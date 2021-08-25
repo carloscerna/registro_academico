@@ -1,0 +1,219 @@
+<!-- PERFIL ADMINISTRADOR -->
+{% if codigo_perfil == '01' %}
+	
+{% endif %}
+<!-- VARIABLE PARA EL DIRECTOR O SUBDIRECTOR. -->
+{% if codigo_perfil == '02' or codigo_perfil == '03'%}
+
+{% endif %}
+
+<!-- PERFIL DE REGISTRO BÁSICA Y MEIDA ADMINISTRAR Estudiantes REPORTES NOTAS, NO MATENIMIENTO. -->
+{% if codigo_perfil == '04' or codigo_perfil == '05' %}
+      <!-- Sidebar Menu -->
+          <!-- Add icons to the links using the .nav-icon class
+               with font-awesome or any other icon font library -->
+          <li class="nav-item has-treeview menu-open">
+            <a href="index.php" class="nav-link active">
+              <i class="nav-icon fas fa-school"></i>
+              <p>
+                Dashboard
+                <i class="right fas fa-angle-left"></i>
+              </p>
+            </a>
+          </li>
+					<!-- /. ESTUDIANTES -->
+          <li class="nav-item has-treeview">
+            <a href="#" class="nav-link">
+              <i class="nav-icon fas fa-user"></i>
+              <p>
+                Estudiantes
+                <i class="fas fa-angle-left right"></i>
+                <span class="badge badge-info right"></span>
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="estudiantes.php" class="nav-link">
+                  <i class="fas fa-check nav-icon"></i>
+                  <p>Estudiantes</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="matricula_masiva.php" class="nav-link">
+                  <i class="fas fa-check nav-icon"></i>
+                  <p>Matricular</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="indicadores_matricula.php" class="nav-link">
+                  <i class="fas fa-check nav-icon"></i>
+                  <p>Indicadores de Matricula</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="datos_pn.php" class="nav-link">
+                  <i class="fas fa-check nav-icon"></i>
+                  <p>Datos Partida Nacimiento</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="datos_pn_imagen.php" class="nav-link">
+                  <i class="fas fa-check nav-icon"></i>
+                  <p>Partida Nacimiento - Imagen</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="datos_masivos.php" class="nav-link">
+                  <i class="fas fa-check nav-icon"></i>
+                  <p>Datos Masivos 1</p>
+                </a>
+              </li>
+							<li class="nav-item">
+                <a href="datos_masivos_2.php" class="nav-link">
+                  <i class="fas fa-check nav-icon"></i>
+                  <p>Datos Masivos 2</p>
+                </a>
+              </li>
+            </ul>
+          </li>
+				  <!-- /. DOCENTES  -->
+          <li class="nav-item has-treeview">
+            <a href="#" class="nav-link">
+              <i class="nav-icon fas fa-user-tie"></i>
+              <p>
+                Docentes
+                <i class="fas fa-angle-left right"></i>
+                <span class="badge badge-info right"></span>
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="personal.php" class="nav-link">
+                  <i class="fas fa-check nav-icon"></i>
+                  <p>Ficha </p>
+                </a>
+              </li>
+            </ul>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="carga_academica.php" class="nav-link">
+                  <i class="fas fa-check nav-icon"></i>
+                  <p>Carga Académica</p>
+                </a>
+              </li>
+            </ul>
+          </li>
+					<!-- /.MENU REPORTES -->
+          <li class="nav-item has-treeview">
+            <a href="#" class="nav-link">
+              <i class="nav-icon fas fa-book"></i>
+              <p>
+                Reportes
+                <i class="fas fa-angle-left right"></i>
+                <span class="badge badge-info right"></span>
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="reportes_listados.php" class="nav-link">
+                  <i class="fas fa-check nav-icon"></i>
+                  <p class="text-justify">Listados - Calificaciones</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="#" class="nav-link">
+                  <i class="fas fa-check nav-icon"></i>
+                  <p class="text-justify">Consolidados (Calificaciones)</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="#" class="nav-link">
+                  <i class="fas fa-check nav-icon"></i>
+                  <p>Indicadores Educativos</p>
+                </a>
+              </li>
+            </ul>
+          </li>
+					<!-- /.MENU REPORTES -->
+          <li class="nav-item has-treeview">
+            <a href="#" class="nav-link">
+              <i class="nav-icon fas fa-edit"></i>
+              <p>
+                Calificaciones
+                <i class="fas fa-angle-left right"></i>
+                <span class="badge badge-info right"></span>
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="notas_por_asignatura.php" class="nav-link">
+                  <i class="fas fa-check nav-icon"></i>
+                  <p>Por Asignatura</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="notas_por_estudiante.php" class="nav-link">
+                  <i class="fas fa-check nav-icon"></i>
+                  <p>Por Estudiante</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="promedio_calificaciones.php" class="nav-link">
+                  <i class="fas fa-check nav-icon"></i>
+                  <p>Promedio</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="notas_importar" class="nav-link">
+                  <i class="fas fa-check nav-icon"></i>
+                  <p>Importar de Docentes</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="notas_exportar.php" class="nav-link">
+                  <i class="fas fa-check nav-icon"></i>
+                  <p>Exportar a SIGES</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="notas_asignaturas_compartidas.php" class="nav-link">
+                  <i class="fas fa-check nav-icon"></i>
+                  <p>Asignaturas Compartidas</p>
+                </a>
+              </li>
+            </ul>
+          </li>
+				<!-- /.MENU ARCHIVOS -->
+          <li class="nav-item has-treeview">
+            <a href="#" class="nav-link">
+              <i class="nav-icon fas fa-file-export"></i>
+              <p>
+                Archivos
+                <i class="fas fa-angle-left right"></i>
+                <span class="badge badge-info right"></span>
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+								<a href="/registro_academico/Archivos" class="nav-link" id="goArchivos" data-accion="hoja_de_calculo" target="_blank">
+                  <i class="fas fa-check nav-icon"></i>
+                  <p>Hojas de Cálculo</p>
+                </a>
+              </li>
+            </ul>
+          </li>
+
+      <!-- /.sidebar-menu -->
+{% endif %}
+
+<!-- PERFIL DE matricula -->
+{% if codigo_perfil == '06' %}
+
+
+{% endif %}
+ 
+<!-- PERFIL DE ROOT ROOT - PARA CREAR LOS USUARIOS Y MANTENIMIENTO DEL PESONAL. -->
+{% if codigo_perfil == '99' %}
+
+{% endif %}
+

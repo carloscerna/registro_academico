@@ -1,0 +1,16 @@
+DELETE FROM alumno;
+delete from alumno_encargado;
+delete from alumno_historial;
+delete from alumno_matricula;
+delete from alumno_segunda_matricula;
+delete from alumnos_notas;
+delete from nota;
+delete from notas;
+--delete from organizacion_grados_secciones;
+--delete from organizar_planta_docente_ciclos;
+--delete from personal;
+--delete from personal_licencias_permisos;
+--delete from personal_responsable_licencia;
+--delete from personal_salario;
+--delete from planta_docente;
+--delete from preparatoria;

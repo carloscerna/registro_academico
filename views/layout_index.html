@@ -1,0 +1,233 @@
+{# Heredando la plantilla principal #}
+
+
+{% extends 'default_layout.html' %}
+
+{% block javascripts %}
+ <!-- JS SCRIPT  -->
+  <script type="text/JavaScript" src="js/carga-datos-indicadores-educativos.js"></script>
+  <script type="text/JavaScript" src="js/main_reportes-indicadores.js"></script>
+
+  <script type="text/JavaScript" src="js/main_graficos_indicadores.js"></script>
+  <script type="text/JavaScript" src="js/main_actualizar_indicadores.js"></script>
+  <script src="js/Chart.js-2.7.0/dist/Chart.bundle.js"></script>
+  <script src="js/Chart.js-2.7.0/samples/utils.js"></script>
+
+<!-- DEINIR EL AJAX START- STOP Y ERROR -->
+<script>
+  $(document).ready(function () { 
+    /*$(document).ajaxStart(function () {
+         $('#myModal').modal('show');
+     });*/
+     $(document).ajaxStop(function () {
+         $('#myModal').modal('hide');
+     });
+     $(document).ajaxError(function () {
+         $('#myModal').modal('hide');
+     });   
+ });
+ </script>
+  {% endblock %}
+
+{% block contenidos %}
+<!-- Page header -->
+<!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <h1 class="m-0 text-dark">{{ nombre_institucion }}</h1>
+          </div><!-- /.col -->
+          <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-right">
+              <li class="breadcrumb-item"><a href="index.php">Home</a></li>
+              <li class="breadcrumb-item active">Indicadores</li>
+            </ol>
+          </div><!-- /.col -->
+        </div><!-- /.row -->
+      </div><!-- /.container-fluid -->
+    </div>
+    <!-- /.content-header -->
+    
+   <!-- Main content -->
+    <section class="content">
+      <div class="container-fluid">
+      <!-- SELECCION DEL AÑO LECTIVO -->
+      <form  action="" method="post" name="form" id="form" role="form">
+        <fieldset id="ocultos">
+          <input type="hidden" id="accion" name="accion" value = "BuscarUser" class="{required:true}">
+        </fieldset>
+        <div class="row">
+          <div class="col col-md-6 col-lg-3 col-xl-3">
+                <!-- / AÑO LECTIVO -->
+                <div class="form-group row">
+                  <label class="col-sm-4 col-form-label" for="lstannlectivo">Año Lectivo</label>
+                  <div class="col-sm-6">
+                    <select id="lstannlectivo" name="lstannlectivo" autofocus class="custom-select" required="required"></select>
+                  </div>
+                </div>
+          </div>
+                <!-- / BOTONES -->
+                <div class="col col-md-6 col-lg-9 col-xl-9">
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary" id = "goCABuscar">
+                          <span class="fas fa-search"></span> Buscar
+                        </button>
+                        <button type="button" class="btn btn-danger" id = "goActualizarRepitentes">
+                          <span class="fas fa-sync-alt"></span> Actualizar Repitentes
+                        </button>
+                        <button type="button" class="btn btn-info" id = "goActualizarNuevoIngreso">
+                          <span class="fas fa-sync-alt"></span> Actualizar Nuevo Ingreso
+                        </button>
+                        <button type="button" class="btn btn-info" id = "goActualizarPN">
+                          <span class="fas fa-sync-alt"></span> Actualizar Partida de Nacimiento
+                        </button>
+                    </div>
+                  </div>
+        </div>
+        </form>
+        <!-- Small boxes (Stat box) -->
+        <div class="row">
+          <div class="col-lg-3 col-6">
+            <!-- small box -->
+            <div class="small-box bg-info">
+              <div class="inner">
+                <h4 id="totaldeEstudiantes">
+                  <label for="totalEstudiantesMasculino"></label> - Masculino
+                  <label for="totalEstudiantesFemenino"></label> - Femenino
+                </h4>
+                <h2><label for="totalEstudiantes"></label> - Estudiantes</h2>
+              </div>
+              <div class="icon">
+                <i class="fas fa-restroom"></i>
+              </div>
+              <a href="#" class="small-box-footer">Más Detalles <i class="fas fa-arrow-circle-right"></i></a>
+            </div>
+          </div>
+          <!-- ./col -->
+          <div class="col-lg-3 col-6">
+            <!-- small box -->
+            <div class="small-box bg-success">
+              <div class="inner">
+                <h3><sup style="font-size: 20px"></sup></h3>
+
+                <p>Personal</p>
+              </div>
+              <div class="icon">
+                <i class="fas fa-user-tie"></i>
+              </div>
+              <a href="#" class="small-box-footer">Más Detalles <i class="fas fa-arrow-circle-right"></i></a>
+            </div>
+          </div>
+          <!-- ./col -->
+          <div class="col-lg-3 col-6">
+            <!-- small box -->
+            <div class="small-box bg-warning">
+              <div class="inner">
+                <h3 id="Familias">
+                  <label for="TotalFamilias"></label> 
+                </h3>
+
+                <p>Total de Familias</p>
+              </div>
+              <div class="icon">
+                <i class="fas fa-users"></i>
+              </div>
+              <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+            </div>
+          </div>
+          <!-- ./col -->
+          <div class="col-lg-3 col-6">
+            <!-- small box -->
+            <div class="small-box bg-danger">
+              <div class="inner">
+                <h4 id="Docentes">
+                  <label for="totalDocentesMasculino"></label> - Masculino
+                  <label for="totalDocentesFemenino"></label> - Femenino
+                </h4>
+                <h2><label for="totalDocentes"></label> - Docentes</h2>
+                <p>Total Docentes</p>
+              </div>
+              <div class="icon">
+                <i class="fas fa-chalkboard-teacher"></i>
+              </div>
+              <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+            </div>
+          </div>
+          <!-- ./col -->
+        </div>
+        <!-- /.row -->
+      </div>
+    </section>
+
+    <!-- GRAFICOS  y TABLA-->  
+    <section>
+      <div class="row">
+            <!-- GRAFICOS -->
+        <div class="col col-md-6 col-lg-6 col-xl-6">
+          <div class="jumbotron">
+            <h2>Matrícula Máxima y Retirados</h2>
+                <button type="button" class="btn btn-primary">
+                  Masculino <span class="badge badge-light" id="MatriculaMasculino">0</span>
+                </button>
+                <button type="button" class="btn btn-danger">
+                  Femenino <span class="badge badge-light" id="MatriculaFemenino">0</span>
+                </button>
+                <button type="button" class="btn btn-success">
+                  Total <span class="badge badge-light" id="MatriculaTotal">0</span>
+                </button>
+           <div>
+             <canvas id="GraficoMatricula" height="300px"></canvas>    
+          </div>
+        </div>
+        </div>
+       <!-- TABLA DE INDICADORES -->
+          <div class="col col-md-6 col-lg-6 col-xl-6">
+            <div class="jumbotron">
+              <h2>Matricula</h2>
+              <table class="table table-striped table-sm" id="listadoMatricula">     
+                <thead>     
+                  <tr>     
+                    <th>N°</th>     
+                    <th>Modalidad</th>     
+                    <th>Turno</th>     
+                    <th>Masculino</th>     
+                    <th>Femenino</th>     
+                    <th>Total</th>     
+                  </tr>                         
+                </thead>     
+                <tbody id="listaMatricula">     
+                      
+                </tbody>     
+              </table>             
+            </div>
+          </div>
+       </div>
+    </section>
+  </div> <!-- /.content-Wrapper, Contains page content. -->
+<!-- Modal VENTANA EN ESPERA.-->
+<div id="myModal" class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static" 
+  data-keyboard="false">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel"><label for="VerificarActualizar">Actualizando...</label></h5>
+      </div>
+      <div class="modal-body">
+        <div class="d-flex justify-content-center mb-3">
+          <img src="img/ajax-loader.gif" width="45" height="45" alt="Loading...">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <label for="NombreArchivo"></label>
+      </div>
+    </div>
+  </div>
+</div>  
+  {% endblock %}
+
+{% block loginUser %}
+<!--	{% include 'layout-login-user.html' %} -->
+{% endblock %}
