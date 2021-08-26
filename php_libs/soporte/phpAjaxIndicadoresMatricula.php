@@ -93,7 +93,7 @@ if($errorDbConexion == false){
 					while($listado = $consulta -> fetch(PDO::FETCH_BOTH))
 					{
 						// Variable para el color de las filas de la tabla.
-						if($color_tabla == "success"){$color_tabla="active";}else{$color_tabla="success";}
+						//if($color_tabla == "success"){$color_tabla="active";}else{$color_tabla="success";}
 						
 						$num++;
 						$id_alumno = $listado['id_alumno'];
@@ -145,10 +145,10 @@ if($errorDbConexion == false){
                           }
 						// armar variables para retirado
 						if($listado['retirado'] == 't'){
-							$color_fila = '<tr style=background:#FFC4A7><td>';
+							$color_fila = '<tr style=background:#2980B9><td>';
                             $retirado = "checked data-toggle=tooltip data-placement=top title='Check Igual Si'";
                           }else{
-							$color_fila = '<tr style=background:#DAD8D7><td>';
+							$color_fila = '<tr style=background:##17202A><td>';
                             $retirado = "data-toggle=tooltip data-placement=top title='Check Igual Si'";;
                           }
 						// armar variables para nuevo ingreso.
