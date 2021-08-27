@@ -1,9 +1,12 @@
 # CARPTA QUE CONTIENE ADMINLTE 3.1 Y BOOTSTRAP
 /docs/
+# CONTINEN IMAGENES DEL SISTEMA Y PARTIDAS DE NACIMIENTO
 /img/
 /images/
 /assets/
+# CUADROS QUE UTILIZA EL SISTEMA (HOJAS DE CALCULO)
 /formatos_hoja_de_calculo/
+# FRAMEWORK Y OTROS
 /js/bootstrap-select/
 /js/Chart.js-2.7.0/
 /js/jquery-validation-1.10.0/
