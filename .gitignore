@@ -1,26 +1,35 @@
+# CONTIENE LA ULTIMA VERSION DE ADMINLTE 3.1 Y BOOTSTRAP.
 /docs/
+# CONTIENEN IMAGENES UTILIZADAS EN EL SISTEMA Y PARTIDAS DE NACIMIENTO.
 /img/
 /images/
+#
 /assets/
+# DIFERENTES FORMATOS DE HOJA DE CALCULO QUE UTILIZA EL SISTEMA
 /formatos_hoja_de_calculo/
+# UTILIDADES JAVASCRIPT
 /js/bootstrap-select/
 /js/Chart.js-2.7.0/
 /js/jquery-validation-1.10.0/
 /js/jquery-validation-1.19.1/
 /js/plugins/
 /js/popper/
-/php_libs/fpdf182/
-/php_libs/fpdf/
-/php_libs/Twig
-/vendor/
-/vendore/
-/webfonts/
-/php_libs/PHPMailer/
-/css/alt/
-/files/
 /js/file-input/
 /js/sweetalert2/
 /js/toastr/
 /js/pace/
 /js/jqueryNumeric/
 /js/jquery-mask/
+# PDF Y TWIG
+/php_libs/fpdf182/
+/php_libs/fpdf/
+/php_libs/Twig
+/php_libs/PHPMailer/
+# UTILIZANDO EN....
+/vendor/
+/vendore/
+/webfonts/
+# 
+/css/alt/
+# Archivos temprales
+/files/
