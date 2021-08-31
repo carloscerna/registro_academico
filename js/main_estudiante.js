@@ -2,6 +2,18 @@
 var id_ = 0;
 var NIE = 0;
 var tabla = "";
+var menu_group = '<div class="dropdown">'+
+					'<button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown">...'+
+					'</button>'+
+						'<div class="dropdown-menu">'+
+							'<a class="editar dropdown-item fal fa-user-edit" href="#"> Editar'+
+							'</a>'+
+							'<a class="expediente dropdown-item far fa-id-card" href="#"> Expediente'+
+							'</a>'+
+							'<a class="imprimir-portada dropdown-item fas fa-address-card" href="#"> Portada'+
+							'</a>'+
+						'</div>'+
+				'</div>';
 $(function(){ // iNICIO DEL fUNCTION.
 ///////////////////////////////////////////////////////////////////////////////
 // FUNCION QUE CARGA LA TABLA COMPLETA CON LOS REGISTROS
@@ -27,7 +39,7 @@ var listar = function(){
 				"columns":[
 					{
 						data: null,
-						defaultContent: '<div class="dropdown"><button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown">...</button><div class="dropdown-menu"><a class="editar dropdown-item" href="#">Editar</a><a class="expediente dropdown-item" href="#">Expediente</a><a class="imprimir-portada dropdown-item" href="#">Portada</a></div></div>',
+						defaultContent: menu_group,
 						orderable: false
 					},
 					{"data":"id_alumno"},
