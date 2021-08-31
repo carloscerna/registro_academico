@@ -13,20 +13,24 @@
 /js/jquery-validation-1.19.1/
 /js/plugins/
 /js/popper/
-/php_libs/fpdf182/
-/php_libs/fpdf/
-/php_libs/Twig
-/vendor/
-/vendore/
-/webfonts/
-/php_libs/PHPMailer/
-/css/alt/
-/files/
 /js/file-input/
 /js/sweetalert2/
 /js/toastr/
 /js/pace/
 /js/jqueryNumeric/
 /js/jquery-mask/
-/.vscode/
 /js/pace-1.2.4/
+/js/fontawesome-pro-5.14.0-web/
+#PHP LIBS
+/php_libs/fpdf182/
+/php_libs/fpdf/
+/php_libs/Twig
+/php_libs/PHPMailer/
+# COMPOSER
+/vendor/
+/vendore/
+# OTROS
+/webfonts/
+/css/alt/
+/files/
+/.vscode/
