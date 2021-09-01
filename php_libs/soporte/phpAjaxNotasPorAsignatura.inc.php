@@ -93,9 +93,9 @@ if($errorDbConexion == false){
 						// S� se ha seleccionado Recuperaci�n evaluar y presentar s�lo los registros necesarios.
 						// CAMBIAR COLOR DE LA FILA SEGUN NOTA.
 						if($nota_ == 0){
-							$color_fila = '<tr style=background:#F1948A><td>';
+							$color_fila = '<tr style=background:#2980B9><td>';
 							}else{
-							$color_fila = '<tr style=background:#FBFCFC><td>';
+							$color_fila = '<tr style=background:##FBFCFC><td>';
 							}
 						
 						if($periodo == 'Recuperacion' and $nota_final < $nota_evaluar)

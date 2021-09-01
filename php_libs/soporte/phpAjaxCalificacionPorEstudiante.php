@@ -120,9 +120,9 @@ if($errorDbConexion == false){
 						$observacion_ = (trim($listado[$observacion]));
 						// CAMBIAR COLOR DE LA FILA SEGUN NOTA.
 						if($nota_ == 0){
-							$color_fila = '<tr style=background:#F1948A><td>';
+							$color_fila = '<tr style=background:#2980B9><td>';
 							}else{
-							$color_fila = '<tr style=background:#FBFCFC><td>';
+							$color_fila = '<tr style=background:##FBFCFC><td>';
 							}
 						
 						if($periodo == 'R1' || $periodo == "R2")
