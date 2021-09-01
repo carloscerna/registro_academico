@@ -87,11 +87,11 @@
  <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
     <!-- Content Header (Page header) -->
-    <section class="content-header">
+    <section class="content-header p-0">
       <div class="container-fluid">
         <div class="row mb-1">
           <div class="col-sm-6">
-            <h4>Datos Partida de Nacimiento</h4>
+            <h4></h4>
           </div>
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
@@ -110,9 +110,9 @@
           <!-- left column -->
           <div class="col">
             <!-- general form elements -->
-            <div class="card card-primary mx-auto">
-              <div class="card-header">
-                <h3 class="card-title">Seleccione.</h3>
+            <div class="card">
+              <div class="card-header bg-gradient-navy">
+                <h3 class="card-title">Partidas de Nacimiento</h3>
               </div>
               <!-- /.card-header -->
               <!-- card body - form start -->
@@ -144,14 +144,14 @@
                 <!-- /.card-body -->
                 <div class="card-footer d-flex justify-content-center">
                   <div class="form-group row">
-                    <button type="submit" class="btn btn-primary" id = "goBuscar">
-                      <span class="fas fa-search"></span> Buscar Registros
+                    <button type="submit" class="btn btn-primary btn-md" id = "goBuscar" title="Buscar">
+                      <span class="fas fa-search"></span>
                     </button>
-                    <button type="button" class="btn btn-success" id = "goActualizar" disabled>
-                      <span class="fas fa-save"></span> Actualizar Registros
+                    <button type="button" class="btn btn-success btn-md" id = "goActualizar" title="Guardar" disabled>
+                      <span class="fas fa-save"></span> 
                     </button>
-                    <button type="button" class="btn btn-danger" id = "goCancelar">
-                      <span class="fas fa-window-close"></span> Cancelar
+                    <button type="button" class="btn btn-danger btn-md" id = "goCancelar" title="Cancelar">
+                      <span class="fas fa-window-close"></span> 
                     </button>
                   </div>
                 </div>
@@ -165,7 +165,12 @@
             <div class="col">
              <div class="card card-secondary mx-auto" id="tabstabla">
                 <div class="card-header">
-                  <h3 class="card-title">...</h3>
+                  <h3 class="card-title"></h3>
+                  <div class="card-tools">
+                    <!-- Buttons, labels, and many other things can be placed here! -->
+                    <!-- Here is a label for example -->
+                    <span class="badge badge-primary">Estudiantes</span>
+                  </div>
                 </div>
                 <!-- /.card-header -->
                 <div class="card-body p-0">

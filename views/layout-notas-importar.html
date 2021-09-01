@@ -331,13 +331,10 @@ $(document).ready(function() {
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
     <!-- Content Header (Page header) -->
-    <section class="content-header">
+    <section class="content-header p-0">
       <div class="container-fluid">
         <div class="row mb-1">
-          <div class="col-sm-6">
-            <h4>Calificaciones (Importar de Docentes)</h4>
-          </div>
-          <div class="col-sm-6">
+          <div class="col">
             <ol class="breadcrumb float-sm-right">
               <li class="breadcrumb-item"><a href="index.php">Home</a></li>
               <li class="breadcrumb-item active">Calificaciones (Importar de Docentes)</li>
@@ -354,10 +351,9 @@ $(document).ready(function() {
       <div class="row">
         <div class="col-12">
           <div class="card">
-            <div class="card-header">
+            <div class="card-header bg-gradient-navy">
               <h3 class="card-title">
-                  Seleccione...
-              </h3>
+                Calificaciones (Importar de Docentes)</h3>
             </div>
             <!-- /.card-header -->
             <div class="card-body">
@@ -480,15 +476,16 @@ $(document).ready(function() {
                     </div>
                   </div>
                 </div>
-              </div>
+              </div> 
+            <div class="card-footer">
+             <div id="MensajeImportar">
+               <label class="text-sucess bg-cyan">?..?</label>
+             </div>
+            </div>
             </div>
           </div>
         </div> <!-- /.card -->
-        <div class="card-footer">
-             <div id="MensajeImportar">
-               <label class="text-sucess bg-cyan">?</label>
-             </div>
-        </div>
+
         <!-- /.card-footer -->
       </div> <!-- /.col -->
      </div> <!-- /. tab-content-->
