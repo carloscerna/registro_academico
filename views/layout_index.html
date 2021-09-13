@@ -38,7 +38,7 @@
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6">
-            <h4 class="m-0 text-dark">{{ nombre_institucion }}</h4>
+            <h4 class="m-0">{{ nombre_institucion }}</h4>
           </div><!-- /.col -->
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
@@ -60,45 +60,50 @@
           <input type="hidden" id="accion" name="accion" value = "BuscarUser" class="{required:true}">
         </fieldset>
         <div class="row">
-          <div class="col col-md-6 col-lg-3 col-xl-3">
-                <!-- / AÑO LECTIVO -->
-                <div class="form-group row">
-                  <label class="col-sm-4 col-form-label" for="lstannlectivo">Año Lectivo</label>
-                  <div class="col-sm-6">
-                    <select id="lstannlectivo" name="lstannlectivo" autofocus class="custom-select" required="required"></select>
-                  </div>
-                </div>
+          <div class="col-12 col-sm-12 col-md-6 col-lg-5 col-xl-5">
+            <!-- / AÑO LECTIVO -->
+            <div class="form-group">
+                <label class="col-sm-4 col-form-label" for="lstannlectivo">Año Lectivo</label>
+                <select id="lstannlectivo" name="lstannlectivo" autofocus class="custom-select" required="required"></select>
+            </div>
           </div>
                 <!-- / BOTONES -->
-                <div class="col col-md-6 col-lg-9 col-xl-9">
-                    <div class="form-group">
-                        <button type="submit" class="btn btn-primary" id = "goCABuscar">
-                          <span class="fas fa-search"></span> Buscar
+                <div class="col-12 col-sm-12 col-md-6 col-lg-7 col-xl-7 align-content-center">
+                  <div class="btn-group">
+                    <button type="submit" class="btn btn-info" alt="Buscar" id = "goCABuscar">
+                      <span class="fal fa-search"></span>
+                    </button>
+                    <div class="btn-group">
+                      <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown">
+                         Actualizar
+                      </button>
+                      <div class="dropdown-menu">
+                        <button type="button" class="btn btn-sm btn-secondary" id = "goActualizarRepitentes">
+                          <span class="fas fa-sync-alt"></span> Actualizar
                         </button>
-                        <button type="button" class="btn btn-danger" id = "goActualizarRepitentes">
-                          <span class="fas fa-sync-alt"></span> Actualizar Repitentes
+                        <button type="button" class="btn btn-sm btn-info" id = "goActualizarNuevoIngreso">
+                          <span class="fas fa-sync-alt"></span> Nuevo Ingreso
                         </button>
-                        <button type="button" class="btn btn-info" id = "goActualizarNuevoIngreso">
-                          <span class="fas fa-sync-alt"></span> Actualizar Nuevo Ingreso
+                        <button type="button" class="btn btn-sm btn-info" id = "goActualizarPN">
+                          <span class="fas fa-sync-alt"></span> Partida de Nacimiento
                         </button>
-                        <button type="button" class="btn btn-info" id = "goActualizarPN">
-                          <span class="fas fa-sync-alt"></span> Actualizar Partida de Nacimiento
-                        </button>
+                      </div>
                     </div>
                   </div>
+                </div>
         </div>
-        </form>
+      </form>
         <!-- Small boxes (Stat box) -->
         <div class="row">
-          <div class="col-lg-3 col-6">
+          <div class="col-12 col-sm-12 col-md-6 col-lg-4 col-xl-3">
             <!-- small box -->
             <div class="small-box bg-info">
               <div class="inner">
-                <h4 id="totaldeEstudiantes">
+                <h6 id="totaldeEstudiantes">
                   <label for="totalEstudiantesMasculino"></label> - Masculino
                   <label for="totalEstudiantesFemenino"></label> - Femenino
-                </h4>
-                <h2><label for="totalEstudiantes"></label> - Estudiantes</h2>
+                </h6>
+                <h6><label for="totalEstudiantes"></label> - Estudiantes</h6>
               </div>
               <div class="icon">
                 <i class="fas fa-restroom"></i>
@@ -107,7 +112,7 @@
             </div>
           </div>
           <!-- ./col -->
-          <div class="col-lg-3 col-6">
+          <div class="col-12 col-sm-12 col-md-6 col-lg-4 col-xl-3">
             <!-- small box -->
             <div class="small-box bg-success">
               <div class="inner">
@@ -122,7 +127,7 @@
             </div>
           </div>
           <!-- ./col -->
-          <div class="col-lg-3 col-6">
+          <div class="col-12 col-sm-12 col-md-6 col-lg-4 col-xl-3">
             <!-- small box -->
             <div class="small-box bg-warning">
               <div class="inner">
@@ -135,25 +140,25 @@
               <div class="icon">
                 <i class="fas fa-users"></i>
               </div>
-              <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+              <a href="#" class="small-box-footer"> Más Detalles <i class="fas fa-arrow-circle-right"></i></a>
             </div>
           </div>
           <!-- ./col -->
-          <div class="col-lg-3 col-6">
+          <div class="col-12 col-sm-12 col-md-6 col-lg-4 col-xl-3">
             <!-- small box -->
             <div class="small-box bg-danger">
               <div class="inner">
-                <h4 id="Docentes">
+                <h6 id="Docentes">
                   <label for="totalDocentesMasculino"></label> - Masculino
                   <label for="totalDocentesFemenino"></label> - Femenino
-                </h4>
-                <h2><label for="totalDocentes"></label> - Docentes</h2>
+                </h6>
+                <h6><label for="totalDocentes"></label> - Docentes</h6>
                 <p>Total Docentes</p>
               </div>
               <div class="icon">
                 <i class="fas fa-chalkboard-teacher"></i>
               </div>
-              <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+              <a href="#" class="small-box-footer"> Más Detalles <i class="fas fa-arrow-circle-right"></i></a>
             </div>
           </div>
           <!-- ./col -->
@@ -163,7 +168,7 @@
     </section>
 
     <!-- GRAFICOS  y TABLA-->  
-    <section>
+    <section style="display: none;">
       <div class="row">
             <!-- GRAFICOS -->
         <div class="col col-md-6 col-lg-6 col-xl-6">
