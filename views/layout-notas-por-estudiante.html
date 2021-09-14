@@ -3,7 +3,7 @@
 {% extends 'default_layout.html' %}
 
 {% block extraCSS %}
-
+  <link href="css/styles-loading.css" rel="stylesheet">
 {% endblock %}
 
 {% block javascripts %}
@@ -191,7 +191,11 @@ $(document).ready(function()
           </div> <!-- CLASS ROW PARA EL INGRESO DE NOTAS. -->
     </section>
   </div> <!-- /.Content Wrapper. Caontains page content -->			
-{% endblock %}
+
+<!-- Loading Screen -->
+  {% include 'loading-screen.html' %}
+
+  {% endblock %}
 
 {% block menu %}
 <!-- plantilla que contiene el menú principal. -->

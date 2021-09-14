@@ -320,32 +320,8 @@ $(document).ready(function () {
     </section>
   </div> <!-- /.Content Wrapper. Caontains page content -->
   
-  <!-- Modal 
-  
-<div id="myModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static"  data-keyboard="false">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Creando Archivo...</h5>
-      </div>
-      <div class="modal-body">
-        <div class="d-flex justify-content-center mb-3">
-          <img src="img/ajax-loader.gif" width="45" height="45" alt="Loading...">
-        </div>
-      </div>
-      <div class="modal-footer">
-        <label for="NombreArchivo">Nombre del Archivo.</label>
-      </div>
-    </div>
-  </div>
-</div>
--->
-<div id="loading-screen" style="display:none">
-  <img src="img/spinning-circles.svg">
-  <h3>
-    <label for="LblDescripcion" class="">Por Favor Espere...</label>
-  </h3>
-</div>
+  <!-- Loading Screen -->
+  {% include 'loading-screen.html' %}
 
 {% endblock %}
 

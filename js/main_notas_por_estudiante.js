@@ -254,3 +254,13 @@ function PasarFoco()
    {
        $('#codigo_nie').focus();
    }
+// Mensaje de Carga de Ajax.
+function configureLoadingScreen(screen){
+    $(document)
+        .ajaxStart(function () {
+            screen.fadeIn();
+        })
+        .ajaxStop(function () {
+            screen.fadeOut();
+        });
+}
