@@ -24,6 +24,7 @@ include($path_root."/registro_academico/includes/funciones_2.php");
 	$trimestre_1 = trim($_REQUEST["t1"]);
 	$trimestre_2 = trim($_REQUEST["t2"]);
 	$trimestre_3 = trim($_REQUEST["t3"]);
+	$trimestre_4 = trim($_REQUEST["t4"]);
 // consulta sobre el codigo del docente y el a?o lectivo.
   $query = "SELECT eg.encargado, eg.codigo_ann_lectivo, eg.codigo_grado, eg.codigo_seccion, eg.codigo_bachillerato, eg.codigo_docente, eg.imparte_asignatura
 						FROM encargado_grado eg 
@@ -74,7 +75,10 @@ include($path_root."/registro_academico/includes/funciones_2.php");
 						if($trimestre_3 == "yes"){
 							$nombre_de_hoja_de_calculo = "Control de Actividades Ver.2019-3.xlsx";
 						}
-						
+
+						if($trimestre_4 == "yes"){
+							$nombre_de_hoja_de_calculo = "Control de Actividades Ver.2019-4.xlsx";
+						}
 		// Seleccionar el archivo con el se trabajará
 		$objPHPExcel = $objReader->load($origen.$nombre_de_hoja_de_calculo);
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -186,7 +190,7 @@ include($path_root."/registro_academico/includes/funciones_2.php");
 			{
 				// seleccionar que hoja se va duplicar.
             // turno Vespertino o Matutino.
-            if($codigo_bach == "10"){
+            if($codigo_bach == "10" || $codigo_bach == "11" || $codigo_bach == "12"){
                // Nocturna
                   $numero_hoja_clonar = 2;
             }
@@ -248,7 +252,7 @@ include($path_root."/registro_academico/includes/funciones_2.php");
 			$query = "SELECT a.id_alumno, a.codigo_nie, btrim(a.apellido_paterno || CAST(' ' AS VARCHAR) || a.apellido_materno || CAST(', ' AS VARCHAR) || a.nombre_completo) as apellido_alumno,
 					a.genero, a.id_alumno as cod_alumno, am.id_alumno_matricula as codigo_matricula, am.codigo_bach_o_ciclo,
 					bach.nombre as nombre_bachillerato, am.codigo_ann_lectivo, ann.nombre as nombre_ann_lectivo, am.codigo_grado, gan.nombre as nombre_grado, am.codigo_seccion, sec.nombre as nombre_seccion,
-					n.nota_p_p_1, n.nota_p_p_2, n.nota_p_p_3, n.codigo_asignatura, ae.codigo_alumno, ae.encargado
+					n.nota_p_p_1, n.nota_p_p_2, n.nota_p_p_3, n.nota_p_p_4, n.codigo_asignatura, ae.codigo_alumno, ae.encargado
 					FROM alumno a 
 					INNER JOIN alumno_encargado ae ON a.id_alumno = ae.codigo_alumno and ae.encargado = 't' 
 					INNER JOIN alumno_matricula am ON a.id_alumno = am.codigo_alumno and am.retirado = 'f' 
@@ -311,6 +315,12 @@ include($path_root."/registro_academico/includes/funciones_2.php");
 							$objPHPExcel->getActiveSheet()->SetCellValue("AR".$fila_excel, (TRIM($row['nota_p_p_2'])));
 							$objPHPExcel->getActiveSheet()->SetCellValue("BK".$fila_excel, (TRIM($row['nota_p_p_3'])));
 						}
+						if($trimestre_4 == "yes"){
+							$objPHPExcel->getActiveSheet()->SetCellValue("Y".$fila_excel, (TRIM($row['nota_p_p_1'])));
+							$objPHPExcel->getActiveSheet()->SetCellValue("AR".$fila_excel, (TRIM($row['nota_p_p_2'])));
+							$objPHPExcel->getActiveSheet()->SetCellValue("BK".$fila_excel, (TRIM($row['nota_p_p_3'])));
+							$objPHPExcel->getActiveSheet()->SetCellValue("CD".$fila_excel, (TRIM($row['nota_p_p_4'])));
+						}
 					////////////////////////////////////////////////////////////////////////////////////////////////////////////////////   
 				}    //  FIN DEL WHILE.
 	    // Proteger hoja.
@@ -327,7 +337,7 @@ include($path_root."/registro_academico/includes/funciones_2.php");
 	{
 		if($hoja_aspectos == 1){
 		    // seleccionar que hoja se va duplicar.
-            if($codigo_bach == "10"){
+            if($codigo_bach == "10" || $codigo_bach == "11" || $codigo_bach == "12"){
                // Nocturna
                   $numero_hoja_clonar = 3;
             }
@@ -389,7 +399,7 @@ include($path_root."/registro_academico/includes/funciones_2.php");
                         $objPHPExcel->getActiveSheet()->SetCellValue('Q8', 'T R I M E S T R E');
                         $objPHPExcel->getActiveSheet()->SetCellValue('V8', 'SOLO PARA EDUCACIÓN MEDIA');
 			}else{
-            $objPHPExcel->getActiveSheet()->SetCellValue('G4', 'MEDIA');
+            	$objPHPExcel->getActiveSheet()->SetCellValue('G4', 'MEDIA');
                $objPHPExcel->getActiveSheet()->SetCellValue('G11', "'".$nuevo_codigo_asignatura."'");
                $objPHPExcel->getActiveSheet()->SetCellValue('L11', "'".$nuevo_codigo_asignatura."'");
                $objPHPExcel->getActiveSheet()->SetCellValue('Q11', "'".$nuevo_codigo_asignatura."'");
@@ -482,7 +492,7 @@ include($path_root."/registro_academico/includes/funciones_2.php");
 				$objPHPExcel->getActiveSheet()->SetCellValue('K11', "'".$nuevo_codigo_asignatura."'");
 				$objPHPExcel->getActiveSheet()->SetCellValue('P11', "'".$nuevo_codigo_asignatura."'");
 				$objPHPExcel->getActiveSheet()->SetCellValue('U11', "'".$nuevo_codigo_asignatura."'");
-            $objPHPExcel->getActiveSheet()->SetCellValue('Z11', "'".$nuevo_codigo_asignatura."'");
+            	$objPHPExcel->getActiveSheet()->SetCellValue('Z11', "'".$nuevo_codigo_asignatura."'");
             // Nocturna.
                if($codigo_bach == "10"){
                   $objPHPExcel->getActiveSheet()->SetCellValue('AE11', "'".$nuevo_codigo_asignatura."'");   
@@ -502,7 +512,7 @@ include($path_root."/registro_academico/includes/funciones_2.php");
 			$query = "SELECT a.id_alumno, a.codigo_nie, btrim(a.apellido_paterno || CAST(' ' AS VARCHAR) || a.apellido_materno || CAST(', ' AS VARCHAR) || a.nombre_completo) as apellido_alumno,
 					a.genero, a.id_alumno as cod_alumno, am.id_alumno_matricula as codigo_matricula, am.codigo_bach_o_ciclo,
 					bach.nombre as nombre_bachillerato, am.codigo_ann_lectivo, ann.nombre as nombre_ann_lectivo, am.codigo_grado, gan.nombre as nombre_grado, am.codigo_seccion, sec.nombre as nombre_seccion,
-					n.nota_p_p_1, n.nota_p_p_2, n.nota_p_p_3, n.codigo_asignatura, ae.codigo_alumno, ae.encargado
+					n.nota_p_p_1, n.nota_p_p_2, n.nota_p_p_3, n.nota_p_p_4, n.codigo_asignatura, ae.codigo_alumno, ae.encargado
 					FROM alumno a 
 					INNER JOIN alumno_encargado ae ON a.id_alumno = ae.codigo_alumno and ae.encargado = 't' 
 					INNER JOIN alumno_matricula am ON a.id_alumno = am.codigo_alumno and am.retirado = 'f' 
@@ -595,6 +605,69 @@ include($path_root."/registro_academico/includes/funciones_2.php");
 									case 5:
 										$objPHPExcel->getActiveSheet()->SetCellValue("K".$fila_excel, (TRIM($row['nota_p_p_1'])));
 										$objPHPExcel->getActiveSheet()->SetCellValue("P".$fila_excel, (TRIM($row['nota_p_p_2'])));
+										break;
+								}							
+						}
+						if($trimestre_3 == "yes"){
+							switch ($hoja_aspectos) {
+									case 1:
+										$objPHPExcel->getActiveSheet()->SetCellValue("G".$fila_excel, (TRIM($row['nota_p_p_1'])));
+										$objPHPExcel->getActiveSheet()->SetCellValue("L".$fila_excel, (TRIM($row['nota_p_p_2'])));		
+										$objPHPExcel->getActiveSheet()->SetCellValue("Q".$fila_excel, (TRIM($row['nota_p_p_3'])));		
+										break;
+									case 2:
+										$objPHPExcel->getActiveSheet()->SetCellValue("H".$fila_excel, (TRIM($row['nota_p_p_1'])));
+										$objPHPExcel->getActiveSheet()->SetCellValue("M".$fila_excel, (TRIM($row['nota_p_p_2'])));
+										$objPHPExcel->getActiveSheet()->SetCellValue("R".$fila_excel, (TRIM($row['nota_p_p_3'])));		
+										break;
+									case 3:
+										$objPHPExcel->getActiveSheet()->SetCellValue("I".$fila_excel, (TRIM($row['nota_p_p_1'])));
+										$objPHPExcel->getActiveSheet()->SetCellValue("N".$fila_excel, (TRIM($row['nota_p_p_2'])));
+										$objPHPExcel->getActiveSheet()->SetCellValue("S".$fila_excel, (TRIM($row['nota_p_p_3'])));		
+										break;
+									case 4:
+										$objPHPExcel->getActiveSheet()->SetCellValue("J".$fila_excel, (TRIM($row['nota_p_p_1'])));
+										$objPHPExcel->getActiveSheet()->SetCellValue("O".$fila_excel, (TRIM($row['nota_p_p_2'])));
+										$objPHPExcel->getActiveSheet()->SetCellValue("T".$fila_excel, (TRIM($row['nota_p_p_3'])));		
+										break;
+									case 5:
+										$objPHPExcel->getActiveSheet()->SetCellValue("K".$fila_excel, (TRIM($row['nota_p_p_1'])));
+										$objPHPExcel->getActiveSheet()->SetCellValue("P".$fila_excel, (TRIM($row['nota_p_p_2'])));
+										$objPHPExcel->getActiveSheet()->SetCellValue("U".$fila_excel, (TRIM($row['nota_p_p_3'])));		
+										break;
+								}							
+						}
+						if($trimestre_4 == "yes"){
+							switch ($hoja_aspectos) {
+									case 1:
+										$objPHPExcel->getActiveSheet()->SetCellValue("G".$fila_excel, (TRIM($row['nota_p_p_1'])));
+										$objPHPExcel->getActiveSheet()->SetCellValue("L".$fila_excel, (TRIM($row['nota_p_p_2'])));		
+										$objPHPExcel->getActiveSheet()->SetCellValue("Q".$fila_excel, (TRIM($row['nota_p_p_3'])));		
+										$objPHPExcel->getActiveSheet()->SetCellValue("V".$fila_excel, (TRIM($row['nota_p_p_4'])));		
+										break;
+									case 2:
+										$objPHPExcel->getActiveSheet()->SetCellValue("H".$fila_excel, (TRIM($row['nota_p_p_1'])));
+										$objPHPExcel->getActiveSheet()->SetCellValue("M".$fila_excel, (TRIM($row['nota_p_p_2'])));
+										$objPHPExcel->getActiveSheet()->SetCellValue("R".$fila_excel, (TRIM($row['nota_p_p_3'])));		
+										$objPHPExcel->getActiveSheet()->SetCellValue("W".$fila_excel, (TRIM($row['nota_p_p_4'])));		
+										break;
+									case 3:
+										$objPHPExcel->getActiveSheet()->SetCellValue("I".$fila_excel, (TRIM($row['nota_p_p_1'])));
+										$objPHPExcel->getActiveSheet()->SetCellValue("N".$fila_excel, (TRIM($row['nota_p_p_2'])));
+										$objPHPExcel->getActiveSheet()->SetCellValue("S".$fila_excel, (TRIM($row['nota_p_p_3'])));		
+										$objPHPExcel->getActiveSheet()->SetCellValue("X".$fila_excel, (TRIM($row['nota_p_p_4'])));		
+										break;
+									case 4:
+										$objPHPExcel->getActiveSheet()->SetCellValue("J".$fila_excel, (TRIM($row['nota_p_p_1'])));
+										$objPHPExcel->getActiveSheet()->SetCellValue("O".$fila_excel, (TRIM($row['nota_p_p_2'])));
+										$objPHPExcel->getActiveSheet()->SetCellValue("T".$fila_excel, (TRIM($row['nota_p_p_3'])));		
+										$objPHPExcel->getActiveSheet()->SetCellValue("Y".$fila_excel, (TRIM($row['nota_p_p_4'])));		
+										break;
+									case 5:
+										$objPHPExcel->getActiveSheet()->SetCellValue("K".$fila_excel, (TRIM($row['nota_p_p_1'])));
+										$objPHPExcel->getActiveSheet()->SetCellValue("P".$fila_excel, (TRIM($row['nota_p_p_2'])));
+										$objPHPExcel->getActiveSheet()->SetCellValue("U".$fila_excel, (TRIM($row['nota_p_p_3'])));		
+										$objPHPExcel->getActiveSheet()->SetCellValue("Z".$fila_excel, (TRIM($row['nota_p_p_4'])));		
 										break;
 								}							
 						}

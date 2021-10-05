@@ -458,7 +458,7 @@ $cambiar_asignaturas = 1;
                         $i++;}
         }
         $modo = 'I'; // Envia al navegador (I), Descarga el archivo (D), Guardar el fichero en un local(F).
-        $print_nombre = "Calificaciones - " . $codigo_grado . "-" . $nombre_seccion . '.pdf';
+        $print_nombre = "Calificaciones - " . $print_grado . "-" . $print_seccion . '.pdf';
         
         //$print_nombre = $path_root . '/registro_academico/temp/' . trim($nombre_completo_alumno) . ' ' . trim($print_grado) . ' ' . trim($print_seccion) . '.pdf';
         $pdf->Output($print_nombre,$modo);

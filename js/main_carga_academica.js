@@ -427,10 +427,11 @@ $('#goCrearHC').on('click',function(){
 		var codigo_personal = $("#lstCodigoPersonal").val();                
         var pendiente = "no";
         //variables checked                
-         var trimestre_1 = "no"; var trimestre_2 = "no"; var trimestre_3 = "no";                
+         var trimestre_1 = "no"; var trimestre_2 = "no"; var trimestre_3 = "no"; var trimestre_4 = "no";                
                 if($('#T1').is(":checked")) {trimestre_1 = 'yes';}                
                 if($('#T2').is(":checked")) {trimestre_2 = 'yes';}                
                 if($('#T3').is(":checked")) {trimestre_3 = 'yes';}                
+                if($('#T4').is(":checked")) {trimestre_4 = 'yes';}   
                 if($('#Pendiente').is(":checked")) {pendiente = 'yes';}                
         // Evaluar Ejecución de Asignatutra Pendiente o Actual.
         if(pendiente == "yes")
@@ -451,7 +452,7 @@ $('#goCrearHC').on('click',function(){
                 type: "POST",		        
                 dataType: "json",		        
                 url:"php_libs/soporte/CrearHCPendientes.php",		        
-                data: "&codigo_annlectivo=" + codigo_annlectivo + "&codigo_docente=" + codigo_personal + "&t1=" + trimestre_1 + "&t2=" + trimestre_2 + "&t3=" + trimestre_3 + "&id=" +  Math.random(),		        
+                data: "&codigo_annlectivo=" + codigo_annlectivo + "&codigo_docente=" + codigo_personal + "&t1=" + trimestre_1 + "&t2=" + trimestre_2 + "&t3=" + trimestre_3 + "&t4=" + trimestre_4 + "&id=" +  Math.random(),		        
                 success: function(response){		        
                     // Validar mensaje de error		        
                     if(response.respuesta === false){		        
