@@ -493,7 +493,7 @@ $('#goCrearHC').on('click',function(){
                 type: "POST",		        
                 dataType: "json",		        
                 url:"php_libs/soporte/CrearHC.php",		        
-                data: "&codigo_annlectivo=" + codigo_annlectivo + "&codigo_docente=" + codigo_personal + "&t1=" + trimestre_1 + "&t2=" + trimestre_2 + "&t3=" + trimestre_3 + "&id=" +  Math.random(),		        
+                data: "&codigo_annlectivo=" + codigo_annlectivo + "&codigo_docente=" + codigo_personal + "&t1=" + trimestre_1 + "&t2=" + trimestre_2 + "&t3=" + trimestre_3 + "&t4=" + trimestre_4 + "&id=" +  Math.random(),		        
                 success: function(response){		        
                     // Validar mensaje de error		        
                     if(response.respuesta === false){		        
