@@ -31,7 +31,7 @@
   $crear_archivos = $_REQUEST["chkCrearArchivoPdf"];
   $print_uno = $_REQUEST["print_uno"]; // variable para imprimir un solo registro.
 // variables a utilizar en el encabezado de la tabla para las notas.
-	$registro_docente = "Docente";
+	$registro_docente = "Carlos Wilfredo Cerna";//$_SESSION['nombre_personal']; //
 	$periodo_trimestre = "TRIMESTRE";
 	$conteo_reprobadas = array();
 	$conteo_aprobadas = array();
@@ -198,9 +198,10 @@ function Footer()
 		$this->Line(10,245,80,245);		//Crear una l�nea de la primera firma
 		$this->Line(120,245,190,245);	//Crear una l�nea de la segunda firma.
 		$this->Line(5,265,203,265);		//Crear una l�nea FINAL.
-		$this->RotatedText(50,255,$registro_docente,0,1,'C');		// NOMBRE DEL DOCENTE.
+		$this->RotatedText(10,250,$registro_docente,0,1,'C');		// NOMBRE DEL DOCENTE, Sub-director o Encargado de Registro Académico.
+		$this->RotatedText(10,255,utf8_decode('Encargado Registro Académico'),0,1,'C');			// ETIQUETA DIRECTOR.
 		if(isset($img_firma)){$this->Image($img_firma,120,225,70,15);}						// IMAGEN FIRMA
-		if(isset($img_firma)){$this->Image($img_sello,80,225,30,30);}						// IMAGEN SELLO
+		if(isset($img_firma)){$this->Image($img_sello,165,225,30,30);}						// IMAGEN SELLO
     	$this->RotatedText(130,250,$nombre_director,0,1,'C');	    // Nombre Director
 		$this->RotatedText(140,255,'Director(a)',0,1,'C');			// ETIQUETA DIRECTOR.
 
