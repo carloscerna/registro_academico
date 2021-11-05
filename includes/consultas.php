@@ -150,7 +150,7 @@ function consultas($ejecutar,$cerrar,$codigo_bachillerato,$codigo_grado,$codigo_
                INNER JOIN catalogo_genero cat_g ON cat_g.codigo = ae.codigo_genero
                 WHERE btrim(am.codigo_bach_o_ciclo || am.codigo_grado || am.codigo_seccion || am.codigo_ann_lectivo || am.codigo_turno) = '".$codigo_bachillerato.
 		"'".$order;
-            // Ejecutamos el Query. Tabla Bitacora.
+            // Ejecutamos el Query. Tabla Bitacora. and am.retirado = 'f'
 	    $result = $db_link -> query($query);
 	    $result_encabezado = $db_link -> query($query);
 		
@@ -234,7 +234,7 @@ function consultas($ejecutar,$cerrar,$codigo_bachillerato,$codigo_grado,$codigo_
                 am.codigo_turno
 		FROM alumno a
                 INNER JOIN alumno_encargado ae ON a.id_alumno = ae.codigo_alumno and ae.encargado = 't'
-		INNER JOIN alumno_matricula am ON a.id_alumno = am.codigo_alumno
+		INNER JOIN alumno_matricula am ON a.id_alumno = am.codigo_alumno and am.retirado = 'f'
 		INNER JOIN bachillerato_ciclo bach ON bach.codigo = am.codigo_bach_o_ciclo
 		INNER JOIN grado_ano gan ON gan.codigo = am.codigo_grado
 		INNER JOIN seccion sec ON sec.codigo = am.codigo_seccion
@@ -260,7 +260,7 @@ function consultas($ejecutar,$cerrar,$codigo_bachillerato,$codigo_grado,$codigo_
                 am.codigo_grado, gan.nombre as nombre_grado, am.codigo_seccion, sec.nombre as nombre_seccion, tur.nombre as nombre_turno
 					FROM alumno a
                 INNER JOIN alumno_encargado ae ON a.id_alumno = ae.codigo_alumno and ae.encargado = 't'
-				INNER JOIN alumno_matricula am ON a.id_alumno = am.codigo_alumno and am.retirado = 'f'
+				INNER JOIN alumno_matricula am ON a.id_alumno = am.codigo_alumno  and am.retirado = 'f'
 				INNER JOIN bachillerato_ciclo bach ON bach.codigo = am.codigo_bach_o_ciclo
 				INNER JOIN grado_ano gan ON gan.codigo = am.codigo_grado
 				INNER JOIN seccion sec ON sec.codigo = am.codigo_seccion
@@ -402,7 +402,7 @@ function consultas($ejecutar,$cerrar,$codigo_bachillerato,$codigo_grado,$codigo_
                 am.codigo_grado, gan.nombre as nombre_grado, am.codigo_seccion, sec.nombre as nombre_seccion
 					FROM alumno a
                 INNER JOIN alumno_encargado ae ON a.id_alumno = ae.codigo_alumno and ae.encargado = 't'
-				INNER JOIN alumno_matricula am ON a.id_alumno = am.codigo_alumno
+				INNER JOIN alumno_matricula am ON a.id_alumno = am.codigo_alumno and am.retirado = 'f'
 				INNER JOIN bachillerato_ciclo bach ON bach.codigo = am.codigo_bach_o_ciclo
 				INNER JOIN grado_ano gan ON gan.codigo = am.codigo_grado
 				INNER JOIN seccion sec ON sec.codigo = am.codigo_seccion
