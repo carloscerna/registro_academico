@@ -93,12 +93,15 @@ if($valor_x_encabezado == true)
 // segunda PARTE DEL RECTANGULO. numero de orden
     $this->Rect(10,5,7,50);
     $this->RotatedText(15,30,utf8_decode('N° de Orden'),90);
+// segunda PARTE DEL RECTANGULO. numero de orden
+    $this->Rect(17,45,20,50);
+    $this->RotatedText(30,80,utf8_decode('N° de NIE'),90);
 // tercera PARTE DEL RECTANGULO.   nombre del alumno
-    $this->Rect(17,5,110,50);
+    $this->Rect(17,45,110,50);
     $this->SetFont('Arial','',11); // I : Italica; U: Normal;
-    $this->SetXY(18,25);
+    $this->SetXY(38,65);
     $this->SetFillColor(255,255,255);
-    $this->MultiCell(110,8,utf8_decode('Nombre de los Alumnos(as) en orden alfabético de apellidos'),0,2,'C',true);
+    $this->MultiCell(90,8,utf8_decode('Nombre de los Alumnos(as) en orden alfabético de apellidos'),0,2,'C',true);
 // cuarta PARTE DEL RECTANGULO. nie
     //$pdf->Rect(107,45,20,50);
     //$pdf->SetXY(110,65);
@@ -457,12 +460,15 @@ $codigo_all_ = substr($codigo_all,0,8);
 // segunda PARTE DEL RECTANGULO. numero de orden
     $pdf->Rect(10,45,7,50);
     $pdf->RotatedText(15,80,utf8_decode('N° de Orden'),90);
+// segunda PARTE DEL RECTANGULO. numero de orden
+    $pdf->Rect(17,45,20,50);
+    $pdf->RotatedText(30,80,utf8_decode('N° de NIE'),90);
 // tercera PARTE DEL RECTANGULO.   nombre del alumno
     $pdf->Rect(17,45,110,50);
     $pdf->SetFont('Arial','',11); // I : Italica; U: Normal;
-    $pdf->SetXY(18,65);
+    $pdf->SetXY(38,65);
     $pdf->SetFillColor(255,255,255);
-    $pdf->MultiCell(110,8,utf8_decode('Nombre de los Alumnos(as) en orden alfabético de apellidos'),0,2,'C',true);
+    $pdf->MultiCell(90,8,utf8_decode('Nombre de los Alumnos(as) en orden alfabético de apellidos'),0,2,'C',true);
 // cuarta PARTE DEL RECTANGULO. nie
     //$pdf->Rect(107,45,20,50);
     //$pdf->SetXY(110,65);
@@ -686,7 +692,8 @@ $codigo_all_ = substr($codigo_all,0,8);
 									$fill=!$fill;
                 $pdf->SetX(10);
                   $pdf->Cell(7,$h[0],$numero,1,0,'C',$fill);  // N| de Orden.
-                  $pdf->Cell(110,$h[0],cambiar_de_del(trim($row['apellido_alumno'])),1,0,'l');  // nombre del alumno.
+                  $pdf->Cell(20,$h[0],$row['codigo_nie'],1,0,'R',$fill);  // N| de Orden.
+                  $pdf->Cell(90,$h[0],cambiar_de_del(trim($row['apellido_alumno'])),1,0,'l');  // nombre del alumno.
                   //$pdf->Cell(20,6,trim($row['codigo_nie']),1,0,'C');  // NIE
                   //$pdf->Cell(10,$h[0],verificar_nota($row['nota_final'],$row['recuperacion']),1,0,'C'); 
                   // camibar color menor de 5.

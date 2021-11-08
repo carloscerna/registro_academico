@@ -219,7 +219,7 @@ include($path_root."/registro_academico/includes/mainFunctions_conexion.php");
 	   break;
 	case "P5":
 		$nota_p_p = 'nota_p_p_5';
-		$nota_de_letras_01 = array("BQ","BW","CA","CC","CD"); // para los aspectos de la conducta
+		$nota_de_letras_01 = array("CJ","CP","CT","CV","CW"); // para los aspectos de la conducta
 		$observacion = 'observacion_5';
 		break;
 	case "Recuperacion":
