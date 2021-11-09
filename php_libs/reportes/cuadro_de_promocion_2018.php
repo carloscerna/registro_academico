@@ -94,12 +94,12 @@ if($valor_x_encabezado == true)
     $this->Rect(10,5,7,50);
     $this->RotatedText(15,30,utf8_decode('N° de Orden'),90);
 // segunda PARTE DEL RECTANGULO. numero de orden
-    $this->Rect(17,45,20,50);
-    $this->RotatedText(30,80,utf8_decode('N° de NIE'),90);
+    $this->Rect(17,5,20,50);
+    $this->RotatedText(25,30,utf8_decode('N° de NIE'),90);
 // tercera PARTE DEL RECTANGULO.   nombre del alumno
-    $this->Rect(17,45,110,50);
+    $this->Rect(17,5,110,50);
     $this->SetFont('Arial','',11); // I : Italica; U: Normal;
-    $this->SetXY(38,65);
+    $this->SetXY(38,25);
     $this->SetFillColor(255,255,255);
     $this->MultiCell(90,8,utf8_decode('Nombre de los Alumnos(as) en orden alfabético de apellidos'),0,2,'C',true);
 // cuarta PARTE DEL RECTANGULO. nie
