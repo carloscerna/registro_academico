@@ -49,7 +49,7 @@ $(function(){
                                 //var codigo_alumno = $(this).find('td').eq(1).html();
                                 //var codigo_matricula = $(this).find('td').eq(2).html();
                                 //var codigo_asignatura =$(this).find('td').eq(3).html();
-                                var nota =$(this).find('td').eq(6).find("input[name='nota']").val();
+                                var nota =$(this).find('td').eq(7).find("input[name='nota']").val();
                                 
                                 $(this).css("background-color", "#ECF8E0");
                 // dar valor a las arrays.
@@ -200,3 +200,14 @@ function PasarFoco()
 				toastr.warning("Registros no encontrados."); 
 				return false; 
 			}
+
+                        // Mensaje de Carga de Ajax.
+   function configureLoadingScreen(screen){
+        $(document)
+            .ajaxStart(function () {
+                screen.fadeIn();
+            })
+            .ajaxStop(function () {
+                screen.fadeOut();
+            });
+    }

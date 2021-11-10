@@ -106,6 +106,7 @@ if($errorDbConexion == false){
 								.'<td><input type=hidden name=codigo_asignatura size=1 value = '.$codigo_asignatura.'>'
 								.'<td>'.$nie
 								.'<td>'.$apellido_alumno
+								.'<td>'.$nota_final
 								."<td style='width: 40%'><div class='d-flex justify-content-end'><input type=text name=nota $valor_m_m value = $nota_ onkeypress='return validarCualquierNumero();' class='form-control decimal-1-places text-right' style='width:40%'></div>"
 								;
 						}

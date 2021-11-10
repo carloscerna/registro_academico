@@ -3,7 +3,7 @@
 {% extends 'default_layout.html' %}
 
 {% block extraCSS %}
-
+<link href="css/styles-loading.css" rel="stylesheet">
 {% endblock %}
 
 {% block javascripts %}
@@ -162,6 +162,14 @@
 	    });
 });
 </script>
+
+<!-- DEINIR EL AJAX START- STOP Y ERROR -->
+<script>
+  $(document).ready(function () { 
+   var screen = $('#loading-screen');
+     configureLoadingScreen(screen);
+   })
+ </script>
 {% endblock %}
 
 {% block contenidos %}
@@ -277,6 +285,7 @@
                         <th></th>
                         <th class="text-center">NIE</th>
                         <th>Apellidos - Nombres</th>
+                        <th></th>
                         <th style="width:40%" class="text-center">Nota</th>
                       </tr>                    
                     </thead>
@@ -295,6 +304,9 @@
           </div> <!-- CLASS ROW PARA EL INGRESO DE NOTAS. -->
     </section>
   </div> <!-- /.Content Wrapper. Caontains page content -->			
+
+  <!-- Loading Screen -->
+  {% include 'loading-screen.html' %}
 {% endblock %}
 
 {% block menu %}
