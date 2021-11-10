@@ -16,6 +16,10 @@
 	$valor_x_encabezado = false;
 	$contar_evaluar = 5;
 // variables para retenidos y promovidos.
+    $total_matricula_inicial_masculino = 0;
+    $total_matricula_final_femenino = 0;
+    $total_matricula_retirados_masculino = 0;
+    $total_matricula_retirados_femenino = 0;
 		$total_promovidos_f= 0;
     $total_promovidos_m=0;
     $total_retenidos_f=0;
@@ -170,13 +174,13 @@ function FancyTable($header)
 //************************************************************************************************************************
 //consulta para obtener el total de alumnos masculino.
      $query_verificar = "SELECT a.id_alumno as total_alumnos_masculino
-		FROM alumno a
-		INNER JOIN alumno_matricula am ON a.id_alumno = am.codigo_alumno and am.retirado = 'f' and a.genero = 'm'
-		INNER JOIN bachillerato_ciclo bach ON bach.codigo = am.codigo_bach_o_ciclo
-		INNER JOIN grado_ano gan ON gan.codigo = am.codigo_grado
-		INNER JOIN seccion sec ON sec.codigo = am.codigo_seccion
-		INNER JOIN ann_lectivo ann ON ann.codigo = am.codigo_ann_lectivo
-		WHERE btrim(am.codigo_bach_o_ciclo || am.codigo_grado || am.codigo_seccion || am.codigo_ann_lectivo || am.codigo_turno) = '".$codigo_all."'";
+        FROM alumno a
+          INNER JOIN alumno_matricula am ON a.id_alumno = am.codigo_alumno and am.retirado = 'f' and a.genero = 'm'
+          INNER JOIN bachillerato_ciclo bach ON bach.codigo = am.codigo_bach_o_ciclo
+          INNER JOIN grado_ano gan ON gan.codigo = am.codigo_grado
+          INNER JOIN seccion sec ON sec.codigo = am.codigo_seccion
+          INNER JOIN ann_lectivo ann ON ann.codigo = am.codigo_ann_lectivo
+            WHERE btrim(am.codigo_bach_o_ciclo || am.codigo_grado || am.codigo_seccion || am.codigo_ann_lectivo || am.codigo_turno) = '".$codigo_all."'";
 
 		$result_verificar = $db_link -> query($query_verificar);
 		$verificar = $result_verificar -> rowCount();
@@ -225,13 +229,55 @@ if($verificar != 0)	// IF PRINCIPAL QUE VERIFICA SI HAY REGISTROS.
                         
      //consulta para obtener el total de alumnos.
      $query_total_alumnos = "SELECT count(*) as total_alumnos
-		FROM alumno a
-		INNER JOIN alumno_matricula am ON a.id_alumno = am.codigo_alumno and am.retirado = 'f'
-		INNER JOIN bachillerato_ciclo bach ON bach.codigo = am.codigo_bach_o_ciclo
-		INNER JOIN grado_ano gan ON gan.codigo = am.codigo_grado
-		INNER JOIN seccion sec ON sec.codigo = am.codigo_seccion
-		INNER JOIN ann_lectivo ann ON ann.codigo = am.codigo_ann_lectivo
-		WHERE btrim(am.codigo_bach_o_ciclo || am.codigo_grado || am.codigo_seccion || am.codigo_ann_lectivo  || am.codigo_turno) = '".$codigo_all."'";
+      FROM alumno a
+        INNER JOIN alumno_matricula am ON a.id_alumno = am.codigo_alumno and am.retirado = 'f'
+        INNER JOIN bachillerato_ciclo bach ON bach.codigo = am.codigo_bach_o_ciclo
+        INNER JOIN grado_ano gan ON gan.codigo = am.codigo_grado
+        INNER JOIN seccion sec ON sec.codigo = am.codigo_seccion
+        INNER JOIN ann_lectivo ann ON ann.codigo = am.codigo_ann_lectivo
+          WHERE btrim(am.codigo_bach_o_ciclo || am.codigo_grado || am.codigo_seccion || am.codigo_ann_lectivo  || am.codigo_turno) = '".$codigo_all."'";
+
+//consulta para obtener el total de alumnos masculino.
+    $query_total_alumnos_matricula_inicial_masculino = "SELECT count(*) as total_alumnos_matricula_inicial_masculino
+      FROM alumno a
+        INNER JOIN alumno_matricula am ON a.id_alumno = am.codigo_alumno  and a.genero = 'm'
+        INNER JOIN bachillerato_ciclo bach ON bach.codigo = am.codigo_bach_o_ciclo
+        INNER JOIN grado_ano gan ON gan.codigo = am.codigo_grado
+        INNER JOIN seccion sec ON sec.codigo = am.codigo_seccion
+        INNER JOIN ann_lectivo ann ON ann.codigo = am.codigo_ann_lectivo
+          WHERE btrim(am.codigo_bach_o_ciclo || am.codigo_grado || am.codigo_seccion || am.codigo_ann_lectivo  || am.codigo_turno) = '".$codigo_all."'";
+
+//consulta para obtener el total de alumnos masculino.
+    $query_total_alumnos_matricula_inicial_femenino = "SELECT count(*) as total_alumnos_matricula_inicial_femenino
+    FROM alumno a
+      INNER JOIN alumno_matricula am ON a.id_alumno = am.codigo_alumno  and a.genero = 'f'
+      INNER JOIN bachillerato_ciclo bach ON bach.codigo = am.codigo_bach_o_ciclo
+      INNER JOIN grado_ano gan ON gan.codigo = am.codigo_grado
+      INNER JOIN seccion sec ON sec.codigo = am.codigo_seccion
+      INNER JOIN ann_lectivo ann ON ann.codigo = am.codigo_ann_lectivo
+        WHERE btrim(am.codigo_bach_o_ciclo || am.codigo_grado || am.codigo_seccion || am.codigo_ann_lectivo  || am.codigo_turno) = '".$codigo_all."'";
+
+
+//consulta para obtener el total de alumnos masculino. RETIRNADOS
+$query_total_alumnos_retirados_masculino = "SELECT count(*) as total_alumnos_retirados_masculino
+FROM alumno a
+  INNER JOIN alumno_matricula am ON a.id_alumno = am.codigo_alumno  and a.genero = 'm' and am.retirado = 't'
+  INNER JOIN bachillerato_ciclo bach ON bach.codigo = am.codigo_bach_o_ciclo
+  INNER JOIN grado_ano gan ON gan.codigo = am.codigo_grado
+  INNER JOIN seccion sec ON sec.codigo = am.codigo_seccion
+  INNER JOIN ann_lectivo ann ON ann.codigo = am.codigo_ann_lectivo
+    WHERE btrim(am.codigo_bach_o_ciclo || am.codigo_grado || am.codigo_seccion || am.codigo_ann_lectivo  || am.codigo_turno) = '".$codigo_all."'";
+
+//consulta para obtener el total de alumnos FEMEFINO RETIRADOS
+$query_total_alumnos_retirados_femenino = "SELECT count(*) as total_alumnos_retirados_femenino
+FROM alumno a
+INNER JOIN alumno_matricula am ON a.id_alumno = am.codigo_alumno  and a.genero = 'f' and am.retirado = 't'
+INNER JOIN bachillerato_ciclo bach ON bach.codigo = am.codigo_bach_o_ciclo
+INNER JOIN grado_ano gan ON gan.codigo = am.codigo_grado
+INNER JOIN seccion sec ON sec.codigo = am.codigo_seccion
+INNER JOIN ann_lectivo ann ON ann.codigo = am.codigo_ann_lectivo
+  WHERE btrim(am.codigo_bach_o_ciclo || am.codigo_grado || am.codigo_seccion || am.codigo_ann_lectivo  || am.codigo_turno) = '".$codigo_all."'";
+
 
 //consulta para obtener el total de alumnos masculino.
      $query_total_alumnos_m = "SELECT count(*) as total_alumnos_masculino
@@ -262,7 +308,11 @@ if($verificar != 0)	// IF PRINCIPAL QUE VERIFICA SI HAY REGISTROS.
 	$result_total_alumnos_m = $db_link -> query($query_total_alumnos_m);
 	$result_total_alumnos_f = $db_link -> query($query_total_alumnos_f);
 	$result_promovidos_retenidos = $db_link -> query($query);
+  $result_total_alumnos_matricula_inicial_masculino = $db_link -> query($query_total_alumnos_matricula_inicial_masculino);
+	$result_total_alumnos_matricula_inicial_femenino = $db_link -> query($query_total_alumnos_matricula_inicial_femenino);
 
+  $result_total_alumnos_retirados_masculino = $db_link -> query($query_total_alumnos_retirados_masculino);
+	$result_total_alumnos_retirados_femenino = $db_link -> query($query_total_alumnos_retirados_femenino);
 //  cuenta el total de alumnos para colocar en la estadistica.
     $ji = 1; $total_alumnos_masculino = 0; $total_promovidos_m = 0; $total_promovidos_f = 0; $contar_p_m = 0; $generos = ''; $notas = 0;
     $total_promovidos_m = 0; $total_promovidos_f = 0; $contar_r_m = 0; $total_retenidos_m = 0; $contar_r_f = 0; $contar_p_f = 0; $total_retenidos_f = 0;
@@ -343,6 +393,33 @@ if($verificar != 0)	// IF PRINCIPAL QUE VERIFICA SI HAY REGISTROS.
      		$total_alumnos_masculino = trim($rows_total_alumnos_m['total_alumnos_masculino']);
     }
 
+//  cuenta el total de alumnos para colocar en la estadistica MATRICULA INICIAL..
+  $total_alumnos_matricula_inicial_masculino = 0;
+  while($rows_total_alumnos_m = $result_total_alumnos_matricula_inicial_masculino -> fetch(PDO::FETCH_BOTH))
+    {
+        $total_alumnos_matricula_inicial_masculino = trim($rows_total_alumnos_m['total_alumnos_matricula_inicial_masculino']);
+    }
+
+//  cuenta el total de alumnos para colocar en la estadistica MATRICULA INICIAL..
+    $total_alumnos_matricula_inicial_femenino = 0;
+    while($rows_total_alumnos_f = $result_total_alumnos_matricula_inicial_femenino -> fetch(PDO::FETCH_BOTH))
+      {
+          $total_alumnos_matricula_inicial_femenino = trim($rows_total_alumnos_f['total_alumnos_matricula_inicial_femenino']);
+      }
+
+      //  cuenta el total de alumnos para colocar en la estadistica RETIRADOS.
+$total_alumnos_retirados_masculino = 0;
+while($rows_total_alumnos_m = $result_total_alumnos_retirados_masculino -> fetch(PDO::FETCH_BOTH))
+  {
+      $total_alumnos_retirados_masculino = trim($rows_total_alumnos_m['total_alumnos_retirados_masculino']);
+  }
+
+//  cuenta el total de alumnos para colocar en la estadistica RETIRADOS..
+  $total_alumnos_retirados_femenino = 0;
+  while($rows_total_alumnos_f = $result_total_alumnos_retirados_femenino -> fetch(PDO::FETCH_BOTH))
+    {
+        $total_alumnos_retirados_femenino = trim($rows_total_alumnos_f['total_alumnos_retirados_femenino']);
+    }
 //  cuenta el total de alumnos para colocar en la estadistica.
     $total_alumnos_femenino = 0;
     while($rows_total_alumnos_f = $result_total_alumnos_f -> fetch(PDO::FETCH_BOTH))
@@ -418,7 +495,7 @@ $codigo_all_ = substr($codigo_all,0,8);
 /////////////////////////////////////////////////////////////////////////////////////////
 // Sumar datos de matricula inicial, retirados masculino y femenino
 //  cuenta el total de alumnos para colocar en la estadistica.
-    $matricula_inicial_m_f = array(); $retirados_m_f = array();
+   $matricula_inicial_m_f = array(); $retirados_m_f = array();
 //	actualizar el query
     $result_estadistica = $db_link -> query($query_estadistica);
 	$fila = $result_estadistica -> rowCount();
@@ -438,7 +515,7 @@ $codigo_all_ = substr($codigo_all,0,8);
 // Imprimir el primer encabezado REGISTRO DE EVALUACION....
     $pdf->SetXY(70,10);
     $pdf->SetFont('Arial','',18); // I : Italica; U: Normal;
-    $pdf->Cell(235,14,utf8_decode('REGISTRO DE EVALUACIÓN DEL RENDIMIENTO ESCOLAR DE '.substr($codigo_grado,1,1).'° DE EDUCACIÓN BÁSICA'),0,0,'L');
+    $pdf->Cell(235,14,utf8_decode('REGISTRO DE EVALUACIÓN DEL RENDIMIENTO ESCOLAR DE '.substr($codigo_grado,1,1).'.° DE EDUCACIÓN BÁSICA'),0,0,'L');
     
     $pdf->SetXY(80,25);
     $pdf->SetFont('Arial','',11); // I : Italica; U: Normal;
@@ -562,13 +639,13 @@ $codigo_all_ = substr($codigo_all,0,8);
     $pdf->SetFont('Arial','',10);
 	if($fila !=0)
 	{
-		$pdf->Cell(15,4.5,$matricula_inicial_m_f[0],0,0,'C');
+		$pdf->Cell(15,4.5,$total_alumnos_matricula_inicial_masculino,0,0,'C');
 		$pdf->SetXY(266,101);
-		$pdf->Cell(15,4.5,$matricula_inicial_m_f[1],0,0,'C');
+		$pdf->Cell(15,4.5,$total_alumnos_matricula_inicial_femenino,0,0,'C');
 		$pdf->SetXY(266,106);
-		$pdf->Cell(15,4.5,array_sum($matricula_inicial_m_f),0,0,'C');		
+		$pdf->Cell(15,4.5,$total_alumnos_matricula_inicial_masculino+$total_alumnos_matricula_inicial_femenino,0,0,'C');		
 	}else{
-		$pdf->Cell(15,4.5,'',0,0,'C');
+		$pdf->Cell(15,4.5,'xxxx',0,0,'C');
 		$pdf->SetXY(265,101);
 		$pdf->Cell(15,4.5,'',0,0,'C');
 		$pdf->SetXY(265,106);
@@ -583,11 +660,11 @@ $codigo_all_ = substr($codigo_all,0,8);
 	
 	if($fila !=0)
 	{
-    $pdf->Cell(15,4.5,$retirados_m_f[0],0,0,'C');
+    $pdf->Cell(15,4.5,$total_alumnos_retirados_masculino,0,0,'C');
     $pdf->SetXY(280,101);
-    $pdf->Cell(15,4.5,$retirados_m_f[1],0,0,'C');
+    $pdf->Cell(15,4.5,$total_alumnos_retirados_femenino,0,0,'C');
     $pdf->SetXY(280,106);
-    $pdf->Cell(15,4.5,array_sum($retirados_m_f),0,0,'C');		
+    $pdf->Cell(15,4.5,$total_alumnos_retirados_masculino+$total_alumnos_retirados_femenino,0,0,'C');		
 	}else{
     $pdf->Cell(15,4.5,'',0,0,'C');
     $pdf->SetXY(280,101);
@@ -643,7 +720,7 @@ $codigo_all_ = substr($codigo_all,0,8);
     $pdf->SetXY(250,150);
 		$pdf->Cell(11,5,'PROMOVIDOS:',0,0,'L');
 		$pdf->SetXY(270,150);
-		$pdf->Cell(75,5,utf8_decode(strtolower(num2letras($total_promovidos_f+$total_promovidos_m))),0,0,'C');
+		$pdf->Cell(75,5,utf8_encode(strtolower(num2letras($total_promovidos_f+$total_promovidos_m))),0,0,'C');
 		
     $pdf->Rect(280,170,60,0);
 		
@@ -666,7 +743,7 @@ $codigo_all_ = substr($codigo_all,0,8);
             
             $pdf->SetXY(152,24.3);
             $pdf->SetFont('Arial','b',11); // I : Italica; U: Normal;
-            $pdf->Cell(85,5.5,utf8_decode(substr($codigo_grado,1,1).'° GRADO.      SECCIÓN: '.$nombre_seccion.'    CÓDIGO DE INFRAESTRUCTURA: '.$_SESSION['codigo']),0,2,'L');
+            $pdf->Cell(85,5.5,utf8_decode(substr($codigo_grado,1,1).'.° GRADO.      SECCIÓN: '.$nombre_seccion.'    CÓDIGO DE INFRAESTRUCTURA: '.$_SESSION['codigo']),0,2,'L');
             $pdf->Cell(140,6,cambiar_de_del($_SESSION['institucion']),0,2,'C');
             $pdf->SetXY(105,34.5);
             $pdf->Cell(85,6,utf8_decode($_SESSION['direccion']).'                       MUNICIPIO: '.$_SESSION['nombre_municipio'],0,2,'L');

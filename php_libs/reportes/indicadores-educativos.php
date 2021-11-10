@@ -365,7 +365,7 @@ else{
 //
 //******************************************************//
     /// armar subtotales. crear una nueva página.
-/*        $pdf->AddPage();
+        $pdf->AddPage();
 // Aqui mandamos texto a imprimir o al documento.
     $pdf->SetY(50);
     $pdf->SetX(15);
@@ -485,7 +485,7 @@ else{
 else{
     // si no existen registros.
     $pdf->Cell(150,7,$fila.' NO EXISTEN REGISTROS EN LA TABLA.',1,0,'L');
-} */  
+}   
 // Salida del pdf.
      $modo = 'I'; // Envia al navegador (I), Descarga el archivo (D).
      $print_nombre = $print_grado . ' ' . $print_seccion;

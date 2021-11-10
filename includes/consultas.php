@@ -355,7 +355,7 @@ function consultas($ejecutar,$cerrar,$codigo_bachillerato,$codigo_grado,$codigo_
          // para los diferntes listados Indicadores Educativos.
     if($ejecutar == 13)
     {
-         $query = "SELECT org.codigo_bachillerato as codigo_modalidad, org.codigo_grado, org.codigo_seccion, org.codigo_ann_lectivo, org.codigo_turno,
+        print $query = "SELECT org.codigo_bachillerato as codigo_modalidad, org.codigo_grado, org.codigo_seccion, org.codigo_ann_lectivo, org.codigo_turno,
 			        sec.nombre as nombre_seccion, ann.nombre as nombre_ann_lectivo, gan.nombre as nombre_grado, bach.nombre as nombre_bachillerato, tur.nombre as nombre_turno
 			            FROM organizacion_grados_secciones org
                             INNER JOIN bachillerato_ciclo bach ON bach.codigo = org.codigo_bachillerato
@@ -383,7 +383,18 @@ function consultas($ejecutar,$cerrar,$codigo_bachillerato,$codigo_grado,$codigo_
                             INNER JOIN turno tur ON tur.codigo = org.codigo_turno
                                 WHERE codigo_ann_lectivo = '".$codigo_bachillerato.
 	                			 "' ORDER BY org.codigo_bachillerato, org.codigo_grado, org.codigo_ann_lectivo";
-    // ejecutar la consulta.
+/*
+CONSULTA PARA LE MEMORIA ESTADISTICA
+SELECT DISTINCT ROW(org.codigo_bachillerato), org.codigo_bachillerato, org.codigo_grado, org.codigo_ann_lectivo,
+                    gan.nombre as nombre_grado, ann.nombre as nombre_ann_lectivo,  bach.nombre as nombre_modalidad
+			            FROM organizacion_grados_secciones org
+                            INNER JOIN grado_ano gan ON gan.codigo = org.codigo_grado
+                            INNER JOIN ann_lectivo ann ON ann.codigo = org.codigo_ann_lectivo
+                            INNER JOIN bachillerato_ciclo bach ON bach.codigo = org.codigo_bachillerato
+                                WHERE codigo_ann_lectivo = '21' ORDER BY org.codigo_bachillerato, org.codigo_grado, org.codigo_ann_lectivo
+*/
+
+                                 // ejecutar la consulta.
 	    $result = $db_link -> query($query);
 	    $result_encabezado = $db_link -> query($query);
     }
