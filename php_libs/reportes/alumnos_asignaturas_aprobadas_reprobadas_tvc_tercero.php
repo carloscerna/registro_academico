@@ -20,28 +20,28 @@
     consultas(5,0,$codigo_all,'','','',$db_link,'');
 //  imprimir datos del bachillerato.
      while($row = $result -> fetch(PDO::FETCH_BOTH))
-            {
+        {
             $print_bachillerato = utf8_decode(trim($row['nombre_bachillerato']));
             $print_grado = utf8_decode(trim($row['nombre_grado']));
             $print_seccion = trim($row['nombre_seccion']);
             $print_ann_lectivo = trim($row['nombre_ann_lectivo']);
 	    
-	    $print_codigo_bachillerato = trim($row['codigo_bach_o_ciclo']);
-	    $codigo_bachillerato = trim($row['codigo_bach_o_ciclo']);
+            $print_codigo_bachillerato = trim($row['codigo_bach_o_ciclo']);
+            $codigo_bachillerato = trim($row['codigo_bach_o_ciclo']);
             $print_codigo_grado = trim($row['codigo_grado']);
             $codigo_seccion = trim($row['codigo_seccion']);
             $codigo_ann_lectivo = trim($row['codigo_ann_lectivo']);
 
             $data[$j] = substr(trim($row['n_asignatura']),0,4);
             $j++;
-            }
+        }
 
 ////////////////////////////////////////////////////////////////////
 //////// CONTAR CUANTAS ASIGNATURAS TIENE CADA MODALIDAD.
 //////////////////////////////////////////////////////////////////
 // buscar la consulta y la ejecuta.
   consulta_contar(1,0,$codigo_all,'','','',$db_link,'');
-// EJECUTAR CONDICIONES PARA EL NOMBRE DEL NIVEL Y EL NÚMERO DE ASIGNATURAS.
+// EJECUTAR CONDICIONES PARA EL NOMBRE DEL NIVEL Y EL Nï¿½MERO DE ASIGNATURAS.
 	$total_asignaturas = 0;	
      while($row = $result -> fetch(PDO::FETCH_BOTH))
             {
@@ -50,43 +50,43 @@
 		
       	    if($print_codigo_bachillerato >= '01' and $print_codigo_bachillerato <= '05')
 	    {
-		$nivel_educacion = "Educación Básica";
+		$nivel_educacion = "Educaciï¿½n Bï¿½sica";
 	    }else{
 		// Validar Bachillerato.
 		if($print_codigo_bachillerato == '06'){
-		    $nivel_educacion = "Educación Media - General";
+		    $nivel_educacion = "Educaciï¿½n Media - General";
 		}
 		
 		if($print_codigo_bachillerato == '07'){
-		    $nivel_educacion = "Educación Media - Técnico";
+		    $nivel_educacion = "Educaciï¿½n Media - Tï¿½cnico";
 		}
 		
 		if($print_codigo_bachillerato == '08' or $print_codigo_bachillerato == '09'){
-		    $nivel_educacion = "Educación Media - Contaduría";
+		    $nivel_educacion = "Educaciï¿½n Media - Contadurï¿½a";
 		}
-		// Validar grado de educación Media.
+		// Validar grado de educaciï¿½n Media.
 		if($print_codigo_grado == '10'){
-		    $print_grado_media = "Primer año";
+		    $print_grado_media = "Primer aï¿½o";
 		}
 		if($print_codigo_grado == '11'){
-		    $print_grado_media = "Segundo año";
+		    $print_grado_media = "Segundo aï¿½o";
 		}
 		if($print_codigo_grado == '12'){
-		    $print_grado_media = "Tercer año";
+		    $print_grado_media = "Tercer aï¿½o";
 		}
 	    }
-// Colocar la leyenda del Período.
+// Colocar la leyenda del Perï¿½odo.
    if($nota_p == "nota_p_p_1"){
-      $periodo = "Período 1";
+      $periodo = "Perï¿½odo 1";
    }
    if($nota_p == "nota_p_p_2"){
-      $periodo = "Período 2";
+      $periodo = "Perï¿½odo 2";
    }
    if($nota_p == "nota_p_p_3"){
-      $periodo = "Período 3";
+      $periodo = "Perï¿½odo 3";
    }
    if($nota_p == "nota_p_p_4"){
-      $periodo = "Período 4";
+      $periodo = "Perï¿½odo 4";
    }
    if($nota_p == "nota_final"){
       $periodo = "Nota Final";
@@ -121,7 +121,7 @@ function RotatedTextMultiCellAspectos($x,$y,$txt,$angle)
 	$this->Rotate(0);
 }
 
-//Cabecera de página
+//Cabecera de pï¿½gina
 function Header()
 {
       global $periodo;
@@ -132,22 +132,22 @@ function Header()
     $this->SetFont('Arial','B',13);
     //Movernos a la derecha
     //$this->Cell(20);
-    //Título
+    //Tï¿½tulo
     $this->Cell(200,7,$_SESSION['institucion'],0,1,'C');
     $this->Cell(200,7,'INFORME ASIGNATURAS APROBADAS O REPROBADAS - '.$periodo,0,1,'C');
     $this->Line(0,20,280,20);
 }
 
-//Pie de página
+//Pie de pï¿½gina
 function Footer()
 {
-    //Posición: a 1,5 cm del final
+    //Posiciï¿½n: a 1,5 cm del final
     $this->SetY(-20);
     //Arial italic 8
     $this->SetFont('Arial','I',8);
-    //Número de página
+    //Nï¿½mero de pï¿½gina
     $this->SetY(-10);
-    $this->Cell(0,6,utf8_decode('Nº ').$this->PageNo().'/{nb}',0,0,'C');
+    $this->Cell(0,6,utf8_decode('Nï¿½ ').$this->PageNo().'/{nb}',0,0,'C');
 
 }
 
@@ -161,7 +161,7 @@ function cuadro($data)
 // segunda PARTE DEL RECTANGULO. numero de orden
     $this->Rect(6,35,5,20);
     $this->SetFont('Arial','',9); // I : Italica; U: Normal;
-    $this->RotatedText(10,54,utf8_decode('N° de Orden'),90);
+    $this->RotatedText(10,54,utf8_decode('Nï¿½ de Orden'),90);
 // tercera PARTE DEL RECTANGULO.   nombre del alumno
     $this->Rect(11,35,80,20);
     $this->SetFont('Arial','',12); // I : Italica; U: Normal;
@@ -226,7 +226,7 @@ function cuadro($data)
     $this->SetFont('Arial','',9); // I : Italica; U: Normal;
     $this->RotatedText(166,54,'T.Repo',90);
 
-// NOVENA PARTE DEL RECTANGULO. DERECHO A RECUPERACIÓN. (D. A  R.)
+// NOVENA PARTE DEL RECTANGULO. DERECHO A RECUPERACIï¿½N. (D. A  R.)
     $this->Rect(169,35,8,20);
     $this->SetFont('Arial','',9); // I : Italica; U: Normal;
     $this->RotatedText(173,54,'D. a R.',90);
@@ -236,30 +236,30 @@ function cuadro($data)
 //************************************************************************************************************************
 // Creando el Informe.
     $pdf=new PDF('L','mm','Letter');
-    #Establecemos los márgenes izquierda, arriba y derecha: 
+    #Establecemos los mï¿½rgenes izquierda, arriba y derecha: 
     $pdf->SetMargins(5, 5, 5);
     #Establecemos el margen inferior: 
     $pdf->SetAutoPageBreak(true,5);
     
-//Títulos de las columnas
+//Tï¿½tulos de las columnas
     $header=array('');
     $pdf->AliasNbPages();
     $pdf->AddPage();
 
 // Aqui mandamos texto a imprimir o al documento.
-// Definimos el tipo de fuente, estilo y tamaño.
+// Definimos el tipo de fuente, estilo y tamaï¿½o.
     $pdf->SetFont('Arial','B',10); // I : Italica; U: Normal;
     $pdf->SetY(20);
     $pdf->SetX(6);
     
-// Definimos el tipo de fuente, estilo y tamaño.
+// Definimos el tipo de fuente, estilo y tamaï¿½o.
         $w2=array(5); //determina el ancho de las columnas
             $pdf->SetFont('Arial','',10); // I : Italica; U: Normal;
              $pdf->SetY(22);
              $pdf->Cell(110,$w2[0],'Modalidad: '.$pdf->SetFont('Arial','B',10).$print_bachillerato.$pdf->SetFont(''),0,1,'L');
              $pdf->Cell(100,$w2[0],'Grado: '.$pdf->SetFont('Arial','B',10).$print_grado.$pdf->SetFont('Arial','',10),0,0,'L');
-             $pdf->Cell(50,$w2[0],utf8_decode('Sección: ').$print_seccion,0,0,'L');
-             $pdf->Cell(30,$w2[0],utf8_decode('Año Lectivo: ').$print_ann_lectivo,0,0,'L');
+             $pdf->Cell(50,$w2[0],utf8_decode('Secciï¿½n: ').$print_seccion,0,0,'L');
+             $pdf->Cell(30,$w2[0],utf8_decode('Aï¿½o Lectivo: ').$print_ann_lectivo,0,0,'L');
             $pdf->ln();
 
     $pdf->cuadro($data);
@@ -312,7 +312,7 @@ function cuadro($data)
     // recorrer las asignaturas con las notas.
      while($row = $result -> fetch(PDO::FETCH_BOTH))
             {
-            // >Impresión de la primera asignatura. primer ciclo, segundo y tercero.
+            // >Impresiï¿½n de la primera asignatura. primer ciclo, segundo y tercero.
                 if ($i == 1){
                     $pdf->SetFont('Arial','',9); // I : Italica; U: Normal;
                     $pdf->Cell($w[0],$w2[0],$numero_linea,0,0,'C',$fill);
@@ -425,7 +425,7 @@ function cuadro($data)
 			}
 		     }
 
-                    //acumular el valor - educaciòn artística o ingles.
+                    //acumular el valor - educaciï¿½n artï¿½stica o ingles.
 		     if($i == 5){
                         if($row[$nota_p] < 6){
 			      if ($row['genero'] == 'm'){$tream++;}
@@ -532,7 +532,7 @@ function cuadro($data)
             // validar $i = 11
                 if($i == $total_asignaturas)
                 {
-                    if($total_reprobadas > 2){$derecho_recuperacion = 'No';}else{$derecho_recuperacion = "Sí";}
+                    if($total_reprobadas > 2){$derecho_recuperacion = 'No';}else{$derecho_recuperacion = "Sï¿½";}
                     // imprimir el total de puntos.
                     $pdf->SetFont('Arial','B',10); // I : Italica; U: Normal;
                     $pdf->Cell($w[3],$w2[0],number_format($total_reprobadas,1),1,0,'C',$fill);

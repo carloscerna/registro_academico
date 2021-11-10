@@ -159,13 +159,14 @@ function consultas($ejecutar,$cerrar,$codigo_bachillerato,$codigo_grado,$codigo_
     // para los diferntes listados para notas.
     if($ejecutar == 5)
     {
-      $query = "SELECT DISTINCT a.codigo_nie, btrim(a.apellido_paterno || CAST(' ' AS VARCHAR) || a.apellido_materno || CAST(', ' AS VARCHAR) || a.nombre_completo) as apellido_alumno,
+ $query = "SELECT DISTINCT a.codigo_nie, btrim(a.apellido_paterno || CAST(' ' AS VARCHAR) || a.apellido_materno || CAST(', ' AS VARCHAR) || a.nombre_completo) as apellido_alumno,
 		a.nombre_completo, btrim(a.apellido_paterno || CAST(' ' AS VARCHAR) || a.apellido_materno) as apellidos_alumno, a.genero, a.foto,
 		am.codigo_bach_o_ciclo, am.pn, bach.nombre as nombre_bachillerato, am.codigo_ann_lectivo, ann.nombre as nombre_ann_lectivo, am.codigo_grado, am.codigo_turno,
 		gan.nombre as nombre_grado, am.codigo_seccion, am.retirado, bach.codigo as codigo_bachillerato,
 		sec.nombre as nombre_seccion, ae.codigo_alumno, id_alumno, n.codigo_alumno, n.codigo_asignatura, asig.nombre AS n_asignatura, n.nota_p_p_1, n.nota_p_p_2, n.nota_p_p_3, n.nota_p_p_4, n.nota_final, n.recuperacion, n.nota_paes,
 		id_alumno as cod_alumno, am.id_alumno_matricula as cod_matricula, tur.nombre as nombre_turno,
-		round((n.nota_p_p_1+n.nota_p_p_2+n.nota_p_p_3),1) as total_puntos_basica, round((n.nota_p_p_1+n.nota_p_p_2+n.nota_p_p_3+n.nota_p_p_4),1) as total_puntos_media, aaa.orden, aaa.codigo_ann_lectivo
+		round((n.nota_p_p_1+n.nota_p_p_2+n.nota_p_p_3),1) as total_puntos_basica, 
+        round((n.nota_p_p_1+n.nota_p_p_2+n.nota_p_p_3+n.nota_p_p_4),1) as total_puntos_media, aaa.orden, aaa.codigo_ann_lectivo
 		FROM alumno a
 		INNER JOIN alumno_encargado ae ON a.id_alumno = ae.codigo_alumno and ae.encargado = 't'
 		INNER JOIN alumno_matricula am ON a.id_alumno = am.codigo_alumno and am.retirado = 'f'
@@ -918,7 +919,7 @@ function consulta_contar($ejecutar,$cerrar,$codigo_all,$codigo_grado,$codigo_sec
     {
 	//  imprimir datos del bachillerato.
 	$modalidad_ann_lectivo = substr($codigo_all,0,2) . substr($codigo_all,2,2) . substr($codigo_all,6,2);
-            $query = "SELECT count(*) as total_asignaturas FROM a_a_a_bach_o_ciclo
+        $query = "SELECT count(*) as total_asignaturas FROM a_a_a_bach_o_ciclo
 	    		    WHERE btrim(codigo_bach_o_ciclo || codigo_grado ||codigo_ann_lectivo) = '$modalidad_ann_lectivo' and codigo_asignatura <> ''";
           
     // ejecutar la consulta.

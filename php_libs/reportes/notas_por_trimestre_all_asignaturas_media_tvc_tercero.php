@@ -16,33 +16,64 @@
 // buscar la consulta y la ejecuta.
     consultas(5,0,$codigo_all,'','','',$db_link,'');
 //  imprimir datos del bachillerato.
-     while($row = $result -> fetch(PDO::FETCH_BOTH))
-            {
-            $print_bachillerato = trim($row['nombre_bachillerato']);
-            $print_grado = utf8_decode(trim($row['nombre_grado']));
-            $print_seccion = trim($row['nombre_seccion']);
-            $print_ann_lectivo = trim($row['nombre_ann_lectivo']);
-	    
-	    $codigo_bachillerato = trim($row['codigo_bach_o_ciclo']);
-            $codigo_grado = trim($row['codigo_grado']);
-            $codigo_seccion = trim($row['codigo_seccion']);
-            $codigo_ann_lectivo = trim($row['codigo_ann_lectivo']);
+while($row = $result -> fetch(PDO::FETCH_BOTH))
+{
+$print_bachillerato = utf8_decode(trim($row['nombre_bachillerato']));
+$print_grado = utf8_decode(trim($row['nombre_grado']));
+$print_seccion = utf8_decode(trim($row['nombre_seccion']));
+$print_ann_lectivo = utf8_decode(trim($row['nombre_ann_lectivo']));
 
-            $data[$j] = substr(trim($row['n_asignatura']),0,20);
-            $j++;
-            }
+$print_codigo_bachillerato = trim($row['codigo_bach_o_ciclo']);
+$print_codigo_grado = trim($row['codigo_grado']);
+$codigo_seccion = trim($row['codigo_seccion']);
+$codigo_ann_lectivo = trim($row['codigo_ann_lectivo']);
 
-// dar valor a la variable que verifica el bachillerato.
-            if ($codigo_bachillerato >= '03' && $print_bachillerato <= '06'){
-                if ($j == 1){break;}else{$j++;}
+$data[$j] = substr(utf8_decode(trim($row['n_asignatura'])),0,20);
+$j++;
+}
+//  variable para cambiar e imprimir las demás asignaturas.
+$cambiar_asignaturas = 0;
+////////////////////////////////////////////////////////////////////
+//////// CONTAR CUANTAS ASIGNATURAS TIENE CADA MODALIDAD.
+//////////////////////////////////////////////////////////////////
+// buscar la consulta y la ejecuta.
+consulta_contar(1,0,$codigo_all,'','','',$db_link,'');
+// EJECUTAR CONDICIONES PARA EL NOMBRE DEL NIVEL Y EL NÚMERO DE ASIGNATURAS.
+$total_asignaturas = 0;	
+while($row = $result -> fetch(PDO::FETCH_BOTH))
+{
+$total_asignaturas = (trim($row['total_asignaturas']));
+}
 
-            if ($codigo_bachillerato == '07'){
-               if ($j == 13){break;}else{$j++;}}
+  if($print_codigo_bachillerato >= '01' and $print_codigo_bachillerato <= '05')
+{
+$nivel_educacion = "Educación Básica";
+}else{
+// Validar Bachillerato.
+if($print_codigo_bachillerato == '06'){
+$nivel_educacion = "Educación Media - General";
+}
 
-            if ($codigo_bachillerato == '09'){
-               if ($j == 7){break;}else{$j++;}}
-            }
-class PDF extends FPDF
+if($print_codigo_bachillerato == '07'){
+$nivel_educacion = "Educación Media - Técnico";
+}
+
+if($print_codigo_bachillerato == '08' or $print_codigo_bachillerato == '09'){
+$nivel_educacion = "Educación Media - Contaduría";
+}
+// Validar grado de educación Media.
+if($print_codigo_grado == '10'){
+$print_grado_media = "Primer año";
+}
+if($print_codigo_grado == '11'){
+$print_grado_media = "Segundo año";
+}
+if($print_codigo_grado == '12'){
+$print_grado_media = "Tercer año";
+}
+}
+
+               class PDF extends FPDF
 {
 // rotar texto funcion TEXT()
 function RotatedText($x,$y,$txt,$angle)
@@ -234,7 +265,7 @@ function cuadro($data)
                 if ($i == 1){
                     $pdf->SetFont('Arial','',9); // I : Italica; U: Normal;
                     $pdf->Cell($w[0],$w2[0],$numero_linea,0,0,'C',$fill);
-                    $pdf->Cell($w[1],$w2[0],trim($row['apellido_alumno']),0,0,'L',$fill);   // Nombre + apellido_materno + apellido_paterno
+                    $pdf->Cell($w[1],$w2[0],utf8_decode(trim($row['apellido_alumno'])),0,0,'L',$fill);   // Nombre + apellido_materno + apellido_paterno
                     $pdf->SetFont('Arial','',7); // I : Italica; U: Normal;
                     if($row['nota_p_p_1'] == 0){$pdf->Cell($w[2],$w2[0],'',0,0,0,'C',$fill);}else{$pdf->Cell($w[2],$w2[0],number_format(trim($row['nota_p_p_1']),1),0,0,'C',$fill);}
                     if($row['nota_p_p_2'] == 0){$pdf->Cell($w[2],$w2[0],'',0,0,0,'C',$fill);}else{$pdf->Cell($w[2],$w2[0],number_format(trim($row['nota_p_p_2']),1),0,0,'C',$fill);}
@@ -271,7 +302,7 @@ function cuadro($data)
                 }
                 
             // validar $i = 11
-                if($i == 7)
+                if($i == $total_asignaturas)
                 {
                     // imprimir el total de puntos.
                     $pdf->SetFont('Arial','B',8); // I : Italica; U: Normal;

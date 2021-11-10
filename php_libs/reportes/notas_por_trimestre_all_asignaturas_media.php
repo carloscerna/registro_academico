@@ -23,7 +23,7 @@
             $print_seccion = utf8_decode(trim($row['nombre_seccion']));
             $print_ann_lectivo = utf8_decode(trim($row['nombre_ann_lectivo']));
 	    
-	    $print_codigo_bachillerato = trim($row['codigo_bach_o_ciclo']);
+	        $print_codigo_bachillerato = trim($row['codigo_bach_o_ciclo']);
             $print_codigo_grado = trim($row['codigo_grado']);
             $codigo_seccion = trim($row['codigo_seccion']);
             $codigo_ann_lectivo = trim($row['codigo_ann_lectivo']);
@@ -42,7 +42,7 @@
 	$total_asignaturas = 0;	
         while($row = $result -> fetch(PDO::FETCH_BOTH))
             {
-		$total_asignaturas = (trim($row['total_asignaturas']));
+		        $total_asignaturas = (trim($row['total_asignaturas']));
             }
 		
       	    if($print_codigo_bachillerato >= '01' and $print_codigo_bachillerato <= '05')

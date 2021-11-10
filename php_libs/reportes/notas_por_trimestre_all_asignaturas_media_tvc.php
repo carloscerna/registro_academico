@@ -44,7 +44,7 @@
 	$total_asignaturas = 0;	
         while($row = $result -> fetch(PDO::FETCH_BOTH))
             {
-		$total_asignaturas = (trim($row['total_asignaturas']));
+		        $total_asignaturas = (trim($row['total_asignaturas']));
             }
 		
       	    if($print_codigo_bachillerato >= '01' and $print_codigo_bachillerato <= '05')
