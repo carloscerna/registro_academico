@@ -48,4 +48,22 @@ $(function(){
        });
 
      });
-});
+
+  // BLOQUE MEMORIA ESTADISTICA
+  $('#goVerMemoriaEstadistica').on('click',function(){
+    // BUSCAR EL �LTINMO DE LA ASIGNATURA PARA ASIGNARLE A UN NUEVO REGISTRO.
+     var codigo_annlectivo = $("#lstannlectivo").val();
+                  varenviar = "/registro_academico/php_libs/reportes/memoria_estadistica.php?lstannlectivo="+codigo_annlectivo;
+               // Ejecutar la funci�n
+                  AbrirVentana(varenviar);        
+    });
+
+
+    });
+     
+
+function AbrirVentana(url)
+{
+    window.open(url, '_blank');
+    return false;
+}
