@@ -198,8 +198,8 @@ function Footer()
 		$this->Line(10,245,80,245);		//Crear una l�nea de la primera firma
 		$this->Line(120,245,190,245);	//Crear una l�nea de la segunda firma.
 		$this->Line(5,265,203,265);		//Crear una l�nea FINAL.
-		//$this->RotatedText(10,250,$registro_docente,0,1,'C');		// NOMBRE DEL DOCENTE, Sub-director o Encargado de Registro Académico.
-		//$this->RotatedText(10,255,utf8_decode('Encargado Registro Académico'),0,1,'C');			// ETIQUETA DIRECTOR.
+		$this->RotatedText(10,250,$registro_docente,0,1,'C');		// NOMBRE DEL DOCENTE, Sub-director o Encargado de Registro Académico.
+		$this->RotatedText(10,255,utf8_decode('Encargado Registro Académico'),0,1,'C');			// ETIQUETA DIRECTOR.
 		if(isset($img_firma)){$this->Image($img_firma,120,225,70,15);}						// IMAGEN FIRMA
 		if(isset($img_firma)){$this->Image($img_sello,165,225,30,30);}						// IMAGEN SELLO
     	$this->RotatedText(130,250,$nombre_director,0,1,'C');	    // Nombre Director

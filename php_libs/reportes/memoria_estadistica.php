@@ -13,6 +13,7 @@
      $codigo_ann_lectivo = $_REQUEST["lstannlectivo"];
      $db_link = $dblink;
      $codigo_all_indicadores = array(); $nombre_grado = array(); $nombre_modalidad = array(); $nombre_ann_lectivo = array();
+	 $codigo_modalidad_matriz = array();
      //CONSULTA PARA LE MEMORIA ESTADISTICA
         $query_grados = "SELECT DISTINCT ROW(org.codigo_bachillerato), org.codigo_bachillerato as codigo_modalidad, org.codigo_grado, org.codigo_ann_lectivo,
                     gan.nombre as nombre_grado, ann.nombre as nombre_ann_lectivo,  bach.nombre as nombre_modalidad
@@ -30,8 +31,9 @@
 	    	$codigo_grado = trim($row['codigo_grado']);
             $nombre_ann_lectivo = trim($row['nombre_ann_lectivo']);
             $codigo_modalidad = trim($row['codigo_modalidad']);
+			$codigo_modalidad_matriz[] = trim($row['codigo_modalidad']);
             $nombre_modalidad[] = trim($row['nombre_modalidad']);
-            $nombre_grado[] = (ucfirst(strtolower(trim($row['nombre_grado']))));
+            $nombre_grado[] = cambiar_de_del(trim($row['nombre_grado']));
 	    	// modalidad, grado y año lectivo.
 	    	$codigo_indicadores[] = $codigo_modalidad . $codigo_grado . $codigo_ann_lectivo;
         }
@@ -105,7 +107,8 @@ function encabezado()
             $this->Cell(10,4,'F',1,0,'C');
             $this->Cell(10,4,'T',1,0,'C');
         }
-    
+	// Salto de línea
+		$this->ln();
 }
 }
 
@@ -114,24 +117,57 @@ function encabezado()
     $pdf=new PDF('L','mm','Letter');
     $data = array();
     #Establecemos los márgenes izquierda, arriba y derecha: 
-    $pdf->SetMargins(5, 15, 5);
+	    $pdf->SetMargins(5, 15, 5);
     #Establecemos el margen inferior: 
-    $pdf->SetAutoPageBreak(true,5);
-    $pdf->AliasNbPages();
-    $pdf->SetFont('Arial','',9);
-    $pdf->AddPage();
+		$pdf->SetAutoPageBreak(true,5);
+		$pdf->AliasNbPages();
+		$pdf->AddPage();
     // Aqui mandamos texto a imprimir o al documento.
-    $pdf->SetY(40);
-    $pdf->SetX(5);
+		$pdf->SetY(40);
+		$pdf->SetX(5);
 	// llamar al encabezado.
        $pdf->encabezado();
-// Evaluar si existen registros.
+	   $pdf->SetFont('Arial','',10);
+	// Ancho de las diferentes columnas	
+		$ancho=array(0,50,30,10); //determina el ancho de las columnas
+		$alto=array(0,5.5);
+	   // Evaluar si existen registros.
 		for($jh=0;$jh<=count($codigo_indicadores)-1;$jh++)
 		{
-
-			// Ancho de las diferentes columnas	
-				$w=array(10,60,20,15,10,15,15,15); //determina el ancho de las columnas
-        }
+			// CAMBIAR ETIQUETA PARA LA DESCRIPCIÓN DEL GRADO
+			switch ($codigo_modalidad_matriz[$jh]) {
+				case '02':
+					$pdf->Cell($ancho[1],$alto[1],$nombre_modalidad[$jh] . ' ' . ($nombre_grado[$jh] . utf8_decode(' años')),1,1,'L');
+					break;
+				case '06':
+					$pdf->Cell($ancho[1],$alto[1],($nombre_grado[$jh] . ' General'),1,1,'L');
+					break;
+				case '07':
+					$pdf->Cell($ancho[1],$alto[1],($nombre_grado[$jh] . utf8_decode(' Técnico')),1,1,'L');
+					break;
+				case '09':
+					$pdf->Cell($ancho[1],$alto[1],($nombre_grado[$jh] . utf8_decode(' Técnico')),1,1,'L');
+					break;
+				case '10':
+					$pdf->Cell($ancho[1],$alto[1],($nombre_grado[$jh] . utf8_decode(' Nocturna')),1,1,'L');
+					break;
+				case '11':
+					$pdf->Cell($ancho[1],$alto[1],($nombre_grado[$jh] . utf8_decode(' Nocturna')),1,1,'L');
+					break;
+				case '12':
+					$pdf->Cell($ancho[1],$alto[1],($nombre_grado[$jh] . utf8_decode(' Nocturna')),1,1,'L');
+					break;
+				default:
+					$pdf->Cell($ancho[1],$alto[1],($nombre_grado[$jh]),1,1,'L');
+					break;
+			}	// cierre del swicth
+		// ARMAS LAS DIFERENTES CONSULTAS 
+		// VARIABLES
+		
+		//
+		//	MATRICULA MAXIMA
+		//
+        }	// cierre del for de la matriz que es rellenada
 /*
 
 
