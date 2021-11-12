@@ -79,7 +79,7 @@ function RotatedTextMultiCellDireccion($x,$y,$txt,$angle)
 	//Text rotated around its origin
 	$this->Rotate($angle,$x,$y);
 	$this->SetXY($x,$y);
-        $this->MultiCell(90,4,$txt,0,'J');
+        $this->MultiCell(90,4,utf8_decode($txt),0,'J');
 	$this->Rotate(0);
 }
 
@@ -247,7 +247,7 @@ if($verificar != 0)	// IF PRINCIPAL QUE VERIFICA SI HAY REGISTROS.
         INNER JOIN ann_lectivo ann ON ann.codigo = am.codigo_ann_lectivo
           WHERE btrim(am.codigo_bach_o_ciclo || am.codigo_grado || am.codigo_seccion || am.codigo_ann_lectivo  || am.codigo_turno) = '".$codigo_all."'";
 
-//consulta para obtener el total de alumnos masculino.
+//consulta para obtener el total de alumnos femenino.
     $query_total_alumnos_matricula_inicial_femenino = "SELECT count(*) as total_alumnos_matricula_inicial_femenino
     FROM alumno a
       INNER JOIN alumno_matricula am ON a.id_alumno = am.codigo_alumno  and a.genero = 'f'
@@ -338,22 +338,22 @@ INNER JOIN ann_lectivo ann ON ann.codigo = am.codigo_ann_lectivo
             		contar_promovidos($generos, $notas, $contar_evaluar);
         		  break;
             	case 2:
-        		contar_promovidos($generos, $notas, $contar_evaluar);
+          		contar_promovidos($generos, $notas, $contar_evaluar);
         		  break;
-        	case 3:
-			contar_promovidos($generos, $notas, $contar_evaluar);
+            	case 3:
+        			contar_promovidos($generos, $notas, $contar_evaluar);
         		  break;
-        	case 4:
-		        contar_promovidos($generos, $notas, $contar_evaluar);
+            	case 4:
+  		        contar_promovidos($generos, $notas, $contar_evaluar);
         		  break;
-        	case 5:
-        		contar_promovidos($generos, $notas, $contar_evaluar);
+            	case 5:
+          		contar_promovidos($generos, $notas, $contar_evaluar);
         		  break;
-        	case 6:
-        		contar_promovidos($generos, $notas, $contar_evaluar);
+          	  case 6:
+        	  	contar_promovidos($generos, $notas, $contar_evaluar);
         		  break;
-        	case 7:
-        		contar_promovidos($generos, $notas, $contar_evaluar);
+            	case 7:
+          		contar_promovidos($generos, $notas, $contar_evaluar);
         		  break;
             }
      		
@@ -629,7 +629,7 @@ $codigo_all_ = substr($codigo_all,0,8);
       $pdf->Rect(310,80,15,30);
     
     $pdf->SetXY(250,80);
-    $pdf->Cell(90,5,utf8_decode('ESTADÍSTICA'),1,2,'C', true);
+    $pdf->Cell(90,5,utf8_decode('ESTADÝSTICA'),1,2,'C', true);
     $pdf->SetXY(248,88);
     $pdf->Cell(20,5,'SEXO',0,0,'C');
     $pdf->SetFont('Arial','',7);
@@ -720,7 +720,7 @@ $codigo_all_ = substr($codigo_all,0,8);
     $pdf->SetXY(250,150);
 		$pdf->Cell(11,5,'PROMOVIDOS:',0,0,'L');
 		$pdf->SetXY(270,150);
-		$pdf->Cell(75,5,utf8_encode(strtolower(num2letras($total_promovidos_f+$total_promovidos_m))),0,0,'C');
+		$pdf->Cell(75,5,strtolower(utf8_decode(num2letras($total_promovidos_f+$total_promovidos_m))),0,0,'C');
 		
     $pdf->Rect(280,170,60,0);
 		
@@ -731,7 +731,7 @@ $codigo_all_ = substr($codigo_all,0,8);
     if($total_retenidos_m_f == 0){
       $pdf->Cell(75,5,"ninguno",0,0,'C');  
     }else{
-      $pdf->Cell(75,5,strtolower(num2letras($total_retenidos_f+$total_retenidos_m)),0,0,'C');  
+      $pdf->Cell(75,5,strtolower(utf8_decode(num2letras($total_retenidos_f+$total_retenidos_m))),0,0,'C');  
     }
     
     
@@ -902,7 +902,8 @@ $codigo_all_ = substr($codigo_all,0,8);
                     $pdf->RotatedText(290,187,'SELLO',0);
                 //Crear una línea. Lugar. Line(x hacia la izq.,y - mueven hacia abajo,x1 hacia a la izq.,y1 mueven hacia abajo)
                     $pdf->RotatedText(250,35,'Lugar:',0);
-                    $pdf->RotatedTextMultiCellDireccion(290-((strlen($_SESSION['direccion']))/2),37,utf8_decode($_SESSION['direccion']),0);
+                    $direccion_local = ($_SESSION['direccion']);
+                    $pdf->RotatedTextMultiCellDireccion(290-((strlen($_SESSION['direccion']))/2),37,($direccion_local),0);
                     $pdf->Line(250,45,350,45);
 										$pdf->SetY(55);
                 //Crear una línea. Fecha.

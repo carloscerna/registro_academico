@@ -93,13 +93,13 @@ function encabezado()
 		$this->SetFont('Arial','B',8);
     // PRIMERA LINEA
         $this->Cell(50,4,'GRADO','LTR',0,'C');
-        $this->Cell(30,4,'MATRICULA MAXIMA','LTR',0,'C');
-        $this->Cell(30,4,'EGRESADOS','LTR',0,'C');
-        $this->Cell(30,4,'MATRICULA FINAL','LTR',0,'C');
-        $this->Cell(30,4,'PROMOVIDOS','LTR',0,'C');
-        $this->Cell(30,4,'RETENIDOS','LTR',0,'C');
+        $this->Cell(30,4,'MATRICULA INICIAL','LTR',0,'C');
+        $this->Cell(30,4,'DESERSION','LTR',0,'C');
         $this->Cell(30,4,'REPITENCIA','LTR',0,'C');
-        $this->Cell(30,4,'SOBREEDAD','LTR',1,'C');
+        $this->Cell(30,4,'APROBADOS','LTR',0,'C');
+        $this->Cell(30,4,'REPROBADOS','LTR',0,'C');
+        $this->Cell(30,4,'SOBREEDAD','LTR',0,'C');
+        $this->Cell(30,4,'MATRICULA FINAL','LTR',1,'C');
     // SEGUNDA LINEA
         $this->Cell(50,4,'','LBR',0,'C');
         for ($i=0; $i <=6 ; $i++) { 
@@ -131,42 +131,167 @@ function encabezado()
 	// Ancho de las diferentes columnas	
 		$ancho=array(0,50,30,10); //determina el ancho de las columnas
 		$alto=array(0,5.5);
+		$indicadores = array("maxima","desercion","repitencia","aprobados","reprobados","sobreedad","final");
 	   // Evaluar si existen registros.
 		for($jh=0;$jh<=count($codigo_indicadores)-1;$jh++)
 		{
 			// CAMBIAR ETIQUETA PARA LA DESCRIPCIÓN DEL GRADO
 			switch ($codigo_modalidad_matriz[$jh]) {
 				case '02':
-					$pdf->Cell($ancho[1],$alto[1],$nombre_modalidad[$jh] . ' ' . ($nombre_grado[$jh] . utf8_decode(' años')),1,1,'L');
+					$pdf->Cell($ancho[1],$alto[1],$nombre_modalidad[$jh] . ' ' . ($nombre_grado[$jh] . utf8_decode(' años')),1,0,'L');
 					break;
 				case '06':
-					$pdf->Cell($ancho[1],$alto[1],($nombre_grado[$jh] . ' General'),1,1,'L');
+					$pdf->Cell($ancho[1],$alto[1],($nombre_grado[$jh] . ' General'),1,0,'L');
 					break;
 				case '07':
-					$pdf->Cell($ancho[1],$alto[1],($nombre_grado[$jh] . utf8_decode(' Técnico')),1,1,'L');
+					$pdf->Cell($ancho[1],$alto[1],($nombre_grado[$jh] . utf8_decode(' Técnico')),1,0,'L');
 					break;
 				case '09':
-					$pdf->Cell($ancho[1],$alto[1],($nombre_grado[$jh] . utf8_decode(' Técnico')),1,1,'L');
+					$pdf->Cell($ancho[1],$alto[1],($nombre_grado[$jh] . utf8_decode(' Técnico')),1,0,'L');
 					break;
 				case '10':
-					$pdf->Cell($ancho[1],$alto[1],($nombre_grado[$jh] . utf8_decode(' Nocturna')),1,1,'L');
+					$pdf->Cell($ancho[1],$alto[1],($nombre_grado[$jh] . utf8_decode(' Nocturna')),1,0,'L');
 					break;
 				case '11':
-					$pdf->Cell($ancho[1],$alto[1],($nombre_grado[$jh] . utf8_decode(' Nocturna')),1,1,'L');
+					$pdf->Cell($ancho[1],$alto[1],($nombre_grado[$jh] . utf8_decode(' Nocturna')),1,0,'L');
 					break;
 				case '12':
-					$pdf->Cell($ancho[1],$alto[1],($nombre_grado[$jh] . utf8_decode(' Nocturna')),1,1,'L');
+					$pdf->Cell($ancho[1],$alto[1],($nombre_grado[$jh] . utf8_decode(' Nocturna')),1,0,'L');
 					break;
 				default:
-					$pdf->Cell($ancho[1],$alto[1],($nombre_grado[$jh]),1,1,'L');
+					$pdf->Cell($ancho[1],$alto[1],($nombre_grado[$jh]),1,0,'L');
 					break;
 			}	// cierre del swicth
 		// ARMAS LAS DIFERENTES CONSULTAS 
 		// VARIABLES
-		
-		//
-		//	MATRICULA MAXIMA
-		//
+			// variables para retenidos y promovidos.
+			$total_masculino = 0; $total_femenino = 0;
+			// variables para el cambio de INNER JOIN
+				$innerJoinMatriculaM = ""; $innerJoinMatriculaF = "";
+			// Evaluar si existen registros INDICADORES.
+			for($ind=0;$ind<=count($indicadores)-1;$ind++)
+			{
+				// CAMBIAR ETIQUETA PARA LA DESCRIPCIÓN DEL GRADO
+				switch ($indicadores[$ind]) {
+					case "maxima":
+						$innerJoinMatriculaM = "INNER JOIN alumno_matricula am ON a.id_alumno = am.codigo_alumno and a.genero = 'm'";
+						$innerJoinMatriculaF = "INNER JOIN alumno_matricula am ON a.id_alumno = am.codigo_alumno and a.genero = 'f'";
+						break;
+					case "desercion":
+						$innerJoinMatriculaM = "INNER JOIN alumno_matricula am ON a.id_alumno = am.codigo_alumno and a.genero = 'm' and am.retirado = 't' ";
+						$innerJoinMatriculaF = "INNER JOIN alumno_matricula am ON a.id_alumno = am.codigo_alumno and a.genero = 'f' and am.retirado = 't' ";
+						break;
+					case "repitencia":
+						$innerJoinMatriculaM = "INNER JOIN alumno_matricula am ON a.id_alumno = am.codigo_alumno and a.genero = 'm' and am.repitente = 't' ";
+						$innerJoinMatriculaF = "INNER JOIN alumno_matricula am ON a.id_alumno = am.codigo_alumno and a.genero = 'f' and am.repitente = 't' ";
+						break;
+					case "sobreedad":
+						$innerJoinMatriculaM = "INNER JOIN alumno_matricula am ON a.id_alumno = am.codigo_alumno and a.genero = 'm' and am.sobreedad = 't' ";
+						$innerJoinMatriculaF = "INNER JOIN alumno_matricula am ON a.id_alumno = am.codigo_alumno and a.genero = 'f' and am.sobreedad = 't' ";
+						break;
+				}	// FIN DEL SWICTH INDICADORES
+					// ARMAR CONSULTAS
+					//consulta para obtener el total de alumnos masculino.
+					$query_total_masculino = "SELECT count(*) as total_alumnos_matricula_inicial_masculino
+						FROM alumno a
+							$innerJoinMatriculaM
+							INNER JOIN bachillerato_ciclo bach ON bach.codigo = am.codigo_bach_o_ciclo
+							INNER JOIN grado_ano gan ON gan.codigo = am.codigo_grado
+							INNER JOIN ann_lectivo ann ON ann.codigo = am.codigo_ann_lectivo
+									WHERE btrim(am.codigo_bach_o_ciclo || am.codigo_grado || am.codigo_ann_lectivo) = '".$codigo_indicadores[$jh]."'";
+					//consulta para obtener el total de alumnos femenino.
+					$query_total_femenino = "SELECT count(*) as total_alumnos_matricula_inicial_femenino
+						FROM alumno a
+							$innerJoinMatriculaF
+							INNER JOIN bachillerato_ciclo bach ON bach.codigo = am.codigo_bach_o_ciclo
+							INNER JOIN grado_ano gan ON gan.codigo = am.codigo_grado
+							INNER JOIN ann_lectivo ann ON ann.codigo = am.codigo_ann_lectivo
+								WHERE btrim(am.codigo_bach_o_ciclo || am.codigo_grado || am.codigo_ann_lectivo) = '".$codigo_indicadores[$jh]."'";
+					// 
+					//	CONSULTAS RESULT
+					//
+					$result_total_masculino = $db_link -> query($query_total_masculino);
+					$result_total_femenino = $db_link -> query($query_total_femenino);
+					//
+					//	imprimir DATOS DE LA MATRICULA.
+					//
+					//  cuenta el total de alumnos para colocar en la estadistica MATRICULA INICIAL..
+						$total_alumnos_masculino = 0;
+							while($rows_total_alumnos_m = $result_total_masculino -> fetch(PDO::FETCH_BOTH))
+								{
+									$total_alumnos_masculino = trim($rows_total_alumnos_m['total_alumnos_matricula_inicial_masculino']);
+								}
+
+						//  cuenta el total de alumnos para colocar en la estadistica MATRICULA INICIAL..
+						$total_alumnos_femenino = 0;
+							while($rows_total_alumnos_f = $result_total_femenino -> fetch(PDO::FETCH_BOTH))
+								{
+									$total_alumnos_femenino = trim($rows_total_alumnos_f['total_alumnos_matricula_inicial_femenino']);
+								}
+					//
+					//	IMPRIMIR VALORES 
+					//
+					switch ($codigo_modalidad_matriz[$jh]) {
+						case '02':
+							$pdf->Cell($ancho[3],$alto[1],$total_alumnos_masculino,1,0,'C');
+							$pdf->Cell($ancho[3],$alto[1],$total_alumnos_femenino,1,0,'C');
+							$pdf->SetFont('Arial','B',10);
+								$pdf->Cell($ancho[3],$alto[1],$total_alumnos_masculino+$total_alumnos_femenino,1,0,'C',true);
+							$pdf->SetFont('Arial','',10);
+							break;
+						case '06':
+							$pdf->Cell($ancho[3],$alto[1],$total_alumnos_masculino,1,0,'C');
+							$pdf->Cell($ancho[3],$alto[1],$total_alumnos_femenino,1,0,'C');
+							$pdf->SetFont('Arial','B',10);
+								$pdf->Cell($ancho[3],$alto[1],$total_alumnos_masculino+$total_alumnos_femenino,1,0,'C',true);
+							$pdf->SetFont('Arial','',10);
+							break;
+						case '07':
+							$pdf->Cell($ancho[3],$alto[1],$total_alumnos_masculino,1,0,'C');
+							$pdf->Cell($ancho[3],$alto[1],$total_alumnos_femenino,1,0,'C');
+							$pdf->SetFont('Arial','B',10);
+								$pdf->Cell($ancho[3],$alto[1],$total_alumnos_masculino+$total_alumnos_femenino,1,0,'C',true);
+							$pdf->SetFont('Arial','',10);
+							break;
+						case '09':
+							$pdf->Cell($ancho[3],$alto[1],$total_alumnos_masculino,1,0,'C');
+							$pdf->Cell($ancho[3],$alto[1],$total_alumnos_femenino,1,0,'C');
+							$pdf->SetFont('Arial','B',10);
+								$pdf->Cell($ancho[3],$alto[1],$total_alumnos_masculino+$total_alumnos_femenino,1,0,'C',true);
+							$pdf->SetFont('Arial','',10);
+							break;
+						case '10':
+							$pdf->Cell($ancho[3],$alto[1],$total_alumnos_masculino,1,0,'C');
+							$pdf->Cell($ancho[3],$alto[1],$total_alumnos_femenino,1,0,'C');
+							$pdf->SetFont('Arial','B',10);
+								$pdf->Cell($ancho[3],$alto[1],$total_alumnos_masculino+$total_alumnos_femenino,1,0,'C',true);
+							$pdf->SetFont('Arial','',10);
+							break;
+						case '11':
+							$pdf->Cell($ancho[3],$alto[1],$total_alumnos_masculino,1,0,'C');
+							$pdf->Cell($ancho[3],$alto[1],$total_alumnos_femenino,1,0,'C');
+							$pdf->SetFont('Arial','B',10);
+								$pdf->Cell($ancho[3],$alto[1],$total_alumnos_masculino+$total_alumnos_femenino,1,0,'C',true);
+							$pdf->SetFont('Arial','',10);
+							break;
+						case '12':
+							$pdf->Cell($ancho[3],$alto[1],$total_alumnos_masculino,1,0,'C');
+							$pdf->Cell($ancho[3],$alto[1],$total_alumnos_femenino,1,0,'C');
+							$pdf->SetFont('Arial','B',10);
+								$pdf->Cell($ancho[3],$alto[1],$total_alumnos_masculino+$total_alumnos_femenino,1,0,'C',true);
+							$pdf->SetFont('Arial','',10);
+							break;
+						default:
+							$pdf->Cell($ancho[3],$alto[1],$total_alumnos_masculino,1,0,'C');
+							$pdf->Cell($ancho[3],$alto[1],$total_alumnos_femenino,1,0,'C');
+							$pdf->SetFont('Arial','B',10);
+								$pdf->Cell($ancho[3],$alto[1],$total_alumnos_masculino+$total_alumnos_femenino,1,0,'C',true);
+							$pdf->SetFont('Arial','',10);
+							break;
+					}	// cierre del swicth
+			}	// FIN DE FOR INDICADORES
+			// SALTO DE LINEA
+				$pdf->ln();
         }	// cierre del for de la matriz que es rellenada
 /*
 

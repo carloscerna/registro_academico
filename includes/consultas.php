@@ -355,7 +355,7 @@ function consultas($ejecutar,$cerrar,$codigo_bachillerato,$codigo_grado,$codigo_
          // para los diferntes listados Indicadores Educativos.
     if($ejecutar == 13)
     {
-        print $query = "SELECT org.codigo_bachillerato as codigo_modalidad, org.codigo_grado, org.codigo_seccion, org.codigo_ann_lectivo, org.codigo_turno,
+        $query = "SELECT org.codigo_bachillerato as codigo_modalidad, org.codigo_grado, org.codigo_seccion, org.codigo_ann_lectivo, org.codigo_turno,
 			        sec.nombre as nombre_seccion, ann.nombre as nombre_ann_lectivo, gan.nombre as nombre_grado, bach.nombre as nombre_bachillerato, tur.nombre as nombre_turno
 			            FROM organizacion_grados_secciones org
                             INNER JOIN bachillerato_ciclo bach ON bach.codigo = org.codigo_bachillerato
