@@ -65,6 +65,10 @@ function Header()
 //Pie de página
 function Footer()
 {
+	//Firma Director.
+	$nombre_director = cambiar_de_del($_SESSION['nombre_director']);
+		$this->RotatedText(170,200,$nombre_director,0,1,'C');	    // Nombre Director
+		$this->RotatedText(180,205,'Director(a)',0,1,'C');			// ETIQUETA DIRECTOR.
   //
   // Establecer formato para la fecha.
   // 
@@ -132,6 +136,8 @@ function encabezado()
 		$ancho=array(0,50,30,10); //determina el ancho de las columnas
 		$alto=array(0,5.5);
 		$indicadores = array("maxima","desercion","repitencia","aprobados","reprobados","sobreedad","final");
+		$tmm = array(); $tmf = array(); $tdm = array(); $tdf = array(); $trm = array(); $trf = array();
+		$tam = array(); $taf = array(); $trem = array(); $tref = array(); $tsm = array(); $tsf = array(); $tfm = array(); $tff = array();
 	   // Evaluar si existen registros.
 		for($jh=0;$jh<=count($codigo_indicadores)-1;$jh++)
 		{
@@ -166,8 +172,13 @@ function encabezado()
 		// VARIABLES
 			// variables para retenidos y promovidos.
 			$total_masculino = 0; $total_femenino = 0;
+			$total_final_masculino = 0; $total_final_femenino = 0;
+			$calculo_final = 0; $total_final_masculino = 0; $total_final_femenino = 0;
 			// variables para el cambio de INNER JOIN
 				$innerJoinMatriculaM = ""; $innerJoinMatriculaF = "";
+				$innerJoinMatriculaM_m = ""; $innerJoinMatriculaF_m = "";
+				$innerJoinMatriculaM_r = ""; $innerJoinMatriculaF_r = "";
+				$promovidos_retenidos = "";
 			// Evaluar si existen registros INDICADORES.
 			for($ind=0;$ind<=count($indicadores)-1;$ind++)
 			{
@@ -176,20 +187,171 @@ function encabezado()
 					case "maxima":
 						$innerJoinMatriculaM = "INNER JOIN alumno_matricula am ON a.id_alumno = am.codigo_alumno and a.genero = 'm'";
 						$innerJoinMatriculaF = "INNER JOIN alumno_matricula am ON a.id_alumno = am.codigo_alumno and a.genero = 'f'";
+						$calculo_final = 0;
 						break;
 					case "desercion":
 						$innerJoinMatriculaM = "INNER JOIN alumno_matricula am ON a.id_alumno = am.codigo_alumno and a.genero = 'm' and am.retirado = 't' ";
 						$innerJoinMatriculaF = "INNER JOIN alumno_matricula am ON a.id_alumno = am.codigo_alumno and a.genero = 'f' and am.retirado = 't' ";
+						$calculo_final = 0;
 						break;
 					case "repitencia":
 						$innerJoinMatriculaM = "INNER JOIN alumno_matricula am ON a.id_alumno = am.codigo_alumno and a.genero = 'm' and am.repitente = 't' ";
 						$innerJoinMatriculaF = "INNER JOIN alumno_matricula am ON a.id_alumno = am.codigo_alumno and a.genero = 'f' and am.repitente = 't' ";
+						$calculo_final = 0;
 						break;
 					case "sobreedad":
 						$innerJoinMatriculaM = "INNER JOIN alumno_matricula am ON a.id_alumno = am.codigo_alumno and a.genero = 'm' and am.sobreedad = 't' ";
 						$innerJoinMatriculaF = "INNER JOIN alumno_matricula am ON a.id_alumno = am.codigo_alumno and a.genero = 'f' and am.sobreedad = 't' ";
+						$calculo_final = 0;
+						break;
+					case "final":
+						$innerJoinMatriculaM_m = "INNER JOIN alumno_matricula am ON a.id_alumno = am.codigo_alumno and a.genero = 'm'";
+						$innerJoinMatriculaF_m = "INNER JOIN alumno_matricula am ON a.id_alumno = am.codigo_alumno and a.genero = 'f'";
+
+						$innerJoinMatriculaM_r = "INNER JOIN alumno_matricula am ON a.id_alumno = am.codigo_alumno and a.genero = 'm' and am.retirado = 't' ";
+						$innerJoinMatriculaF_r = "INNER JOIN alumno_matricula am ON a.id_alumno = am.codigo_alumno and a.genero = 'f' and am.retirado = 't' ";
+
+						$calculo_final = 1;
+						break;
+					case "aprobados":
+						$promovidos_retenidos = "promovidos";
+						$calculo_final = 2;
+						break;
+					case "reprobados":
+						$promovidos_retenidos = "retenidos";
+						$calculo_final = 2;
 						break;
 				}	// FIN DEL SWICTH INDICADORES
+
+				if($calculo_final == 1){
+					// ARMAR CONSULTAS
+					//consulta para obtener el total de alumnos masculino.
+					$query_total_masculino = "SELECT count(*) as total_alumnos_matricula_inicial_masculino
+						FROM alumno a
+							$innerJoinMatriculaM_m
+							INNER JOIN bachillerato_ciclo bach ON bach.codigo = am.codigo_bach_o_ciclo
+							INNER JOIN grado_ano gan ON gan.codigo = am.codigo_grado
+							INNER JOIN ann_lectivo ann ON ann.codigo = am.codigo_ann_lectivo
+									WHERE btrim(am.codigo_bach_o_ciclo || am.codigo_grado || am.codigo_ann_lectivo) = '".$codigo_indicadores[$jh]."'";
+					//consulta para obtener el total de alumnos femenino.
+					$query_total_femenino = "SELECT count(*) as total_alumnos_matricula_inicial_femenino
+						FROM alumno a
+							$innerJoinMatriculaF_m
+							INNER JOIN bachillerato_ciclo bach ON bach.codigo = am.codigo_bach_o_ciclo
+							INNER JOIN grado_ano gan ON gan.codigo = am.codigo_grado
+							INNER JOIN ann_lectivo ann ON ann.codigo = am.codigo_ann_lectivo
+								WHERE btrim(am.codigo_bach_o_ciclo || am.codigo_grado || am.codigo_ann_lectivo) = '".$codigo_indicadores[$jh]."'";
+					// 
+					//	CONSULTAS RESULT
+					//
+					$result_total_masculino = $db_link -> query($query_total_masculino);
+					$result_total_femenino = $db_link -> query($query_total_femenino);
+					//
+					//	imprimir DATOS DE LA MATRICULA.
+					//
+					//  cuenta el total de alumnos para colocar en la estadistica MATRICULA INICIAL..
+						$total_alumnos_masculino = 0;
+							while($rows_total_alumnos_m = $result_total_masculino -> fetch(PDO::FETCH_BOTH))
+								{
+									$total_alumnos_masculino = trim($rows_total_alumnos_m['total_alumnos_matricula_inicial_masculino']);
+								}
+
+						//  cuenta el total de alumnos para colocar en la estadistica MATRICULA INICIAL..
+						$total_alumnos_femenino = 0;
+							while($rows_total_alumnos_f = $result_total_femenino -> fetch(PDO::FETCH_BOTH))
+								{
+									$total_alumnos_femenino = trim($rows_total_alumnos_f['total_alumnos_matricula_inicial_femenino']);
+								}	
+					//
+					// total final
+						$total_final_masculino = $total_alumnos_masculino;
+						$total_final_femenino = $total_alumnos_femenino;
+					//
+					//
+					// ARMAR CONSULTAS
+					//consulta para obtener el total de alumnos masculino.
+					$query_total_masculino = "SELECT count(*) as total_alumnos_matricula_inicial_masculino
+						FROM alumno a
+							$innerJoinMatriculaM_r
+							INNER JOIN bachillerato_ciclo bach ON bach.codigo = am.codigo_bach_o_ciclo
+							INNER JOIN grado_ano gan ON gan.codigo = am.codigo_grado
+							INNER JOIN ann_lectivo ann ON ann.codigo = am.codigo_ann_lectivo
+									WHERE btrim(am.codigo_bach_o_ciclo || am.codigo_grado || am.codigo_ann_lectivo) = '".$codigo_indicadores[$jh]."'";
+					//consulta para obtener el total de alumnos femenino.
+					$query_total_femenino = "SELECT count(*) as total_alumnos_matricula_inicial_femenino
+						FROM alumno a
+							$innerJoinMatriculaF_r
+							INNER JOIN bachillerato_ciclo bach ON bach.codigo = am.codigo_bach_o_ciclo
+							INNER JOIN grado_ano gan ON gan.codigo = am.codigo_grado
+							INNER JOIN ann_lectivo ann ON ann.codigo = am.codigo_ann_lectivo
+								WHERE btrim(am.codigo_bach_o_ciclo || am.codigo_grado || am.codigo_ann_lectivo) = '".$codigo_indicadores[$jh]."'";
+					// 
+					//	CONSULTAS RESULT
+					//
+					$result_total_masculino = $db_link -> query($query_total_masculino);
+					$result_total_femenino = $db_link -> query($query_total_femenino);
+					//
+					//	imprimir DATOS DE LA MATRICULA.
+					//
+					//  cuenta el total de alumnos para colocar en la estadistica MATRICULA INICIAL..
+						$total_alumnos_masculino = 0;
+							while($rows_total_alumnos_m = $result_total_masculino -> fetch(PDO::FETCH_BOTH))
+								{
+									$total_alumnos_masculino = trim($rows_total_alumnos_m['total_alumnos_matricula_inicial_masculino']);
+								}
+
+						//  cuenta el total de alumnos para colocar en la estadistica MATRICULA INICIAL..
+						$total_alumnos_femenino = 0;
+							while($rows_total_alumnos_f = $result_total_femenino -> fetch(PDO::FETCH_BOTH))
+								{
+									$total_alumnos_femenino = trim($rows_total_alumnos_f['total_alumnos_matricula_inicial_femenino']);
+								}	
+					//
+						$total_alumnos_masculino = $total_final_masculino - $total_alumnos_masculino;
+						$total_alumnos_femenino = $total_final_femenino - $total_alumnos_femenino;
+
+
+				}else if($calculo_final == 2){
+					// ARMAR CONSULTAS
+					//consulta para obtener el total de alumnos masculino.
+					$query_total_masculino = "SELECT sum($promovidos_retenidos) as total_alumnos_promovidos_masculino
+						FROM estadistica_grados eg
+									WHERE btrim(eg.codigo_bachillerato_ciclo || eg.codigo_grado || eg.codigo_ann_lectivo) = '".$codigo_indicadores[$jh]."' and eg.genero = 'Masculino'";
+					//consulta para obtener el total de alumnos femenino.
+					$query_total_femenino = "SELECT sum($promovidos_retenidos) as total_alumnos_promovidos_femenino
+						FROM estadistica_grados eg
+								WHERE btrim(eg.codigo_bachillerato_ciclo || eg.codigo_grado || eg.codigo_ann_lectivo) = '".$codigo_indicadores[$jh]."' and eg.genero = 'Femenino'";
+					// 
+					//	CONSULTAS RESULT
+					//
+					$result_total_masculino = $db_link -> query($query_total_masculino);
+					$result_total_femenino = $db_link -> query($query_total_femenino);
+					//
+					//	imprimir DATOS DE LA MATRICULA.
+					//
+					//  cuenta el total de alumnos para colocar en la estadistica MATRICULA INICIAL..
+						$total_alumnos_masculino = 0;
+							while($rows_total_alumnos_m = $result_total_masculino -> fetch(PDO::FETCH_BOTH))
+								{
+									$total_alumnos_masculino = trim($rows_total_alumnos_m['total_alumnos_promovidos_masculino']);
+									if($total_alumnos_masculino == null){
+										$total_alumnos_masculino = 0;
+									}
+								}
+
+						//  cuenta el total de alumnos para colocar en la estadistica MATRICULA INICIAL..
+						$total_alumnos_femenino = 0;
+							while($rows_total_alumnos_f = $result_total_femenino -> fetch(PDO::FETCH_BOTH))
+								{
+									$total_alumnos_femenino = trim($rows_total_alumnos_f['total_alumnos_promovidos_femenino']);
+									if($total_alumnos_femenino == null){
+										$total_alumnos_femenino = 0;
+									}
+								}	
+					//
+					//
+					//
+				}else{
 					// ARMAR CONSULTAS
 					//consulta para obtener el total de alumnos masculino.
 					$query_total_masculino = "SELECT count(*) as total_alumnos_matricula_inicial_masculino
@@ -227,7 +389,9 @@ function encabezado()
 							while($rows_total_alumnos_f = $result_total_femenino -> fetch(PDO::FETCH_BOTH))
 								{
 									$total_alumnos_femenino = trim($rows_total_alumnos_f['total_alumnos_matricula_inicial_femenino']);
-								}
+								}			
+				}
+							
 					//
 					//	IMPRIMIR VALORES 
 					//
@@ -289,278 +453,88 @@ function encabezado()
 							$pdf->SetFont('Arial','',10);
 							break;
 					}	// cierre del swicth
-			}	// FIN DE FOR INDICADORES
+
+					// CAMBIAR ETIQUETA PARA LA DESCRIPCIÓN DEL GRADO
+					switch ($indicadores[$ind]) {
+						case "maxima":
+							$tmm[] = $total_alumnos_masculino;
+							$tmf[] = $total_alumnos_femenino;
+							break;
+						case "desercion":
+							$tdm[] = $total_alumnos_masculino;
+							$tdf[] = $total_alumnos_femenino;
+							break;
+						case "repitencia":
+							$trm[] = $total_alumnos_masculino;
+							$trf[] = $total_alumnos_femenino;
+							break;
+						case "aprobados":
+							$tam[] = $total_alumnos_masculino;
+							$taf[] = $total_alumnos_femenino;
+							break;
+						case "reprobados":
+							$trem[] = $total_alumnos_masculino;
+							$tref[] = $total_alumnos_femenino;
+							break;
+						case "sobreedad":
+							$tsm[] = $total_alumnos_masculino;
+							$tsf[] = $total_alumnos_femenino;
+							break;
+						case "final":
+							$tfm[] = $total_alumnos_masculino;
+							$tff[] = $total_alumnos_femenino;
+							break;
+						}
+				}	// FIN DE FOR INDICADORES
 			// SALTO DE LINEA
 				$pdf->ln();
         }	// cierre del for de la matriz que es rellenada
-/*
+		// total final de matricula inicial o maxima.
+			$pdf->Cell($ancho[1],$alto[1],'TOTAL',1,0,'C');
+			$pdf->Cell($ancho[3],$alto[1],array_sum($tmm),1,0,'C');
+			$pdf->Cell($ancho[3],$alto[1],array_sum($tmf),1,0,'C');
+			$pdf->SetFont('Arial','B',10);
+				$pdf->Cell($ancho[3],$alto[1],array_sum($tmm) + array_sum($tmf),1,0,'C',true);
+			$pdf->SetFont('Arial','',10);
+		// total final desercion
+			$pdf->Cell($ancho[3],$alto[1],array_sum($tdm),1,0,'C');
+			$pdf->Cell($ancho[3],$alto[1],array_sum($tdf),1,0,'C');
+			$pdf->SetFont('Arial','B',10);
+				$pdf->Cell($ancho[3],$alto[1],array_sum($tdm) + array_sum($tdf),1,0,'C',true);
+			$pdf->SetFont('Arial','',10);
+		// total final repitencia
+			$pdf->Cell($ancho[3],$alto[1],array_sum($trm),1,0,'C');
+			$pdf->Cell($ancho[3],$alto[1],array_sum($trf),1,0,'C');
+			$pdf->SetFont('Arial','B',10);
+				$pdf->Cell($ancho[3],$alto[1],array_sum($trm) + array_sum($trf),1,0,'C',true);
+			$pdf->SetFont('Arial','',10);
+		// total final aprobados
+			$pdf->Cell($ancho[3],$alto[1],array_sum($tam),1,0,'C');
+			$pdf->Cell($ancho[3],$alto[1],array_sum($taf),1,0,'C');
+			$pdf->SetFont('Arial','B',10);
+				$pdf->Cell($ancho[3],$alto[1],array_sum($tam) + array_sum($taf),1,0,'C',true);
+			$pdf->SetFont('Arial','',10);
+		// total final reprobados
+			$pdf->Cell($ancho[3],$alto[1],array_sum($trem),1,0,'C');
+			$pdf->Cell($ancho[3],$alto[1],array_sum($tref),1,0,'C');
+			$pdf->SetFont('Arial','B',10);
+				$pdf->Cell($ancho[3],$alto[1],array_sum($trem) + array_sum($tref),1,0,'C',true);
+			$pdf->SetFont('Arial','',10);
+		// total final sobreedad
+			$pdf->Cell($ancho[3],$alto[1],array_sum($tsm),1,0,'C');
+			$pdf->Cell($ancho[3],$alto[1],array_sum($tsf),1,0,'C');
+			$pdf->SetFont('Arial','B',10);
+				$pdf->Cell($ancho[3],$alto[1],array_sum($tsm) + array_sum($tsf),1,0,'C',true);
+			$pdf->SetFont('Arial','',10);
+		// total final matricula final
+			$pdf->Cell($ancho[3],$alto[1],array_sum($tfm),1,0,'C');
+			$pdf->Cell($ancho[3],$alto[1],array_sum($tff),1,0,'C');
+			$pdf->SetFont('Arial','B',10);
+				$pdf->Cell($ancho[3],$alto[1],array_sum($tfm) + array_sum($tff),1,0,'C',true);
+			$pdf->SetFont('Arial','',10);
+			//
+			$pdf->ln(); 
 
-
-                // Variables para los diferentes cálculos.
-				$fill=false; $i=0; $m = 0; $f = 0; $suma = 0; $n_a = 0;
-				$contador_tabla_grado = 0;
-				$repitentem = 0; $repitentef = 0; $totalrepitente = 0;
-				$sobreedadm = 0; $sobreedadf = 0; $totalsobreedad = 0;
-				$total_masculino_final = 0; $total_femenino_final = 0; $total_final = 0;
-				$total_general_masculino = 0; $total_general_femenino = 0; $total_general = 0;
-				$alto_fila = 6;
-			// recorrer la tabla. SEGUN AÑO, MODALIDAD, GRADO, SECCIÓN	 
-			for($j=0;$j<=count($codigo_all_indicadores)-1;$j++)
-			{
-				if($codigo_turno_bucle[$jh] == substr($codigo_all_indicadores[$j],8,2))
-				{
-					$i=$i+1; // Variables para el salto de página y el control de número de líneas.
-					$pdf->SetX(15);
-					// Consultar al docente encargado.
-					 // CAPTURAR EL NOMBRE DEL RESPONSABLES DE LA SECCIÓN.
-						// buscar la consulta y la ejecuta.
-						consultas_docentes(1,0,$codigo_all_indicadores[$j],'','','',$db_link,'');
-						$print_nombre_docente = "";
-						while($row = $result_docente -> fetch(PDO::FETCH_BOTH))
-							{
-						$print_nombre_docente = cambiar_de_del(trim($row['nombre_docente']));
-						
-						if (!mb_check_encoding($print_nombre_docente, 'LATIN1')){
-							$print_nombre_docente = mb_convert_encoding($print_nombre_docente,'LATIN1');
-						}
-						
-							}
-					$pdf->Cell($w[0],$alto_fila,$i,'LR',0,'C',$fill);        // núermo correlativo
-					$pdf->Cell($w[1],$alto_fila,$print_nombre_docente,'LR',0,'J',$fill);
-					//$pdf->Cell($w[1],$alto_fila,substr(utf8_decode($nombre_modalidad[$j]),0,22),'LR',0,'J',$fill);
-					$pdf->Cell($w[2],$alto_fila,$nombre_grado[$j],'LR',0,'J',$fill);
-					$pdf->Cell($w[3],$alto_fila,$nombre_seccion[$j],'LR',0,'C',$fill);
-					//$pdf->Cell($w[3],$alto_fila,$nombre_turno[$j],'LR',0,'C',$fill);
-					// consultar y mostrar valores de matricula. m y f.
-					consulta_indicadores(1,0,$codigo_all_indicadores[$j],'','','',$db_link,'');
-						while($row_indicadores = $result_indicadores -> fetch(PDO::FETCH_BOTH))
-						{
-						$total_masculino = $row_indicadores['total_masculino'];
-						$pdf->Cell($w[4],$alto_fila,$total_masculino,'LR',0,'C',$fill);
-						}
-					// consultar y mostrar valores de matricula. m y f.
-					consulta_indicadores(2,0,$codigo_all_indicadores[$j],'','','',$db_link,'');
-						while($row_indicadores = $result_indicadores -> fetch(PDO::FETCH_BOTH))
-						{
-						$total_femenino = $row_indicadores['total_femenino'];
-						$pdf->Cell($w[4],$alto_fila,$total_femenino,'LR',0,'C',$fill);
-						// femenino + masculino
-						$pdf->Cell($w[4],$alto_fila,$total_masculino + $total_femenino,'LR',0,'C',$fill);
-						}
-					// consultar y mostrar valores de matricula. m y f. desercion
-					consulta_indicadores(3,0,$codigo_all_indicadores[$j],'','','',$db_link,'');
-						while($row_indicadores = $result_indicadores -> fetch(PDO::FETCH_BOTH))
-						{
-						$total_masculino_desercion = $row_indicadores['total_masculino_desercion'];
-						if($total_masculino_desercion == 0){$pdf->Cell($w[4],$alto_fila,'','LR',0,'C',$fill);}else{$pdf->Cell($w[4],$alto_fila,$total_masculino_desercion,'LR',0,'C',$fill);}
-						}
-					// consultar y mostrar valores de matricula. m y f. desercion
-					consulta_indicadores(4,0,$codigo_all_indicadores[$j],'','','',$db_link,'');
-						while($row_indicadores = $result_indicadores -> fetch(PDO::FETCH_BOTH))
-						{
-							$total_femenino_desercion = $row_indicadores['total_femenino_desercion'];
-							if($total_femenino_desercion == 0){$pdf->Cell($w[4],$alto_fila,'','LR',0,'C',$fill);}else{$pdf->Cell($w[4],$alto_fila,$total_femenino_desercion,'LR',0,'C',$fill);}
-						// femenino + masculino desercion
-							if(($total_femenino_desercion + $total_masculino_desercion) == 0){$pdf->Cell($w[4],$alto_fila,'','LR',0,'C',$fill);}else{$pdf->Cell($w[4],$alto_fila,$total_masculino_desercion + $total_femenino_desercion,'LR',0,'C',$fill);}
-						}		    
-					// consultar y mostrar valores de matricula. m y f. repitente
-					consulta_indicadores(5,0,$codigo_all_indicadores[$j],'','','',$db_link,'');
-						while($row_indicadores = $result_indicadores -> fetch(PDO::FETCH_BOTH))
-						{
-							$total_masculino_repitente = $row_indicadores['total_masculino_repitente'];
-							if($total_masculino_repitente == 0){$pdf->Cell($w[4],$alto_fila,'','LR',0,'C',$fill);}else{$pdf->Cell($w[4],$alto_fila,$total_masculino_repitente,'LR',0,'C',$fill);}
-						}
-					// consultar y mostrar valores de matricula. m y f. repitente
-					consulta_indicadores(6,0,$codigo_all_indicadores[$j],'','','',$db_link,'');
-						while($row_indicadores = $result_indicadores -> fetch(PDO::FETCH_BOTH))
-						{
-							$total_femenino_repitente = $row_indicadores['total_femenino_repitente'];
-							if($total_femenino_repitente == 0){$pdf->Cell($w[4],$alto_fila,'','LR',0,'C',$fill);}else{$pdf->Cell($w[4],$alto_fila,$total_femenino_repitente,'LR',0,'C',$fill);}
-						// femenino + masculino desercion
-							if(($total_femenino_repitente + $total_masculino_repitente) == 0){$pdf->Cell($w[4],$alto_fila,'','LR',0,'C',$fill);}else{$pdf->Cell($w[4],$alto_fila,$total_masculino_repitente + $total_femenino_repitente,'LR',0,'C',$fill);}
-						}
-					// consultar y mostrar valores de matricula. m y f. sobreedad
-					consulta_indicadores(7,0,$codigo_all_indicadores[$j],'','','',$db_link,'');
-						while($row_indicadores = $result_indicadores -> fetch(PDO::FETCH_BOTH))
-						{
-							$total_masculino_sobreedad = $row_indicadores['total_masculino_sobreedad'];
-							if($total_masculino_sobreedad == 0){$pdf->Cell($w[4],$alto_fila,'','LR',0,'C',$fill);}else{$pdf->Cell($w[4],$alto_fila,$total_masculino_sobreedad,'LR',0,'C',$fill);}
-						}
-					// consultar y mostrar valores de matricula. m y f. sobreedad
-					consulta_indicadores(8,0,$codigo_all_indicadores[$j],'','','',$db_link,'');
-						while($row_indicadores = $result_indicadores -> fetch(PDO::FETCH_BOTH))
-						{
-							$total_femenino_sobreedad = $row_indicadores['total_femenino_sobreedad'];
-							if($total_femenino_sobreedad == 0){$pdf->Cell($w[4],$alto_fila,'','LR',0,'C',$fill);}else{$pdf->Cell($w[4],$alto_fila,$total_femenino_sobreedad,'LR',0,'C',$fill);}
-						// femenino + masculino desercion
-							if(($total_femenino_sobreedad + $total_masculino_sobreedad) == 0){$pdf->Cell($w[4],$alto_fila,'','LR',0,'C',$fill);}else{$pdf->Cell($w[4],$alto_fila,$total_masculino_sobreedad + $total_femenino_sobreedad,'LR',0,'C',$fill);}
-						}
-					// calcular la matricula final.
-						$total_masculino_final = $total_masculino - $total_masculino_desercion;
-						$total_femenino_final = $total_femenino - $total_femenino_desercion;
-						$total_final = $total_masculino_final + $total_femenino_final;
-						$total_general_masculino = $total_general_masculino + $total_masculino_final;
-						$total_general_femenino = $total_general_femenino + $total_femenino_final;
-						$total_general = $total_general_masculino + $total_general_femenino;
-						
-						$pdf->Cell($w[4],$alto_fila,$total_masculino_final,'LR',0,'C',$fill);
-						$pdf->Cell($w[4],$alto_fila,$total_femenino_final,'LR',0,'C',$fill);
-						$pdf->Cell($w[4],$alto_fila,$total_final,'LR',0,'C',$fill);
-					// número de la línea y fondo.
-							$pdf->Ln();
-							$fill=!$fill;
-					// Salto de Línea.
-							if($i > 25){
-							$pdf->SetX(15);
-							$pdf->Cell(array_sum($w)+5+(6*10),0,'','B');
-							$pdf->AddPage();
-							// Aqui mandamos texto a imprimir o al documento.
-							$pdf->SetY(50);
-							$pdf->SetX(15);
-							$pdf->encabezado();
-							}
-				} // if condiciones para imprimir dependiendo del codigo turno.
-			}	// for codigo_all_indicadores
-/*
-//////////////////////////////////////////////////////////////////////////////////////////////////////////
-// CONSOLIDADOS GENERALES
-//////////////////////////////////////////////////////////////////////////////////////////////////////////
-  $pdf->SetX(15);
-      $pdf->cell(205,$alto_fila,' ','LR',0,'C',$fill);
-      $pdf->Cell($w[4],$alto_fila,$total_general_masculino,'LR',0,'C',$fill);
-      $pdf->Cell($w[4],$alto_fila,$total_general_femenino,'LR',0,'C',$fill);
-      $pdf->Cell($w[4],$alto_fila,$total_general,'LR',1,'C',$fill);
-    // cerrar línea si sólo hay una página.
-    if($i == 26){
-	$pdf->SetX(15);
-	$pdf->Cell(array_sum($w)+5+(6*10),0,'','B');
-    }
-//*******************************************************/
-//	CREAR PROCESO PARA CONSOLIDAR GRADOS
-//
-//******************************************************//
-    /// armar subtotales. crear una nueva página.
-  /*      $pdf->AddPage();
-// Aqui mandamos texto a imprimir o al documento.
-    $pdf->SetY(50);
-    $pdf->SetX(15);
- // Evaluar si existen registros.
-    if($result -> rowCount() != 0){
-	// llamar al encabezado.
-	    $pdf->encabezado();
-	    
-	$w=array(10,40,20,15,10,15,15,15); //determina el ancho de las columnas
-	
-	$fill=false; $i=1; $m = 0; $f = 0; $suma = 0; $n_a = 0;
-	$contador_tabla_grado = 0;
-	$repitentem = 0; $repitentef = 0; $totalrepitente = 0;
-	$sobreedadm = 0; $sobreedadf = 0; $totalsobreedad = 0;
-	$alto_fila = 6;
-
-  
-	// recorrer la tabla.	 
-	    for($j=0;$j<=count($codigo_indicadores)-1;$j++)
-		{
-		$pdf->SetX(15);
-		$pdf->Cell($w[0],$alto_fila,$i,'LR',0,'C',$fill);        // núermo correlativo
-		$pdf->Cell($w[1],$alto_fila,utf8_decode(substr($nombre_modalidad_consolidado[$j],0,23)),'LR',0,'J',$fill);
-		$pdf->Cell($w[2],$alto_fila,$nombre_grado_consolidado[$j],'LR',0,'J',$fill);
-		$pdf->Cell($w[3],$alto_fila,'','LR',0,'C',$fill);
-		
-		// consultar y mostrar valores de matricula. m y f.
-		    consulta_indicadores(9,0,$codigo_indicadores[$j],'','','',$db_link,'');
-		    	while($row_indicadores = $result_indicadores -> fetch(PDO::FETCH_BOTH))
-			    {
-				$total_masculino = $row_indicadores['total_masculino'];
-				$pdf->Cell($w[4],$alto_fila,$total_masculino,'LR',0,'C',$fill);
-			    }
-    
-		// consultar y mostrar valores de matricula. m y f.
-		    consulta_indicadores(10,0,$codigo_indicadores[$j],'','','',$db_link,'');
-		    	while($row_indicadores = $result_indicadores -> fetch(PDO::FETCH_BOTH))
-			    {
-				$total_femenino = $row_indicadores['total_femenino'];
-				$pdf->Cell($w[4],$alto_fila,$total_femenino,'LR',0,'C',$fill);
-				// femenino + masculino
-				$pdf->Cell($w[4],$alto_fila,$total_masculino + $total_femenino,'LR',0,'C',$fill);
-			    }
-
-		// consultar y mostrar valores de matricula. m y f. desercion
-		    consulta_indicadores(11,0,$codigo_indicadores[$j],'','','',$db_link,'');
-		    	while($row_indicadores = $result_indicadores -> fetch(PDO::FETCH_BOTH))
-			    {
-				$total_masculino_desercion = $row_indicadores['total_masculino_desercion'];
-				if($total_masculino_desercion == 0){$pdf->Cell($w[4],$alto_fila,'','LR',0,'C',$fill);}else{$pdf->Cell($w[4],$alto_fila,$total_masculino_desercion,'LR',0,'C',$fill);}
-			    }
-
-		// consultar y mostrar valores de matricula. m y f. desercion
-		    consulta_indicadores(12,0,$codigo_indicadores[$j],'','','',$db_link,'');
-		    	while($row_indicadores = $result_indicadores -> fetch(PDO::FETCH_BOTH))
-			    {
-				$total_femenino_desercion = $row_indicadores['total_femenino_desercion'];
-				if($total_femenino_desercion == 0){$pdf->Cell($w[4],$alto_fila,'','LR',0,'C',$fill);}else{$pdf->Cell($w[4],$alto_fila,$total_femenino_desercion,'LR',0,'C',$fill);}
-				// femenino + masculino desercion
-				
-				if(($total_femenino_desercion + $total_masculino_desercion) == 0){$pdf->Cell($w[4],$alto_fila,'','LR',0,'C',$fill);}else{$pdf->Cell($w[4],$alto_fila,$total_masculino_desercion + $total_femenino_desercion,'LR',0,'C',$fill);}
-			    }
-			    
-		// consultar y mostrar valores de matricula. m y f. repitente
-		    consulta_indicadores(13,0,$codigo_indicadores[$j],'','','',$db_link,'');
-		    	while($row_indicadores = $result_indicadores -> fetch(PDO::FETCH_BOTH))
-			    {
-				$total_masculino_repitente = $row_indicadores['total_masculino_repitente'];
-				if($total_masculino_repitente == 0){$pdf->Cell($w[4],$alto_fila,'','LR',0,'C',$fill);}else{$pdf->Cell($w[4],$alto_fila,$total_masculino_repitente,'LR',0,'C',$fill);}
-			    }
-
-		// consultar y mostrar valores de matricula. m y f. repitente
-		    consulta_indicadores(14,0,$codigo_indicadores[$j],'','','',$db_link,'');
-		    	while($row_indicadores = $result_indicadores -> fetch(PDO::FETCH_BOTH))
-			    {
-				$total_femenino_repitente = $row_indicadores['total_femenino_repitente'];
-				if($total_femenino_repitente == 0){$pdf->Cell($w[4],$alto_fila,'','LR',0,'C',$fill);}else{$pdf->Cell($w[4],$alto_fila,$total_femenino_repitente,'LR',0,'C',$fill);}
-				// femenino + masculino desercion
-				if(($total_femenino_repitente + $total_masculino_repitente) == 0){$pdf->Cell($w[4],$alto_fila,'','LR',0,'C',$fill);}else{$pdf->Cell($w[4],$alto_fila,$total_masculino_repitente + $total_femenino_repitente,'LR',0,'C',$fill);}
-			    }
-			    
-		// consultar y mostrar valores de matricula. m y f. sobreedad
-		    consulta_indicadores(15,0,$codigo_indicadores[$j],'','','',$db_link,'');
-		    	while($row_indicadores = $result_indicadores -> fetch(PDO::FETCH_BOTH))
-			    {
-				$total_masculino_sobreedad = $row_indicadores['total_masculino_sobreedad'];
-				if($total_masculino_sobreedad == 0){$pdf->Cell($w[4],$alto_fila,'','LR',0,'C',$fill);}else{$pdf->Cell($w[4],$alto_fila,$total_masculino_sobreedad,'LR',0,'C',$fill);}
-			    }
-
-		// consultar y mostrar valores de matricula. m y f. sobreedad
-		    consulta_indicadores(16,0,$codigo_indicadores[$j],'','','',$db_link,'');
-		    	while($row_indicadores = $result_indicadores -> fetch(PDO::FETCH_BOTH))
-			    {
-				$total_femenino_sobreedad = $row_indicadores['total_femenino_sobreedad'];
-				if($total_femenino_sobreedad == 0){$pdf->Cell($w[4],$alto_fila,'','LR',0,'C',$fill);}else{$pdf->Cell($w[4],$alto_fila,$total_femenino_sobreedad,'LR',0,'C',$fill);}
-				// femenino + masculino desercion
-				if(($total_femenino_sobreedad + $total_masculino_sobreedad) == 0){$pdf->Cell($w[4],$alto_fila,'','LR',0,'C',$fill);}else{$pdf->Cell($w[4],$alto_fila,$total_masculino_sobreedad + $total_femenino_sobreedad,'LR',0,'C',$fill);}
-			    }    
-		
-			    //$pdf->cell($w[4],$alto_fila,$codigo_indicadores[$j],0,0,'C',$fill);
-		// número de la línea y fondo.
-					$pdf->Ln();
-					$fill=!$fill;
-					$i=$i+1;
-        // salto de línea.
-				if($i == 26){
-					$pdf->SetX(15);
-					$pdf->Cell(array_sum($w)+5+(6*10),0,'','B');
-					$pdf->AddPage();
-					// Aqui mandamos texto a imprimir o al documento.
-					$pdf->SetY(50);
-					$pdf->SetX(15);
-					$pdf->encabezado();
-			    }
-		}
-    } // condición de vacío en la tabla.    
-else{
-    // si no existen registros.
-    $pdf->Cell(150,7,$fila.' NO EXISTEN REGISTROS EN LA TABLA.',1,0,'L');
-}   */
 // Salida del pdf.
      $modo = 'I'; // Envia al navegador (I), Descarga el archivo (D).
      $print_nombre = 'MEMORIA ESTADISTICA ' . $nombre_ann_lectivo;
