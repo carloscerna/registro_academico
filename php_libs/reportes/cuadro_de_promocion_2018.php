@@ -481,15 +481,17 @@ $codigo_all_ = substr($codigo_all,0,8);
 		else
 		{
 			$query_update_estadistica = "UPDATE estadistica_grados SET
-			matricula_final = $total_alumnos_masculino,
-			retenidos = $total_retenidos_m,
-			promovidos = $total_promovidos_m
-			WHERE genero = 'Masculino' and codigo_bachillerato_ciclo = '".$codigo_bachillerato."' and codigo_ann_lectivo = '".$codigo_ann_lectivo."' and codigo_grado = '".$codigo_grado."' and codigo_seccion = '".$codigo_seccion."';
-			UPDATE estadistica_grados SET
+		  	matricula_final = $total_alumnos_masculino,
+			  retenidos = $total_retenidos_m,
+			  promovidos = $total_promovidos_m
+			    WHERE genero = 'Masculino' and codigo_bachillerato_ciclo = '$codigo_bachillerato' and codigo_ann_lectivo = '$codigo_ann_lectivo' and codigo_grado = '$codigo_grado' and codigo_seccion = '$codigo_seccion'";
+      $result_udpate = $db_link -> query($query_update_estadistica);
+
+			$query_update_estadistica = "UPDATE estadistica_grados SET
 			matricula_final = $total_alumnos_femenino,
 			retenidos = $total_retenidos_f,
 			promovidos = $total_promovidos_f
-			WHERE genero = 'Femenino' and codigo_bachillerato_ciclo = '".$codigo_bachillerato."' and codigo_ann_lectivo = '".$codigo_ann_lectivo."' and codigo_grado = '".$codigo_grado."' and codigo_seccion = '".$codigo_seccion."'";
+			WHERE genero = 'Femenino' and codigo_bachillerato_ciclo = '$codigo_bachillerato' and codigo_ann_lectivo = '$codigo_ann_lectivo' and codigo_grado = '$codigo_grado' and codigo_seccion = '$codigo_seccion'";
 			$result_udpate = $db_link -> query($query_update_estadistica);
 		}
 /////////////////////////////////////////////////////////////////////////////////////////

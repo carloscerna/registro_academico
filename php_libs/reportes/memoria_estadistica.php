@@ -53,7 +53,7 @@ function Header()
     $this->Cell(270,4,utf8_decode('MINISTERIO DE EDUCACION, CIENCIA Y TECNOLOGIA'),0,1,'C');
     $this->Cell(270,4,utf8_decode('DIRECCION DEPARTAMENTAL DE SANTA ANA'),0,1,'C');
     $this->SetFont('Arial','B',10);
-        $this->Cell(270,4,utf8_decode('MEMORIA ESTADISTICA ') . $nombre_ann_lectivo,0,1,'C');
+    $this->Cell(270,4,utf8_decode('MEMORIA ESTADISTICA ') . $nombre_ann_lectivo,0,1,'C');
     $this->SetFont('Arial','',8);
     $this->ln();
     $this->Cell(150,4,'CENTRO ESCOLAR: ' . utf8_decode($_SESSION['institucion']),0,0,'L');
@@ -98,7 +98,7 @@ function encabezado()
     // PRIMERA LINEA
         $this->Cell(50,4,'GRADO','LTR',0,'C');
         $this->Cell(30,4,'MATRICULA INICIAL','LTR',0,'C');
-        $this->Cell(30,4,'DESERSION','LTR',0,'C');
+        $this->Cell(30,4,'DESERCION','LTR',0,'C');
         $this->Cell(30,4,'REPITENCIA','LTR',0,'C');
         $this->Cell(30,4,'APROBADOS','LTR',0,'C');
         $this->Cell(30,4,'REPROBADOS','LTR',0,'C');
@@ -220,6 +220,9 @@ function encabezado()
 					case "reprobados":
 						$promovidos_retenidos = "retenidos";
 						$calculo_final = 2;
+						break;
+					default:
+						$calculo_final = 0;
 						break;
 				}	// FIN DEL SWICTH INDICADORES
 
@@ -382,6 +385,9 @@ function encabezado()
 							while($rows_total_alumnos_m = $result_total_masculino -> fetch(PDO::FETCH_BOTH))
 								{
 									$total_alumnos_masculino = trim($rows_total_alumnos_m['total_alumnos_matricula_inicial_masculino']);
+									if($total_alumnos_masculino == null){
+										$total_alumnos_masculino = 0;
+									}
 								}
 
 						//  cuenta el total de alumnos para colocar en la estadistica MATRICULA INICIAL..
@@ -389,6 +395,9 @@ function encabezado()
 							while($rows_total_alumnos_f = $result_total_femenino -> fetch(PDO::FETCH_BOTH))
 								{
 									$total_alumnos_femenino = trim($rows_total_alumnos_f['total_alumnos_matricula_inicial_femenino']);
+									if($total_alumnos_femenino == null){
+										$total_alumnos_femenino = 0;
+									}
 								}			
 				}
 							
