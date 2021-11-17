@@ -86,7 +86,30 @@ while($row = $result_catalogo_area -> fetch(PDO::FETCH_BOTH))
 			$print_codigo_matricula = $row['codigo_matricula'];
 				break;
 		}
-		
+
+// ENCARGADO DE GRADO, NOMBRE DEL DOCENTE.
+	$query_encargado = "SELECT eg.id_encargado_grado, eg.encargado, btrim(p.nombres || CAST(' ' AS VARCHAR) || p.apellidos) as nombre_docente, 
+		eg.codigo_docente, bach.nombre, gann.nombre, sec.nombre, ann.nombre, tur.nombre
+		FROM encargado_grado eg 
+		INNER JOIN personal p ON eg.codigo_docente = p.id_personal 
+		INNER JOIN bachillerato_ciclo bach ON eg.codigo_bachillerato = bach.codigo 
+		INNER JOIN ann_lectivo ann ON eg.codigo_ann_lectivo = ann.codigo 
+		INNER JOIN grado_ano gann ON eg.codigo_grado = gann.codigo 
+		INNER JOIN seccion sec ON eg.codigo_seccion = sec.codigo 
+		INNER JOIN turno tur ON eg.codigo_turno = tur.codigo
+		WHERE btrim(bach.codigo || gann.codigo || sec.codigo || ann.codigo || tur.codigo) = '$codigo_all' and eg.encargado = 't' ORDER BY p.nombres";
+
+
+
+$result_encargado = $db_link -> query($query_encargado);
+//  Nombre del Encargado.
+$nombre_encargado = '';
+while($rows_encargado = $result_encargado -> fetch(PDO::FETCH_BOTH))
+{
+		 $nombre_encargado = utf8_decode(trim($rows_encargado['nombre_docente']));
+		 $codigo_docente = trim($rows_encargado['codigo_docente']);
+		 
+}
 ////////////////////////////////////////////////////////////////////
 //////// CONTAR CUANTAS ASIGNATURAS TIENE CADA MODALIDAD.
 //////////////////////////////////////////////////////////////////
@@ -182,14 +205,15 @@ function Header()
 function Footer()
 {
 	// Variables.
-	global $registro_docente, $firma, $sello, $print_codigo_alumno, $print_codigo_matricula, $print_codigo_bachillerato, $meses, $dia, $mes, $año;
+	global $registro_docente, $firma, $sello, $print_codigo_alumno, $print_codigo_matricula, $print_codigo_bachillerato, $meses, $dia, $mes, $año, $nombre_encargado;
 	//Firma Director.
 		$nombre_director = cambiar_de_del($_SESSION['nombre_director']);
     if($firma == 'yes'){
-		$img_firma = $_SERVER['DOCUMENT_ROOT'].'/registro_academico/img/'.$_SESSION['imagen_firma'];;
+		$img_firma = $_SERVER['DOCUMENT_ROOT'].'/registro_academico/img/'.$_SESSION['imagen_firma'];
     	}
     if($sello == 'yes'){
-		$img_sello = $_SERVER['DOCUMENT_ROOT'].'/registro_academico/img/'.$_SESSION['imagen_sello'];;
+		$img_sello = $_SERVER['DOCUMENT_ROOT'].'/registro_academico/img/'.$_SESSION['imagen_sello'];
+		$img_sello_registro = $_SERVER['DOCUMENT_ROOT'].'/registro_academico/img/sello_registro_cerz.jpg';
     }	
     $this->SetFont('Arial','I',8);	    //Arial italic 8    
 	// PRINT A PANTALLA.
@@ -198,10 +222,19 @@ function Footer()
 		$this->Line(10,245,80,245);		//Crear una l�nea de la primera firma
 		$this->Line(120,245,190,245);	//Crear una l�nea de la segunda firma.
 		$this->Line(5,265,203,265);		//Crear una l�nea FINAL.
-		$this->RotatedText(10,250,$registro_docente,0,1,'C');		// NOMBRE DEL DOCENTE, Sub-director o Encargado de Registro Académico.
-		$this->RotatedText(10,255,utf8_decode('Encargado Registro Académico'),0,1,'C');			// ETIQUETA DIRECTOR.
+		if($nombre_encargado != ""){
+			$this->RotatedText(10,250,$nombre_encargado,0,1,'C');		// NOMBRE DEL DOCENTE, Sub-director o Encargado de Registro Académico.
+			$this->RotatedText(10,255,utf8_decode('Docente encargado de la sección'),0,1,'C');			// ETIQUETA DIRECTOR.
+			
+		}else{
+
+			$this->RotatedText(10,250,$registro_docente,0,1,'C');		// NOMBRE DEL DOCENTE, Sub-director o Encargado de Registro Académico.
+			$this->RotatedText(10,255,utf8_decode('Encargado Registro Académico'),0,1,'C');			// ETIQUETA DIRECTOR.
+		}
+
 		if(isset($img_firma)){$this->Image($img_firma,120,225,70,15);}						// IMAGEN FIRMA
 		if(isset($img_firma)){$this->Image($img_sello,165,225,30,30);}						// IMAGEN SELLO
+		if(isset($img_firma)){$this->Image($img_sello_registro,85,225,32,32);}						// IMAGEN SELLO
     	$this->RotatedText(130,250,$nombre_director,0,1,'C');	    // Nombre Director
 		$this->RotatedText(140,255,'Director(a)',0,1,'C');			// ETIQUETA DIRECTOR.
 
@@ -372,6 +405,7 @@ for($listado=0;$listado<count($codigo_alumno_listado);$listado++)
 while($row = $result -> fetch(PDO::FETCH_BOTH)) // bucle para la recorrer las asignaturas.
 {
 	// variables a utilizar.
+		$conteo_aprobadas = 0;
 		$nombre_completo_alumno = utf8_decode(trim($row['apellido_alumno']));
 		$numero_identificacion_estudiantil = trim($row['codigo_nie']);
 		$print_codigo_alumno = $row['codigo_alumno'];
@@ -470,8 +504,8 @@ while($row = $result -> fetch(PDO::FETCH_BOTH)) // bucle para la recorrer las as
 				$catalogo_area_complementaria = false;
 			}
 		}
-		//Restauraci�n de colores y fuentes
-		$pdf->SetFillColor(224,235,255);
+		//Restauraci�n de colos y fuentes
+		$pdf->SetFillColor(212, 230, 252);
 		$pdf->SetTextColor(0);
 		$pdf->SetFont('Times','',10);	
 	///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -535,7 +569,11 @@ while($row = $result -> fetch(PDO::FETCH_BOTH)) // bucle para la recorrer las as
 					$calificacion_ = $row[$nombre_campos[$ii]];
 					// EVALUAR LA CALIFICACIÓN.
 						if($concepto_calificacion == '01'){
-							if($calificacion_ != 0){$pdf->Cell($ancho[1],($line * $alto[0]),$calificacion_,0,0,'C',$fill);}else{$pdf->Cell($ancho[1],($line * $alto[0]),'',0,0,'C',$fill);}	// NOTA 1 (TRIMESTRE, PERIODO O MODULO)
+							if($calificacion_ != 0){
+								$pdf->Cell($ancho[1],($line * $alto[0]),$calificacion_,0,0,'C',$fill);
+							}else{
+								$pdf->Cell($ancho[1],($line * $alto[0]),'',0,0,'C',$fill);
+							}	// NOTA 1 (TRIMESTRE, PERIODO O MODULO)
 						}
 						//	SI ES DE CONCEPTO.
 						if($concepto_calificacion == '02'){
@@ -569,7 +607,55 @@ while($row = $result -> fetch(PDO::FETCH_BOTH)) // bucle para la recorrer las as
 					if($row['total_puntos_nocturna'] != 0){$pdf->Cell($ancho[3],($line * $alto[0]),trim($row['total_puntos_nocturna']),'L',0,'C',$fill);}else{$pdf->Cell($ancho[3],($line * $alto[0]),'',0,0,'C',$fill);}
 					if($row['nota_final'] != 0){$pdf->Cell($ancho[3],($line * $alto[0]),trim($row['nota_final']),0,0,'C',$fill);}else{$pdf->Cell($ancho[3],($line * $alto[0]),'',0,0,'C',$fill);}
 					if($row['recuperacion'] != 0){$pdf->Cell($ancho[3],($line * $alto[0]),trim($row['recuperacion']),0,0,'C',$fill);}else{$pdf->Cell($ancho[3],($line * $alto[0]),'',0,0,'C',$fill);}
-					if(verificar_nota($row['nota_final'],$row['recuperacion'] != 0)){$pdf->Cell($ancho[3],($line * $alto[0]),verificar_nota($row['nota_final'],$row['recuperacion']),0,0,'C',$fill);}else{$pdf->Cell($ancho[3],($line * $alto[0]),'',0,0,'C',$fill);}
+					if(verificar_nota($row['nota_final'],$row['recuperacion'] != 0)){
+						if($print_codigo_bachillerato >= '01' and  $print_codigo_bachillerato <= '05')
+						{
+							if(verificar_nota($row['nota_final'],$row['recuperacion']) < 5){
+								$pdf->SetLineWidth(.3);				// GROSOR.
+								$pdf->SetDrawColor(255, 0, 0);			// COLOR DE LA LÍNEA.
+								$pdf->SetFont('Arial','B',9);
+								$pdf->SetTextColor(255, 25, 0);
+									$pdf->Cell($ancho[3],($line * $alto[0]),verificar_nota($row['nota_final'],$row['recuperacion']) . ' Rep',1,0,'C',$fill);
+								$pdf->SetFont('');
+								$pdf->SetTextColor(0,0,0);
+								$pdf->SetLineWidth(0.1);				// GROSOR.
+								$pdf->SetDrawColor(0, 0, 0);			// COLOR DE LA LÍNEA.
+							}else{
+								$pdf->SetLineWidth(0.1);				// GROSOR.
+								$pdf->SetDrawColor(0, 0, 0);			// COLOR DE LA LÍNEA.
+								$pdf->SetFont('');
+								$pdf->SetTextColor(0,0,0);
+									$pdf->Cell($ancho[3],($line * $alto[0]),verificar_nota($row['nota_final'],$row['recuperacion']) . ' Apr ',0,0,'C',$fill);
+							}
+							$concepto_calificacion = trim($row['codigo_cc']);
+							if(verificar_nota($row['nota_final'],$row['recuperacion']) > 5){
+								$conteo_aprobadas++;
+							}
+						}	// CONDICION PARA BASICA DE 1.º A 9.º
+						if($print_codigo_bachillerato >= '06' and  $print_codigo_bachillerato <= '09')
+						{
+							if(verificar_nota_media($row['nota_final'],$row['recuperacion']) < 6){
+								$pdf->SetLineWidth(.3);				// GROSOR.
+								$pdf->SetDrawColor(255, 0, 0);			// COLOR DE LA LÍNEA.
+								$pdf->SetFont('Arial','B',9);
+								$pdf->SetTextColor(255, 25, 0);
+									$pdf->Cell($ancho[3],($line * $alto[0]),verificar_nota_media($row['nota_final'],$row['recuperacion']) . ' Rep',1,0,'C',$fill);
+								$pdf->SetFont('');
+								$pdf->SetTextColor(0,0,0);
+								$pdf->SetLineWidth(0.1);				// GROSOR.
+								$pdf->SetDrawColor(0, 0, 0);			// COLOR DE LA LÍNEA.
+							}else{
+								$pdf->SetLineWidth(0.1);				// GROSOR.
+								$pdf->SetDrawColor(0, 0, 0);			// COLOR DE LA LÍNEA.
+								$pdf->SetFont('');
+								$pdf->SetTextColor(0,0,0);
+									$pdf->Cell($ancho[3],($line * $alto[0]),verificar_nota_media($row['nota_final'],$row['recuperacion']) . ' Apr ',0,0,'C',$fill);
+							}
+						}	// CONDICION PARA BASICA DE 1.º A 9.º
+
+					}else{
+						$pdf->Cell($ancho[3],($line * $alto[0]),'',0,0,'C',$fill);
+					}
 				// SALTO DE LINEA Y CAMBIO DE COLOR DE RELLENO.
 					$pdf->Ln();
 						$fill=!$fill;
@@ -580,6 +666,7 @@ while($row = $result -> fetch(PDO::FETCH_BOTH)) // bucle para la recorrer las as
 				$pdf->SetFont('','',10);
 				$pdf->Ln();
 				// evaluar etiqueta leyenda.
+					$leyenda_2 = "APROBADO PARA EL GRADO INMEDIATO SUPERIOR.";
 				if($print_codigo_bachillerato >= '01' and  $print_codigo_bachillerato <= '05')
 				{
 					$leyenda = " Trimestre >= 5.";}
@@ -596,8 +683,22 @@ while($row = $result -> fetch(PDO::FETCH_BOTH)) // bucle para la recorrer las as
 				}
 				$pdf->Cell(120,$alto[0],'Nota. Para Aprobar cada asignatura por '.utf8_decode($leyenda),0,1,'L');
 				$pdf->Cell(160,$alto[0],'Si alguna ASIGNATURA aparece en BLANCO consulte con el DOCENTE que la imparte.',0,1,'L');
-				$pdf->Cell(40,$alto[0],'A = Aprobado; R = Reprobado',0,1,'L');
-
+				$pdf->Cell(40,$alto[0],'A = Aprobado; R = Reprobado ',0,1,'L');
+				// LEYENDA GRADO INMEDIATO SUPERIOR
+				if($print_codigo_bachillerato >= '01' and  $print_codigo_bachillerato <= '05')
+				{
+					if($conteo_aprobadas > 7){
+						$pdf->Cell(40,$alto[0],$leyenda_2,0,1,'L');
+					}
+				}
+				else if($print_codigo_bachillerato >= '06' and  $print_codigo_bachillerato <= '09')
+				{
+					$AR = cambiar_aprobado_reprobado_m($calificacion_);}
+				else if($print_codigo_bachillerato == '10'){
+					$AR = cambiar_aprobado_reprobado_b($calificacion_);
+				}else{
+					$AR = cambiar_aprobado_reprobado_m($calificacion_);
+				}
 			}
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
