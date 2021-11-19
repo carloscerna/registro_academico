@@ -317,7 +317,7 @@ function FancyTable($header)
 		$this->SetFont('Times','B',10);
 	///////////////////////////////////////////////////////////////////////////////////////
     //Restauraci�n de colores y fuentes
-		$this->SetFillColor(224,235,255);
+		$this->SetFillColor(212, 230, 252);
 		$this->SetTextColor(0);
 		$this->SetFont('Times','',10);
     //Datos
@@ -652,7 +652,46 @@ while($row = $result -> fetch(PDO::FETCH_BOTH)) // bucle para la recorrer las as
 									$pdf->Cell($ancho[3],($line * $alto[0]),verificar_nota_media($row['nota_final'],$row['recuperacion']) . ' Apr ',0,0,'C',$fill);
 							}
 						}	// CONDICION PARA BASICA DE 1.º A 9.º
-
+						if($print_codigo_bachillerato == '10' || $print_codigo_bachillerato == '12')
+						{
+							if(verificar_nota_media($row['nota_final'],$row['recuperacion']) < 5){
+								$pdf->SetLineWidth(.3);				// GROSOR.
+								$pdf->SetDrawColor(255, 0, 0);			// COLOR DE LA LÍNEA.
+								$pdf->SetFont('Arial','B',9);
+								$pdf->SetTextColor(255, 25, 0);
+									$pdf->Cell($ancho[3],($line * $alto[0]),verificar_nota_media($row['nota_final'],$row['recuperacion']) . ' Rep',1,0,'C',$fill);
+								$pdf->SetFont('');
+								$pdf->SetTextColor(0,0,0);
+								$pdf->SetLineWidth(0.1);				// GROSOR.
+								$pdf->SetDrawColor(0, 0, 0);			// COLOR DE LA LÍNEA.
+							}else{
+								$pdf->SetLineWidth(0.1);				// GROSOR.
+								$pdf->SetDrawColor(0, 0, 0);			// COLOR DE LA LÍNEA.
+								$pdf->SetFont('');
+								$pdf->SetTextColor(0,0,0);
+									$pdf->Cell($ancho[3],($line * $alto[0]),verificar_nota_media($row['nota_final'],$row['recuperacion']) . ' Apr ',0,0,'C',$fill);
+							}
+						}	// CONDICION PARA BASICA DE 1.º A 9.º
+						if($print_codigo_bachillerato == '11')
+						{
+							if(verificar_nota_media($row['nota_final'],$row['recuperacion']) < 5){
+								$pdf->SetLineWidth(.3);				// GROSOR.
+								$pdf->SetDrawColor(255, 0, 0);			// COLOR DE LA LÍNEA.
+								$pdf->SetFont('Arial','B',9);
+								$pdf->SetTextColor(255, 25, 0);
+									$pdf->Cell($ancho[3],($line * $alto[0]),verificar_nota_media($row['nota_final'],$row['recuperacion']) . ' Rep',1,0,'C',$fill);
+								$pdf->SetFont('');
+								$pdf->SetTextColor(0,0,0);
+								$pdf->SetLineWidth(0.1);				// GROSOR.
+								$pdf->SetDrawColor(0, 0, 0);			// COLOR DE LA LÍNEA.
+							}else{
+								$pdf->SetLineWidth(0.1);				// GROSOR.
+								$pdf->SetDrawColor(0, 0, 0);			// COLOR DE LA LÍNEA.
+								$pdf->SetFont('');
+								$pdf->SetTextColor(0,0,0);
+									$pdf->Cell($ancho[3],($line * $alto[0]),verificar_nota_media($row['nota_final'],$row['recuperacion']) . ' Apr ',0,0,'C',$fill);
+							}
+						}	// CONDICION PARA BASICA DE 1.º A 9.º
 					}else{
 						$pdf->Cell($ancho[3],($line * $alto[0]),'',0,0,'C',$fill);
 					}

@@ -203,7 +203,7 @@ submitHandler: function(){
                     var miLstPeriodo=$("#LstPeriodo");
                         miLstPeriodo.empty();
                         // Condiciones para Parvularia y Educación Básica (I, II Y III).
-                        if(response.codigo_modalidad >= '01' && response.codigo_modalidad <= '05' || response.codigo_modalidad == '12'){
+                        if(response.codigo_modalidad >= '01' && response.codigo_modalidad <= '05'){
                             miLstPeriodo.append('<option value="" selected>Seleccionar...</option>');
                             miLstPeriodo.append('<option value="Periodo 1">Trimestre 1</option>');
                             miLstPeriodo.append('<option value="Periodo 2">Trimestre 2</option>');
@@ -222,7 +222,7 @@ submitHandler: function(){
                             miLstPeriodo.append('<option value="R2">Recuperación 2</option>');
                         }
                         // Condiciones para Educación Básica de Adultos (Nocturna).
-                        if(response.codigo_modalidad >= '10' && response.codigo_modalidad <= '11'){
+                        if(response.codigo_modalidad >= '10' && response.codigo_modalidad <= '12'){
                             miLstPeriodo.append('<option value="" selected>Seleccionar...</option>');
                             miLstPeriodo.append('<option value="Periodo 1">Período 1</option>');
                             miLstPeriodo.append('<option value="Periodo 2">Período 2</option>');
