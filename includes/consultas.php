@@ -261,7 +261,7 @@ function consultas($ejecutar,$cerrar,$codigo_bachillerato,$codigo_grado,$codigo_
                 am.codigo_grado, gan.nombre as nombre_grado, am.codigo_seccion, sec.nombre as nombre_seccion, tur.nombre as nombre_turno
 					FROM alumno a
                 INNER JOIN alumno_encargado ae ON a.id_alumno = ae.codigo_alumno and ae.encargado = 't'
-				INNER JOIN alumno_matricula am ON a.id_alumno = am.codigo_alumno  and am.retirado = 'f'
+				INNER JOIN alumno_matricula am ON a.id_alumno = am.codigo_alumno  
 				INNER JOIN bachillerato_ciclo bach ON bach.codigo = am.codigo_bach_o_ciclo
 				INNER JOIN grado_ano gan ON gan.codigo = am.codigo_grado
 				INNER JOIN seccion sec ON sec.codigo = am.codigo_seccion
@@ -383,16 +383,16 @@ function consultas($ejecutar,$cerrar,$codigo_bachillerato,$codigo_grado,$codigo_
                             INNER JOIN turno tur ON tur.codigo = org.codigo_turno
                                 WHERE codigo_ann_lectivo = '".$codigo_bachillerato.
 	                			 "' ORDER BY org.codigo_bachillerato, org.codigo_grado, org.codigo_ann_lectivo";
-/*
-CONSULTA PARA LE MEMORIA ESTADISTICA
-SELECT DISTINCT ROW(org.codigo_bachillerato), org.codigo_bachillerato, org.codigo_grado, org.codigo_ann_lectivo,
-                    gan.nombre as nombre_grado, ann.nombre as nombre_ann_lectivo,  bach.nombre as nombre_modalidad
-			            FROM organizacion_grados_secciones org
-                            INNER JOIN grado_ano gan ON gan.codigo = org.codigo_grado
-                            INNER JOIN ann_lectivo ann ON ann.codigo = org.codigo_ann_lectivo
-                            INNER JOIN bachillerato_ciclo bach ON bach.codigo = org.codigo_bachillerato
-                                WHERE codigo_ann_lectivo = '21' ORDER BY org.codigo_bachillerato, org.codigo_grado, org.codigo_ann_lectivo
-*/
+            /*
+            CONSULTA PARA LE MEMORIA ESTADISTICA
+            SELECT DISTINCT ROW(org.codigo_bachillerato), org.codigo_bachillerato, org.codigo_grado, org.codigo_ann_lectivo,
+                                gan.nombre as nombre_grado, ann.nombre as nombre_ann_lectivo,  bach.nombre as nombre_modalidad
+                                    FROM organizacion_grados_secciones org
+                                        INNER JOIN grado_ano gan ON gan.codigo = org.codigo_grado
+                                        INNER JOIN ann_lectivo ann ON ann.codigo = org.codigo_ann_lectivo
+                                        INNER JOIN bachillerato_ciclo bach ON bach.codigo = org.codigo_bachillerato
+                                            WHERE codigo_ann_lectivo = '21' ORDER BY org.codigo_bachillerato, org.codigo_grado, org.codigo_ann_lectivo
+                */
 
                                  // ejecutar la consulta.
 	    $result = $db_link -> query($query);
@@ -647,7 +647,7 @@ function consultas_alumno($ejecutar,$cerrar,$buscar_nombre,$codigo_alumno,$codig
 
 function consulta_docente($ejecutar,$cerrar,$codigo_annlectivo,$codigo_docentes,$codigo_contratacion,$db_link,$result,$fecha_desde,$fecha_hasta,$codigo_licencia_permiso,$codigo_turno)
 {
-    global $result; $result_saldo;
+    global $result, $result_saldo;
      // para los diferntes listados a imprimir Licencias y Permisos de docentes.
     if($ejecutar == 1)
     {
@@ -923,7 +923,7 @@ function consulta_otras_tablas($ejecutar,$cerrar,$codigo,$db_link,$result)
 ////////////// CONSULTAS PARA CONTAR.
 function consulta_contar($ejecutar,$cerrar,$codigo_all,$codigo_grado,$codigo_seccion,$codigo_annlectivo,$db_link,$result)
 {
-    global $result; $result_saldo;
+    global $result, $result_saldo;
     
     // tabla catalogo estado familiar.
     if($ejecutar == 1)
@@ -941,7 +941,7 @@ function consulta_contar($ejecutar,$cerrar,$codigo_all,$codigo_grado,$codigo_sec
 ////////////// CONSULTAS PARA CONTAR.
 function consulta_consolidados($ejecutar,$cerrar,$codigo_all,$codigo_grado,$codigo_seccion,$codigo_annlectivo,$db_link,$result)
 {
-    global $result; $result_saldo;
+    global $result, $result_saldo;
     
     // tabla catalogo estado familiar.
     if($ejecutar == 1)
