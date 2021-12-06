@@ -180,7 +180,7 @@ function Footer()
 
              
             $pdf->SetXY(20,120);
-	    $pdf->MultiCell(180,10,utf8_decode($estudias).utf8_decode(" en está institución y demostrando ".$conducta." conducta hacia sus compañeros y maestros."));
+	    $pdf->MultiCell(180,10,utf8_decode($estudias).utf8_decode(" en esta institución y demostrando ".$conducta." conducta hacia sus compañeros y maestros."));
             
 	    if($mostrar_traslado == "yes"){
 	    $pdf->ln();

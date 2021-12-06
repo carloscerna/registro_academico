@@ -550,7 +550,11 @@ if (lstlist_notas == 'aprobados_reprobados' && $(this).attr('data-accion') == 'l
 if (lstlist_notas == 'cuadro_promocion' && $(this).attr('data-accion') == 'listados_02') {
         console.log(ann_lectivo);
         if(ann_lectivo >= "18"){
-                varenviar = "/registro_academico/php_libs/reportes/cuadro_de_promocion_2018.php?todos="+reporte_ok;
+                if(varbach >= '03' && varbach <= '05'){
+                        varenviar = "/registro_academico/php_libs/reportes/cuadro_de_promocion_2018.php?todos="+reporte_ok;
+                }else{
+                        varenviar = "/registro_academico/php_libs/reportes/cuadro_de_promocion_general.php?todos="+reporte_ok;
+                }                
         }else{
                 varenviar = "/registro_academico/php_libs/reportes/cuadro_de_promocion_2015.php?todos="+reporte_ok;
         }
