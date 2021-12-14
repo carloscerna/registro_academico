@@ -357,12 +357,15 @@ class PDF extends FPDF
               $espacio = 0;
               for($ix=0;$ix<=$total_asignaturas-1;$ix++){
                 if($ix >= 0 && $ix <= 9){
-                  $this->Rect(102+$espacio,13,10,42);
-                  $this->RotatedTextMultiCellAspectos(105+$espacio,54,$nombre_asignatura[$ix],90);}
+                  $this->Rect(102+$espacio,13,8,42);
+                  $this->RotatedTextMultiCellAspectos(105+$espacio,54,$nombre_asignatura[$ix],90);
+                  $espacio = $espacio + 8;}
                 else{
                   $this->Rect(102+$espacio,13,10,42);
-                  $this->RotatedTextMultiCellAspectos(102+$espacio,54,$nombre_asignatura[$ix],90);}
-                $espacio = $espacio + 10;}
+                  $this->RotatedTextMultiCellAspectos(102+$espacio,54,$nombre_asignatura[$ix],90);
+                  $espacio = $espacio + 10;
+                }
+              }
           // cuarta PARTE DEL RECTANGULO. calificacion
               $espacio = 0;
               $this->SetFont('Arial','',7); // I : Italica; U: Normal;
@@ -596,12 +599,16 @@ $codigo_all_ = substr($codigo_all,0,8);
     $espacio = 0;
     for($ix=0;$ix<=$total_asignaturas-1;$ix++){
       if($ix >= 0 && $ix <= 9){
-        $pdf->Rect(102+$espacio,53,10,42);
-        $pdf->RotatedTextMultiCellAspectos(105+$espacio,95,$nombre_asignatura[$ix],90);}
+        $pdf->Rect(102+$espacio,53,8,42);
+        $pdf->RotatedTextMultiCellAspectos(105+$espacio,95,$nombre_asignatura[$ix],90);
+        $espacio = $espacio + 8;
+      }
       else{
         $pdf->Rect(102+$espacio,53,10,42);
-        $pdf->RotatedTextMultiCellAspectos(102+$espacio,95,$nombre_asignatura[$ix],90);}
-      $espacio = $espacio + 10;}
+        $pdf->RotatedTextMultiCellAspectos(102+$espacio,95,$nombre_asignatura[$ix],90);
+        $espacio = $espacio + 10;
+          }
+      }
 // cuarta PARTE DEL RECTANGULO. calificacion
     $espacio = 0;
     $pdf->SetFont('Arial','',7); // I : Italica; U: Normal;
@@ -773,9 +780,12 @@ $codigo_all_ = substr($codigo_all,0,8);
     $fill = true;$i=1;  $suma = 0; $numero = 1; $nota_concepto = 0; $conteo_alumnos = 0; 
      $total_puntos_01_array = array(); $total_puntos_02_array = array(); $total_puntos_03_array = array();
      $total_puntos_04_array = array(); $total_puntos_05_array = array(); $total_puntos_06_array = array();
-		 $total_puntos_07_array = array(); $nota_final_ = 0;
+		 $total_puntos_07_array = array(); $total_puntos_08_array = array(); $total_puntos_09_array = array();
+     $total_puntos_10_array = array();
+     $nota_final_ = 0;
      // Define el alto de la fila.
      $h=array(5); //determina el ancho de las columnas
+     $w=array(8,10);  // determinar el ancho de
      $result = $db_link -> query($query);
 		while($row = $result -> fetch(PDO::FETCH_BOTH))
           {
@@ -792,10 +802,10 @@ $codigo_all_ = substr($codigo_all,0,8);
                     $nota_final_ = verificar_nota($row['nota_final'],$row['recuperacion']);
                       if($nota_final_ < 6 ){
                         $pdf->SetTextColor(255,0,0);
-                          $pdf->Cell(10,$h[0],$nota_final_,1,0,'C',$fill); 
+                          $pdf->Cell($w[0],$h[0],$nota_final_,1,0,'C',$fill); 
                         $pdf->SetTextColor(0,0,0);
                       }else{
-                        $pdf->Cell(10,$h[0],$nota_final_,1,0,'C',$fill); 
+                        $pdf->Cell($w[0],$h[0],$nota_final_,1,0,'C',$fill); 
                       }
                     $total_puntos_01_array[] = verificar_nota($row['nota_final'],$row['recuperacion']);
 										$conteo_alumnos++;
@@ -805,10 +815,10 @@ $codigo_all_ = substr($codigo_all,0,8);
                 $nota_final_ = verificar_nota($row['nota_final'],$row['recuperacion']);
                 if($nota_final_ < 6 ){
                   $pdf->SetTextColor(255,0,0);
-                    $pdf->Cell(10,$h[0],$nota_final_,1,0,'C',$fill); 
+                    $pdf->Cell($w[0],$h[0],$nota_final_,1,0,'C',$fill); 
                   $pdf->SetTextColor(0,0,0);
                 }else{
-                  $pdf->Cell(10,$h[0],$nota_final_,1,0,'C',$fill); 
+                  $pdf->Cell($w[0],$h[0],$nota_final_,1,0,'C',$fill); 
                 }
                 //$pdf->Cell(10,$h[0],verificar_nota($row['nota_final'],$row['recuperacion']),1,0,'C');
               break;
@@ -817,10 +827,10 @@ $codigo_all_ = substr($codigo_all,0,8);
                 $nota_final_ = verificar_nota($row['nota_final'],$row['recuperacion']);
                 if($nota_final_ < 6 ){
                   $pdf->SetTextColor(255,0,0);
-                    $pdf->Cell(10,$h[0],$nota_final_,1,0,'C',$fill); 
+                    $pdf->Cell($w[0],$h[0],$nota_final_,1,0,'C',$fill); 
                   $pdf->SetTextColor(0,0,0);
                 }else{
-                  $pdf->Cell(10,$h[0],$nota_final_,1,0,'C',$fill); 
+                  $pdf->Cell($w[0],$h[0],$nota_final_,1,0,'C',$fill); 
                 }
                 //$pdf->Cell(10,$h[0],verificar_nota($row['nota_final'],$row['recuperacion']),1,0,'C');
               break;
@@ -829,10 +839,10 @@ $codigo_all_ = substr($codigo_all,0,8);
                 $nota_final_ = verificar_nota($row['nota_final'],$row['recuperacion']);
                 if($nota_final_ < 6 ){
                   $pdf->SetTextColor(255,0,0);
-                    $pdf->Cell(10,$h[0],$nota_final_,1,0,'C',$fill); 
+                    $pdf->Cell($w[0],$h[0],$nota_final_,1,0,'C',$fill); 
                   $pdf->SetTextColor(0,0,0);
                 }else{
-                  $pdf->Cell(10,$h[0],$nota_final_,1,0,'C',$fill); 
+                  $pdf->Cell($w[0],$h[0],$nota_final_,1,0,'C',$fill); 
                 }
                 //$pdf->Cell(10,$h[0],verificar_nota($row['nota_final'],$row['recuperacion']),1,0,'C');
               break;              
@@ -841,10 +851,10 @@ $codigo_all_ = substr($codigo_all,0,8);
                 $nota_final_ = verificar_nota($row['nota_final'],$row['recuperacion']);
                 if($nota_final_ < 6 ){
                   $pdf->SetTextColor(255,0,0);
-                    $pdf->Cell(10,$h[0],$nota_final_,1,0,'C',$fill); 
+                    $pdf->Cell($w[0],$h[0],$nota_final_,1,0,'C',$fill); 
                   $pdf->SetTextColor(0,0,0);
                 }else{
-                  $pdf->Cell(10,$h[0],$nota_final_,1,0,'C',$fill); 
+                  $pdf->Cell($w[0],$h[0],$nota_final_,1,0,'C',$fill); 
                 }
                 //$pdf->Cell(10,$h[0],verificar_nota($row['nota_final'],$row['recuperacion']),1,0,'C');
               break;              
@@ -853,10 +863,10 @@ $codigo_all_ = substr($codigo_all,0,8);
                 $nota_final_ = verificar_nota($row['nota_final'],$row['recuperacion']);
                 if($nota_final_ < 6 ){
                   $pdf->SetTextColor(255,0,0);
-                    $pdf->Cell(10,$h[0],$nota_final_,1,0,'C',$fill); 
+                    $pdf->Cell($w[0],$h[0],$nota_final_,1,0,'C',$fill); 
                   $pdf->SetTextColor(0,0,0);
                 }else{
-                  $pdf->Cell(10,$h[0],$nota_final_,1,0,'C',$fill); 
+                  $pdf->Cell($w[0],$h[0],$nota_final_,1,0,'C',$fill); 
                 }
                 //$pdf->Cell(10,$h[0],verificar_nota($row['nota_final'],$row['recuperacion']),1,0,'C');
               break;              
@@ -865,43 +875,43 @@ $codigo_all_ = substr($codigo_all,0,8);
                 $nota_final_ = verificar_nota($row['nota_final'],$row['recuperacion']);
                 if($nota_final_ < 6 ){
                   $pdf->SetTextColor(255,0,0);
-                    $pdf->Cell(10,$h[0],$nota_final_,1,0,'C',$fill); 
+                    $pdf->Cell($w[0],$h[0],$nota_final_,1,0,'C',$fill); 
                   $pdf->SetTextColor(0,0,0);
                 }else{
-                  $pdf->Cell(10,$h[0],$nota_final_,1,0,'C',$fill); 
+                  $pdf->Cell($w[0],$h[0],$nota_final_,1,0,'C',$fill); 
                 }
               break;              
               case 8:
-                $total_puntos_07_array[] = verificar_nota($row['nota_final'],$row['recuperacion']);
+                $total_puntos_08_array[] = verificar_nota($row['nota_final'],$row['recuperacion']);
                 $nota_final_ = verificar_nota($row['nota_final'],$row['recuperacion']);
                 if($nota_final_ < 6 ){
                   $pdf->SetTextColor(255,0,0);
-                    $pdf->Cell(10,$h[0],$nota_final_,1,0,'C',$fill); 
+                    $pdf->Cell($w[0],$h[0],$nota_final_,1,0,'C',$fill); 
                   $pdf->SetTextColor(0,0,0);
                 }else{
-                  $pdf->Cell(10,$h[0],$nota_final_,1,0,'C',$fill); 
+                  $pdf->Cell($w[0],$h[0],$nota_final_,1,0,'C',$fill); 
                 }
               break;              
               case 9:
-                $total_puntos_07_array[] = verificar_nota($row['nota_final'],$row['recuperacion']);
+                $total_puntos_09_array[] = verificar_nota($row['nota_final'],$row['recuperacion']);
                 $nota_final_ = verificar_nota($row['nota_final'],$row['recuperacion']);
                 if($nota_final_ < 6 ){
                   $pdf->SetTextColor(255,0,0);
-                    $pdf->Cell(10,$h[0],$nota_final_,1,0,'C',$fill); 
+                    $pdf->Cell($w[0],$h[0],$nota_final_,1,0,'C',$fill); 
                   $pdf->SetTextColor(0,0,0);
                 }else{
-                  $pdf->Cell(10,$h[0],$nota_final_,1,0,'C',$fill); 
+                  $pdf->Cell($w[0],$h[0],$nota_final_,1,0,'C',$fill); 
                 }
               break;              
               case 10:
-                $total_puntos_07_array[] = verificar_nota($row['nota_final'],$row['recuperacion']);
+                $total_puntos_10_array[] = verificar_nota($row['nota_final'],$row['recuperacion']);
                 $nota_final_ = verificar_nota($row['nota_final'],$row['recuperacion']);
                 if($nota_final_ < 6 ){
                   $pdf->SetTextColor(255,0,0);
-                    $pdf->Cell(10,$h[0],$nota_final_,1,0,'C',$fill); 
+                    $pdf->Cell($w[0],$h[0],$nota_final_,1,0,'C',$fill); 
                   $pdf->SetTextColor(0,0,0);
                 }else{
-                  $pdf->Cell(10,$h[0],$nota_final_,1,0,'C',$fill); 
+                  $pdf->Cell($w[0],$h[0],$nota_final_,1,0,'C',$fill); 
                 }
               break;              
               case 11:  // muci
@@ -985,11 +995,12 @@ $codigo_all_ = substr($codigo_all,0,8);
 		      $fill=!$fill;		    
                     $pdf->SetX(10);
                       $pdf->Cell(7,$h[0],$numero++,1,0,'C',$fill);  // N| de Orden.
-                      $pdf->Cell(110,$h[0],'',1,0,'l');  // nombre del alumno.
-                      //$pdf->Cell(20,6,'',1,0,'C');  // NIE
-                      $pdf->Cell(10,$h[0],'',1,0,'C');  // nota final
-                      
-                      for($j=0;$j<=10;$j++){$pdf->Cell(10,$h[0],'',1,0,'C');}
+                      $pdf->Cell(20,$h[0],'',1,0,'C');  // NIE
+                      $pdf->Cell(65,$h[0],'',1,0,'l');  // nombre del alumno.
+                      // primr bloque del ancho.
+                      for($j=0;$j<=9;$j++){$pdf->Cell($w[0],$h[0],'',1,0,'C');}
+                      // segundo bloque del ancho.
+                      for($j=0;$j<=6;$j++){$pdf->Cell($w[1],$h[0],'',1,0,'C');}
                       $pdf->Ln();
 
                   }
@@ -1040,23 +1051,26 @@ $codigo_all_ = substr($codigo_all,0,8);
 						$pdf->Cell(7,$h[0],$numero++,1,0,'C',$fill);  // N| de Orden.
             $pdf->Cell(20,$h[0],'',1,0,'C');  // NIE
 						$pdf->Cell(65,$h[0],'',1,0,'l');  // nombre del alumno.
-
-						//$pdf->Cell(10,$h[0],'',1,0,'C');  // nota final
-                      
-						for($j=0;$j<=14;$j++){$pdf->Cell(10,$h[0],'',1,0,'C');}
-						$pdf->Ln();
+              // primr bloque del ancho.
+              for($j=0;$j<=9;$j++){$pdf->Cell($w[0],$h[0],'',1,0,'C');}
+              // segundo bloque del ancho.
+              for($j=0;$j<=6;$j++){$pdf->Cell($w[1],$h[0],'',1,0,'C');}
+              $pdf->Ln();
 
                   }
            // Ultimas lineas....
               $pdf->SetX(10);
                 $pdf->Cell(92,$h[0],'TOTAL DE PUNTOS',1,0,'R');  // TOTAL DE PUNTOS
-                  $pdf->Cell(10,$h[0],array_sum($total_puntos_01_array),1,0,'C');
-                  $pdf->Cell(10,$h[0],array_sum($total_puntos_02_array),1,0,'C');
-                  $pdf->Cell(10,$h[0],array_sum($total_puntos_03_array),1,0,'C');
-                  $pdf->Cell(10,$h[0],array_sum($total_puntos_04_array),1,0,'C');
-                  $pdf->Cell(10,$h[0],array_sum($total_puntos_05_array),1,0,'C');
-                  $pdf->Cell(10,$h[0],array_sum($total_puntos_06_array),1,0,'C');
-									$pdf->Cell(10,$h[0],array_sum($total_puntos_07_array),1,0,'C');
+                  $pdf->Cell($w[0],$h[0],array_sum($total_puntos_01_array),1,0,'C');
+                  $pdf->Cell($w[0],$h[0],array_sum($total_puntos_02_array),1,0,'C');
+                  $pdf->Cell($w[0],$h[0],array_sum($total_puntos_03_array),1,0,'C');
+                  $pdf->Cell($w[0],$h[0],array_sum($total_puntos_04_array),1,0,'C');
+                  $pdf->Cell($w[0],$h[0],array_sum($total_puntos_05_array),1,0,'C');
+                  $pdf->Cell($w[0],$h[0],array_sum($total_puntos_06_array),1,0,'C');
+									$pdf->Cell($w[0],$h[0],array_sum($total_puntos_07_array),1,0,'C');
+                  $pdf->Cell($w[0],$h[0],array_sum($total_puntos_08_array),1,0,'C');
+                  $pdf->Cell($w[0],$h[0],array_sum($total_puntos_09_array),1,0,'C');
+                  $pdf->Cell($w[0],$h[0],array_sum($total_puntos_10_array),1,0,'C');
                   
                   for($j=0;$j<=7;$j++){$pdf->Cell(10,$h[0],'',1,0,'C');}
                     $pdf->Ln();
@@ -1064,17 +1078,20 @@ $codigo_all_ = substr($codigo_all,0,8);
 										$pdf->Cell(92,$h[0],'PROMEDIO',1,0,'R');  // PROMEDIO
 										$pdf->SetTextColor(255,0,0);
 										$pdf->SetFont('Arial','B',10);
-										$pdf->Cell(10,$h[0],number_format(array_sum($total_puntos_01_array)/$conteo_alumnos,0),1,0,'C');
-										$pdf->Cell(10,$h[0],number_format(array_sum($total_puntos_02_array)/$conteo_alumnos,0),1,0,'C');
-										$pdf->Cell(10,$h[0],number_format(array_sum($total_puntos_03_array)/$conteo_alumnos,0),1,0,'C');
-										$pdf->Cell(10,$h[0],number_format(array_sum($total_puntos_04_array)/$conteo_alumnos,0),1,0,'C');
-										$pdf->Cell(10,$h[0],number_format(array_sum($total_puntos_05_array)/$conteo_alumnos,0),1,0,'C');
-										$pdf->Cell(10,$h[0],number_format(array_sum($total_puntos_06_array)/$conteo_alumnos,0),1,0,'C');
-										$pdf->Cell(10,$h[0],number_format(array_sum($total_puntos_07_array)/$conteo_alumnos,0),1,0,'C');
+										$pdf->Cell($w[0],$h[0],number_format(array_sum($total_puntos_01_array)/$conteo_alumnos,0),1,0,'C');
+										$pdf->Cell($w[0],$h[0],number_format(array_sum($total_puntos_02_array)/$conteo_alumnos,0),1,0,'C');
+										$pdf->Cell($w[0],$h[0],number_format(array_sum($total_puntos_03_array)/$conteo_alumnos,0),1,0,'C');
+										$pdf->Cell($w[0],$h[0],number_format(array_sum($total_puntos_04_array)/$conteo_alumnos,0),1,0,'C');
+										$pdf->Cell($w[0],$h[0],number_format(array_sum($total_puntos_05_array)/$conteo_alumnos,0),1,0,'C');
+										$pdf->Cell($w[0],$h[0],number_format(array_sum($total_puntos_06_array)/$conteo_alumnos,0),1,0,'C');
+										$pdf->Cell($w[0],$h[0],number_format(array_sum($total_puntos_07_array)/$conteo_alumnos,0),1,0,'C');
+                    $pdf->Cell($w[0],$h[0],number_format(array_sum($total_puntos_08_array)/$conteo_alumnos,0),1,0,'C');
+                    $pdf->Cell($w[0],$h[0],number_format(array_sum($total_puntos_09_array)/$conteo_alumnos,0),1,0,'C');
+                    $pdf->Cell($w[0],$h[0],number_format(array_sum($total_puntos_10_array)/$conteo_alumnos,0),1,0,'C');
 										$pdf->SetTextColor(0);
 										$pdf->SetFont('');
                   
-                  for($j=0;$j<=7;$j++){$pdf->Cell(10,$h[0],'',1,0,'C');}
+                  for($j=0;$j<=6;$j++){$pdf->Cell(10,$h[0],'',1,0,'C');}
                     $pdf->Ln();   
 // Construir el nombre del archivo.
 	$nombre_archivo = $print_bachillerato.' '.$print_grado.' '.$print_seccion.'-'.$print_ann_lectivo . '.pdf';
