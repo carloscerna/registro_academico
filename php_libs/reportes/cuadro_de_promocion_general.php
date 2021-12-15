@@ -316,7 +316,10 @@ class PDF extends FPDF
     //Cabecera de página
     function Header()
     {
-        global $nombre_asignatura, $valor_x_encabezado, $total_asignaturas;
+      global $nombre_asignatura, $valor_x_encabezado, $total_asignaturas, $print_bachillerato;
+      // dParte superior izquierda.
+        $this->SetFont('Arial','',8); // I : Italica; U: Normal;
+        $this->Cell(343,8,utf8_decode($print_bachillerato),0,0,'R');
         
         if($valor_x_encabezado == true)
         {    

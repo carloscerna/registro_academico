@@ -186,7 +186,7 @@ while($rows_promovidos_retenidos = $result_promovidos_retenidos -> fetch(PDO::FE
     // VERIFICAR SI ASIGNATURA ESTA APROBADA SI ES BASICA O DE CALIFICACION
         switch($ji){
             //
-            case ($ji >=1 && $ji<=9): 
+            case ($ji >=1 && $ji<=4): 
                 contar_promovidos($generos, $notas, $contar_evaluar);
               break;
         }
@@ -301,7 +301,7 @@ class PDF extends FPDF
         if($valor_x_encabezado == true)
         {    
           // PRIEMRA PARTE DEL RECTANGULO.
-          $this->Rect(10,5,242,50);
+          $this->Rect(10,5,182,50);
           // segunda PARTE DEL RECTANGULO. numero de orden
               $this->Rect(10,5,7,50);
               $this->RotatedText(15,38,utf8_decode('N° de Orden'),90);
@@ -309,34 +309,24 @@ class PDF extends FPDF
               $this->Rect(17,5,20,50);
               $this->RotatedText(30,38,utf8_decode('N° de NIE'),90);
           // tercera PARTE DEL RECTANGULO.   nombre del alumno
-              //$this->Rect(17,45,85,50);
               $this->SetFont('Arial','',11); // I : Italica; U: Normal;
               $this->SetXY(38,25);
               $this->SetFillColor(255,255,255);
               $this->MultiCell(65,8,utf8_decode('Nombre de los Alumnos(as) en orden alfabético de apellidos'),0,2,'C',true);
           // cuarta PARTE DEL RECTANGULO. asignatura
               $this->SetFont('Arial','',13); // I : Italica; U: Normal;
-              //$this->Rect(127,45,70,7);
               $this->SetXY(37,5);
               $this->Cell(65,8,'AREA ASIGNATURA',1,2,'C');
               $this->SetXY(102,5);
-              $this->Cell(60,8,'BASICA',1,2,'C',true);
-              $this->SetXY(158,5);
-              $this->Cell(24,8,'TECNICA',1,2,'C',true);
-          // quinta PARTE DEL RECTANGULO. educacion moral y civica
-              $this->SetFont('Arial','',6); // I : Italica; U: Normal;
-              $this->SetXY(182,5);
-              $this->Cell(20,8,'COMPLEMENTARIA',1,2,'C',true);
+              $this->Cell(40,8,'TECNICA',1,2,'C',true);
           // sexta PARTE DEL RECTANGULO. educacion moral y civica
-              //$this->Rect(205,45,50,7);
-              $this->SetXY(202,5);
+              $this->SetXY(142,5);
               $this->SetFont('Arial','',9); // I : Italica; U: Normal;
               $this->Cell(50,8,'COMPETENCIAS CIUDADANAS',1,2,'C',true);
-              //$this->Cell(60,3,utf8_decode('Aspectos de la Conducta'),0,2,'C');
           // cuarta PARTE DEL RECTANGULO. asignaturas nombres
               $espacio = 0;
               for($ix=0;$ix<=$total_asignaturas-1;$ix++){
-                if($ix >= 0 && $ix <= 9){
+                if($ix >= 0 && $ix <= 4){
                   $this->Rect(102+$espacio,13,8,42);
                   $this->RotatedTextMultiCellAspectos(105+$espacio,54,$nombre_asignatura[$ix],90);
                   $espacio = $espacio + 8;}
@@ -545,7 +535,7 @@ $codigo_all_ = substr($codigo_all,0,8);
     $pdf->Cell(60,4,utf8_decode('Ministerio de Educación'),0,2,'C');
     $pdf->Cell(60,4,utf8_decode('Dirección Nacional de Educación Media'),0,2,'C');
 // PRIEMRA PARTE DEL RECTANGULO.
-    $pdf->Rect(10,45,242,50);
+    $pdf->Rect(10,45,182,50);
 // segunda PARTE DEL RECTANGULO. numero de orden
     $pdf->Rect(10,45,7,50);
     $pdf->RotatedText(15,80,utf8_decode('N° de Orden'),90);
@@ -564,23 +554,16 @@ $codigo_all_ = substr($codigo_all,0,8);
     $pdf->SetXY(37,45);
     $pdf->Cell(65,8,'AREA ASIGNATURA',1,2,'C');
     $pdf->SetXY(102,45);
-    $pdf->Cell(60,8,'BASICA',1,2,'C',true);
-    $pdf->SetXY(158,45);
-    $pdf->Cell(24,8,'TECNICA',1,2,'C',true);
-// quinta PARTE DEL RECTANGULO. educacion moral y civica
-    $pdf->SetFont('Arial','',6); // I : Italica; U: Normal;
-    $pdf->SetXY(182,45);
-    $pdf->Cell(20,8,'COMPLEMENTARIA',1,2,'C',true);
+    $pdf->Cell(40,8,'TECNICA',1,2,'C',true);
 // sexta PARTE DEL RECTANGULO. educacion moral y civica
     //$pdf->Rect(205,45,50,7);
-    $pdf->SetXY(202,45);
+    $pdf->SetXY(142,45);
     $pdf->SetFont('Arial','',9); // I : Italica; U: Normal;
     $pdf->Cell(50,8,'COMPETENCIAS CIUDADANAS',1,2,'C',true);
-    //$pdf->Cell(60,3,utf8_decode('Aspectos de la Conducta'),0,2,'C');
 // cuarta PARTE DEL RECTANGULO. asignaturas nombres
     $espacio = 0;
     for($ix=0;$ix<=$total_asignaturas-1;$ix++){
-      if($ix >= 0 && $ix <= 9){
+      if($ix >= 0 && $ix <= 4){
         $pdf->Rect(102+$espacio,53,8,42);
         $pdf->RotatedTextMultiCellAspectos(105+$espacio,95,$nombre_asignatura[$ix],90);
         $espacio = $espacio + 8;
@@ -792,16 +775,11 @@ $codigo_all_ = substr($codigo_all,0,8);
                     $total_puntos_01_array[] = verificar_nota($row['nota_final'],$row['recuperacion']);
 										$conteo_alumnos++;
                     break;  // nota final
-              case ($i>=2 && $i<=10):
+              case ($i>=2 && $i<=5):
                   if($i == 2){$total_puntos_02_array[] = verificar_nota($row['nota_final'],$row['recuperacion']);}
                   if($i == 3){$total_puntos_03_array[] = verificar_nota($row['nota_final'],$row['recuperacion']);}
                   if($i == 4){$total_puntos_04_array[] = verificar_nota($row['nota_final'],$row['recuperacion']);}
                   if($i == 5){$total_puntos_05_array[] = verificar_nota($row['nota_final'],$row['recuperacion']);}
-                  if($i == 6){$total_puntos_06_array[] = verificar_nota($row['nota_final'],$row['recuperacion']);}
-                  if($i == 7){$total_puntos_07_array[] = verificar_nota($row['nota_final'],$row['recuperacion']);}
-                  if($i == 8){$total_puntos_08_array[] = verificar_nota($row['nota_final'],$row['recuperacion']);}
-                  if($i == 9){$total_puntos_09_array[] = verificar_nota($row['nota_final'],$row['recuperacion']);}
-                  if($i == 10){$total_puntos_10_array[] = verificar_nota($row['nota_final'],$row['recuperacion']);}
                 
                 $nota_final_ = verificar_nota($row['nota_final'],$row['recuperacion']);
                 if($nota_final_ < 6 ){
@@ -812,11 +790,11 @@ $codigo_all_ = substr($codigo_all,0,8);
                   $pdf->Cell($w[0],$h[0],$nota_final_,1,0,'C',$fill); 
                 }
               break;
-              case ($i>=11 && $i<=16):  // muci
+              case ($i>=6 && $i<=9):  // muci
               	$nota_concepto = verificar_nota($row['nota_final'],$row['recuperacion']);
                 $concepto_asignatura = cambiar_concepto($nota_concepto);
                 $pdf->Cell(10,$h[0],$concepto_asignatura,1,0,'C',$fill); break;
-              case 17:
+              case 10:
                   $nota_concepto = verificar_nota($row['nota_final'],$row['recuperacion']);
                   $concepto_asignatura = cambiar_concepto($nota_concepto);
                   $pdf->Cell(10,$h[0],$concepto_asignatura,1,1,'C',$fill); break;
@@ -876,9 +854,9 @@ $codigo_all_ = substr($codigo_all,0,8);
                       $pdf->Cell(20,$h[0],'',1,0,'C');  // NIE
                       $pdf->Cell(65,$h[0],'',1,0,'l');  // nombre del alumno.
                       // primr bloque del ancho.
-                      for($j=0;$j<=9;$j++){$pdf->Cell($w[0],$h[0],'',1,0,'C');}
+                      for($j=0;$j<=4;$j++){$pdf->Cell($w[0],$h[0],'',1,0,'C');}
                       // segundo bloque del ancho.
-                      for($j=0;$j<=6;$j++){$pdf->Cell($w[1],$h[0],'',1,0,'C');}
+                      for($j=0;$j<=4;$j++){$pdf->Cell($w[1],$h[0],'',1,0,'C');}
                       $pdf->Ln();
 
                   }
@@ -930,9 +908,9 @@ $codigo_all_ = substr($codigo_all,0,8);
             $pdf->Cell(20,$h[0],'',1,0,'C');  // NIE
 						$pdf->Cell(65,$h[0],'',1,0,'l');  // nombre del alumno.
               // primr bloque del ancho.
-              for($j=0;$j<=9;$j++){$pdf->Cell($w[0],$h[0],'',1,0,'C');}
+              for($j=0;$j<=4;$j++){$pdf->Cell($w[0],$h[0],'',1,0,'C');}
               // segundo bloque del ancho.
-              for($j=0;$j<=6;$j++){$pdf->Cell($w[1],$h[0],'',1,0,'C');}
+              for($j=0;$j<=4;$j++){$pdf->Cell($w[1],$h[0],'',1,0,'C');}
               $pdf->Ln();
 
                   }
@@ -944,13 +922,8 @@ $codigo_all_ = substr($codigo_all,0,8);
                   $pdf->Cell($w[0],$h[0],array_sum($total_puntos_03_array),1,0,'C');
                   $pdf->Cell($w[0],$h[0],array_sum($total_puntos_04_array),1,0,'C');
                   $pdf->Cell($w[0],$h[0],array_sum($total_puntos_05_array),1,0,'C');
-                  $pdf->Cell($w[0],$h[0],array_sum($total_puntos_06_array),1,0,'C');
-									$pdf->Cell($w[0],$h[0],array_sum($total_puntos_07_array),1,0,'C');
-                  $pdf->Cell($w[0],$h[0],array_sum($total_puntos_08_array),1,0,'C');
-                  $pdf->Cell($w[0],$h[0],array_sum($total_puntos_09_array),1,0,'C');
-                  $pdf->Cell($w[0],$h[0],array_sum($total_puntos_10_array),1,0,'C');
                   
-                  for($j=0;$j<=6;$j++){$pdf->Cell(10,$h[0],'',1,0,'C');}
+                  for($j=0;$j<=4;$j++){$pdf->Cell(10,$h[0],'',1,0,'C');}
                     $pdf->Ln();
 										$pdf->SetX(10);
 										$pdf->Cell(92,$h[0],'PROMEDIO',1,0,'R');  // PROMEDIO
@@ -961,15 +934,10 @@ $codigo_all_ = substr($codigo_all,0,8);
 										$pdf->Cell($w[0],$h[0],number_format(array_sum($total_puntos_03_array)/$conteo_alumnos,0),1,0,'C');
 										$pdf->Cell($w[0],$h[0],number_format(array_sum($total_puntos_04_array)/$conteo_alumnos,0),1,0,'C');
 										$pdf->Cell($w[0],$h[0],number_format(array_sum($total_puntos_05_array)/$conteo_alumnos,0),1,0,'C');
-										$pdf->Cell($w[0],$h[0],number_format(array_sum($total_puntos_06_array)/$conteo_alumnos,0),1,0,'C');
-										$pdf->Cell($w[0],$h[0],number_format(array_sum($total_puntos_07_array)/$conteo_alumnos,0),1,0,'C');
-                    $pdf->Cell($w[0],$h[0],number_format(array_sum($total_puntos_08_array)/$conteo_alumnos,0),1,0,'C');
-                    $pdf->Cell($w[0],$h[0],number_format(array_sum($total_puntos_09_array)/$conteo_alumnos,0),1,0,'C');
-                    $pdf->Cell($w[0],$h[0],number_format(array_sum($total_puntos_10_array)/$conteo_alumnos,0),1,0,'C');
 										$pdf->SetTextColor(0);
 										$pdf->SetFont('');
                   
-                  for($j=0;$j<=6;$j++){$pdf->Cell(10,$h[0],'',1,0,'C');}
+                  for($j=0;$j<=4;$j++){$pdf->Cell(10,$h[0],'',1,0,'C');}
                     $pdf->Ln();   
 // Construir el nombre del archivo.
 	$nombre_archivo = $print_bachillerato.' '.$print_grado.' '.$print_seccion.'-'.$print_ann_lectivo . '.pdf';
