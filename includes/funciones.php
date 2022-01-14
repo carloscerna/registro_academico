@@ -633,7 +633,7 @@ function contar_promovidos_aprobados($x1){
     return ;
 }
 ////////////////////////////////////////////////////
-//contar promovidos masculino
+//contar promovidos masculino BASICA
 ////////////////////////////////////////////////////
 
 function contar_promovidos($x1, $x2, $nota_e){
@@ -650,6 +650,24 @@ function contar_promovidos($x1, $x2, $nota_e){
 	if($x2 < $nota_e){$no_aprobado++;}
     return ;
 }
+////////////////////////////////////////////////////
+//contar promovidos masculino MEDIA
+////////////////////////////////////////////////////
+
+function contar_promovidos_media($x1, $x2, $nota_e){
+	global $contar_p_m, $contar_r_m, $contar_p_f, $contar_r_f, $si_aprobado, $no_aprobado;;
+	
+		   if($x1 == 'm' && $x2 >= 6){$contar_p_m++;}
+		   if($x1 == 'm' && $x2 < 6){$contar_r_m++;}
+	   
+		   if($x1 == 'f' && $x2 >= 6){$contar_p_f++;}
+		   if($x1 == 'f' && $x2 < 6){$contar_r_f++;}
+	   
+		   
+	   if($x2 >= $nota_e){$si_aprobado++;}
+	   if($x2 < $nota_e){$no_aprobado++;}
+	   return ;
+   }
 ////////////////////////////////////////////////////
 //Aprobados o Reprobados
 ////////////////////////////////////////////////////
