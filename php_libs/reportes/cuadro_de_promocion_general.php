@@ -14,7 +14,7 @@
     $codigo_all = $_REQUEST["todos"];
     $db_link = $dblink;
 	$valor_x_encabezado = false;
-	$contar_evaluar = 5;
+	$contar_evaluar = 6;
 // variables para retenidos y promovidos.
     $total_matricula_inicial_masculino = 0;
     $total_matricula_final_femenino = 0;
@@ -183,34 +183,10 @@ if($rows_promovidos_retenidos['recuperacion'] != 0){
    $notas = number_format($nueva_nota_final,0);}
    else{
       $notas = number_format($rows_promovidos_retenidos['nota_final'],0);}
-           
-/*if($notas < 5)
-  {
-    $nueva_nota_final = number_format(($rows_promovidos_retenidos['nota_final']+$rows_promovidos_retenidos['recuperacion'])/2,0);
-    $notas = $nueva_nota_final;
-  }*/
                 
         switch($ji){
-          case 1:
-            contar_promovidos($generos, $notas, $contar_evaluar);
-          break;
-          case 2:
-          contar_promovidos($generos, $notas, $contar_evaluar);
-          break;
-          case 3:
-          contar_promovidos($generos, $notas, $contar_evaluar);
-          break;
-          case 4:
-          contar_promovidos($generos, $notas, $contar_evaluar);
-          break;
-          case 5:
-          contar_promovidos($generos, $notas, $contar_evaluar);
-          break;
-          case 6:
-          contar_promovidos($generos, $notas, $contar_evaluar);
-          break;
-          case 7:
-          contar_promovidos($generos, $notas, $contar_evaluar);
+          case ($ji >=1 && $ji<=7): 
+            contar_promovidos_media($generos, $notas, $contar_evaluar);
           break;
         }
 ////////////////////////////////////////////////////////////////////

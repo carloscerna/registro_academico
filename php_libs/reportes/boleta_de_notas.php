@@ -213,7 +213,7 @@ function Footer()
     	}
     if($sello == 'yes'){
 		$img_sello = $_SERVER['DOCUMENT_ROOT'].'/registro_academico/img/'.$_SESSION['imagen_sello'];
-		$img_sello_registro = $_SERVER['DOCUMENT_ROOT'].'/registro_academico/img/sello_registro_cerz.jpg';
+		//$img_sello_registro = $_SERVER['DOCUMENT_ROOT'].'/registro_academico/img/sello_registro_cerz.jpg';
     }	
     $this->SetFont('Arial','I',8);	    //Arial italic 8    
 	// PRINT A PANTALLA.
@@ -234,7 +234,7 @@ function Footer()
 
 		if(isset($img_firma)){$this->Image($img_firma,120,225,70,15);}						// IMAGEN FIRMA
 		if(isset($img_firma)){$this->Image($img_sello,165,225,30,30);}						// IMAGEN SELLO
-		if(isset($img_firma)){$this->Image($img_sello_registro,85,225,32,32);}						// IMAGEN SELLO
+		//if(isset($img_firma)){$this->Image($img_sello_registro,85,225,32,32);}						// IMAGEN SELLO
     	$this->RotatedText(130,250,$nombre_director,0,1,'C');	    // Nombre Director
 		$this->RotatedText(140,255,'Director(a)',0,1,'C');			// ETIQUETA DIRECTOR.
 
