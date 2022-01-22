@@ -12,6 +12,8 @@ var menu_group = '<div class="dropdown">'+
 							'</a>'+
 							'<a class="imprimir-portada dropdown-item fas fa-address-card" href="#"> Portada'+
 							'</a>'+
+							'<a class="eliminar dropdown-item fas fa-user-slash" href="#"> Eliminar'+
+							'</a>'+
 						'</div>'+
 				'</div>';
 $(function(){ // iNICIO DEL fUNCTION.
@@ -129,6 +131,70 @@ var obtener_data_editar = function(tbody, tabla){
             // Ejecutar la función
                AbrirVentana(varenviar);
 	});
+	///////////////////////////////////////////////////////////////////////////////
+//	FUNCION que al dar clic buscar el registro para posterior mente abri una
+// ventana modal. ELIMINAR REGISTRO
+///////////////////////////////////////////////////////////////////////////////
+$(tbody).on("click","a.eliminar",function(){
+	var data = tabla.row($(this).parents("tr")).data();
+	console.log(data); console.log(data[1]);
+	id_ = data[0];
+			//	ENVIAR MENSAJE CON SWEETALERT 2, PARA CONFIRMAR SI ELIMINA EL REGISTRO.
+			const swalWithBootstrapButtons = Swal.mixin({
+				customClass: {
+				confirmButton: 'btn btn-success',
+				cancelButton: 'btn btn-danger'
+				},
+				buttonsStyling: false
+			})
+	
+			swalWithBootstrapButtons.fire({
+				title: '¿Qué desea hacer?',
+				text: 'Eliminar el Registro Seleccionado!',
+				showCancelButton: true,
+				confirmButtonText: 'Sí, Eliminar!',
+				cancelButtonText: 'No, Cancelar!',
+				reverseButtons: true,
+				allowOutsideClick: false,
+				allowEscapeKey: false,
+				allowEnterKey: false,
+				stopKeydownPropagation: false,
+				closeButtonAriaLabel: 'Cerrar Alerta',
+				type: 'question'
+			}).then((result) => {
+				if (result.value) {
+				// PROCESO PARA ELIMINAR REGISTRO.
+						// ejecutar Ajax.. 
+						$.ajax({
+						cache: false,                     
+						type: "POST",                     
+						dataType: "json",                     
+						url:"php_libs/soporte/NuevoEditarEstudiante.php",                     
+						data: {                     
+								accion_buscar: 'eliminarEstudiante', id_estudiante: id_,
+								},                     
+						success: function(response) {                     
+								if (response.respuesta === true) {                     		
+									toastr["info"](response.mensaje, "Sistema");
+									window.location.href = 'estudiantes.php';				                  
+								}                
+						}                     
+						});
+				//////////////////////////////////////
+				} else if (
+				/* Read more about handling dismissals below */
+				result.dismiss === Swal.DismissReason.cancel
+				) {
+				swalWithBootstrapButtons.fire(
+					'Cancelar',
+					'Su Archivo no ha sido Eliminado :)',
+					'error'
+				)
+				}
+			})
+});
+
+
 }; // Funcion principal dentro del DataTable.
 ///////////////////////////////////////////////////////////////////////////////
 //	FUNCION que al dar clic buscar el registro para posterior mente abri una

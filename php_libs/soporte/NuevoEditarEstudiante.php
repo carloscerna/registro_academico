@@ -387,9 +387,12 @@ if($errorDbConexion == false){
 				}
 			break;
 		
-			case 'eliminar':
+			case 'eliminarEstudiante':
+				$id_ = $_REQUEST["id_estudiante"];
 				// Armamos el query
-				$query = "DELETE FROM alumno WHERE id_alumno = $_POST[id_user]";
+				$query = "DELETE FROM alumno WHERE id_alumno = '$id_';
+						  DELETE FROM alumno_encargado WHERE codigo_alumno = '$id_';
+						  DELETE FROM alumno_matricula WHERE codigo_alumno = '$id_';";
 
 				// Ejecutamos el query
 					$count = $dblink -> exec($query);

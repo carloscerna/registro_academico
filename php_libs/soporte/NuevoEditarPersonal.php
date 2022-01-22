@@ -33,8 +33,7 @@ if($errorDbConexion == false){
 			case 'GenerarCodigoNuevo':
 				$ann_ = substr(trim($_POST['ann']),2,2);	// Año en Curso. pasar a dos digitos.
 
-				$query = "SELECT id_personal, codigo, substring(codigo from 1 for 3)::int as codigo_empleado_numero_entero,substring(codigo from 1 for 3) as codigo_empleado,
-							substring(codigo from 4 for 2) as codigo_empleado_ann, nombres, apellidos FROM personal WHERE substring(codigo from 4 for 2) = '$ann_'
+				$query = "SELECT id_personal FROM personal WHERE  = '$ann_'
 							ORDER BY codigo_empleado_numero_entero DESC LIMIT 1";
 				// Ejecutamos el Query.
 				$consulta = $dblink -> query($query);
@@ -199,7 +198,7 @@ if($errorDbConexion == false){
 			case 'AgregarNuevoPersonal':		
 				// armar variables.
 					// INFO 1
-					$codigo_personal = trim($_POST['txtcodigo']);
+				//	$codigo_personal = trim($_POST['txtcodigo']);
 					$codigo_estatus = trim($_POST['lstestatus']);
 					
 					$nombre = trim($_POST['txtnombres']);
@@ -241,20 +240,24 @@ if($errorDbConexion == false){
 					$comentario = htmlspecialchars(trim($_POST['txtComentario']));
 				// Query
 					$query = "INSERT INTO personal (nombres, apellidos, fecha_nacimiento, edad, codigo_genero,
-					codigo_estado_civil, tipo_sangre, codigo_estudio, codigo_vivienda, codigo_afp, nombre_conyuge,
+					codigo_estado_civil, tipo_sangre, codigo_estudio, 
+					codigo_vivienda, codigo_afp, nombre_conyuge,
 					codigo_municipio, codigo_departamento, direccion,
-					telefono_residencia, telefono_celular, correo_electronico,
-					codigo_cargo, fecha_ingreso, fecha_retiro, codigo_departamento_empresa, codigo_clasificacion_empresa,
-					codigo_ruta, codigo_socio, numero_cuenta,
-					codigo_tipo_licencia, licencia, dui, nit, isss, afp,
-					comentario, codigo, codigo_estatus)
-						VALUES ('$nombre', '$apellido', '$fecha_nacimiento', '$edad', '$codigo_genero', '$codigo_estado_civil', '$tipo_sangre', '$codigo_estudios', '$codigo_tipo_vivienda', '$codigo_afp', '$nombre_conyuge',
+					telefono_residencia, telefono_celular, 
+					correo_electronico, codigo_cargo, fecha_ingreso, 
+					fecha_retiro, numero_cuenta,
+					codigo_tipo_licencia, licencia, dui, nit, afp, 
+					codigo_estatus)
+						VALUES ('$nombre', '$apellido', '$fecha_nacimiento', '$edad', '$codigo_genero',
+						 	'$codigo_estado_civil', '$tipo_sangre', '$codigo_estudios', 
+							 '$codigo_tipo_vivienda', '$codigo_afp', '$nombre_conyuge',
 							'$codigo_municipio', '$codigo_departamento', '$direccion',
-							'$telefono_fijo', '$telefono_movil', '$correo_electronico',
-							'$codigo_cargo', '$fecha_ingreso', '$fecha_retiro', 
-							'$numero_cuenta',
-							'$codigo_licencia', '$numero_licencia', '$dui', '$nit', '$isss', '$afp',
-							'$comentario','$codigo_personal','$codigo_estatus')";
+							'$telefono_fijo', '$telefono_movil', 
+							'$correo_electronico', '$codigo_cargo', '$fecha_ingreso', 
+							'$fecha_retiro', '$numero_cuenta',
+							'$dui', '$nit', '$isss', '$afp',
+							'$codigo_licencia', '$numero_licencia', '$dui','$nit','$afp',
+							'$codigo_estatus')";
 					// Ejecutamos el query
 						$resultadoQuery = $dblink -> query($query);              
                         ///////////////////////////////////////////////////////////////////////////////////////
