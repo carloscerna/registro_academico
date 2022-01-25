@@ -52,7 +52,12 @@ function Header()
     //Arial bold 11
     $this->SetFont('Arial','B',11);
     //Título
-    $this->RotatedText(75,15,utf8_decode('PROGRAMA DE DOTACIÓN DE PAQUETES ESCOLARES AÑO '.$nombre_ann_lectivo),0);
+    if($rubro == "Sin Texto"){
+      $this->RotatedText(75,15,utf8_decode('NÓMINA DE ESTUDIANTES (PADRE DE FAMILIA O ENCARGADO) - AÑO LECTIVO - '.$nombre_ann_lectivo),0);
+    }else{
+      $this->RotatedText(75,15,utf8_decode('PROGRAMA DE DOTACIÓN DE PAQUETES ESCOLARES AÑO '.$nombre_ann_lectivo),0);
+    }
+    
     $this->SetFont('Arial','',10);
     // primera columna de datos, RUBRO, FECHA, CODIGO DEL C.E., NOMBRE DEL C.E.
     $this->RotatedText(20,20,'RUBRO: ',0);
