@@ -781,7 +781,7 @@ $codigo_all_ = substr($codigo_all,0,8);
                   $pdf->Cell(20,$h[0],trim($row['codigo_nie']),1,0,'R',$fill);  // N| de Orden.
                   $pdf->Cell(65,$h[0],cambiar_de_del(trim($row['apellido_alumno'])),1,0,'l',$fill);  // nombre del alumno.
                   // camibar color menor de 5.
-                    $nota_final_ = verificar_nota($row['nota_final'],$row['recuperacion']);
+                    $nota_final_ = verificar_nota_media($row['nota_final'],$row['recuperacion']);
                       if($nota_final_ < 6 ){
                         $pdf->SetTextColor(255,0,0);
                           $pdf->Cell($w[0],$h[0],$nota_final_,1,0,'C',$fill); 
@@ -789,21 +789,21 @@ $codigo_all_ = substr($codigo_all,0,8);
                       }else{
                         $pdf->Cell($w[0],$h[0],$nota_final_,1,0,'C',$fill); 
                       }
-                    $total_puntos_01_array[] = verificar_nota($row['nota_final'],$row['recuperacion']);
+                    $total_puntos_01_array[] = verificar_nota_media($row['nota_final'],$row['recuperacion']);
 										$conteo_alumnos++;
                     break;  // nota final
               case ($i>=2 && $i<=10):
-                  if($i == 2){$total_puntos_02_array[] = verificar_nota($row['nota_final'],$row['recuperacion']);}
-                  if($i == 3){$total_puntos_03_array[] = verificar_nota($row['nota_final'],$row['recuperacion']);}
-                  if($i == 4){$total_puntos_04_array[] = verificar_nota($row['nota_final'],$row['recuperacion']);}
-                  if($i == 5){$total_puntos_05_array[] = verificar_nota($row['nota_final'],$row['recuperacion']);}
-                  if($i == 6){$total_puntos_06_array[] = verificar_nota($row['nota_final'],$row['recuperacion']);}
-                  if($i == 7){$total_puntos_07_array[] = verificar_nota($row['nota_final'],$row['recuperacion']);}
-                  if($i == 8){$total_puntos_08_array[] = verificar_nota($row['nota_final'],$row['recuperacion']);}
-                  if($i == 9){$total_puntos_09_array[] = verificar_nota($row['nota_final'],$row['recuperacion']);}
-                  if($i == 10){$total_puntos_10_array[] = verificar_nota($row['nota_final'],$row['recuperacion']);}
+                  if($i == 2){$total_puntos_02_array[] = verificar_nota_media($row['nota_final'],$row['recuperacion']);}
+                  if($i == 3){$total_puntos_03_array[] = verificar_nota_media($row['nota_final'],$row['recuperacion']);}
+                  if($i == 4){$total_puntos_04_array[] = verificar_nota_media($row['nota_final'],$row['recuperacion']);}
+                  if($i == 5){$total_puntos_05_array[] = verificar_nota_media($row['nota_final'],$row['recuperacion']);}
+                  if($i == 6){$total_puntos_06_array[] = verificar_nota_media($row['nota_final'],$row['recuperacion']);}
+                  if($i == 7){$total_puntos_07_array[] = verificar_nota_media($row['nota_final'],$row['recuperacion']);}
+                  if($i == 8){$total_puntos_08_array[] = verificar_nota_media($row['nota_final'],$row['recuperacion']);}
+                  if($i == 9){$total_puntos_09_array[] = verificar_nota_media($row['nota_final'],$row['recuperacion']);}
+                  if($i == 10){$total_puntos_10_array[] = verificar_nota_media($row['nota_final'],$row['recuperacion']);}
                 
-                $nota_final_ = verificar_nota($row['nota_final'],$row['recuperacion']);
+                $nota_final_ = verificar_nota_media($row['nota_final'],$row['recuperacion']);
                 if($nota_final_ < 6 ){
                   $pdf->SetTextColor(255,0,0);
                     $pdf->Cell($w[0],$h[0],$nota_final_,1,0,'C',$fill); 
@@ -813,11 +813,11 @@ $codigo_all_ = substr($codigo_all,0,8);
                 }
               break;
               case ($i>=11 && $i<=16):  // muci
-              	$nota_concepto = verificar_nota($row['nota_final'],$row['recuperacion']);
+              	$nota_concepto = verificar_nota_media($row['nota_final'],$row['recuperacion']);
                 $concepto_asignatura = cambiar_concepto($nota_concepto);
                 $pdf->Cell(10,$h[0],$concepto_asignatura,1,0,'C',$fill); break;
               case 17:
-                  $nota_concepto = verificar_nota($row['nota_final'],$row['recuperacion']);
+                  $nota_concepto = verificar_nota_media($row['nota_final'],$row['recuperacion']);
                   $concepto_asignatura = cambiar_concepto($nota_concepto);
                   $pdf->Cell(10,$h[0],$concepto_asignatura,1,1,'C',$fill); break;
                 }
