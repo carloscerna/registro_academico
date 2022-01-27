@@ -113,6 +113,7 @@ if($errorDbConexion == false){
 								// Pendiente calculo de la edad. y sobredad.
 				$direccion_[] = $_POST["direccion"];
 				$telefono_[] = $_POST["telefono_alumno"];
+				$telefono_encargado[] = $_POST["telefono_encargado"];
 				$celular_[] = $_POST["telefono_celular"];
 
 				
@@ -123,6 +124,7 @@ if($errorDbConexion == false){
 					$codigo_a = $codigo_alumno[0][$i];
 					
 					$direccion_a = $direccion_[0][$i];
+					$telefono_e = $telefono_encargado[0][$i];
 					$telefono_a = $telefono_[0][$i];
 					$telefono_c = $celular_[0][$i];
 					// armar sql. para acutlizar tabla alumno.
@@ -137,6 +139,11 @@ if($errorDbConexion == false){
                     $query_encargado = "UPDATE alumno_encargado SET direccion = '$direccion_a' WHERE codigo_alumno = $codigo_a";
                     // Ejecutamos el Query.
 					$consulta = $dblink -> query($query_encargado);
+					// actualizar direcci�n del encargado. N.º TELEFONO
+					$true_encargado = true;
+                    $query_encargado_telefono = "UPDATE alumno_encargado SET telefono = '$telefono_e' WHERE codigo_alumno = $codigo_a and encargado = 'true'";
+                    // Ejecutamos el Query.
+					$consulta = $dblink -> query($query_encargado_telefono);
 				}
 
 				$respuestaOK = true;
