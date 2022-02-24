@@ -161,7 +161,7 @@ function FancyTable($header)
                 $pdf->Cell($w[2],6,'','1',0,'C',$fill);
                     $pdf->ln();
 
-                if($i==25 || $i == 51 || $i == 65){
+                if($i==25 || $i == 50 || $i == 75){
 		   $pdf->Cell(array_sum($w)+$w[2]*29,0,'','T');
 		   $pdf->AddPage();
 
@@ -190,7 +190,7 @@ function FancyTable($header)
                       $fill=!$fill;
                       
                       // Salto de Línea.
-        		if($i==25 || $i == 51 || $i == 65){
+        		if($i==25 || $i == 50 || $i == 75){
 				$pdf->Cell(array_sum($w)+$w[2]*29,0,'','T');
 				$pdf->AddPage();
 				$pdf->FancyTable($header);}
@@ -213,7 +213,7 @@ function FancyTable($header)
                       $fill=!$fill;
                       
                       // Salto de Línea.
-        		if($i==25 || $i == 51 || $i == 65){
+        		if($i==25 || $i == 50 || $i == 75){
 				$pdf->Cell(array_sum($w)+$w[2]*29,0,'','T');
 				$pdf->AddPage();
 				$pdf->FancyTable($header);}

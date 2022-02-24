@@ -31,6 +31,7 @@ var listar = function(){
 			var buscartodos = "BuscarTodos";
 		// Tabla que contrendrá los registros.
 			tabla = jQuery("#listadoEstudiantes").DataTable({
+				"responsive": true,
 				"lengthMenu": [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]],
 				"destroy": true,
 				"ajax":{

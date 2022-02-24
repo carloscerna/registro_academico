@@ -539,35 +539,72 @@ $(tbody).on("click","a.imprimir-titulo-tramite",function(){
 		accion = "eliminarMatricula";
 		var id_alumno = id_;
 		var txtcodigomatricula = data[0];
-        //variables checked                        
-			//alert(txtcodigomatricula);
-///////////////////////////////////////////////////////////////			
+
+		//	ENVIAR MENSAJE CON SWEETALERT 2, PARA CONFIRMAR SI ELIMINA EL REGISTRO.
+		const swalWithBootstrapButtons = Swal.mixin({
+			customClass: {
+			confirmButton: 'btn btn-success',
+			cancelButton: 'btn btn-danger'
+			},
+			buttonsStyling: false
+		})
+
+		swalWithBootstrapButtons.fire({
+			title: '¿Qué desea hacer?',
+			text: 'Eliminar el Registro Seleccionado!',
+			showCancelButton: true,
+			confirmButtonText: 'Sí, Eliminar!',
+			cancelButtonText: 'No, Cancelar!',
+			reverseButtons: true,
+			allowOutsideClick: false,
+			allowEscapeKey: false,
+			allowEnterKey: false,
+			stopKeydownPropagation: false,
+			closeButtonAriaLabel: 'Cerrar Alerta',
+			type: 'question'
+		}).then((result) => {
+			if (result.value) {
+			// PROCESO PARA ELIMINAR REGISTRO.
+			///////////////////////////////////////////////////////////////			
 			// Inicio del Ajax. guarda o Actualiza los datos del Formualrio.
 			///////////////////////////////////////////////////////////////
-		        $.ajax({
-		            beforeSend: function(){
-		                
-		            },
-		            cache: false,
-		            type: "POST",
-		            dataType: "json",
-		            url:"php_libs/soporte/NuevoEditarEstudiante.php",
-		            data:"&id=" + Math.random() + "&codigo_alumno=" + id_alumno + "&codigo_matricula=" + txtcodigomatricula + "&accion=" + accion,
-		            success: function(response){
-		            	// Validar mensaje de error
-		            	if(response.respuesta === false){
-		            		alert(response.mensaje);
-		            	}
-		            	else{
-		            		// si es exitosa la operación. Validar mensajes.
-                                        if (response.mensaje == 'Matricula Borrada') {
-                                                toastr.success("Registro Eliminado.");
-												$('#listaMatricula').empty();
-												listarMatriculaAlumno();
-                                        }
-                                }               
-		            },
-		        }); // ajax para eliminar matricula.
+			$.ajax({
+				beforeSend: function(){
+					
+				},
+				cache: false,
+				type: "POST",
+				dataType: "json",
+				url:"php_libs/soporte/NuevoEditarEstudiante.php",
+				data:"&id=" + Math.random() + "&codigo_alumno=" + id_alumno + "&codigo_matricula=" + txtcodigomatricula + "&accion=" + accion,
+				success: function(response){
+					// Validar mensaje de error
+					if(response.respuesta === false){
+						alert(response.mensaje);
+					}
+					else{
+						// si es exitosa la operación. Validar mensajes.
+									if (response.mensaje == 'Matricula Borrada') {
+											toastr.success("Registro Eliminado.");
+											$('#listaMatricula').empty();
+											listarMatriculaAlumno();
+									}
+							}               
+				},
+			}); // ajax para eliminar matricula.
+			//////////////////////////////////////
+			} else if (
+			/* Read more about handling dismissals below */
+			result.dismiss === Swal.DismissReason.cancel
+			) {
+			swalWithBootstrapButtons.fire(
+				'Cancelar',
+				'Su Archivo no ha sido Eliminado :)',
+				'error'
+			)
+			}
+		})
+       
 	});
 }; // Funcion principal dentro del DataTable.
 ///////////////////////////////////////////////////////

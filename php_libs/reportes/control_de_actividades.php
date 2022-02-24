@@ -224,7 +224,7 @@ function FancyTable($header)
         while($row = $result -> fetch(PDO::FETCH_BOTH))
             {           
             // Contabiliza el total de lineas para otra página o continuar en la misma.    
-                if($i==26 || $i == 55){
+                if($i==26 || $i == 50 || $i == 76){
                         $pagina_impar = true;
                 	$pdf->Cell(array_sum($w)+(9*10),0,'','T');
 			$pdf->SetMargins(10, 10, 5);
@@ -260,7 +260,7 @@ function FancyTable($header)
                       $fill=!$fill;
                       
                       // Salto de Línea.
-        		if($numero == 26 || $numero == 55){
+        		if($numero == 26 || $numero == 49 || $numero == 76){
 		           $pdf->Cell(array_sum($w)+9*10,0,'','B');
 			   $pdf->AddPage();
                           }

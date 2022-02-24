@@ -96,6 +96,7 @@ $contenidoOK = "";
   $nombre_encargado = trim(($row['nombres']));
   $dui_encargado = trim(($row['encargado_dui']));
   $telefono_encargado = trim(($row['telefono']));
+  $nombre_parentesco = trim(($row['nombre_tipo_parentesco']));
         //  IMPRIMIR EL CONTENIDO DE  INFORMACION EN EXCEL.
 	    $objPHPExcel->getActiveSheet()->SetCellValue("A".$fila_excel, $num);
 	    $objPHPExcel->getActiveSheet()->SetCellValue("B".$fila_excel, TRIM($row['codigo_nie']));
@@ -110,6 +111,7 @@ $contenidoOK = "";
         // datos del encargado nombre y n.º de dui.
         $objPHPExcel->getActiveSheet()->SetCellValue("M".$fila_excel,($nombre_encargado));
         $objPHPExcel->getActiveSheet()->SetCellValue("N".$fila_excel,($dui_encargado));
+        $objPHPExcel->getActiveSheet()->SetCellValue("O".$fila_excel,($nombre_parentesco));
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////        
    }    //  FIN DEL WHILE.
 // Verificar si Existe el directorio archivos.

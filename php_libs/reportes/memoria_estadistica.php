@@ -59,7 +59,7 @@ function Header()
     $this->Cell(150,4,'CENTRO ESCOLAR: ' . utf8_decode($_SESSION['institucion']),0,0,'L');
     $this->Cell(100,4,'CODIGO: ' . utf8_decode($_SESSION['codigo']),0,1,'R');
     //
-    $this->Cell(150,4,utf8_decode('SISTEMA INTREGRADO N.° 3'),0,0,'L');
+    $this->Cell(150,4,utf8_decode('DISTRITO EDUCATIVO 02-02 ZONA 3'),0,0,'L');
     $this->Cell(100,4,'MUNICIPIO: SANTA ANA',0,1,'R');}
 
 //Pie de página
