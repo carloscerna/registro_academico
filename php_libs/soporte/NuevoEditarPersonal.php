@@ -255,7 +255,6 @@ if($errorDbConexion == false){
 							'$telefono_fijo', '$telefono_movil', 
 							'$correo_electronico', '$codigo_cargo', '$fecha_ingreso', 
 							'$fecha_retiro', '$numero_cuenta',
-							'$dui', '$nit', '$isss', '$afp',
 							'$codigo_licencia', '$numero_licencia', '$dui','$nit','$afp',
 							'$codigo_estatus')";
 					// Ejecutamos el query
