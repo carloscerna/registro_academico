@@ -222,15 +222,7 @@ function FancyTable($header)
     // Variables a utilizar
     $fill = false; $i=1; $pagina_impar = false;
         while($row = $result -> fetch(PDO::FETCH_BOTH))
-            {           
-            // Contabiliza el total de lineas para otra página o continuar en la misma.    
-                if($i==26 || $i == 51 || $i == 74){
-                        $pagina_impar = true;
-                	$pdf->Cell(array_sum($w)+(9*10),0,'','T');
-			$pdf->SetMargins(10, 10, 5);
-                        $pdf->AddPage();
-                        }
-                        
+            {                                  
                     $pdf->Cell($w[0],7,$i,'LR',0,'C',$fill);        // número correlativo
                     $pdf->Cell($w[1],7,utf8_decode(trim($row['apellido_alumno'])),'LR',0,'L',$fill); // Nombre + apellido_materno + apellido_paterno
                 
@@ -241,6 +233,13 @@ function FancyTable($header)
                                 
                     $fill=!$fill;
                     $i=$i+1;
+                                // Contabiliza el total de lineas para otra página o continuar en la misma.    
+                if($i==26 || $i == 50){
+                    $pagina_impar = true;
+                    $pdf->Cell(array_sum($w)+(9*10),0,'','T');
+                    $pdf->SetMargins(10, 10, 5);
+                    $pdf->AddPage();
+            }
             }
             ///////////////////////////////////////////////////////////////////////////////////////
             // rellenar con las lineas que faltan y colocar total de puntos y promedio.
@@ -253,16 +252,15 @@ function FancyTable($header)
                       $pdf->Cell($w[0],7,$numero++,'LR',0,'C',$fill);  // N| de Orden.
                       $pdf->Cell($w[1],7,'','LR',0,'l',$fill);  // nombre del alumno.
 																				
-			for($j=0;$j<=10;$j++)											
+			            for($j=0;$j<=10;$j++)											
                   		$pdf->Cell($w[2],7,'','LR',0,'C',$fill);    // lineas de ancho 7.
 											
                       $pdf->Ln();   
                       $fill=!$fill;
-                      
                       // Salto de Línea.
-        		if($numero == 26 || $numero == 51 || $numero == 74){
-		           $pdf->Cell(array_sum($w)+9*10,0,'','B');
-			   $pdf->AddPage();
+                		if($numero == 26 || $numero == 50){
+		                   $pdf->Cell(array_sum($w)+9*10,0,'','B');
+    			            $pdf->AddPage();
                           }
                   }
 // Cierre de la Línea Final.        

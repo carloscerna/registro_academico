@@ -97,6 +97,11 @@ $contenidoOK = "";
   $dui_encargado = trim(($row['encargado_dui']));
   $telefono_encargado = trim(($row['telefono']));
   $nombre_parentesco = trim(($row['nombre_tipo_parentesco']));
+  $numero_telefono_encargado = trim(($row['telefono_encargado']));
+  $direccion = trim(($row['direccion_alumno']));
+  $fecha_nacimiento = trim(($row['fecha_nacimiento']));
+  $edad = trim(($row['edad']));
+  //$ = trim(($row['']));
         //  IMPRIMIR EL CONTENIDO DE  INFORMACION EN EXCEL.
 	    $objPHPExcel->getActiveSheet()->SetCellValue("A".$fila_excel, $num);
 	    $objPHPExcel->getActiveSheet()->SetCellValue("B".$fila_excel, TRIM($row['codigo_nie']));
@@ -112,6 +117,12 @@ $contenidoOK = "";
         $objPHPExcel->getActiveSheet()->SetCellValue("M".$fila_excel,($nombre_encargado));
         $objPHPExcel->getActiveSheet()->SetCellValue("N".$fila_excel,($dui_encargado));
         $objPHPExcel->getActiveSheet()->SetCellValue("O".$fila_excel,($nombre_parentesco));
+        $objPHPExcel->getActiveSheet()->SetCellValue("P".$fila_excel,($numero_telefono_encargado));
+        $objPHPExcel->getActiveSheet()->SetCellValue("Q".$fila_excel,($direccion));
+
+        // DATOS DEL ESTUDIANTE
+        $objPHPExcel->getActiveSheet()->SetCellValue("R".$fila_excel,($fecha_nacimiento));
+        $objPHPExcel->getActiveSheet()->SetCellValue("S".$fila_excel,($edad));
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////        
    }    //  FIN DEL WHILE.
 // Verificar si Existe el directorio archivos.
