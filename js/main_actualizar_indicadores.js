@@ -61,10 +61,15 @@ $(function(){
   // BLOQUE SOBREEDAD
     $('#goVerSobreEdad').on('click',function(){
       // BUSCAR EL �LTINMO DE LA ASIGNATURA PARA ASIGNARLE A UN NUEVO REGISTRO.
-      var codigo_annlectivo = $("#lstannlectivo").val();
-                    varenviar = "/registro_academico/php_libs/reportes/CrearNominasSobreedad.php?lstannlectivo="+codigo_annlectivo;
-                // Ejecutar la funci�n
-                    AbrirVentana(varenviar);        
+        var codigo_annlectivo = $("#lstannlectivo").val();
+      // abrir caja de dialogo.		        
+          $("label[for='NombreArchivo']").text('Creando Archivo de Sobreedad. ');
+      // mostra rel modal. que contiene el mensaje del nombre del archivo y mensajes de veririvación o actualización.
+          $('#myModal').modal('show');
+          $.post("php_libs/reportes/CrearNominasSobreedad.php",{codigo_annlectivo: codigo_annlectivo},
+            function() {
+			        toastr.success("Archio Creado...");
+       });
       });
 
     });

@@ -384,45 +384,196 @@ function genera_bach()
 			$edad_ok = false;
 			$sobreedad = "";
 		
-		if($edad >= 9 && $grado == "01" ){	// 7
+		if($edad >= 8 && $grado == "01" ){	// 7
 		$edad_ok = true;}
 		
-		if($edad >= 10 && $grado == "02" ){ // 8
+		if($edad >= 9 && $grado == "02" ){ // 8
 		$edad_ok = true;}
 		
-		if($edad >= 11 && $grado == "03" ){ // 9
+		if($edad >= 10 && $grado == "03" ){ // 9
 		$edad_ok = true;}
 		
-		if($edad >= 12 && $grado == "04" ){	// 10
+		if($edad >= 11 && $grado == "04" ){	// 10
 		$edad_ok = true;}
 		
-		if($edad >= 13 && $grado == "05" ){	// 11
+		if($edad >= 12 && $grado == "05" ){	// 11
 		$edad_ok = true;}
 		
-		if($edad >= 14 && $grado == "06" ){		// 12
+		if($edad >= 13 && $grado == "06" ){		// 12
 		$edad_ok = true;}
 		
-		if($edad >= 15 && $grado == "07" ){	// 13
+		if($edad >= 14 && $grado == "07" ){	// 13
 		$edad_ok = true;}
 		
-		if($edad >= 16 && $grado == "08" ){	// 14
+		if($edad >= 15 && $grado == "08" ){	// 14
 		$edad_ok = true;}
 		
-		if($edad >= 17 && $grado == "09" ){	// 15
+		if($edad >= 16 && $grado == "09" ){	// 15
 		$edad_ok = true;}
 
-    if($edad >= 18 && $grado == "10" ){	// 16
+    if($edad >= 17 && $grado == "10" ){	// 16
 		$edad_ok = true;}		
 		
-		if($edad >= 19 && $grado == "11" ){	// 17
+		if($edad >= 18 && $grado == "11" ){	// 17
 		$edad_ok = true;}		
 
-		if($edad >= 20 && $grado == "12" ){	// 18
+		if($edad >= 19 && $grado == "12" ){	// 18
 		$edad_ok = true;}
 		
 		if($edad_ok == true){$sobreedad = "t";}else{$sobreedad = "f";}
 		
 		return $sobreedad;
+	}
+	function calcular_sobreedad_escala($edad,$grado)
+	{
+		global $sobreedad_escala;
+			$sobreedad_escala = 1;
+		
+		if($edad >= 8 && $grado == "01" ){	// 7
+				if($edad == 8){
+
+				}else if($edad == 9){
+					$sobreedad_escala = 2;
+				}else if($edad == 10){
+					$sobreedad_escala = 3;
+				}else{
+					$sobreedad_escala = 4;
+				}
+			}
+		
+		if($edad >= 9 && $grado == "02" ){ // 8
+			if($edad == 9){
+
+			}else if($edad == 10){
+				$sobreedad_escala = 2;
+			}else if($edad == 11){
+				$sobreedad_escala = 3;
+			}else{
+				$sobreedad_escala = 4;
+			}
+		}
+		
+		if($edad >= 10 && $grado == "03" ){ // 9
+			if($edad == 10){
+
+			}else if($edad == 11){
+				$sobreedad_escala = 2;
+			}else if($edad == 12){
+				$sobreedad_escala = 3;
+			}else{
+				$sobreedad_escala = 4;
+			}
+		}
+		
+		if($edad >= 11 && $grado == "04" ){	// 10
+			if($edad == 11){
+
+			}else if($edad == 12){
+				$sobreedad_escala = 2;
+			}else if($edad == 13){
+				$sobreedad_escala = 3;
+			}else{
+				$sobreedad_escala = 4;
+			}
+		}
+		
+		if($edad >= 12 && $grado == "05" ){	// 11
+			if($edad == 12){
+
+			}else if($edad == 13){
+				$sobreedad_escala = 2;
+			}else if($edad == 14){
+				$sobreedad_escala = 3;
+			}else{
+				$sobreedad_escala = 4;
+			}
+		}
+		
+		if($edad >= 13 && $grado == "06" ){		// 12
+			if($edad == 13){
+
+			}else if($edad == 14){
+				$sobreedad_escala = 2;
+			}else if($edad == 15){
+				$sobreedad_escala = 3;
+			}else{
+				$sobreedad_escala = 4;
+			}
+		}
+		
+		if($edad >= 14 && $grado == "07" ){	// 13
+			if($edad == 14){
+
+			}else if($edad == 15){
+				$sobreedad_escala = 2;
+			}else if($edad == 16){
+				$sobreedad_escala = 3;
+			}else{
+				$sobreedad_escala = 4;
+			}
+		}
+		
+		if($edad >= 15 && $grado == "08" ){	// 14
+			if($edad == 15){
+
+			}else if($edad == 16){
+				$sobreedad_escala = 2;
+			}else if($edad == 17){
+				$sobreedad_escala = 3;
+			}else{
+				$sobreedad_escala = 4;
+			}
+		}
+		
+		if($edad >= 16 && $grado == "09" ){	// 15
+			if($edad == 16){
+
+			}else if($edad == 17){
+				$sobreedad_escala = 2;
+			}else if($edad == 18){
+				$sobreedad_escala = 3;
+			}else{
+				$sobreedad_escala = 4;
+			}
+		}
+
+    if($edad >= 17 && $grado == "10" ){	// 16
+		if($edad == 17){
+
+		}else if($edad == 18){
+			$sobreedad_escala = 2;
+		}else if($edad == 19){
+			$sobreedad_escala = 3;
+		}else{
+			$sobreedad_escala = 4;
+		}
+	}		
+		
+		if($edad >= 18 && $grado == "11" ){	// 17
+			if($edad == 18){
+
+			}else if($edad == 19){
+				$sobreedad_escala = 2;
+			}else if($edad == 20){
+				$sobreedad_escala = 3;
+			}else{
+				$sobreedad_escala = 4;
+			}
+		}		
+
+		if($edad >= 19 && $grado == "12" ){	// 18
+			if($edad == 19){
+
+			}else if($edad == 20){
+				$sobreedad_escala = 2;
+			}else if($edad == 21){
+				$sobreedad_escala = 3;
+			}else{
+				$sobreedad_escala = 4;
+			}
+		}
+		
+		return $sobreedad_escala;
 	}
 /////////////////////////////////////////////////////////////////////////////////////////
 //				**	verificar la nota mayor, la final o recuperación.
