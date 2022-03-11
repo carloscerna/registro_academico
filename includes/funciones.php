@@ -378,6 +378,52 @@ function genera_bach()
 		return $sobreedad;
 	}
 
+	function calcular_sobreedad_($edad,$grado)
+	{
+		global $sobreedad;
+			$edad_ok = false;
+			$sobreedad = "";
+		
+		if($edad >= 9 && $grado == "01" ){	// 7
+		$edad_ok = true;}
+		
+		if($edad >= 10 && $grado == "02" ){ // 8
+		$edad_ok = true;}
+		
+		if($edad >= 11 && $grado == "03" ){ // 9
+		$edad_ok = true;}
+		
+		if($edad >= 12 && $grado == "04" ){	// 10
+		$edad_ok = true;}
+		
+		if($edad >= 13 && $grado == "05" ){	// 11
+		$edad_ok = true;}
+		
+		if($edad >= 14 && $grado == "06" ){		// 12
+		$edad_ok = true;}
+		
+		if($edad >= 15 && $grado == "07" ){	// 13
+		$edad_ok = true;}
+		
+		if($edad >= 16 && $grado == "08" ){	// 14
+		$edad_ok = true;}
+		
+		if($edad >= 17 && $grado == "09" ){	// 15
+		$edad_ok = true;}
+
+    if($edad >= 18 && $grado == "10" ){	// 16
+		$edad_ok = true;}		
+		
+		if($edad >= 19 && $grado == "11" ){	// 17
+		$edad_ok = true;}		
+
+		if($edad >= 20 && $grado == "12" ){	// 18
+		$edad_ok = true;}
+		
+		if($edad_ok == true){$sobreedad = "t";}else{$sobreedad = "f";}
+		
+		return $sobreedad;
+	}
 /////////////////////////////////////////////////////////////////////////////////////////
 //				**	verificar la nota mayor, la final o recuperación.
 /////////////////////////////////////////////////////////////////////////////////////////

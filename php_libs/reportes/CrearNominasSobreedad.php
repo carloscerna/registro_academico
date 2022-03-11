@@ -10,7 +10,7 @@
 $codigo_ann_lectivo = $_REQUEST["lstannlectivo"];
 $db_link = $dblink;
 $codigo_all_indicadores = array(); $nombre_grado = array(); $nombre_seccion = array(); $nombre_modalidad = array(); $nombre_ann_lectivo = array();
-$codigo_grado_tabla = array(); $codigo_grado_comparar = array(); $nombre_modalidad_consolidad = array(); $nombre_turno = array(); $nombre_turno_consolidado = array();
+$codigo_grado_tabla = array(); $codigo_grado_ = array(); $nombre_modalidad_consolidad = array(); $nombre_turno = array(); $nombre_turno_consolidado = array();
 
 // buscar la consulta y la ejecuta.
 consultas(13,0,$codigo_ann_lectivo,'','','',$db_link,'');
@@ -27,66 +27,26 @@ while($row = $result -> fetch(PDO::FETCH_BOTH))
        $codigo_seccion = trim($row['codigo_seccion']);
        $codigo_ann_lectivo = trim($row['codigo_ann_lectivo']);
        $codigo_turno = trim($row['codigo_turno']);
-       // Array
+       // ArrayÇ
+       $codigo_grado_[] = trim($row['codigo_grado']);
        $nombre_grado[] = utf8_decode($row['nombre_grado']);
        $nombre_seccion[] = $row['nombre_seccion'];
        $nombre_modalidad[] = $row['nombre_bachillerato'];
        $nombre_ann_lectivo[] = $row['nombre_ann_lectivo'];
        $nombre_turno[] = $row['nombre_turno'];
        // modalidad, grado, sección, año lectivo.
-       $codigo_all_indicadores[] = $codigo_modalidad . $codigo_grado . $codigo_seccion . $codigo_ann_lectivo . $codigo_turno;
+       $codigo_all_sobreedad[] = $codigo_modalidad . $codigo_grado . $codigo_seccion . $codigo_ann_lectivo . $codigo_turno;
    }
 
+   //print_r($codigo_all_sobreedad);
 // Inicializamos variables de mensajes y JSON
     $respuestaOK = true;
     $mensajeError = "No se puede ejecutar la aplicación";
     $contenidoOK = "";
-// Información Académica.
-    /*$codigo_bachillerato = substr($codigo_all,0,2);
-    $codigo_grado = substr($codigo_all,2,2);
-    $codigo_seccion = substr($codigo_all,4,2);
-    $codigo_annlectivo = substr($codigo_all,6,2);*/
-// buscar la consulta y la ejecuta.
-  consultas(9,0,$codigo_all,'','','',$db_link,'');
-//  imprimir datos del bachillerato.
-        while($row = $result_encabezado -> fetch(PDO::FETCH_BOTH))
-            {
-            $print_bachillerato ='Modalidad: '.trim($row['nombre_bachillerato']);
-			$nombre_ann_lectivo = trim($row['nombre_ann_lectivo']);
-            $print_grado = 'Grado: '. trim($row['nombre_grado']);
-			$nombre_grado = trim($row['nombre_grado']);
-            $print_seccion = ('Sección: ').trim($row['nombre_seccion']);
-			$nombre_seccion = trim($row['nombre_seccion']);
-            $print_ann_lectivo = 'Año Lectivo: '.trim($row['nombre_ann_lectivo']);
-	            break;
-            }
-	    // buscar la consulta y la ejecuta.
-        consultas(14,0,$codigo_ann_lectivo,'','','',$db_link,'');
-        //  captura de datos para información individual de grado y sección.
-             while($row = $result_encabezado -> fetch(PDO::FETCH_BOTH))
-                {
-                    $codigo_grado = trim($row['codigo_grado']);
-                    $codigo_modalidad_consolidado = trim($row[1]);
-                    // arrays
-                    $nombre_modalidad_consolidado[] = trim($row['nombre_modalidad']);
-                    $nombre_grado_consolidado[] = utf8_decode($row['nombre_grado']);
-                    $nombre_ann_lectivo[] = $row['nombre_ann_lectivo'];
-                    $nombre_turno_consolidado[] = $row['nombre_turno'];
-                    // modalidad, grado y año lectivo.
-                    $codigo_indicadores[] = $codigo_modalidad_consolidado . $codigo_grado . $codigo_ann_lectivo;
-                }
-        //  captura de datos para información individual de grado y sección.
-                $query_turno = "SELECT * FROM turno ORDER BY codigo";
-                // ejecutar la consulta.
-                $result_turno = $db_link -> query($query_turno);
-                while($row = $result_turno -> fetch(PDO::FETCH_BOTH))
-                {
-                    $codigo_turno_bucle[] = trim($row['codigo']);
-                    $nombre_turno_bucle[] = trim($row['nombre']);
-                }
+
 // Proceso de la creaciòn de la Hoja de cálculo.
     $n_hoja = 0;	// variable para el activesheet.
-    consultas(4,0,$codigo_all,'','','',$db_link,'');
+    //consultas(4,0,$codigo_all,'','','',$db_link,'');
 // call the autoload
     require $path_root."/registro_academico/vendor/autoload.php";
 // load phpspreadsheet class using namespaces.
@@ -119,87 +79,70 @@ while($row = $result -> fetch(PDO::FETCH_BOTH))
     $n_hoja++;    
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Time zone.
-    //echo date('H:i:s') . " Set Encabezado"."<br />";
-//Escribimos en la hoja en la celda e3. los datos del bachillerato, grado, sección, año lectivo, etc.
-/*    $objPHPExcel->getActiveSheet()->SetCellValue('A1', $print_bachillerato);
-    $objPHPExcel->getActiveSheet()->SetCellValue('A2', $print_grado);
-    $objPHPExcel->getActiveSheet()->SetCellValue('C2', $print_seccion);
-    $objPHPExcel->getActiveSheet()->SetCellValue('D2', $print_ann_lectivo);*/
 // Correlativo, numero de linea.
-    $num = 0; $fila_excel = 5;
-
-    // Evaluar si existen registros.
-	if($result -> rowCount() != 0)
-	{
-		for($jh=0;$jh<=count($nombre_turno_bucle)-1;$jh++)
+    $num = 0; $fila_excel = 5; $numero_grado_sobreedad = 0;
+    $codigo_grado_sobreedad = array("01","02","03","04","05","06","07","08","09");
+		for($jh=0;$jh<=count($codigo_all_sobreedad)-1;$jh++)
 		{
+            // verificar codigo grado
+                    //
+                        $codigo_grado_ok = $codigo_grado_sobreedad[$numero_grado_sobreedad];
+                    //  EJECUTAR CONSULTA.
+                        consultas(4,0,$codigo_all_sobreedad[$jh],'','','',$db_link,'');
+                    //  RECORRER LA CONSULTA.
+                        while($listado_sobreedad = $result -> fetch(PDO::FETCH_BOTH))
+                        {
+                            $apellidos_nombres = trim(cambiar_de_del_2($listado_sobreedad['apellido_alumno']));
+                            $nie = trim($listado_sobreedad["codigo_nie"]);
+                            $fecha_nacimiento = trim($listado_sobreedad["fecha_nacimiento"]);                            
+                            $edad = trim($listado_sobreedad["edad"]);                            
+                            $nombre_grado = trim($listado_sobreedad["nombre_grado"]);     
+                            $codigo_grado = trim($listado_sobreedad["codigo_grado"]);                            
+                            $nombre_seccion = trim($listado_sobreedad["nombre_seccion"]);                            
+                            $nombre_encargado = trim($listado_sobreedad["nombres"]);                            
+                            $dui_encargado = trim($listado_sobreedad["encargado_dui"]);
+                            $nombre_parentesco = trim($listado_sobreedad["nombre_tipo_parentesco"]);
+                            $telefono_encargado = trim($listado_sobreedad["encargado_telefono"]);
+                            $direccion_encargado = trim($listado_sobreedad["encargado_direccion"]);
 
+                            // Imprimir valores si la sobreedad es mayor dependiendo del grado.
+                            if($codigo_grado >= "01" and $codigo_grado <= "09"){
+                                calcular_sobreedad_($edad, $codigo_grado_ok);
+                                if($sobreedad == "t"){
+                                    //  IMPRIMIR EL CONTENIDO DE  INFORMACION EN EXCEL.
+                                    $num++;
+                                    $objPHPExcel->getActiveSheet()->SetCellValue("A".$fila_excel, $num);
+                                    $objPHPExcel->getActiveSheet()->SetCellValue("B".$fila_excel, $nie);
+                                    $objPHPExcel->getActiveSheet()->SetCellValue("C".$fila_excel,($apellidos_nombres));
+                                    $objPHPExcel->getActiveSheet()->SetCellValue("D".$fila_excel,($fecha_nacimiento));
+                                    $objPHPExcel->getActiveSheet()->SetCellValue("E".$fila_excel,($edad));
+                                    $objPHPExcel->getActiveSheet()->SetCellValue("F".$fila_excel,($nombre_grado));
+                                    $objPHPExcel->getActiveSheet()->SetCellValue("G".$fila_excel,($nombre_seccion));
+                                    //SOBREEDAD
+                                    //$objPHPExcel->getActiveSheet()->SetCellValue("J".$fila_excel,($codigo_matricula));
+                                    //$objPHPExcel->getActiveSheet()->SetCellValue("K".$fila_excel,TRIM($row['codigo_nie']));
+                                    //$objPHPExcel->getActiveSheet()->SetCellValue("L".$fila_excel,($apellidos_nombres));Ç
+                                    //DATOS DEL ENCARGADO
+                                    // datos del encargado nombre y n.º de dui.
+                                        $objPHPExcel->getActiveSheet()->SetCellValue("L".$fila_excel,($nombre_encargado));
+                                        $objPHPExcel->getActiveSheet()->SetCellValue("M".$fila_excel,($dui_encargado));
+                                        $objPHPExcel->getActiveSheet()->SetCellValue("N".$fila_excel,($nombre_parentesco));
+                                        $objPHPExcel->getActiveSheet()->SetCellValue("O".$fila_excel,($telefono_encargado));
+                                        $objPHPExcel->getActiveSheet()->SetCellValue("P".$fila_excel,($direccion_encargado));
+                                    // aumentar fila excel
+                                        $fila_excel++;
+                                }
+                            }
+                        }
         }
-
-        while($row = $result -> fetch(PDO::FETCH_BOTH))
-        {
-print            $apellidos_nombres = trim(cambiar_de_del_2($row['apellido_alumno']));
-exit;
-        }
-    }
-
-    while($row = $result -> fetch(PDO::FETCH_BOTH))
-    {
-    // acumular correlativo y fila.
-        $num++; $fila_excel++;
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	// Apellidos (paterno y materno) - nombres.
-	$apellidos_nombres = trim(cambiar_de_del_2($row['apellido_alumno']));
-	// Apellidos (paterno y materno)
-	$apellidos_materno_paterno = trim(cambiar_de_del_2($row['apellidos_alumno']));
-	// Nombres
-	$nombres = trim(cambiar_de_del_2($row['nombre_completo']));
-    // Código Alumno
-      $codigo_alumno = trim(($row['id_alumno']));
-    // Código Matricula
-    $codigo_matricula = trim(($row['codigo_matricula']));
-    // datos de los encargados
-        $nombre_encargado = trim(($row['nombres']));
-        $dui_encargado = trim(($row['encargado_dui']));
-        $telefono_encargado = trim(($row['telefono']));
-        $nombre_parentesco = trim(($row['nombre_tipo_parentesco']));
-        $numero_telefono_encargado = trim(($row['telefono_encargado']));
-        $direccion = trim(($row['direccion_alumno']));
-        $fecha_nacimiento = trim(($row['fecha_nacimiento']));
-        $edad = trim(($row['edad']));
-  //$ = trim(($row['']));
-        //  IMPRIMIR EL CONTENIDO DE  INFORMACION EN EXCEL.
-	    $objPHPExcel->getActiveSheet()->SetCellValue("A".$fila_excel, $num);
-	    $objPHPExcel->getActiveSheet()->SetCellValue("B".$fila_excel, TRIM($row['codigo_nie']));
-        $objPHPExcel->getActiveSheet()->SetCellValue("C".$fila_excel,($apellidos_nombres));
-	    $objPHPExcel->getActiveSheet()->SetCellValue("E".$fila_excel,($nombres . ' ' . $apellidos_materno_paterno));
-		$objPHPExcel->getActiveSheet()->SetCellValue("G".$fila_excel,($apellidos_materno_paterno));
-		$objPHPExcel->getActiveSheet()->SetCellValue("H".$fila_excel,($nombres));
-        $objPHPExcel->getActiveSheet()->SetCellValue("I".$fila_excel,($codigo_alumno));
-        $objPHPExcel->getActiveSheet()->SetCellValue("J".$fila_excel,($codigo_matricula));
-        $objPHPExcel->getActiveSheet()->SetCellValue("K".$fila_excel,TRIM($row['codigo_nie']));
-        $objPHPExcel->getActiveSheet()->SetCellValue("L".$fila_excel,($apellidos_nombres));
-        // datos del encargado nombre y n.º de dui.
-        $objPHPExcel->getActiveSheet()->SetCellValue("M".$fila_excel,($nombre_encargado));
-        $objPHPExcel->getActiveSheet()->SetCellValue("N".$fila_excel,($dui_encargado));
-        $objPHPExcel->getActiveSheet()->SetCellValue("O".$fila_excel,($nombre_parentesco));
-        $objPHPExcel->getActiveSheet()->SetCellValue("P".$fila_excel,($numero_telefono_encargado));
-        $objPHPExcel->getActiveSheet()->SetCellValue("Q".$fila_excel,($direccion));
-
-        // DATOS DEL ESTUDIANTE
-        $objPHPExcel->getActiveSheet()->SetCellValue("R".$fila_excel,($fecha_nacimiento));
-        $objPHPExcel->getActiveSheet()->SetCellValue("S".$fila_excel,($edad));
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////        
-   }    //  FIN DEL WHILE.
 // Verificar si Existe el directorio archivos.
-		$codigo_modalidad = $codigo_bachillerato;
 		$nombre_ann_lectivo = $nombre_ann_lectivo;
 	// Tipo de Carpeta a Grabar Cuadro de Calificaciones.
 		$codigo_destino = 1;
-		CrearDirectorios($path_root,$nombre_ann_lectivo,$codigo_modalidad,$codigo_destino,"");
+		CrearDirectorios($path_root,$nombre_ann_lectivo,"",$codigo_destino,"");
 	// Nombre del archivo.
-		$nombre_archivo = replace_3($codigo_modalidad . "-". $nombre_grado ."-".$nombre_seccion.".xlsx");
+		$nombre_archivo = replace_3("Informe Sobreedad - ".$print_ann_lectivo.".xlsx");
         $contenidoOK = "Archivo Creado: " . $nombre_archivo;
 	try {
     // Grabar el archivo.
