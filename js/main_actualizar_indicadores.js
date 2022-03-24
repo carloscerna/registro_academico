@@ -66,13 +66,41 @@ $(function(){
           $("label[for='NombreArchivo']").text('Creando Archivo de Sobreedad. ');
       // mostra rel modal. que contiene el mensaje del nombre del archivo y mensajes de veririvación o actualización.
           $('#myModal').modal('show');
-          $.post("php_libs/reportes/CrearNominasSobreedad.php",{codigo_annlectivo: codigo_annlectivo},
+          $.post("php_libs/reportes/CrearNominasSobreedad.php",{codigo_annlectivo: codigo_annlectivo, tipo_archivo: 'sobreedad'},
             function() {
 			        toastr.success("Archio Creado...");
        });
       });
 
+  // BLOQUE IGUAL 9 AÑOS Y FECHA DE NACIMIENTO 6/4/2022
+  $('#goVerIgualNueveFemenino').on('click',function(){
+    // BUSCAR EL �LTINMO DE LA ASIGNATURA PARA ASIGNARLE A UN NUEVO REGISTRO.
+      var codigo_annlectivo = $("#lstannlectivo").val();
+    // abrir caja de dialogo.		        
+        $("label[for='NombreArchivo']").text('Creando Archivo Igual 9 años y antes de Fecha de Nacimiento. ');
+    // mostra rel modal. que contiene el mensaje del nombre del archivo y mensajes de veririvación o actualización.
+        $('#myModal').modal('show');
+        $.post("php_libs/reportes/CrearNominasSobreedad.php",{codigo_annlectivo: codigo_annlectivo, tipo_archivo: 'Nueve Year'},
+          function() {
+            toastr.success("Archio Creado...");
+     });
     });
+
+  // BLOQUE MAYOR 10 AÑOS SOLO FEMENINO
+  $('#goVerMayorDiezFemenino').on('click',function(){
+    // BUSCAR EL �LTINMO DE LA ASIGNATURA PARA ASIGNARLE A UN NUEVO REGISTRO.
+      var codigo_annlectivo = $("#lstannlectivo").val();
+    // abrir caja de dialogo.		        
+        $("label[for='NombreArchivo']").text('Creando Archivo Mayor 10 años');
+    // mostra rel modal. que contiene el mensaje del nombre del archivo y mensajes de veririvación o actualización.
+        $('#myModal').modal('show');
+        $.post("php_libs/reportes/CrearNominasSobreedad.php",{codigo_annlectivo: codigo_annlectivo, tipo_archivo: 'Ten Year'},
+          function() {
+            toastr.success("Archio Creado...");
+     });
+    });
+
+}); // FIN DE LA FUNCION
      
 
 function AbrirVentana(url)

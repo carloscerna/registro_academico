@@ -9,6 +9,7 @@
 // variables y consulta a la tabla.
 $codigo_ann_lectivo = $_REQUEST["codigo_annlectivo"];
 $cc_ann_lectivo = $_REQUEST["codigo_annlectivo"];
+$tipo_archivo = $_REQUEST["tipo_archivo"];
 $db_link = $dblink;
 $codigo_all_indicadores = array(); $nombre_grado = array(); $nombre_seccion = array(); $nombre_modalidad = array(); $nombre_ann_lectivo = array();
 $codigo_grado_tabla = array(); $codigo_grado_ = array(); $nombre_modalidad_consolidad = array(); $nombre_turno = array(); $nombre_turno_consolidado = array();
@@ -68,7 +69,21 @@ while($row = $result -> fetch(PDO::FETCH_BOTH))
 // Leemos un archivo Excel 2007
     $objReader = \PhpOffice\PhpSpreadsheet\IOFactory::createReader("Xlsx");
     $origen = $path_root."/registro_academico/formatos_hoja_de_calculo/";
-    $objPHPExcel = $objReader->load($origen."Formato - Listado SOBREEDAD.xlsx");
+    switch ($tipo_archivo) {
+        case 'sobreedad':
+            $objPHPExcel = $objReader->load($origen."Formato - Listado SOBREEDAD.xlsx");
+            break;
+        case 'Nueve Year':
+            $objPHPExcel = $objReader->load($origen."Formato - Listado NUEVE AÑOS NIÑAS.xlsx");
+            break;
+        case 'Ten Year':
+            $objPHPExcel = $objReader->load($origen."Formato - Listado DIEZ AÑOS NIÑAS.xlsx");
+            break;
+        default:
+            # code...
+            break;
+    }
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // consulta a la tabla para optener la nomina.
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -89,7 +104,21 @@ while($row = $result -> fetch(PDO::FETCH_BOTH))
                     //
                         $codigo_grado_ok = $codigo_grado_sobreedad[$numero_grado_sobreedad];
                     //  EJECUTAR CONSULTA.
-                        consultas(4,0,$codigo_all_sobreedad[$jh],'','','',$db_link,'');
+                    switch ($tipo_archivo) {
+                        case 'sobreedad':
+                            consultas(4,0,$codigo_all_sobreedad[$jh],'','','',$db_link,'');
+                            break;
+                        case 'Nueve Year':
+                            consultas(20,0,$codigo_all_sobreedad[$jh],'','','',$db_link,'');
+                            break;
+                        case 'Ten Year':
+                            consultas(21,0,$codigo_all_sobreedad[$jh],'','','',$db_link,'');
+                            break;
+                        default:
+                            # code...
+                            break;
+                    }
+                     
                     //  RECORRER LA CONSULTA.
                         while($listado_sobreedad = $result -> fetch(PDO::FETCH_BOTH))
                         {
@@ -109,45 +138,84 @@ while($row = $result -> fetch(PDO::FETCH_BOTH))
 
                             // Imprimir valores si la sobreedad es mayor dependiendo del grado.
                             if($codigo_grado >= "01" and $codigo_grado <= "12"){
-                                calcular_sobreedad_($edad, $codigo_grado);
-                                if($sobreedad == "t"){
-                                    //  IMPRIMIR EL CONTENIDO DE  INFORMACION EN EXCEL.
-                                    $num++;
-                                    $objPHPExcel->getActiveSheet()->SetCellValue("A".$fila_excel, $num);
-                                    $objPHPExcel->getActiveSheet()->SetCellValue("B".$fila_excel, $nie);
-                                    $objPHPExcel->getActiveSheet()->SetCellValue("C".$fila_excel,($apellidos_nombres));
-                                    $objPHPExcel->getActiveSheet()->SetCellValue("D".$fila_excel,($fecha_nacimiento));
-                                    $objPHPExcel->getActiveSheet()->SetCellValue("E".$fila_excel,($edad));
-                                    $objPHPExcel->getActiveSheet()->SetCellValue("F".$fila_excel,($nombre_grado));
-                                    $objPHPExcel->getActiveSheet()->SetCellValue("G".$fila_excel,($nombre_seccion));
-                                    $objPHPExcel->getActiveSheet()->SetCellValue("H".$fila_excel,($nombre_turno));
-                                    //SOBREEDAD
-                                    calcular_sobreedad_escala($edad, $codigo_grado);
-                                        if($sobreedad_escala == 1){
-                                            $objPHPExcel->getActiveSheet()->SetCellValue("I".$fila_excel,"X");
+                                if($tipo_archivo == "sobreedad"){
+                                    calcular_sobreedad_($edad, $codigo_grado);
+                                    if($sobreedad == "t"){
+                                        //  IMPRIMIR EL CONTENIDO DE  INFORMACION EN EXCEL.
+                                        $num++;
+                                        $objPHPExcel->getActiveSheet()->SetCellValue("A".$fila_excel, $num);
+                                        $objPHPExcel->getActiveSheet()->SetCellValue("B".$fila_excel, $nie);
+                                        $objPHPExcel->getActiveSheet()->SetCellValue("C".$fila_excel,($apellidos_nombres));
+                                        $objPHPExcel->getActiveSheet()->SetCellValue("D".$fila_excel,($fecha_nacimiento));
+                                        $objPHPExcel->getActiveSheet()->SetCellValue("E".$fila_excel,($edad));
+                                        $objPHPExcel->getActiveSheet()->SetCellValue("F".$fila_excel,($nombre_grado));
+                                        $objPHPExcel->getActiveSheet()->SetCellValue("G".$fila_excel,($nombre_seccion));
+                                        $objPHPExcel->getActiveSheet()->SetCellValue("H".$fila_excel,($nombre_turno));
+                                        //SOBREEDAD
+                                        calcular_sobreedad_escala($edad, $codigo_grado);
+                                            if($sobreedad_escala == 1){
+                                                $objPHPExcel->getActiveSheet()->SetCellValue("I".$fila_excel,"X");
+                                            }
+                                            if($sobreedad_escala == 2){
+                                                $objPHPExcel->getActiveSheet()->SetCellValue("J".$fila_excel,"X");
+                                            }
+                                            if($sobreedad_escala == 3){
+                                                $objPHPExcel->getActiveSheet()->SetCellValue("K".$fila_excel,"X");
+                                            }
+                                            if($sobreedad_escala == 4){
+                                                $objPHPExcel->getActiveSheet()->SetCellValue("L".$fila_excel,"X");
+                                            }
+                                        //DATOS DEL ENCARGADO
+                                        // datos del encargado nombre y n.º de dui.
+                                            $objPHPExcel->getActiveSheet()->SetCellValue("M".$fila_excel,($nombre_encargado));
+                                            $objPHPExcel->getActiveSheet()->SetCellValue("N".$fila_excel,($dui_encargado));
+                                            $objPHPExcel->getActiveSheet()->SetCellValue("O".$fila_excel,($nombre_parentesco));
+                                            $objPHPExcel->getActiveSheet()->SetCellValue("P".$fila_excel,($telefono_encargado));
+                                            $objPHPExcel->getActiveSheet()->SetCellValue("Q".$fila_excel,($direccion_encargado));
+                                        // aumentar fila excel
+                                            $fila_excel++;
                                         }
-                                        if($sobreedad_escala == 2){
-                                            $objPHPExcel->getActiveSheet()->SetCellValue("J".$fila_excel,"X");
-                                        }
-                                        if($sobreedad_escala == 3){
-                                            $objPHPExcel->getActiveSheet()->SetCellValue("K".$fila_excel,"X");
-                                        }
-                                        if($sobreedad_escala == 4){
-                                            $objPHPExcel->getActiveSheet()->SetCellValue("L".$fila_excel,"X");
-                                        }
-                                    //DATOS DEL ENCARGADO
-                                    // datos del encargado nombre y n.º de dui.
-                                        $objPHPExcel->getActiveSheet()->SetCellValue("M".$fila_excel,($nombre_encargado));
-                                        $objPHPExcel->getActiveSheet()->SetCellValue("N".$fila_excel,($dui_encargado));
-                                        $objPHPExcel->getActiveSheet()->SetCellValue("O".$fila_excel,($nombre_parentesco));
-                                        $objPHPExcel->getActiveSheet()->SetCellValue("P".$fila_excel,($telefono_encargado));
-                                        $objPHPExcel->getActiveSheet()->SetCellValue("Q".$fila_excel,($direccion_encargado));
-                                    // aumentar fila excel
-                                        $fila_excel++;
-                                }
-                            }
-                        }
-        }
+                                    }else{
+                                            calcular_sobreedad_($edad, $codigo_grado);
+                                            if($sobreedad == "t" || $sobreedad == "f"){
+                                                //  IMPRIMIR EL CONTENIDO DE  INFORMACION EN EXCEL.
+                                                $num++;
+                                                $objPHPExcel->getActiveSheet()->SetCellValue("A".$fila_excel, $num);
+                                                $objPHPExcel->getActiveSheet()->SetCellValue("B".$fila_excel, $nie);
+                                                $objPHPExcel->getActiveSheet()->SetCellValue("C".$fila_excel,($apellidos_nombres));
+                                                $objPHPExcel->getActiveSheet()->SetCellValue("D".$fila_excel,($fecha_nacimiento));
+                                                $objPHPExcel->getActiveSheet()->SetCellValue("E".$fila_excel,($edad));
+                                                $objPHPExcel->getActiveSheet()->SetCellValue("F".$fila_excel,($nombre_grado));
+                                                $objPHPExcel->getActiveSheet()->SetCellValue("G".$fila_excel,($nombre_seccion));
+                                                $objPHPExcel->getActiveSheet()->SetCellValue("H".$fila_excel,($nombre_turno));
+                                                //SOBREEDAD
+                                                calcular_sobreedad_escala($edad, $codigo_grado);
+                                                    if($sobreedad_escala == 1){
+                                                        $objPHPExcel->getActiveSheet()->SetCellValue("I".$fila_excel,"X");
+                                                    }
+                                                    if($sobreedad_escala == 2){
+                                                        $objPHPExcel->getActiveSheet()->SetCellValue("J".$fila_excel,"X");
+                                                    }
+                                                    if($sobreedad_escala == 3){
+                                                        $objPHPExcel->getActiveSheet()->SetCellValue("K".$fila_excel,"X");
+                                                    }
+                                                    if($sobreedad_escala == 4){
+                                                        $objPHPExcel->getActiveSheet()->SetCellValue("L".$fila_excel,"X");
+                                                    }
+                                                //DATOS DEL ENCARGADO
+                                                // datos del encargado nombre y n.º de dui.
+                                                    $objPHPExcel->getActiveSheet()->SetCellValue("M".$fila_excel,($nombre_encargado));
+                                                    $objPHPExcel->getActiveSheet()->SetCellValue("N".$fila_excel,($dui_encargado));
+                                                    $objPHPExcel->getActiveSheet()->SetCellValue("O".$fila_excel,($nombre_parentesco));
+                                                    $objPHPExcel->getActiveSheet()->SetCellValue("P".$fila_excel,($telefono_encargado));
+                                                    $objPHPExcel->getActiveSheet()->SetCellValue("Q".$fila_excel,($direccion_encargado));
+                                                // aumentar fila excel
+                                                    $fila_excel++;
+                                            }   // if de sobreedad verdadero y falso
+                                        }   /// if tipo de archivo.
+                            }   // if del codigo grado
+                        }   // fin del while
+        }   // for del codigo indicadores
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////        
 // Verificar si Existe el directorio archivos.
 		$nombre_ann_lectivo = $nombre_ann_lectivo;
@@ -155,7 +223,21 @@ while($row = $result -> fetch(PDO::FETCH_BOTH))
 		$codigo_destino = 1;
 		CrearDirectorios($path_root,"","",$codigo_destino,"");
 	// Nombre del archivo.
-		$nombre_archivo = replace_3("Informe Sobreedad ".$print_ann_lectivo.".xlsx");
+    //  EJECUTAR CONSULTA.
+    switch ($tipo_archivo) {
+        case 'sobreedad':
+            $nombre_archivo = replace_3("Informe Sobreedad ".$print_ann_lectivo.".xlsx");
+            break;
+        case 'Nueve Year':
+            $nombre_archivo = replace_3("Informe Nueve Años Femenino ".$print_ann_lectivo.".xlsx");
+            break;
+        case 'Ten Year':
+            $nombre_archivo = replace_3("Informe Mayor de Diez Años ".$print_ann_lectivo.".xlsx");
+            break;
+        default:
+            # code...
+            break;
+    }
         $contenidoOK = "Archivo Creado: " . $nombre_archivo;
 	try {
     // Grabar el archivo.
