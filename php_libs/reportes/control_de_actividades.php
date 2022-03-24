@@ -95,23 +95,25 @@ function Header()
     // Generar el cuadro que contiene la información de la cuadricula, nº, nombre, actividades  y %.
         $this->RoundedRect(20, 35, 184, 55, .5, '');    // Principal
         $this->RoundedRect(20, 35, 5, 55, .5, '');    // Nº
-        $this->RoundedRect(25, 35, 80, 55, .5, '');    // Nombre
+        $this->RoundedRect(25, 35, 12, 55, .5, '');    // NIE
+        $this->RoundedRect(37, 35, 68, 55, .5, '');    // Nombre
         $this->RotatedText(24, 75, utf8_decode('Nº de Orden'), 90);    // Nombre
-        $this->RotatedText(40, 70, utf8_decode('Orden Alfabético por Apellido'), 0);    // Nombre
+        $this->RotatedText(32, 75, utf8_decode(' N  I  E '), 90);    // NUMERO DE IDENTIFICACION ESTUDIANTIL
+        $this->RotatedText(50, 70, utf8_decode('Orden Alfabético por Apellido'), 0);    // Nombre
     // Línea Horizontal. Actividades Realizadas.
         $this->RoundedRect(105, 35, 99, 5, .5, '');
         $this->RotatedText(125, 39, utf8_decode('PRUEBAS Y ACTIVIDADES REALIZADAS'), 0);    // Nombre
     // Línea Horizontal. Porcentajes
         $this->RoundedRect(105, 40, 99, 5, .5, '');
-        $this->RoundedRect(25, 35, 80, 10, .5, '');    // Porcentaje.
+        $this->RoundedRect(37, 35, 68, 10, .5, '');    // Porcentaje.
         $this->RotatedText(75, 44, utf8_decode('PORCENTAJES (%)'), 0);    // Nombre
     // Líneas Verticales para la cuadricula.
         $mov_izq = 105;
         $ancho_1 = 9;
         for($j=0;$j<=10;$j++)
         {
-        $this->RoundedRect($mov_izq, 40, $ancho_1, 50, .5, '');  // cuadros verticales
-        $mov_izq = $mov_izq + $ancho_1;
+            $this->RoundedRect($mov_izq, 40, $ancho_1, 50, .5, '');  // cuadros verticales
+            $mov_izq = $mov_izq + $ancho_1;
         }
     }   // decisión para mover el primer cuadro.
     
@@ -145,15 +147,17 @@ function Header()
     // Generar el cuadro que contiene la información de la cuadricula, nº, nombre, actividades  y %.
         $this->RoundedRect(10, 35, 184, 55, .5, '');    // Principal
         $this->RoundedRect(10, 35, 5, 55, .5, '');    // Nº
+        $this->RoundedRect(15, 35, 12, 55, .5, '');    // NIE
         $this->RoundedRect(15, 35, 80, 55, .5, '');    // Nombre
         $this->RotatedText(14, 75, utf8_decode('Nº de Orden'), 90);    // Nombre
-        $this->RotatedText(30, 70, utf8_decode('Orden Alfabético por Apellido'), 0);    // Nombre
+        $this->RotatedText(23, 75, utf8_decode(' N  I  E '), 90);    // NUMERO DE IDENTIFICACION ESTUDIANTIL
+        $this->RotatedText(40, 70, utf8_decode('Orden Alfabético por Apellido'), 0);    // Nombre
     // Línea Horizontal. Actividades Realizadas.
         $this->RoundedRect(95, 35, 99, 5, .5, '');
         $this->RotatedText(125, 39, utf8_decode('ACTIVIDADES REALIZADAS'), 0);    // Nombre
     // Línea Horizontal. Porcentajes
         $this->RoundedRect(95, 40, 99, 5, .5, '');
-        $this->RoundedRect(15, 35, 80, 10, .5, '');    // Porcentaje.
+        $this->RoundedRect(27, 35, 68, 10, .5, '');    // Porcentaje.
         $this->RotatedText(65, 44, utf8_decode('PORCENTAJES (%)'), 0);    // Nombre
     // Líneas Verticales para la cuadricula.
         $mov_izq = 95;
@@ -214,7 +218,7 @@ function FancyTable($header)
     // variables y consulta a la tabla.
       consultas(4,0,$codigo_all,'','','',$db_link,'');
 
-    $w=array(5,80,9); //determina el ancho de las columnas
+    $w=array(5,12,68,9); //determina el ancho de las columnas
     
     // colores del fondo, texto, línea.
     $pdf->SetFillColor(224,235,255);
@@ -222,19 +226,27 @@ function FancyTable($header)
     // Variables a utilizar
     $fill = false; $i=1; $pagina_impar = false;
         while($row = $result -> fetch(PDO::FETCH_BOTH))
-            {                                  
+            {       
+                // variables
+                $codigo_nie = trim($row['codigo_nie']);                           
+                $apellido_alumno = trim($row['apellido_alumno']);                        
+                $pdf->SetFont('Arial','',8);   
                     $pdf->Cell($w[0],7,$i,'LR',0,'C',$fill);        // número correlativo
-                    $pdf->Cell($w[1],7,utf8_decode(trim($row['apellido_alumno'])),'LR',0,'L',$fill); // Nombre + apellido_materno + apellido_paterno
-                
+                    $pdf->SetFont('Arial','',7.5);   
+                        $pdf->Cell($w[1],7,$codigo_nie,'LR',0,'C',$fill);        // número correlativo
+                    $pdf->SetFont('Arial','',8);   
+                    $pdf->Cell($w[2],7,utf8_decode(trim($row['apellido_alumno'])),'LR',0,'L',$fill); // Nombre + apellido_materno + apellido_paterno
+                $pdf->SetFont('Arial','',9);
                 // Bloque que genera la cuadricula en total son 12.
-                    for($j=0;$j<=10;$j++)
-                    $pdf->Cell($w[2],7,'','LR',0,'C',$fill);    // lineas de ancho 7.
+                    for($j=0;$j<=10;$j++){
+                        $pdf->Cell($w[3],7,'','LR',0,'C',$fill);    // lineas de ancho 7.
+                    }
+                // Salto de L{inea}
                     $pdf->Ln();
-                                
                     $fill=!$fill;
                     $i=$i+1;
                                 // Contabiliza el total de lineas para otra página o continuar en la misma.    
-                if($i==26 || $i == 50){
+                if($i==26){
                     $pagina_impar = true;
                     $pdf->Cell(array_sum($w)+(9*10),0,'','T');
                     $pdf->SetMargins(10, 10, 5);
@@ -251,14 +263,15 @@ function FancyTable($header)
                   {
                       $pdf->Cell($w[0],7,$numero++,'LR',0,'C',$fill);  // N| de Orden.
                       $pdf->Cell($w[1],7,'','LR',0,'l',$fill);  // nombre del alumno.
+                      $pdf->Cell($w[2],7,'','LR',0,'l',$fill);  // nombre del alumno.
 																				
 			            for($j=0;$j<=10;$j++)											
-                  		$pdf->Cell($w[2],7,'','LR',0,'C',$fill);    // lineas de ancho 7.
+                  		$pdf->Cell($w[3],7,'','LR',0,'C',$fill);    // lineas de ancho 7.
 											
                       $pdf->Ln();   
                       $fill=!$fill;
                       // Salto de Línea.
-                		if($numero == 26 || $numero == 50){
+                		if($numero == 26){
 		                   $pdf->Cell(array_sum($w)+9*10,0,'','B');
     			            $pdf->AddPage();
                           }
