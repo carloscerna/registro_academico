@@ -127,6 +127,7 @@ function Footer()
     $pdf->SetFillColor(224);
     $pdf->RoundedRect(45, 55, 155, 8, 2, '1234', 'DF');
     $pdf->RoundedRect(105, 65, 35, 8, 2, '1234', '');
+    //$pdf->RoundedRect(168, 65, 32, 8, 2, '1234', '');
     $pdf->RoundedRect(53, 75, 147, 8, 2, '1234', '');
     $pdf->RoundedRect(55, 85, 30, 8, 2, '1234', '');
     $pdf->RoundedRect(55, 95, 30, 8, 2, '1234', '');
@@ -158,6 +159,11 @@ function Footer()
              $pdf->RotatedText(110,70,utf8_decode(trim($row['codigo_nie'])),0);   // Nombre + apellido_materno + apellido_paterno
              $pdf->SetFont('Arial','',12);
 
+       /*  $pdf->RotatedText(150,70,utf8_decode('N.° DUI: '),0);
+             $pdf->SetFont('Arial','B',13);
+             $pdf->RotatedText(170,70,utf8_decode(trim($row['encargado_dui'])),0);   // Nombre + apellido_materno + apellido_paterno
+             $pdf->SetFont('Arial','',12);
+*/
 	     $pdf->RotatedText(30,80,utf8_decode('Modalidad: '),0);
              $pdf->SetFont('Arial','B',12);
              $pdf->RotatedText(55,80,$print_bachillerato,0);   // Nombre + apellido_materno + apellido_paterno

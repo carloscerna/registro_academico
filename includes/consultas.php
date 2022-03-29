@@ -562,7 +562,8 @@ if($ejecutar == 19)
             INNER JOIN turno tur ON tur.codigo = am.codigo_turno
             INNER JOIN catalogo_familiar cat_f ON cat_f.codigo = ae.codigo_familiar
             INNER JOIN catalogo_genero cat_g ON cat_g.codigo = ae.codigo_genero
-                WHERE a.edad = '9' and a.codigo_genero = '02' and btrim(am.codigo_bach_o_ciclo || am.codigo_grado || am.codigo_seccion || am.codigo_ann_lectivo || am.codigo_turno) = '".$codigo_bachillerato.
+                WHERE a.edad >= '8' and a.edad <= '12' and a.codigo_genero = '02' 
+                and btrim(am.codigo_bach_o_ciclo || am.codigo_grado || am.codigo_seccion || am.codigo_ann_lectivo || am.codigo_turno) = '".$codigo_bachillerato.
         "'".$order;
             // Ejecutamos el Query. Tabla Bitacora. and am.retirado = 'f'
         $result = $db_link -> query($query);
@@ -678,10 +679,12 @@ function consultas_alumno($ejecutar,$cerrar,$buscar_nombre,$codigo_alumno,$codig
 		    a.codigo_departamento, a.codigo_municipio, a.genero, a.codigo_estado_civil, cat_ec.nombre as estado_civil,
 		    a.estudio_parvularia, a.tiene_hijos, a.cantidad_hijos, a.codigo_actividad_economica, a.codigo_discapacidad, a.codigo_estado_familiar,
 		    a.foto,
+            ae.encargado, ae.dui as encargado_dui,
 		    depa.nombre as nombre_departamento, depa.codigo,
 		    muni.nombre as nombre_municipio,
 		    cat_z_r.codigo as codigo_zona_residencia
 		FROM alumno a
+        INNER JOIN alumno_encargado ae ON a.id_alumno = ae.codigo_alumno and ae.encargado = 't'
 		INNER JOIN catalogo_zona_residencia cat_z_r ON cat_z_r.codigo = a.codigo_zona_residencia
 		INNER JOIN catalogo_estado_civil cat_ec ON cat_ec.codigo = a.codigo_estado_civil
 		INNER JOIN departamento depa ON depa.codigo = a.codigo_departamento 
