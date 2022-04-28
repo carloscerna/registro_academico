@@ -367,8 +367,8 @@ if (lstlist_nominas == 'pre-matricula' && $(this).attr('data-accion') == 'listad
 if (lstlist_nominas == 'carnet-estudiantil' && $(this).attr('data-accion') == 'listados_01') {
         // construir la variable con el url.
         if(lstcarnet == "carnet_frente"){
-                //varenviar = "/registro_academico/php_libs/reportes/informe_carnet_uno.php?todos="+reporte_ok+"&chksello="+chksello+"&chkfirma="+chkfirma+"&path_foto="+url_fotos;
-                varenviar = "/registro_academico/php_libs/reportes/informe_carnet.php?todos="+reporte_ok+"&chksello="+chksello+"&chkfirma="+chkfirma+"&path_foto="+url_fotos;
+                varenviar = "/registro_academico/php_libs/reportes/informe_carnet_uno.php?todos="+reporte_ok+"&chksello="+chksello+"&chkfirma="+chkfirma;
+                //varenviar = "/registro_academico/php_libs/reportes/informe_carnet.php?todos="+reporte_ok+"&chksello="+chksello+"&chkfirma="+chkfirma+"&path_foto="+url_fotos;
         }
         if(lstcarnet == "carnet_vuelto"){
                 varenviar = "/registro_academico/php_libs/reportes/informe_carnet_vuelto.php?todos="+reporte_ok+"&chksello="+chksello+"&chkfirma="+chkfirma;

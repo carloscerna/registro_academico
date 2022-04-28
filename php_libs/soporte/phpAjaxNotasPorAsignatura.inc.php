@@ -160,9 +160,9 @@ if($errorDbConexion == false){
 					$codigo_asig = $codigo_asignatura[0][$i];
 					$nota_ = $nota[0][$i];
 					// CONDICIONAR SI ES MAYOR DE 10.0
-                    if($nota_ > 10){
-                        $nota_ = 1;
-                    }
+                    //if($nota_ > 10){
+                     //   $nota_ = 1;
+                    //}
 					// armar sql.
 						$query = "UPDATE nota SET $nota_p_p = '$nota_' WHERE codigo_alumno = '$codigo_a' and codigo_matricula = '$codigo_m' and codigo_asignatura = '$codigo_asig'";
 					// Ejecutamos el Query.
