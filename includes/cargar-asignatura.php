@@ -13,7 +13,7 @@ $query = "SELECT DISTINCT cd.codigo_bachillerato, cd.codigo_ann_lectivo, cd.codi
 				INNER JOIN ann_lectivo ann ON ann.codigo = cd.codigo_ann_lectivo 
 				INNER JOIN grado_ano grd ON grd.codigo = cd.codigo_grado 
 				INNER JOIN turno tur ON tur.codigo = cd.codigo_turno 
-				INNER JOIN asignatura asi ON asi.codigo = cd.codigo_asignatura 
+				INNER JOIN asignatura asi ON asi.codigo = cd.codigo_asignatura and asig.estatus = '1'
 				where btrim(cd.codigo_grado || cd.codigo_seccion || cd.codigo_turno) = '".$_POST["elegido"]."' and cd.codigo_bachillerato = '".$_POST["modalidad"]."' and cd.codigo_ann_lectivo = '".$_POST["annlectivo"]. "' and cd.codigo_docente = '".$_SESSION['codigo_personal']."' ORDER BY asi.codigo";
 }else{
 $query = "SELECT DISTINCT ON (aaa.codigo_asignatura) aaa.codigo_asignatura, aaa.codigo_grado, aaa.codigo_sirai, asi.nombre as nombre_asignatura

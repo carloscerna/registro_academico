@@ -18,6 +18,7 @@ $('#goActualizar').on('click',function(){
    // Información de la Página 1.                               
       var $objCuerpoTabla=$("#tablaDatosPn").children().prev().parent();          
 		var codigo_alumno_ = []; var direccion_ = []; var telefono_alumno_ = []; var telefono_celular_ = []; 
+      var telefono_encargado_ = []; 
                 
       var fila = 0;          
    // recorre el contenido de la tabla.
@@ -25,14 +26,16 @@ $('#goActualizar').on('click',function(){
 			var codigo_alumno = $(this).find('td').eq(1).html();
 			// input text
          var direccion =$(this).find('td').eq(3).find("textarea[name=direccion]").val();
-         var telefono_alumno =$(this).find('td').eq(4).find("input[name=telefono_alumno]").val();
-         var telefono_celular =$(this).find('td').eq(5).find("input[name=telefono_celular]").val();
+         var telefono_encargado =$(this).find('td').eq(4).find("input[name=telefono_encargado]").val();
+         var telefono_alumno =$(this).find('td').eq(5).find("input[name=telefono_alumno]").val();
+         var telefono_celular =$(this).find('td').eq(6).find("input[name=telefono_celular]").val();
 			// Color de filas.                                
          $(this).css("background-color", "#ECF8E0");                       
 			// dar valor a las arrays.
              codigo_alumno_[fila]=codigo_alumno;           
 				 
              direccion_[fila] = direccion;           
+             telefono_encargado_[fila] = telefono_encargado;           
              telefono_alumno_[fila] = telefono_alumno;           
              telefono_celular_[fila] = telefono_celular;           
 
@@ -47,7 +50,8 @@ $('#goActualizar').on('click',function(){
            dataType: "json",                     
            url:"php_libs/soporte/phpAjaxDatosMasivos.php",                     
            data: {                     
-                  accion: accion_ok, codigo_alumno: codigo_alumno_, fila: fila, direccion: direccion_, telefono_alumno: telefono_alumno_, telefono_celular: telefono_celular_,
+                  accion: accion_ok, codigo_alumno: codigo_alumno_, fila: fila, direccion: direccion_, 
+                  telefono_alumno: telefono_alumno_, telefono_celular: telefono_celular_, telefono_encargado: telefono_encargado_,
                    },                     
            success: function(response) {                     
                    if (response.respuesta === true) {                     

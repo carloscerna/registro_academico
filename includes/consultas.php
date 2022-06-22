@@ -261,7 +261,7 @@ function consultas($ejecutar,$cerrar,$codigo_bachillerato,$codigo_grado,$codigo_
                 am.codigo_grado, gan.nombre as nombre_grado, am.codigo_seccion, sec.nombre as nombre_seccion, tur.nombre as nombre_turno
 					FROM alumno a
                 INNER JOIN alumno_encargado ae ON a.id_alumno = ae.codigo_alumno and ae.encargado = 't'
-				INNER JOIN alumno_matricula am ON a.id_alumno = am.codigo_alumno  
+				INNER JOIN alumno_matricula am ON a.id_alumno = am.codigo_alumno  and am.retirado = 'f'
 				INNER JOIN bachillerato_ciclo bach ON bach.codigo = am.codigo_bach_o_ciclo
 				INNER JOIN grado_ano gan ON gan.codigo = am.codigo_grado
 				INNER JOIN seccion sec ON sec.codigo = am.codigo_seccion
@@ -527,7 +527,93 @@ if($ejecutar == 19)
     	pg_free_result($result);
     	pg_close($db_link);
     }
-}
+    //
+    // para los diferntes listados a imprimirÇ
+    // EXPORTAR INFORMACION A ARCHIVO DE EXCEL.
+    if($ejecutar == 20)
+    {
+    $order = ' ORDER BY apellido_alumno ASC';
+
+    if($por_genero == 'true'){
+        $order = ' ORDER BY a.genero, apellido_alumno ASC';
+    }
+
+    $query = "SELECT a.estudio_parvularia, a.id_alumno, a.codigo_nie, btrim(a.apellido_paterno || CAST(' ' AS VARCHAR) || a.apellido_materno || CAST(', ' AS VARCHAR) || a.nombre_completo) as apellido_alumno,
+    btrim(a.apellido_paterno || CAST(' ' AS VARCHAR) || a.apellido_materno) as apellidos_alumno, a.nombre_completo,
+    btrim(a.nombre_completo || CAST(' ' AS VARCHAR) || a.apellido_paterno  || CAST(' ' AS VARCHAR) || a.apellido_materno) as nombre_completo_alumno,
+    ae.codigo_alumno, ae.nombres, ae.encargado, ae.dui as encargado_dui, ae.telefono as telefono_encargado, ae.fecha_nacimiento as encargado_fecha_nacimiento, ae.direccion as encargado_direccion, ae.telefono as encargado_telefono,
+    a.foto, a.pn_folio, a.pn_tomo, a.pn_numero, a.pn_libro, a.fecha_nacimiento, a.direccion_alumno, telefono_alumno, a.edad, a.genero, a.estudio_parvularia, a.codigo_discapacidad, a.codigo_apoyo_educativo, a.codigo_actividad_economica, a.codigo_estado_familiar, a.partida_nacimiento, a.telefono_celular,
+    a.codigo_departamento, a.codigo_municipio, a.codigo_genero,
+    am.imprimir_foto, am.pn, am.repitente, am.sobreedad, am.retirado, am.codigo_bach_o_ciclo, am.certificado, am.ann_anterior,
+    am.nuevo_ingreso, bach.nombre as nombre_bachillerato, am.codigo_ann_lectivo, ann.nombre as nombre_ann_lectivo, bach.codigo as codigo_bachillerato,
+    am.codigo_grado, gan.nombre as nombre_grado, am.codigo_seccion, sec.nombre as nombre_seccion, am.id_alumno_matricula as codigo_matricula, am.codigo_turno,
+    am.observaciones, am.id_alumno_matricula as cod_matricula,
+    ae.codigo_departamento as encargado_departamento, ae.codigo_municipio as encargado_municipio,
+    cat_f.descripcion as nombre_tipo_parentesco,
+    cat_g.descripcion as nombre_sexo,
+    tur.nombre as nombre_turno
+        FROM alumno a
+            INNER JOIN alumno_encargado ae ON a.id_alumno = ae.codigo_alumno and ae.encargado = 't'
+            INNER JOIN alumno_matricula am ON a.id_alumno = am.codigo_alumno and am.retirado = 'f'
+            INNER JOIN bachillerato_ciclo bach ON bach.codigo = am.codigo_bach_o_ciclo
+            INNER JOIN grado_ano gan ON gan.codigo = am.codigo_grado
+            INNER JOIN seccion sec ON sec.codigo = am.codigo_seccion
+            INNER JOIN ann_lectivo ann ON ann.codigo = am.codigo_ann_lectivo
+            INNER JOIN turno tur ON tur.codigo = am.codigo_turno
+            INNER JOIN catalogo_familiar cat_f ON cat_f.codigo = ae.codigo_familiar
+            INNER JOIN catalogo_genero cat_g ON cat_g.codigo = ae.codigo_genero
+                WHERE a.edad >= '8' and a.edad <= '12' and a.codigo_genero = '02' 
+                and btrim(am.codigo_bach_o_ciclo || am.codigo_grado || am.codigo_seccion || am.codigo_ann_lectivo || am.codigo_turno) = '".$codigo_bachillerato.
+        "'".$order;
+            // Ejecutamos el Query. Tabla Bitacora. and am.retirado = 'f'
+        $result = $db_link -> query($query);
+        $result_encabezado = $db_link -> query($query);
+        
+    }  
+
+    // EXPORTAR INFORMACION A ARCHIVO DE EXCEL.
+    if($ejecutar == 21)
+    {
+    $order = ' ORDER BY apellido_alumno ASC';
+
+    if($por_genero == 'true'){
+        $order = ' ORDER BY a.genero, apellido_alumno ASC';
+    }
+
+    $query = "SELECT a.estudio_parvularia, a.id_alumno, a.codigo_nie, btrim(a.apellido_paterno || CAST(' ' AS VARCHAR) || a.apellido_materno || CAST(', ' AS VARCHAR) || a.nombre_completo) as apellido_alumno,
+    btrim(a.apellido_paterno || CAST(' ' AS VARCHAR) || a.apellido_materno) as apellidos_alumno, a.nombre_completo,
+    btrim(a.nombre_completo || CAST(' ' AS VARCHAR) || a.apellido_paterno  || CAST(' ' AS VARCHAR) || a.apellido_materno) as nombre_completo_alumno,
+    ae.codigo_alumno, ae.nombres, ae.encargado, ae.dui as encargado_dui, ae.telefono as telefono_encargado, ae.fecha_nacimiento as encargado_fecha_nacimiento, ae.direccion as encargado_direccion, ae.telefono as encargado_telefono,
+    a.foto, a.pn_folio, a.pn_tomo, a.pn_numero, a.pn_libro, a.fecha_nacimiento, a.direccion_alumno, telefono_alumno, a.edad, a.genero, a.estudio_parvularia, a.codigo_discapacidad, a.codigo_apoyo_educativo, a.codigo_actividad_economica, a.codigo_estado_familiar, a.partida_nacimiento, a.telefono_celular,
+    a.codigo_departamento, a.codigo_municipio, a.codigo_genero,
+    am.imprimir_foto, am.pn, am.repitente, am.sobreedad, am.retirado, am.codigo_bach_o_ciclo, am.certificado, am.ann_anterior,
+    am.nuevo_ingreso, bach.nombre as nombre_bachillerato, am.codigo_ann_lectivo, ann.nombre as nombre_ann_lectivo, bach.codigo as codigo_bachillerato,
+    am.codigo_grado, gan.nombre as nombre_grado, am.codigo_seccion, sec.nombre as nombre_seccion, am.id_alumno_matricula as codigo_matricula, am.codigo_turno,
+    am.observaciones, am.id_alumno_matricula as cod_matricula,
+    ae.codigo_departamento as encargado_departamento, ae.codigo_municipio as encargado_municipio,
+    cat_f.descripcion as nombre_tipo_parentesco,
+    cat_g.descripcion as nombre_sexo,
+    tur.nombre as nombre_turno
+        FROM alumno a
+            INNER JOIN alumno_encargado ae ON a.id_alumno = ae.codigo_alumno and ae.encargado = 't'
+            INNER JOIN alumno_matricula am ON a.id_alumno = am.codigo_alumno and am.retirado = 'f'
+            INNER JOIN bachillerato_ciclo bach ON bach.codigo = am.codigo_bach_o_ciclo
+            INNER JOIN grado_ano gan ON gan.codigo = am.codigo_grado
+            INNER JOIN seccion sec ON sec.codigo = am.codigo_seccion
+            INNER JOIN ann_lectivo ann ON ann.codigo = am.codigo_ann_lectivo
+            INNER JOIN turno tur ON tur.codigo = am.codigo_turno
+            INNER JOIN catalogo_familiar cat_f ON cat_f.codigo = ae.codigo_familiar
+            INNER JOIN catalogo_genero cat_g ON cat_g.codigo = ae.codigo_genero
+                WHERE a.edad > '10' and a.codigo_genero = '02' and btrim(am.codigo_bach_o_ciclo || am.codigo_grado || am.codigo_seccion || am.codigo_ann_lectivo || am.codigo_turno) = '".$codigo_bachillerato.
+        "'".$order;
+            // Ejecutamos el Query. Tabla Bitacora. and am.retirado = 'f'
+        $result = $db_link -> query($query);
+        $result_encabezado = $db_link -> query($query);
+        
+    }  
+
+
+}   // FIN DE LA FUNCION CONSULTAS
 
 function consultas_alumno($ejecutar,$cerrar,$buscar_nombre,$codigo_alumno,$codigo_matricula,$codigo_ann_lectivo, $db_link,$result)
 {
@@ -593,10 +679,12 @@ function consultas_alumno($ejecutar,$cerrar,$buscar_nombre,$codigo_alumno,$codig
 		    a.codigo_departamento, a.codigo_municipio, a.genero, a.codigo_estado_civil, cat_ec.nombre as estado_civil,
 		    a.estudio_parvularia, a.tiene_hijos, a.cantidad_hijos, a.codigo_actividad_economica, a.codigo_discapacidad, a.codigo_estado_familiar,
 		    a.foto,
+            ae.encargado, ae.dui as encargado_dui,
 		    depa.nombre as nombre_departamento, depa.codigo,
 		    muni.nombre as nombre_municipio,
 		    cat_z_r.codigo as codigo_zona_residencia
 		FROM alumno a
+        INNER JOIN alumno_encargado ae ON a.id_alumno = ae.codigo_alumno and ae.encargado = 't'
 		INNER JOIN catalogo_zona_residencia cat_z_r ON cat_z_r.codigo = a.codigo_zona_residencia
 		INNER JOIN catalogo_estado_civil cat_ec ON cat_ec.codigo = a.codigo_estado_civil
 		INNER JOIN departamento depa ON depa.codigo = a.codigo_departamento 

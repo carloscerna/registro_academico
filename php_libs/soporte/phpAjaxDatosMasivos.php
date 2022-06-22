@@ -11,29 +11,29 @@ sleep(0);
 
 // Inicializamos variables de mensajes y JSON
 $respuestaOK = false;
-$mensajeError = "No se puede ejecutar la aplicación";
+$mensajeError = "No se puede ejecutar la aplicaciï¿½n";
 $contenidoOK = "";
 // ruta de los archivos con su carpeta
     $path_root=trim($_SERVER['DOCUMENT_ROOT']);
     
-// Incluimos el archivo de funciones y conexión a la base de datos
+// Incluimos el archivo de funciones y conexiï¿½n a la base de datos
 
 include($path_root."/registro_academico/includes/mainFunctions_conexion.php");
 include($path_root."/registro_academico/includes/funciones.php");
-// Validar conexión con la base de datos
+// Validar conexiï¿½n con la base de datos
 if($errorDbConexion == false){
 	// Validamos qe existan las variables post
 	if(isset($_POST) && !empty($_POST)){
 		if(!empty($_POST['accion_buscar'])){
 			$_POST['accion'] = $_POST['accion_buscar'];
 		}
-		// Verificamos las variables de acción
+		// Verificamos las variables de acciï¿½n
 		switch ($_POST['accion']) {
 			case 'BuscarLista':
 				// Declarar Variables y Crear consulta Query.
 						$codigo_all = $_REQUEST["lstmodalidad"] . substr($_REQUEST["lstgradoseccion"],0,4) . $_REQUEST["lstannlectivo"];
 				  
-						 // Información Académica.
+						 // Informaciï¿½n Acadï¿½mica.
 						 $codigo_modalidad = substr($codigo_all,0,2);
 						 $codigo_grado = substr($codigo_all,2,2);
 						 $codigo_seccion = substr($codigo_all,4,2);
@@ -44,7 +44,7 @@ if($errorDbConexion == false){
 						$query = "SELECT a.estudio_parvularia, a.id_alumno, a.codigo_nie, btrim(a.apellido_paterno || CAST(' ' AS VARCHAR) || a.apellido_materno || CAST(', ' AS VARCHAR) || a.nombre_completo) as apellido_alumno,
 									btrim(a.apellido_paterno || CAST(' ' AS VARCHAR) || a.apellido_materno) as apellidos_alumno, a.nombre_completo, 
 									btrim(a.nombre_completo || CAST(' ' AS VARCHAR) || a.apellido_paterno  || CAST(' ' AS VARCHAR) || a.apellido_materno) as nombre_completo_alumno,
-									ae.codigo_alumno, ae.nombres, ae.encargado, ae.dui, ae.telefono, ae.direccion,
+									ae.codigo_alumno, ae.nombres, ae.encargado, ae.dui, ae.telefono as telefono_encargado, ae.direccion,
 									a.foto, a.pn_folio, a.pn_tomo, a.pn_numero, a.pn_libro, a.fecha_nacimiento, a.direccion_alumno, telefono_alumno, a.edad, a.genero, a.estudio_parvularia, a.codigo_discapacidad,
 									a.codigo_apoyo_educativo, a.codigo_actividad_economica, a.codigo_estado_familiar, a.codigo_nie, a.codigo_genero, a.telefono_celular,
 									am.imprimir_foto, am.pn, am.repitente, am.sobreedad, am.retirado, am.codigo_bach_o_ciclo, am.certificado, am.ann_anterior,
@@ -81,12 +81,14 @@ if($errorDbConexion == false){
                         $direccion = $listado['direccion_alumno'];
                         $telefono = $listado['telefono_alumno'];
                         $telefono_celular = $listado['telefono_celular'];
+						$telefono_encargado = $listado['telefono_encargado'];
 
 						// Armar Cadena con resultado de las respectivas variables.	
 						$contenidoOK .= '<tr class='.$color_tabla.'><td>'.$num
 							.'<td>'.$id_alumno
 							.'<td>'.$apellido_alumno
                             .'<td>'.'<textarea name=direccion class=form-control>'.$direccion.'</textarea>'
+							.'<td><input type=text name=telefono_encargado class=form-control maxlength = 9 id=telefono_encargado value = '.$telefono_encargado.'>'
                             .'<td><input type=text name=telefono_alumno class=form-control maxlength = 9 id=telefono_alumno value = '.$telefono.'>'
                             .'<td><input type=text name=telefono_celular class=form-control maxlength = 9 id=telefono_celular value = '.$telefono_celular.'>'
 							;
@@ -111,6 +113,7 @@ if($errorDbConexion == false){
 								// Pendiente calculo de la edad. y sobredad.
 				$direccion_[] = $_POST["direccion"];
 				$telefono_[] = $_POST["telefono_alumno"];
+				$telefono_encargado[] = $_POST["telefono_encargado"];
 				$celular_[] = $_POST["telefono_celular"];
 
 				
@@ -121,6 +124,7 @@ if($errorDbConexion == false){
 					$codigo_a = $codigo_alumno[0][$i];
 					
 					$direccion_a = $direccion_[0][$i];
+					$telefono_e = $telefono_encargado[0][$i];
 					$telefono_a = $telefono_[0][$i];
 					$telefono_c = $celular_[0][$i];
 					// armar sql. para acutlizar tabla alumno.
@@ -131,10 +135,15 @@ if($errorDbConexion == false){
 						WHERE id_alumno = $codigo_a";
 					// Ejecutamos el Query.
 					$consulta = $dblink -> query($query);
-                    // actualizar dirección del encargado.
+                    // actualizar direcciï¿½n del encargado.
                     $query_encargado = "UPDATE alumno_encargado SET direccion = '$direccion_a' WHERE codigo_alumno = $codigo_a";
                     // Ejecutamos el Query.
 					$consulta = $dblink -> query($query_encargado);
+					// actualizar direcciï¿½n del encargado. N.Âº TELEFONO
+					$true_encargado = true;
+                    $query_encargado_telefono = "UPDATE alumno_encargado SET telefono = '$telefono_e' WHERE codigo_alumno = $codigo_a and encargado = 'true'";
+                    // Ejecutamos el Query.
+					$consulta = $dblink -> query($query_encargado_telefono);
 				}
 
 				$respuestaOK = true;
@@ -143,15 +152,15 @@ if($errorDbConexion == false){
 			break;
 		
 			default:
-				$mensajeError = 'Esta acción no se encuentra disponible';
+				$mensajeError = 'Esta acciï¿½n no se encuentra disponible';
 			break;
 		}
 	}
 	else{
-		$mensajeError = 'No se puede ejecutar la aplicación';}
+		$mensajeError = 'No se puede ejecutar la aplicaciï¿½n';}
 }
 else{
-	$mensajeError = 'No se puede establecer conexión con la base de datos';}
+	$mensajeError = 'No se puede establecer conexiï¿½n con la base de datos';}
 
 // Armamos array para convertir a JSON
 $salidaJson = array("respuesta" => $respuestaOK,

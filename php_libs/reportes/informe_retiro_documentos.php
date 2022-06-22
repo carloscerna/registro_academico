@@ -37,7 +37,7 @@ function Header()
     $this->Cell(20);
     //Título
     $this->Cell(0,4,utf8_decode($_SESSION['institucion']),0,1,'C');
-    $this->Cell(0,4,utf8_decode('Nómina de Alumnos/as - Retiro de Documentos (PN=Partida de Nacimiento; C1=Certificado 1º, etc.)'),0,1,'C');
+    $this->Cell(0,4,utf8_decode('ASAMBLEA GENERAL DE PADRES/MADRES O ENCARGADOS'),0,1,'C');
     $this->Line(10,20,260,20);
     //Salto de línea
    // $this->Ln(20);
@@ -88,7 +88,7 @@ function FancyTable($header)
     $pdf=new PDF('L','mm','Letter');
     $data = array();
 //Títulos de las columnas
-    $header=array('Nº','ID','Nombre de Alumnos/as','Nombre de Padre, Madre o Encargado','Documentos','FIRMA');
+    $header=array('Nº','ID','Nombre de Alumnos/as','Nombre de Padre, Madre o Encargado','DUI','FIRMA');
     $pdf->AliasNbPages();
     $pdf->SetFont('Arial','',12);
     $pdf->AddPage();

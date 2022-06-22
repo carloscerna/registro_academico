@@ -14,7 +14,8 @@
 	$fecha = date("Y");
 	$fecha_vencimiento = "31/12/" . $fecha;
 
-	$path_fotos = $_REQUEST["path_foto"];
+	//$path_fotos = $_REQUEST["path_foto"];
+	$codigo_institucion = $_SESSION['codigo_institucion'];
     $firma = $_REQUEST["chkfirma"];
     $sello = $_REQUEST["chksello"];
     $db_link = $dblink;
@@ -166,11 +167,11 @@ function carnet()
 			
 			if(trim($row['foto']) == ""){$fotos = 'nofoto.jpg';}else{$fotos = trim($row['foto']);}
 		// Comprobar si existe el archivo.
-			if (file_exists($_SERVER['DOCUMENT_ROOT'].'/registro_academico/img/png'.$path_fotos.'/'.$fotos))
+			if (file_exists($_SERVER['DOCUMENT_ROOT'].'/registro_academico/img/fotos/'.$codigo_institucion.'/'.$fotos))
 		      {
-				$ruta_foto[$fila_contar] = $_SERVER['DOCUMENT_ROOT'].'/registro_academico/img/png'.$path_fotos.'/'.$fotos;	
+				$ruta_foto[$fila_contar] = $_SERVER['DOCUMENT_ROOT'].'/registro_academico/img/fotos/'.$codigo_institucion.'/'.$fotos;	
 		      }else{
-				$fotos = 'nofoto.jpg';
+				$fotos = 'no.jpg';
 				$ruta_foto[$fila_contar] = $_SERVER['DOCUMENT_ROOT'].'/registro_academico/img/'.$fotos;
 		      }
 				$fila_contar++;
