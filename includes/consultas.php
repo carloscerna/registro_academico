@@ -124,12 +124,12 @@ function consultas($ejecutar,$cerrar,$codigo_bachillerato,$codigo_grado,$codigo_
 	    $order = ' ORDER BY a.genero, apellido_alumno ASC';
 	}
 	
-    $query = "SELECT a.estudio_parvularia, a.id_alumno, a.codigo_nie, btrim(a.apellido_paterno || CAST(' ' AS VARCHAR) || a.apellido_materno || CAST(', ' AS VARCHAR) || a.nombre_completo) as apellido_alumno,
+     $query = "SELECT a.estudio_parvularia, a.id_alumno, a.codigo_nie, btrim(a.apellido_paterno || CAST(' ' AS VARCHAR) || a.apellido_materno || CAST(', ' AS VARCHAR) || a.nombre_completo) as apellido_alumno,
        btrim(a.apellido_paterno || CAST(' ' AS VARCHAR) || a.apellido_materno) as apellidos_alumno, a.nombre_completo,
        btrim(a.nombre_completo || CAST(' ' AS VARCHAR) || a.apellido_paterno  || CAST(' ' AS VARCHAR) || a.apellido_materno) as nombre_completo_alumno,
        ae.codigo_alumno, ae.nombres, ae.encargado, ae.dui as encargado_dui, ae.telefono as telefono_encargado, ae.fecha_nacimiento as encargado_fecha_nacimiento, ae.direccion as encargado_direccion, ae.telefono as encargado_telefono,
        a.foto, a.pn_folio, a.pn_tomo, a.pn_numero, a.pn_libro, a.fecha_nacimiento, a.direccion_alumno, telefono_alumno, a.edad, a.genero, a.estudio_parvularia, a.codigo_discapacidad, a.codigo_apoyo_educativo, a.codigo_actividad_economica, a.codigo_estado_familiar, a.partida_nacimiento, a.telefono_celular,
-       a.codigo_departamento, a.codigo_municipio,
+       a.codigo_departamento, a.codigo_municipio, cat_gs.descripcion as genero_estudiante,
        am.imprimir_foto, am.pn, am.repitente, am.sobreedad, am.retirado, am.codigo_bach_o_ciclo, am.certificado, am.ann_anterior,
        am.nuevo_ingreso, bach.nombre as nombre_bachillerato, am.codigo_ann_lectivo, ann.nombre as nombre_ann_lectivo, bach.codigo as codigo_bachillerato,
        am.codigo_grado, gan.nombre as nombre_grado, am.codigo_seccion, sec.nombre as nombre_seccion, am.id_alumno_matricula as codigo_matricula, am.codigo_turno,
@@ -148,6 +148,7 @@ function consultas($ejecutar,$cerrar,$codigo_bachillerato,$codigo_grado,$codigo_
                INNER JOIN turno tur ON tur.codigo = am.codigo_turno
                INNER JOIN catalogo_familiar cat_f ON cat_f.codigo = ae.codigo_familiar
                INNER JOIN catalogo_genero cat_g ON cat_g.codigo = ae.codigo_genero
+               INNER JOIN catalogo_genero cat_gs ON cat_gs.codigo = a.codigo_genero
                 WHERE btrim(am.codigo_bach_o_ciclo || am.codigo_grado || am.codigo_seccion || am.codigo_ann_lectivo || am.codigo_turno) = '".$codigo_bachillerato.
 		"'".$order;
             // Ejecutamos el Query. Tabla Bitacora. and am.retirado = 'f'

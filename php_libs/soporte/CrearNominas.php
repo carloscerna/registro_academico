@@ -87,15 +87,18 @@ $contenidoOK = "";
 	// Apellidos (paterno y materno)
 	$apellidos_materno_paterno = trim(cambiar_de_del_2($row['apellidos_alumno']));
 	// Nombres
+    // genero estudiante
+    $genero_estudiante = trim($row['genero_estudiante']);
 	$nombres = trim(cambiar_de_del_2($row['nombre_completo']));
   // Código Alumno
   $codigo_alumno = trim(($row['id_alumno']));
+  $nombre_grado_seccion = trim(($row['nombre_grado'])) . ' ' . trim(($row['nombre_seccion']));
   // Código Matricula
   $codigo_matricula = trim(($row['codigo_matricula']));
   // datos de los encargados
   $nombre_encargado = trim(($row['nombres']));
   $dui_encargado = trim(($row['encargado_dui']));
-  $telefono_encargado = trim(($row['telefono']));
+  $telefono_encargado = trim(($row['telefono_encargado']));
   $nombre_parentesco = trim(($row['nombre_tipo_parentesco']));
   $numero_telefono_encargado = trim(($row['telefono_encargado']));
   $direccion = trim(($row['direccion_alumno']));
@@ -123,6 +126,18 @@ $contenidoOK = "";
         // DATOS DEL ESTUDIANTE
         $objPHPExcel->getActiveSheet()->SetCellValue("R".$fila_excel,($fecha_nacimiento));
         $objPHPExcel->getActiveSheet()->SetCellValue("S".$fila_excel,($edad));
+        //
+        $objPHPExcel->getActiveSheet()->SetCellValue("T".$fila_excel, TRIM($row['codigo_nie']));
+        $objPHPExcel->getActiveSheet()->SetCellValue("U".$fila_excel, $nombre_grado_seccion);
+
+        $objPHPExcel->getActiveSheet()->SetCellValue("V".$fila_excel,($nombres . ' ' . $apellidos_materno_paterno));
+        $objPHPExcel->getActiveSheet()->SetCellValue("AA".$fila_excel,($genero_estudiante));
+        //
+        $objPHPExcel->getActiveSheet()->SetCellValue("AB".$fila_excel,($nombre_parentesco));
+        $objPHPExcel->getActiveSheet()->SetCellValue("AC".$fila_excel,($nombre_encargado));
+        $objPHPExcel->getActiveSheet()->SetCellValue("AD".$fila_excel,($dui_encargado));
+        //
+        // GENERO ESTUDIANTAE
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////        
    }    //  FIN DEL WHILE.
 // Verificar si Existe el directorio archivos.

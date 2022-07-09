@@ -70,7 +70,7 @@ class PDF extends FPDF
 //Cabecera de página
 function Header()
 {
-    global $print_nombre_docente;
+    global $print_nombre_docente, $print_ann_lectivo, $print_turno;;
     //Logo
     $img = $_SERVER['DOCUMENT_ROOT'].'/registro_academico/img/'.$_SESSION['logo_uno'];
     $this->Image($img,10,5,12,15);
@@ -79,11 +79,11 @@ function Header()
     //Movernos a la derecha
     $this->Cell(20);
     //Título
-    $this->Cell(150,6,utf8_decode($_SESSION['institucion']),0,1,'C');
+    $this->Cell(250,6,utf8_decode($_SESSION['institucion']),0,1,'C');
     $this->SetFont('Arial','',11);
     $this->Cell(15);
-    $this->Cell(150,4,utf8_decode('Indicadores Educativos (SobreEdad y Repitencia)'),0,0,'C');
-    $this->Line(10,20,200,20);
+    $this->Cell(250,4,utf8_decode('Indicadores Educativos (SobreEdad y Repitencia)') . ' ' . $print_ann_lectivo . ' Turno: ' . $print_turno,0,0,'C');
+    $this->Line(0,20,300,20);
     //Salto de línea
    // $this->Ln(20);
 }
@@ -117,72 +117,75 @@ function encabezado()
 		$this->SetTextColor(0);
 		$this->SetFont('');
     //	crear encabezado. año lectio y Turno
-		$this->RotatedText(18,32,($print_ann_lectivo),0);
-		$this->RotatedText(210,32,("Turno: " . $print_turno),0);
-
+		//$this->RotatedText(18,22,($print_ann_lectivo),0);
+		//$this->RotatedText(210,22,("Turno: " . $print_turno),0);
+		$altoY = 21;
+		$altoYTitulos = 26;
+		$altoYTitulosMyF = 33;
+		$altoYTitulos2MyF = 29;
 		$this->SetFont('Arial','',10);
     // Generar el cuadro en donde se ubicara el grado, sección y año lectivo.
-        	$this->RoundedRect(15, 35, 10, 15, 1.5, '1234', '');
+        	$this->RoundedRect(15, $altoY, 10, 15, 1.5, '1234', '');
 			// Número de Línea.
-			$this->RoundedRect(15, 35, 10, 15, 1.5, '1234', '');
-			$this->RotatedText(18,42,utf8_decode('Nº'),0);
+			$this->RoundedRect(15, $altoY, 10, 15, 1.5, '1234', '');
+			$this->RotatedText(18,$altoY+4,utf8_decode('Nº'),0);
 			// Nombre del Docente o Encargado.
-			$this->RoundedRect(25, 35, 60, 15, 1.5, '1234', '');
-			$this->RotatedText(45,42,'Docente',0);
+			$this->RoundedRect(25, $altoY, 60, 15, 1.5, '1234', '');
+			$this->RotatedText(45,$altoY+4,'Nombre del Docente',0);
 			// Grado.
 			$this->SetFont('Arial','',9);
-			$this->RoundedRect(85, 35, 20, 15, 1.5, '1234', '');
-			$this->RotatedText(90,42,'Grado',0);
+			$this->RoundedRect(85, $altoY, 20, 15, 1.5, '1234', '');
+			$this->RotatedText(90,$altoY+4,'Grado',0);
 			$this->SetFont('Arial','',10);
 			// Sección
-			$this->RoundedRect(105, 35, 15, 15, 1.5, '1234', '');
-			$this->RotatedText(106.5,42,utf8_decode('Sección'),0);
+			$this->RoundedRect(105, $altoY, 15, 15, 1.5, '1234', '');
+			$this->RotatedText(106.5,$altoY+4,utf8_decode('Sección'),0);
 		   // cuadro para la sobreedad, repitencia y deserción.
 		   // matricula Máxima.
-	       $this->RoundedRect(120, 35, 30, 7.5, 1.5, '1234', '');
-	       $this->RotatedText(122,40,utf8_decode('Matricula Máxima'),0);
-	       $this->RotatedText(124,48,utf8_decode('M'),0);
-	       $this->RotatedText(134,48,utf8_decode('F'),0);
-	       $this->RotatedText(144,48,utf8_decode('T'),0);
-	       $this->RoundedRect(120, 42.5, 10, 7.5, 1.5, '1234', ''); //m
-	       $this->RoundedRect(130, 42.5, 10, 7.5, 1.5, '1234', ''); // f
-	       $this->RoundedRect(140, 42.5, 10, 7.5, 1.5, '1234', ''); // t
+	       $this->RoundedRect(120, $altoY, 30, 7.5, 1.5, '1234', '');
+	       $this->RotatedText(122,$altoYTitulos,utf8_decode('Matricula Máxima'),0);
+	       $this->RotatedText(124,$altoYTitulosMyF,utf8_decode('M'),0);
+	       $this->RotatedText(134,$altoYTitulosMyF,utf8_decode('F'),0);
+	       $this->RotatedText(144,$altoYTitulosMyF,utf8_decode('T'),0);
+	       $this->RoundedRect(120, $altoYTitulos2MyF, 10, 7.5, 1.5, '1234', ''); //m
+	       $this->RoundedRect(130, $altoYTitulos2MyF, 10, 7.5, 1.5, '1234', ''); // f
+	       $this->RoundedRect(140, $altoYTitulos2MyF, 10, 7.5, 1.5, '1234', ''); // t
 	       // Deserción.
-	       $this->RoundedRect(150, 35, 30, 7.5, 1.5, '1234', '');
-	       $this->RotatedText(155,40,utf8_decode('Deserción'),0);
-	       $this->RotatedText(153,48,utf8_decode('M'),0);
-	       $this->RotatedText(164,48,utf8_decode('F'),0);
-	       $this->RotatedText(173,48,utf8_decode('T'),0);
-	       $this->RoundedRect(150, 42.5, 10, 7.5, 1.5, '1234', ''); //m
-	       $this->RoundedRect(160, 42.5, 10, 7.5, 1.5, '1234', ''); // f
-	       $this->RoundedRect(170, 42.5, 10, 7.5, 1.5, '1234', ''); // t
+	       $this->RoundedRect(150, $altoY, 30, 7.5, 1.5, '1234', '');
+	       $this->RotatedText(155,$altoYTitulos,utf8_decode('Deserción'),0);
+	       $this->RotatedText(153,$altoYTitulosMyF,utf8_decode('M'),0);
+	       $this->RotatedText(164,$altoYTitulosMyF,utf8_decode('F'),0);
+	       $this->RotatedText(173,$altoYTitulosMyF,utf8_decode('T'),0);
+	       $this->RoundedRect(150, $altoYTitulos2MyF, 10, 7.5, 1.5, '1234', ''); //m
+	       $this->RoundedRect(160, $altoYTitulos2MyF, 10, 7.5, 1.5, '1234', ''); // f
+	       $this->RoundedRect(170, $altoYTitulos2MyF, 10, 7.5, 1.5, '1234', ''); // t
 			// Repitencia.
-	       $this->RoundedRect(180, 35, 30, 7.5, 1.5, '1234', '');
-	       $this->RotatedText(185,40,utf8_decode('Repitencia'),0);
-	       $this->RotatedText(184,48,utf8_decode('M'),0);
-	       $this->RotatedText(194,48,utf8_decode('F'),0);
-	       $this->RotatedText(204,48,utf8_decode('T'),0);
-	       $this->RoundedRect(180, 42.5, 10, 7.5, 1.5, '1234', ''); //m
-	       $this->RoundedRect(190, 42.5, 10, 7.5, 1.5, '1234', ''); // f
-	       $this->RoundedRect(200, 42.5, 10, 7.5, 1.5, '1234', ''); // t
+	       $this->RoundedRect(180, $altoY, 30, 7.5, 1.5, '1234', '');
+	       $this->RotatedText(185,$altoYTitulos,utf8_decode('Repitencia'),0);
+	       $this->RotatedText(184,$altoYTitulosMyF,utf8_decode('M'),0);
+	       $this->RotatedText(194,$altoYTitulosMyF,utf8_decode('F'),0);
+	       $this->RotatedText(204,$altoYTitulosMyF,utf8_decode('T'),0);
+	       $this->RoundedRect(180, $altoYTitulos2MyF, 10, 7.5, 1.5, '1234', ''); //m
+	       $this->RoundedRect(190, $altoYTitulos2MyF, 10, 7.5, 1.5, '1234', ''); // f
+	       $this->RoundedRect(200, $altoYTitulos2MyF, 10, 7.5, 1.5, '1234', ''); // t
 			// Sobreedad
-	       $this->RoundedRect(210, 35, 30, 7.5, 1.5, '1234', '');
-	       $this->RotatedText(215,40,utf8_decode('Sobreedad'),0);
-	       $this->RotatedText(214,48,utf8_decode('M'),0);
-	       $this->RotatedText(224,48,utf8_decode('F'),0);
-	       $this->RotatedText(234,48,utf8_decode('T'),0);
-	       $this->RoundedRect(210, 42.5, 10, 7.5, 1.5, '1234', ''); //m
-	       $this->RoundedRect(220, 42.5, 10, 7.5, 1.5, '1234', ''); // f
-	       $this->RoundedRect(230, 42.5, 10, 7.5, 1.5, '1234', ''); // t
+	       $this->RoundedRect(210, $altoY, 30, 7.5, 1.5, '1234', '');
+	       $this->RotatedText(215,$altoYTitulos,utf8_decode('Sobreedad'),0);
+	       $this->RotatedText(214,$altoYTitulosMyF,utf8_decode('M'),0);
+	       $this->RotatedText(224,$altoYTitulosMyF,utf8_decode('F'),0);
+	       $this->RotatedText(234,$altoYTitulosMyF,utf8_decode('T'),0);
+	       $this->RoundedRect(210, $altoYTitulos2MyF, 10, 7.5, 1.5, '1234', ''); //m
+	       $this->RoundedRect(220, $altoYTitulos2MyF, 10, 7.5, 1.5, '1234', ''); // f
+	       $this->RoundedRect(230, $altoYTitulos2MyF, 10, 7.5, 1.5, '1234', ''); // t
 			// Matricula Final.
-	       $this->RoundedRect(240, 35, 30, 7.5, 1.5, '1234', '');
-	       $this->RotatedText(243,40,utf8_decode('Matricula Final'),0);
-	       $this->RotatedText(243,48,utf8_decode('M'),0);
-	       $this->RotatedText(254,48,utf8_decode('F'),0);
-	       $this->RotatedText(264,48,utf8_decode('T'),0);
-	       $this->RoundedRect(240, 42.5, 10, 7.5, 1.5, '1234', ''); //m
-	       $this->RoundedRect(250, 42.5, 10, 7.5, 1.5, '1234', ''); // f
-	       $this->RoundedRect(260, 42.5, 10, 7.5, 1.5, '1234', ''); // t
+	       $this->RoundedRect(240, $altoY, 30, 7.5, 1.5, '1234', '');
+	       $this->RotatedText(243,$altoYTitulos,utf8_decode('Matricula Final'),0);
+	       $this->RotatedText(243,$altoYTitulosMyF,utf8_decode('M'),0);
+	       $this->RotatedText(254,$altoYTitulosMyF,utf8_decode('F'),0);
+	       $this->RotatedText(264,$altoYTitulosMyF,utf8_decode('T'),0);
+	       $this->RoundedRect(240, $altoYTitulos2MyF, 10, 7.5, 1.5, '1234', ''); //m
+	       $this->RoundedRect(250, $altoYTitulos2MyF, 10, 7.5, 1.5, '1234', ''); // f
+	       $this->RoundedRect(260, $altoYTitulos2MyF, 10, 7.5, 1.5, '1234', ''); // t
 }
 }
 
@@ -207,7 +210,7 @@ function encabezado()
 		{
 			$pdf->AddPage();
 			// Aqui mandamos texto a imprimir o al documento.
-			$pdf->SetY(50);
+			$pdf->SetY(35);
 			$pdf->SetX(15);
 			// variable para el turno.
 				$print_turno = $nombre_turno_bucle[$jh];
@@ -329,12 +332,12 @@ function encabezado()
 							$pdf->Ln();
 							$fill=!$fill;
 					// Salto de Línea.
-							if($i > 25){
-							$pdf->SetX(15);
-							$pdf->Cell(array_sum($w)+5+(6*10),0,'','B');
-							$pdf->AddPage();
+							if($i > 28){
+								$pdf->SetX(15);
+								$pdf->Cell(array_sum($w)+5+(6*10),0,'','B');
+								$pdf->AddPage();
 							// Aqui mandamos texto a imprimir o al documento.
-							$pdf->SetY(50);
+							$pdf->SetY(30);
 							$pdf->SetX(15);
 							$pdf->encabezado();
 							}
@@ -356,9 +359,9 @@ else{
       $pdf->Cell($w[4],$alto_fila,$total_general_femenino,'LR',0,'C',$fill);
       $pdf->Cell($w[4],$alto_fila,$total_general,'LR',1,'C',$fill);
     // cerrar línea si sólo hay una página.
-    if($i == 26){
-	$pdf->SetX(15);
-	$pdf->Cell(array_sum($w)+5+(6*10),0,'','B');
+    if($i == 28){
+		$pdf->SetX(15);
+		$pdf->Cell(array_sum($w)+5+(6*10),0,'','B');
     }
 //*******************************************************//
 //	CREAR PROCESO PARA CONSOLIDAR GRADOS
@@ -367,7 +370,7 @@ else{
     /// armar subtotales. crear una nueva página.
         $pdf->AddPage();
 // Aqui mandamos texto a imprimir o al documento.
-    $pdf->SetY(50);
+    $pdf->SetY(30);
     $pdf->SetX(15);
  // Evaluar si existen registros.
     if($result -> rowCount() != 0){
@@ -476,7 +479,7 @@ else{
 					$pdf->Cell(array_sum($w)+5+(6*10),0,'','B');
 					$pdf->AddPage();
 					// Aqui mandamos texto a imprimir o al documento.
-					$pdf->SetY(50);
+					$pdf->SetY(30);
 					$pdf->SetX(15);
 					$pdf->encabezado();
 			    }

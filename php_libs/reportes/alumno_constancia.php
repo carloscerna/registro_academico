@@ -59,10 +59,10 @@ class PDF extends FPDF
         $this->SetFont('Arial','B',14);
     //Título
 	//$0titulo1 = utf8_decode("Educación Parvularia - Básica - Tercer Ciclo y Bachillerato.");
-        $this->RotatedText(30,10,utf8_decode($_SESSION['institucion']),0);
+        $this->RotatedText(30,10,utf8_decode($_SESSION['institucion'] . ' - ' . $_SESSION['codigo']),0);
     //Arial bold 13
         $this->SetFont('Arial','B',12);
-	$this->RotatedText(30,17,utf8_decode($_SESSION['direccion']),0);
+	$this->RotatedText(30,17,utf8_decode($_SESSION['direccion'] . ', Santa Ana '),0);
 	
     // Teléfono.
 	if(empty($_SESSION['telefono'])){
