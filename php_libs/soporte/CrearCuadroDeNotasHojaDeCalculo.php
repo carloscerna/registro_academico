@@ -305,7 +305,7 @@ if($codigo_grado == "I3" || $codigo_grado =="4P" || $codigo_grado == "5P")
           for($ca=0;$ca<count($codigo_area);$ca++){
             if($codigo_grado == "I3" || $codigo_grado =="4P" || $codigo_grado == "5P")
                 {
-                  if($codigo_area[$ca] == "09"){
+                  if($codigo_area[$ca] == "09" || $codigo_area[$ca] == "08"){
                     $objPHPExcel->setActiveSheetIndex(1);                  
                       $objPHPExcel->getActiveSheet()->SetCellValue($codigo_asignatura_hoja_alerta[$i_h_a], $codigo_asignatura[$ca]);
                       $objPHPExcel->getActiveSheet()->SetCellValue($numero_hoja_alerta[$i_h_a],$i_h_a+1);
