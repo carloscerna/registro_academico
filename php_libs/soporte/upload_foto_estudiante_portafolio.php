@@ -6,13 +6,17 @@
     $small = 'thumbails/';
     $large = 'large/';
     $random = rand();
+    $respuestaOK = true;
+    $url_archivo = "";
+    $mensajeError = "No hay archivo.";
+    $contenidoOK = "";
 // verificar si existe la imagen.
 if (is_array($_FILES) && count($_FILES) > 0) {
     if (($_FILES["file"]["type"] == "image/pjpeg")
         || ($_FILES["file"]["type"] == "image/jpeg")
         || ($_FILES["file"]["type"] == "image/png")
         || ($_FILES["file"]["type"] == "image/gif")
-        || mime_content_type($_FILES['file']['type']) == 'application/pdf') {
+        || ($_FILES['file']['type']) == 'application/pdf') {
         if (move_uploaded_file($_FILES["file"]["tmp_name"], $path_root . $url_ . $_FILES['file']['name'])) {
             // Incluimos el archivo de funciones y conexión a la base de datos
                 include($path_root."/registro_academico/includes/mainFunctions_conexion.php");
@@ -66,50 +70,71 @@ if (is_array($_FILES) && count($_FILES) > 0) {
                 rename($path_root.$url_."/".$_FILES['file']['name'],$path_root.$url_.$codigo_institucion."/".$nombreArchivo);
             
             // UTILIZACIÓN DE LAS HERRAMIENTAS GD CON IMAGE.
+                // VALIDAR SI EL ARCHIVO ES PDF O IMAGEN
+                    $archivo_validar_pdf = false;
                 //  Abrir foto original
                     if($_FILES["file"]["type"] == "image/jpeg"){
                         $original = imagecreatefromjpeg($path_root.$url_.$codigo_institucion."/".$nombreArchivo);
                     }else if($_FILES["file"]["type"] == "image/png"){
                         $original = imagecreatefrompng($path_root.$url_.$codigo_institucion."/".$nombreArchivo);
+                    }else if(($_FILES['file']['type']) == 'application/pdf'){
+                        $mensajeError = "Cargado Archivo PDF...";
+                        $contenidoOK = "pdf";
+                        copy($path_root.$url_."/".$codigo_institucion."/".$nombreArchivo,$path_root.$url_.$codigo_institucion."/".$large."/".$nombreArchivo);
+                        copy($path_root.$url_."/".$codigo_institucion."/".$nombreArchivo,$path_root.$url_.$codigo_institucion."/".$small."/".$nombreArchivo);
                     }
-                //  OBETNER COORD3ENADAS ANCHO Y ALTO.
-                    $ancho_original = imagesx( $original );
-                    $alto_original = imagesy( $original );
-                        //  ****************************************************************************************************************
-                        //  ****************************************************************************************************************
-                        //  Crear un lienzo vacio (foto destino Small)
-                            $ancho_nuevo = 168; // $small.
-                            $alto_nuevo = round( $ancho_nuevo * $alto_original / $ancho_original );
 
-                            $copia = imagecreatetruecolor( $ancho_nuevo , $alto_nuevo );
-                        //  Copiar orignal --> copia
-                            imagecopyresampled($copia, $original, 0,0,0,0, $ancho_nuevo, $alto_nuevo, $ancho_original, $alto_original );
-                        //  Exportar y guardar imagen.
-                            imagejpeg( $copia, $path_root.$url_.$codigo_institucion."/".$small."/".$nombreArchivo, 100);
-                        //  ****************************************************************************************************************
-                        //  ****************************************************************************************************************
+                    // validar si el archivo es PDF O IMAGEN
+                    if($archivo_validar_pdf == true){
+                        $mensajeError = "Cargado Archivo IMAGEN...";
+                        $contenidoOK = "img";
+                        //  OBETNER COORD3ENADAS ANCHO Y ALTO.
+                        $ancho_original = imagesx( $original );
+                        $alto_original = imagesy( $original );
+                            //  ****************************************************************************************************************
+                            //  ****************************************************************************************************************
+                            //  Crear un lienzo vacio (foto destino Small)
+                                $ancho_nuevo = 168; // $small.
+                                $alto_nuevo = round( $ancho_nuevo * $alto_original / $ancho_original );
 
-                        //  ****************************************************************************************************************
-                        //  ****************************************************************************************************************
-                        //  Crear un lienzo vacio (foto destino $large)
-                            $ancho_nuevo = 1024; // $large.
-                            $alto_nuevo = round( $ancho_nuevo * $alto_original / $ancho_original );
+                                $copia = imagecreatetruecolor( $ancho_nuevo , $alto_nuevo );
+                            //  Copiar orignal --> copia
+                                imagecopyresampled($copia, $original, 0,0,0,0, $ancho_nuevo, $alto_nuevo, $ancho_original, $alto_original );
+                            //  Exportar y guardar imagen.
+                                imagejpeg( $copia, $path_root.$url_.$codigo_institucion."/".$small."/".$nombreArchivo, 100);
+                            //  ****************************************************************************************************************
+                            //  ****************************************************************************************************************
 
-                            $copia = imagecreatetruecolor( $ancho_nuevo , $alto_nuevo );
-                        //  Copiar orignal --> copia
-                            imagecopyresampled($copia, $original, 0,0,0,0, $ancho_nuevo, $alto_nuevo, $ancho_original, $alto_original );
-                        //  Exportar y guardar imagen.
-                            imagejpeg( $copia, $path_root.$url_.$codigo_institucion."/".$large."/".$nombreArchivo, 100);
-                        //  ****************************************************************************************************************
-                        //  ****************************************************************************************************************
-                // UTILIZACIÓN DE LAS HERRAMIENTAS GD CON IMAGE.
+                            //  ****************************************************************************************************************
+                            //  ****************************************************************************************************************
+                            //  Crear un lienzo vacio (foto destino $large)
+                                $ancho_nuevo = 1024; // $large.
+                                $alto_nuevo = round( $ancho_nuevo * $alto_original / $ancho_original );
+
+                                $copia = imagecreatetruecolor( $ancho_nuevo , $alto_nuevo );
+                            //  Copiar orignal --> copia
+                                imagecopyresampled($copia, $original, 0,0,0,0, $ancho_nuevo, $alto_nuevo, $ancho_original, $alto_original );
+                            //  Exportar y guardar imagen.
+                                imagejpeg( $copia, $path_root.$url_.$codigo_institucion."/".$large."/".$nombreArchivo, 100);
+                            //  ****************************************************************************************************************
+                            //  ****************************************************************************************************************
+                    // UTILIZACIÓN DE LAS HERRAMIENTAS GD CON IMAGE.
+                    }
+
 
             // Guardar el nombre de la imagen. en la tabla.            
             // Armar query. para actualizar el nombre del archivo de la ruta foto.
                 $query = "UPDATE alumno_portafolio SET url_imagen = '".$nombreArchivo."' WHERE id_ = ". $id_portafolio;
             // Ejecutamos el Query.
                 $consulta = $dblink -> query($query);
-                    echo "..".$url_.$codigo_institucion."/".$nombreArchivo;
+                    $url_archivo = "..".$url_.$codigo_institucion."/".$nombreArchivo;
+
+                    // Armamos array para convertir a JSON
+                    $salidaJson = array("respuesta" => $respuestaOK,
+                    "mensaje" => $mensajeError,
+                    "url" => $url_archivo,
+                    "contenido" => $contenidoOK);
+                echo json_encode($salidaJson);
         } else {
             echo 0;
         }

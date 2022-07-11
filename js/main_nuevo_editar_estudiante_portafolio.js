@@ -198,7 +198,13 @@ $('body').on('click','#ListarPortafolio a',function (e){
 				var ruta_imagen = data[0].nombre_imagen
 				// Cambiar imagen
 				//$('.card-img-top-Portafolio').removeAttr('src');
-				$('#ImagenPortafolio').attr('src', ruta_imagen);
+				let text = ruta_imagen;
+				const myExtension = text.split(".");
+				if(myExtension[3] == "pdf"){
+					$('#iframePDF').attr('src',ruta_imagen)
+				}else{
+					$('#ImagenPortafolio').attr('src', ruta_imagen);
+				}
 				//$("#").val(data[0].);	
 				// Form Visible
 				$("#EditarNuevoPortafolio").css("display","block");
@@ -292,7 +298,7 @@ $('body').on('click','#ListarPortafolio a',function (e){
 	  var filename=arr.slice(-1)[0];
 	  filextension=filename.split(".");
 	  filext="."+filextension.slice(-1)[0];
-	  valid=[".jpg",".png",".jpeg",".bmp"];
+	  valid=[".jpg",".png",".jpeg",".bmp",".pdf"];
   //if file is not valid we show the error icon, the red alert, and hide the submit button
 	  if (valid.indexOf(filext.toLowerCase())==-1){
 		  $( ".imguploadPortafolio.ok" ).hide("slow");
@@ -324,13 +330,24 @@ $('body').on('click','#ListarPortafolio a',function (e){
 			  contentType: false,
 			  processData: false,
 			  success: function(response) {
-				  if (response != 0) {
+					if(response.respuesta == true){
+						if(response.contenido == "img"){
+							$(".card-img-top-Portafolio").attr("src", response.url);
+							toastr["success"](response.mensaje, "Sistema");	
+						}else if (response.contenido == "pdf") {
+							$(".card-img-top-Portafolio").attr("src", response.url);
+						} else {
+							
+						}
+					}
+
+			/*	  if (response != 0) {
 					  //$('.card-img-top-Portafolio').removeAttr('src');
 					  $(".card-img-top-Portafolio").attr("src", response);
 					  toastr["success"]('Imagen Cargada...', "Sistema");
 				  } else {
 					toastr["error"]('Formato de imagen incorrecto.', "Sistema");
-				  }
+				  }*/
 			  }
 		  });
 		  return false;

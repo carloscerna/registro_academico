@@ -131,6 +131,9 @@ if($errorDbConexion == false){
 							$descripcion = trim($listado['descripcion']);
 							$nombre_imagen = trim($listado['url_imagen']);
 							$id_alumno = trim($listado['id_alumno']);
+						// separar el nombre del archivo para saber su extension
+							$extension_ = explode(".",$nombre_imagen);
+							$extension_pdf = $extension_[1];
 						//	VERIFICAR SI NO EXISTE LA IMAGEN.
 							if (empty($nombre_imagen)) {
 								$ruta_imagen = $url_no;
@@ -140,37 +143,76 @@ if($errorDbConexion == false){
 								$ruta_imagen_large = $url_large . $nombre_imagen;
 							}
 						// ENVIAR AL CONTENIDO AL SECTION.
-							$contenidoOK .="
-									<div class='card'>
-										<div class='card-header text-right'>$fecha</div>
-										<div class='text-center'>
-											<a href='#' data-toggle='modal' data-target='#myModal$id_portafolio'>
-												<img class='img-fluid rounded' src='$ruta_imagen' alt='Portafolio style='width=auto; height=94;'>
-											</a>
-										</div>
-										<div class='card-body'>
-											<h4 class='card-title'><a>$titulo</a></h4>
-											<p class='card-text'>$descripcion</p>
-										</div>
-										<div class='card-footer text-center'>
-											<a data-accion=EditarRegistro class='btn btn-info btn-sm text-dark' alt='Editar' href='$id_portafolio-$id_alumno'>Editar</a>
-											<a data-accion=EliminarRegistro class='btn btn-warning btn-sm text-dark' alt='Editar' href='$id_portafolio-$id_alumno'>Eliminar</a>
-										</div>
+
+						if($extension_pdf == "pdf"){
+								$contenidoOK .="
+								<div class='card'>
+									<div class='card-header text-right'>$fecha</div>
+									<div class='text-center'>
+										<a href='#' data-toggle='modal' data-target='#myModal$id_portafolio'>
+											<iframe id='iframePDF' frameborder='0' scrolling='no' width='100%' height='500px' src='$ruta_imagen'></iframe>											
+										</a>
 									</div>
-							";
-							//<!-- The Modal -->
-								$contenidoOK .= "
-									<div class='modal fade' id='myModal$id_portafolio' tabaindex='-1' role='dialog' aria-labelledby='myModalLabel$id_portafolio' aria-hidden='true'>
-										<!-- Modal button close -->
-											<button type='button' class='close mr-2' data-dismiss='modal' aria-label='Close'>
-												<span aria-hidden='true'>&times;</span>
-											</button>
-										<!-- Modal body -->
-											<div class='modal-dialog modal-lg modal-dialog-centered' role='document'>
-												<img class='img-fluid rounded' src='$ruta_imagen_large'>
-											</div>
-									</div>";
-							//<!-- The Modal -->
+									<div class='card-body'>
+										<h4 class='card-title'><a>$titulo</a></h4>
+										<p class='card-text'>$descripcion</p>
+									</div>
+									<div class='card-footer text-center'>
+										<a data-accion=EditarRegistro class='btn btn-info btn-sm text-dark' alt='Editar' href='$id_portafolio-$id_alumno'>Editar</a>
+										<a data-accion=EliminarRegistro class='btn btn-warning btn-sm text-dark' alt='Editar' href='$id_portafolio-$id_alumno'>Eliminar</a>
+									</div>
+								</div>
+						";
+						//<!-- The Modal -->
+							$contenidoOK .= "
+								<div class='modal fade' id='myModal$id_portafolio' tabaindex='-1' role='dialog' aria-labelledby='myModalLabel$id_portafolio' aria-hidden='true'>
+									<!-- Modal button close -->
+										<button type='button' class='close mr-2' data-dismiss='modal' aria-label='Close'>
+											<span aria-hidden='true'>&times;</span>
+										</button>
+									<!-- Modal body -->
+										<div class='modal-dialog modal-lg modal-dialog-centered' role='document'>
+											<iframe id='iframePDF' frameborder='0' scrolling='no' width='100%' height='500px' src='$ruta_imagen'></iframe>	
+										</div>
+								</div>";
+						//<!-- The Modal -->
+						}else{
+							//
+							// 	SI ES UNA IMAGEN.
+							$contenidoOK .="
+							<div class='card'>
+								<div class='card-header text-right'>$fecha</div>
+								<div class='text-center'>
+									<a href='#' data-toggle='modal' data-target='#myModal$id_portafolio'>
+										<img class='img-fluid rounded' src='$ruta_imagen' alt='Portafolio' style='width=auto; height=94;'>				
+									</a>
+								</div>
+								<div class='card-body'>
+									<h4 class='card-title'><a>$titulo</a></h4>
+									<p class='card-text'>$descripcion</p>
+								</div>
+								<div class='card-footer text-center'>
+									<a data-accion=EditarRegistro class='btn btn-info btn-sm text-dark' alt='Editar' href='$id_portafolio-$id_alumno'>Editar</a>
+									<a data-accion=EliminarRegistro class='btn btn-warning btn-sm text-dark' alt='Editar' href='$id_portafolio-$id_alumno'>Eliminar</a>
+								</div>
+							</div>
+					";
+					//<!-- The Modal -->
+						$contenidoOK .= "
+							<div class='modal fade' id='myModal$id_portafolio' tabaindex='-1' role='dialog' aria-labelledby='myModalLabel$id_portafolio' aria-hidden='true'>
+								<!-- Modal button close -->
+									<button type='button' class='close mr-2' data-dismiss='modal' aria-label='Close'>
+										<span aria-hidden='true'>&times;</span>
+									</button>
+								<!-- Modal body -->
+									<div class='modal-dialog modal-lg modal-dialog-centered' role='document'>
+										<img class='img-fluid rounded' src='$ruta_imagen_large'>
+									</div>
+							</div>";
+					//<!-- The Modal -->
+						}
+						
+							
 					}	// FIN DEL WHILE.
 					//	cierre de fila.
 						$contenidoOK .="</div></div>";
