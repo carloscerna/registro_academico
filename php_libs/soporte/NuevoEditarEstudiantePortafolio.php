@@ -99,6 +99,7 @@ if($errorDbConexion == false){
 				$offset = ($page - 1) * $rowsPerPage;
 			// ARVAR EL URL DEPENDIENDO DEL CODIGO PERSONAL
 				$url_ = "../registro_academico/img/portafolio/" . $codigo_institucion . "/" . "thumbails/";
+				$url_pdf = "../registro_academico/img/portafolio/" . $codigo_institucion . "/";
 				$url_large = "../registro_academico/img/portafolio/" . $codigo_institucion . "/" . "large/";
 				$url_no = "../registro_academico/img/NoDisponible.jpg";
 				//	Total de registros.
@@ -145,6 +146,7 @@ if($errorDbConexion == false){
 						// ENVIAR AL CONTENIDO AL SECTION.
 
 						if($extension_pdf == "pdf"){
+							$ruta_imagen = $url_pdf . $nombre_imagen;
 								$contenidoOK .="
 								<div class='card'>
 									<div class='card-header text-right'>$fecha</div>

@@ -305,14 +305,14 @@ $('body').on('click','#ListarPortafolio a',function (e){
 		  $( ".imguploadPortafolio.stop" ).show("slow");
 		
 		  $('#namefilePortafolio').css({"color":"red","font-weight":700});
-		  $('#namefilePortafolio').html("No es una Imagen!");
+		  $('#namefilePortafolio').html("No es una Archivo!");
 	  }else{
 		  //if file is valid we show the green alert and show the valid submit
 		  $( ".imguploadPortafolio.stop" ).hide("slow");
 		  $( ".imguploadPortafolio.ok" ).show("slow");
 		
 		  $('#namefilePortafolio').css({"color":"green","font-weight":700});
-		  $('#namefilePortafolio').html('Imagen!');
+		  $('#namefilePortafolio').html('archivo!');
 
 		  $("#SubirImagenPortafolio").attr("disabled",false);		// Botón Subir Imagen Portafolio
 	  }
@@ -326,21 +326,27 @@ $('body').on('click','#ListarPortafolio a',function (e){
 		  $.ajax({
 			  url: 'php_libs/soporte/upload_foto_estudiante_portafolio.php',
 			  type: 'post',
+			  dataType: "json",
 			  data: formData,
 			  contentType: false,
 			  processData: false,
 			  success: function(response) {
-					if(response.respuesta == true){
+				//alert(response.url);
 						if(response.contenido == "img"){
+							$("#iframePDF").css("display","none");
+							$(".card-img-top-Portafolio").css("display","block");
 							$(".card-img-top-Portafolio").attr("src", response.url);
-							toastr["success"](response.mensaje, "Sistema");	
-						}else if (response.contenido == "pdf") {
-							$(".card-img-top-Portafolio").attr("src", response.url);
-						} else {
-							
+								toastr["success"](response.mensaje, "Sistema");	
 						}
-					}
-
+						
+						if (response.contenido == 'pdf') {
+							$("#iframePDF").css("display","block");
+							$(".card-img-top-Portafolio").css("display","none");
+							$("#iframePDF").attr("src", response.url);
+								toastr["success"](response.mensaje, "Sistema");	
+						}
+						// descartivar boton subir imagen.
+						$("#SubirImagenPortafolio").attr("disabled",true);		// Botón Subir Imagen Portafolio
 			/*	  if (response != 0) {
 					  //$('.card-img-top-Portafolio').removeAttr('src');
 					  $(".card-img-top-Portafolio").attr("src", response);

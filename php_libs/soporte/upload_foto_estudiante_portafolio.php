@@ -80,8 +80,8 @@ if (is_array($_FILES) && count($_FILES) > 0) {
                     }else if(($_FILES['file']['type']) == 'application/pdf'){
                         $mensajeError = "Cargado Archivo PDF...";
                         $contenidoOK = "pdf";
-                        copy($path_root.$url_."/".$codigo_institucion."/".$nombreArchivo,$path_root.$url_.$codigo_institucion."/".$large."/".$nombreArchivo);
-                        copy($path_root.$url_."/".$codigo_institucion."/".$nombreArchivo,$path_root.$url_.$codigo_institucion."/".$small."/".$nombreArchivo);
+                        //copy($path_root.$url_."/".$codigo_institucion."/".$nombreArchivo,$path_root.$url_.$codigo_institucion."/".$large."/".$nombreArchivo);
+                        //copy($path_root.$url_."/".$codigo_institucion."/".$nombreArchivo,$path_root.$url_.$codigo_institucion."/".$small."/".$nombreArchivo);
                     }
 
                     // validar si el archivo es PDF O IMAGEN
