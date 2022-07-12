@@ -9,9 +9,64 @@
      include($path_root."/registro_academico/php_libs/fpdf/fpdf.php");
 // cambiar a utf-8.
      header("Content-Type: text/html; charset=UTF-8");    
+//
+    $fecha_mes = '07';//$_REQUEST["fechaMes"];
+    $fecha_ann = 2022; //$_REQUEST["fechaAnn"];
+    $quincena = "Q1";
 // variables y consulta a la tabla.
      $codigo_all = $_REQUEST["todos"];
      $db_link = $dblink;
+//
+	    // Establecer formato para la fecha.
+	    // 
+		date_default_timezone_set('America/El_Salvador');
+		setlocale(LC_TIME,'es_SV');
+	    //
+		//$dias = array("Domingo","Lunes","Martes","Miercoles","Jueves","Viernes","Sábado");
+            $meses = array("enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre");
+                //Salida: Viernes 24 de Febrero del 2012		
+		//Crear una línea. Fecha.
+		$dia = strftime("%d");		// El Día.
+        $mes = $meses[date('n')-1];     // El Mes.
+        $año = strftime("%Y");		// El Año.
+//        $total_de_dias = date('t');    // total de dias.
+        $total_de_dias = cal_days_in_month(CAL_GREGORIAN, (int)$fecha_mes, $año);
+        $NombreMes = $meses[(int)$fecha_mes - 1];
+
+// definimos 2 array uno para los nombre de los dias y otro para los nombres de los meses
+    $nombresDias = array("D", "L", "M", "M", "J", "V", "S" );
+    $nombresMeses = array(1=>"Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre");
+// ARMANR FECHA DEPENDIENDO DE LA QUINCENA
+    if($quincena == "Q1"){
+        $fecha_inicio = $año . '-' . $fecha_mes . '-01'; 
+        $fecha_fin = $año . '-' . $fecha_mes . '-'.$total_de_dias; 
+    }
+    //print $fecha_inicio . " - " . $fecha_fin . "<br>";
+// establecemos la fecha de inicio
+    $inicio =  DateTime::createFromFormat('Y-m-d', $fecha_inicio, new DateTimeZone('America/El_Salvador'));
+// establecemos la fecha final (fecha de inicio + dias que queramos)
+    $fin =  DateTime::createFromFormat('Y-m-d', $fecha_fin, new DateTimeZone('America/El_Salvador'));
+// definier el número de días dependiendo de la quincena.
+    $fin = $fin->modify( '+1 day' );
+// creamos el periodo de fechas
+    $periodo = new DatePeriod($inicio, new DateInterval('P1D') ,$fin);
+// Crear Matriz para el # de dia y nombre del dia.
+    $nombreDia_a = array(); $numeroDia_a = array();
+// recorremos las dechas del periodo
+    foreach($periodo as $date){
+    // definimos la variables para verlo mejor
+        $nombreDia = $nombresDias[$date->format("w")];
+        $nombreMes = $nombresMeses[$date->format("n")];
+        $numeroDia = $date->format("j");
+        $anyo = $date->format("Y");
+    // mostramos los datos
+   // echo $nombreDia.' '.$numeroDia.' de '.$nombreMes.' de '.$anyo.'<br>';
+        $nombreDia_a[] = $nombreDia;
+        $numeroDia_a[] = $numeroDia;
+
+    //echo $nombreDia.' '.$numeroDia.'<br>';
+    //echo $total_de_dias;
+    }
 // buscar la consulta y la ejecuta.
   consultas(9,0,$codigo_all,'','','',$db_link,'');
 //  imprimir datos del bachillerato.
@@ -34,7 +89,7 @@ class PDF extends FPDF
 //Cabecera de página
 function Header()
 {
-        global $print_bachillerato, $print_grado, $print_seccion, $print_ann_lectivo, $print_periodo, $pagina_impar;
+        global $print_bachillerato, $print_grado, $print_seccion, $print_ann_lectivo, $print_periodo, $pagina_impar, $NombreMes;
 
         //Logo
 	$img = $_SERVER['DOCUMENT_ROOT'].'/registro_academico/img/'.$_SESSION['logo_uno'];
@@ -43,7 +98,7 @@ function Header()
         $this->SetFont('Arial','B',13);
         //Título
         $this->RotatedText(35,15,utf8_decode($_SESSION['institucion']),0);
-        $this->RotatedText(35,20,'Lista de Asistencia',0,1,'L');
+        $this->RotatedText(35,20,'Lista de Asistencia - Mes: '. strtoupper($NombreMes),0,1,'L');
         
         $this->SetFont('Arial','',9);
         // Imprimir Modalidad y Asignatura.
@@ -88,6 +143,7 @@ function Footer()
 //Tabla coloreada
 function FancyTable($header)
 {
+    global $nombreDia_a, $numeroDia_a, $total_de_dias;
     //Colores, ancho de línea y fuente en negrita
     $this->SetFillColor(0,0,0);
     $this->SetTextColor(255);
@@ -104,19 +160,22 @@ function FancyTable($header)
     
         // Coloca las lineas de los cuadros.
             $this->SetFillColor(255,255,255);
-            for($j=0;$j<=29;$j++)
-              $this->Cell($w1[0],7,'','1',0,'C',1);
+            $this->SetTextColor(0);
+            for($j=0;$j<=$total_de_dias-1;$j++){
+                $this->Cell($w1[0],7,$nombreDia_a[$j],1,0,'C',1);
+            }
+              
               $this->Ln();
         
             $this->Cell($w[0],7,'','LBR',0,'C',1);
             $this->Cell($w[1],7,'','LBR',0,'C',1);
         
           
-        $this->Cell($w[2],7,'(Orden Alfabético por Apellido)','LBR',0,'C',1);
+        $this->Cell($w[2],7,utf8_decode('(Orden Alfabético por Apellido)'),'LBR',0,'C',1);
 
     $this->SetFillColor(255,255,255);
-    for($j=0;$j<=29;$j++)
-        $this->Cell($w1[0],7,'','1',0,'C',1);
+    for($j=0;$j<=$total_de_dias-1;$j++)
+        $this->Cell($w1[0],7,$numeroDia_a[$j],'1',0,'C',1);
     $this->Ln();
     //Restauración de colores y fuentes
     $this->SetFillColor(224,235,255);
@@ -131,7 +190,7 @@ function FancyTable($header)
     $pdf=new PDF('L','mm','Letter');
     $data = array();
     #Establecemos los márgenes izquierda, arriba y derecha:
-    $pdf->SetMargins(15, 15, 5);
+    $pdf->SetMargins(10, 15, 5);
     #Establecemos el margen inferior: 
     $pdf->SetAutoPageBreak(true,10);
 //Títulos de las columnas
@@ -161,7 +220,7 @@ function FancyTable($header)
                     $pdf->Cell($w[1],6,trim($row['codigo_nie']),'LR',0,'C',$fill);        // núermo correlativo
                     $pdf->Cell($w[2],6,utf8_decode(trim($row['apellido_alumno'])),'LR',0,'L',$fill); // Nombre + apellido_materno + apellido_paterno
                 $pdf->SetFont('Arial','',9); // I : Italica; U: Normal;
-                for($j=0;$j<=29;$j++)
+                for($j=0;$j<=$total_de_dias-1;$j++)
                     $pdf->Cell($w[3],6,'','1',0,'C',$fill);
                     $pdf->ln();
 
@@ -189,7 +248,7 @@ function FancyTable($header)
                       $pdf->Cell($w[1],6,'','LR',0,'l',$fill);  // nombre del alumno.
                       $pdf->Cell($w[2],6,'','LR',0,'l',$fill);  // nombre del alumno.
 
-			for($j=0;$j<=29;$j++)
+			for($j=0;$j<=$total_de_dias-1;$j++)
                 	$pdf->Cell($w[3],6,'','1',0,'C',$fill);
                 
                       $pdf->Ln();   
@@ -214,7 +273,7 @@ function FancyTable($header)
                       $pdf->Cell($w[1],6,'','LR',0,'l',$fill);  // nombre del alumno.
                       $pdf->Cell($w[2],6,'','LR',0,'l',$fill);  // nombre del alumno.
 
-			for($j=0;$j<=29;$j++)
+			for($j=0;$j<=$total_de_dias-1;$j++)
                 	$pdf->Cell($w[3],6,'','1',0,'C',$fill);
                 
                       $pdf->Ln();   
