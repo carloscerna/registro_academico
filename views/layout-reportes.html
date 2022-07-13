@@ -32,6 +32,16 @@
 			var lst = this.value;
 
 			switch(lst) {
+        case "asistencia":
+        $("#asistencia").show();
+        $("#pre-matricula").hide();
+        $('#trimestre').hide();
+        $('#nota-paes').hide();
+        $('#nota-asignatura').hide();
+        $('#boleta').hide();
+        $('#certificados').hide();
+        $('#carnet-estudiantil').hide();
+        break;
 				case "pre-matricula":
 				    $("#pre-matricula").show();
 				    $('#trimestre').hide();
@@ -40,6 +50,7 @@
 				    $('#boleta').hide();
 				    $('#certificados').hide();
 				    $('#carnet-estudiantil').hide();
+            $("#asistencia").hide();
 				    break;
 				case "carnet-estudiantil":
 				    $("#carnet-estudiantil").show();
@@ -48,6 +59,7 @@
 				    $('#nota-asignatura').hide();
 				    $('#boleta').hide();
 				    $('#certificados').hide();
+            $("#asistencia").hide();
 				    break;
 				case "paquete_escolar_02":
 				    $("#pre-matricula").hide();
@@ -57,6 +69,7 @@
 				    $('#boleta').hide();
 				    $('#certificados').hide();
 				    $('#carnet-estudiantil').hide();
+            $("#asistencia").hide();
         $('#paquete').show();
 				    break;
 				default:
@@ -68,6 +81,7 @@
         $('#paquete').hide();
         $('#carnet-estudiantil').hide();
         $("#pre-matricula").hide();
+        $("#asistencia").hide();
 			}
 			});
 			
@@ -302,6 +316,26 @@
                             <option value=hoja-de-calculo>Hoja de Cálculo
                             <option value=cuadro-de-notas-hoja-de-calculo>Cuatro de Notas (Hoja de Cálculo)
                        </select>
+                        <div id="asistencia" style="display: none;">
+                            <!-- SELECT MES -->
+                            <div class="form-group">
+                              <label for="Mes">Mes</label>
+                              <select class="custom-select" name="lstFechaMes" id="lstFechaMes">
+                                <option value="01">Enero</option>
+                                <option value="02">Febrero</option>
+                                <option value="03">Marzo</option>
+                                <option value="04">Abril</option>
+                                <option value="05">Mayo</option>
+                                <option value="06">Junio</option>
+                                <option value="07">Julio</option>
+                                <option value="08">Agosto</option>
+                                <option value="09">Septiembre</option>
+                                <option value="10">Octubre</option>
+                                <option value="11">Noviembre</option>
+                                <option value="12">Diciembre</option>
+                              </select>                                      
+                            </div>
+                        </div>
                              <!--  OPCIONES PARA LOS PAQUETES ESCOLARES -->
                            <div id="paquete" style="display: none;">
                             <div class="row">
@@ -310,11 +344,11 @@
                                  <option value='01' selected>Paquete de Útiles Escolares</option>
                                  <option value='02'>Adquisión de Zapatos Escolares</option>
                                  <option value='03'>Confección de Primer Uniforme</option>
-                                 <option value='04'>Confección de Segundo Uniforme</opcion>
-                                  <option value='05'>Familias</opcion>
-                                    <option value='06'>Libro de ESMATE</opcion>
-                                      <option value='07'>Libro de Lenguaje</opcion>
-                                        <option value='08'>Sin Texto</opcion>
+                                 <option value='04'>Confección de Segundo Uniforme</option>
+                                  <option value='05'>Familias</option>
+                                    <option value='06'>Libro de ESMATE</option>
+                                      <option value='07'>Libro de Lenguaje</option>
+                                        <option value='08'>Sin Texto</option>
                                 </select>
                             </div>
                             <div class="row">

@@ -74,6 +74,7 @@ $('body').on('click','#listaUsuariosOK a',function (e){
         var varbach = $('#lstmodalidad').val();
         var lstlist_nominas = $("#lstlist option:selected").val();
 
+        var lstlist_fechames = $("#lstFechaMes option:selected").val();
         var lstlist_notas = $("#lstnotas option:selected").val();
         var lstlist_notas_paes = $("#lstpaes option:selected").val();
         var lstasignatura = $('#lstasignatura option:selected').val();
@@ -128,7 +129,7 @@ if (lstlist_nominas == 'control_actividades' && $(this).attr('data-accion') == '
 
 if (lstlist_nominas == 'asistencia' && $(this).attr('data-accion') == 'listados_01') {
         // construir la variable con el url.
-        varenviar = "/registro_academico/php_libs/reportes/nomina_asistencia.php?todos="+reporte_ok;
+        varenviar = "/registro_academico/php_libs/reportes/nomina_asistencia.php?todos="+reporte_ok+"&lstannlectivo="+ann_lectivo+"&FechaMes="+lstlist_fechames;
         // Ejecutar la función
         AbrirVentana(varenviar);
 }

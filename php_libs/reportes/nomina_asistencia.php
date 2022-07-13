@@ -10,8 +10,8 @@
 // cambiar a utf-8.
      header("Content-Type: text/html; charset=UTF-8");    
 //
-    $fecha_mes = '07';//$_REQUEST["fechaMes"];
-    $fecha_ann = 2022; //$_REQUEST["fechaAnn"];
+    $fecha_mes = $_REQUEST["FechaMes"];//$_REQUEST["fechaMes"];
+    $fecha_ann = $_REQUEST["lstannlectivo"]; //$_REQUEST["fechaAnn"];
     $quincena = "Q1";
 // variables y consulta a la tabla.
      $codigo_all = $_REQUEST["todos"];
@@ -162,7 +162,13 @@ function FancyTable($header)
             $this->SetFillColor(255,255,255);
             $this->SetTextColor(0);
             for($j=0;$j<=$total_de_dias-1;$j++){
-                $this->Cell($w1[0],7,$nombreDia_a[$j],1,0,'C',1);
+                if($nombreDia_a[$j] == "S" || $nombreDia_a[$j] == "D"){
+                    $this->SetFillColor(213, 216, 220);
+                        $this->Cell($w1[0],7,$nombreDia_a[$j],1,0,'C',1);
+                }else{
+                    $this->SetFillColor(255,255,255);
+                        $this->Cell($w1[0],7,$nombreDia_a[$j],1,0,'C',1);
+                }
             }
               
               $this->Ln();
@@ -175,7 +181,14 @@ function FancyTable($header)
 
     $this->SetFillColor(255,255,255);
     for($j=0;$j<=$total_de_dias-1;$j++)
-        $this->Cell($w1[0],7,$numeroDia_a[$j],'1',0,'C',1);
+    if($nombreDia_a[$j] == "S" || $nombreDia_a[$j] == "D"){
+        $this->SetFillColor(213, 216, 220);
+            $this->Cell($w1[0],7,$numeroDia_a[$j],'1',0,'C',1);
+    }else{
+        $this->SetFillColor(255,255,255);
+            $this->Cell($w1[0],7,$numeroDia_a[$j],'1',0,'C',1);
+    }
+
     $this->Ln();
     //Restauración de colores y fuentes
     $this->SetFillColor(224,235,255);
@@ -220,8 +233,16 @@ function FancyTable($header)
                     $pdf->Cell($w[1],6,trim($row['codigo_nie']),'LR',0,'C',$fill);        // núermo correlativo
                     $pdf->Cell($w[2],6,utf8_decode(trim($row['apellido_alumno'])),'LR',0,'L',$fill); // Nombre + apellido_materno + apellido_paterno
                 $pdf->SetFont('Arial','',9); // I : Italica; U: Normal;
-                for($j=0;$j<=$total_de_dias-1;$j++)
-                    $pdf->Cell($w[3],6,'','1',0,'C',$fill);
+                for($j=0;$j<=$total_de_dias-1;$j++){
+                    if($nombreDia_a[$j] == "S" || $nombreDia_a[$j] == "D"){
+                        $pdf->SetFillColor(255, 255, 255);
+                            $pdf->Cell($w[3],6,'','LR',0,'C',$fill);
+                    }else{
+                        $pdf->SetFillColor(213, 216, 220);
+                            $pdf->Cell($w[3],6,'','1',0,'C',$fill);
+                    }
+                }
+                    
                     $pdf->ln();
 
                 if($i==25 || $i == 50 || $i == 75){
@@ -248,9 +269,15 @@ function FancyTable($header)
                       $pdf->Cell($w[1],6,'','LR',0,'l',$fill);  // nombre del alumno.
                       $pdf->Cell($w[2],6,'','LR',0,'l',$fill);  // nombre del alumno.
 
-			for($j=0;$j<=$total_de_dias-1;$j++)
-                	$pdf->Cell($w[3],6,'','1',0,'C',$fill);
-                
+			for($j=0;$j<=$total_de_dias-1;$j++){
+                if($nombreDia_a[$j] == "S" || $nombreDia_a[$j] == "D"){
+                    $pdf->SetFillColor(255, 255, 255);
+                        $pdf->Cell($w[3],6,'','LR',0,'C',$fill);
+                }else{
+                    $pdf->SetFillColor(213, 216, 220);
+                        $pdf->Cell($w[3],6,'','1',0,'C',$fill);
+                }
+            }
                       $pdf->Ln();   
                       $fill=!$fill;
                       
@@ -273,12 +300,17 @@ function FancyTable($header)
                       $pdf->Cell($w[1],6,'','LR',0,'l',$fill);  // nombre del alumno.
                       $pdf->Cell($w[2],6,'','LR',0,'l',$fill);  // nombre del alumno.
 
-			for($j=0;$j<=$total_de_dias-1;$j++)
-                	$pdf->Cell($w[3],6,'','1',0,'C',$fill);
-                
-                      $pdf->Ln();   
-                      $fill=!$fill;
-                      
+			for($j=0;$j<=$total_de_dias-1;$j++){
+                if($nombreDia_a[$j] == "S" || $nombreDia_a[$j] == "D"){
+                    $pdf->SetFillColor(255, 255, 255);
+                        $pdf->Cell($w[3],6,'','LR',0,'C',$fill);
+                }else{
+                    $pdf->SetFillColor(213, 216, 220);
+                        $pdf->Cell($w[3],6,'','1',0,'C',$fill);
+                }
+            }               
+                $pdf->Ln();   
+                $fill=!$fill;
                       // Salto de Línea.
         		if($i==25 || $i == 50 || $i == 75){
 				    $pdf->Cell(array_sum($w)+$w[3]*29,0,'','T');
