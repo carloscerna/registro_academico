@@ -239,7 +239,8 @@ function FancyTable($header)
              {
                  // cambiar el color de relleno cuanto el total de hermanos sea mayor a 1.
                  if($total_hermanos > 1){
-                    $pdf->SetFillColor(212,212,212);
+                    //$pdf->SetFillColor(212,212,212);
+                    $pdf->SetFillColor(129,212,250);
                     $fill = true;
                  }
                  // datos apra el listado.
