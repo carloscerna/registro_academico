@@ -111,7 +111,7 @@ if($errorDbConexion == false){
 					$paginas = $total_portafolio / $rowsPerPage;
 					$numero_paginas = ceil($paginas);
 				// Armamos el query.
-					$query = "SELECT id_, to_char(fecha,'dd/MM/yyyy') as fecha, titulo, descripcion, url_imagen, id_alumno FROM alumno_portafolio
+				$query = "SELECT id_, to_char(fecha,'dd/MM/yyyy') as fecha, titulo, descripcion, url_imagen, id_alumno FROM alumno_portafolio
 							WHERE id_alumno = '$id_alumno'
 								ORDER BY fecha DESC LIMIT '$rowsPerPage' OFFSET '$offset'";
 				// Ejecutamos el Query.
@@ -133,8 +133,12 @@ if($errorDbConexion == false){
 							$nombre_imagen = trim($listado['url_imagen']);
 							$id_alumno = trim($listado['id_alumno']);
 						// separar el nombre del archivo para saber su extension
-							$extension_ = explode(".",$nombre_imagen);
-							$extension_pdf = $extension_[1];
+							if(!empty($extension_)){
+								$extension_ = explode(".",$nombre_imagen);
+								$extension_pdf = $extension_[1];
+							}else{
+								$extension_pdf = "";
+							}
 						//	VERIFICAR SI NO EXISTE LA IMAGEN.
 							if (empty($nombre_imagen)) {
 								$ruta_imagen = $url_no;
