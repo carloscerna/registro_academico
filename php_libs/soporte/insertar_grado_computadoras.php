@@ -32,8 +32,8 @@ require $path_root."/registro_academico/vendor/autoload.php";
 // Leemos un archivo Excel 2007
     $objReader = \PhpOffice\PhpSpreadsheet\IOFactory::createReader("Xlsx");
     $origen = $path_root."/registro_academico/formatos_hoja_de_calculo/";
-    $nombre_archivo = "CE-TABLET-10391.xlsx";
-    $objPHPExcel = $objReader->load($origen."CE-TABLET-10391.xlsx");
+    $nombre_archivo = "Rio zarco - 2022.xlsx";
+    $objPHPExcel = $objReader->load($origen."Rio zarco - 2022.xlsx");
 // Leemos un archivo Excel 2007
 	 $fila = 2;
      $fila_excel = 2;
@@ -45,21 +45,23 @@ require $path_root."/registro_academico/vendor/autoload.php";
        $objPHPExcel->setActiveSheetIndex($numero_de_hoja);
 	
 		//	BUCLE QUE RECORRE TODA LA CUADRICULA DE LA HOJA DE CALCULO.
-		while($objPHPExcel->getActiveSheet()->getCell("M".$fila)->getValue() != "")
+		while($objPHPExcel->getActiveSheet()->getCell("K".$fila)->getValue() != "")
 		  {
 			 //  DATOS GENERALES.
-			 $nie = $objPHPExcel->getActiveSheet()->getCell("M".$fila)->getValue();
+			 $nie = $objPHPExcel->getActiveSheet()->getCell("K".$fila)->getValue();
 			 //$descripcion = $objPHPExcel->getActiveSheet()->getCell("B".$fila)->getValue();
 			// $codigo_departamento = $objPHPExcel->getActiveSheet()->getCell("C".$fila)->getValue();
 
 		$query = "SELECT a.codigo_nie, a.id_alumno, am.codigo_bach_o_ciclo, bach.nombre as nombre_bachillerato,
-                gan.nombre as nombre_grado, am.codigo_seccion, sec.nombre as nombre_seccion, am.retirado
+                gan.nombre as nombre_grado, am.codigo_seccion, sec.nombre as nombre_seccion, am.retirado,
+                tur.nombre as nombre_turno
                 from alumno a 
                 INNER JOIN alumno_matricula am ON a.id_alumno = am.codigo_alumno
                 INNER JOIN bachillerato_ciclo bach ON bach.codigo = am.codigo_bach_o_ciclo
                 INNER JOIN grado_ano gan ON gan.codigo = am.codigo_grado
                 INNER JOIN seccion sec ON sec.codigo = am.codigo_seccion
                 INNER JOIN ann_lectivo ann ON ann.codigo = am.codigo_ann_lectivo
+                INNER JOIN turno tur ON tur.codigo = am.codigo_turno
                     where a.codigo_nie = '$nie' and am.codigo_ann_lectivo = '22'";
 		// ejecutar la consulta.
 				$consulta = $dblink -> query($query);
@@ -70,6 +72,7 @@ require $path_root."/registro_academico/vendor/autoload.php";
                     $codigo_nie = $listado['codigo_nie'];
                     $nombre_grado = $listado['nombre_grado'];
                     $nombre_seccion = $listado['nombre_seccion'];
+                    $nombre_turno = $listado['nombre_turno'];
                     $retirado = $listado['retirado'];
 
                     if($retirado == 'false'){
@@ -77,10 +80,11 @@ require $path_root."/registro_academico/vendor/autoload.php";
                     }else{
                         $retirado = "No";
                     }
-                    $objPHPExcel->getActiveSheet()->SetCellValue("V".$fila_excel, TRIM($listado['nombre_grado']));
-                    $objPHPExcel->getActiveSheet()->SetCellValue("W".$fila_excel, TRIM($listado['nombre_seccion']));
-                    $objPHPExcel->getActiveSheet()->SetCellValue("X".$fila_excel, $retirado);
-                    $objPHPExcel->getActiveSheet()->SetCellValue("Y".$fila_excel, '2022');
+                    $objPHPExcel->getActiveSheet()->SetCellValue("Y".$fila_excel, TRIM($listado['nombre_grado']));
+                    $objPHPExcel->getActiveSheet()->SetCellValue("Z".$fila_excel, TRIM($listado['nombre_seccion']));
+                    $objPHPExcel->getActiveSheet()->SetCellValue("AA".$fila_excel, $retirado);
+                    $objPHPExcel->getActiveSheet()->SetCellValue("AB".$fila_excel, $nombre_turno);
+                    $objPHPExcel->getActiveSheet()->SetCellValue("AC".$fila_excel, '2022');
                     
                     print "<p>$fila - $codigo_nie - $nombre_grado - $nombre_seccion - $retirado</p>";
                 }
