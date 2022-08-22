@@ -11,7 +11,7 @@ ini_set("display_error", true);
 // variables/conexion.
     $host = 'localhost';
     $port = 5432;
-    $database = 'registro_academico';
+    $database = 'registro_academico_10391';
     $username = 'postgres';
     $password = 'Orellana';
 //Construimos el DSN//
@@ -29,7 +29,8 @@ try{
         $errorDbConexion = true;   
     };
 // 024P0119 , 025P0119 , 025P0219 , 026P0119 . 026P0219
-$todos='025P0119';
+$todos='03020122'; // MODALIDAD - GRADO - SECCION - ANN LECTIVO
+$codigo_asignatura = array('09','10','11','12','13');
 $num = 0;
 // datos de la tabla de facturas_compras.
         $query = "SELECT a.codigo_nie, btrim(a.apellido_paterno || CAST(' ' AS VARCHAR) || a.apellido_materno || CAST(', ' AS VARCHAR) || a.nombre_completo) as apellido_alumno,
@@ -55,10 +56,13 @@ $num = 0;
                     $codigo_alumno = $row_['id_alumno'];
                     $codigo_alumno_matricula = $row_['id_alumno_matricula'];
                     $nombres = trim($row_['apellidos_alumno']);
-                                      
-                    print $query_eliminar = "DELETE FROM nota WHERE codigo_alumno = '$codigo_alumno' and codigo_matricula = '$codigo_alumno_matricula'";
-					//$result_consulta_eliminar_notas = $dblink -> query($query_eliminar);
-                    print $num . "-" .  $codigo_alumno . " " . $codigo_alumno_matricula . " " .$nombres . " " ."<br>";
+
+                    for ($i=0; $i < count($codigo_asignatura); $i++) { 
+                        print $query_eliminar = "DELETE FROM nota WHERE codigo_alumno = '$codigo_alumno' and codigo_matricula = '$codigo_alumno_matricula' and codigo_asignatura = '$codigo_asignatura[$i]'";
+                        $result_consulta_eliminar_notas = $dblink -> query($query_eliminar);
+                        print "<br>";
+                        print $num . "-" .  $codigo_alumno . " " . $codigo_alumno_matricula . " " .$nombres . " " . $codigo_asignatura[$i] . "<br>";
+                    }
                  }
                  
                  
