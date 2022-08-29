@@ -16,6 +16,7 @@ if (is_array($_FILES) && count($_FILES) > 0) {
         || ($_FILES["file"]["type"] == "image/jpeg")
         || ($_FILES["file"]["type"] == "image/png")
         || ($_FILES["file"]["type"] == "image/gif")
+        || ($_FILES["file"]["type"] == "image/jpg")
         || ($_FILES['file']['type']) == 'application/pdf') {
         if (move_uploaded_file($_FILES["file"]["tmp_name"], $path_root . $url_ . $_FILES['file']['name'])) {
             // Incluimos el archivo de funciones y conexión a la base de datos
@@ -80,12 +81,13 @@ if (is_array($_FILES) && count($_FILES) > 0) {
                     }else if(($_FILES['file']['type']) == 'application/pdf'){
                         $mensajeError = "Cargado Archivo PDF...";
                         $contenidoOK = "pdf";
-                        //copy($path_root.$url_."/".$codigo_institucion."/".$nombreArchivo,$path_root.$url_.$codigo_institucion."/".$large."/".$nombreArchivo);
-                        //copy($path_root.$url_."/".$codigo_institucion."/".$nombreArchivo,$path_root.$url_.$codigo_institucion."/".$small."/".$nombreArchivo);
+                        $archivo_validar_pdf = true;
+                            //copy($path_root.$url_."/".$codigo_institucion."/".$nombreArchivo,$path_root.$url_.$codigo_institucion."/".$large."/".$nombreArchivo);
+                            //copy($path_root.$url_."/".$codigo_institucion."/".$nombreArchivo,$path_root.$url_.$codigo_institucion."/".$small."/".$nombreArchivo);
                     }
 
                     // validar si el archivo es PDF O IMAGEN
-                    if($archivo_validar_pdf == true){
+                    if($archivo_validar_pdf == false){
                         $mensajeError = "Cargado Archivo IMAGEN...";
                         $contenidoOK = "img";
                         //  OBETNER COORD3ENADAS ANCHO Y ALTO.

@@ -97,7 +97,7 @@ if($errorDbConexion == false){
 				if(!isset($_POST['page'])){$page = 1;}else{$page = $_POST['page'];}
 				$rowsPerPage = 3;
 				$offset = ($page - 1) * $rowsPerPage;
-			// ARVAR EL URL DEPENDIENDO DEL CODIGO PERSONAL
+				// ARVAR EL URL DEPENDIENDO DEL CODIGO PERSONAL
 				$url_ = "../registro_academico/img/portafolio/" . $codigo_institucion . "/" . "thumbails/";
 				$url_pdf = "../registro_academico/img/portafolio/" . $codigo_institucion . "/";
 				$url_large = "../registro_academico/img/portafolio/" . $codigo_institucion . "/" . "large/";
@@ -133,7 +133,7 @@ if($errorDbConexion == false){
 							$nombre_imagen = trim($listado['url_imagen']);
 							$id_alumno = trim($listado['id_alumno']);
 						// separar el nombre del archivo para saber su extension
-							if(!empty($extension_)){
+							if(!empty($nombre_imagen)){
 								$extension_ = explode(".",$nombre_imagen);
 								$extension_pdf = $extension_[1];
 							}else{
@@ -336,9 +336,20 @@ if($errorDbConexion == false){
 					$count = $dblink -> exec($query);
 				// REGISTRO CON UNLINK().
 					if(!empty($nombreArchivo)){
+						if(file_exists($path_root.$url_.$codigo_institucion."/".$nombreArchivo)){
+							unlink($path_root.$url_.$codigo_institucion."/".$nombreArchivo);				// imagen original.
+						}
+						if(file_exists($path_root.$url_.$codigo_institucion."/".$small."/".$nombreArchivo)){
+							unlink($path_root.$url_.$codigo_institucion."/".$small."/".$nombreArchivo);	// imagen small
+						}
+						if(file_exists($path_root.$url_.$codigo_institucion."/".$large."/".$nombreArchivo)){
+							unlink($path_root.$url_.$codigo_institucion."/".$large."/".$nombreArchivo);	// imagen large	
+						}
+						/*
 						unlink($path_root.$url_.$codigo_institucion."/".$nombreArchivo);				// imagen original.
 						unlink($path_root.$url_.$codigo_institucion."/".$small."/".$nombreArchivo);	// imagen small
 						unlink($path_root.$url_.$codigo_institucion."/".$large."/".$nombreArchivo);	// imagen large	
+						*/
 					}
 				// Validamos que se haya actualizado el registro
 				if($count != 0){

@@ -29,8 +29,8 @@ try{
         $errorDbConexion = true;   
     };
 // 024P0119 , 025P0119 , 025P0219 , 026P0119 . 026P0219
-$todos='03020122'; // MODALIDAD - GRADO - SECCION - ANN LECTIVO
-$codigo_asignatura = array('09','10','11','12','13');
+$todos='0722'; // MODALIDAD - GRADO - SECCION - ANN LECTIVO
+$codigo_asignatura = array('248','249');
 $num = 0;
 // datos de la tabla de facturas_compras.
         $query = "SELECT a.codigo_nie, btrim(a.apellido_paterno || CAST(' ' AS VARCHAR) || a.apellido_materno || CAST(', ' AS VARCHAR) || a.nombre_completo) as apellido_alumno,
@@ -45,9 +45,10 @@ $num = 0;
 			INNER JOIN grado_ano gan ON gan.codigo = am.codigo_grado
 			INNER JOIN seccion sec ON sec.codigo = am.codigo_seccion
 			INNER JOIN ann_lectivo ann ON ann.codigo = am.codigo_ann_lectivo
-			WHERE btrim(am.codigo_bach_o_ciclo || am.codigo_grado || am.codigo_seccion || am.codigo_ann_lectivo) = '".$todos.
-			"' ORDER BY apellido_alumno ASC";
+			WHERE btrim(am.codigo_bach_o_ciclo || am.codigo_ann_lectivo) = '".$todos.
+			"' ORDER BY apellido_alumno, am.codigo_grado, am.codigo_seccion ASC";
             
+            //WHERE btrim(am.codigo_bach_o_ciclo || am.codigo_grado || am.codigo_seccion || am.codigo_ann_lectivo) = '".$todos.
       $result_ = $dblink -> query($query);
     // Extraer valore de la consulta.
 				 while($row_ = $result_ -> fetch(PDO::FETCH_BOTH))
@@ -58,10 +59,13 @@ $num = 0;
                     $nombres = trim($row_['apellidos_alumno']);
 
                     for ($i=0; $i < count($codigo_asignatura); $i++) { 
-                        print $query_eliminar = "DELETE FROM nota WHERE codigo_alumno = '$codigo_alumno' and codigo_matricula = '$codigo_alumno_matricula' and codigo_asignatura = '$codigo_asignatura[$i]'";
+                        $query_eliminar = "DELETE FROM nota WHERE codigo_alumno = '$codigo_alumno' and codigo_matricula = '$codigo_alumno_matricula' and codigo_asignatura = '$codigo_asignatura[$i]'";
                         $result_consulta_eliminar_notas = $dblink -> query($query_eliminar);
-                        print "<br>";
-                        print $num . "-" .  $codigo_alumno . " " . $codigo_alumno_matricula . " " .$nombres . " " . $codigo_asignatura[$i] . "<br>";
+                            if($result_consulta_eliminar_notas)
+                            {
+                                print $num . "-" .  $codigo_alumno . " " . $codigo_alumno_matricula . " " .$nombres . " " . $codigo_asignatura[$i] . "<br>";
+                            }
+                        
                     }
                  }
                  

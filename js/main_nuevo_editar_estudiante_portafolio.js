@@ -202,8 +202,10 @@ $('body').on('click','#ListarPortafolio a',function (e){
 				const myExtension = text.split(".");
 				if(myExtension[3] == "pdf"){
 					$('#iframePDF').attr('src',ruta_imagen)
+					$("#iframePDF").css("display","block");		// Botón Ver
 				}else{
 					$('#ImagenPortafolio').attr('src', ruta_imagen);
+					$("#ImagenPortafolio").css("display","block");		// Botón Ver
 				}
 				//$("#").val(data[0].);	
 				// Form Visible
