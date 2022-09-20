@@ -1,6 +1,6 @@
 $(function(){
            // funcionalidad del botón Actualizar
-		$('#goNotasCancelar').on('click',function(){
+	$('#goNotasCancelar').on('click',function(){
                 $('#accion_buscar').val('BuscarNotas');
                 $("#goNotasBuscar").prop("disabled",false);
                 $("#goNotasActualizar").prop("disabled",true);

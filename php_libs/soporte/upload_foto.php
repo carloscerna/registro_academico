@@ -5,6 +5,7 @@
     include($path_root."/registro_academico/includes/mainFunctions_conexion.php");
 // URL PARA GUARDAR LAS IMAGENES.
     $url_ = "/registro_academico/img/fotos/";
+    $SistemaSiscarad = "C:/wamp64/www/siscarad/public/img/fotos/";
     $random = rand();
 // VARIABLES.
     $Id_ = $_SESSION["Id_A"];
@@ -26,10 +27,14 @@ if (is_array($_FILES) && count($_FILES) > 0) {
                     $nombreArchivo = trim($listado['foto']);
                     $id_alumno = trim($listado['id_alumno']);
                 }
-            // REGISTRO CON UNLINK().
+            // REGISTRO CON UNLINK(). para eliminar el archivo.
                 if(!empty($nombreArchivo)){
                     if(file_exists($path_root.$url_.$nombreArchivo)){
                         unlink($path_root.$url_.$nombreArchivo);				// imagen original.
+                    }
+                    // CARPETA SISCARAD
+                    if(file_exists($SistemaSiscarad.$nombreArchivo)){
+                        unlink($SistemaSiscarad.$nombreArchivo);				// imagen original.
                     }
                 }
             // Capturar nombre temporal.
@@ -41,6 +46,12 @@ if (is_array($_FILES) && count($_FILES) > 0) {
                         mkdir ($path_root.$url_.$codigo_institucion."/");
                         chmod($path_root.$url_.$codigo_institucion."/",07777);
                 }
+                    //  VERIFICAR SI EXISTE EL DIRECTORIO POR EL ID PERSONAL. SISCARAD
+                    if(!file_exists($SistemaSiscarad.$codigo_institucion)){
+                        // Crear el Directorio Principal Archvos...
+                            mkdir($SistemaSiscarad.$codigo_institucion."/");
+                            chmod($SistemaSiscarad.$codigo_institucion."/",07777);
+                    }
             //  renombrar archivo y la ubicación por defecto.
                 rename($path_root.$url_.$_FILES['file']['name'],$path_root.$url_.$codigo_institucion."/".$nombreArchivo);
             // UTILIZACIÓN DE LAS HERRAMIENTAS GD CON IMAGE.
@@ -63,7 +74,9 @@ if (is_array($_FILES) && count($_FILES) > 0) {
                     //  Copiar orignal --> copia
                         imagecopyresampled($copia, $original, 0,0,0,0, $ancho_nuevo, $alto_nuevo, $ancho_original, $alto_original );
                     //  Exportar y guardar imagen.
-                        imagejpeg( $copia, $path_root.$url_.$codigo_institucion."/".$nombreArchivo, 100);
+                        imagejpeg($copia, $path_root.$url_.$codigo_institucion."/".$nombreArchivo, 100);
+                    //  COPIAR FOTO EN SISCARAD /PUBLIC/IMG/fotos/codigo insstitucion
+                        imagejpeg($copia, $SistemaSiscarad.$codigo_institucion."/".$nombreArchivo, 100);
                     //  ****************************************************************************************************************
                     //  ****************************************************************************************************************
             // UTILIZACIÓN DE LAS HERRAMIENTAS GD CON IMAGE.

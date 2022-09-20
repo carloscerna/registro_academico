@@ -29,8 +29,8 @@ try{
         $errorDbConexion = true;   
     };
 // 024P0119 , 025P0119 , 025P0219 , 026P0119 . 026P0219
-$todos='0722'; // MODALIDAD - GRADO - SECCION - ANN LECTIVO
-$codigo_asignatura = array('248','249');
+$todos='0522'; // MODALIDAD - GRADO - SECCION - ANN LECTIVO
+$codigo_asignatura = array('73','74');
 $num = 0;
 // datos de la tabla de facturas_compras.
         $query = "SELECT a.codigo_nie, btrim(a.apellido_paterno || CAST(' ' AS VARCHAR) || a.apellido_materno || CAST(', ' AS VARCHAR) || a.nombre_completo) as apellido_alumno,
