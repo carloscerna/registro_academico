@@ -128,7 +128,7 @@ if($valor_x_encabezado == true)
     $espacio = 0;
     for($i=0;$i<=11;$i++){
       if($i >= 0 && $i <= 6){
-        $this->Rect(127+$espacio,12,10,33);
+        $this->Rect(127+$espacio,12,10,36);
         $this->RotatedTextMultiCell(128+$espacio,45,$nombre_asignatura[$i],90);}
       else{
         $this->RotatedTextMultiCellAspectos(128+$espacio,55,$nombre_asignatura[$i],90);}

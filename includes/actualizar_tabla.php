@@ -21,7 +21,7 @@ try{
     };
     
     $num = 0;
-    $codigo_ann_lectivo = '20';
+    $codigo_ann_lectivo = '22';
     $organizacion_secciones_grados = array();
     $query_grados_secciones = "SELECT org.codigo_grado, org.codigo_seccion, org.codigo_bachillerato, gr.nombre as nombre_grado, sec.nombre as nombre_seccion
                                 FROM organizacion_grados_secciones org
@@ -34,11 +34,13 @@ try{
     // Extraer valore de la consulta.
         // CREAR LA TABLA.
         print utf8_decode("<h3>COMPLEJO EDUCATIVO COLONIA RÍO ZARCO</h3><br>");
-        print utf8_decode("<h4>Nómina de Alumnas Iguales o Mayores a 10 años</h4>");
+        //print utf8_decode("<h4>Nómina de Alumnas Iguales o Mayores a 10 años</h4>");
+        print utf8_decode("<h4>ACTUALIZAR CORREO ELECTRONICO</h4>");
             print "<table border=1>";
                 print "<tbody>";
                 print "<tr>";
-                print ("<th>N°</th><th>Nombre del alumno/a</th><th>Grado</th><th>Sección</th><th>Edad</th>");
+                //print ("<th>N°</th><th>Nombre del alumno/a</th><th>Grado</th><th>Sección</th><th>Edad</th>");
+                print ("<th>N°</th><th>Nombre del alumno/a</th><th>Grado</th><th>Sección</th><th>CORREO ELECTRONICO</th>");
                 print "</tr>";
 				 while($row_ = $result_grado_seccion -> fetch(PDO::FETCH_BOTH))
 				 {
@@ -48,7 +50,7 @@ try{
                     //print 'Grado: ' . $nombre_grado . utf8_decode(' Sección: ') . $nombre_seccion . '<br>';
 
 
-                    $query = "SELECT a.codigo_nie, a.edad, btrim(a.apellido_paterno || CAST(' ' AS VARCHAR) || a.apellido_materno || CAST(', ' AS VARCHAR) || a.nombre_completo) as apellido_alumno,
+                    $query = "SELECT a.id_alumno, a.codigo_nie, a.edad, btrim(a.apellido_paterno || CAST(' ' AS VARCHAR) || a.apellido_materno || CAST(', ' AS VARCHAR) || a.nombre_completo) as apellido_alumno,
                         a.nombre_completo, btrim(a.apellido_paterno || CAST(' ' AS VARCHAR) || a.apellido_materno) as apellidos_alumno, 
                         am.codigo_bach_o_ciclo, am.pn, bach.nombre as nombre_bachillerato, am.codigo_ann_lectivo, ann.nombre as nombre_ann_lectivo, am.codigo_grado, 
                         gan.nombre as nombre_grado, am.codigo_seccion, am.retirado, am.id_alumno_matricula,
@@ -60,7 +62,7 @@ try{
                         INNER JOIN grado_ano gan ON gan.codigo = am.codigo_grado
                         INNER JOIN seccion sec ON sec.codigo = am.codigo_seccion
                         INNER JOIN ann_lectivo ann ON ann.codigo = am.codigo_ann_lectivo
-                        WHERE a.edad >= '6' and a.edad <= '12' and btrim(am.codigo_bach_o_ciclo || am.codigo_grado || am.codigo_seccion || am.codigo_ann_lectivo) = '".$todos.
+                        WHERE btrim(am.codigo_bach_o_ciclo || am.codigo_grado || am.codigo_seccion || am.codigo_ann_lectivo) = '".$todos.
                         "' ORDER BY apellido_alumno ASC";
                         
                       $result_ = $dblink -> query($query);
@@ -69,11 +71,22 @@ try{
                                      {
                                         $num++;
                                         $nombre_completo = (trim($row_r['apellido_alumno']));
-                                        $edad = (trim($row_r['edad']));
-                                        
+                                        //$edad = (trim($row_r['edad']));
+                                        $codigo_estudiante = (trim($row_r['id_alumno']));
+                                        $codigo_nie = (trim($row_r['codigo_nie']));
+                                        $dominio_correo = '@clases.edu.sv';
+                                        $correo_estudiante = $codigo_nie . $dominio_correo;
                                         // Imprimir valores
+                                        // print "<tr>";
+                                        // print "<td>$num</td><td>$nombre_completo</td><td>".($nombre_grado)."</td><td>".($nombre_seccion)."</td><td>$edad</td>";
+                                        // print "</tr>";
+                                        // ACTULIZAR TABLA
+
+                                        print '<br>' . $query_actualizar_correo = "UPDATE alumno SET direccion_email = '$correo_estudiante' WHERE id_alumno = '$codigo_estudiante'";
+                                        $result_ac = $dblink -> query($query_actualizar_correo);
+
                                         print "<tr>";
-                                        print "<td>$num</td><td>$nombre_completo</td><td>".($nombre_grado)."</td><td>".($nombre_seccion)."</td><td>$edad</td>";
+                                        print "<td>$codigo_nie</td><td>$nombre_completo</td><td>".($nombre_grado)."</td><td>".($nombre_seccion)."</td><td>$correo_estudiante</td>";
                                         print "</tr>";
                                      }
                                      // valor num a cero.
