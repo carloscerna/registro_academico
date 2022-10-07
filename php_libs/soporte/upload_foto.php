@@ -6,6 +6,7 @@
 // URL PARA GUARDAR LAS IMAGENES.
     $url_ = "/registro_academico/img/fotos/";
     $SistemaSiscarad = "C:/wamp64/www/siscarad/public/img/fotos/";
+    $url_respaldo_fotos = "d:/registro_academico/img/fotos/";
     $random = rand();
 // VARIABLES.
     $Id_ = $_SESSION["Id_A"];
@@ -29,12 +30,16 @@ if (is_array($_FILES) && count($_FILES) > 0) {
                 }
             // REGISTRO CON UNLINK(). para eliminar el archivo.
                 if(!empty($nombreArchivo)){
-                    if(file_exists($path_root.$url_.$nombreArchivo)){
-                        unlink($path_root.$url_.$nombreArchivo);				// imagen original.
+                    if(file_exists($path_root.$url_.$codigo_institucion."/".$nombreArchivo)){
+                        unlink($path_root.$url_.$codigo_institucion."/".$nombreArchivo);				// imagen original.
                     }
                     // CARPETA SISCARAD
-                    if(file_exists($SistemaSiscarad.$nombreArchivo)){
-                        unlink($SistemaSiscarad.$nombreArchivo);				// imagen original.
+                    if(file_exists($SistemaSiscarad.$codigo_institucion."/".$nombreArchivo)){
+                        unlink($SistemaSiscarad.$codigo_institucion."/".$nombreArchivo);				// imagen original.
+                    }
+                    // CARPETA respaldo de fotos en unidad D:
+                    if(file_exists($url_respaldo_fotos.$codigo_institucion."/".$nombreArchivo)){
+                        unlink($url_respaldo_fotos.$codigo_institucion."/".$nombreArchivo);				// imagen original.
                     }
                 }
             // Capturar nombre temporal.
@@ -46,12 +51,18 @@ if (is_array($_FILES) && count($_FILES) > 0) {
                         mkdir ($path_root.$url_.$codigo_institucion."/");
                         chmod($path_root.$url_.$codigo_institucion."/",07777);
                 }
-                    //  VERIFICAR SI EXISTE EL DIRECTORIO POR EL ID PERSONAL. SISCARAD
-                    if(!file_exists($SistemaSiscarad.$codigo_institucion)){
-                        // Crear el Directorio Principal Archvos...
-                            mkdir($SistemaSiscarad.$codigo_institucion."/");
-                            chmod($SistemaSiscarad.$codigo_institucion."/",07777);
-                    }
+                //  VERIFICAR SI EXISTE EL DIRECTORIO POR EL ID PERSONAL. SISCARAD
+                if(!file_exists($SistemaSiscarad.$codigo_institucion)){
+                    // Crear el Directorio Principal Archvos...
+                        mkdir($SistemaSiscarad.$codigo_institucion."/");
+                        chmod($SistemaSiscarad.$codigo_institucion."/",07777);
+                }
+                //  VERIFICAR SI EXISTE EL DIRECTORIO POR EL ID PERSONAL. UNIDAD DE RESPALDO D:
+                if(!file_exists($url_respaldo_fotos.$codigo_institucion)){
+                    // Crear el Directorio Principal Archvos...
+                        mkdir($url_respaldo_fotos.$codigo_institucion."/");
+                        chmod($url_respaldo_fotos.$codigo_institucion."/",07777);
+                }
             //  renombrar archivo y la ubicación por defecto.
                 rename($path_root.$url_.$_FILES['file']['name'],$path_root.$url_.$codigo_institucion."/".$nombreArchivo);
             // UTILIZACIÓN DE LAS HERRAMIENTAS GD CON IMAGE.
@@ -77,6 +88,8 @@ if (is_array($_FILES) && count($_FILES) > 0) {
                         imagejpeg($copia, $path_root.$url_.$codigo_institucion."/".$nombreArchivo, 100);
                     //  COPIAR FOTO EN SISCARAD /PUBLIC/IMG/fotos/codigo insstitucion
                         imagejpeg($copia, $SistemaSiscarad.$codigo_institucion."/".$nombreArchivo, 100);
+                    //  COPIAR FOTO EN UNIDAD DE DISCO D:/REGISTRO-ACADEMICO/IMG/FOTOS
+                        imagejpeg($copia, $url_respaldo_fotos.$codigo_institucion."/".$nombreArchivo, 100);
                     //  ****************************************************************************************************************
                     //  ****************************************************************************************************************
             // UTILIZACIÓN DE LAS HERRAMIENTAS GD CON IMAGE.
