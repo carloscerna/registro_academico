@@ -366,22 +366,34 @@ if($errorDbConexion == false){
 						}
 			break;
 			case 'EliminarRegistro':
-				// Armamos el query
-				$query = "DELETE FROM informacion_institucion WHERE id_ = $_POST[id_user]";
+				$codigo_personal = $_POST['id_user'];
+				// Buscar si existen registros en tabla PERSONAL LICENCIAS Y PERMISOS.
+					$query_buscar_personal_licencias = "SELECT * FROM personal_licencias_permisos where codigo_personal = $codigo_personal";
+					// Ejecutamos el Query.
+					$consulta_personal_licencias_permisos = $dblink -> query($query_buscar_personal_licencias);
+					// Verificar la consulta
+						if($consulta_personal_licencias_permisos -> rowCount() != 0){
+							$respuestaOK = true;
+							$contenidoOK = "";
+							$mensajeError =  'No se puede Eliminar, Tiene registros en Licencias y permisos.';
+						}else{
+							// Armamos el query
+								$query = "DELETE FROM personal WHERE id_personal = $codigo_personal";
 
-				// Ejecutamos el query
-					$count = $dblink -> exec($query);
-				
-				// Validamos que se haya actualizado el registro
-				if($count != 0){
-					$respuestaOK = true;
-					$mensajeError = 'Se ha Eliminado '.$count.' Registro(s).';
+								// Ejecutamos el query
+									$count = $dblink -> exec($query);
+								
+								// Validamos que se haya actualizado el registro
+								if($count != 0){
+									$respuestaOK = true;
+									$mensajeError = 'Se ha Eliminado '.$count.' Registro(s).';
 
-					$contenidoOK = '';
+									$contenidoOK = $query;
 
-				}else{
-					$mensajeError = 'No se ha eliminado el registro';
-				}
+								}else{
+									$mensajeError = 'No se ha eliminado el registro';
+								}
+							}
 			break;
 
             
