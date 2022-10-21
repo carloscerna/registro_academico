@@ -996,7 +996,7 @@ $codigo_all_ = substr($codigo_all,0,8);
 		}
 		// Escribir líneas faltantes.  
 		for($i=0;$i<=$linea_faltante;$i++)
-                  {
+        {
 						// Para el fondo de la fila.
 						$fill=!$fill;
 						$pdf->SetX(10);
@@ -1008,7 +1008,7 @@ $codigo_all_ = substr($codigo_all,0,8);
 						for($j=0;$j<=10;$j++){$pdf->Cell(10,$h[0],'',1,0,'C');}
 						$pdf->Ln();
 
-                  }
+        }
            // Ultimas lineas....
               $pdf->SetX(10);
                 $pdf->Cell(117,$h[0],'TOTAL DE PUNTOS',1,0,'R');  // TOTAL DE PUNTOS
