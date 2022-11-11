@@ -249,6 +249,10 @@ while($objPHPExcel->getActiveSheet()->getCell("E".$fila)->getValue() != "")
     $nota_a_1 = $objPHPExcel->getActiveSheet()->getCell($nota_de_letras_01[0].$fila)->getoldCalculatedValue();
     $nota_a_2 = $objPHPExcel->getActiveSheet()->getCell($nota_de_letras_01[1].$fila)->getoldCalculatedValue();
     $nota_a_3 = $objPHPExcel->getActiveSheet()->getCell($nota_de_letras_01[2].$fila)->getoldCalculatedValue();
+	//
+	//$nota_a_1 = $objPHPExcel->getActiveSheet()->getCell($nota_de_letras_01[0].$fila)->getValue();
+    //$nota_a_2 = $objPHPExcel->getActiveSheet()->getCell($nota_de_letras_01[1].$fila)->getValue();
+    //$nota_a_3 = $objPHPExcel->getActiveSheet()->getCell($nota_de_letras_01[2].$fila)->getValue();
     
     $nota_recuperacion = $objPHPExcel->getActiveSheet()->getCell($nota_de_letras_01[3].$fila)->getoldCalculatedValue();
     $nota_trimestre_1 = $objPHPExcel->getActiveSheet()->getCell($nota_de_letras_01[4].$fila)->getoldCalculatedValue();
