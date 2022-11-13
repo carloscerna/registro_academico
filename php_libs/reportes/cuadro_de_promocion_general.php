@@ -70,7 +70,7 @@ $query = "SELECT DISTINCT a.codigo_nie, btrim(a.apellido_paterno || CAST(' ' AS 
             a.nombre_completo, btrim(a.apellido_paterno || CAST(' ' AS VARCHAR) || a.apellido_materno) as apellidos_alumno, 
             am.codigo_bach_o_ciclo, am.pn, bach.nombre as nombre_bachillerato, am.codigo_ann_lectivo, ann.nombre as nombre_ann_lectivo, am.codigo_grado, 
             gan.nombre as nombre_grado, am.codigo_seccion, am.retirado, a.genero,
-            sec.nombre as nombre_seccion, ae.codigo_alumno, id_alumno, n.codigo_alumno, n.codigo_asignatura, asig.nombre AS n_asignatura, n.nota_final, n.recuperacion, asig.nombre as nombre_asignatura, aaa.orden
+            sec.nombre as nombre_seccion, ae.codigo_alumno, id_alumno, n.codigo_alumno, n.codigo_asignatura, asig.nombre AS n_asignatura, n.nota_final, n.recuperacion, asig.nombre as nombre_asignatura, aaa.orden, n.nota_recuperacion_2
               FROM alumno a
                 INNER JOIN alumno_encargado ae ON a.id_alumno = ae.codigo_alumno and ae.encargado = 't'
                 INNER JOIN alumno_matricula am ON a.id_alumno = am.codigo_alumno and am.retirado = 'f'
@@ -177,65 +177,81 @@ $nueva_nota_final = 0;
 
 while($rows_promovidos_retenidos = $result_promovidos_retenidos -> fetch(PDO::FETCH_BOTH))
   {
-$generos = $rows_promovidos_retenidos['genero'];
+    $codigo_matricula = $rows_promovidos_retenidos['codigo_matricula'];
+    $codigo_alumno = $rows_promovidos_retenidos['codigo_alumno'];
+    $apellido_alumno = $rows_promovidos_retenidos['apellido_alumno'];
+    $generos = $rows_promovidos_retenidos['genero'];
 if($rows_promovidos_retenidos['recuperacion'] != 0){
-   $nueva_nota_final = (number_format($rows_promovidos_retenidos['nota_final'],0) + number_format($rows_promovidos_retenidos['recuperacion'],0))/2;
-   $notas = number_format($nueva_nota_final,0);}
+      $nueva_nota_final = (number_format($rows_promovidos_retenidos['nota_final'],0) + number_format($rows_promovidos_retenidos['recuperacion'],0))/2;
+      if($nueva_nota_final < 6 && $rows_promovidos_retenidos['nota_recuperacion_2'] != 0)
+            {
+              $nueva_nota_final = (number_format($rows_promovidos_retenidos['nota_final'],0) + number_format($rows_promovidos_retenidos['nota_recuperacion_2'],0))/2;
+            }
+      $notas = number_format($nueva_nota_final,0);}
    else{
-      $notas = number_format($rows_promovidos_retenidos['nota_final'],0);}
-                
-        switch($ji){
-          case ($ji >=1 && $ji<=7): 
-            contar_promovidos_media($generos, $notas, $contar_evaluar);
-          break;
-        }
-////////////////////////////////////////////////////////////////////
-//////// CONTAR CUANTAS ASIGNATURAS TIENE CADA MODALIDAD.
-//////////////////////////////////////////////////////////////////
-// buscar la consulta y la ejecuta.
-//consulta_contar(1,0,$codigo_all,'','','',$db_link,'');
- $query_asig = "SELECT count(*) as total_asignaturas FROM a_a_a_bach_o_ciclo
-      WHERE btrim(codigo_bach_o_ciclo || codigo_grado || codigo_ann_lectivo) = '".substr($codigo_all,0,4) . substr($codigo_all,6,2) ."'";
-  // ejecutar la consulta.
-  $result = $db_link -> query($query_asig);
-  // EJECUTAR CONDICIONES PARA EL NOMBRE DEL NIVEL Y EL N�MERO DE ASIGNATURAS.
-  $total_asignaturas = 0;	
-      while($row = $result -> fetch(PDO::FETCH_BOTH))	// RECORRER PARA EL CONTEO DE Nº DE ASIGNATURAS.
-          {
-              $total_asignaturas = (trim($row['total_asignaturas']));
-          }
-    $salir = 1; $nombre_asignatura = array(); $nombre_bachillerato = ""; $nombre_seccion = "";
-    // QUERY PARA BUSCAR LOS NOMBRES DE LAS ASIGNATURAS
-    $query_nombres_asignaturas = "SELECT aaa.codigo_asignatura, asig.nombre as nombre_asignatura, bach.nombre as nombre_bachillerato, gr.nombre as nombre_grado 
-          FROM a_a_a_bach_o_ciclo aaa 
-          INNER JOIN asignatura asig ON asig.codigo = aaa.codigo_asignatura 
-          INNER JOIN bachillerato_ciclo bach ON bach.codigo = aaa.codigo_bach_o_ciclo
-          INNER JOIN grado_ano gr ON gr.codigo = aaa.codigo_grado
-                  WHERE btrim(aaa.codigo_bach_o_ciclo || aaa.codigo_grado || aaa.codigo_ann_lectivo) = '".substr($codigo_all,0,4) . substr($codigo_all,6,2) ."' ORDER BY aaa.orden";
-                    " ORDER BY aaa.codigo_asignatura";
-    $result_asignaturas = $db_link -> query($query_nombres_asignaturas);
-    while($rows = $result_asignaturas -> fetch(PDO::FETCH_BOTH))
-      {
-              $nombre_asignatura[] = utf8_decode(trim($rows['nombre_asignatura']));
-              $nombre_bachillerato = trim($rows['nombre_bachillerato']);
-              $nombre_grado = trim($rows['nombre_grado']);
-      }
-//print_r($nombre_asignatura);/
-      //contar el total de promovidos segun genero y si contar_p_m es mayor igual que cinco.
+          $notas = number_format($rows_promovidos_retenidos['nota_final'],0);}
+                    
+            switch($ji){
+              case ($ji >=1 && $ji<=7): 
+                contar_promovidos_media($generos, $notas, $contar_evaluar);
+              break;
+            }
+            ////////////////////////////////////////////////////////////////////
+            //////// CONTAR CUANTAS ASIGNATURAS TIENE CADA MODALIDAD.
+            //////////////////////////////////////////////////////////////////
+            // buscar la consulta y la ejecuta.
+            //consulta_contar(1,0,$codigo_all,'','','',$db_link,'');
+            $query_asig = "SELECT count(*) as total_asignaturas FROM a_a_a_bach_o_ciclo
+                  WHERE btrim(codigo_bach_o_ciclo || codigo_grado || codigo_ann_lectivo) = '".substr($codigo_all,0,4) . substr($codigo_all,6,2) ."'";
+              // ejecutar la consulta.
+              $result = $db_link -> query($query_asig);
+              // EJECUTAR CONDICIONES PARA EL NOMBRE DEL NIVEL Y EL N�MERO DE ASIGNATURAS.
+              $total_asignaturas = 0;	
+            while($row = $result -> fetch(PDO::FETCH_BOTH))	// RECORRER PARA EL CONTEO DE Nº DE ASIGNATURAS.
+                {
+                    $total_asignaturas = (trim($row['total_asignaturas']));
+                }
+          $salir = 1; $nombre_asignatura = array(); $nombre_bachillerato = ""; $nombre_seccion = "";
+          // QUERY PARA BUSCAR LOS NOMBRES DE LAS ASIGNATURAS
+          $query_nombres_asignaturas = "SELECT aaa.codigo_asignatura, asig.nombre as nombre_asignatura, bach.nombre as nombre_bachillerato, gr.nombre as nombre_grado 
+                FROM a_a_a_bach_o_ciclo aaa 
+                INNER JOIN asignatura asig ON asig.codigo = aaa.codigo_asignatura 
+                INNER JOIN bachillerato_ciclo bach ON bach.codigo = aaa.codigo_bach_o_ciclo
+                INNER JOIN grado_ano gr ON gr.codigo = aaa.codigo_grado
+                        WHERE btrim(aaa.codigo_bach_o_ciclo || aaa.codigo_grado || aaa.codigo_ann_lectivo) = '".substr($codigo_all,0,4) . substr($codigo_all,6,2) ."' ORDER BY aaa.orden";
+                          " ORDER BY aaa.codigo_asignatura";
+          $result_asignaturas = $db_link -> query($query_nombres_asignaturas);
+          while($rows = $result_asignaturas -> fetch(PDO::FETCH_BOTH))
+            {
+                    $nombre_asignatura[] = utf8_decode(trim($rows['nombre_asignatura']));
+                    $nombre_bachillerato = trim($rows['nombre_bachillerato']);
+                    $nombre_grado = trim($rows['nombre_grado']);
+            }
+             //print_r($nombre_asignatura);/
+            //contar el total de promovidos segun genero y si contar_p_m es mayor igual que cinco.
+            $promocion = "No";
             if($ji == $total_asignaturas)
               {
                 if($contar_r_m > 0)
-                  {$total_retenidos_m++;}
+                  {$total_retenidos_m++;
+                  $promocion = "No";
+                }
                 else{
                   if($contar_p_m > 0)
-                    {$total_promovidos_m++;}
+                    {$total_promovidos_m++;
+                      $promocion = "Si";
+                    }
                   }
                 
                 if($contar_r_f > 0)
-                  {$total_retenidos_f++;}
+                  {$total_retenidos_f++;
+                    $promocion = "No";
+                  }
                 else{
                   if($contar_p_f > 0)
-                    {$total_promovidos_f++;}
+                    {$total_promovidos_f++;
+                      $promocion = "Si";
+                    }
                   }
                   
                 $contar_r_m = 0;
@@ -245,8 +261,21 @@ if($rows_promovidos_retenidos['recuperacion'] != 0){
                 $contar_p_f = 0;
               }		
               
-        // Incremento del Número.
-            if($ji == $total_asignaturas){$ji = 1;}else{$ji++;}
+            // Incremento del Número.
+            if($ji == $total_asignaturas){
+              $ji = 1;
+                // actualizar estatus PROMOCIONEN ALUMNO MATRICULA.
+                if($promocion == "Si"){
+                  $codigo_promocion = 3;
+                }else{
+                  $codigo_promocion = 4;
+                }
+                //print "<br>" . "Apellido - Nombres: " . $apellido_alumno . " Código Alumno: " . $codigo_alumno . " Código Matricula: " . $codigo_matricula . " Promoción: " . $promocion;
+                $query_update_matricula = "UPDATE alumno_matricula SET codigo_resultado = '$codigo_promocion' WHERE id_alumno_matricula = '$codigo_matricula' and codigo_alumno = '$codigo_alumno'";
+                  $result_uddate_matricula = $db_link -> query($query_update_matricula);
+            }else{
+              $ji++;
+            }
         }        
 class PDF extends FPDF
 {
