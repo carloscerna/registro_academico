@@ -29,16 +29,18 @@ function calcularedad($fecha)
 	$mes = $cadena[1];
 	$dia = $cadena[0];
 	$añoActual = date("Y");
-	$mesActual = date("m");
-	$diaActual = date("d");
+	$mesActual = date("m"); // 12
+	$diaActual = date("d"); // 31
 	// pasar valores a datos enteros.
 	$año = (int)$año;
 	$mes = (int)$mes;
 	$dia = (int)$dia;
 	
 	$añoActual = (int)$añoActual;
-	$mesActual = (int)$mesActual;
-	$diaActual = (int)$diaActual;
+	//$mesActual = (int)$mesActual;
+	//$diaActual = (int)$diaActual;
+	$mesActual = 12;
+	$diaActual = 31;
 	
 	// Calcular edad en base al año.
 		$edad = $añoActual - $año;	
