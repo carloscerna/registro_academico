@@ -68,7 +68,7 @@ $query_encargado = "SELECT eg.id_encargado_grado, eg.encargado, btrim(p.nombres 
 //consulta para las notas finales y nombre de asignaturas.
 $query = "SELECT DISTINCT a.codigo_nie, btrim(a.apellido_paterno || CAST(' ' AS VARCHAR) || a.apellido_materno || CAST(', ' AS VARCHAR) || a.nombre_completo) as apellido_alumno,
             a.nombre_completo, btrim(a.apellido_paterno || CAST(' ' AS VARCHAR) || a.apellido_materno) as apellidos_alumno, 
-            am.codigo_bach_o_ciclo, am.pn, bach.nombre as nombre_bachillerato, am.codigo_ann_lectivo, ann.nombre as nombre_ann_lectivo, am.codigo_grado, 
+            am.codigo_bach_o_ciclo, am.pn, bach.nombre as nombre_bachillerato, am.codigo_ann_lectivo, ann.nombre as nombre_ann_lectivo, am.codigo_grado, am.id_alumno_matricula as codigo_matricula,
             gan.nombre as nombre_grado, am.codigo_seccion, am.retirado, a.genero,
             sec.nombre as nombre_seccion, ae.codigo_alumno, id_alumno, n.codigo_alumno, n.codigo_asignatura, asig.nombre AS n_asignatura, n.nota_final, n.recuperacion, asig.nombre as nombre_asignatura, aaa.orden, n.nota_recuperacion_2
               FROM alumno a
@@ -181,15 +181,34 @@ while($rows_promovidos_retenidos = $result_promovidos_retenidos -> fetch(PDO::FE
     $codigo_alumno = $rows_promovidos_retenidos['codigo_alumno'];
     $apellido_alumno = $rows_promovidos_retenidos['apellido_alumno'];
     $generos = $rows_promovidos_retenidos['genero'];
-if($rows_promovidos_retenidos['recuperacion'] != 0){
-      $nueva_nota_final = (number_format($rows_promovidos_retenidos['nota_final'],0) + number_format($rows_promovidos_retenidos['recuperacion'],0))/2;
-      if($nueva_nota_final < 6 && $rows_promovidos_retenidos['nota_recuperacion_2'] != 0)
-            {
-              $nueva_nota_final = (number_format($rows_promovidos_retenidos['nota_final'],0) + number_format($rows_promovidos_retenidos['nota_recuperacion_2'],0))/2;
-            }
-      $notas = number_format($nueva_nota_final,0);}
+
+    $nota_r_1 = $rows_promovidos_retenidos['nota_final'];
+    $nota_r_2 = $rows_promovidos_retenidos['nota_recuperacion_2'];
+    $nota_final = $rows_promovidos_retenidos['nota_final'];
+    
+if($nota_r_1 != 0){
+      $nueva_nota_final = round(($nota_final + $nota_r_1)/2,0);
+//print "n1: " .  $nota_r_1 . "notal fina: " . $nota_final . " n2: " . $nota_r_2; 
+ //   print "<br>";
+
+        if($nueva_nota_final < 6){
+          //print $nueva_nota_final;
+          //print "<br>";
+                    if($nota_r_2 != 0){
+                        $nueva_nota_final = round(($nota_final + $nota_r_2)/2,0);
+                       // print "nueva nota final: " . $nueva_nota_final;
+                      //  print "<br>";
+                    }
+        }
+
+      $notas = $nueva_nota_final;
+        //print "<br>";
+        //print $notas;
+        //exit;
+    }
    else{
-          $notas = number_format($rows_promovidos_retenidos['nota_final'],0);}
+          $notas = number_format($rows_promovidos_retenidos['nota_final'],0);
+        }
                     
             switch($ji){
               case ($ji >=1 && $ji<=7): 

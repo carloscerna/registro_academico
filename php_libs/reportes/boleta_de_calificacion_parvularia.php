@@ -312,6 +312,8 @@ while($row = $result -> fetch(PDO::FETCH_BOTH)) // bucle para la recorrer las as
 		$numero_identificacion_estudiantil = trim($row['codigo_nie']);
 		$print_codigo_alumno = $row['codigo_alumno'];
 		$print_codigo_matricula = $row['cod_matricula'];
+		$codigo_matricula = $row['cod_matricula'];
+		$codigo_alumno = $row['codigo_alumno'];
 		$nombre_asignatura = utf8_decode(trim($row['n_asignatura']));
 		$foto = trim($row['foto']);
 	// imprimir la foto en la boleta
@@ -345,6 +347,15 @@ while($row = $result -> fetch(PDO::FETCH_BOTH)) // bucle para la recorrer las as
 			// dibujar encabezado de la tabla.
 			$pdf->SetY(50);
 			$pdf->FancyTable($header);
+			//
+			// Colocar la PROMOCIÓN A 3 para poder matricularlo en el año superior solo para PARVULARIA.
+			//
+				$codigo_promocion = 3;
+				$query_update_matricula = "UPDATE alumno_matricula SET codigo_resultado = '$codigo_promocion' WHERE id_alumno_matricula = '$codigo_matricula' and codigo_alumno = '$codigo_alumno'";
+				$result_uddate_matricula = $db_link -> query($query_update_matricula);
+			//
+			//	FIN DEL PROCESO PARA ASIGNATURA EL VALOR A LA MATRICULA.
+			//
         }
             ///////////////////////////////////////////////////////////////////////////////////////////////////
             /////VERIFICAR ENCABEZADO de AREA DE ASIGNATURAS///////////////////////////////////////////////////
