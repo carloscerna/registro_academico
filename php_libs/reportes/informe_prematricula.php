@@ -371,7 +371,7 @@ function FancyTable2()
 						INNER JOIN ann_lectivo ann ON eg.codigo_ann_lectivo = ann.codigo
 						INNER JOIN grado_ano gann ON eg.codigo_grado = gann.codigo
 						INNER JOIN seccion sec ON eg.codigo_seccion = sec.codigo
-							WHERE btrim(eg.codigo_bachillerato || eg.codigo_grado || eg.codigo_seccion || eg.codigo_ann_lectivo) = '$codigo_all' and encargado = 't' ORDER BY nombre_docente";
+							WHERE btrim(eg.codigo_bachillerato || eg.codigo_grado || eg.codigo_seccion || eg.codigo_ann_lectivo || eg.codigo_turno) = '$codigo_all' and encargado = 't' ORDER BY nombre_docente";
 
     if($listadoigual == "si"){
     $query = "SELECT DISTINCT a.codigo_nie, a.id_alumno, btrim(a.apellido_paterno || CAST(' ' AS VARCHAR) || a.apellido_materno || CAST(', ' AS VARCHAR) || a.nombre_completo) as apellido_alumno, 
@@ -403,9 +403,9 @@ function FancyTable2()
 		INNER JOIN catalogo_genero cat_genero ON cat_genero.codigo = a.codigo_genero
 		INNER JOIN catalogo_nacionalidad cat_nacionalidad ON cat_nacionalidad.codigo = a.codigo_nacionalidad
 		INNER JOIN catalogo_transporte cat_transporte ON cat_transporte.codigo = a.codigo_transporte
-    INNER JOIN asignatura asig ON asig.codigo = n.codigo_asignatura
-    INNER JOIN a_a_a_bach_o_ciclo aaa ON aaa.codigo_asignatura = asig.codigo and aaa.orden <> 0 
-		WHERE btrim(am.codigo_bach_o_ciclo || am.codigo_grado || am.codigo_seccion || am.codigo_ann_lectivo) = '$codigo_all'
+   		INNER JOIN asignatura asig ON asig.codigo = n.codigo_asignatura
+   		INNER JOIN a_a_a_bach_o_ciclo aaa ON aaa.codigo_asignatura = asig.codigo and aaa.orden <> 0 
+		WHERE btrim(am.codigo_bach_o_ciclo || am.codigo_grado || am.codigo_seccion || am.codigo_ann_lectivo || am.codigo_turno) = '$codigo_all'
 		ORDER BY apellido_alumno, aaa.orden ASC";}
 
     if($listadoigual == "no"){
@@ -461,10 +461,10 @@ function FancyTable2()
 // Crear el encabezando a la izquierda y derecha.
 		$pdf->SetFont('Arial','B',11); // I : Italica; U: Normal;
 		$pdf->Rect(5,5,100,20);	// Izq.
-		$pdf->RotatedText(10,9,'DATOS DE MATRICULA 2016',0);
+		$pdf->RotatedText(10,9,'DATOS DE MATRICULA 2022',0);
 		
 		$pdf->Rect(250,5,100,20);	// Der.
-		$pdf->RotatedText(260,9,'DATOS DE MATRICULA 2017',0);
+		$pdf->RotatedText(260,9,'DATOS DE MATRICULA 2023',0);
 					
 		$pdf->SetFont('Arial','B',9); // I : Italica; U: Normal;
 			
