@@ -99,12 +99,22 @@ include($path_root."/registro_academico/includes/mainFunctions_conexion.php");
 				  $codigo_matricula = $objPHPExcel->getActiveSheet()->getCell("C".$fila_nota)->getValue();
 				  $nombre_del_alumno = $objPHPExcel->getActiveSheet()->getCell("E".$fila_nota)->getValue();
 					$nota_ = strtoupper($objPHPExcel->getActiveSheet()->getCell($nota_indicador[$ii].$fila_nota)->getValue());
+					//$codigo_asignatura = strtoupper($objPHPExcel->getActiveSheet()->getCell($codigo_asignatura[$ii].$fila_nota)->getValue());
 					// SQL QUERY
           if($nota_ != 0){
             $nota_ = round(number_format($nota_,0),0);
 							$query_indicador = "UPDATE nota SET $nota_p_p = '$nota_' WHERE codigo_alumno = $codigo_interno and codigo_matricula = $codigo_matricula and codigo_asignatura = '$codigo_asignatura'";
 							$result = $db_link -> query($query_indicador);
-          }
+				//if ($codigo_bachillerato >= "'03'" and $codigo_bachillerato <= "'05'"){
+					// Query cuando son notas num�ricas.
+						$query_nota_final = "UPDATE nota SET
+							nota_final = (select round((nota_p_p_1 + nota_p_p_2 + nota_p_p_3)/3,0) as promedio
+							from nota WHERE codigo_alumno = '$codigo_interno' and codigo_matricula = '$codigo_matricula' and codigo_asignatura = '$codigo_asignatura')
+											WHERE codigo_alumno = '$codigo_interno' and codigo_matricula = '$codigo_matricula' and codigo_asignatura = '$codigo_asignatura'";
+					// Ejectuamos query.
+						$consulta_nota_final = $dblink -> query($query_nota_final);
+					}
+          		//}
 					// IMPRIMIR VALORES
 					  // print "<br" . $codigo_interno . " " . $codigo_matricula . " " . $nombre_del_alumno . " nota: " . $nota_  ." $codigo_asignatura<br>";
 					// ACUMULAR EL VALOR DE FILA _NOTA

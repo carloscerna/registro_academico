@@ -405,7 +405,7 @@ function FancyTable2()
 		INNER JOIN catalogo_transporte cat_transporte ON cat_transporte.codigo = a.codigo_transporte
    		INNER JOIN asignatura asig ON asig.codigo = n.codigo_asignatura
    		INNER JOIN a_a_a_bach_o_ciclo aaa ON aaa.codigo_asignatura = asig.codigo and aaa.orden <> 0 
-		WHERE btrim(am.codigo_bach_o_ciclo || am.codigo_grado || am.codigo_seccion || am.codigo_ann_lectivo || am.codigo_turno) = '$codigo_all'
+		WHERE btrim(am.codigo_bach_o_ciclo || am.codigo_grado || am.codigo_seccion || am.codigo_ann_lectivo || am.codigo_turno) = '$codigo_all' and nota_final <> 0
 		ORDER BY apellido_alumno, aaa.orden ASC";}
 
     if($listadoigual == "no"){
