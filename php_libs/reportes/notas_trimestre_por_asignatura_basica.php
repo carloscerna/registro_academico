@@ -110,16 +110,17 @@ function Header()
 		$this->Rect(5,40,132,15); // T3
 		$this->Rect(5,40,147,15); // total puntos
 		$this->Rect(5,40,167,15); // Promedio 3 trimestres
-		$this->Rect(5,40,187,15); // Nota recuperacion
-		$this->Rect(5,40,207,15); // nota final
+		$this->Rect(5,40,177,15); // Nota recuperacion
+        $this->Rect(5,40,187,15); // Nota recuperacion 2
+		$this->Rect(5,40,197,15); // nota final
 		// Establecer ubicación Y.
 		$this->SetY(40);
 		//Cabecera tamaño de ancho y alto y array para los encabezados.
-		$contenido_encabezado = array('Nº','Orden Alfabético (Por Apellidos - nombres)','T1','T2','T3','Total Puntos','Prom. 3 Trimestre','Nota Recup.','Nota Final');
+		$contenido_encabezado = array('Nº','Orden Alfabético (Por Apellidos - nombres)','T1','T2','T3','Total Puntos','Prom. 3 Trimestre','NR1','NR2','NF');
 		//un arreglo con su medida  a lo ancho
-		$this->SetWidths(array(7,80,15,15,15,15,20,20,20));
+		$this->SetWidths(array(7,80,15,15,15,15,20,10,10,10));
 		//un arreglo con alineacion de cada celda
-		$this->SetAligns(array('C','C','C','C','C','C','C','C','C','C','C'));
+		$this->SetAligns(array('C','C','C','C','C','C','C','C','C','C','C','C'));
 		// Ubicación de la Información y tipo de letra.
       	$y=$this->GetY();
 		$x=$this->GetX();
@@ -127,7 +128,7 @@ function Header()
 		$this->SetFont('Arial','B',8);
 		//OTro arreglo pero con el contenido utf8_decode es para que escriba bien los acentos. 
 		$this->Row(array(utf8_decode($contenido_encabezado[0]),utf8_decode($contenido_encabezado[1]),utf8_decode($contenido_encabezado[2]),utf8_decode($contenido_encabezado[3]),utf8_decode($contenido_encabezado[4]),utf8_decode($contenido_encabezado[5])
-						 ,utf8_decode($contenido_encabezado[6]),utf8_decode($contenido_encabezado[7]),utf8_decode($contenido_encabezado[8])));
+						 ,utf8_decode($contenido_encabezado[6]),utf8_decode($contenido_encabezado[7]),utf8_decode($contenido_encabezado[8]),utf8_decode($contenido_encabezado[9])));
 		//Restauración de colores y fuentes
 		$this->SetFillColor(255);
 		$this->SetTextColor(0);
@@ -177,7 +178,7 @@ function FancyTable($header)
     $pdf->SetFont('Arial','B',14); // I : Italica; U: Normal;
     $pdf->SetXY(5,55);
 // Definimos el tipo de fuente, estilo y tamaño.
-    $w=array(7,80,15,15,15,15,20,20,20); //determina el ancho de las columnas
+    $w=array(7,80,15,15,15,15,20,10,10,10); //determina el ancho de las columnas
     $h=array(7,12); //determina el alto de las columnas    
     // colores del fondo, texto, línea.
     $pdf->SetFillColor(224,235,255);
@@ -204,9 +205,19 @@ function FancyTable($header)
 						// Promedio 3 trimestres.
 						$pdf->SetFont('Arial','B',11);
 						  $pdf->Cell($w[6],$h[0],trim($row['nota_final']),0,0,'C',$fill);
-						// Nota Recuperación y Final.
+						// Nota Recuperación, Recuperación 2 y Final.
 						if(trim($row['recuperacion']) <> 0){$pdf->Cell($w[7],$h[0],trim($row['recuperacion']),0,0,'C',$fill);}else{$pdf->Cell($w[7],$h[0],'',0,0,'C',$fill);}
-						if(verificar_nota($row['nota_final'],$row['recuperacion'] != 0)){$pdf->Cell($w[8],$h[0],verificar_nota($row['nota_final'],$row['recuperacion']),0,0,'C',$fill);}else{$pdf->Cell($w[8],$h[0],'',0,0,'C',$fill);}
+                        if(trim($row['nota_recuperacion_2']) <> 0){$pdf->Cell($w[7],$h[0],trim($row['nota_recuperacion_2']),0,0,'C',$fill);}else{$pdf->Cell($w[7],$h[0],'',0,0,'C',$fill);}
+                        // calculo de la calificacion
+						if(verificar_nota($row['nota_final'],$row['recuperacion'] != 0)){
+                            $nota_ = verificar_nota($row['nota_final'],$row['recuperacion']);
+                                if($nota_ < 5){
+                                    $nota_ = verificar_nota($row['nota_final'],$row['nota_recuperacion_2']);
+                                }
+                            $pdf->Cell($w[8],$h[0],$nota_,0,0,'C',$fill);
+                        }else{
+                            $pdf->Cell($w[8],$h[0],'',0,0,'C',$fill);
+                        }
 						$pdf->SetFont('Arial','',11);
 						$pdf->Ln();
                  // Controlar el Salto de Página..
