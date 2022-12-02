@@ -189,8 +189,8 @@ function cuadro($data)
         if($i == 7){$relleno = true; $this->SetFillColor(0,250,114);$this->Cell($x2,5,$data[$i],0,2,'L',$relleno);}else{$this->SetFillColor(255,255,255);$relleno = false;}
         if($i == 8){$relleno = true; $this->SetFillColor(50,205,50);$this->Cell($x2,5,$data[$i],0,2,'L',$relleno);}else{$this->SetFillColor(255,255,255);$relleno = false;}
         if($i == 9){$relleno = true; $this->SetFillColor(72,118,255);$this->Cell($x2,5,$data[$i],0,2,'L',$relleno);}else{$this->SetFillColor(255,255,255);$relleno = false;}
-        if($i == 10){$relleno = true; $this->SetFillColor(202,255,112);$this->Cell($x2,5,$data[$i],0,2,'L',$relleno);}else{$this->SetFillColor(255,255,255);$relleno = false;}
-	if($i == 11){$relleno = true; $this->SetFillColor(202,255,111);$this->Cell($x2,5,$data[$i],0,2,'L',$relleno);}else{$this->SetFillColor(255,255,255);$relleno = false;}
+        //if($i == 10){$relleno = true; $this->SetFillColor(202,255,112);$this->Cell($x2,5,$data[$i],0,2,'L',$relleno);}else{$this->SetFillColor(255,255,255);$relleno = false;}
+	    //if($i == 11){$relleno = true; $this->SetFillColor(202,255,111);$this->Cell($x2,5,$data[$i],0,2,'L',$relleno);}else{$this->SetFillColor(255,255,255);$relleno = false;}
         $mover_x = $mover_x + 36;
 	$this->SetFillColor(224,235,255);
     }
@@ -313,7 +313,7 @@ function cuadro($data)
                     $pdf->Cell($w[2],$w2[0],number_format(trim($row['nota_final']),1),1,0,'C',$fill);
                     $pdf->SetFont('Arial','',7); // I : Italica; U: Normal;
                     
-                    if ($i >= 2 && $i<=5)
+                    if ($i >= 2 && $i<=6)
                     {
                         //acumular el total de puntos.
                         $total_puntos = $total_puntos + $row['total_puntos_media'];
@@ -383,7 +383,7 @@ $cambiar_asignaturas = 1;
     //Cabecera
     $w=array(5,80,6,8); //determina el ancho de las columnas
     $w2=array(7,12,70,50,8); //determina el ancho de las columnas
-    $numero_linea = 1; $i = 1; $fill = true; $total_puntos = 0;
+    $numero_linea = 1; $i = 1; $fill = true; //$total_puntos = 0;
     $pdf->SetXY(6,55);
     
 // hacer nuevamente la consulta.
@@ -413,16 +413,19 @@ $cambiar_asignaturas = 1;
                 
                 if ($i >= 8 && $i<=$total_asignaturas)
                 {
-                    if($row['nota_p_p_1'] == 0){$pdf->Cell($w[2],$w2[0],'',0,0,0,'C',$fill);}else{$pdf->Cell($w[2],$w2[0],number_format(trim($row['nota_p_p_1']),1),0,0,'C',$fill);}
-                    if($row['nota_p_p_2'] == 0){$pdf->Cell($w[2],$w2[0],'',0,0,0,'C',$fill);}else{$pdf->Cell($w[2],$w2[0],number_format(trim($row['nota_p_p_2']),1),0,0,'C',$fill);}
-                    if($row['nota_p_p_3'] == 0){$pdf->Cell($w[2],$w2[0],'',0,0,0,'C',$fill);}else{$pdf->Cell($w[2],$w2[0],number_format(trim($row['nota_p_p_3']),1),0,0,'C',$fill);}
-                    if($row['nota_p_p_4'] == 0){$pdf->Cell($w[2],$w2[0],'',0,0,0,'C',$fill);}else{$pdf->Cell($w[2],$w2[0],number_format(trim($row['nota_p_p_4']),1),0,0,'C',$fill);}
-                    
-                    $pdf->Cell($w[2],$w2[0],number_format(trim($row['total_puntos_media']),1),0,0,'C',$fill);
-                    
-                    $pdf->SetFont('Arial','B',7); // I : Italica; U: Normal;
-                    $pdf->Cell($w[2],$w2[0],number_format(trim($row['nota_final']),1),1,0,'C',$fill);
-                    $pdf->SetFont('Arial','',7); // I : Italica; U: Normal;
+                    if($i >= 8 && $i<=10){
+                        if($row['nota_p_p_1'] == 0){$pdf->Cell($w[2],$w2[0],'',0,0,0,'C',$fill);}else{$pdf->Cell($w[2],$w2[0],number_format(trim($row['nota_p_p_1']),1),0,0,'C',$fill);}
+                        if($row['nota_p_p_2'] == 0){$pdf->Cell($w[2],$w2[0],'',0,0,0,'C',$fill);}else{$pdf->Cell($w[2],$w2[0],number_format(trim($row['nota_p_p_2']),1),0,0,'C',$fill);}
+                        if($row['nota_p_p_3'] == 0){$pdf->Cell($w[2],$w2[0],'',0,0,0,'C',$fill);}else{$pdf->Cell($w[2],$w2[0],number_format(trim($row['nota_p_p_3']),1),0,0,'C',$fill);}
+                        if($row['nota_p_p_4'] == 0){$pdf->Cell($w[2],$w2[0],'',0,0,0,'C',$fill);}else{$pdf->Cell($w[2],$w2[0],number_format(trim($row['nota_p_p_4']),1),0,0,'C',$fill);}
+                        
+                        $pdf->Cell($w[2],$w2[0],number_format(trim($row['total_puntos_media']),1),0,0,'C',$fill);
+                        
+                        $pdf->SetFont('Arial','B',7); // I : Italica; U: Normal;
+                        $pdf->Cell($w[2],$w2[0],number_format(trim($row['nota_final']),1),1,0,'C',$fill);
+                        $pdf->SetFont('Arial','',7); // I : Italica; U: Normal;
+                    }
+
                     
                     if ($i >= 8 && $i<=10)
                     {
