@@ -56,7 +56,7 @@ $contenidoOK = "";
 // Leemos un archivo Excel 2007
     $objReader = \PhpOffice\PhpSpreadsheet\IOFactory::createReader("Xlsx");
     $origen = $path_root."/registro_academico/formatos_hoja_de_calculo/";
-    $objPHPExcel = $objReader->load($origen."Formato - Listado.xlsx");
+    $objPHPExcel = $objReader->load($origen."Formato - Listado - 2023.xlsx");
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // consulta a la tabla para optener la nomina.
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -76,7 +76,7 @@ $contenidoOK = "";
     $objPHPExcel->getActiveSheet()->SetCellValue('C2', $print_seccion);
     $objPHPExcel->getActiveSheet()->SetCellValue('D2', $print_ann_lectivo);
 // Correlativo, numero de linea.
-    $num = 0; $fila_excel = 5;
+    $num = 0; $fila_excel = 4;
     while($row = $result -> fetch(PDO::FETCH_BOTH))
     {
     // acumular correlativo y fila.
@@ -104,38 +104,37 @@ $contenidoOK = "";
   $direccion = trim(($row['direccion_alumno']));
   $fecha_nacimiento = trim(($row['fecha_nacimiento']));
   $edad = trim(($row['edad']));
+  $pn_numero = trim(($row['pn_numero']));
+  $pn_tomo = trim(($row['pn_tomo']));
+  $pn_libro = trim(($row['pn_libro']));
+  $pn_folio = trim(($row['pn_folio']));
+
   //$ = trim(($row['']));
         //  IMPRIMIR EL CONTENIDO DE  INFORMACION EN EXCEL.
 	    $objPHPExcel->getActiveSheet()->SetCellValue("A".$fila_excel, $num);
-	    $objPHPExcel->getActiveSheet()->SetCellValue("B".$fila_excel, TRIM($row['codigo_nie']));
-        $objPHPExcel->getActiveSheet()->SetCellValue("C".$fila_excel,($apellidos_nombres));
-	    $objPHPExcel->getActiveSheet()->SetCellValue("E".$fila_excel,($nombres . ' ' . $apellidos_materno_paterno));
-		$objPHPExcel->getActiveSheet()->SetCellValue("G".$fila_excel,($apellidos_materno_paterno));
-		$objPHPExcel->getActiveSheet()->SetCellValue("H".$fila_excel,($nombres));
-        $objPHPExcel->getActiveSheet()->SetCellValue("I".$fila_excel,($codigo_alumno));
-        $objPHPExcel->getActiveSheet()->SetCellValue("J".$fila_excel,($codigo_matricula));
-        $objPHPExcel->getActiveSheet()->SetCellValue("K".$fila_excel,TRIM($row['codigo_nie']));
-        $objPHPExcel->getActiveSheet()->SetCellValue("L".$fila_excel,($apellidos_nombres));
+        $objPHPExcel->getActiveSheet()->SetCellValue("B".$fila_excel,($codigo_alumno));
+        $objPHPExcel->getActiveSheet()->SetCellValue("C".$fila_excel,($codigo_matricula));
+        $objPHPExcel->getActiveSheet()->SetCellValue("D".$fila_excel, TRIM($row['codigo_nie']));
+        $objPHPExcel->getActiveSheet()->SetCellValue("E".$fila_excel,($apellidos_nombres));
+        $objPHPExcel->getActiveSheet()->SetCellValue("F".$fila_excel,($genero_estudiante));
+        $objPHPExcel->getActiveSheet()->SetCellValue("G".$fila_excel,($fecha_nacimiento));
+        $objPHPExcel->getActiveSheet()->SetCellValue("H".$fila_excel,($edad));
+        $objPHPExcel->getActiveSheet()->SetCellValue("I".$fila_excel,($pn_numero));
+        $objPHPExcel->getActiveSheet()->SetCellValue("J".$fila_excel,($pn_folio));
+        $objPHPExcel->getActiveSheet()->SetCellValue("K".$fila_excel,($pn_tomo));
+        $objPHPExcel->getActiveSheet()->SetCellValue("L".$fila_excel,($pn_libro));
+        $objPHPExcel->getActiveSheet()->SetCellValue("M".$fila_excel, $nombre_grado_seccion);
+        $objPHPExcel->getActiveSheet()->SetCellValue("N".$fila_excel,($direccion));
+
         // datos del encargado nombre y n.º de dui.
-        $objPHPExcel->getActiveSheet()->SetCellValue("M".$fila_excel,($nombre_encargado));
-        $objPHPExcel->getActiveSheet()->SetCellValue("N".$fila_excel,($dui_encargado));
-        $objPHPExcel->getActiveSheet()->SetCellValue("O".$fila_excel,($nombre_parentesco));
-        $objPHPExcel->getActiveSheet()->SetCellValue("P".$fila_excel,($numero_telefono_encargado));
-        $objPHPExcel->getActiveSheet()->SetCellValue("Q".$fila_excel,($direccion));
+        $objPHPExcel->getActiveSheet()->SetCellValue("O".$fila_excel,($nombre_encargado));
+        $objPHPExcel->getActiveSheet()->SetCellValue("P".$fila_excel,($dui_encargado));
+        $objPHPExcel->getActiveSheet()->SetCellValue("Q".$fila_excel,($nombre_parentesco));
+        $objPHPExcel->getActiveSheet()->SetCellValue("R".$fila_excel,($numero_telefono_encargado));
+        
 
-        // DATOS DEL ESTUDIANTE
-        $objPHPExcel->getActiveSheet()->SetCellValue("R".$fila_excel,($fecha_nacimiento));
-        $objPHPExcel->getActiveSheet()->SetCellValue("S".$fila_excel,($edad));
-        //
-        $objPHPExcel->getActiveSheet()->SetCellValue("T".$fila_excel, TRIM($row['codigo_nie']));
-        $objPHPExcel->getActiveSheet()->SetCellValue("U".$fila_excel, $nombre_grado_seccion);
 
-        $objPHPExcel->getActiveSheet()->SetCellValue("V".$fila_excel,($nombres . ' ' . $apellidos_materno_paterno));
-        $objPHPExcel->getActiveSheet()->SetCellValue("AA".$fila_excel,($genero_estudiante));
-        //
-        $objPHPExcel->getActiveSheet()->SetCellValue("AB".$fila_excel,($nombre_parentesco));
-        $objPHPExcel->getActiveSheet()->SetCellValue("AC".$fila_excel,($nombre_encargado));
-        $objPHPExcel->getActiveSheet()->SetCellValue("AD".$fila_excel,($dui_encargado));
+
         //
         // GENERO ESTUDIANTAE
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////        
