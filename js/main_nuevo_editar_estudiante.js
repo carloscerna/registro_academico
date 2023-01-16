@@ -512,7 +512,7 @@ $(tbody).on("click","a.imprimir-titulo-tramite",function(){
 	if($('#chkfoto').is(":checked")) {chkfoto = 'yes';}else {chkfoto = 'no';}                                                       
 
 	// Validar
-	if(codigo_modalidad == '06' && codigo_grado == '11'){
+	/* if(codigo_modalidad == '06' && codigo_grado == '11' && codigo_modalidad == '11'){
 
 	}else if(codigo_modalidad == '09' && codigo_grado == '12'){
 
@@ -520,7 +520,7 @@ $(tbody).on("click","a.imprimir-titulo-tramite",function(){
 		respuestaOK = false;
 		mensaje = "El Estudiante no es de 2.º o 3.º Año de Educación Media.";
 		toastr["error"](mensaje, "Sistema");
-	}
+	} */
 	// Enviar.
 	if(respuestaOK == true){
 		varenviar = "/registro_academico/php_libs/reportes/estudiante_tramite_titulo.php?todos="+idtodos_ok+"&lstconducta="+lstconducta+"&lstestudia="+lstestudio+"&chktraslado="+chktraslado+"&txttraslado="+txttraslado+"&chksello="+chksello+"&chkfirma="+chkfirma+"&txtcodmatricula="+txtcodigomatricula+"&txtidalumno="+id_alumno;

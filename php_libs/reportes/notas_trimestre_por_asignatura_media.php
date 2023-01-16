@@ -101,25 +101,39 @@ function Header()
 		$this->SetFillColor(224,248,252);
 		$this->Rect(5,40,207,15,true); // Principal.
 		$this->SetFillColor(255);
-		$this->Rect(5,40,8,15); // Número.
-		$this->Rect(5,40,84,15); // Orden Alfabetico
-		$this->Rect(5,40,97,15); // P1
-		$this->Rect(5,40,110,15); // P2
-		$this->Rect(5,40,123,15); // P3
-		$this->Rect(5,40,136,15); // P4
-		$this->Rect(5,40,153,15); // total puntos
-		$this->Rect(5,40,170,15); // Promedio 4 periodos
-		$this->Rect(5,40,187,15); // Nota recuperacion
-		$this->Rect(5,40,197,15); // nota final
-		$this->Rect(5,40,207,15); //porcentaje institucional
+        $w=array(8,15,85,10,10,10,10,10,10,10,10,10,10); //determina el ancho de las columnas
+        $linea_ancho = 0;
+        for ($xx=0; $xx < count($w); $xx++) { 
+            if($xx == 0){
+                $this->Rect(5,40,8,15); // Número.
+                $linea_ancho = $linea_ancho + $w[$xx];
+            }else{
+                $linea_ancho = $linea_ancho + $w[$xx];
+                $this->Rect(5,40,$linea_ancho,15); // Número.
+            }
+            
+        }
+		/* $this->Rect(5,40,8,15); // Número.
+        $this->Rect(5,40,28,15); // NIE.
+		$this->Rect(5,40,113,15); // Orden Alfabetico
+		$this->Rect(5,40,123,15); // P1
+		$this->Rect(5,40,133,15); // P2
+		$this->Rect(5,40,143,15); // P3
+		$this->Rect(5,40,153,15); // P4
+		$this->Rect(5,40,163,15); // total puntos
+		$this->Rect(5,40,173,15); // Promedio 4 periodos
+		$this->Rect(5,40,183,15); // Nota recuperacion
+        $this->Rect(5,40,193,15); // nota recuperacion 2
+		$this->Rect(5,40,203,15); // nota final
+		$this->Rect(5,40,217,15); //porcentaje institucional */
 		// Establecer ubicación Y.
 		$this->SetY(40);
 		//Cabecera tamaño de ancho y alto y array para los encabezados.
-		$contenido_encabezado = array('Nº','Orden Alfabético (Por Apellidos - nombres)','P1','P2','P3','P4','Total Puntos','Prom. 4 Períodos','Nota Recup.','Nota Final', '% Instit');
+		$contenido_encabezado = array('Nº','NIE','Orden Alfabético (Por Apellidos - nombres)','P1','P2','P3','P4','TP','PP 4','NR1','NR2','NF', '%Ins');
 		//un arreglo con su medida  a lo ancho
-		$this->SetWidths(array(8,76,13,13,13,13,17,17,17,10,10));
+		$this->SetWidths(array(8,15,85,10,10,10,10,10,10,10,10,10,10));
 		//un arreglo con alineacion de cada celda
-		$this->SetAligns(array('C','C','C','C','C','C','C','C','C','C','C'));
+		$this->SetAligns(array('C','C','C','C','C','C','C','C','C','C','C','C','C'));
 		// Ubicación de la Información y tipo de letra.
       	$y=$this->GetY();
 		$x=$this->GetX();
@@ -127,7 +141,8 @@ function Header()
 		$this->SetFont('Arial','B',8);
 		//OTro arreglo pero con el contenido utf8_decode es para que escriba bien los acentos. 
 		$this->Row(array(utf8_decode($contenido_encabezado[0]),utf8_decode($contenido_encabezado[1]),utf8_decode($contenido_encabezado[2]),utf8_decode($contenido_encabezado[3]),utf8_decode($contenido_encabezado[4]),utf8_decode($contenido_encabezado[5])
-						 ,utf8_decode($contenido_encabezado[6]),utf8_decode($contenido_encabezado[7]),utf8_decode($contenido_encabezado[8]),utf8_decode($contenido_encabezado[9]),utf8_decode($contenido_encabezado[10])));
+						 ,utf8_decode($contenido_encabezado[6]),utf8_decode($contenido_encabezado[7]),utf8_decode($contenido_encabezado[8]),utf8_decode($contenido_encabezado[9]),utf8_decode($contenido_encabezado[10]),utf8_decode($contenido_encabezado[11]),
+                            utf8_decode($contenido_encabezado[12])));
 		//Restauración de colores y fuentes
 		$this->SetFillColor(255);
 		$this->SetTextColor(0);
@@ -178,7 +193,7 @@ function FancyTable($header)
     $pdf->SetXY(5,55);
 // Definimos el tipo de fuente, estilo y tamaño.
     $pdf->SetFont('Arial','',10); // I : Italica; U: Normal;
-    $w=array(8,76,13,13,13,13,17,17,17,10,10); //determina el ancho de las columnas
+    $w=array(8,15,85,10,10,10,10,10,10,10,10,10,10); //determina el ancho de las columnas
     $h=array(7,12); //determina el alto de las columnas    
     // colores del fondo, texto, línea.
     $pdf->SetFillColor(224,235,255);
@@ -192,28 +207,36 @@ function FancyTable($header)
 				$pdf->SetFont('Arial','',9);
                 $pdf->Cell($w[0],$h[0],$numero_linea,0,0,'C',$fill);
                 $pdf->SetFont('Arial','',9);
-				$pdf->Cell($w[1],$h[0],utf8_decode(trim($row['apellido_alumno'])),0,0,'L',$fill);   // Nombre + apellido_materno + apellido_paterno
-                if(trim($row['nota_p_p_1']) == 0){$pdf->Cell($w[2],$h[0],'',0,0,'C',$fill);}else{$pdf->Cell($w[2],$h[0],trim($row['nota_p_p_1']),0,0,'C',$fill);}
-                if(trim($row['nota_p_p_2']) == 0){$pdf->Cell($w[3],$h[0],'',0,0,'C',$fill);}else{$pdf->Cell($w[3],$h[0],trim($row['nota_p_p_2']),0,0,'C',$fill);}
-                if(trim($row['nota_p_p_3']) == 0){$pdf->Cell($w[4],$h[0],'',0,0,'C',$fill);}else{$pdf->Cell($w[4],$h[0],trim($row['nota_p_p_3']),0,0,'C',$fill);}
-                if(trim($row['nota_p_p_4']) == 0){$pdf->Cell($w[5],$h[0],'',0,0,'C',$fill);}else{$pdf->Cell($w[5],$h[0],trim($row['nota_p_p_4']),0,0,'C',$fill);}
+                $pdf->Cell($w[1],$h[0],(trim($row['codigo_nie'])),0,0,'L',$fill);   // CODIGO NIE
+				$pdf->Cell($w[2],$h[0],utf8_decode(trim($row['apellido_alumno'])),0,0,'L',$fill);   // Nombre + apellido_materno + apellido_paterno
+                if(trim($row['nota_p_p_1']) == 0){$pdf->Cell($w[3],$h[0],'',0,0,'C',$fill);}else{$pdf->Cell($w[3],$h[0],trim($row['nota_p_p_1']),0,0,'C',$fill);}
+                if(trim($row['nota_p_p_2']) == 0){$pdf->Cell($w[4],$h[0],'',0,0,'C',$fill);}else{$pdf->Cell($w[4],$h[0],trim($row['nota_p_p_2']),0,0,'C',$fill);}
+                if(trim($row['nota_p_p_3']) == 0){$pdf->Cell($w[5],$h[0],'',0,0,'C',$fill);}else{$pdf->Cell($w[5],$h[0],trim($row['nota_p_p_3']),0,0,'C',$fill);}
+                if(trim($row['nota_p_p_4']) == 0){$pdf->Cell($w[6],$h[0],'',0,0,'C',$fill);}else{$pdf->Cell($w[6],$h[0],trim($row['nota_p_p_4']),0,0,'C',$fill);}
 				// total de Puntos
 				$pdf->SetFont('Arial','B',10);
-                $pdf->Cell($w[6],$h[0],trim($row['total_puntos_media']),0,0,'C',$fill);
+                $pdf->Cell($w[7],$h[0],trim($row['total_puntos_media']),0,0,'C',$fill);
                 // Promedio Cuatro Peridos
                 $pdf->SetFont('Arial','B',10);
-                if(trim($row['nota_final']) == 0){$pdf->Cell($w[7],$h[0],'',0,0,'C',$fill);}else{$pdf->Cell($w[7],$h[0],trim($row['nota_final']),0,0,'C',$fill);}
+                if(trim($row['nota_final']) == 0){$pdf->Cell($w[8],$h[0],'',0,0,'C',$fill);}else{$pdf->Cell($w[8],$h[0],trim($row['nota_final']),0,0,'C',$fill);}
                 // Calcular el porcentaje institucional.
                 $porcentaje_institucional = round($row['nota_final'] * 0.75,1);
-                // Nota Recuperacion
-                if(trim($row['recuperacion']) == 0){$pdf->Cell($w[8],$h[0],'',0,0,'C',$fill);}
-                else{$pdf->Cell($w[8],$h[0],trim($row['recuperacion']),0,0,'C',$fill);}
-				// Nota Final
-				$pdf->SetFont('Arial','B',10);
-				if(verificar_nota_media($row['nota_final'],$row['recuperacion'] != 0)){$pdf->Cell($w[9],$h[0],verificar_nota_media($row['nota_final'],$row['recuperacion']),0,0,'C',$fill);}else{$pdf->Cell($w[9],$h[0],'',0,0,'C',$fill);}
+                // Nota Recuperación, Recuperación 2 y Final.
+						if(trim($row['recuperacion']) <> 0){$pdf->Cell($w[9],$h[0],trim($row['recuperacion']),0,0,'C',$fill);}else{$pdf->Cell($w[9],$h[0],'',0,0,'C',$fill);}
+                        if(trim($row['nota_recuperacion_2']) <> 0){$pdf->Cell($w[9],$h[0],trim($row['nota_recuperacion_2']),0,0,'C',$fill);}else{$pdf->Cell($w[9],$h[0],'',0,0,'C',$fill);}
+                        // calculo de la calificacion
+						if(verificar_nota($row['nota_final'],$row['recuperacion'] != 0)){
+                            $nota_ = verificar_nota($row['nota_final'],$row['recuperacion']);
+                                if($nota_ < 6){
+                                    $nota_ = verificar_nota_media($row['nota_final'],$row['nota_recuperacion_2']);
+                                }
+                            $pdf->Cell($w[10],$h[0],$nota_,0,0,'C',$fill);
+                        }else{
+                            $pdf->Cell($w[10],$h[0],'',0,0,'C',$fill);
+                        }
                 // Porcentaje Institucional
                 $pdf->SetFont('Arial','',10);
-                  $pdf->Cell($w[10],$h[0],$porcentaje_institucional,0,0,'C',$fill);
+                  $pdf->Cell($w[11],$h[0],$porcentaje_institucional,0,0,'C',$fill);
                 $pdf->Ln();
                  // Controlar el Salto de Página..
                 if($numero_linea == 30 || $numero_linea == 60 || $numero_linea == 90)
