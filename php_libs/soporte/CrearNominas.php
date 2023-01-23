@@ -99,15 +99,17 @@ $contenidoOK = "";
   $nombre_encargado = trim(($row['nombres']));
   $dui_encargado = trim(($row['encargado_dui']));
   $telefono_encargado = trim(($row['telefono_encargado']));
+  $telefono_estudiante = trim(($row['telefono_alumno']));
   $nombre_parentesco = trim(($row['nombre_tipo_parentesco']));
   $numero_telefono_encargado = trim(($row['telefono_encargado']));
   $direccion = trim(($row['direccion_alumno']));
-  $fecha_nacimiento = trim(($row['fecha_nacimiento']));
+  $fecha_nacimiento = trim(cambiaf_a_normal(($row['fecha_nacimiento'])));
   $edad = trim(($row['edad']));
   $pn_numero = trim(($row['pn_numero']));
   $pn_tomo = trim(($row['pn_tomo']));
   $pn_libro = trim(($row['pn_libro']));
   $pn_folio = trim(($row['pn_folio']));
+  $fecha_nacimiento_encargado = trim(cambiaf_a_normal(($row['encargado_fecha_nacimiento'])));
 
   //$ = trim(($row['']));
         //  IMPRIMIR EL CONTENIDO DE  INFORMACION EN EXCEL.
@@ -124,17 +126,15 @@ $contenidoOK = "";
         $objPHPExcel->getActiveSheet()->SetCellValue("K".$fila_excel,($pn_tomo));
         $objPHPExcel->getActiveSheet()->SetCellValue("L".$fila_excel,($pn_libro));
         $objPHPExcel->getActiveSheet()->SetCellValue("M".$fila_excel, $nombre_grado_seccion);
-        $objPHPExcel->getActiveSheet()->SetCellValue("N".$fila_excel,($direccion));
+        $objPHPExcel->getActiveSheet()->SetCellValue("N".$fila_excel,($telefono_estudiante));
+        $objPHPExcel->getActiveSheet()->SetCellValue("O".$fila_excel,($direccion));
 
         // datos del encargado nombre y n.º de dui.
-        $objPHPExcel->getActiveSheet()->SetCellValue("O".$fila_excel,($nombre_encargado));
-        $objPHPExcel->getActiveSheet()->SetCellValue("P".$fila_excel,($dui_encargado));
-        $objPHPExcel->getActiveSheet()->SetCellValue("Q".$fila_excel,($nombre_parentesco));
-        $objPHPExcel->getActiveSheet()->SetCellValue("R".$fila_excel,($numero_telefono_encargado));
-        
-
-
-
+        $objPHPExcel->getActiveSheet()->SetCellValue("P".$fila_excel,($nombre_encargado));
+        $objPHPExcel->getActiveSheet()->SetCellValue("Q".$fila_excel,($fecha_nacimiento_encargado));
+        $objPHPExcel->getActiveSheet()->SetCellValue("R".$fila_excel,($dui_encargado));
+        $objPHPExcel->getActiveSheet()->SetCellValue("S".$fila_excel,($nombre_parentesco));
+        $objPHPExcel->getActiveSheet()->SetCellValue("T".$fila_excel,($numero_telefono_encargado));
         //
         // GENERO ESTUDIANTAE
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////        

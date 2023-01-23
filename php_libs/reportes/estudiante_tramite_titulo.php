@@ -119,7 +119,7 @@ function Footer()
     $nombre_municipio = cambiar_de_del($_SESSION['nombre_municipio']);
     $porciones = explode(" ", $print_bachillerato);
     $nombre_modalidad = cambiar_de_del(trim($porciones[1]));
-    $año_anterior = $año;
+    $año_anterior = $año -1;
 /**********************************************************************************************************************************************************/
 // Consultar y Ejecutar el Query.
     consultas_alumno(3,0,$codigo_all,$codigo_alumno,$codigo_matricula,'',$db_link,'');      
