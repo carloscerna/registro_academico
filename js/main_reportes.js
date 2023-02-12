@@ -401,7 +401,32 @@ if (lstlist_nominas == 'hoja-de-calculo' && $(this).attr('data-accion') == 'list
         //varenviar = "/registro_academico/php_libs/soporte/CrearNominas.php?todos="+reporte_ok;
         // Ejecutar la función
         //AbrirVentana(varenviar);
-}                        
+}
+if (lstlist_nominas == 'hoja-de-calculo-caracterizacion' && $(this).attr('data-accion') == 'listados_01') {
+        $.ajax({
+                cache: false,
+                type: "POST",
+                dataType: "json",
+                url:"php_libs/soporte/CrearNominaCaracterizacion.php",
+                data: "todos="+ reporte_ok + "&id=" + Math.random(),
+                success: function(response){
+                        // Validar mensaje de error
+                        if(response.respuesta === false){
+                                toastr["error"](response.mensaje, "Sistema");
+                        }
+                        else{
+                                toastr["info"](response.contenido, "Sistema");}
+                },
+                error:function(){
+                        error_();
+                }
+                });
+        
+        // construir la variable con el url.
+        //varenviar = "/registro_academico/php_libs/soporte/CrearNominas.php?todos="+reporte_ok;
+        // Ejecutar la función
+        //AbrirVentana(varenviar);
+}                                   
 if (lstlist_nominas == 'cuadro-de-notas-hoja-de-calculo' && $(this).attr('data-accion') == 'listados_01') {
         $.ajax({
                 cache: false,
