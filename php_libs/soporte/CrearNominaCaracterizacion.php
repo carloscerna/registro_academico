@@ -176,13 +176,221 @@ $contenidoOK = "";
             $objPHPExcel->getActiveSheet()->getCell('BD'.$i)->setDataValidation(clone $validation);
             $objPHPExcel->getActiveSheet()->getCell('BE'.$i)->setDataValidation(clone $validation);
         }
-        
+        // VALIDATION LIST COLUMNA CON VIVE EL ESTUDIANTE.
+        $validation = $objPHPExcel->getActiveSheet()->getCell('AB7')
+            ->getDataValidation();
+        $validation->setType( \PhpOffice\PhpSpreadsheet\Cell\DataValidation::TYPE_LIST );
+        $validation->setErrorStyle( \PhpOffice\PhpSpreadsheet\Cell\DataValidation::STYLE_INFORMATION );
+        $validation->setAllowBlank(false);
+        $validation->setShowInputMessage(true);
+        $validation->setShowErrorMessage(true);
+        $validation->setShowDropDown(true);
+        $validation->setErrorTitle('Input error');
+        $validation->setError('Value is not in list.');
+        $validation->setPromptTitle('Lista');
+        $validation->setPrompt('Por Favor Seleccion.');
+        $validation->setFormula1('=\'Datos\'!$C$2:$C$16');
+        for ($i=7; $i < 68 ; $i++) { 
+            $objPHPExcel->getActiveSheet()->getCell('AB'.$i)->setDataValidation(clone $validation);
+            $objPHPExcel->getActiveSheet()->getCell('AP'.$i)->setDataValidation(clone $validation);
+            $objPHPExcel->getActiveSheet()->getCell('BF'.$i)->setDataValidation(clone $validation);
+        }
+
+        // VALIDATION LIST COLUMNA ZONA DE RESIDENCIA DEL ESTUDIANTE..
+                $validation = $objPHPExcel->getActiveSheet()->getCell('AM7')
+                ->getDataValidation();
+            $validation->setType( \PhpOffice\PhpSpreadsheet\Cell\DataValidation::TYPE_LIST );
+            $validation->setErrorStyle( \PhpOffice\PhpSpreadsheet\Cell\DataValidation::STYLE_INFORMATION );
+            $validation->setAllowBlank(false);
+            $validation->setShowInputMessage(true);
+            $validation->setShowErrorMessage(true);
+            $validation->setShowDropDown(true);
+            $validation->setErrorTitle('Input error');
+            $validation->setError('Value is not in list.');
+            $validation->setPromptTitle('Lista');
+            $validation->setPrompt('Por Favor Seleccion.');
+            $validation->setFormula1('=\'Datos\'!$L$2:$L$3');
+            for ($i=8; $i < 68 ; $i++) { 
+                $objPHPExcel->getActiveSheet()->getCell('AM'.$i)->setDataValidation(clone $validation);
+            }
+
+        // VALIDATION LIST COLUMNA ZONA DE RESIDENCIA DEL ESTUDIANTE..
+            $validation = $objPHPExcel->getActiveSheet()->getCell('AN7')
+            ->getDataValidation();
+            $validation->setType( \PhpOffice\PhpSpreadsheet\Cell\DataValidation::TYPE_LIST );
+            $validation->setErrorStyle( \PhpOffice\PhpSpreadsheet\Cell\DataValidation::STYLE_INFORMATION );
+            $validation->setAllowBlank(false);
+            $validation->setShowInputMessage(true);
+            $validation->setShowErrorMessage(true);
+            $validation->setShowDropDown(true);
+            $validation->setErrorTitle('Input error');
+            $validation->setError('Value is not in list.');
+            $validation->setPromptTitle('Lista');
+            $validation->setPrompt('Por Favor Seleccion.');
+            $validation->setFormula1('=\'Datos\'!$K$2:$K$15');
+            for ($i=8; $i < 68 ; $i++) { 
+                $objPHPExcel->getActiveSheet()->getCell('AN'.$i)->setDataValidation(clone $validation);
+            }
+
+        // VALIDATION LIST COLUMNA MEDIO QUE UTILIZA PARA LLEGAR AL CENTRO ESCOLAR
+        $validation = $objPHPExcel->getActiveSheet()->getCell('AQ7')
+        ->getDataValidation();
+            $validation->setType( \PhpOffice\PhpSpreadsheet\Cell\DataValidation::TYPE_LIST );
+            $validation->setErrorStyle( \PhpOffice\PhpSpreadsheet\Cell\DataValidation::STYLE_INFORMATION );
+            $validation->setAllowBlank(false);
+            $validation->setShowInputMessage(true);
+            $validation->setShowErrorMessage(true);
+            $validation->setShowDropDown(true);
+            $validation->setErrorTitle('Input error');
+            $validation->setError('Value is not in list.');
+            $validation->setPromptTitle('Lista');
+            $validation->setPrompt('Por Favor Seleccion.');
+            $validation->setFormula1('=\'Datos\'!$E$2:$E$6');
+            for ($i=8; $i < 68 ; $i++) { 
+                $objPHPExcel->getActiveSheet()->getCell('AQ'.$i)->setDataValidation(clone $validation);
+            }
+
+        // VALIDATION LIST COLUMNA UNIDAD DE SALUD MAS CERCANA.
+            $validation = $objPHPExcel->getActiveSheet()->getCell('AR7')
+            ->getDataValidation();
+                $validation->setType( \PhpOffice\PhpSpreadsheet\Cell\DataValidation::TYPE_LIST );
+                $validation->setErrorStyle( \PhpOffice\PhpSpreadsheet\Cell\DataValidation::STYLE_INFORMATION );
+                $validation->setAllowBlank(false);
+                $validation->setShowInputMessage(true);
+                $validation->setShowErrorMessage(true);
+                $validation->setShowDropDown(true);
+                $validation->setErrorTitle('Input error');
+                $validation->setError('Value is not in list.');
+                $validation->setPromptTitle('Lista');
+                $validation->setPrompt('Por Favor Seleccion.');
+                $validation->setFormula1('=\'Datos\'!$F$2:$F$5');
+                for ($i=8; $i < 68 ; $i++) { 
+                    $objPHPExcel->getActiveSheet()->getCell('AR'.$i)->setDataValidation(clone $validation);
+                }
+
+        // VALIDATION LIST COLUMNA ZONA DE RESIDENCIA DEL ESTUDIANTE..
+        $validation = $objPHPExcel->getActiveSheet()->getCell('AW7')
+                ->getDataValidation();
+            $validation->setType( \PhpOffice\PhpSpreadsheet\Cell\DataValidation::TYPE_LIST );
+            $validation->setErrorStyle( \PhpOffice\PhpSpreadsheet\Cell\DataValidation::STYLE_INFORMATION );
+            $validation->setAllowBlank(false);
+            $validation->setShowInputMessage(true);
+            $validation->setShowErrorMessage(true);
+            $validation->setShowDropDown(true);
+            $validation->setErrorTitle('Input error');
+            $validation->setError('Value is not in list.');
+            $validation->setPromptTitle('Lista');
+            $validation->setPrompt('Por Favor Seleccion.');
+            $validation->setFormula1('=\'Datos\'!$G$2:$G$16');
+            for ($i=8; $i < 68 ; $i++) { 
+                $objPHPExcel->getActiveSheet()->getCell('AW'.$i)->setDataValidation(clone $validation);
+            }
+
+                // VALIDATION LIST COLUMNA NOMBRE DE LAS ASIGNATURAS
+                $validation = $objPHPExcel->getActiveSheet()->getCell('AX7')
+                ->getDataValidation();
+            $validation->setType( \PhpOffice\PhpSpreadsheet\Cell\DataValidation::TYPE_LIST );
+            $validation->setErrorStyle( \PhpOffice\PhpSpreadsheet\Cell\DataValidation::STYLE_INFORMATION );
+            $validation->setAllowBlank(false);
+            $validation->setShowInputMessage(true);
+            $validation->setShowErrorMessage(true);
+            $validation->setShowDropDown(true);
+            $validation->setErrorTitle('Input error');
+            $validation->setError('Value is not in list.');
+            $validation->setPromptTitle('Lista');
+            $validation->setPrompt('Por Favor Seleccion.');
+            $validation->setFormula1('=\'Datos\'!$H$2:$H$10');
+            for ($i=7; $i < 68 ; $i++) { 
+                $objPHPExcel->getActiveSheet()->getCell('AX'.$i)->setDataValidation(clone $validation);
+                $objPHPExcel->getActiveSheet()->getCell('AY'.$i)->setDataValidation(clone $validation);
+                $objPHPExcel->getActiveSheet()->getCell('AZ'.$i)->setDataValidation(clone $validation);
+                $objPHPExcel->getActiveSheet()->getCell('BA'.$i)->setDataValidation(clone $validation);
+            }
+
+                // VALIDATION LIST COLUMNA NOMBRE DE LAS ASIGNATURAS
+                $validation = $objPHPExcel->getActiveSheet()->getCell('BG7')
+                ->getDataValidation();
+            $validation->setType( \PhpOffice\PhpSpreadsheet\Cell\DataValidation::TYPE_LIST );
+            $validation->setErrorStyle( \PhpOffice\PhpSpreadsheet\Cell\DataValidation::STYLE_INFORMATION );
+            $validation->setAllowBlank(false);
+            $validation->setShowInputMessage(true);
+            $validation->setShowErrorMessage(true);
+            $validation->setShowDropDown(true);
+            $validation->setErrorTitle('Input error');
+            $validation->setError('Value is not in list.');
+            $validation->setPromptTitle('Lista');
+            $validation->setPrompt('Por Favor Seleccion.');
+            $validation->setFormula1('=\'Datos\'!$I$2:$I$11');
+            for ($i=8; $i < 68 ; $i++) { 
+                $objPHPExcel->getActiveSheet()->getCell('BG'.$i)->setDataValidation(clone $validation);
+            }
+                // VALIDATION LIST COLUMNA NOMBRE DE LAS ASIGNATURAS
+                $validation = $objPHPExcel->getActiveSheet()->getCell('BH7')
+                ->getDataValidation();
+            $validation->setType( \PhpOffice\PhpSpreadsheet\Cell\DataValidation::TYPE_LIST );
+            $validation->setErrorStyle( \PhpOffice\PhpSpreadsheet\Cell\DataValidation::STYLE_INFORMATION );
+            $validation->setAllowBlank(false);
+            $validation->setShowInputMessage(true);
+            $validation->setShowErrorMessage(true);
+            $validation->setShowDropDown(true);
+            $validation->setErrorTitle('Input error');
+            $validation->setError('Value is not in list.');
+            $validation->setPromptTitle('Lista');
+            $validation->setPrompt('Por Favor Seleccion.');
+            $validation->setFormula1('=\'Datos\'!$J$2:$J$9');
+            for ($i=8; $i < 68 ; $i++) { 
+                $objPHPExcel->getActiveSheet()->getCell('BH'.$i)->setDataValidation(clone $validation);
+            }
+
+            // VALIDATION LIST COLUMNA 
+            $validation = $objPHPExcel->getActiveSheet()->getCell('AJ7')
+            ->getDataValidation();
+        $validation->setType( \PhpOffice\PhpSpreadsheet\Cell\DataValidation::TYPE_LIST );
+        $validation->setErrorStyle( \PhpOffice\PhpSpreadsheet\Cell\DataValidation::STYLE_INFORMATION );
+        $validation->setAllowBlank(false);
+        $validation->setShowInputMessage(true);
+        $validation->setShowErrorMessage(true);
+        $validation->setShowDropDown(true);
+        $validation->setErrorTitle('Input error');
+        $validation->setError('Value is not in list.');
+        $validation->setPromptTitle('Lista');
+        $validation->setPrompt('Por Favor Seleccion.');
+        $validation->setFormula1('=\'Datos\'!$D$2:$D$8');
+        for ($i=8; $i < 68 ; $i++) { 
+            $objPHPExcel->getActiveSheet()->getCell('AJ'.$i)->setDataValidation(clone $validation);
+        }
+
+        // CONSULTAR LA TABLA CODIGO
+
+        $query_encargado = "SELECT * from alumno_encargado where codigo_alumno = '$codigo_alumno' order by id_alumno_encargado";
+            $result_encargado = $db_link -> query($query_encargado);
+            $fila_encargado = 0;
+        while($rows = $result_encargado -> fetch(PDO::FETCH_BOTH))
+        {
+            $nombre_encargado = trim($rows['nombres']);
+            $dui_encargado = trim($rows['dui']);
+            $telefono_encargado = trim($rows['telefono']);
         // datos del encargado nombre y n.º de dui.
-//        $objPHPExcel->getActiveSheet()->SetCellValue("P".$fila_excel,($nombre_encargado));
-  //      $objPHPExcel->getActiveSheet()->SetCellValue("Q".$fila_excel,($fecha_nacimiento_encargado));
-    //    $objPHPExcel->getActiveSheet()->SetCellValue("R".$fila_excel,($dui_encargado));
-      //  $objPHPExcel->getActiveSheet()->SetCellValue("S".$fila_excel,($nombre_parentesco));
-        //$objPHPExcel->getActiveSheet()->SetCellValue("T".$fila_excel,($numero_telefono_encargado));
+            switch ($fila_encargado) {
+                case '0':
+                    $objPHPExcel->getActiveSheet()->SetCellValue("S".$fila_excel,($nombre_encargado));
+                    $objPHPExcel->getActiveSheet()->SetCellValue("T".$fila_excel,($dui_encargado));
+                    $objPHPExcel->getActiveSheet()->SetCellValue("U".$fila_excel,($numero_telefono_encargado));
+                    break;
+                case '1':
+                    $objPHPExcel->getActiveSheet()->SetCellValue("V".$fila_excel,($nombre_encargado));
+                    $objPHPExcel->getActiveSheet()->SetCellValue("W".$fila_excel,($dui_encargado));
+                    $objPHPExcel->getActiveSheet()->SetCellValue("X".$fila_excel,($numero_telefono_encargado));
+                    break;
+                case '2':
+                    $objPHPExcel->getActiveSheet()->SetCellValue("Y".$fila_excel,($nombre_encargado));
+                    $objPHPExcel->getActiveSheet()->SetCellValue("Z".$fila_excel,($dui_encargado));
+                    $objPHPExcel->getActiveSheet()->SetCellValue("AA".$fila_excel,($numero_telefono_encargado));
+                    break;
+            }
+            $fila_encargado++;
+        }
+
         //
         // GENERO ESTUDIANTAE
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////        
