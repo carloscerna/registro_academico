@@ -144,7 +144,8 @@ function FancyTable($header)
         $this->Cell($w[$i],7,utf8_decode($header[$i]),1,0,'C',1);
     $this->Ln();
     //Restauración de colores y fuentes
-    $this->SetFillColor(224,235,255);
+    //$this->SetFillColor(224,235,255);
+    $this->SetFillColor(255,255,255);
     $this->SetTextColor(0);
     $this->SetFont('');
     //Datos
