@@ -133,6 +133,12 @@ if (lstlist_nominas == 'asistencia' && $(this).attr('data-accion') == 'listados_
         // Ejecutar la función
         AbrirVentana(varenviar);
 }
+if (lstlist_nominas == 'asistencia-cuadros' && $(this).attr('data-accion') == 'listados_01') {
+        // construir la variable con el url.
+        varenviar = "/registro_academico/php_libs/reportes/nomina_asistencia_.php?todos="+reporte_ok+"&lstannlectivo="+ann_lectivo;
+        // Ejecutar la función
+        AbrirVentana(varenviar);
+}
 if (lstlist_nominas == 'genero' && $(this).attr('data-accion') == 'listados_01') {
         // construir la variable con el url.
         varenviar = "/registro_academico/php_libs/reportes/nomina_genero.php?todos="+reporte_ok;

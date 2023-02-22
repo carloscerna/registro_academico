@@ -2,11 +2,11 @@
 // ruta de los archivos con su carpeta
     $path_root=trim($_SERVER['DOCUMENT_ROOT']);
 // Archivos que se incluyen.
-     include($path_root."/registro_web/includes/funciones.php");
-     include($path_root."/registro_web/includes/consultas.php");
-     include($path_root."/registro_web/includes/mainFunctions_conexion.php");
+include($path_root."/registro_academico/includes/funciones.php");
+include($path_root."/registro_academico/includes/consultas.php");
+include($path_root."/registro_academico/includes/mainFunctions_conexion.php");
 // Llamar a la libreria fpdf
-     include($path_root."/registro_web/php_libs/fpdf/fpdf.php");
+include($path_root."/registro_academico/php_libs/fpdf/fpdf.php");
 // cambiar a utf-8.
      header("Content-Type: text/html; charset=UTF-8");    
 // variables y consulta a la tabla.
