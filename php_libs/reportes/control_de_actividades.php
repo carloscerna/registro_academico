@@ -27,6 +27,7 @@
             $print_ann_lectivo = utf8_decode('Año Lectivo: '.trim($row['nombre_ann_lectivo']));
             $nombre_ann_lectivo = utf8_decode(trim($row['nombre_ann_lectivo']));
             $print_periodo = utf8_decode('Período: _____');
+            $codigo_grado = trim($row['codigo_grado']);
 	    break;
             }
 
@@ -211,7 +212,8 @@ function FancyTable($header)
     $pdf->SetMargins(20, 10, 5);
     #Establecemos el margen inferior: 
     $pdf->SetAutoPageBreak(true,10);
-    
+    $pdf->SetTitle("Control de Actividades: " . $codigo_grado . $nombre_seccion);  
+    $pdf->SetSubject("Estudiantes");
     $pdf->AliasNbPages();
     $pdf->SetFont('Arial','',9);
     $pdf->AddPage();
