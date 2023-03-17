@@ -35,7 +35,7 @@ if($errorDbConexion == false){
 		case 'BuscarTodos':
                 // armando el Query. Para la tabla alumno_matricula.
 			$query_alumno_matricula = "SELECT am.id_alumno_matricula, am.codigo_bach_o_ciclo, am.codigo_grado, am.codigo_seccion, am.codigo_ann_lectivo, am.retirado, 
-									am.repitente, am.codigo_turno, am.codigo_alumno, bach.nombre as nombre_modalidad, am.fecha_ingreso,
+									am.repitente, am.codigo_turno, am.codigo_alumno, bach.nombre as nombre_modalidad, to_char(am.fecha_ingreso,'dd/mm/yyyy') as fecha_ingreso,
 									gan.nombre as nombre_grado, sec.nombre as nombre_seccion, ann.nombre as nombre_ann_lectivo, 
 									tur.nombre as nombre_turno, btrim(bach.nombre || CAST(' ' AS VARCHAR) || gan.nombre || CAST(' ' AS VARCHAR) || sec.nombre || CAST(' ' AS VARCHAR) || CAST(' ' AS VARCHAR) || tur.nombre || CAST(' - ' AS VARCHAR) || ann.nombre) as nombre_todos, 
 									btrim(am.codigo_bach_o_ciclo || am.codigo_grado || am.codigo_seccion || am.codigo_ann_lectivo || am.codigo_turno) as todos
