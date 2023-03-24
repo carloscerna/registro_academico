@@ -37,10 +37,10 @@ function calcularedad($fecha)
 	$dia = (int)$dia;
 	
 	$añoActual = (int)$añoActual;
-	//$mesActual = (int)$mesActual;
-	//$diaActual = (int)$diaActual;
-	$mesActual = 12;
-	$diaActual = 31;
+	$mesActual = (int)$mesActual;
+	$diaActual = (int)$diaActual;
+	//$mesActual = 12;
+	//$diaActual = 31;
 	
 	// Calcular edad en base al año.
 		$edad = $añoActual - $año;	

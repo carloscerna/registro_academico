@@ -40,6 +40,7 @@ while($row = $result -> fetch(PDO::FETCH_BOTH))
        $codigo_all_sobreedad[] = $codigo_modalidad . $codigo_grado . $codigo_seccion . $codigo_ann_lectivo . $codigo_turno;
    }
 
+
    //print_r($codigo_all_sobreedad);
 // Inicializamos variables de mensajes y JSON
     $respuestaOK = true;

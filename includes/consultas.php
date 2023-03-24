@@ -612,7 +612,35 @@ if($ejecutar == 19)
         $result_encabezado = $db_link -> query($query);
         
     }  
-
+    // PARA LA SOBREEDADD
+  // para los diferntes listados a imprimir por género.
+  //
+  if($ejecutar == 22)
+  {
+   $query = "SELECT a.estudio_parvularia, a.id_alumno, a.codigo_nie, btrim(a.apellido_paterno || CAST(' ' AS VARCHAR) || a.apellido_materno || CAST(', ' AS VARCHAR) || a.nombre_completo) as apellido_alumno,
+              btrim(a.apellido_paterno || CAST(' ' AS VARCHAR) || a.apellido_materno) as apellidos_alumno, a.nombre_completo,
+              ae.codigo_alumno, ae.nombres, ae.encargado, ae.dui, ae.telefono,
+              a.foto, a.pn_folio, a.pn_tomo, a.pn_numero, a.pn_libro, a.fecha_nacimiento, a.direccion_alumno, telefono_alumno, a.edad, a.genero, a.ruta_pn,
+              a.id_alumno as cod_alumno, am.id_alumno_matricula as cod_matricula,
+              am.imprimir_foto, am.pn, am.repitente, am.sobreedad, am.retirado, am.codigo_bach_o_ciclo, am.certificado, am.codigo_turno,
+              am.nuevo_ingreso, bach.nombre as nombre_bachillerato, am.codigo_ann_lectivo, ann.nombre as nombre_ann_lectivo,
+              am.codigo_grado, gan.nombre as nombre_grado, am.codigo_seccion, sec.nombre as nombre_seccion, tur.nombre as nombre_turno
+                  FROM alumno a
+              INNER JOIN alumno_encargado ae ON a.id_alumno = ae.codigo_alumno and ae.encargado = 't'
+              INNER JOIN alumno_matricula am ON a.id_alumno = am.codigo_alumno  and am.retirado = 'f' and am.sobreedad = 't'
+              INNER JOIN bachillerato_ciclo bach ON bach.codigo = am.codigo_bach_o_ciclo
+              INNER JOIN grado_ano gan ON gan.codigo = am.codigo_grado
+              INNER JOIN seccion sec ON sec.codigo = am.codigo_seccion
+              INNER JOIN ann_lectivo ann ON ann.codigo = am.codigo_ann_lectivo
+              INNER JOIN turno tur ON tur.codigo = am.codigo_turno
+              WHERE btrim(am.codigo_bach_o_ciclo || am.codigo_grado || am.codigo_seccion || am.codigo_ann_lectivo || am.codigo_turno) = '".$codigo_bachillerato.
+                  "' ORDER BY apellido_alumno ASC";
+      
+          // Ejecutamos el Query. Tabla Bitacora.
+      $result = $db_link -> query($query);
+      $result_encabezado = $db_link -> query($query);
+      $result_indicadores = $db_link -> query($query);
+  }
 
 }   // FIN DE LA FUNCION CONSULTAS
 
