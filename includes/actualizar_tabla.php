@@ -19,9 +19,12 @@ try{
      // Variable que indica el status de la conexión a la base de datos
         $errorDbConexion = true;   
     };
-    
+/// ruta de los archivos con su carpeta
+    $path_root=trim($_SERVER['DOCUMENT_ROOT']);
+    $url_ = "/registro_academico/img/fotos/10391/";
+
     $num = 0;
-    $codigo_ann_lectivo = '22';
+    $codigo_ann_lectivo = '23';
     $organizacion_secciones_grados = array();
     $query_grados_secciones = "SELECT org.codigo_grado, org.codigo_seccion, org.codigo_bachillerato, gr.nombre as nombre_grado, sec.nombre as nombre_seccion
                                 FROM organizacion_grados_secciones org
@@ -64,8 +67,10 @@ try{
                         INNER JOIN ann_lectivo ann ON ann.codigo = am.codigo_ann_lectivo
                         WHERE btrim(am.codigo_bach_o_ciclo || am.codigo_grado || am.codigo_seccion || am.codigo_ann_lectivo) = '".$todos.
                         "' ORDER BY apellido_alumno ASC";
+                      
                         
-                      $result_ = $dblink -> query($query);
+                // cambio de correo electronico.
+/*                      $result_ = $dblink -> query($query);
                         // Extraer valore de la consulta.
                                      while($row_r = $result_ -> fetch(PDO::FETCH_BOTH))
                                      {
@@ -88,6 +93,40 @@ try{
                                         print "<tr>";
                                         print "<td>$codigo_nie</td><td>$nombre_completo</td><td>".($nombre_grado)."</td><td>".($nombre_seccion)."</td><td>$correo_estudiante</td>";
                                         print "</tr>";
+                                     }
+                                     // valor num a cero.
+                                        $num = 0;
+                 }
+*/
+                 // CAMBIO DE NOMBRE DE LA FOTO.
+                      $result_ = $dblink -> query($query);
+
+                        //print $path_root.$url_.$nombre_foto;
+                        // Extraer valore de la consulta.
+                                     while($row_r = $result_ -> fetch(PDO::FETCH_BOTH))
+                                     {
+                                        $num++;
+                                        $nombre_completo = (trim($row_r['apellido_alumno']));
+                                        //$edad = (trim($row_r['edad']));
+                                        $codigo_estudiante = (trim($row_r['id_alumno']));
+                                        $codigo_nie = (trim($row_r['codigo_nie']));
+                                        $nombre_foto = $codigo_estudiante . '.jpg';
+                                        //$correo_estudiante = $codigo_nie . $dominio_correo;
+                                        // Imprimir valores
+                                        // print "<tr>";
+                                        // print "<td>$num</td><td>$nombre_completo</td><td>".($nombre_grado)."</td><td>".($nombre_seccion)."</td><td>$edad</td>";
+                                        // print "</tr>";
+                                        // ACTULIZAR TABLA
+
+                                        //  VERIFICAR SI EXISTE EL DIRECTORIO POR EL ID PERSONAL.
+                                        if(file_exists($path_root.$url_.$nombre_foto)){
+                                            $query_actualizar_foto = "UPDATE alumno SET foto = '$nombre_foto' WHERE id_alumno = '$codigo_estudiante'";
+                                            $result_ac = $dblink -> query($query_actualizar_foto);
+    
+                                            print "<tr>";
+                                            print "<td>$codigo_nie</td><td>$nombre_completo</td><td>".($nombre_grado)."</td><td>".($nombre_seccion)."</td><td>$nombre_foto</td>";
+                                            print "</tr>";
+                                        }
                                      }
                                      // valor num a cero.
                                         $num = 0;
