@@ -61,7 +61,8 @@ if (is_array($_FILES) && count($_FILES) > 0) {
             // Ejecutamos el Query.
                 $consulta = $dblink -> query($query);
             //echo "../registro_academico/img/png/".$_FILES['file']['name'];
-                echo "../registro_academico/img/Pn/".$codigo_institucion."/".$nombreArchivo;
+                //echo "../registro_academico/img/Pn/".$codigo_institucion."/".$nombreArchivo;
+                echo "../registro_academico/img/Pn/".$nombreArchivo;
         } else {
             echo 0;
         }

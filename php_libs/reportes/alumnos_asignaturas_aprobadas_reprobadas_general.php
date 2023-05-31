@@ -133,7 +133,7 @@ function Header()
     //Movernos a la derecha
     //$this->Cell(20);
     //Título
-    $this->Cell(200,7,$_SESSION['institucion'],0,1,'C');
+    $this->Cell(200,7,utf8_decode($_SESSION['institucion']),0,1,'C');
     $this->Cell(200,7,'INFORME ASIGNATURAS APROBADAS O REPROBADAS - '.utf8_decode($periodo),0,1,'C');
     $this->Line(0,20,280,20);
 }

@@ -10,7 +10,7 @@
         exec("sudo sh pg_backup.sh");    
     }
     if($info["os"] === "WIN"){
-        exec("backup.bat");    
+        exec("backup-10391.bat");    
     }
 
 //
