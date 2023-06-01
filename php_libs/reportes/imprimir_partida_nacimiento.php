@@ -7,7 +7,10 @@
     include($path_root."/registro_academico/php_libs/fpdf/fpdf.php");
 // cambiar a utf-8.
     header("Content-Type: text/html; charset=UTF-8");
-// Variable
+// COLOCAR UN LIMITE A LA MEMORIA PARA LA CREACIÓN DE LA HOJA DE CÁLCULO.
+set_time_limit(0);
+ini_set("memory_limit","1024M");
+    // Variable
    // $nombre_archivo = $_REQUEST['nombre_archivo'];
     $codigo_alumno = $_REQUEST['codigo_alumno'];    
     $codigo_institucion = $_SESSION["codigo_institucion"];

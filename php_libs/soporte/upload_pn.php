@@ -39,8 +39,10 @@ if (is_array($_FILES) && count($_FILES) > 0) {
                     }
                 }
                 // CARPETA respaldo de PN en unidad D:
-                if(file_exists($url_respaldo_pn.$codigo_institucion."/".$nombreArchivo)){
-                    unlink($url_respaldo_pn.$codigo_institucion."/".$nombreArchivo);				// imagen original.
+                if(!empty($nombreArchivo)){
+                    if(file_exists($url_respaldo_pn.$codigo_institucion."/".$nombreArchivo)){
+                        unlink($url_respaldo_pn.$codigo_institucion."/".$nombreArchivo);				// imagen original.
+                    }
                 }
             // Variables de la imagen.
                 $extension = pathinfo($_FILES['file']['name'], PATHINFO_EXTENSION);
@@ -54,15 +56,16 @@ if (is_array($_FILES) && count($_FILES) > 0) {
                 // carpeta local c
                     rename($path_root.$url_.$_FILES['file']['name'],$path_root.$url_.$codigo_institucion."/".$nombreArchivo);
                 // respaldo d
-                    rename($path_root.$url_.$_FILES['file']['name'],$url_respaldo_pn.$codigo_institucion."/".$nombreArchivo);
+                    copy($path_root.$url_.$codigo_institucion."/".$nombreArchivo,$url_respaldo_pn.$codigo_institucion."/".$nombreArchivo);
+                // copar el archivo al C.
+                    //copy($url_respaldo_pn.$codigo_institucion."/".$nombreArchivo,$path_root.$url_.$codigo_institucion."/".$nombreArchivo);
             // Guardar el nombre de la imagen. en la tabla.            
             // Armar query. para actualizar el nombre del archivo de la ruta foto.
                 $query = "UPDATE alumno SET ruta_pn = '".$nombreArchivo."' WHERE id_alumno = ". $Id_;
             // Ejecutamos el Query.
                 $consulta = $dblink -> query($query);
-            //echo "../registro_academico/img/png/".$_FILES['file']['name'];
                 //echo "../registro_academico/img/Pn/".$codigo_institucion."/".$nombreArchivo;
-                echo "../registro_academico/img/Pn/".$nombreArchivo;
+                echo $url_.$codigo_institucion."/".$nombreArchivo;
         } else {
             echo 0;
         }
