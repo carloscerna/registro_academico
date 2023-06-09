@@ -32,8 +32,8 @@ require $path_root."/registro_academico/vendor/autoload.php";
 // Leemos un archivo Excel 2007
     $objReader = \PhpOffice\PhpSpreadsheet\IOFactory::createReader("Xlsx");
     $origen = $path_root."/registro_academico/formatos_hoja_de_calculo/";
-    $nombre_archivo = "02-10428.xlsx";
-    $objPHPExcel = $objReader->load($origen."02-10428.xlsx");
+    $nombre_archivo = "02-10391.xlsx";
+    $objPHPExcel = $objReader->load($origen."02-10391.xlsx");
     //$nombre_archivo = "CE-COMPUTADORA.xlsx";
     //$objPHPExcel = $objReader->load($origen."CE-COMPUTADORA.xlsx");
 // Leemos un archivo Excel 2007
@@ -55,6 +55,7 @@ require $path_root."/registro_academico/vendor/autoload.php";
 			// $codigo_departamento = $objPHPExcel->getActiveSheet()->getCell("C".$fila)->getValue();
 
 		     $query = "SELECT a.codigo_nie, a.id_alumno, am.codigo_bach_o_ciclo, bach.nombre as nombre_bachillerato,
+                btrim(a.apellido_paterno || CAST(' ' AS VARCHAR) || a.apellido_materno || CAST(', ' AS VARCHAR) || a.nombre_completo) as apellido_alumno,
                 a.foto, a.pn_folio, a.pn_tomo, a.pn_numero, a.pn_libro, a.fecha_nacimiento, a.direccion_alumno, telefono_alumno, a.edad, a.genero, a.estudio_parvularia, a.codigo_discapacidad, a.codigo_apoyo_educativo, a.codigo_actividad_economica, a.codigo_estado_familiar, a.partida_nacimiento, a.telefono_celular,
                 a.codigo_departamento, a.codigo_municipio,
                 gan.nombre as nombre_grado, am.codigo_seccion, sec.nombre as nombre_seccion, am.retirado,
@@ -78,6 +79,7 @@ require $path_root."/registro_academico/vendor/autoload.php";
                 while($listado = $consulta -> fetch(PDO::FETCH_BOTH))
                 {
                     // obtenemos el �ltimo c�digo asignado.
+                    $apellidos_nombres = $listado['apellido_alumno'];
                     $codigo_alumno = $listado['id_alumno'];
                     $codigo_nie = $listado['codigo_nie'];
                     $nombre_grado = $listado['nombre_grado'];
@@ -103,16 +105,24 @@ require $path_root."/registro_academico/vendor/autoload.php";
                     $codigo_departamento = trim($listado["codigo_departamento"]);
                     $codigo_municipio = trim($listado["codigo_municipio"]);
                 // Extraer nombre del Municpio y Departamento.
-                    $query_d_m = "SELECT depa.codigo, depa.nombre as nombre_departamento, muni.codigo, muni.nombre as nombre_municipio
-                                FROM departamento depa 
-                                    INNER JOIN municipio muni ON muni.codigo_departamento = depa.codigo
-                                        WHERE depa.codigo = '$codigo_departamento' and muni.codigo = '$codigo_municipio'";
+                    if($codigo_nie == "10767079"){
+                        print $query_d_m = "SELECT depa.codigo, depa.nombre as nombre_departamento, muni.codigo, muni.nombre as nombre_municipio
+                        FROM departamento depa 
+                            INNER JOIN municipio muni ON muni.codigo_departamento = depa.codigo
+                                WHERE depa.codigo = '$codigo_departamento' and muni.codigo = '$codigo_municipio'";
+                    }else{
+                        $query_d_m = "SELECT depa.codigo, depa.nombre as nombre_departamento, muni.codigo, muni.nombre as nombre_municipio
+                        FROM departamento depa 
+                            INNER JOIN municipio muni ON muni.codigo_departamento = depa.codigo
+                                WHERE depa.codigo = '$codigo_departamento' and muni.codigo = '$codigo_municipio'";
+                    }
+                   
                 //  Ejecutar Query.
                     $result_d_m = $dblink -> query($query_d_m);
                     while($row_d_m = $result_d_m -> fetch(PDO::FETCH_BOTH))
                     {
-                        $departamento_nacimiento = strtolower(trim($row_d_m["nombre_departamento"]));
-                        $municipio_nacimiento = strtolower(trim($row_d_m["nombre_municipio"]));
+                        $departamento_nacimiento = utf8_encode(strtolower(trim($row_d_m["nombre_departamento"])));
+                        $municipio_nacimiento = utf8_encode(strtolower(trim($row_d_m["nombre_municipio"])));
                     }    
                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                     $objPHPExcel->getActiveSheet()->SetCellValue("O".$fila_excel, TRIM($listado['nombre_grado']));
@@ -129,8 +139,9 @@ require $path_root."/registro_academico/vendor/autoload.php";
                     $objPHPExcel->getActiveSheet()->SetCellValue("Y".$fila_excel,($pn_libro));
                     $objPHPExcel->getActiveSheet()->SetCellValue("Z".$fila_excel,($departamento_nacimiento));
                     $objPHPExcel->getActiveSheet()->SetCellValue("AA".$fila_excel,($municipio_nacimiento));
+                    $objPHPExcel->getActiveSheet()->SetCellValue("AE".$fila_excel,($apellidos_nombres));
 
-                    print "<p>$fila - $codigo_nie - $nombre_grado - $nombre_seccion - $retirado</p>";
+                    print "<p>$fila - $codigo_nie - $apellidos_nombres - $nombre_grado - $nombre_seccion - $retirado - $departamento_nacimiento - $municipio_nacimiento</p>";
                 }
 				$fila = $fila + 1; $fila_excel = $fila_excel + 1;
 		}
