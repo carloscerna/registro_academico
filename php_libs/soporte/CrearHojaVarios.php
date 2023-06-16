@@ -81,6 +81,7 @@ require $path_root."/registro_academico/vendor/autoload.php";
                     // obtenemos el �ltimo c�digo asignado.
                     $apellidos_nombres = $listado['apellido_alumno'];
                     $codigo_alumno = $listado['id_alumno'];
+                    $direccion_alumno = $listado['direccion_alumno'];
                     $codigo_nie = $listado['codigo_nie'];
                     $nombre_grado = $listado['nombre_grado'];
                     $nombre_seccion = $listado['nombre_seccion'];
@@ -139,7 +140,9 @@ require $path_root."/registro_academico/vendor/autoload.php";
                     $objPHPExcel->getActiveSheet()->SetCellValue("Y".$fila_excel,($pn_libro));
                     $objPHPExcel->getActiveSheet()->SetCellValue("Z".$fila_excel,($departamento_nacimiento));
                     $objPHPExcel->getActiveSheet()->SetCellValue("AA".$fila_excel,($municipio_nacimiento));
-                    $objPHPExcel->getActiveSheet()->SetCellValue("AE".$fila_excel,($apellidos_nombres));
+                    $objPHPExcel->getActiveSheet()->SetCellValue("AE".$fila_excel,($codigo_alumno));
+                    $objPHPExcel->getActiveSheet()->SetCellValue("AF".$fila_excel,($apellidos_nombres));
+                    $objPHPExcel->getActiveSheet()->SetCellValue("AG".$fila_excel,($direccion_alumno));
 
                     print "<p>$fila - $codigo_nie - $apellidos_nombres - $nombre_grado - $nombre_seccion - $retirado - $departamento_nacimiento - $municipio_nacimiento</p>";
                 }
