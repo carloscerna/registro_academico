@@ -1,9 +1,9 @@
 <?php
 // ruta de los archivos con su carpeta
     $path_root=trim($_SERVER['DOCUMENT_ROOT']);
-// Incluimos el archivo de funciones y conexión a la base de datos
+// Incluimos el archivo de funciones y conexiï¿½n a la base de datos
 	include($path_root."/registro_web/includes/mainFunctions_conexion.php");
-// Ar,ar Qieru cpm varoabñe-
+// Ar,ar Qieru cpm varoabï¿½e-
 	$ciclo = $_POST["elegido"];
 	$query = "SELECT ga.codigo as codigo_grado, ga.nombre as nombre_grado from grado_ano ga ORDER BY codigo_grado";
 
@@ -16,7 +16,7 @@
 		{
 			// Nombres de los campos de la tabla.
 			   $codigo = trim($listado['codigo_grado']); $descripcion = $listado['nombre_grado'];
-		  // EDUCACIÓN INICIAL
+		  // EDUCACIï¿½N INICIAL
 		   if($ciclo == '01'){
 			 if($codigo == 'I1' || $codigo == 'I2' || $codigo == 'I3')
 			 {
@@ -66,7 +66,7 @@
 				   $fila_array++;			 
 			 }
 		   }
-		   // para bachillerato general y técnico.
+		   // para bachillerato general y tï¿½cnico.
 		   if($ciclo == '06' || $ciclo == '07'){
 			 if($codigo == '10' || $codigo == '11')
 			 {
@@ -95,7 +95,17 @@
 				   $datos[$fila_array]["descripcion"] = ($descripcion);
 				   $fila_array++;			 
 			 }
-		   }		   
+		   }
+				// EDUCACIÃ“N PARUVULARIA - ESTÃNDAR DE DESARROLLO
+				if($ciclo == '13'){
+					if($codigo == '4P' || $codigo == '5P' || $codigo == '6P')
+					{
+						// Rellenando la array.
+							$datos[$fila_array]["codigo"] = $codigo;
+							$datos[$fila_array]["descripcion"] = ($descripcion);
+							$fila_array++;
+					}
+					} 		   
         }	// fin del while
 // Enviando la matriz con Json.
 echo json_encode($datos);

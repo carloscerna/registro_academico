@@ -10,7 +10,7 @@ include($path_root."/registro_academico/includes/funciones.php");
 // variables. del post.
 //  $ruta = $path_root.'/sgp_web/formatos_hoja_de_calculo/fianzas.xls';
 // $ruta = $path_root.'/sgp_web/formatos_hoja_de_calculo/prestamos.xls';
-	$ruta = $path_root.'/registro_academico/formatos_hoja_de_calculo/.xlsx';
+	$ruta = $path_root.'/registro_academico/formatos_hoja_de_calculo/EDUCACIÓN DESARROLLO ESTANDAR.xlsx';
   //$trimestre = trim($_REQUEST["periodo_"]);
 // variable de la conexi�n dbf.
     $db_link = $dblink;
@@ -40,23 +40,31 @@ $datos=array(); $fila_array = 0;
     $objPHPExcel = $objReader->load($origen);
 
 // N�mero de hoja.
-   $numero_de_hoja = 2;
+   $numero_de_hoja = 6;
 	$numero = 5;	
 // 	Recorre el numero de hojas que contenga el libro
        $objPHPExcel->setActiveSheetIndex($numero_de_hoja);
 		//	BUCLE QUE RECORRE TODA LA CUADRICULA DE LA HOJA DE CALCULO.
-		while($objPHPExcel->getActiveSheet()->getCell("A".$fila)->getValue() != "")
+		while($objPHPExcel->getActiveSheet()->getCell("F".$fila)->getValue() != "")
 		  {
 			 //  DATOS GENERALES.
-				$descripcion = $objPHPExcel->getActiveSheet()->getCell("A".$fila)->getValue();
-				$id = $objPHPExcel->getActiveSheet()->getCell("B".$fila)->getValue();
-				$codigo_cc = $objPHPExcel->getActiveSheet()->getCell("C".$fila)->getValue();
+				$codigo_area = $objPHPExcel->getActiveSheet()->getCell("A".$fila)->getValue();
+				$codigo_dimension = $objPHPExcel->getActiveSheet()->getCell("C".$fila)->getValue();
+				$codigo_subdimension = $objPHPExcel->getActiveSheet()->getCell("E".$fila)->getValue();
+				$descripcion_subdimension = $objPHPExcel->getActiveSheet()->getCell("F".$fila)->getValue();
+				//$codigo = $objPHPExcel->getActiveSheet()->getCell("G".$fila)->getValue();
+				//$descripcion = $objPHPExcel->getActiveSheet()->getCell("H".$fila)->getValue();
+				//$codigo_cc = '03';
+				//$codigo_servicio_educativo = $objPHPExcel->getActiveSheet()->getCell("E2")->getValue();
 				// Armar query para guardar en la tabla CATALOGO_PRODUCTOS.
-				$query = "UPDATE asignatura SET nombre = '$descripcion', codigo_cc = '$codigo_cc'  WHERE id_asignatura = $id";
-				$consulta = $dblink -> query($query);
+					//$query = "INSERT INTO catalogo_area_subdimension (codigo_area, codigo_dimension, codigo, descripcion) values ('$codigo_area','$codigo_dimension','$codigo_subdimension','$descripcion_subdimension')";
+					//$query = "INSERT INTO catalogo_area_dimension (codigo, descripcion, codigo_area) VALUES ('$codigo', '$descripcion','$codigo_area')";
+				 	//$query = "INSERT INTO asignatura (nombre, codigo, codigo_cc, codigo_area, codigo_servicio_educativo) VALUES ('$descripcion','$codigo','$codigo_cc','$codigo_area','$codigo_servicio_educativo')";
+					//$consulta = $dblink -> query($query);
 			
          	$fila++;
-			print $descripcion .  ' - ' . $id . ' - ' . $codigo_cc;
+			print $codigo_area . ' - ' . $codigo_dimension . ' - ' . $codigo_subdimension . ' - ' . $descripcion_subdimension;
+			//print $codigo_area . ' - ' . $codigo  . ' - ' . $descripcion . ' - ' . $codigo_cc . ' - ' . $codigo_servicio_educativo;
 			print "<br>";
 		}	// FIN DEL WHILE PRINCIPAL DE L AHOJA DE CALCULO.
 /*
