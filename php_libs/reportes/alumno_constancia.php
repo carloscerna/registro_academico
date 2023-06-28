@@ -90,7 +90,7 @@ function Footer()
     //Firma Director.
     if($firma == 'yes'){
 	$img = $_SERVER['DOCUMENT_ROOT'].'/registro_academico/img/'.$_SESSION['imagen_firma'];;
-	$this->Image($img,120,210,70,15);
+	$this->Image($img,130,2000,10,10);
     }
     if($sello == 'yes'){
 	$img_sello = $_SERVER['DOCUMENT_ROOT'].'/registro_academico/img/'.$_SESSION['imagen_sello'];;

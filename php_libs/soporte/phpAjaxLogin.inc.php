@@ -29,7 +29,7 @@ if($errorDbConexion == false){
 					$password_usuario = trim($_POST['txtpassword']);
 					//$codigo_infraestructura = trim($_POST['txtcodigoinstitucion']);
 				// armar la consulta.
-					$query = "SELECT u.nombre, u.id_usuario, u.base_de_datos, u.codigo_escuela, u.codigo_perfil, u.codigo_personal, btrim(p.nombres || CAST(' ' AS VARCHAR) || p.apellidos) as nombre_personal,
+					 $query = "SELECT u.nombre, u.id_usuario, u.base_de_datos, u.codigo_escuela, u.codigo_perfil, u.codigo_personal, btrim(p.nombres || CAST(' ' AS VARCHAR) || p.apellidos) as nombre_personal,
 							cat_perfil.descripcion as nombre_perfil
 							FROM usuarios u
 							INNER JOIN personal p ON p.id_personal = u.codigo_personal
@@ -70,7 +70,7 @@ if($errorDbConexion == false){
                             // Actualizar datos del Docente y otros.
                             ////////////////////////////////////////////////////////
                             // armar la consulta.
-                                $query = "SELECT u.nombre, u.id_usuario, u.base_de_datos, u.codigo_escuela, u.codigo_perfil, u.codigo_personal, btrim(p.nombres || CAST(' ' AS VARCHAR) || p.apellidos) as nombre_personal,
+                           $query = "SELECT u.nombre, u.id_usuario, u.base_de_datos, u.codigo_escuela, u.codigo_perfil, u.codigo_personal, btrim(p.nombres || CAST(' ' AS VARCHAR) || p.apellidos) as nombre_personal,
     							cat_perfil.descripcion as nombre_perfil
     							FROM usuarios u
     							INNER JOIN personal p ON p.id_personal = u.codigo_personal

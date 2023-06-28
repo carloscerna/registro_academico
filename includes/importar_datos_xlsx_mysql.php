@@ -36,34 +36,34 @@ $datos=array(); $fila_array = 0;
 // Leemos un archivo Excel 2007
    $objReader = \PhpOffice\PhpSpreadsheet\IOFactory::createReader("Xlsx");
     $origen = $ruta;
-	 $fila = 2;
+	 $fila = 17;
     $objPHPExcel = $objReader->load($origen);
 
 // N�mero de hoja.
-   $numero_de_hoja = 6;
+   $numero_de_hoja = 3;
 	$numero = 5;	
 // 	Recorre el numero de hojas que contenga el libro
        $objPHPExcel->setActiveSheetIndex($numero_de_hoja);
 		//	BUCLE QUE RECORRE TODA LA CUADRICULA DE LA HOJA DE CALCULO.
-		while($objPHPExcel->getActiveSheet()->getCell("F".$fila)->getValue() != "")
+		while($objPHPExcel->getActiveSheet()->getCell("A".$fila)->getValue() != "")
 		  {
 			 //  DATOS GENERALES.
 				$codigo_area = $objPHPExcel->getActiveSheet()->getCell("A".$fila)->getValue();
 				$codigo_dimension = $objPHPExcel->getActiveSheet()->getCell("C".$fila)->getValue();
 				$codigo_subdimension = $objPHPExcel->getActiveSheet()->getCell("E".$fila)->getValue();
-				$descripcion_subdimension = $objPHPExcel->getActiveSheet()->getCell("F".$fila)->getValue();
-				//$codigo = $objPHPExcel->getActiveSheet()->getCell("G".$fila)->getValue();
-				//$descripcion = $objPHPExcel->getActiveSheet()->getCell("H".$fila)->getValue();
-				//$codigo_cc = '03';
-				//$codigo_servicio_educativo = $objPHPExcel->getActiveSheet()->getCell("E2")->getValue();
+				//$descripcion_subdimension = $objPHPExcel->getActiveSheet()->getCell("F".$fila)->getValue();
+				$codigo = $objPHPExcel->getActiveSheet()->getCell("G".$fila)->getValue();
+				$descripcion = $objPHPExcel->getActiveSheet()->getCell("H".$fila)->getValue();
+				$codigo_cc = '03';
+				$codigo_servicio_educativo = $objPHPExcel->getActiveSheet()->getCell("E2")->getValue();
 				// Armar query para guardar en la tabla CATALOGO_PRODUCTOS.
 					//$query = "INSERT INTO catalogo_area_subdimension (codigo_area, codigo_dimension, codigo, descripcion) values ('$codigo_area','$codigo_dimension','$codigo_subdimension','$descripcion_subdimension')";
 					//$query = "INSERT INTO catalogo_area_dimension (codigo, descripcion, codigo_area) VALUES ('$codigo', '$descripcion','$codigo_area')";
-				 	//$query = "INSERT INTO asignatura (nombre, codigo, codigo_cc, codigo_area, codigo_servicio_educativo) VALUES ('$descripcion','$codigo','$codigo_cc','$codigo_area','$codigo_servicio_educativo')";
-					//$consulta = $dblink -> query($query);
+				 	$query = "INSERT INTO asignatura (nombre, codigo, codigo_cc, codigo_area, codigo_servicio_educativo, codigo_dimension, codigo_subdimension) VALUES ('$descripcion','$codigo','$codigo_cc','$codigo_area','$codigo_servicio_educativo','$codigo_dimension','$codigo_subdimension')";
+					$consulta = $dblink -> query($query);
 			
          	$fila++;
-			print $codigo_area . ' - ' . $codigo_dimension . ' - ' . $codigo_subdimension . ' - ' . $descripcion_subdimension;
+			print $codigo_area . ' - ' . $codigo_dimension . ' - ' . $codigo_subdimension . ' - ' . $codigo . ' - ' . $descripcion . ' - ' . $codigo_cc;
 			//print $codigo_area . ' - ' . $codigo  . ' - ' . $descripcion . ' - ' . $codigo_cc . ' - ' . $codigo_servicio_educativo;
 			print "<br>";
 		}	// FIN DEL WHILE PRINCIPAL DE L AHOJA DE CALCULO.

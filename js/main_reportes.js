@@ -439,7 +439,7 @@ if (lstlist_nominas == 'cuadro-de-notas-hoja-de-calculo' && $(this).attr('data-a
                 cache: false,
                 type: "POST",
                 dataType: "json",
-                url:"php_libs/soporte/CrearCuadroDeNotasHojaDeCalculo.php",
+                url:"php_libs/soporte/CrearIndicadores.php",
                 data: "todos="+ reporte_ok + "&id=" + Math.random(),
                 success: function(response){
                         // Validar mensaje de error
