@@ -167,7 +167,7 @@ $contenidoOK = "";
                 INNER JOIN catalogo_area_subdimension cat_area_subdi ON cat_area_subdi.codigo =  asig.codigo_area_subdimension
                 INNER JOIN catalogo_area_asignatura cat_area ON cat_area.codigo = asig.codigo_area
 									WHERE aaa.codigo_bach_o_ciclo = '$codigo_modalidad' and aaa.codigo_ann_lectivo = '$codigo_annlectivo' and aaa.codigo_grado = '$codigo_grado'
-									ORDER BY asig.codigo_area";
+									ORDER BY asig.ordenar";
     }
   
 // Ejecutamos el Query. PARA LA TABLA EMPLEADOS.
