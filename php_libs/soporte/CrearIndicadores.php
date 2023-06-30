@@ -169,7 +169,7 @@ $contenidoOK = "";
     if(isset($codigo_asignatura))
     {
           for($ca=0;$ca<count($codigo_asignatura);$ca++){
-            if($codigo_grado == "I3" || $codigo_grado =="4P" || $codigo_grado == "5P")
+            if($codigo_grado == "I3" || $codigo_grado =="4P" || $codigo_grado == "5P" || $codigo_grado == "6P")
                 {
                   // ARMAR VARIABLES PARA LA DESCRIPCION DEL AREA, DIMENSION Y SUBDIMENSION.
                     $nombres_area_di_subdi = $nombre_area[$ca] ."/". $nombre_area_di[$ca] . "/" . $nombre_area_di_subdi[$ca];
@@ -230,15 +230,18 @@ $contenidoOK = "";
             $objPHPExcel->getActiveSheet()->SetCellValue($NombreEstudiante[$num]."10",($codigo_matricula));
             //$objPHPExcel->getActiveSheet()->SetCellValue("D".$fila_excel,TRIM($row['codigo_nie']));
         // VER SI HAY ALERTAS EN EL CODIGO GRADO
-            // movilizarme entre hoja
-                $objPHPExcel->setActiveSheetIndex(2); // HOJA DE ALERTAS
+        if($codigo_grado == "I3" || $codigo_grado =="4P" || $codigo_grado == "5P")
+            {
+                // movilizarme entre hoja
+                    $objPHPExcel->setActiveSheetIndex(2); // HOJA DE ALERTAS
 
-        //  IMPRIMIR EL CONTENIDO DE  INFORMACION EN EXCEL. indicadores
-          $objPHPExcel->getActiveSheet()->SetCellValue($NombreEstudiante[$num]."7",$NumeroEnColumna);  
-          $objPHPExcel->getActiveSheet()->SetCellValue($NombreEstudiante[$num]."8",($apellidos_nombres));  
-          $objPHPExcel->getActiveSheet()->SetCellValue($NombreEstudiante[$num]."9",($codigo_alumno));
-          $objPHPExcel->getActiveSheet()->SetCellValue($NombreEstudiante[$num]."10",($codigo_matricula));
-          //$objPHPExcel->getActiveSheet()->SetCellValue("D".$fila_excel,TRIM($row['codigo_nie']));
+              //  IMPRIMIR EL CONTENIDO DE  INFORMACION EN EXCEL. indicadores
+                $objPHPExcel->getActiveSheet()->SetCellValue($NombreEstudiante[$num]."7",$NumeroEnColumna);  
+                $objPHPExcel->getActiveSheet()->SetCellValue($NombreEstudiante[$num]."8",($apellidos_nombres));  
+                $objPHPExcel->getActiveSheet()->SetCellValue($NombreEstudiante[$num]."9",($codigo_alumno));
+                $objPHPExcel->getActiveSheet()->SetCellValue($NombreEstudiante[$num]."10",($codigo_matricula));
+                //$objPHPExcel->getActiveSheet()->SetCellValue("D".$fila_excel,TRIM($row['codigo_nie']));
+            }
             // acumular correlativo y fila.
               $num++; $fila_excel++; $NumeroEnColumna++;
    }    //  FIN DEL WHILE.
