@@ -60,7 +60,7 @@ $datos=array(); $fila_array = 0;
 					//$query = "INSERT INTO catalogo_area_subdimension (codigo_area, codigo_dimension, codigo, descripcion) values ('$codigo_area','$codigo_dimension','$codigo_subdimension','$descripcion_subdimension')";
 					//$query = "INSERT INTO catalogo_area_dimension (codigo, descripcion, codigo_area) VALUES ('$codigo', '$descripcion','$codigo_area')";
 				 	$query = "INSERT INTO asignatura (nombre, codigo, codigo_cc, codigo_area, codigo_servicio_educativo, codigo_area_dimension, codigo_area_subdimension) VALUES ('$descripcion','$codigo','$codigo_cc','$codigo_area','$codigo_servicio_educativo','$codigo_dimension','$codigo_subdimension')";
-					$consulta = $dblink -> query($query);
+					//$consulta = $dblink -> query($query);
 			
          	$fila++;
 			print $codigo_area . ' - ' . $codigo_dimension . ' - ' . $codigo_subdimension . ' - ' . $codigo . ' - ' . $descripcion . ' - ' . $codigo_cc;
