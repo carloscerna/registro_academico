@@ -60,45 +60,22 @@ $contenidoOK = "";
     /////
     // SELECCIONAR EL ARCHIVO DEPENDE DE LA MODALIDAD.
     ////
-    switch ($codigo_bachillerato) {
-        case "01":
-              if($codigo_grado == "I1"){
-                $objPHPExcel = $objReader->load($origen.".xlsx");
-              }
-              if($codigo_grado == "I2"){
-                $objPHPExcel = $objReader->load($origen.".xlsx");
-              }
-              if($codigo_grado == "I3"){
-                $objPHPExcel = $objReader->load($origen.".xlsx");
-
-              }
-            break;
-        case "13":
-              if($codigo_grado == "4P"){
-                $objPHPExcel = $objReader->load($origen."INSTRUMENTOS DESARROLLO ESTANDAR.xlsx");
-                 $NombreEstudiante = array("D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z",
-                 "AA","AB","AC","AD","AE","AF","AG","AH","AI","AJ","AK","AL","AM","AN","AO","AP","AQ");
-                   // PARA LA ALERTA TEMPRANA.
-                break;
-                  }
-              if($codigo_grado == "5P"){
-                $objPHPExcel = $objReader->load($origen.".xlsx");
-               
-              }
-              if($codigo_grado == "6P"){
-                $objPHPExcel = $objReader->load($origen.".xlsx");
-                
-              }
-            break;
-      
-        default:
-            $objPHPExcel = $objReader->load($origen."Educacion Media.xlsx");
-    }      
+    
+  if($codigo_grado == "I3" || $codigo_grado =="4P" || $codigo_grado =="5P" || $codigo_grado =="6P" || $codigo_grado == "01")
+  {
+    $objPHPExcel = $objReader->load($origen."INSTRUMENTOS DESARROLLO ESTANDAR.xlsx");
+    $NombreEstudiante = array("D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z",
+    "AA","AB","AC","AD","AE","AF","AG","AH","AI","AJ","AK","AL","AM","AN","AO","AP","AQ");
+  }
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // consulta a la tabla para optener los nombres de las asignturas.
+    // AREA DE CONSULTAS
+    // 1. INDICADORES O CALIFICACIONES.
+    // 2. NOMBRE DEL DOCENTE ENCARGADO
+    // 3. DATOS EN ENCABEZADO SERÀN SUSTRAIDOS POR $_SESSION.
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Armamos el query.
-  // EDUCACIÓN INICIAL
+  // CONSULTA ASIGNACION DE POR MODALIDAD Y GRADO.
   if($codigo_grado =="I3" || $codigo_grado =="4P" || $codigo_grado =="5P" || $codigo_grado =="6P"){
      $query_asig = "SELECT aaa.codigo_asignacion, aaa.codigo_bach_o_ciclo, aaa.codigo_asignatura, aaa.codigo_ann_lectivo, aaa.codigo_sirai, aaa.codigo_grado, aaa.id_asignacion, aaa.orden,
               ann.nombre as nombre_ann_lectivo, bach.nombre as nombre_modalidad, gr.nombre as nombre_grado, asig.codigo as codigo_asignatura, asig.nombre as nombre_asignatura,
@@ -116,16 +93,15 @@ $contenidoOK = "";
 									WHERE aaa.codigo_bach_o_ciclo = '$codigo_modalidad' and aaa.codigo_ann_lectivo = '$codigo_annlectivo' and aaa.codigo_grado = '$codigo_grado'
 									ORDER BY asig.ordenar";
     }
-  
 // Ejecutamos el Query. PARA LA TABLA EMPLEADOS.
-	    $result_consulta = $dblink -> query($query_asig);
-      $fila_asignatura = $result_consulta -> rowCount();
+    $result_consulta = $dblink -> query($query_asig);
+    $fila_asignatura = $result_consulta -> rowCount();
 // colocar informacion en la hoja seleccionada.
 	$codigo_asignatura_matriz = array(); $nombre_asignatura_matriz = array();
   $nombre_asignatura = array(); $codigo_asignatura = array(); $codigo_area_asignatura = array();
   $nombre_area = array(); $nombre_area_di = array(); $nombre_area_di_subdi = array();
 //  CAPTURA DE DATOS A ARRAY PARA PARVULARIA, BASICA Y MEDIA.
-    // PARVULARIA
+    // PRIMERA INFANCIA - INICIAL 3, 4, 5, 6 Y 7 AÑOS.
       if($codigo_grado =="I3" || $codigo_grado =="4P" || $codigo_grado =="5P" || $codigo_grado =="6P")
       {
         while($row = $result_consulta -> fetch(PDO::FETCH_BOTH))
@@ -139,104 +115,94 @@ $contenidoOK = "";
             $nombre_area_di_subdi[] = trim($row['descripcion_area_subdimension']);
           }
       }
-
-// Construir y Asignar codigo asignatura y nombre para hoja de calculo.
-    
+//
+// CONSULTA PARA EXTRAER EL NOMBRE DEL DOCNETE.
+//
+      consultas_docentes(1,0,$codigo_all,'','','',$db_link,'');
+      $print_nombre_docente = "";
+      while($row = $result_docente -> fetch(PDO::FETCH_BOTH))
+          {
+              $print_nombre_docente = (trim($row['nombre_docente']));         
+          } 
+// Construir y Asignar codigo asignatura y nombre para hoja de calculo.    
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    // consulta a la tabla para optener la nomina.
+/** SET ENCABEZADO - SET INDICADORES - SET NOMINA */
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//  Get the current sheet with all its newly-set style properties
-          /*  if($codigo_grado == "I3" || $codigo_grado =="4P" || $codigo_grado =="5P")
-                {
-                    $objWorkSheetBase = $objPHPExcel->getSheet(3);
-                }else{
-                  $objWorkSheetBase = $objPHPExcel->getSheet(0);
-                }*/
-// Indicamos que se pare en la hoja uno del libro
-   // $objPHPExcel->setActiveSheetIndex($n_hoja);
-    //$objPHPExcel->getActiveSheet($n_hoja)->setTitle(cambiar_de_del($print_grado).' '.$print_seccion);
-    //$n_hoja++;    
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-			//$objPHPExcel->getActiveSheet()->SetCellValue('A2', $nombre_docente_en_excel);
+// VARIABLES.
       $nombre_bachillerato_en_excel = "";
       $informacion_del_grado = $nombre_modalidad . " " . $nombre_grado . " " . $nombre_seccion . " " . $nombre_ann_lectivo;
-			$objPHPExcel->getActiveSheet()->SetCellValue('D4', $informacion_del_grado);
-      // BUSCAR POR EL CODIGO DEL GRADO.
-        if($codigo_grado == "I3" || $codigo_grado =="4P" || $codigo_grado =="5P" || $codigo_grado =="6P")
-        {      
-            $objPHPExcel->getActiveSheet()->SetCellValue('D2', $_SESSION["institucion"]);
-            $objPHPExcel->getActiveSheet()->SetCellValue('AF2',$_SESSION["codigo_institucion"]);
-        }
+// UBICACION DE LA HOJA SEGUN CODIGO DE GRADO.
+  $objPHPExcel->setActiveSheetIndex(1);  // APLICA PARA 4,5,6 Y 7 AÑOS.
+//
+//  ROTULACION PARA I3, 4,5,6 7 AÑOS.
+//
+  if($codigo_grado == "I3" || $codigo_grado =="4P" || $codigo_grado =="5P" || $codigo_grado =="6P")
+  {      
+      $objPHPExcel->getActiveSheet()->SetCellValue('D2', $_SESSION["institucion"]); // NOMBRE DE LA INSTITUCIÒN
+      $objPHPExcel->getActiveSheet()->SetCellValue('D3', $print_nombre_docente); // NOMBRE DEL DOCENTE RESPONSABLE DE LA SECCION
+      $objPHPExcel->getActiveSheet()->SetCellValue('D4', $informacion_del_grado); // INFORMACION DEL GRADO
+      $objPHPExcel->getActiveSheet()->SetCellValue('AF2',$_SESSION["codigo_institucion"]);  // CODIGO DE LA INSTITUCIÓN
+      $objPHPExcel->getActiveSheet()->SetCellValue('AF3',$_SESSION["nombre_departamento"]); // DEPARTAMENTO
+      $objPHPExcel->getActiveSheet()->SetCellValue('AF4',$_SESSION["nombre_municipio"]);  // MUNICIPIO
+  }
+
+// UBICACION DE LA HOJA SEGUN CODIGO DE GRADO.
+  $objPHPExcel->setActiveSheetIndex(2);  // ALERTAS.
 //
 //  ROTULACIÓN PARA LA HOJA DE ALERTA TEMPRANA PARVULARIA
 //
-if($codigo_grado == "I3" || $codigo_grado =="4P" || $codigo_grado == "5P")
-  {
-    // $objPHPExcel->setActiveSheetIndex(1);
-    // $objPHPExcel->getActiveSheet()->SetCellValue('F2', "ALERTAS TEMPRANAS");
-    // $objPHPExcel->getActiveSheet()->SetCellValue('C1', $_SESSION["institucion"]);
-    // $objPHPExcel->getActiveSheet()->SetCellValue('C2', "Código: " . $_SESSION["codigo_institucion"]);
-    // $objPHPExcel->setActiveSheetIndex(0);
-  }
+  if($codigo_grado == "I3" || $codigo_grado =="4P" || $codigo_grado == "5P")
+    {
+      $objPHPExcel->getActiveSheet()->SetCellValue('D2', $_SESSION["institucion"]); // NOMBRE DE LA INSTITUCIÒN
+      $objPHPExcel->getActiveSheet()->SetCellValue('D3', $print_nombre_docente); // NOMBRE DEL DOCENTE RESPONSABLE DE LA SECCION
+      $objPHPExcel->getActiveSheet()->SetCellValue('D4', $informacion_del_grado); // INFORMACION DEL GRADO
+      $objPHPExcel->getActiveSheet()->SetCellValue('AF2',$_SESSION["codigo_institucion"]);  // CODIGO DE LA INSTITUCIÓN
+      $objPHPExcel->getActiveSheet()->SetCellValue('AF3',$_SESSION["nombre_departamento"]); // DEPARTAMENTO
+      $objPHPExcel->getActiveSheet()->SetCellValue('AF4',$_SESSION["nombre_municipio"]);  // MUNICIPIO
+    }
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 // recorrer la array para extraer los datos. DE LOS NOMBRE DE LAS ASIGNATURAS Y SU CODIGO.
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Variables
-    $i_h_a = 0; $i_h = 0; $fila = 11;
+    $i_h_a = 0; $i_h = 0; $fila = 11; $fila_alerta = 11;
 // si existe la variable  para PARVULARIA.
     if(isset($codigo_asignatura))
     {
           for($ca=0;$ca<count($codigo_asignatura);$ca++){
             if($codigo_grado == "I3" || $codigo_grado =="4P" || $codigo_grado == "5P")
                 {
-                  if($codigo_area[$ca] == "09" || $codigo_area[$ca] == "08"){
-                    $objPHPExcel->setActiveSheetIndex(1);                  
-                      //$objPHPExcel->getActiveSheet()->SetCellValue($codigo_asignatura_hoja_alerta[$i_h_a], $codigo_asignatura[$ca]);
-                      //$objPHPExcel->getActiveSheet()->SetCellValue($numero_hoja_alerta[$i_h_a],$i_h_a+1);
-                      //$objPHPExcel->getActiveSheet()->SetCellValue($nombre_asignatura_hoja_alerta[$i_h_a], $nombre_asignatura[$ca]); 
-                        $i_h_a++;
+                  // ARMAR VARIABLES PARA LA DESCRIPCION DEL AREA, DIMENSION Y SUBDIMENSION.
+                    $nombres_area_di_subdi = $nombre_area[$ca] ."/". $nombre_area_di[$ca] . "/" . $nombre_area_di_subdi[$ca];
+                  //
+                  if($codigo_area[$ca] == "09"){
+                    $objPHPExcel->setActiveSheetIndex(2);  // HOJA DE ALERTAS
+                      $objPHPExcel->getActiveSheet()->SetCellValue("A".$fila_alerta, $nombres_area_di_subdi);
+                      $objPHPExcel->getActiveSheet()->SetCellValue("B".$fila_alerta, $codigo_asignatura[$ca]);
+                      $objPHPExcel->getActiveSheet()->SetCellValue("C".$fila_alerta, $nombre_asignatura[$ca]);
+                        $fila_alerta++;
                   }else{
-                    // ARMAR VARIABLES PARA LA DESCRIPCION DEL AREA, DIMENSION Y SUBDIMENSION.
-                    $nombre_area_di_subdi = $nombre_area[$ca] ."/". $nombre_area_di[$ca] . "/" . $nombre_area_di_subdi[$ca];
-                    $objPHPExcel->setActiveSheetIndex(3);
-                    $objPHPExcel->getActiveSheet()->SetCellValue("A".$fila, $nombre_area_di_subdi);
-                    $objPHPExcel->getActiveSheet()->SetCellValue("B".$fila, $codigo_asignatura[$ca]);
-                    $objPHPExcel->getActiveSheet()->SetCellValue("C".$fila, $nombre_asignatura[$ca]);
-                      $fila++;
+                    // movilizarme entre hoja
+                        $objPHPExcel->setActiveSheetIndex(0); // HOJA DE INDICADORES INSTRUMENTO 1
+                          $objPHPExcel->getActiveSheet()->SetCellValue("A".$fila, $nombres_area_di_subdi);
+                          //$objPHPExcel->getActiveSheet()->SetCellValue("B".$fila, $codigo_asignatura[$ca]);
+                          $objPHPExcel->getActiveSheet()->SetCellValue("B".$fila, $nombre_asignatura[$ca]);
+                    // movilizarme entre hoja
+                        $objPHPExcel->setActiveSheetIndex(1); // HOJA DE INDICADORES INSTRUMENTO 2
+                          $objPHPExcel->getActiveSheet()->SetCellValue("A".$fila, $nombres_area_di_subdi);
+                          $objPHPExcel->getActiveSheet()->SetCellValue("B".$fila, $codigo_asignatura[$ca]);
+                          $objPHPExcel->getActiveSheet()->SetCellValue("C".$fila, $nombre_asignatura[$ca]);
+                            $fila++;
                   }
                 } // CIERRE IF PARVULARIA E INICIAL (I3, 4, 5 Y 6 AÑOS)
-                // condición para parvularia 6 años.
-                if($codigo_grado == "6P")
-                  {
-                    $objPHPExcel->setActiveSheetIndex(0);
-                    $objPHPExcel->getActiveSheet()->SetCellValue($codigo_asignatura_hoja[$i_h], $codigo_asignatura[$ca]);
-                    $objPHPExcel->getActiveSheet()->SetCellValue($numero_hoja[$i_h],$i_h+1);
-                    $objPHPExcel->getActiveSheet()->SetCellValue($nombre_asignatura_hoja[$i_h], $nombre_asignatura[$ca]); 
-                      $i_h++;
-                  } // CIERRE IF PARVULARIA 6 AÑOS
          } // FOR DEL CODIGO AREA.
       }else{
-        // PARA EDUCACIÓN BASICA Y MEDIA (NOMBRES DE ASIGNTURAS Y CODIGO EN LA HOJA DE CALCULO).
-        for($ca=0;$ca<count($nombre_asignatura);$ca++){
-         // CONDICIÓN PARA BÁSICA DESDE PRIMER GRADO HASTA MEDIA..
-              if($codigo_grado >= "01" || $codigo_grado <= "05")
-                {
-                  $objPHPExcel->setActiveSheetIndex(0);
-                  $objPHPExcel->getActiveSheet()->SetCellValue($codigo_asignatura_hoja[$i_h], $codigo_asignatura[$ca]);
-                  $objPHPExcel->getActiveSheet()->SetCellValue($numero_hoja[$i_h],$i_h+1);
-                  $objPHPExcel->getActiveSheet()->SetCellValue($nombre_asignatura_hoja[$i_h], $nombre_asignatura[$ca]); 
-                    $i_h++;
-                } // CIERRE IF BASICA Y TERCER CICLO.
-
-          } // FOR DEL CODIGO grado.
+        // SI EL CODIGO GRADO ES
+        // DIFERENTES
+        //
       }
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 // CIERRE. DE LOS NOMBRE DE LAS ASIGNATURAS Y SU CODIGO.
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-// regresar a la hoja 0        
-  $objPHPExcel->setActiveSheetIndex(3);      
 // Correlativo, numero de linea.
     $num = 0; $fila_excel = 8; $NumeroEnColumna = 1;
     while($row = $result -> fetch(PDO::FETCH_BOTH))
@@ -252,19 +218,33 @@ if($codigo_grado == "I3" || $codigo_grado =="4P" || $codigo_grado == "5P")
         $codigo_alumno = trim(($row['id_alumno']));
         // Código Matricula
         $codigo_matricula = trim(($row['codigo_matricula']));
-  
+        //
+        // movilizarme entre hoja
+        //
+            $objPHPExcel->setActiveSheetIndex(1); // HOJA DE INDICADORES
+         
         //  IMPRIMIR EL CONTENIDO DE  INFORMACION EN EXCEL. indicadores
             $objPHPExcel->getActiveSheet()->SetCellValue($NombreEstudiante[$num]."7",$NumeroEnColumna);  
             $objPHPExcel->getActiveSheet()->SetCellValue($NombreEstudiante[$num]."8",($apellidos_nombres));  
             $objPHPExcel->getActiveSheet()->SetCellValue($NombreEstudiante[$num]."9",($codigo_alumno));
             $objPHPExcel->getActiveSheet()->SetCellValue($NombreEstudiante[$num]."10",($codigo_matricula));
             //$objPHPExcel->getActiveSheet()->SetCellValue("D".$fila_excel,TRIM($row['codigo_nie']));
+        // VER SI HAY ALERTAS EN EL CODIGO GRADO
+            // movilizarme entre hoja
+                $objPHPExcel->setActiveSheetIndex(2); // HOJA DE ALERTAS
 
+        //  IMPRIMIR EL CONTENIDO DE  INFORMACION EN EXCEL. indicadores
+          $objPHPExcel->getActiveSheet()->SetCellValue($NombreEstudiante[$num]."7",$NumeroEnColumna);  
+          $objPHPExcel->getActiveSheet()->SetCellValue($NombreEstudiante[$num]."8",($apellidos_nombres));  
+          $objPHPExcel->getActiveSheet()->SetCellValue($NombreEstudiante[$num]."9",($codigo_alumno));
+          $objPHPExcel->getActiveSheet()->SetCellValue($NombreEstudiante[$num]."10",($codigo_matricula));
+          //$objPHPExcel->getActiveSheet()->SetCellValue("D".$fila_excel,TRIM($row['codigo_nie']));
             // acumular correlativo y fila.
               $num++; $fila_excel++; $NumeroEnColumna++;
    }    //  FIN DEL WHILE.
    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////        
-   
+    // movilizarme entre hoja
+      $objPHPExcel->setActiveSheetIndex(1); // HOJA DE instrumento 2.
     // Proteger hoja.
 			$objPHPExcel->getActiveSheet()->getProtection()->setPassword('1');
       //$objPHPExcel->getActiveSheet()->getProtection()->setSelectUnlockedCells(true);

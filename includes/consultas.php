@@ -5,7 +5,7 @@ function consultas_docentes($ejecutar,$cerrar,$codigo_bachillerato,$codigo_grado
     if($ejecutar == 1)
     {
 	// CAPTURAR EL NOMBRE DEL RESPONSABLES DE LA SECCIÓN.
-      $query_docente = "SELECT eg.encargado, eg.codigo_ann_lectivo, eg.codigo_grado, eg.codigo_seccion, eg.codigo_bachillerato, eg.codigo_docente, eg.imparte_asignatura, eg.codigo_turno,
+     $query_docente = "SELECT eg.encargado, eg.codigo_ann_lectivo, eg.codigo_grado, eg.codigo_seccion, eg.codigo_bachillerato, eg.codigo_docente, eg.imparte_asignatura, eg.codigo_turno,
                         btrim(p.nombres || cast(' ' as VARCHAR) || p.apellidos) as nombre_docente
 	                        FROM encargado_grado eg
                                 INNER JOIN personal p ON p.id_personal = eg.codigo_docente
