@@ -69,81 +69,28 @@ $contenidoOK = "";
                 $objPHPExcel = $objReader->load($origen.".xlsx");
               }
               if($codigo_grado == "I3"){
-                $objPHPExcel = $objReader->load($origen."Inicial 3.xlsx");
+                $objPHPExcel = $objReader->load($origen.".xlsx");
 
               }
             break;
         case "13":
               if($codigo_grado == "4P"){
                 $objPHPExcel = $objReader->load($origen."INSTRUMENTOS DESARROLLO ESTANDAR.xlsx");
-                 $codigo_asignatura_hoja = array("F4","G4","H4","I4","J4","K4","L4","M4","N4","O4","P4","Q4","R4","S4","T4","U4","V4","W4","X4","Y4","Z4","AA4","AB4","AC4","AD4","AE4"
-																					 ,"AF4","AG4","AH4","AI4","AJ4","AK4","AL4","AM4","AN4","AO4","AP4","AQ4","AR4","AS4","AT4","AU4","AV4","AW4","AX4","AY4","AZ4"
-																					 ,"BA4","BB4","BC4","BD4","BE4","BF4","BG4","BH4");
-                 $numero_hoja = array("F5","G5","H5","I5","J5","K5","L5","M5","N5","O5","P5","Q5","R5","S5","T5","U5","V5","W5","X5","Y5","Z5","AA5","AB5","AC5","AD5","AE5"
-																					 ,"AF5","AG5","AH5","AI5","AJ5","AK5","AL5","AM5","AN5","AO5","AP5","AQ5","AR5","AS5","AT5","AU5","AV5","AW5","AX5","AY5","AZ5"
-																					 ,"BA5","BB5","BC5","BD5","BE5","BF5","BG5","BH5");
-                 $nombre_asignatura_hoja = array("F6","G6","H6","I6","J6","K6","L6","M6","N6","O6","P6","Q6","R6","S6","T6","U6","V6","W6","X6","Y6","Z6","AA6","AB6","AC6","AD6","AE6"
-																					 ,"AF6","AG6","AH6","AI6","AJ6","AK6","AL6","AM6","AN6","AO6","AP6","AQ6","AR6","AS6","AT6","AU6","AV6","AW6","AX6","AY6","AZ6"
-																					 ,"BA6","BB6","BC6","BD6","BE6","BF6","BG6","BH6");
-
+                 $NombreEstudiante = array("D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z",
+                 "AA","AB","AC","AD","AE","AF","AG","AH","AI","AJ","AK","AL","AM","AN","AO","AP","AQ");
                    // PARA LA ALERTA TEMPRANA.
-                      $codigo_asignatura_hoja_alerta = array("F4","G4","H4","I4","J4","K4","L4","M4","N4","O4","P4");
-                      $numero_hoja_alerta = array("F5","G5","H5","I5","J5","K5","L5","M5","N5","O5","P5");
-                      $nombre_asignatura_hoja_alerta = array("F6","G6","H6","I6","J6","K6","L6","M6","N6","O6","P6");
+                break;
                   }
               if($codigo_grado == "5P"){
-                $objPHPExcel = $objReader->load($origen."Parvularia-5.xlsx");
-                $codigo_asignatura_hoja = array("F4","G4","H4","I4","J4","K4","L4","M4","N4","O4","P4","Q4","R4","S4","T4","U4","V4","W4","X4","Y4","Z4","AA4","AB4","AC4","AD4","AE4"
-																					 ,"AF4","AG4","AH4","AI4","AJ4","AK4","AL4","AM4","AN4","AO4","AP4","AQ4","AR4","AS4","AT4","AU4","AV4","AW4","AX4","AY4","AZ4"
-																					 ,"BA4","BB4","BC4","BD4"
-                                           ,"F4","G4","H4","I4","J4","K4","L4","M4","N4","O4","P4","Q4","R4");
-                 $numero_hoja = array("F5","G5","H5","I5","J5","K5","L5","M5","N5","O5","P5","Q5","R5","S5","T5","U5","V5","W5","X5","Y5","Z5","AA5","AB5","AC5","AD5","AE5"
-																					 ,"AF5","AG5","AH5","AI5","AJ5","AK5","AL5","AM5","AN5","AO5","AP5","AQ5","AR5","AS5","AT5","AU5","AV5","AW5","AX5","AY5","AZ5"
-																					 ,"BA5","BB5","BC5","BD5"
-                                           ,"F5","G5","H5","I5","J5","K5","L5","M5","N5","O5","P5","Q5","R5");
-                 $nombre_asignatura_hoja = array("F6","G6","H6","I6","J6","K6","L6","M6","N6","O6","P6","Q6","R6","S6","T6","U6","V6","W6","X6","Y6","Z6","AA6","AB6","AC6","AD6","AE6"
-																					 ,"AF6","AG6","AH6","AI6","AJ6","AK6","AL6","AM6","AN6","AO6","AP6","AQ6","AR6","AS6","AT6","AU6","AV6","AW6","AX6","AY6","AZ6"
-																					 ,"BA6","BB6","BC6","BD6"
-                                           ,"F6","G6","H6","I6","J6","K6","L6","M6","N6","O6","P6","Q6","R6");
-                 // PARA LA ALERTA TEMPRANA.
-                 $codigo_asignatura_hoja_alerta = array("F4","G4","H4","I4","J4","K4","L4","M4","N4","O4","P4","Q4","R4");
-                 $numero_hoja_alerta = array("F5","G5","H5","I5","J5","K5","L5","M5","N5","O5","P5","Q5","R5");
-                 $nombre_asignatura_hoja_alerta = array("F6","G6","H6","I6","J6","K6","L6","M6","N6","O6","P6","Q6","R6");
+                $objPHPExcel = $objReader->load($origen.".xlsx");
+               
               }
               if($codigo_grado == "6P"){
-                $objPHPExcel = $objReader->load($origen."Parvularia-6.xlsx");
-                $codigo_asignatura_hoja = array("F4","G4","H4","I4","J4","K4","L4","M4","N4","O4","P4","Q4","R4","S4","T4","U4","V4","W4","X4","Y4","Z4","AA4","AB4","AC4","AD4","AE4"
-																					 ,"AF4","AG4","AH4","AI4","AJ4","AK4","AL4","AM4","AN4","AO4","AP4","AQ4","AR4","AS4","AT4","AU4","AV4","AW4","AX4","AY4","AZ4"
-																					 ,"BA4");
-                 $numero_hoja = array("F5","G5","H5","I5","J5","K5","L5","M5","N5","O5","P5","Q5","R5","S5","T5","U5","V5","W5","X5","Y5","Z5","AA5","AB5","AC5","AD5","AE5"
-																					 ,"AF5","AG5","AH5","AI5","AJ5","AK5","AL5","AM5","AN5","AO5","AP5","AQ5","AR5","AS5","AT5","AU5","AV5","AW5","AX5","AY5","AZ5"
-																					 ,"BA5");
-                 $nombre_asignatura_hoja = array("F6","G6","H6","I6","J6","K6","L6","M6","N6","O6","P6","Q6","R6","S6","T6","U6","V6","W6","X6","Y6","Z6","AA6","AB6","AC6","AD6","AE6"
-																					 ,"AF6","AG6","AH6","AI6","AJ6","AK6","AL6","AM6","AN6","AO6","AP6","AQ6","AR6","AS6","AT6","AU6","AV6","AW6","AX6","AY6","AZ6"
-																					 ,"BA6");
+                $objPHPExcel = $objReader->load($origen.".xlsx");
+                
               }
             break;
-        case "03":
-            $objPHPExcel = $objReader->load($origen."Educacion Basica.xlsx");
-            break;
-        case "04":
-            $objPHPExcel = $objReader->load($origen."Educacion Basica.xlsx");
-            break;
-        case "05":
-            $objPHPExcel = $objReader->load($origen."Educacion Basica - Tercer Ciclo.xlsx");
-            break;
-        case "06":
-            $objPHPExcel = $objReader->load($origen."Educacion Media.xlsx");
-            break;
-        case "07":
-            $objPHPExcel = $objReader->load($origen."Educacion Media.xlsx");
-            break;
-        case "08":
-            $objPHPExcel = $objReader->load($origen."Educacion Media.xlsx");
-            break;
-        case "09":
-            $objPHPExcel = $objReader->load($origen."Educacion Media.xlsx");
-            break;          
+      
         default:
             $objPHPExcel = $objReader->load($origen."Educacion Media.xlsx");
     }      
@@ -236,7 +183,7 @@ if($codigo_grado == "I3" || $codigo_grado =="4P" || $codigo_grado == "5P")
 // recorrer la array para extraer los datos. DE LOS NOMBRE DE LAS ASIGNATURAS Y SU CODIGO.
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Variables
-    $i_h_a = 0; $i_h = 0; $fila = 10;
+    $i_h_a = 0; $i_h = 0; $fila = 11;
 // si existe la variable  para PARVULARIA.
     if(isset($codigo_asignatura))
     {
@@ -245,9 +192,9 @@ if($codigo_grado == "I3" || $codigo_grado =="4P" || $codigo_grado == "5P")
                 {
                   if($codigo_area[$ca] == "09" || $codigo_area[$ca] == "08"){
                     $objPHPExcel->setActiveSheetIndex(1);                  
-                      $objPHPExcel->getActiveSheet()->SetCellValue($codigo_asignatura_hoja_alerta[$i_h_a], $codigo_asignatura[$ca]);
-                      $objPHPExcel->getActiveSheet()->SetCellValue($numero_hoja_alerta[$i_h_a],$i_h_a+1);
-                      $objPHPExcel->getActiveSheet()->SetCellValue($nombre_asignatura_hoja_alerta[$i_h_a], $nombre_asignatura[$ca]); 
+                      //$objPHPExcel->getActiveSheet()->SetCellValue($codigo_asignatura_hoja_alerta[$i_h_a], $codigo_asignatura[$ca]);
+                      //$objPHPExcel->getActiveSheet()->SetCellValue($numero_hoja_alerta[$i_h_a],$i_h_a+1);
+                      //$objPHPExcel->getActiveSheet()->SetCellValue($nombre_asignatura_hoja_alerta[$i_h_a], $nombre_asignatura[$ca]); 
                         $i_h_a++;
                   }else{
                     // ARMAR VARIABLES PARA LA DESCRIPCION DEL AREA, DIMENSION Y SUBDIMENSION.
@@ -281,29 +228,19 @@ if($codigo_grado == "I3" || $codigo_grado =="4P" || $codigo_grado == "5P")
                   $objPHPExcel->getActiveSheet()->SetCellValue($nombre_asignatura_hoja[$i_h], $nombre_asignatura[$ca]); 
                     $i_h++;
                 } // CIERRE IF BASICA Y TERCER CICLO.
-                /*if($codigo_grado >= "06" || $codigo_grado <= "09")
-                {
-                  if($codigo_area[])
-                  $objPHPExcel->setActiveSheetIndex(0);
-                  $objPHPExcel->getActiveSheet()->SetCellValue($codigo_asignatura_hoja[$i_h], $codigo_asignatura[$ca]);
-                  $objPHPExcel->getActiveSheet()->SetCellValue($numero_hoja[$i_h],$i_h+1);
-                  $objPHPExcel->getActiveSheet()->SetCellValue($nombre_asignatura_hoja[$i_h], $nombre_asignatura[$ca]); 
-                    $i_h++;
-                } // CIERRE IF BASICA Y TERCER CICLO.*/
+
           } // FOR DEL CODIGO grado.
       }
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 // CIERRE. DE LOS NOMBRE DE LAS ASIGNATURAS Y SU CODIGO.
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
-/*
+
 // regresar a la hoja 0        
-  $objPHPExcel->setActiveSheetIndex(0);      
+  $objPHPExcel->setActiveSheetIndex(3);      
 // Correlativo, numero de linea.
-    $num = 0; $fila_excel = 6;
+    $num = 0; $fila_excel = 8; $NumeroEnColumna = 1;
     while($row = $result -> fetch(PDO::FETCH_BOTH))
     {
-    // acumular correlativo y fila.
-        $num++; $fila_excel++;
       ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         // Apellidos (paterno y materno) - nombres.
         $apellidos_nombres = trim(cambiar_de_del_2($row['apellido_alumno']));
@@ -317,13 +254,17 @@ if($codigo_grado == "I3" || $codigo_grado =="4P" || $codigo_grado == "5P")
         $codigo_matricula = trim(($row['codigo_matricula']));
   
         //  IMPRIMIR EL CONTENIDO DE  INFORMACION EN EXCEL. indicadores
-            $objPHPExcel->getActiveSheet()->SetCellValue("B".$fila_excel,($codigo_alumno));
-            $objPHPExcel->getActiveSheet()->SetCellValue("C".$fila_excel,($codigo_matricula));
-            $objPHPExcel->getActiveSheet()->SetCellValue("D".$fila_excel,TRIM($row['codigo_nie']));
-            $objPHPExcel->getActiveSheet()->SetCellValue("E".$fila_excel,($apellidos_nombres));  
+            $objPHPExcel->getActiveSheet()->SetCellValue($NombreEstudiante[$num]."7",$NumeroEnColumna);  
+            $objPHPExcel->getActiveSheet()->SetCellValue($NombreEstudiante[$num]."8",($apellidos_nombres));  
+            $objPHPExcel->getActiveSheet()->SetCellValue($NombreEstudiante[$num]."9",($codigo_alumno));
+            $objPHPExcel->getActiveSheet()->SetCellValue($NombreEstudiante[$num]."10",($codigo_matricula));
+            //$objPHPExcel->getActiveSheet()->SetCellValue("D".$fila_excel,TRIM($row['codigo_nie']));
+
+            // acumular correlativo y fila.
+              $num++; $fila_excel++; $NumeroEnColumna++;
    }    //  FIN DEL WHILE.
    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////        
-   */
+   
     // Proteger hoja.
 			$objPHPExcel->getActiveSheet()->getProtection()->setPassword('1');
       //$objPHPExcel->getActiveSheet()->getProtection()->setSelectUnlockedCells(true);
