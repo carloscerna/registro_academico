@@ -30,10 +30,10 @@ if($_SESSION['codigo_perfil'] == '04' or $_SESSION['codigo_perfil'] == '05')
 			$query_org ="SELECT org.codigo_bachillerato, bach.nombre as nombre_modalidad
 							FROM organizar_planta_docente_ciclos org
 							INNER JOIN bachillerato_ciclo bach ON bach.codigo = org.codigo_bachillerato
-							WHERE org.codigo_bachillerato >= '01' and org.codigo_bachillerato <'14' and org.codigo_ann_lectivo = '$codigo_annlectivo' and org.codigo_docente = $codigo_docente";				
+							WHERE org.codigo_bachillerato >= '01' and org.codigo_bachillerato <='14' and org.codigo_ann_lectivo = '$codigo_annlectivo' and org.codigo_docente = $codigo_docente";				
 			}else{
 			$query_org = "SELECT * FROM organizar_planta_docente_ciclos org
-							WHERE org.codigo_bachillerato >= '01' and org.codigo_bachillerato <'14' and org.codigo_ann_lectivo = '$codigo_annlectivo' and org.codigo_docente = $codigo";
+							WHERE org.codigo_bachillerato >= '01' and org.codigo_bachillerato <='14' and org.codigo_ann_lectivo = '$codigo_annlectivo' and org.codigo_docente = $codigo";
 			}
 			$consulta_org = $dblink -> query($query_org);
 		}

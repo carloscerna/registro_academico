@@ -76,7 +76,7 @@ $contenidoOK = "";
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Armamos el query.
   // CONSULTA ASIGNACION DE POR MODALIDAD Y GRADO.
-  if($codigo_grado =="I3" || $codigo_grado =="4P" || $codigo_grado =="5P" || $codigo_grado =="6P"){
+  if($codigo_grado =="I3" || $codigo_grado =="4P" || $codigo_grado =="5P" || $codigo_grado =="6P"  || $codigo_grado == "01"){
      $query_asig = "SELECT aaa.codigo_asignacion, aaa.codigo_bach_o_ciclo, aaa.codigo_asignatura, aaa.codigo_ann_lectivo, aaa.codigo_sirai, aaa.codigo_grado, aaa.id_asignacion, aaa.orden,
               ann.nombre as nombre_ann_lectivo, bach.nombre as nombre_modalidad, gr.nombre as nombre_grado, asig.codigo as codigo_asignatura, asig.nombre as nombre_asignatura,
               asig.codigo_area as codigo_area_asignatura, asig.codigo_area_dimension, cat_area_di.descripcion as descripcion_area_dimension,
@@ -102,7 +102,7 @@ $contenidoOK = "";
   $nombre_area = array(); $nombre_area_di = array(); $nombre_area_di_subdi = array();
 //  CAPTURA DE DATOS A ARRAY PARA PARVULARIA, BASICA Y MEDIA.
     // PRIMERA INFANCIA - INICIAL 3, 4, 5, 6 Y 7 AÑOS.
-      if($codigo_grado =="I3" || $codigo_grado =="4P" || $codigo_grado =="5P" || $codigo_grado =="6P")
+      if($codigo_grado =="I3" || $codigo_grado =="4P" || $codigo_grado =="5P" || $codigo_grado =="6P"  || $codigo_grado == "01")
       {
         while($row = $result_consulta -> fetch(PDO::FETCH_BOTH))
           {
@@ -136,7 +136,7 @@ $contenidoOK = "";
 //
 //  ROTULACION PARA I3, 4,5,6 7 AÑOS.
 //
-  if($codigo_grado == "I3" || $codigo_grado =="4P" || $codigo_grado =="5P" || $codigo_grado =="6P")
+  if($codigo_grado == "I3" || $codigo_grado =="4P" || $codigo_grado =="5P" || $codigo_grado =="6P"  || $codigo_grado == "01")
   {      
       $objPHPExcel->getActiveSheet()->SetCellValue('D2', $_SESSION["institucion"]); // NOMBRE DE LA INSTITUCIÒN
       $objPHPExcel->getActiveSheet()->SetCellValue('D3', $print_nombre_docente); // NOMBRE DEL DOCENTE RESPONSABLE DE LA SECCION
@@ -169,7 +169,7 @@ $contenidoOK = "";
     if(isset($codigo_asignatura))
     {
           for($ca=0;$ca<count($codigo_asignatura);$ca++){
-            if($codigo_grado == "I3" || $codigo_grado =="4P" || $codigo_grado == "5P" || $codigo_grado == "6P")
+            if($codigo_grado == "I3" || $codigo_grado =="4P" || $codigo_grado == "5P" || $codigo_grado == "6P"  || $codigo_grado == "01")
                 {
                   // ARMAR VARIABLES PARA LA DESCRIPCION DEL AREA, DIMENSION Y SUBDIMENSION.
                     $nombres_area_di_subdi = $nombre_area[$ca] ."/". $nombre_area_di[$ca] . "/" . $nombre_area_di_subdi[$ca];
@@ -258,8 +258,14 @@ $contenidoOK = "";
 	// Tipo de Carpeta a Grabar en cuadro de Calificaciones.
 		$codigo_destino = 2;
 		CrearDirectorios($path_root,$nombre_ann_lectivo,$codigo_modalidad,$codigo_destino,"");
-	// Nombre del archivo.
-		$nombre_archivo = replace_3("Parvularia Estándar de Desarrollo  " . "-". $nombre_grado ."-".$nombre_seccion.".xlsx");
+	// Nombre del archivo. si es 4,5, 6 o 7 años
+    if($codigo_grado == "I3" || $codigo_grado =="4P" || $codigo_grado == "5P" || $codigo_grado == "6P")
+    {
+      $nombre_archivo = replace_3("Parvularia Estándar de Desarrollo  " . "-". $nombre_grado ."-".$nombre_seccion.".xlsx");
+    }else{
+      $nombre_archivo = replace_3("Educación Básica Estándar de Desarrollo  " . "-". $nombre_grado ."-".$nombre_seccion.".xlsx");
+    }
+		
 // En caso de error.
 	try {
     $mensajeError = "Archivo Creado... " . $nombre_archivo;
