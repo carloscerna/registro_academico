@@ -79,7 +79,7 @@
        $codigo_seccion = substr($codigo_all,4,2);
        $codigo_annlectivo = substr($codigo_all,6,2);
        // Evaluador nota para basica y parvularia
-       if($codigo_modalidad >= '03'){
+       if($codigo_modalidad >= '03' and $codigo_modalidad <="12"){
           if($periodo == "Periodo 1"){$nota_p_p = "nota_p_p_1";}
           if($periodo == "Periodo 2"){$nota_p_p = "nota_p_p_2";}
           if($periodo == "Periodo 3"){$nota_p_p = "nota_p_p_3";}
@@ -116,10 +116,17 @@
                     {
                      if($codigo_bachillerato >= '03')
                      {
-                         $nombre_asignatura_t[] = trim($row['nombre_asignatura']);
+                      $nombre_asignatura =trim($row['nombre_asignatura']);
+                      $nombre_asignatura = str_replace(['.', '\\', '/', '*','"',':',","], ' ', $nombre_asignatura);
+                      $nombre_asignatura_t[] = $nombre_asignatura;
+//                         $nombre_asignatura_t[] = trim($row['nombre_asignatura']);
                          $codigo_asignatura_t[] = trim($row['codigo_asignatura']);
                      }else{
-                         $nombre_asignatura_t[] = (trim($row['nombre_asignatura']));
+                        $nombre_asignatura =trim($row['nombre_asignatura']);
+                        $nombre_asignatura = str_replace(['.', '\\', '/', '*','"',':',","], ' ', $nombre_asignatura);
+                        $nombre_asignatura_t[] = $nombre_asignatura;
+                        // $nombre_asignatura_t[] = (trim($row['nombre_asignatura']));
+
                          $codigo_asignatura_t[] = $row['codigo_asignatura']; 
                      }
                     }
@@ -174,17 +181,17 @@ if($todasLasAsignaturas == "yes"){
 for ($i=0;$i<count($codigo_asignatura_t);$i++)    
   {
     // RECORRE LA MATRIZ CON LOS CODIGOS Y NOMBRES DE LAS ASINGTURAS.
-    $mystring = $nombre_asignatura_t[$i];
+   $mystring = $nombre_asignatura_t[$i];
     $mystring = str_replace(['\\', '/', '*','"',':',',','(',')'], ' ', $mystring);
     $cantidad_caracteres = strlen($mystring);
-    if($cantidad_caracteres > 120){$cantidad_caracteres = 120;}
+    if($cantidad_caracteres > 100){$cantidad_caracteres = 100;}
     $findme   = '.';
     $pos = strpos($mystring, $findme);
 
 
     // Nótese el uso de ===. Puesto que == simple no funcionará como se espera
     // porque la posición de 'a' está en el 1° (primer) caracter.
-    if ($pos === false) {
+     if ($pos === false) {
       //  echo "La cadena '$findme' no fue encontrada en la cadena '$mystring'";
         $codigo_asignatura = $codigo_asignatura_t[$i];
         $nombre_asignatura = trim(substr($mystring,0,$cantidad_caracteres));
@@ -195,10 +202,9 @@ for ($i=0;$i<count($codigo_asignatura_t);$i++)
         $nombre_asignatura = trim(substr($mystring,$pos+1,$cantidad_caracteres));
       }else{
         $nombre_asignatura = trim(substr($mystring,0,$cantidad_caracteres));
-      }
+      } 
 
       $codigo_asignatura = $codigo_asignatura_t[$i];
-      
     }
     /*
                if($codigo_bachillerato >= '03'){
@@ -276,7 +282,7 @@ for ($i=0;$i<count($codigo_asignatura_t);$i++)
                               break;
                           case "03":  // Indicador
                             if(empty($nota_p_p_)){
-                              $objPHPExcel->getActiveSheet()->SetCellValue("B".$fila_excel, "T"); 
+                              $objPHPExcel->getActiveSheet()->SetCellValue("B".$fila_excel, "NE"); 
                             }else{
                               $objPHPExcel->getActiveSheet()->SetCellValue("B".$fila_excel, $nota_p_p_);                       
                             }

@@ -2,27 +2,24 @@
 header ('Content-type: text/html; charset=utf-8');
 // ruta de los archivos con su carpeta
     $path_root=trim($_SERVER['DOCUMENT_ROOT']);
-// Incluimos el archivo de funciones y conexión a la base de datos
+// Incluimos el archivo de funciones y conexiï¿½n a la base de datos
 include($path_root."/registro_web/includes/mainFunctions_conexion.php");
     set_time_limit(0);
     ini_set("memory_limit","2000M");
 // variables. del post.
-		//$origen = $path_root."/registro_web/formatos_hoja_de_calculo/";
-		//$nombre_de_hoja_de_calculo = "Parvularia-4 años seccion A.xlsx";
-    //$trimestre = "Trimestre 1";
-		// variables. del post.
-  $ruta = '../files/' . trim($_REQUEST["nombre_archivo_"]);
-  $trimestre = trim($_REQUEST["periodo_"]);
-	$grado = trim($_REQUEST["grado"]);
-// variable de la conexión dbf.
+	$codigo_institucion = $_SESSION['codigo_institucion'];
+	$ruta = '../files/' . $codigo_institucion . "/" . trim($_REQUEST["nombre_archivo_"]);
+  	$trimestre = trim($_REQUEST["periodo_"]);
+	$codigo_grado = trim($_REQUEST["grado"]);
+// variable de la conexiï¿½n dbf.
     $db_link = $dblink;
 // Inicializando el array
-$datos=array(); $fila_array = 0;
+	$datos=array(); $fila_array = 0;
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////  
 // iniciar PhpSpreadsheet
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // call the autoload
-    require $path_root."/registro_web/vendor/autoload.php";
+    require $path_root."/registro_academico/vendor/autoload.php";
     use PhpOffice\PhpSpreadsheet\Shared\Date;
 // load phpspreadsheet class using namespaces.
     use PhpOffice\PhpSpreadsheet\Spreadsheet;
@@ -33,122 +30,84 @@ $datos=array(); $fila_array = 0;
 // Time zone.
     //echo date('H:i:s') . " Set Time Zone"."<br />";
     date_default_timezone_set('America/El_Salvador');
-
 // set codings.
     $objPHPExcel->_defaultEncoding = 'ISO-8859-1';
-
 // Set default font
     //echo date('H:i:s') . " Set default font"."<br />";
     $objPHPExcel->getDefaultStyle()->getFont()->setName('Arial');
     $objPHPExcel->getDefaultStyle()->getFont()->setSize(10);
-
 // Leemos un archivo Excel 2007
-		$objReader = \PhpOffice\PhpSpreadsheet\IOFactory::createReader("Xlsx");
-		$origen = $ruta;
-// Seleccionar el archivo con el se trabajará
-		$objPHPExcel = $objReader->load($origen);
-
-// Número de hoja.
-   //$numero_de_hoja = 0;
+	$objReader = \PhpOffice\PhpSpreadsheet\IOFactory::createReader("Xlsx");
+	$origen = $ruta;
+// Seleccionar el archivo con el se trabajarï¿½
+	$objPHPExcel = $objReader->load($origen);
+// Nï¿½mero de hoja.
+   $numero_de_hoja = 1;
    $total_de_hojas = $objPHPExcel->getSheetCount();
-
-
-    for($numero_de_hoja=0;$numero_de_hoja<$total_de_hojas;$numero_de_hoja++)
-    {	        
+// Movilizarme la hoja del instrumento 2 PARA 4, 5, 6 Y 7 AÃ‘OS.
        $objPHPExcel->setActiveSheetIndex($numero_de_hoja);
-
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    // consulta a la tabla para optener la nomina.
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-//	codigo de la asignatura. modalidad, docente
-   $fila = 7; $fila_ = 7; $fila_nota = 7;
+//	VARIABLES PARA ELRECORRIDO CON EL WHILE.
+   $columna_codigo_alumno = 0; $fila_indicador_codigo_asignatura = 11;
 //	Variable para las actividades, nota promedio Y observaciones.
    $indicador_1 = ""; $indicador_2 = ""; $indicador_3 = ""; $indicador_final = "";
 	    //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	    //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-				// EVALUAR LA VARIABLE TRIMESTRE PARA EL INDICADOR CORRECTO.
-				switch ($grado)
-          {
-						case "I3":
-								 $letra_indicador = array("F4","G4","H4","I4","J4","K4","L4","M4","N4","O4","P4","Q4","R4","S4","T4","U4","V4","W4","X4","Y4","Z4","AA4","AB4","AC4","AD4","AE4"
-																					 ,"AF4","AG4","AH4","AI4","AJ4","AK4","AL4","AM4","AN4","AO4","AP4","AQ4","AR4","AS4","AT4","AU4","AV4","AW4","AX4","AY4","AZ4"
-																					 ,"BA4","BB4","BC4","BD4","BE4","BF4","BG4","BH4","BI4","BJ4","BK4","BL4","BM4","BN4","BO4","BP4");
-									$nota_indicador = array("F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z","AA","AB","AC","AD","AE"
-																					,"AF","AG","AH","AI","AJ","AK","AL","AM","AN","AO","AP","AQ","AR","AS","AT","AU","AV","AW","AX","AY","AZ"
-																					,"BA","BB","BC","BD","BE","BF","BG","BH","BI","BJ","BK","BL","BM","BN","BO","BP"); // para los aspectos de la conducta
-						break;
-						case "4P":
-								 $letra_indicador = array("F4","G4","H4","I4","J4","K4","L4","M4","N4","O4","P4","Q4","R4","S4","T4","U4","V4","W4","X4","Y4","Z4","AA4","AB4","AC4","AD4","AE4"
-																					 ,"AF4","AG4","AH4","AI4","AJ4","AK4","AL4","AM4","AN4","AO4","AP4","AQ4","AR4","AS4","AT4","AU4","AV4","AW4","AX4","AY4","AZ4"
-																					 ,"BA4","BB4","BC4","BD4","BE4","BF4","BG4","BH4");
-									$nota_indicador = array("F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z","AA","AB","AC","AD","AE"
-																					,"AF","AG","AH","AI","AJ","AK","AL","AM","AN","AO","AP","AQ","AR","AS","AT","AU","AV","AW","AX","AY","AZ"
-																					,"BA","BB","BC","BD","BE","BF","BG","BH"); // para los aspectos de la conducta
-						break;
-						case "5P":
-								 $letra_indicador = array("F4","G4","H4","I4","J4","K4","L4","M4","N4","O4","P4","Q4","R4","S4","T4","U4","V4","W4","X4","Y4","Z4","AA4","AB4","AC4","AD4","AE4"
-																					 ,"AF4","AG4","AH4","AI4","AJ4","AK4","AL4","AM4","AN4","AO4","AP4","AQ4","AR4","AS4","AT4","AU4","AV4","AW4","AX4","AY4","AZ4"
-																					 ,"BA4","BB4","BC4","BD4");
-									$nota_indicador = array("F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z","AA","AB","AC","AD","AE"
-																					,"AF","AG","AH","AI","AJ","AK","AL","AM","AN","AO","AP","AQ","AR","AS","AT","AU","AV","AW","AX","AY","AZ"
-																					,"BA","BB","BC","BD"); // para los aspectos de la conducta						
-						break;
-						case "6P":
-								 $letra_indicador = array("F4","G4","H4","I4","J4","K4","L4","M4","N4","O4","P4","Q4","R4","S4","T4","U4","V4","W4","X4","Y4","Z4","AA4","AB4","AC4","AD4","AE4"
-																					 ,"AF4","AG4","AH4","AI4","AJ4","AK4","AL4","AM4","AN4","AO4","AP4","AQ4","AR4","AS4","AT4","AU4","AV4","AW4","AX4","AY4","AZ4"
-																					 ,"BA4");
-									$nota_indicador = array("F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z","AA","AB","AC","AD","AE"
-																					,"AF","AG","AH","AI","AJ","AK","AL","AM","AN","AO","AP","AQ","AR","AS","AT","AU","AV","AW","AX","AY","AZ"
-																					,"BA"); // para los aspectos de la conducta												
-						break;
-							default:
-							echo"";
-					}
+		// EVALUAR LA VARIABLE TRIMESTRE PARA EL INDICADOR CORRECTO.
+				if($codigo_grado == "I3" || $codigo_grado == "4P" || $codigo_grado =="5P" || $codigo_grado =="6P" || $codigo_grado == "01")
+				{
+				  	$NombreEstudiante = array("D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z",
+				  	"AA","AB","AC","AD","AE","AF","AG","AH","AI","AJ","AK","AL","AM","AN","AO","AP","AQ");
+				}
+				//rint_r($NombreEstudiante);
 				// EVALUAR LA VARIABLE TRIMESTRE PARA EL INDICADOR CORRECTO.
 				switch ($trimestre)
-          {
-           case "Trimestre 1":
-						$nota_p_p = 'indicador_p_p_1';
-           break;
-           case "Trimestre 2":
-						$nota_p_p = 'indicador_p_p_2';
-           break;
-           case "Trimestre 3":
-						$nota_p_p = 'indicador_p_p_3';     
-           default:
-						echo "";
-          }
-		   
-			 /// LEER DATOS DEL INDICADOR Y DE LA HOJA DE EXCEL.
-			 for ($ii = 0; $ii < count($letra_indicador); $ii++) {
-				// CODIGO DEL INDICADOR.
-					$codigo_asignatura = $objPHPExcel->getActiveSheet()->getCell($letra_indicador[$ii])->getValue();
+					{
+						case "Trimestre 1":
+							$nota_p_p = 'indicador_p_p_1';
+							break;
+						case "Trimestre 2":
+							$nota_p_p = 'indicador_p_p_2';
+							break;
+						case "Trimestre 3":
+							$nota_p_p = 'indicador_p_p_3';  
+							break;   
+						default:
+							echo "";
+					}
 			 //	BUCLE QUE RECORRE TODA LA CUADRICULA DE LA HOJA DE CALCULO.
-			  while($objPHPExcel->getActiveSheet()->getCell("E".$fila_nota)->getValue() != "")
-			   {
-					// ASIGNAR VALORES A VARIABLES.
-				  $codigo_interno = $objPHPExcel->getActiveSheet()->getCell("B".$fila_nota)->getValue();
-				  $codigo_matricula = $objPHPExcel->getActiveSheet()->getCell("C".$fila_nota)->getValue();
-				  $nombre_del_alumno = $objPHPExcel->getActiveSheet()->getCell("E".$fila_nota)->getValue();
-					$nota_ = strtoupper($objPHPExcel->getActiveSheet()->getCell($nota_indicador[$ii].$fila_nota)->getValue());
-					// SQL QUERY
-          if($nota_ <> ""){
-							$query_indicador = "UPDATE nota SET $nota_p_p = '$nota_' WHERE codigo_alumno = $codigo_interno and codigo_matricula = $codigo_matricula and codigo_asignatura = '$codigo_asignatura'";
-							$result = $db_link -> query($query_indicador);
-          }
-					// IMPRIMIR VALORES
-					  // print "<br" . $codigo_interno . " " . $codigo_matricula . " " . $nombre_del_alumno . " nota: " . $nota_  ." $codigo_asignatura<br>";
-					// ACUMULAR EL VALOR DE FILA _NOTA
-						$fila_nota++;
-				 }
-					// REINICIAR EL VALOR DE FILA _NOTA
-						$fila_nota=7;
-			 }	//  CIERRE DEL FOR.
-}	// condicion para determinar CUANTAS HOJAS RECORRE.
-	//$total_indicadores = count($letra_indicador);
-	//print "<br>";
-//	print " --> " . $total_indicadores;
+				while($objPHPExcel->getActiveSheet()->getCell($NombreEstudiante[$columna_codigo_alumno]."9")->getValue() != "")
+				{
+					// valor del CÃ³digo Alumno y CÃ³digo Matricula.
+						$nombre_del_alumno = $objPHPExcel->getActiveSheet()->getCell($NombreEstudiante[$columna_codigo_alumno]."8")->getValue();
+						$codigo_alumno = $objPHPExcel->getActiveSheet()->getCell($NombreEstudiante[$columna_codigo_alumno]."9")->getValue();
+						$codigo_matricula = $objPHPExcel->getActiveSheet()->getCell($NombreEstudiante[$columna_codigo_alumno]."10")->getValue();
+						//
+						//	RECORRER LA FILA DE LOS INDICADORES.
+						//
+						while($objPHPExcel->getActiveSheet()->getCell("B".$fila_indicador_codigo_asignatura)->getValue() != "")
+							{
+								// CAPTURAR CODIGO INDICADOR.
+								$codigo_indicador = $objPHPExcel->getActiveSheet()->getCell("B".$fila_indicador_codigo_asignatura)->getValue();	
+								// CAPTURAR VALOR DEL INDICADOR
+								$valor_indicador = trim(strtoupper($objPHPExcel->getActiveSheet()->getCell($NombreEstudiante[$columna_codigo_alumno].$fila_indicador_codigo_asignatura)->getValue()));
+								// SQL QUERY
+								if($valor_indicador <> ""){
+									print "<br>";
+									print $query_indicador = "UPDATE nota SET $nota_p_p = '$valor_indicador' WHERE codigo_alumno = $codigo_alumno and codigo_matricula = $codigo_matricula and codigo_asignatura = '$codigo_indicador'";
+									$result = $db_link -> query($query_indicador);
+								}
+									// IMPRIMIR VALORES
+									//print "<br>" . $codigo_alumno . " " . $codigo_matricula . " " . $nombre_del_alumno . " Indicador: " . $valor_indicador  ." $codigo_indicador<br>";
+								// INCREMENTAR VALOR DE LA FILA.
+									$fila_indicador_codigo_asignatura++;
+							}
+					// AUMENTAR EL VALOR DE LA COLUMNA PARA VER EL OTRO REGISTRO.
+						$columna_codigo_alumno++;
+					// REINIICAR EL VALOR DE DE LA FILA
+						$fila_indicador_codigo_asignatura = 11;
+				}		   
+// FINAL DEL PROCESO
 	$datos[$fila_array]["registro"] = 'Si_registro';
 	$fila_array++;
 // Enviando la matriz con Json.

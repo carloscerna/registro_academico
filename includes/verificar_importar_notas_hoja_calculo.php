@@ -42,7 +42,7 @@ $datos=array(); $fila_array = 0;
     $origen = $ruta;
     $objPHPExcel = $objReader->load($origen);
 // Número de hoja.
-   $numero_de_hoja = 0;
+   $numero_de_hoja = 1;
    $objPHPExcel->setActiveSheetIndex($numero_de_hoja);
    $celda_a1 = $objPHPExcel->getActiveSheet()->getCell("A1")->getValue();
    /*
@@ -86,7 +86,7 @@ $datos=array(); $fila_array = 0;
     // fin del proceso.    
    // sON LOS ARCHIVOS QUE TIENE VARIAS ASIGNATURAS Y CALCULA EL PROMEDIO. INICIAL 3
        if($valor_check === "Promedios" and $modalidad === "01" and $grado === "I3"){
-          if($celda_a1 != "Inicial 3"){
+          if($celda_a1 != "GUÍA DE OBSERVACIÓN. INSTRUMENTO 2"){
             $datos[$fila_array]["registro"] = 'No_registro';
             $fila_array++;
             $datos[$fila_array]["registro"] = $grado . " " .$celda_a1;
@@ -98,7 +98,7 @@ $datos=array(); $fila_array = 0;
     // fin del proceso.
     // sON LOS ARCHIVOS QUE TIENE VARIAS ASIGNATURAS Y CALCULA EL PROMEDIO. 4 AÑOS
        if($valor_check == "Promedios" and $modalidad == "01" and $grado == "4P"){
-          if($celda_a1 != "Parvularia 4"){
+          if($celda_a1 != "GUÍA DE OBSERVACIÓN. INSTRUMENTO 2"){
             $datos[$fila_array]["registro"] = 'No_registro';
             $fila_array++;
             $datos[$fila_array]["registro"] = $grado . " " .$celda_a1;
@@ -110,7 +110,7 @@ $datos=array(); $fila_array = 0;
     // fin del proceso.
 // sON LOS ARCHIVOS QUE TIENE VARIAS ASIGNATURAS Y CALCULA EL PROMEDIO. 4 AÑOS
        if($valor_check == "Promedios" and $modalidad == "01" and $grado == "5P"){
-          if($celda_a1 != "Parvularia 5"){
+          if($celda_a1 != "GUÍA DE OBSERVACIÓN. INSTRUMENTO 2"){
             $datos[$fila_array]["registro"] = 'No_registro';
             $fila_array++;
             $datos[$fila_array]["registro"] = $grado . " " .$celda_a1;
@@ -122,7 +122,7 @@ $datos=array(); $fila_array = 0;
     // fin del proceso.
     // sON LOS ARCHIVOS QUE TIENE VARIAS ASIGNATURAS Y CALCULA EL PROMEDIO. 4 AÑOS
        if($valor_check == "Promedios" and $modalidad == "01" and $grado == "6P"){
-          if($celda_a1 != "Parvularia 6"){
+          if($celda_a1 != "GUÍA DE OBSERVACIÓN. INSTRUMENTO 2"){
             $datos[$fila_array]["registro"] = 'No_registro';
             $fila_array++;
             $datos[$fila_array]["registro"] = $grado . " " .$celda_a1;

@@ -60,7 +60,6 @@ $contenidoOK = "";
     /////
     // SELECCIONAR EL ARCHIVO DEPENDE DE LA MODALIDAD.
     ////
-    
   if($codigo_grado == "I3" || $codigo_grado =="4P" || $codigo_grado =="5P" || $codigo_grado =="6P" || $codigo_grado == "01")
   {
     $objPHPExcel = $objReader->load($origen."INSTRUMENTOS DESARROLLO ESTANDAR.xlsx");

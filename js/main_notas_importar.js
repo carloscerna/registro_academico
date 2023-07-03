@@ -61,7 +61,7 @@ $('body').on('click','#listaArchivosOK a',function (e)
 			url_archivo = "includes/importar_notas_hoja_calculo.php";
 		}
 		if(valor_check == "Promedios" && modalidad == "01"){
-			url_archivo = "includes/importar_notas_hoja_calculo_parvularia.php";
+			url_archivo = "includes/importar_hoja_calculo_parvularia.php";
 		}
 		if(valor_check == "Promedios" && modalidad == "02"){
 			url_archivo = "includes/importar_notas_hoja_calculo_basica_tercer_ciclo.php";
