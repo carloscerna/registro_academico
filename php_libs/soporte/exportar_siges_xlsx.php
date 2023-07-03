@@ -105,10 +105,31 @@
  //   $codigo_asignatura = substr($codigo_asignatura[$i],0,3);
  
  if($todasLasAsignaturas == "yes"){
-       $query_todas = "SELECT DISTINCT ON (aaa.codigo_asignatura) aaa.codigo_asignatura, aaa.codigo_grado, aaa.codigo_sirai, asi.nombre as nombre_asignatura from a_a_a_bach_o_ciclo aaa
+   // agregar CONSULTA PARA EDUCACIÒN PARVULARIA Y BASICA DE ESTANDAR DESARROLLO.
+   if($codigo_grado == "I3" || $codigo_grado == "4P" || $codigo_grado == "5P" || $codigo_grado == "6P" || $codigo_grado == "01")
+    {
+     $query_todas  = "SELECT aaa.codigo_asignacion, aaa.codigo_bach_o_ciclo, aaa.codigo_asignatura, aaa.codigo_ann_lectivo, aaa.codigo_sirai, aaa.codigo_grado, aaa.id_asignacion, aaa.orden,
+     ann.nombre as nombre_ann_lectivo, bach.nombre as nombre_modalidad, gr.nombre as nombre_grado, asig.codigo as codigo_asignatura, asig.nombre as nombre_asignatura,
+     asig.codigo_area as codigo_area_asignatura, asig.codigo_area_dimension, cat_area_di.descripcion as descripcion_area_dimension,
+     cat_area_subdi.codigo, cat_area_subdi.descripcion as descripcion_area_subdimension,
+     cat_area.codigo, cat_area.descripcion as descripcion_area
+       FROM a_a_a_bach_o_ciclo aaa
+       INNER JOIN ann_lectivo ann ON ann.codigo = aaa.codigo_ann_lectivo
+       INNER JOIN bachillerato_ciclo bach ON bach.codigo = aaa.codigo_bach_o_ciclo
+       INNER JOIN grado_ano gr ON gr.codigo = aaa.codigo_grado
+       INNER JOIN asignatura asig ON asig.codigo = aaa.codigo_asignatura
+       INNER JOIN catalogo_area_dimension cat_area_di ON cat_area_di.codigo = asig.codigo_area_dimension
+       INNER JOIN catalogo_area_subdimension cat_area_subdi ON cat_area_subdi.codigo =  asig.codigo_area_subdimension
+       INNER JOIN catalogo_area_asignatura cat_area ON cat_area.codigo = asig.codigo_area
+         WHERE aaa.codigo_bach_o_ciclo = '$codigo_modalidad' and aaa.codigo_ann_lectivo = '$codigo_annlectivo' and aaa.codigo_grado = '$codigo_grado'
+         ORDER BY asig.ordenar";
+    }else{
+       $query_todas = "SELECT DISTINCT ON (aaa.codigo_asignatura) aaa.codigo_asignatura, aaa.codigo_grado, aaa.codigo_sirai, asi.nombre as nombre_asignatura
+        from a_a_a_bach_o_ciclo aaa
            INNER JOIN asignatura asi ON asi.codigo = aaa.codigo_asignatura
             WHERE aaa.codigo_bach_o_ciclo = '$codigo_modalidad' and aaa.codigo_ann_lectivo = '$codigo_annlectivo' and aaa.codigo_grado = '$codigo_grado'
             ORDER BY aaa.codigo_asignatura";
+            }
 
     // ejecutar la consulta.
             $result_asignatura = $db_link -> query($query_todas);
@@ -119,12 +140,14 @@
                       $nombre_asignatura =trim($row['nombre_asignatura']);
                       $nombre_asignatura = str_replace(['.', '\\', '/', '*','"',':',","], ' ', $nombre_asignatura);
                       $nombre_asignatura_t[] = $nombre_asignatura;
+                      $nombre_area_dimension_t[] = trim($row['descripcion_area_dimension']);
 //                         $nombre_asignatura_t[] = trim($row['nombre_asignatura']);
                          $codigo_asignatura_t[] = trim($row['codigo_asignatura']);
                      }else{
                         $nombre_asignatura =trim($row['nombre_asignatura']);
                         $nombre_asignatura = str_replace(['.', '\\', '/', '*','"',':',","], ' ', $nombre_asignatura);
                         $nombre_asignatura_t[] = $nombre_asignatura;
+                        $nombre_area_dimension_t[] = trim($row['descripcion_area_dimension']);
                         // $nombre_asignatura_t[] = (trim($row['nombre_asignatura']));
 
                          $codigo_asignatura_t[] = $row['codigo_asignatura']; 
@@ -181,7 +204,7 @@ if($todasLasAsignaturas == "yes"){
 for ($i=0;$i<count($codigo_asignatura_t);$i++)    
   {
     // RECORRE LA MATRIZ CON LOS CODIGOS Y NOMBRES DE LAS ASINGTURAS.
-   $mystring = $nombre_asignatura_t[$i];
+   $mystring = $nombre_area_dimension_t[$i] . '-' . trim($nombre_asignatura_t[$i]);
     $mystring = str_replace(['\\', '/', '*','"',':',',','(',')'], ' ', $mystring);
     $cantidad_caracteres = strlen($mystring);
     if($cantidad_caracteres > 100){$cantidad_caracteres = 100;}
@@ -205,21 +228,9 @@ for ($i=0;$i<count($codigo_asignatura_t);$i++)
       } 
 
       $codigo_asignatura = $codigo_asignatura_t[$i];
+      $nombre_area_dimension = $nombre_area_dimension_t[$i];
     }
-    /*
-               if($codigo_bachillerato >= '03'){
-                      $codigo_asignatura = $codigo_asignatura_t[$i];
-                      //$nombre_asignatura = str_replace(['.', '\\', '/', '*','"','1','3','4','5','6','7','8','9','0'], ' ', $nombre_asignatura);
-                      $nombre_asignatura = trim(substr(replace_3($nombre_asignatura_t[$i]),0,80));
-                    }else{
-                      $codigo_asignatura = $codigo_asignatura_t[$i];
-                      //$nombre_asignatura_t[$i] = str_replace(['.', '\\', '/', '*','"','1','2','3','4','5','6','7','8','9','0'], ' ', $nombre_asignatura_t[$i]);
-                      //$nombre_asignatura = trim(substr(replace_3($nombre_asignatura_t[$i]),3,80));
-                      //$nombre_asignatura = trim(replace_3($nombre_asignatura_t[$i]));
-                      $nombre_asignatura = htmlspecialchars($nombre_asignatura_t[$i]);
-                    }*/
-                    //print "Nombre asignatura: " . $nombre_asignatura;
-                    //exit;
+   
   // CONSULTA PARA OBTENER LAS NOTAS DE LOS PERIODOS.
             $query = "SELECT a.codigo_nie, btrim(a.apellido_paterno || CAST(' ' AS VARCHAR) || a.apellido_materno || CAST(', ' AS VARCHAR) || a.nombre_completo) as apellido_alumno,
               a.nombre_completo, btrim(a.apellido_paterno || CAST(' ' AS VARCHAR) || a.apellido_materno) as apellidos_alumno, a.fecha_nacimiento,
@@ -240,6 +251,7 @@ for ($i=0;$i<count($codigo_asignatura_t);$i++)
                   ."INNER JOIN asignatura asig ON asig.codigo = n.codigo_asignatura ".
                   "WHERE btrim(am.codigo_bach_o_ciclo || am.codigo_grado || am.codigo_seccion || am.codigo_ann_lectivo) = '".$codigo_all."' and n.codigo_asignatura = '".$codigo_asignatura.
                   "' ORDER BY apellido_alumno, n.codigo_asignatura ASC";
+                
               // ejecutar la consulta. PARA MOSTRAR LOS RESULTADOS EN PANTALLA.
                   $result = $db_link -> query($query);
   //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -362,7 +374,7 @@ for ($i=0;$i<count($codigo_asignatura_t);$i++)
                         // Condicionar las resuestas y mensajes.
                         $mensajeError .= "<tr class=text-success><td>" .$nombre_asignatura . "</td></tr>";
                    }else if($periodo == "Periodo 1" || $periodo == "Periodo 2" || $periodo == "Periodo 3" || $periodo == "Periodo 4" || $periodo == "Periodo 5"){
-                    $nombre_archivo = replace_3($nombre_asignatura) . ".xlsx";
+                    $nombre_archivo = trim(($nombre_asignatura) . ".xlsx");
                     //$nombre_archivo = replace_3(substr($nombre_asignatura,0,50) . ".xlsx");
                     // Grabar el archivo.
                     $objWriter->save($DestinoArchivo.$nombre_directorio_mgs."/".$nombre_archivo);
