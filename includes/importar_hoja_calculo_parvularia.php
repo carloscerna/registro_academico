@@ -93,8 +93,8 @@ include($path_root."/registro_web/includes/mainFunctions_conexion.php");
 								$valor_indicador = trim(strtoupper($objPHPExcel->getActiveSheet()->getCell($NombreEstudiante[$columna_codigo_alumno].$fila_indicador_codigo_asignatura)->getValue()));
 								// SQL QUERY
 								if($valor_indicador <> ""){
-									print "<br>";
-									print $query_indicador = "UPDATE nota SET $nota_p_p = '$valor_indicador' WHERE codigo_alumno = $codigo_alumno and codigo_matricula = $codigo_matricula and codigo_asignatura = '$codigo_indicador'";
+									//print "<br>";
+									$query_indicador = "UPDATE nota SET $nota_p_p = '$valor_indicador' WHERE codigo_alumno = $codigo_alumno and codigo_matricula = $codigo_matricula and codigo_asignatura = '$codigo_indicador'";
 									$result = $db_link -> query($query_indicador);
 								}
 									// IMPRIMIR VALORES
