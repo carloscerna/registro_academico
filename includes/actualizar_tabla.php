@@ -121,7 +121,7 @@ try{
                                         //  VERIFICAR SI EXISTE EL DIRECTORIO POR EL ID PERSONAL.
                                         if(file_exists($path_root.$url_.$nombre_foto)){
                                             $query_actualizar_foto = "UPDATE alumno SET foto = '$nombre_foto' WHERE id_alumno = '$codigo_estudiante'";
-                                            $result_ac = $dblink -> query($query_actualizar_foto);
+                                            //$result_ac = $dblink -> query($query_actualizar_foto);
     
                                             print "<tr>";
                                             print "<td>$codigo_nie</td><td>$nombre_completo</td><td>".($nombre_grado)."</td><td>".($nombre_seccion)."</td><td>$nombre_foto</td>";

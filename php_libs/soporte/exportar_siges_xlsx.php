@@ -37,7 +37,7 @@
     //echo date('H:i:s') . " Set Time Zone"."<br />";
     date_default_timezone_set('America/El_Salvador');
 // set codings.
-    $objPHPExcel->_defaultEncoding = 'ISO-8859-1';
+    //$objPHPExcel->_defaultEncoding = 'ISO-8859-1';
 // Set default font
     //echo date('H:i:s') . " Set default font"."<br />";
     $objPHPExcel->getDefaultStyle()->getFont()->setName('Arial');
@@ -212,7 +212,7 @@ for ($i=0;$i<count($codigo_asignatura_t);$i++)
    $mystring = $nombre_area_dimension_t[$i] . '-' . trim($nombre_asignatura_t[$i]);
     $mystring = str_replace(['\\', '/', '*','"',':',',','(',')'], ' ', $mystring);
     $cantidad_caracteres = strlen($mystring);
-    if($cantidad_caracteres > 90){$cantidad_caracteres = 90;}
+    if($cantidad_caracteres > 80){$cantidad_caracteres = 80;}
     $findme   = '.';
     $pos = strpos($mystring, $findme);
 
