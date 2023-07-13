@@ -1,0 +1,63 @@
+{# Heredando la plantilla principal #}
+
+{% extends 'default_layout.html' %}
+
+{% block extraCSS %}
+  <link href="css/styles-loading.css" rel="stylesheet">
+  <link rel="stylesheet" href="style.css"/>
+  {% endblock %}
+
+{% block javascripts %}
+<script type="text/JavaScript" src="js/main_servicio_educativo.js"></script>
+<script src="./node_modules/bootstrap/dist/js/bootstrap.js"></script>
+
+</script>
+<!-- DEINIR EL AJAX START- STOP Y ERROR -->
+<script>
+ $(document).ready(function () { 
+  var screen = $('#loading-screen');
+    configureLoadingScreen(screen);
+  })
+</script>
+{% endblock %}
+
+{% block contenidos %}
+<div class="container">
+<h1>BOOTSTRAP 5</h1>
+
+<!-- Button trigger modal -->
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+  Launch demo modal
+</button>
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        ...
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+<!-- Loading Screen -->
+  {% include 'loading-screen.html' %}
+{% endblock %}
+
+{% block menu %}
+<!-- plantilla que contiene el menú principal. -->
+		{% include 'layout-menu.html' %}
+{% endblock %}
+
+{% block loginUser %}
+<!--	{% include 'layout-login-user.html' %} -->
+{% endblock %}
