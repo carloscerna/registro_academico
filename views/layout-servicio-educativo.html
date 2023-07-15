@@ -4,12 +4,12 @@
 
 {% block extraCSS %}
   <link href="css/styles-loading.css" rel="stylesheet">
-  <link rel="stylesheet" href="style.css"/>
+  <!-- <link rel="stylesheet" href="style.css"/> -->
   {% endblock %}
 
 {% block javascripts %}
 <script type="text/JavaScript" src="js/main_servicio_educativo.js"></script>
-<script src="./node_modules/bootstrap/dist/js/bootstrap.js"></script>
+<!-- <script src="./node_modules/bootstrap/dist/js/bootstrap.js"></script> -->
 
 </script>
 <!-- DEINIR EL AJAX START- STOP Y ERROR -->
@@ -22,16 +22,90 @@
 {% endblock %}
 
 {% block contenidos %}
-<div class="container">
-  
-  <nav aria-label="breadcrumb">
-    <ol class="breadcrumb">
-      <li class="breadcrumb-item"><a href="index.php">Home</a></li>
-      <li class="breadcrumb-item active" aria-current="page">Servicio Educativo</li>
-    </ol>
-  </nav>
+ <!-- Content Wrapper. Contains page content -->
+ <div class="content-wrapper">
+  <!-- Content Header (Page header) -->
+  <section class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-1">
+        <div class="col-sm-6">
+          <h4></h4>
+        </div>
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item"><a href="index.php">Home</a></li>
+            <li class="breadcrumb-item active">Servicio Educativo</li>
+          </ol>
+        </div>
+      </div>
+    </div><!-- /.container-fluid -->
+  </section>
 
-</div> <!-- DIV CONTAINER DE CONTENIDO PRINCIPAL-->
+  <!-- Main content -->
+  <section class="content">
+    <div class="container-fluid">
+      <div class="tab-content"> <!-- VALIDATE DE TODO EL DIV PARA LOS DIFERENTES INPUT'S -->
+        <div class="row">
+          <div class="col-12">
+            <!-- INICIO DEL CARD-->
+              <div class="card">
+                <div class="card-header bg-gradient-navy">
+                  <h3 class="card-title"><i class="fal fa-school"></i> Servicios Educativos</h3>
+                </div>
+                    <!-- /.card-header -->
+                    <div class="card-body">
+                      <!-- Nav tabs ASIGNATURA, MODALIDAD, GRADO, SECCION Y AÑO LECTIVO-->
+                      <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+                        <li class="nav-item">
+                          <a class="nav-link active" id="pills-home-tab" data-toggle="pill" href="#pills-home" role="tab" aria-controls="pills-home" aria-selected="true">Asignaturas</a>
+                        </li>
+                        <li class="nav-item">
+                          <a class="nav-link" id="pills-modalidad-tab" data-toggle="pill" href="#pills-modalidad" role="tab" aria-controls="pills-profile" aria-selected="false">Modalidad</a>
+                        </li>
+                        <li class="nav-item">
+                          <a class="nav-link" id="pills-grado-tab" data-toggle="pill" href="#pills-grado" role="tab" aria-controls="pills-contact" aria-selected="false">Grado</a>
+                        </li>
+                        <li class="nav-item">
+                          <a class="nav-link" id="pills-seccion-tab" data-toggle="pill" href="#pills-seccion" role="tab" aria-controls="pills-contact" aria-selected="false">Sección</a>
+                        </li>
+                        <li class="nav-item">
+                          <a class="nav-link" id="pills-annlectivo-tab" data-toggle="pill" href="#pills-annlectivo" role="tab" aria-controls="pills-contact" aria-selected="false">Año Lectivo</a>
+                        </li>
+                      </ul>
+                      <div class="tab-content" id="pills-tabContent">
+                         <!-- NAV TAB ASIGNATURAS *INICIO*-->
+                        <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
+                          <form class="form-inline">
+                            <div class="form-group mb-2 mx-sm-3">
+                              <label for="exampleFormControlSelect1">Servicio Educativo </label>
+                              <select class="form-control mx-sm-3" id="exampleFormControlSelect1">
+                                <option>1</option>
+                              </select>
+                            </div>
+                              <button type="button" id="goBuscar" aria-label="goBuscar" class="btn btn-info mb-2 mx-sm-1" tabindex="-1" data-toggle="tooltip" data-placement="top" title="Buscar">
+                                <i class="fal fa-search"></i>
+                              </button>
+                              <button type="button" id="goNuevo" aria-label="goNuevo" class="btn btn-primary mb-2" tabindex="-1" data-toggle="tooltip" data-placement="top" title="Nuevo">
+                                <i class="far fa-layer-plus"></i>
+                              </button>
+                          </form>
+                        </div> <!-- NAV TAB ASIGNATURAS FIN*-->
+                        <div class="tab-pane fade" id="pills-modalidad" role="tabpanel" aria-labelledby="pills-modalidad-tab">m...</div>
+                        <div class="tab-pane fade" id="pills-grado" role="tabpanel" aria-labelledby="pills-grado-tab">g...</div>
+                        <div class="tab-pane fade" id="pills-seccion" role="tabpanel" aria-labelledby="pills-seccion-tab">s...</div>
+                        <div class="tab-pane fade" id="pills-annlectivo" role="tabpanel" aria-labelledby="pills-annlectivo-tab">aa...</div>
+                      </div>
+
+                    </div> <!-- CARD BODY-->
+                <div class="card-footer"></div>
+              </div> <!-- /.card -->
+            <!-- FIN DEL CARD-->
+          </div><!-- /.col -->
+        </div> <!-- /.ROW -->
+      </div> <!-- /. tab-content-->
+    </div> <!-- /. CONTAINER FLUID-->
+  </section>
+ </div> <!-- CONTENT WRAPPER-->
 <!-- Loading Screen -->
   {% include 'loading-screen.html' %}
 {% endblock %}

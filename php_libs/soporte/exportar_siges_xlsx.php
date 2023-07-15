@@ -206,20 +206,22 @@ if($todasLasAsignaturas == "yes"){
 ////
 //// REPETIR EL PROCESO DEPENDE DE LAS ASIGNATURAS SELECCIONADAS.
 ////
+//$cantidad_caracteres = 100;
 for ($i=0;$i<count($codigo_asignatura_t);$i++)    
   {
     // RECORRE LA MATRIZ CON LOS CODIGOS Y NOMBRES DE LAS ASINGTURAS.
    $mystring = $nombre_area_dimension_t[$i] . '-' . trim($nombre_asignatura_t[$i]);
+   
     $mystring = str_replace(['\\', '/', '*','"',':',',','(',')'], ' ', $mystring);
     $cantidad_caracteres = strlen($mystring);
-    if($cantidad_caracteres > 80){$cantidad_caracteres = 80;}
+    if($cantidad_caracteres >= 40){$cantidad_caracteres = 60;}
     $findme   = '.';
     $pos = strpos($mystring, $findme);
 
 
     // Nótese el uso de ===. Puesto que == simple no funcionará como se espera
     // porque la posición de 'a' está en el 1° (primer) caracter.
-     if ($pos === false) {
+      if ($pos === false) {
       //  echo "La cadena '$findme' no fue encontrada en la cadena '$mystring'";
         $codigo_asignatura = $codigo_asignatura_t[$i];
         $nombre_asignatura = trim(substr($mystring,0,$cantidad_caracteres));
@@ -230,12 +232,12 @@ for ($i=0;$i<count($codigo_asignatura_t);$i++)
         $nombre_asignatura = trim(substr($mystring,$pos+1,$cantidad_caracteres));
       }else{
         $nombre_asignatura = trim(substr($mystring,0,$cantidad_caracteres));
-      } 
+      }  
 
       $codigo_asignatura = $codigo_asignatura_t[$i];
       $nombre_area_dimension = $nombre_area_dimension_t[$i];
     }
-   
+    $nombre_asignatura = $nombre_area_dimension_t[$i] . '-' . trim($nombre_asignatura_t[$i]);
   // CONSULTA PARA OBTENER LAS NOTAS DE LOS PERIODOS.
             $query = "SELECT a.codigo_nie, btrim(a.apellido_paterno || CAST(' ' AS VARCHAR) || a.apellido_materno || CAST(', ' AS VARCHAR) || a.nombre_completo) as apellido_alumno,
               a.nombre_completo, btrim(a.apellido_paterno || CAST(' ' AS VARCHAR) || a.apellido_materno) as apellidos_alumno, a.fecha_nacimiento,
