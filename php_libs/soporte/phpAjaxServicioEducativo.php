@@ -95,16 +95,23 @@ if($errorDbConexion == false){
 					$nombre_cc = trim($listado['nombre_cc']);
 					$codigo_area = trim($listado['codigo_area']);
 					$nombre_area = trim($listado['nombre_area']);
-					$estatus_asignatura = trim($listado['estatus']);
+					$estatus = trim($listado['estatus']);
 					$ordenar = trim($listado['ordenar']);
 					$num++;
-						    
+					// VARIABLES ESTATUS.
+						if($estatus == 1){
+							$estatus = "<td><span class='badge badge-pill badge-info'>Activo</span></td>";
+						}else{
+							$estatus = "<td><span class='badge badge-pill badge-danger'>Inactivo</span></td>";
+						}
 						$contenidoOK .= "<tr>
 							<td><input type=checkbox class=case name=chk$id_ id=chk$id_>
 							<td>$num
 							<td>$id_
 							<td>$codigo
 							<td>$nombre
+							<td>$ordenar
+							$estatus
 							";
 					}
 					$mensajeError = "Se ha consultado el registro correctamente ";
