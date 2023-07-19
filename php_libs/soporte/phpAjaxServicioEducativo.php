@@ -53,18 +53,6 @@ if($errorDbConexion == false){
 				// Armar Colores
 				$statusTipo = array ("01" => "btn-success", "02" => "btn-warning", "03" => "btn-danger");
 				$codigo_se_post = $_POST["codigo_se"];
-				if($codigo_se_post == "00"){
-				// Armamos el query.
-					$query = "SELECT asig.id_asignatura, asig.nombre, asig.codigo as codigo_asignatura, asig.codigo_servicio_educativo, asig.codigo_cc, asig.codigo_servicio_educativo, asig.codigo_area, asig.estatus, asig.ordenar,
-							cat_se.descripcion as nombre_servicio_educativo, 
-							cat_cc.descripcion as nombre_cc, cat_cc.codigo,
-							cat_area.descripcion as nombre_area, cat_area.codigo
-							FROM asignatura asig
-							INNER JOIN catalogo_servicio_educativo cat_se ON cat_se.codigo = asig.codigo_servicio_educativo
-							INNER JOIN catalogo_cc_asignatura cat_cc ON cat_cc.codigo = asig.codigo_cc
-							INNER JOIN catalogo_area_asignatura cat_area ON cat_area.codigo = asig.codigo_area
-							ORDER BY asig.codigo_area, asig.codigo, asig.estatus = '1'";					
-				}else{
 				// Armamos el query.
 					$query = "SELECT asig.id_asignatura, asig.nombre, asig.codigo as codigo_asignatura, asig.codigo_servicio_educativo, asig.codigo_cc, asig.codigo_servicio_educativo, asig.codigo_area, asig.estatus, asig.ordenar,
 							cat_se.descripcion as nombre_servicio_educativo, 
@@ -75,7 +63,7 @@ if($errorDbConexion == false){
 							INNER JOIN catalogo_cc_asignatura cat_cc ON cat_cc.codigo = asig.codigo_cc
 							INNER JOIN catalogo_area_asignatura cat_area ON cat_area.codigo = asig.codigo_area
 							WHERE asig.codigo_servicio_educativo = '$codigo_se_post'
-							ORDER BY asig.codigo_area, asig.codigo, asig.estatus = '1'";}
+								ORDER BY asig.estatus DESC, asig.codigo_area";
 				// Ejecutamos el Query.
 				$consulta = $dblink -> query($query);
 
@@ -109,9 +97,12 @@ if($errorDbConexion == false){
 							<td>$num
 							<td>$id_
 							<td>$codigo
+							<td>$nombre_area
 							<td>$nombre
 							<td>$ordenar
 							$estatus
+							<td><a data-accion=editar_asignatura class='btn btn-xs btn-info' href=$id_ tabindex='-1' data-toggle='tooltip' data-placement='top' title='Editar'><i class='fad fa-edit'></i></a>
+							<a data-accion=eliminar_asignatura class='btn btn-xs btn-warning' href=$id_ tabindex='-1' data-toggle='tooltip' data-placement='top' title='Eliminar'><i class='fad fa-trash'></i></a>
 							";
 					}
 					$mensajeError = "Se ha consultado el registro correctamente ";
@@ -265,9 +256,8 @@ if($errorDbConexion == false){
 				// Armamos el query y iniciamos variables.
 					$query = "SELECT id_bachillerato_ciclo, nombre, codigo FROM bachillerato_ciclo WHERE id_bachillerato_ciclo = ".$_POST['id_x']. " ORDER BY codigo ";
 				// Ejecutamos el Query.
-				$consulta = $dblink -> query($query);
-
-				if($consulta -> rowCount() != 0){
+					$consulta = $dblink -> query($query);
+					if($consulta -> rowCount() != 0){
 					$respuestaOK = true;
 					$fila_array = 0;
 					// convertimos el objeto
@@ -429,9 +419,9 @@ if($errorDbConexion == false){
 					$mensajeError = "Se ha consultado el registro correctamente ";
 				}
 			break;	
-			///////////////////////////////////////////////////////////////////////////////////////////////////
-			////////////// BLOQUE DE REGISTRO GESTION (AÑO LECTIVO)
-			///////////////////////////////////////////////////////////////////////////////////////////////////
+				///////////////////////////////////////////////////////////////////////////////////////////////////
+				////////////// BLOQUE DE REGISTRO GESTION (AÑO LECTIVO)
+				///////////////////////////////////////////////////////////////////////////////////////////////////
 			case 'BuscarCodigoAnnLectivo':
 				// Armamos el query.
 				$query = "SELECT id_annlectivo, nombre, codigo, descripcion, fecha_inicio, fecha_fin, estatus FROM ann_lectivo ORDER BY codigo DESC LIMIT 1";
@@ -492,7 +482,7 @@ if($errorDbConexion == false){
 				// Armamos el query y iniciamos variables.
 					$query = "SELECT id_annlectivo, nombre, codigo, descripcion, fecha_inicio, fecha_fin, estatus FROM ann_lectivo WHERE id_annlectivo = ".$_POST['id_x']. " ORDER BY codigo ";
 				// Ejecutamos el Query.
-				$consulta = $dblink -> query($query);
+					$consulta = $dblink -> query($query);
 
 				if($consulta -> rowCount() != 0){
 					$respuestaOK = true;
