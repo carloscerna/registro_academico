@@ -3,7 +3,7 @@
     $path_root=trim($_SERVER['DOCUMENT_ROOT']);
 	$verificar_ann_lectivo = "no";
 // Incluimos el archivo de funciones y conexión a la base de datos
-include($path_root."/registro_web/includes/mainFunctions_conexion.php");
+include($path_root."/registro_academico/includes/mainFunctions_conexion.php");
 // armando el Query.
 		$query = "SELECT codigo, descripcion FROM catalogo_cc_asignatura ORDER BY codigo ASC ";
 // Ejecutamos el Query.

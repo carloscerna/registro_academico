@@ -19,6 +19,43 @@
     configureLoadingScreen(screen);
   })
 </script>
+<!-- DEFINIR PARA SERVICIO EDUCATIVO CARGAR DATOS-->
+<script>
+  $(document).ready(function () { 
+      var miselect=$("#lstcodigose");
+      var miselect12=$("#lstcodigose_m");
+      /* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
+      miselect.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
+      
+      $.post("includes/cargar-servicio-educativo.php",
+        function(data) {
+          miselect.empty();
+          miselect.append("<option value='00'>Seleccionar...</option>");
+          for (var i=0; i<data.length; i++) {
+            miselect.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');
+          }
+          // Rellenar el de Servicio Educativo Nuevo o Modificar.
+          miselect12.empty();
+          miselect12.append("<option value='00'>Seleccionar...</option>");
+          for (var j=0; j<data.length; j++) {
+            miselect12.append('<option value="' + data[j].codigo + '">' + data[j].descripcion + '</option>');
+          }					
+      }, "json");
+      // CARGAR DATOS DE CC
+      var miselect2=$("#lstcodigocc");
+      /* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
+      miselect2.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
+      
+      $.post("includes/cargar-cc.php",
+        function(data) {
+          miselect2.empty();
+          miselect2.append("<option value='00'>Seleccionar...</option>");
+          for (var i=0; i<data.length; i++) {
+            miselect2.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');
+          }
+      }, "json");	
+    })
+</script>
 {% endblock %}
 
 {% block contenidos %}
@@ -75,20 +112,46 @@
                       <div class="tab-content" id="pills-tabContent">
                          <!-- NAV TAB ASIGNATURAS *INICIO*-->
                         <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
-                          <form class="form-inline">
+                          <form class="form-inline" id="FormServicioEducativo" name="FormServicioEducativo">
                             <div class="form-group mb-2 mx-sm-3">
-                              <label for="exampleFormControlSelect1">Servicio Educativo </label>
-                              <select class="form-control mx-sm-3" id="exampleFormControlSelect1">
-                                <option>1</option>
-                              </select>
+                              <label for="lstcodigose">Servicio Educativo</label>
+                              <select class="form-control mx-sm-3" id="lstcodigose" name="lstcodigose"></select>
                             </div>
-                              <button type="button" id="goBuscar" aria-label="goBuscar" class="btn btn-info mb-2 mx-sm-1" tabindex="-1" data-toggle="tooltip" data-placement="top" title="Buscar">
+                              <button type="button" id="goBuscarSE" aria-label="goBuscarSE" class="btn btn-info mb-2 mx-sm-1" tabindex="-1" data-toggle="tooltip" data-placement="top" title="Buscar">
                                 <i class="fal fa-search"></i>
                               </button>
-                              <button type="button" id="goNuevo" aria-label="goNuevo" class="btn btn-primary mb-2" tabindex="-1" data-toggle="tooltip" data-placement="top" title="Nuevo">
+                              <button type="button" id="goNuevoSE" aria-label="goNuevoSE" class="btn btn-primary mb-2" tabindex="-1" data-toggle="tooltip" data-placement="top" title="Nuevo">
                                 <i class="far fa-layer-plus"></i>
-                              </button>
+                              </button>                                 
                           </form>
+                                <!-- TABLA CON LOS DATOS DEL SERVICIO EDUCATIVO. -->  
+                                    <div class="modal-body">
+                                      <div class="row bg-cyan">
+                                        <div class="col">
+                                          <label for="">Servicio Educativo</label>
+                                        </div>
+                                      </div>
+                                        <div class="col">
+                                          <table id="listadoContenidoSE" class="table table-striped table-bordered table-hover table-condensed">
+                                            <thead>
+                                              <tr>
+                                                <th><input type=checkbox name="checkBoxAllSE" id="checkBoxAllSE" data-toggle=tooltip data-placement=top title='Marcar/Desmarcar Todo'></th>
+                                                <th>#</th>
+                                                <th>id</th>
+                                                <th>Código</th>
+                                                <th>Descripción</th>
+                                                <th>...</th>
+                                              </tr>
+                                            </thead>
+                                              <tbody id="listaContenidoSE">
+                                            
+                                              </tbody>                            
+                                            <tfoot>
+                                            </tfoot>
+                                        </table>
+                                      </div>
+                                    </div>
+                                    <!-- TABLA CON LOS DATOS DEL SERVICIO EDUCATIV. --> 
                         </div> <!-- NAV TAB ASIGNATURAS FIN*-->
                         <div class="tab-pane fade" id="pills-modalidad" role="tabpanel" aria-labelledby="pills-modalidad-tab">m...</div>
                         <div class="tab-pane fade" id="pills-grado" role="tabpanel" aria-labelledby="pills-grado-tab">g...</div>
