@@ -101,8 +101,8 @@ if($errorDbConexion == false){
 							<td>$nombre
 							<td>$ordenar
 							$estatus
-							<td><a data-accion=editar_asignatura class='btn btn-xs btn-info' href=$id_ tabindex='-1' data-toggle='tooltip' data-placement='top' title='Editar'><i class='fad fa-edit'></i></a>
-							<a data-accion=eliminar_asignatura class='btn btn-xs btn-warning' href=$id_ tabindex='-1' data-toggle='tooltip' data-placement='top' title='Eliminar'><i class='fad fa-trash'></i></a>
+							<td><a data-accion=editar_asignatura class='btn btn-xs btn-info' href=$id_-$codigo tabindex='-1' data-toggle='tooltip' data-placement='top' title='Editar'><i class='fad fa-edit'></i></a>
+							<a data-accion=eliminar_asignatura class='btn btn-xs btn-warning' href=$id_-$codigo tabindex='-1' data-toggle='tooltip' data-placement='top' title='Eliminar'><i class='fad fa-trash'></i></a>
 							";
 					}
 					$mensajeError = "Se ha consultado el registro correctamente ";
@@ -201,6 +201,40 @@ if($errorDbConexion == false){
 					$respuestaOK = true;
 					$contenidoOK = "Registro Actualizado.";
 					$mensajeError = "Registro Actualizado";
+			break;
+			case 'eliminar_asignatura':
+				$codigo_id_ = trim($_REQUEST['codigo_id_']);
+				$codigo_id_ = explode("-",$codigo_id_);
+				$id_ = $codigo_id_[0];
+				$codigo_asignatura = $codigo_id_[1];
+				$count = 0;
+				// BUSCAR EN LA TABLA NOTA, PARA revisar si no existe el registro del codigo de la asignatura.
+					$query_buscar = "SELECT id_notas, codigo_asignatura FROM nota WHERE codigo_asignatura = '$codigo_asignatura' LIMIT 1";
+				// Ejecutamos el query
+					$count_buscar = $dblink -> exec($query_buscar);					
+				// Validamos que se haya actualizado el registro
+					if($count_buscar != 0){
+						$mensajeError = 'No se ha eliminado el registro'.$query_buscar;
+							break;
+					}else{
+						// Armamos el query
+						$query = "DELETE FROM asignatura WHERE id_asignatura = '$id_'";
+
+						// Ejecutamos el query
+							//$count = $dblink -> exec($query);
+						
+						// Validamos que se haya actualizado el registro
+						if($count != 0){
+							$respuestaOK = true;
+							$mensajeError = 'Se ha eliminado el registro correctamente'.$query;
+
+							$contenidoOK = 'Se ha Eliminado '.$count.' Registro(s).';
+
+						}else{
+							$mensajeError = 'No se ha eliminado el registro '. $query . " - " . $query_buscar;
+						}
+					}
+
 			break;
 			///////////////////////////////////////////////////////////////////////////////////////////////////
 			////////////// BLOQUE DE REGISTRO GESTION (MODALIDAD)
@@ -696,7 +730,12 @@ if($errorDbConexion == false){
 else{
 	$mensajeError = 'No se puede establecer conexión con la base de datos';}
 
-if($_POST['accion'] == "eliminar_annlectivo" || $_POST['accion'] == "BuscarSeccion" || $_POST['accion'] == "modificar_seccion" || $_POST['accion'] == "addSeccion" || $_POST['accion'] == "BuscarAnnLectivo" || $_POST['accion'] == "addAnnLectivo" || $_POST['accion'] == "BuscarGrado" || $_POST['accion'] == "addGrado" || $_POST['accion'] == "modificar_annlectivo" || $_POST['accion'] == "BuscarModalidad" || $_POST['accion'] == "modificar_modalidad" || $_POST['accion'] == "addModalidad" || $_POST['accion'] == "modificar_grado" || $_POST['accion'] == "BuscarAsignatura" || $_POST['accion'] == "GuardarAsignatura" || $_POST['accion'] == "modificar_asignatura") {
+if($_POST['accion'] == "eliminar_annlectivo" || $_POST['accion'] == "BuscarSeccion" || $_POST['accion'] == "modificar_seccion" || $_POST['accion'] == "addSeccion" || $_POST['accion'] == "BuscarAnnLectivo" || $_POST['accion'] == "addAnnLectivo" || $_POST['accion'] == "BuscarGrado" || $_POST['accion'] == "addGrado" || $_POST['accion'] == "modificar_annlectivo" || $_POST['accion'] == "BuscarModalidad" || $_POST['accion'] == "modificar_modalidad" || $_POST['accion'] == "addModalidad" || $_POST['accion'] == "modificar_grado"
+	|| $_POST['accion'] == "BuscarAsignatura"
+	|| $_POST['accion'] == "GuardarAsignatura"
+	|| $_POST['accion'] == "modificar_asignatura"
+	|| $_POST['accion'] == "eliminar_asignatura"
+	) {
 // Armamos array para convertir a JSON
 $salidaJson = array("respuesta" => $respuestaOK,
 		"mensaje" => $mensajeError,
