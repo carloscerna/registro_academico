@@ -291,15 +291,17 @@ if (lstlist_nominas == 'informe_hogar_individual' && $(this).attr('data-accion')
 }              
 if (lstlist_nominas == 'cuadro_notas' && $(this).attr('data-accion') == 'listados_01') {
         // Validar la Modalidad.
-        if(varbach >= '03' && varbach <= '09')
+        if(varbach >= '03' && varbach <= '14')
         {
                 if(varbach >= '03' && varbach <= '05'){
                 // construir la variable con el url.
                         varenviar = "/registro_academico/php_libs/reportes/cuadro_notas.php?todos="+reporte_ok;
                 }
-                if(varbach >= '06'){
+                if(varbach == '06' || varbach == '07' || varbach == '08' || varbach == '09'){
                 // construir la variable con el url.
                         varenviar = "/registro_academico/php_libs/reportes/cuadro_notas_media.php?todos="+reporte_ok;
+                }else{
+                        varenviar = "/registro_academico/php_libs/reportes/cuadro_notas.php?todos="+reporte_ok;
                 }
         }
         // Ejecutar la función
