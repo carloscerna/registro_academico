@@ -128,7 +128,7 @@
                               </button>                                 
                           </form>
                           <div class="alert alert-danger" role="alert" id="AlertSE">
-                            Debe Seleccionar un Servicio Educativo...
+                            <span id="TextoAlert">...</span>
                           </div>
                                 <!-- TABLA CON LOS DATOS DEL SERVICIO EDUCATIVO. -->  
                                     <div class="modal-body">
@@ -184,7 +184,11 @@
  </div> <!-- CONTENT WRAPPER-->
 <!-- Loading Screen -->
   {% include 'loading-screen.html' %}
-{% endblock %}
+<!-- plantilla que contiene el . -->
+  {% include 'VentanaAsignatura.html' %}
+
+<!-- FINAL DEL BLOQUE DE CONTENIDO.-->
+{% endblock %}  
 
 {% block menu %}
 <!-- plantilla que contiene el menú principal. -->

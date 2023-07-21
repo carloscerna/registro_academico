@@ -111,7 +111,7 @@ if($errorDbConexion == false){
 					$mensajeError = "No existen registros.";
 				}
 			break;
-			case 'GuardarAsignatura':
+			case 'guardar_asignatura':
 				// consultar el registro antes de agregarlo.
 				// Armamos el query y iniciamos variables.
 				 $codigo_se = ($_POST['lstcodigose_m']);

@@ -41,6 +41,14 @@ $(function(){
         $('#lstcodigose').on('change', function() {
             $("#AlertSE").css("display", "none");
           });
+        ///////////////////////////////////////////////////
+		// funcionalidad del botón que abre el formulario
+		///////////////////////////////////////////////////
+	    $("#VentanaAsignatura").on('hidden.bs.modal', function () {
+            // Limpiar variables Text, y textarea
+				$("#formVentanaAsignatura")[0].reset();
+				$("label.error").remove();
+		});
     });
 //
 //
@@ -220,6 +228,7 @@ $(function(){
                     //
                     if(codigo_se == "00"){
                         $("#AlertSE").css("display", "block");
+                        $("#TextoAlert").text("Debe Seleccionar un Servicio Educativo para Buscar.");
                         return;
                     }
                     // Llamar al archivo php para hacer la consulta y presentar los datos.
@@ -235,6 +244,29 @@ $(function(){
                             $('#listaContenidoSE').append(response.contenido);
                         },"json");
             });
+            //////////////////////////////////////////////////////////////////////////////////
+            /* VER #CONTROLES CREADOS */
+            //////////////////////////////////////////////////////////////////////////////////
+            $('#goNuevoSE').on('click', function(){
+                var codigo_se = $("#lstcodigose").val();
+                    accion = 'guardar_asignatura';
+                var texto_se = $("#lstcodigose option:selected").html();
+                //
+                //  CONDICONAR EL SELECT SERVICIO EDUCATIVO.
+                //
+                if(codigo_se == "00"){
+                    $("#AlertSE").css("display", "block");
+                    $("#TextoAlert").text("Debe Seleccionar un Servicio Educativo para Crear uno Nuevo.");
+                    return;
+                }else{
+                    $("#TextoSE").text(texto_se);
+                    // buscare codigo estatus
+                    listar_CodigoEstatus();
+                    listar_CodigoAreaAsignatura();
+                }
+                // Abrir ventana modal.
+                $('#VentanaAsignatura').modal("show");
+            });
 }); // FIN DEL FUNCTION.
 
 // Mensaje de Carga de Ajax.
@@ -247,3 +279,46 @@ function configureLoadingScreen(screen){
             screen.fadeOut();
         });
     }
+    ///////////////////////////////////////////////////////////////////////
+// TODAS LAS TABLAS VAN HA ESTAR EN ASIGNATURA.*******************
+// FUNCION LISTAR TABLA catalogo_estatus
+////////////////////////////////////////////////////////////
+function listar_CodigoEstatus(CodigoEstatus){
+    var miselect=$("#lstEstatus");
+    /* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
+    miselect.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
+    
+    $.post("includes/cargar_estatus.php",
+        function(data) {
+            miselect.empty();
+            for (var i=0; i<data.length; i++) {
+                if(CodigoEstatus == data[i].codigo){
+                    miselect.append('<option value="' + data[i].codigo + '" selected>' + data[i].descripcion + '</option>');
+                }else{
+                    miselect.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');
+                }
+            }
+    }, "json");    
+}
+   ///////////////////////////////////////////////////////////////////////
+// TODAS LAS TABLAS VAN HA ESTAR EN ASIGNATURA.*******************
+// FUNCION LISTAR TABLA catalogo_area_asignatura
+////////////////////////////////////////////////////////////
+function listar_CodigoAreaAsignatura(CodigoAreaAsignatura){
+    var miselect=$("#lstArea");
+    /* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
+    miselect.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
+    //
+    $.post("includes/cargar-area-asignatura.php",
+        function(data) {
+            miselect.empty();
+            miselect.append("<option value='00'>Seleccionar...</option>");
+            for (var i=0; i<data.length; i++) {
+                if(CodigoAreaAsignatura == data[i].codigo){
+                    miselect.append('<option value="' + data[i].codigo + '" selected>' + data[i].descripcion + '</option>');
+                }else{
+                    miselect.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');
+                }
+            }
+    }, "json");    
+}
