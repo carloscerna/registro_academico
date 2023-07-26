@@ -4,7 +4,10 @@ var accion_ok = 'noAccion';
 var accion = "";
 var Id_Editar_Eliminar = 0;
 var Accion_Editar_Eliminar = "noAccion";
-
+var codigo_area = "";
+var CodigoIndicador = "";
+var CodigoDimension = "";
+var CodigoSubDimension = "";
 // INICIO DE LA FUNCION PRINCIPAL.
 $(function(){
 //
@@ -40,6 +43,86 @@ $(function(){
         // funcion onchange.
         $('#lstcodigose').on('change', function() {
             $("#AlertSE").css("display", "none");
+          });
+        // funcion onchange.
+        $('#lstArea').on('change', function() {
+            CodigoArea = $("#lstArea").val();
+
+            var miselect=$("#lstDimension");
+            /* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
+            miselect.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
+            
+            $.post("includes/cargar-area-dimension.php", {CodigoArea: CodigoArea},
+                function(data) {
+                    miselect.empty();
+                    miselect.append("<option value='00'>Seleccionar...</option>");
+                    for (var i=0; i<data.length; i++) {
+                        if(CodigoDimension == data[i].codigo){
+                            miselect.append('<option value="' + data[i].codigo + '" selected>' + data[i].descripcion + '</option>');
+                        }else{
+                            miselect.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');
+                        }
+                    }
+            }, "json");  
+          });
+        // funcion onchange.
+        $('#lstDimension').on('change', function() {
+            CodigoArea = $("#lstArea").val();
+            CodigoDimension = $("#lstDimension").val();
+            // seelct a modificar o rellenar
+            var miselect=$("#lstSubDimension");
+            /* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
+            miselect.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
+            // ajax.
+            $.post("includes/cargar-area-subdimension.php", {CodigoArea: CodigoArea, CodigoDimension: CodigoDimension},
+                function(data) {
+                    miselect.empty();
+                    miselect.append("<option value='00'>Seleccionar...</option>");
+                    for (var i=0; i<data.length; i++) {
+                        if(CodigoSubDimension == data[i].codigo){
+                            miselect.append('<option value="' + data[i].codigo + '" selected>' + data[i].descripcion + '</option>');
+                        }else{
+                            miselect.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');
+                        }
+                    }
+            }, "json");  
+ 
+        // funcion onchange.
+        $('#lstSubDimension').on('change', function() {
+            CodigoArea = $("#lstArea").val();
+            CodigoDimension = $("#lstDimension").val();
+                // seelct a modificar o rellenar
+                var miselect=$("#lstIndicadorCalificacion");
+                /* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
+                miselect.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
+                // ajax.
+                $.post("includes/cargar-cc.php", 
+                    function(data) {
+                        miselect.empty();
+                        miselect.append("<option value='00'>Seleccionar...</option>");
+                        for (var i=0; i<data.length; i++) {
+                            if(CodigoIndicador == data[i].codigo){
+                                miselect.append('<option value="' + data[i].codigo + '" selected>' + data[i].descripcion + '</option>');
+                            }else{
+                                miselect.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');
+                            }
+                        }
+                }, "json");  
+            //
+            // BUSCAR Y GENERAR NUEVO CODIGO PARA LA ASIGNATURA.
+            //
+                    // BUSCAR EL ÚLTINMO DE LA ASIGNATURA PARA ASIGNARLE A UN NUEVO REGISTRO.
+                    accion = 'BuscarCodigoAsignatura';
+                    // Llamar al archivo php para hacer la consulta y presentar los datos.
+                            $.post("php_libs/soporte/phpAjaxMantenimiento_1.inc.php",  {accion: accion},
+                                function(data) {
+                                    // si es exitosa la operación
+                                        $('#CodigoAsignatura').val(data[0].codigo_asignatura);
+                                },"json");
+                    // Ocultar botón actualizar y mostrar botón guardar.
+                            $('#accion_asignatura').val("GuardarAsignatura");
+                            accion = $("#accion_asignatura").val();
+          });
           });
         ///////////////////////////////////////////////////
 		// funcionalidad del botón que abre el formulario

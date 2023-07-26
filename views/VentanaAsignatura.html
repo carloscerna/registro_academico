@@ -15,7 +15,9 @@
 		</div>
 		<!-- FORMULARIO PRINCIPAL. -->
 		<form  action="" method="post" name="form" id="formVentanaAsignatura" role="form">
-        </form>
+      <!-- SECCION DEL HIDDEN INPUT-->
+      <input type="hidden" id="accion_asignatura" name="accion_asignatura" value="GuardarAsignatura">
+
 			<div class="modal-body">
 				<div class="container">
 					<div class="row">
@@ -69,7 +71,7 @@
                                             <div class="input-group-prepend">
                                               <span class="input-group-text bg-gradient-gray-dark" id="basic-addon3">Código</span>
                                             </div>
-                                            <input type="text" class="form-control text-bold text-blue" id="CodigoAsignatura" placeholder="" aria-label="BusquedaPersonalControl" aria-describedby="basic-addon3">
+                                            <input type="text" class="form-control text-bold text-blue" id="CodigoAsignatura" placeholder="" aria-label="BusquedaPersonalControl" aria-describedby="basic-addon3" readonly>
                                           </div>
                                     </div>
                                     <div class="input-group">
@@ -87,14 +89,15 @@
                                 </div>
                             </div>
                     </fieldset>
+                </div>
+              </div> <!-- ROW -->
+            </div> <!-- CONTAINER -->
+          </div> <!-- MODAL BODY -->
+            <!-- footer modal -->
+            <div class="modal-footer bg-gradient-cyan p-0">
+              <button class="btn btn-default" data-dismiss="modal" type="button">Cerrar</button>
             </div>
-					</div> <!-- ROW -->
-				</div> <!-- CONTAINER -->
-			</div> <!-- MODAL BODY -->
-				<!-- footer modal -->
-				<div class="modal-footer bg-gradient-cyan p-0">
-					<button class="btn btn-default" data-dismiss="modal">Cerrar</button>
-				</div>
+        </form> <!-- from principal -->
 	</div>
 </div>
 </div>
