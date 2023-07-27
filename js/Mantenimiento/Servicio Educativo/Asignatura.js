@@ -115,7 +115,7 @@ $(function(){
                     // BUSCAR EL ÚLTINMO DE LA ASIGNATURA PARA ASIGNARLE A UN NUEVO REGISTRO.
                     accion = 'BuscarCodigoAsignatura';
                     // Llamar al archivo php para hacer la consulta y presentar los datos.
-                            $.post("php_libs/soporte/phpAjaxServicioEducativo.php",  {accion: accion},
+                            $.post("php_libs/soporte/Mantenimiento/Servicio Educativo/phpAjaxSEAsignatura.php",  {accion: accion},
                                 function(data) {
                                     // si es exitosa la operación
                                         $('#CodigoAsignatura').val(data[0].codigo_asignatura);
@@ -168,7 +168,7 @@ $(function(){
                                 var id_ = $(this).parent().parent().children('td:eq(1)').text();
                                 
                                 // Llamar al archivo php para hacer la consulta y presentar los datos.
-                                $.post("php_libs/soporte/phpAjaxMantenimiento_1.inc.php",  { id_x: id_, accion: accion},
+                                $.post("php_libs/soporte/Mantenimiento/Servicio Educativo/phpAjaxMantenimiento_1.inc.php",  { id_x: id_, accion: accion},
                                   function(data) {
                                     alertify.success("Registros Encontrados."); 
                                     // Llenar el formulario con los datos del registro seleccionado tabs-1
@@ -233,7 +233,7 @@ $(function(){
                                         cache: false,                     
                                         type: "POST",                     
                                         dataType: "json",                     
-                                        url:"php_libs/soporte/phpAjaxServicioEducativo.php",                     
+                                        url:"php_libs/soporte/Mantenimiento/Servicio Educativo/phpAjaxSEAsignatura.php",                     
                                         data: {                     
                                                 accion_buscar: 'eliminar_asignatura', codigo_id_: Id_Editar_Eliminar,
                                                 },                     
@@ -251,7 +251,7 @@ $(function(){
                                                             return;
                                                         }
                                                         // Llamar al archivo php para hacer la consulta y presentar los datos.
-                                                        $.post("php_libs/soporte/phpAjaxServicioEducativo.php",  {accion: accion, codigo_se: codigo_se},
+                                                        $.post("php_libs/soporte/Mantenimiento/Servicio Educativo/phpAjaxSEAsignatura.php",  {accion: accion, codigo_se: codigo_se},
                                                             function(response) {
                                                             if (response.respuesta === true) {
                                                                 toastr["info"]('Registros Encontrados', "Sistema");
@@ -316,7 +316,7 @@ $(function(){
                         return;
                     }
                     // Llamar al archivo php para hacer la consulta y presentar los datos.
-                    $.post("php_libs/soporte/phpAjaxServicioEducativo.php",  {accion: accion, codigo_se: codigo_se},
+                    $.post("php_libs/soporte/Mantenimiento/Servicio Educativo/phpAjaxSEAsignatura.php",  {accion: accion, codigo_se: codigo_se},
                         function(response) {
                         if (response.respuesta === true) {
                             toastr["info"]('Registros Encontrados', "Sistema");
@@ -416,7 +416,7 @@ $(function(){
                             cache: false,
                             type: "POST",
                             dataType: "json",
-                            url:"php_libs/soporte/phpAjaxServicioEducativo.php",
+                            url:"php_libs/soporte/Mantenimiento/Servicio Educativo/phpAjaxSEAsignatura.php",
                             data:str + "&CodigoSE=" + codigo_se + "&accion=" + accion + "&id=" + Math.random(),
                             success: function(response){
                                 // Validar mensaje de error
@@ -430,7 +430,7 @@ $(function(){
                                     // Llamar al archivo php para hacer la consulta y presentar los datos.
                                     $('#accion_asignatura').val('BuscarAsignatura');
                                     accion = 'BuscarAsignatura';
-                                        $.post("php_libs/soporte/phpAjaxServicioEducativo.php",  {accion: accion, codigo_se: codigo_se},
+                                        $.post("php_libs/soporte/Mantenimiento/Servicio Educativo/phpAjaxSEAsignatura.php",  {accion: accion, codigo_se: codigo_se},
                                         function(response) {
                                         if (response.respuesta === true) {
                                             toastr["info"]('Registros Encontrados', "Sistema");

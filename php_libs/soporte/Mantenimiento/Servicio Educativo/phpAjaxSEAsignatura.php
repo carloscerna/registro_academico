@@ -124,6 +124,12 @@ if($errorDbConexion == false){
 				 $codigo_subdimension = ($_POST['lstSubDimension']);
 				 $estatus_asignatura = ($_POST['lstEstatus']);
 				 $orden = ($_POST['OrdenAsignatura']);
+				// VALIDAR ESTATUS CON FALSE O TRUE
+					if($estatus_asignatura == '01'){
+						$estatus = true;
+					}else{
+						$estatus = false;
+					}
 				 // verificar si existe la asignatura con respoecto al codigo.
 				 	$query = "SELECT * FROM asignatura WHERE codigo = '$codigo_asignatura' ORDER BY codigo ";
 				 // Ejecutamos el Query.
@@ -135,8 +141,8 @@ if($errorDbConexion == false){
 						$mensajeError = "Si Existe";
 					}else{
 				// proceso para grabar el registro
-					$query = "INSERT INTO asignatura (nombre, codigo, codigo_servicio_educativo, codigo_cc, codigo_area, codigo_estatus, codigo_area_dimension, codigo_area_subdimension, ordenar) 
-					VALUES ('$nombre_asignatura','$codigo_asignatura','$codigo_se','$codigo_cc','$codigo_area','$estatus_asignatura','$codigo_dimension','$codigo_subdimension','$orden')";
+					$query = "INSERT INTO asignatura (nombre, codigo, codigo_servicio_educativo, codigo_cc, codigo_area, codigo_estatus, codigo_area_dimension, codigo_area_subdimension, ordenar, estatus) 
+					VALUES ('$nombre_asignatura','$codigo_asignatura','$codigo_se','$codigo_cc','$codigo_area','$estatus_asignatura','$codigo_dimension','$codigo_subdimension','$orden','$estatus')";
 				// Ejecutamos el Query.
 					$consulta = $dblink -> query($query);
 						$respuestaOK = true;
