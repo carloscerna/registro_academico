@@ -197,25 +197,35 @@ if($errorDbConexion == false){
 					$mensajeError = "Se ha consultado el registro correctamente ";
 				}
 			break;
-			case 'modificar_asignatura':
-				$id_asignatura = $_POST['id_asignatura'];
-				$nombre = trim($_POST['txtasignatura']);
-				$codigo_se = ($_POST['lstcodigose_m']);
-				$codigo_cc = ($_POST['lstcodigocc']);
-				$codigo_area = ($_POST['lstcodigoarea']);
-				$partes_dividida = ($_POST['sppartes']);
-				$estatus_asignatura = ($_POST['lstEstatusA']);
-				$ordenar = ($_POST['txtordenar']);
+			case 'ActualizarAsignatura':
+				$id_ = $_REQUEST['IdAsignatura'];
+				$codigo_se = ($_POST['CodigoSE']);
+				$codigo_cc = ($_POST['lstIndicadorCalificacion']);
+				$codigo_area = ($_POST['lstArea']);
+				$nombre_asignatura = ($_POST['DescripcionAsignatura']);
+				$codigo_asignatura = ($_POST['CodigoAsignatura']);
+				$codigo_dimension = ($_POST['lstDimension']);
+				$codigo_subdimension = ($_POST['lstSubDimension']);
+				$estatus_asignatura = ($_POST['lstEstatus']);
+				$orden = ($_POST['OrdenAsignatura']);
+			   // VALIDAR ESTATUS CON FALSE O TRUE
+				   if($estatus_asignatura == '01'){
+					   $estatus = true;
+				   }else{
+					   $estatus = false;
+				   }
 				// Armamos el query y iniciamos variables.
 					$query = "UPDATE asignatura SET
-								nombre = '$nombre',
+								nombre = '$nombre_asignatura',
 								codigo_servicio_educativo = '$codigo_se',
 								codigo_cc = '$codigo_cc',
 								codigo_area = '$codigo_area',
-								partes_dividida = '$partes_dividida',
-								estatus = '$estatus_asignatura',
-								ordenar = '$ordenar'
-									WHERE id_asignatura = ". $id_asignatura;
+								codigo_area_dimension = '$codigo_dimension',
+								codigo_area_subdimension = '$codigo_subdimension',
+								codigo_estatus = '$estatus_asignatura',
+								estatus = '$estatus',
+								ordenar = '$orden'
+									WHERE id_asignatura = ". $id_;
 				// Ejecutamos el Query.
 				$consulta = $dblink -> query($query);
 					$respuestaOK = true;
@@ -753,7 +763,7 @@ else{
 if($_POST['accion'] == "eliminar_annlectivo" || $_POST['accion'] == "BuscarSeccion" || $_POST['accion'] == "modificar_seccion" || $_POST['accion'] == "addSeccion" || $_POST['accion'] == "BuscarAnnLectivo" || $_POST['accion'] == "addAnnLectivo" || $_POST['accion'] == "BuscarGrado" || $_POST['accion'] == "addGrado" || $_POST['accion'] == "modificar_annlectivo" || $_POST['accion'] == "BuscarModalidad" || $_POST['accion'] == "modificar_modalidad" || $_POST['accion'] == "addModalidad" || $_POST['accion'] == "modificar_grado"
 	|| $_POST['accion'] == "BuscarAsignatura"
 	|| $_POST['accion'] == "GuardarAsignatura"
-	|| $_POST['accion'] == "modificar_asignatura"
+	|| $_POST['accion'] == "ActualizarAsignatura"
 	|| $_POST['accion'] == "eliminar_asignatura"
 	) {
 // Armamos array para convertir a JSON

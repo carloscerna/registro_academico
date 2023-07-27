@@ -134,12 +134,8 @@ $(function(){
                 accion = "";
 		});
     });
-//
-//
-//
     //
     // FUNCIONALIDAD DE LOS DIFERENTES BOTONES
-
     //
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // BLOQUE PARA ADMINISTRAR LAS ASIGNATURAS.
@@ -149,126 +145,124 @@ $(function(){
         //
 		$('body').on('click','#listaContenidoSE a',function (e){
 			e.preventDefault();
-                        // Limpiar el listado de usuarios.
-                        //$('#listaUsuariosOK').empty();
 			// Id Usuario
     			Id_Editar_Eliminar = $(this).attr('href');
 	    		accion_ok = $(this).attr('data-accion');
-                        // EDITAR LA ASIGNATURA
-                       if($(this).attr('data-accion') == 'editar_asignatura'){
-		        		    // Valor de la acción
-				                $('#accion_asignatura').val('ActualizarAsignatura');
-                                accion = 'EditarAsignatura';
-                                
-                                // obtener el valor del id.
-                                var id_ = $(this).parent().parent().children('td:eq(2)').text();
-                                
-                                // Llamar al archivo php para hacer la consulta y presentar los datos.
-                                $.post("php_libs/soporte/Mantenimiento/Servicio Educativo/phpAjaxSEAsignatura.php",  { id_: id_, accion: accion},
-                                  function(data) {
-                                    // Llenar el formulario con los datos del registro seleccionado tabs-1
-                                    // Datos Generales
-                                        codigo_se = $("#lstcodigose").val();
-                                        texto_se = $("#lstcodigose option:selected").html();
-                                        $("#TextoSE").text(texto_se);
-                                        //
-                                        listar_CodigoEstatus(data[0].codigo_estatus);
-                                        listar_CodigoAreaAsignatura(data[0].codigo_area);
-                                        listar_CodigoAreaAsignaturaDimension(data[0].codigo_area_dimension);
-                                        listar_CodigoAreaAsignaturaSubdimension(data[0].codigo_area, data[0].codigo_area_dimension, data[0].codigo_area_subdimension);
-                                        listar_CodigoIndicadorCalificacion(data[0].codigo_cc);
-                                        //
-                                        $('#IdAsignatura').val(data[0].id_asignatura);
-                                        $('#CodigoAsignatura').val(data[0].codigo);
-                                        $('#OrdenAsignatura').val(data[0].ordenar);
-                                        $('#DescripcionAsignatura').val(data[0].nombre);
-                                        // Abrir ventana modal.
-                                        $('#VentanaAsignatura').modal("show");
-                                        // reestablecer el accion a=ActulizarAsignatura.
-                                        accion = "ActualizarAsignatura";
-                                  },"json");
-                       }
-                       // ELIMINAR REGISTRO ASIGNATURA.
-                       if($(this).attr('data-accion') == 'eliminar_asignatura'){
-                            //	ENVIAR MENSAJE CON SWEETALERT 2, PARA CONFIRMAR SI ELIMINA EL REGISTRO.
-                            const swalWithBootstrapButtons = Swal.mixin({
-                                customClass: {
-                                confirmButton: 'btn btn-success',
-                                cancelButton: 'btn btn-danger'
-                                },
-                                buttonsStyling: false
-                            })
-                            //
-                            swalWithBootstrapButtons.fire({
-                                title: '¿Qué desea hacer?',
-                                text: 'Eliminar el Registro Seleccionado!',
-                                showCancelButton: true,
-                                confirmButtonText: 'Sí, Eliminar!',
-                                cancelButtonText: 'No, Cancelar!',
-                                reverseButtons: true,
-                                allowOutsideClick: false,
-                                allowEscapeKey: false,
-                                allowEnterKey: false,
-                                stopKeydownPropagation: false,
-                                closeButtonAriaLabel: 'Cerrar Alerta',
-                                type: 'question'
-                            }).then((result) => {
-                                if (result.value) {
-                                // PROCESO PARA ELIMINAR REGISTRO.
-                                        // ejecutar Ajax.. 
-                                        $.ajax({
-                                        cache: false,                     
-                                        type: "POST",                     
-                                        dataType: "json",                     
-                                        url:"php_libs/soporte/Mantenimiento/Servicio Educativo/phpAjaxSEAsignatura.php",                     
-                                        data: {                     
-                                                accion_buscar: 'eliminar_asignatura', codigo_id_: Id_Editar_Eliminar,
-                                                },                     
-                                        success: function(response) {                     
-                                                if (response.respuesta === true) {                     		
-                                                    // Asignamos valor a la variable acción
-                                                        $('#accion_asignatura').val('BuscarAsignatura');
-                                                        var codigo_se = $("#lstcodigose").val();
-                                                        accion = 'BuscarAsignatura';
-                                                        //
-                                                        //  CONDICONAR EL SELECT SERVICIO EDUCATIVO.
-                                                        //
-                                                        if(codigo_se == "00"){
-                                                            $("#AlertSE").css("display", "block");
-                                                            return;
+                    // EDITAR LA ASIGNATURA
+                    if($(this).attr('data-accion') == 'editar_asignatura'){
+                        // Valor de la acción
+                            $('#accion_asignatura').val('ActualizarAsignatura');
+                            accion = 'EditarAsignatura';
+                            
+                            // obtener el valor del id.
+                            var id_ = $(this).parent().parent().children('td:eq(2)').text();
+                            
+                            // Llamar al archivo php para hacer la consulta y presentar los datos.
+                            $.post("php_libs/soporte/Mantenimiento/Servicio Educativo/phpAjaxSEAsignatura.php",  { id_: id_, accion: accion},
+                                function(data) {
+                                // Llenar el formulario con los datos del registro seleccionado tabs-1
+                                // Datos Generales
+                                    codigo_se = $("#lstcodigose").val();
+                                    texto_se = $("#lstcodigose option:selected").html();
+                                    $("#TextoSE").text(texto_se);
+                                    //
+                                    listar_CodigoEstatus(data[0].codigo_estatus);
+                                    listar_CodigoAreaAsignatura(data[0].codigo_area);
+                                    listar_CodigoAreaAsignaturaDimension(data[0].codigo_area_dimension);
+                                    listar_CodigoAreaAsignaturaSubdimension(data[0].codigo_area, data[0].codigo_area_dimension, data[0].codigo_area_subdimension);
+                                    listar_CodigoIndicadorCalificacion(data[0].codigo_cc);
+                                    //
+                                    $('#IdAsignatura').val(data[0].id_asignatura);
+                                    $('#CodigoAsignatura').val(data[0].codigo);
+                                    $('#OrdenAsignatura').val(data[0].ordenar);
+                                    $('#DescripcionAsignatura').val(data[0].nombre);
+                                    // Abrir ventana modal.
+                                    $('#VentanaAsignatura').modal("show");
+                                    // reestablecer el accion a=ActulizarAsignatura.
+                                    accion = "ActualizarAsignatura";
+                                },"json");
+                    }
+                    // ELIMINAR REGISTRO ASIGNATURA.
+                    if($(this).attr('data-accion') == 'eliminar_asignatura'){
+                        //	ENVIAR MENSAJE CON SWEETALERT 2, PARA CONFIRMAR SI ELIMINA EL REGISTRO.
+                        const swalWithBootstrapButtons = Swal.mixin({
+                            customClass: {
+                            confirmButton: 'btn btn-success',
+                            cancelButton: 'btn btn-danger'
+                            },
+                            buttonsStyling: false
+                        })
+                        //
+                        swalWithBootstrapButtons.fire({
+                            title: '¿Qué desea hacer?',
+                            text: 'Eliminar el Registro Seleccionado!',
+                            showCancelButton: true,
+                            confirmButtonText: 'Sí, Eliminar!',
+                            cancelButtonText: 'No, Cancelar!',
+                            reverseButtons: true,
+                            allowOutsideClick: false,
+                            allowEscapeKey: false,
+                            allowEnterKey: false,
+                            stopKeydownPropagation: false,
+                            closeButtonAriaLabel: 'Cerrar Alerta',
+                            type: 'question'
+                        }).then((result) => {
+                            if (result.value) {
+                            // PROCESO PARA ELIMINAR REGISTRO.
+                                    // ejecutar Ajax.. 
+                                    $.ajax({
+                                    cache: false,                     
+                                    type: "POST",                     
+                                    dataType: "json",                     
+                                    url:"php_libs/soporte/Mantenimiento/Servicio Educativo/phpAjaxSEAsignatura.php",                     
+                                    data: {                     
+                                            accion_buscar: 'eliminar_asignatura', codigo_id_: Id_Editar_Eliminar,
+                                            },                     
+                                    success: function(response) {                     
+                                            if (response.respuesta === true) {                     		
+                                                // Asignamos valor a la variable acción
+                                                    $('#accion_asignatura').val('BuscarAsignatura');
+                                                    var codigo_se = $("#lstcodigose").val();
+                                                    accion = 'BuscarAsignatura';
+                                                    //
+                                                    //  CONDICONAR EL SELECT SERVICIO EDUCATIVO.
+                                                    //
+                                                    if(codigo_se == "00"){
+                                                        $("#AlertSE").css("display", "block");
+                                                        return;
+                                                    }
+                                                    // Llamar al archivo php para hacer la consulta y presentar los datos.
+                                                    $.post("php_libs/soporte/Mantenimiento/Servicio Educativo/phpAjaxSEAsignatura.php",  {accion: accion, codigo_se: codigo_se},
+                                                        function(response) {
+                                                        if (response.respuesta === true) {
+                                                            toastr["info"]('Registros Encontrados', "Sistema");
                                                         }
-                                                        // Llamar al archivo php para hacer la consulta y presentar los datos.
-                                                        $.post("php_libs/soporte/Mantenimiento/Servicio Educativo/phpAjaxSEAsignatura.php",  {accion: accion, codigo_se: codigo_se},
-                                                            function(response) {
-                                                            if (response.respuesta === true) {
-                                                                toastr["info"]('Registros Encontrados', "Sistema");
-                                                            }
-                                                            if (response.respuesta === false) {
-                                                                toastr["warning"]('Registros No Encontrados', "Sistema");
-                                                            }                                                                                    // si es exitosa la operación
-                                                                $('#listaContenidoSE').empty();
-                                                                $('#listaContenidoSE').append(response.contenido);
-                                                            },"json");
-                                                }
-                                                if (response.respuesta === false) {                     		
-                                                    toastr["info"]('Registro no Eliminado... El còdigo está está activo en la Tabla Notas.', "Sistema");
-                                                }
-                                        }                     
-                                        });
-                                //////////////////////////////////////
-                                } else if (
-                                /* Read more about handling dismissals below */
-                                result.dismiss === Swal.DismissReason.cancel
-                                ) {
-                                swalWithBootstrapButtons.fire(
-                                    'Cancelar',
-                                    'Su Registro no ha sido Eliminado :)',
-                                    'error'
-                                )
-                                }
-                            })
-                       }
-                });
+                                                        if (response.respuesta === false) {
+                                                            toastr["warning"]('Registros No Encontrados', "Sistema");
+                                                        }                                                                                    // si es exitosa la operación
+                                                            $('#listaContenidoSE').empty();
+                                                            $('#listaContenidoSE').append(response.contenido);
+                                                        },"json");
+                                            }
+                                            if (response.respuesta === false) {                     		
+                                                toastr["info"]('Registro no Eliminado... El còdigo está está activo en la Tabla Notas.', "Sistema");
+                                            }
+                                    }                     
+                                    });
+                            //////////////////////////////////////
+                            } else if (
+                            /* Read more about handling dismissals below */
+                            result.dismiss === Swal.DismissReason.cancel
+                            ) {
+                            swalWithBootstrapButtons.fire(
+                                'Cancelar',
+                                'Su Registro no ha sido Eliminado :)',
+                                'error'
+                            )
+                            }
+                        })
+                    }
+        });
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// ACTIVAR Y DESACTIVAR CHECKBOX DE LA TABLA.
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -344,8 +338,7 @@ $(function(){
             // ENVIO DE DATOS Y VALIDAR INFORMACION DEL FORM
             //
             $('#goGuardarAsignatura').on( 'click', function () {
-                // acción
-                    accion = "GuardarAsignatura";
+                // enviar form
                     $('#formVentanaAsignatura').submit();
             });
             //	  
@@ -418,26 +411,26 @@ $(function(){
                                     // Abrir ventana modal.
                                          $('#VentanaAsignatura').modal("hide");
                                     // Llamar al archivo php para hacer la consulta y presentar los datos.
-                                    $('#accion_asignatura').val('BuscarAsignatura');
-                                    accion = 'BuscarAsignatura';
+                                        $('#accion_asignatura').val('BuscarAsignatura');
+                                        accion = 'BuscarAsignatura';
                                         $.post("php_libs/soporte/Mantenimiento/Servicio Educativo/phpAjaxSEAsignatura.php",  {accion: accion, codigo_se: codigo_se},
-                                        function(response) {
-                                        if (response.respuesta === true) {
-                                            toastr["info"]('Registros Encontrados', "Sistema");
-                                        }
-                                        if (response.respuesta === false) {
-                                            toastr["warning"]('Registros No Encontrados', "Sistema");
-                                        }                                                                                    // si es exitosa la operación
-                                            $('#listaContenidoSE').empty();
-                                            $('#listaContenidoSE').append(response.contenido);
-                                        },"json");
+                                            function(response) {
+                                                if (response.respuesta === true) {
+                                                    toastr["info"]('Registros Encontrados', "Sistema");
+                                                }
+                                                if (response.respuesta === false) {
+                                                    toastr["warning"]('Registros No Encontrados', "Sistema");
+                                                }                                                                                    // si es exitosa la operación
+                                                    $('#listaContenidoSE').empty();
+                                                    $('#listaContenidoSE').append(response.contenido);
+                                            },"json");
                                     }               
                             },
                         });
                     },
            });
 }); // FIN DEL FUNCTION.
-
+//
 // Mensaje de Carga de Ajax.
 function configureLoadingScreen(screen){
     $(document)
@@ -537,7 +530,7 @@ function listar_CodigoAreaAsignaturaSubdimension(CodigoArea, CodigoAreaDimension
 }
    ///////////////////////////////////////////////////////////////////////
 // TODAS LAS TABLAS VAN HA ESTAR EN ASIGNATURA.*******************
-// FUNCION LISTAR TABLA catalogo_area_subdimension
+// FUNCION LISTAR TABLA catalogo Indicador Calificaciones
 ////////////////////////////////////////////////////////////
 function listar_CodigoIndicadorCalificacion(CodigoIndicadorCalificacion){
     var miselect=$("#lstIndicadorCalificacion");
