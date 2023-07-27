@@ -23,7 +23,6 @@
 <script>
   $(document).ready(function () { 
       var miselect=$("#lstcodigose");
-      var miselect12=$("#lstcodigose_m");
       /* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
       miselect.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
       
@@ -33,27 +32,8 @@
           miselect.append("<option value='00'>Seleccionar...</option>");
           for (var i=0; i<data.length; i++) {
             miselect.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');
-          }
-          // Rellenar el de Servicio Educativo Nuevo o Modificar.
-          miselect12.empty();
-          miselect12.append("<option value='00'>Seleccionar...</option>");
-          for (var j=0; j<data.length; j++) {
-            miselect12.append('<option value="' + data[j].codigo + '">' + data[j].descripcion + '</option>');
-          }					
+          }			
       }, "json");
-      // CARGAR DATOS DE CC
-      var miselect2=$("#lstcodigocc");
-      /* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
-      miselect2.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
-      
-      $.post("includes/cargar-cc.php",
-        function(data) {
-          miselect2.empty();
-          miselect2.append("<option value='00'>Seleccionar...</option>");
-          for (var i=0; i<data.length; i++) {
-            miselect2.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');
-          }
-      }, "json");	
     })
 </script>
 {% endblock %}

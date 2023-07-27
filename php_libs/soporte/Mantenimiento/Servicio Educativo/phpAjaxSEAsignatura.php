@@ -150,11 +150,13 @@ if($errorDbConexion == false){
 						$mensajeError = "Si Registro";
 				}
 			break;
-			case 'editar_asignatura':
+			case 'EditarAsignatura':
+				$id_ = $_REQUEST['id_'];
 				// Armamos el query y iniciamos variables.
-					$query = "SELECT id_asignatura, nombre, codigo, codigo_servicio_educativo, codigo_area, codigo_cc, estatus, ordenar 
-					FROM asignatura 
-					WHERE id_asignatura = ".$_POST['id_x']. " ORDER BY codigo ";
+					$query = "SELECT id_asignatura, nombre, codigo, codigo_servicio_educativo, codigo_area, codigo_cc, estatus, ordenar,
+								codigo_estatus, codigo_area_dimension, codigo_area_subdimension			
+								FROM asignatura 
+								WHERE id_asignatura = '$id_' ORDER BY codigo";
 				// Ejecutamos el Query.
 				$consulta = $dblink -> query($query);
 
@@ -171,8 +173,11 @@ if($errorDbConexion == false){
 					$codigo_se = trim($listado['codigo_servicio_educativo']);
 					$codigo_cc = trim($listado['codigo_cc']);
 					$codigo_area = trim($listado['codigo_area']);
-					$partes_dividida = trim($listado['partes_dividida']);
+					$codigo_area_dimension = trim($listado['codigo_area_dimension']);
+					$codigo_area_subdimension = trim($listado['codigo_area_subdimension']);
+					//$partes_dividida = trim($listado['partes_dividida']);
 					$estatus_asignatura = trim($listado['estatus']);
+					$codigo_estatus = trim($listado['codigo_estatus']);
 					$ordenar = trim($listado['ordenar']);
 					
 					$datos[$fila_array]["id_asignatura"] = $id_asignatura;
@@ -180,9 +185,12 @@ if($errorDbConexion == false){
 					$datos[$fila_array]["nombre"] = $nombre;
 					$datos[$fila_array]["codigo_cc"] = $codigo_cc;
 					$datos[$fila_array]["codigo_area"] = $codigo_area;
+					$datos[$fila_array]["codigo_area_dimension"] = $codigo_area_dimension;
+					$datos[$fila_array]["codigo_area_subdimension"] = $codigo_area_subdimension;
 					$datos[$fila_array]["codigo_se"] = $codigo_se;
-					$datos[$fila_array]["partes_dividida"] = $partes_dividida;
+					//$datos[$fila_array]["partes_dividida"] = $partes_dividida;
 					$datos[$fila_array]["estatus_asignatura"] = $estatus_asignatura;
+					$datos[$fila_array]["codigo_estatus"] = $codigo_estatus;
 					$datos[$fila_array]["ordenar"] = $ordenar;
 					$fila_array++;
 					}
@@ -755,7 +763,7 @@ $salidaJson = array("respuesta" => $respuestaOK,
 echo json_encode($salidaJson);
 }
 
-if($_POST['accion'] == "editar_modalidad" || $_POST['accion'] == "editar_annlectivo" || $_POST['accion'] == "editar_seccion" || $_POST['accion'] == "BuscarCodigoSeccion" || $_POST['accion'] == "BuscarCodigoAnnLectivo" || $_POST['accion'] == "editar_grado" || $_POST['accion'] == "BuscarCodigoGrado" || $_POST['accion'] == "BuscarCodigoModalidad" || $_POST['accion'] == "BuscarCodigoAsignatura" || $_POST['accion'] == "editar_asignatura") {
+if($_POST['accion'] == "editar_modalidad" || $_POST['accion'] == "editar_annlectivo" || $_POST['accion'] == "editar_seccion" || $_POST['accion'] == "BuscarCodigoSeccion" || $_POST['accion'] == "BuscarCodigoAnnLectivo" || $_POST['accion'] == "editar_grado" || $_POST['accion'] == "BuscarCodigoGrado" || $_POST['accion'] == "BuscarCodigoModalidad" || $_POST['accion'] == "BuscarCodigoAsignatura" || $_POST['accion'] == "EditarAsignatura") {
 // Armamos array para convertir a JSON
 echo json_encode($datos);
 }

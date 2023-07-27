@@ -9,6 +9,7 @@ var CodigoIndicador = "";
 var CodigoDimension = "";
 var CodigoSubDimension = "";
 var codigo_se = "";
+var texto_se = "";
 // INICIO DE LA FUNCION PRINCIPAL.
 $(function(){
 //
@@ -90,8 +91,6 @@ $(function(){
  
         // funcion onchange.
         $('#lstSubDimension').on('change', function() {
-            CodigoArea = $("#lstArea").val();
-            CodigoDimension = $("#lstDimension").val();
                 // seelct a modificar o rellenar
                 var miselect=$("#lstIndicadorCalificacion");
                 /* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
@@ -132,6 +131,7 @@ $(function(){
             // Limpiar variables Text, y textarea
 				$("#formVentanaAsignatura")[0].reset();
 				$("label.error").remove();
+                accion = "";
 		});
     });
 //
@@ -156,50 +156,37 @@ $(function(){
 	    		accion_ok = $(this).attr('data-accion');
                         // EDITAR LA ASIGNATURA
                        if($(this).attr('data-accion') == 'editar_asignatura'){
-                          // Ocultar botón actualizar y mostrar botón guardar.
-                                $('#goAsignaturaActualizar').hide();
-                                $('#goAsignaturaGuardar').show();
 		        		    // Valor de la acción
-				                $('#accion_asignatura').val('modificar_asignatura');
-                                accion = 'editar_asignatura';
-                                alertify.log("Registro Seleccionado para Editar.");
+				                $('#accion_asignatura').val('ActualizarAsignatura');
+                                accion = 'EditarAsignatura';
                                 
                                 // obtener el valor del id.
-                                var id_ = $(this).parent().parent().children('td:eq(1)').text();
+                                var id_ = $(this).parent().parent().children('td:eq(2)').text();
                                 
                                 // Llamar al archivo php para hacer la consulta y presentar los datos.
-                                $.post("php_libs/soporte/Mantenimiento/Servicio Educativo/phpAjaxMantenimiento_1.inc.php",  { id_x: id_, accion: accion},
+                                $.post("php_libs/soporte/Mantenimiento/Servicio Educativo/phpAjaxSEAsignatura.php",  { id_: id_, accion: accion},
                                   function(data) {
-                                    alertify.success("Registros Encontrados."); 
                                     // Llenar el formulario con los datos del registro seleccionado tabs-1
                                     // Datos Generales
-                                     $('#txtasignatura').val(data[0].nombre);
-                                     $('#txtcodigoasignatura').val(data[0].codigo);
-                                     $('#txtordenar').val(data[0].ordenar);
-                                     $('#lstcodigose_m option[value='+data[0].codigo_se+']').attr('selected',true);
-                                     $('#lstcodigocc option[value='+data[0].codigo_cc+']').attr('selected',true);
-                                     $('#lstcodigoarea option[value='+data[0].codigo_area+']').attr('selected',true);
-                                     $("#id_asignatura").val(Id_Editar_Eliminar);
-                                     $('#sppartes').val(data[0].partes_dividida);
-
-                                        if(data[0].estatus_asignatura == '1')
-                                        {
-                                                $('#lstEstatusA option[value=true]').attr('selected',true);
-                                        }else{
-                                                $('#lstEstatusA option[value=false]').attr('selected',true);
-                                        }
-                                     //$('#lstEstatusA').val(data[0].estatus_asignatura);
-                                     // Desactivar casillas
-                                     $('#listaAsignatura').empty();
-                                     // Cambiar el valor de acción.
-                                     accion = $("#accion_asignatura").val();
+                                        codigo_se = $("#lstcodigose").val();
+                                        texto_se = $("#lstcodigose option:selected").html();
+                                        $("#TextoSE").text(texto_se);
+                                        //
+                                        listar_CodigoEstatus(data[0].codigo_estatus);
+                                        listar_CodigoAreaAsignatura(data[0].codigo_area);
+                                        listar_CodigoAreaAsignaturaDimension(data[0].codigo_area_dimension);
+                                        listar_CodigoAreaAsignaturaSubdimension(data[0].codigo_area, data[0].codigo_area_dimension, data[0].codigo_area_subdimension);
+                                        listar_CodigoIndicadorCalificacion(data[0].codigo_cc);
+                                        //
+                                        $('#IdAsignatura').val(data[0].id_asignatura);
+                                        $('#CodigoAsignatura').val(data[0].codigo);
+                                        $('#OrdenAsignatura').val(data[0].ordenar);
+                                        $('#DescripcionAsignatura').val(data[0].nombre);
+                                        // Abrir ventana modal.
+                                        $('#VentanaAsignatura').modal("show");
+                                        // reestablecer el accion a=ActulizarAsignatura.
+                                        accion = "ActualizarAsignatura";
                                   },"json");
-                                
-                                // Abrimos el Formulario
-                                    $('#editarAsignatura').dialog({
-                                        title:'Editar Registro.',
-                                        autoOpen:true
-                                    });
                        }
                        // ELIMINAR REGISTRO ASIGNATURA.
                        if($(this).attr('data-accion') == 'eliminar_asignatura'){
@@ -332,10 +319,11 @@ $(function(){
             /* VER #CONTROLES CREADOS */
             //////////////////////////////////////////////////////////////////////////////////
             $('#goNuevoSE').on('click', function(){
+                texto_se = $("#lstcodigose option:selected").html();
                 codigo_se = $("#lstcodigose").val();
                 accion = 'GuardarAsignatura';
                 $('#accion_asignatura').val('GuardarAsignatura');
-                var texto_se = $("#lstcodigose option:selected").html();
+
                 //
                 //  CONDICONAR EL SELECT SERVICIO EDUCATIVO.
                 //
@@ -359,8 +347,10 @@ $(function(){
                 // acción
                     accion = "GuardarAsignatura";
                     $('#formVentanaAsignatura').submit();
-            });	  
+            });
+            //	  
             // Validar Formulario para la buscque de registro segun el criterio.   
+            // PARA GUARDAR O ACTUALIZAR.
             $('#formVentanaAsignatura').validate({
                 ignore:"",
                 rules:{
@@ -494,6 +484,72 @@ function listar_CodigoAreaAsignatura(CodigoAreaAsignatura){
             miselect.append("<option value='00'>Seleccionar...</option>");
             for (var i=0; i<data.length; i++) {
                 if(CodigoAreaAsignatura == data[i].codigo){
+                    miselect.append('<option value="' + data[i].codigo + '" selected>' + data[i].descripcion + '</option>');
+                }else{
+                    miselect.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');
+                }
+            }
+    }, "json");    
+}
+   ///////////////////////////////////////////////////////////////////////
+// TODAS LAS TABLAS VAN HA ESTAR EN ASIGNATURA.*******************
+// FUNCION LISTAR TABLA catalogo_area_dimension
+////////////////////////////////////////////////////////////
+function listar_CodigoAreaAsignaturaDimension(CodigoAreaDimension){
+    var miselect=$("#lstDimension");
+    /* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
+    miselect.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
+    //
+    $.post("includes/cargar-area-dimension.php", {CodigoArea: CodigoAreaDimension},
+        function(data) {
+            miselect.empty();
+            miselect.append("<option value='00'>Seleccionar...</option>");
+            for (var i=0; i<data.length; i++) {
+                if(CodigoAreaDimension == data[i].codigo){
+                    miselect.append('<option value="' + data[i].codigo + '" selected>' + data[i].descripcion + '</option>');
+                }else{
+                    miselect.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');
+                }
+            }
+    }, "json");    
+}
+   ///////////////////////////////////////////////////////////////////////
+// TODAS LAS TABLAS VAN HA ESTAR EN ASIGNATURA.*******************
+// FUNCION LISTAR TABLA catalogo_area_subdimension
+////////////////////////////////////////////////////////////
+function listar_CodigoAreaAsignaturaSubdimension(CodigoArea, CodigoAreaDimension, CodigoSubdimension){
+    var miselect=$("#lstSubDimension");
+    /* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
+    miselect.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
+    //
+    $.post("includes/cargar-area-subdimension.php", {CodigoArea: CodigoArea, CodigoDimension: CodigoAreaDimension},
+        function(data) {
+            miselect.empty();
+            miselect.append("<option value='00'>Seleccionar...</option>");
+            for (var i=0; i<data.length; i++) {
+                if(CodigoSubdimension == data[i].codigo){
+                    miselect.append('<option value="' + data[i].codigo + '" selected>' + data[i].descripcion + '</option>');
+                }else{
+                    miselect.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');
+                }
+            }
+    }, "json");    
+}
+   ///////////////////////////////////////////////////////////////////////
+// TODAS LAS TABLAS VAN HA ESTAR EN ASIGNATURA.*******************
+// FUNCION LISTAR TABLA catalogo_area_subdimension
+////////////////////////////////////////////////////////////
+function listar_CodigoIndicadorCalificacion(CodigoIndicadorCalificacion){
+    var miselect=$("#lstIndicadorCalificacion");
+    /* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
+    miselect.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
+    //
+    $.post("includes/cargar-cc.php",
+        function(data) {
+            miselect.empty();
+            miselect.append("<option value='00'>Seleccionar...</option>");
+            for (var i=0; i<data.length; i++) {
+                if(CodigoIndicadorCalificacion == data[i].codigo){
                     miselect.append('<option value="' + data[i].codigo + '" selected>' + data[i].descripcion + '</option>');
                 }else{
                     miselect.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');
