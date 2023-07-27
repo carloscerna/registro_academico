@@ -14,7 +14,7 @@
 			</button>
 		</div>
 		<!-- FORMULARIO PRINCIPAL. -->
-		<form  action="" method="post" name="form" id="formVentanaAsignatura" role="form">
+		<form action="" method="post" name="formVentanaAsignatura" id="formVentanaAsignatura" role="form" enctype="multipart/form-data">
       <!-- SECCION DEL HIDDEN INPUT-->
       <input type="hidden" id="accion_asignatura" name="accion_asignatura" value="GuardarAsignatura">
 
@@ -27,7 +27,7 @@
                         <div class="row">
                             <div class="col col-md-12 col-lg-12 col-xl-12">
                                 <div class="input-group">
-                                    <span class="input-group-text text-info" id="TextoSE"></span>
+                                    <span class="input-group-text text-info" id="TextoSE" name="TextoSE"></span>
                                 </div>
                             </div>
                         </div>
@@ -71,7 +71,7 @@
                                             <div class="input-group-prepend">
                                               <span class="input-group-text bg-gradient-gray-dark" id="basic-addon3">Código</span>
                                             </div>
-                                            <input type="text" class="form-control text-bold text-blue" id="CodigoAsignatura" placeholder="" aria-label="BusquedaPersonalControl" aria-describedby="basic-addon3" readonly>
+                                            <input type="text" class="form-control text-bold text-blue" id="CodigoAsignatura" name="CodigoAsignatura" placeholder="" aria-label="BusquedaPersonalControl" aria-describedby="basic-addon3" readonly>
                                           </div>
                                     </div>
                                     <div class="input-group">
@@ -79,7 +79,7 @@
                                             <div class="input-group-prepend">
                                               <span class="input-group-text bg-gradient-gray-dark" id="basic-addon4">Orden</span>
                                             </div>
-                                            <input type="number" class="form-control text-bold text-blue" id="OrdenAsignatura" placeholder="" aria-label="BusquedaRutaControl" aria-describedby="basic-addon4" value="1">
+                                            <input type="number" class="form-control text-bold text-blue" id="OrdenAsignatura" name="OrdenAsignatura" placeholder="" aria-label="BusquedaRutaControl" aria-describedby="basic-addon4" value="1">
                                           </div>
                                     </div>
                                     <div class="form-group">
@@ -96,6 +96,7 @@
             <!-- footer modal -->
             <div class="modal-footer bg-gradient-cyan p-0">
               <button class="btn btn-default" data-dismiss="modal" type="button">Cerrar</button>
+              <input class="btn btn-primary" type="button" value="Guardar" name="goGuardarAsignatura" id="goGuardarAsignatura">
             </div>
         </form> <!-- from principal -->
 	</div>

@@ -1,4 +1,4 @@
-1// id de user global
+// id de user global
 var idUser_ok = 0;
 var accion_ok = 'noAccion';
 var accion = "";
@@ -8,6 +8,7 @@ var codigo_area = "";
 var CodigoIndicador = "";
 var CodigoDimension = "";
 var CodigoSubDimension = "";
+var codigo_se = "";
 // INICIO DE LA FUNCION PRINCIPAL.
 $(function(){
 //
@@ -114,7 +115,7 @@ $(function(){
                     // BUSCAR EL ÚLTINMO DE LA ASIGNATURA PARA ASIGNARLE A UN NUEVO REGISTRO.
                     accion = 'BuscarCodigoAsignatura';
                     // Llamar al archivo php para hacer la consulta y presentar los datos.
-                            $.post("php_libs/soporte/phpAjaxMantenimiento_1.inc.php",  {accion: accion},
+                            $.post("php_libs/soporte/phpAjaxServicioEducativo.php",  {accion: accion},
                                 function(data) {
                                     // si es exitosa la operación
                                         $('#CodigoAsignatura').val(data[0].codigo_asignatura);
@@ -304,7 +305,7 @@ $(function(){
             $('#goBuscarSE').on('click',function(){
                 // Asignamos valor a la variable acción
                     $('#accion_asignatura').val('BuscarAsignatura');
-                    var codigo_se = $("#lstcodigose").val();
+                    codigo_se = $("#lstcodigose").val();
                     accion = 'BuscarAsignatura';
                     //
                     //  CONDICONAR EL SELECT SERVICIO EDUCATIVO.
@@ -331,8 +332,9 @@ $(function(){
             /* VER #CONTROLES CREADOS */
             //////////////////////////////////////////////////////////////////////////////////
             $('#goNuevoSE').on('click', function(){
-                var codigo_se = $("#lstcodigose").val();
-                    accion = 'guardar_asignatura';
+                codigo_se = $("#lstcodigose").val();
+                accion = 'GuardarAsignatura';
+                $('#accion_asignatura').val('GuardarAsignatura');
                 var texto_se = $("#lstcodigose option:selected").html();
                 //
                 //  CONDICONAR EL SELECT SERVICIO EDUCATIVO.
@@ -350,6 +352,100 @@ $(function(){
                 // Abrir ventana modal.
                 $('#VentanaAsignatura').modal("show");
             });
+            //
+            // ENVIO DE DATOS Y VALIDAR INFORMACION DEL FORM
+            //
+            $('#goGuardarAsignatura').on( 'click', function () {
+                // acción
+                    accion = "GuardarAsignatura";
+                    $('#formVentanaAsignatura').submit();
+            });	  
+            // Validar Formulario para la buscque de registro segun el criterio.   
+            $('#formVentanaAsignatura').validate({
+                ignore:"",
+                rules:{
+                        DescripcionAsignatura: {required: true, minlength: 4},
+                        CodigoAsignatura:{required: true, minlength: 3},
+                        lstIndicadorCalificacion: {required: true},
+                        },
+                        errorElement: "em",
+                        errorPlacement: function ( error, element ) {
+                            // Add the `invalid-feedback` class to the error element
+                            error.addClass( "invalid-feedback" );
+                            if ( element.prop( "type" ) === "checkbox" ) {
+                                error.insertAfter( element.next( "label" ) );
+                            } else {
+                                error.insertAfter( element );
+                            }
+                        },
+                            highlight: function ( element, errorClass, validClass ) {
+                                        $( element ).addClass( "is-invalid" ).removeClass( "is-valid" );
+                                    },
+                            unhighlight: function (element, errorClass, validClass) {
+                                        $( element ).addClass( "is-valid" ).removeClass( "is-invalid" );
+                                    },
+                            invalidHandler: function() {
+                                setTimeout(function() {
+                                    toastr.error("Faltan Datos...");
+                            });            
+                        },
+                    submitHandler: function(){	
+                        var str = $('#formVentanaAsignatura').serialize();
+                        //alert(str);
+                    // VALIDAR LOS SELECT...
+                    //
+                        if($('#lstArea').val() == '00'){
+                            alert("Debe seleccionar Area de la Asignatura.");
+                            return;
+                        }
+                        if($('#lstDimension').val() == '00'){
+                            alert("Debe seleccionar Dimensión de la Asignatura.");
+                            return;
+                        }
+                        if($('#lstSubDimension').val() == '00'){
+                            alert("Debe seleccionar Subdimensión de la Asignatura.");
+                            return;
+                        }
+                    ///////////////////////////////////////////////////////////////			
+                    // Inicio del Ajax. guarda o Actualiza los datos del Formualrio.
+                    ///////////////////////////////////////////////////////////////
+                        $.ajax({
+                            beforeSend: function(){
+
+                            },
+                            cache: false,
+                            type: "POST",
+                            dataType: "json",
+                            url:"php_libs/soporte/phpAjaxServicioEducativo.php",
+                            data:str + "&CodigoSE=" + codigo_se + "&accion=" + accion + "&id=" + Math.random(),
+                            success: function(response){
+                                // Validar mensaje de error
+                                if(response.respuesta == false){
+                                    toastr["error"](response.mensaje, "Sistema");
+                                }
+                                else{
+                                    toastr["success"](response.mensaje, "Sistema");
+                                    // Abrir ventana modal.
+                                         $('#VentanaAsignatura').modal("hide");
+                                    // Llamar al archivo php para hacer la consulta y presentar los datos.
+                                    $('#accion_asignatura').val('BuscarAsignatura');
+                                    accion = 'BuscarAsignatura';
+                                        $.post("php_libs/soporte/phpAjaxServicioEducativo.php",  {accion: accion, codigo_se: codigo_se},
+                                        function(response) {
+                                        if (response.respuesta === true) {
+                                            toastr["info"]('Registros Encontrados', "Sistema");
+                                        }
+                                        if (response.respuesta === false) {
+                                            toastr["warning"]('Registros No Encontrados', "Sistema");
+                                        }                                                                                    // si es exitosa la operación
+                                            $('#listaContenidoSE').empty();
+                                            $('#listaContenidoSE').append(response.contenido);
+                                        },"json");
+                                    }               
+                            },
+                        });
+                    },
+           });
 }); // FIN DEL FUNCTION.
 
 // Mensaje de Carga de Ajax.

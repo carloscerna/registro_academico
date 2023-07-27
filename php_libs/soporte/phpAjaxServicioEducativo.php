@@ -54,7 +54,8 @@ if($errorDbConexion == false){
 				$statusTipo = array ("01" => "btn-success", "02" => "btn-warning", "03" => "btn-danger");
 				$codigo_se_post = $_POST["codigo_se"];
 				// Armamos el query.
-					$query = "SELECT asig.id_asignatura, asig.nombre, asig.codigo as codigo_asignatura, asig.codigo_servicio_educativo, asig.codigo_cc, asig.codigo_servicio_educativo, asig.codigo_area, asig.estatus, asig.ordenar,
+					$query = "SELECT asig.id_asignatura, asig.nombre, asig.codigo as codigo_asignatura, asig.codigo_servicio_educativo, asig.codigo_cc, 
+							asig.codigo_servicio_educativo, asig.codigo_area, asig.estatus, asig.ordenar, asig.codigo_estatus,
 							cat_se.descripcion as nombre_servicio_educativo, 
 							cat_cc.descripcion as nombre_cc, cat_cc.codigo,
 							cat_area.descripcion as nombre_area, cat_area.codigo
@@ -83,11 +84,11 @@ if($errorDbConexion == false){
 					$nombre_cc = trim($listado['nombre_cc']);
 					$codigo_area = trim($listado['codigo_area']);
 					$nombre_area = trim($listado['nombre_area']);
-					$estatus = trim($listado['estatus']);
+					$estatus = trim($listado['codigo_estatus']);
 					$ordenar = trim($listado['ordenar']);
 					$num++;
 					// VARIABLES ESTATUS.
-						if($estatus == 1){
+						if($estatus == '01'){
 							$estatus = "<td><span class='badge badge-pill badge-info'>Activo</span></td>";
 						}else{
 							$estatus = "<td><span class='badge badge-pill badge-danger'>Inactivo</span></td>";
@@ -111,38 +112,43 @@ if($errorDbConexion == false){
 					$mensajeError = "No existen registros.";
 				}
 			break;
-			case 'guardar_asignatura':
+			case 'GuardarAsignatura':
 				// consultar el registro antes de agregarlo.
 				// Armamos el query y iniciamos variables.
-				 $codigo_se = ($_POST['lstcodigose_m']);
-				 $codigo_cc = ($_POST['lstcodigocc']);
-				 $codigo_area = ($_POST['lstcodigoarea']);
-				 $nombre_asignatura = ($_POST['txtasignatura']);
-				 $codigo_asignatura = ($_POST['txtcodigoasignatura']);
-				 $partes_dividida = ($_POST['sppartes']);
-				 $estatus_asignatura = ($_POST['lstEstatusA']);
-				 
-				 $query = "SELECT * FROM asignatura WHERE codigo = '".$codigo_asignatura. "' ORDER BY codigo ";
-				// Ejecutamos el Query.
-				$consulta = $dblink -> query($query);
+				 $codigo_se = ($_POST['CodigoSE']);
+				 $codigo_cc = ($_POST['lstIndicadorCalificacion']);
+				 $codigo_area = ($_POST['lstArea']);
+				 $nombre_asignatura = ($_POST['DescripcionAsignatura']);
+				 $codigo_asignatura = ($_POST['CodigoAsignatura']);
+				 $codigo_dimension = ($_POST['lstDimension']);
+				 $codigo_subdimension = ($_POST['lstSubDimension']);
+				 $estatus_asignatura = ($_POST['lstEstatus']);
+				 $orden = ($_POST['OrdenAsignatura']);
+				 // verificar si existe la asignatura con respoecto al codigo.
+				 	$query = "SELECT * FROM asignatura WHERE codigo = '$codigo_asignatura' ORDER BY codigo ";
+				 // Ejecutamos el Query.
+					$consulta = $dblink -> query($query);
 
-				if($consulta -> rowCount() != 0){
-					$respuestaOK = false;
-					$contenidoOK = "";
-					$mensajeError = "Si Existe";
-				}else{
+					if($consulta -> rowCount() != 0){
+						$respuestaOK = false;
+						$contenidoOK = "";
+						$mensajeError = "Si Existe";
+					}else{
 				// proceso para grabar el registro
-					$query = "INSERT INTO asignatura (nombre, codigo, codigo_servicio_educativo, codigo_cc, codigo_area, partes_dividida, estatus) VALUES ('$nombre_asignatura','$codigo_asignatura','$codigo_se','$codigo_cc','$codigo_area',$partes_dividida, '$estatus_asignatura')";
+					$query = "INSERT INTO asignatura (nombre, codigo, codigo_servicio_educativo, codigo_cc, codigo_area, codigo_estatus, codigo_area_dimension, codigo_area_subdimension, ordenar) 
+					VALUES ('$nombre_asignatura','$codigo_asignatura','$codigo_se','$codigo_cc','$codigo_area','$estatus_asignatura','$codigo_dimension','$codigo_subdimension','$orden')";
 				// Ejecutamos el Query.
-				$consulta = $dblink -> query($query);
-					$respuestaOK = true;
-					$contenidoOK = "";
-					$mensajeError = "Si Registro";
+					$consulta = $dblink -> query($query);
+						$respuestaOK = true;
+						$contenidoOK = $query;
+						$mensajeError = "Si Registro";
 				}
 			break;
 			case 'editar_asignatura':
 				// Armamos el query y iniciamos variables.
-					$query = "SELECT id_asignatura, nombre, codigo, codigo_servicio_educativo, codigo_area, codigo_cc, partes_dividida, estatus, ordenar FROM asignatura WHERE id_asignatura = ".$_POST['id_x']. " ORDER BY codigo ";
+					$query = "SELECT id_asignatura, nombre, codigo, codigo_servicio_educativo, codigo_area, codigo_cc, estatus, ordenar 
+					FROM asignatura 
+					WHERE id_asignatura = ".$_POST['id_x']. " ORDER BY codigo ";
 				// Ejecutamos el Query.
 				$consulta = $dblink -> query($query);
 
