@@ -64,7 +64,7 @@ if($errorDbConexion == false){
 							INNER JOIN catalogo_cc_asignatura cat_cc ON cat_cc.codigo = asig.codigo_cc
 							INNER JOIN catalogo_area_asignatura cat_area ON cat_area.codigo = asig.codigo_area
 							WHERE asig.codigo_servicio_educativo = '$codigo_se_post'
-								ORDER BY asig.estatus DESC, asig.codigo_area";
+								ORDER BY asig.estatus DESC, asig.ordenar ASC, asig.codigo_area";
 				// Ejecutamos el Query.
 				$consulta = $dblink -> query($query);
 
@@ -210,9 +210,9 @@ if($errorDbConexion == false){
 				$orden = ($_POST['OrdenAsignatura']);
 			   // VALIDAR ESTATUS CON FALSE O TRUE
 				   if($estatus_asignatura == '01'){
-					   $estatus = true;
+					   $estatus = '1';
 				   }else{
-					   $estatus = false;
+					   $estatus = '0';
 				   }
 				// Armamos el query y iniciamos variables.
 					$query = "UPDATE asignatura SET
@@ -229,7 +229,7 @@ if($errorDbConexion == false){
 				// Ejecutamos el Query.
 				$consulta = $dblink -> query($query);
 					$respuestaOK = true;
-					$contenidoOK = "Registro Actualizado.";
+					$contenidoOK = "Registro Actualizado." . $query;
 					$mensajeError = "Registro Actualizado";
 			break;
 			case 'eliminar_asignatura':
@@ -241,9 +241,9 @@ if($errorDbConexion == false){
 				// BUSCAR EN LA TABLA NOTA, PARA revisar si no existe el registro del codigo de la asignatura.
 					$query_buscar = "SELECT id_notas, codigo_asignatura FROM nota WHERE codigo_asignatura = '$codigo_asignatura' LIMIT 1";
 				// Ejecutamos el query
-					$count_buscar = $dblink -> exec($query_buscar);					
+					$consulta_buscar = $dblink -> query($query_buscar);					
 				// Validamos que se haya actualizado el registro
-					if($count_buscar != 0){
+					if($consulta_buscar -> rowCount() != 0){
 						$mensajeError = 'No se ha eliminado el registro'.$query_buscar;
 							break;
 					}else{
@@ -251,7 +251,7 @@ if($errorDbConexion == false){
 						$query = "DELETE FROM asignatura WHERE id_asignatura = '$id_'";
 
 						// Ejecutamos el query
-							//$count = $dblink -> exec($query);
+							$count = $dblink -> exec($query);
 						
 						// Validamos que se haya actualizado el registro
 						if($count != 0){
@@ -271,7 +271,7 @@ if($errorDbConexion == false){
 			///////////////////////////////////////////////////////////////////////////////////////////////////
 			case 'BuscarCodigoModalidad':
 				// Armamos el query.
-				$query = "SELECT id_bachillerato_ciclo, nombre, codigo FROM bachillerato_ciclo ORDER BY codigo DESC LIMIT 1";
+				$query = "SELECT (codigo)::int FROM bachillerato_ciclo ORDER BY codigo DESC LIMIT 1";
 				// Ejecutamos el Query.
 				$fila_array = 0;
 				$consulta = $dblink -> query($query);
@@ -281,7 +281,7 @@ if($errorDbConexion == false){
 					while($listado = $consulta -> fetch(PDO::FETCH_BOTH))
 					{
 						$codigo = trim($listado['codigo']);
-						$datos[$fila_array]["codigo_modalidad"] = $codigo;	
+						$datos[$fila_array]["codigo"] = $codigo + 1;	
 					}
 				}
 			break;
@@ -302,23 +302,26 @@ if($errorDbConexion == false){
 					// variables
 					$codigo = trim($listado['codigo']);
 					$nombre = trim($listado['nombre']);
-					$id_modalidad = trim($listado['id_bachillerato_ciclo']);
+					$id_ = trim($listado['id_bachillerato_ciclo']);
 					$num++;
 						    
-						$contenidoOK .= '<tr>
-							<td class=centerTXT>'.$num
-							.'<td class=centerTXT>'.$id_modalidad
-							.'<td class=centerTXT>'.$codigo
-							.'<td class=centerTXT>'.$nombre
-							.'<td class = centerTXT><a data-accion=editar_modalidad class="btn btn-xs btn-primary" href='.$listado['id_bachillerato_ciclo'].'>Editar</a>'
+						$contenidoOK .= "<tr>
+							<td><input type=checkbox class=case name=chk$id_ id=chk$id_>
+							<td>$num
+							<td class=centerTXT>$id_
+							<td class=centerTXT>$codigo
+							<td class=centerTXT>$nombre
+							<td class = centerTXT><a data-accion=EditarModalidad class='btn btn-xs btn-info' href=$id_>Editar</a>"
 							;
 					}
 					$mensajeError = "Se ha consultado el registro correctamente ";
 				}
 			break;
-			case 'editar_modalidad':
+			case 'EditarModalidad':
+					$id_ = $_REQUEST['id_'];
 				// Armamos el query y iniciamos variables.
-					$query = "SELECT id_bachillerato_ciclo, nombre, codigo FROM bachillerato_ciclo WHERE id_bachillerato_ciclo = ".$_POST['id_x']. " ORDER BY codigo ";
+					$query = "SELECT id_bachillerato_ciclo, nombre, codigo 
+								FROM bachillerato_ciclo WHERE id_bachillerato_ciclo = '$id_' ORDER BY codigo ";
 				// Ejecutamos el Query.
 					$consulta = $dblink -> query($query);
 					if($consulta -> rowCount() != 0){
@@ -328,30 +331,30 @@ if($errorDbConexion == false){
 					while($listado = $consulta -> fetch(PDO::FETCH_BOTH))
 					{
 					// variables
-					$id_bachillerato_ciclo = trim($listado['id_bachillerato_ciclo']);
+					$id_ = trim($listado['id_bachillerato_ciclo']);
 					$nombre = trim($listado['nombre']);
 					$codigo = trim($listado['codigo']);
 					
-					$datos[$fila_array]["id_modalidad"] = $id_bachillerato_ciclo;
-					$datos[$fila_array]["codigo_modalidad"] = $codigo;
+					$datos[$fila_array]["id_Modalidad"] = $id_;
+					$datos[$fila_array]["codigo"] = $codigo;
 					$datos[$fila_array]["nombre"] = $nombre;
 					$fila_array++;
 					}
 					$mensajeError = "Se ha consultado el registro correctamente ";
 				}
 			break;
-			case 'modificar_modalidad':
-				$id_modalidad = $_POST['id_x'];
-				$nombre = strtoupper($_POST['nombre_modalidad']);
+			case 'ActualizarModalidad':
+				$id_ = $_POST['IdModalidad'];
+				$nombre = htmlspecialchars(trim($_POST['DescripcionModalidad']));
 				// Armamos el query y iniciamos variables.
-					$query = "UPDATE bachillerato_ciclo SET nombre = '$nombre' WHERE id_bachillerato_ciclo = ". $id_modalidad;
+					$query = "UPDATE bachillerato_ciclo SET nombre = '$nombre' WHERE id_bachillerato_ciclo = '$id_'";
 				// Ejecutamos el Query.
-				$consulta = $dblink -> query($query);
-					$respuestaOK = true;
-					$contenidoOK = "Registro Actualizado.";
-					$mensajeError = "Se ha consultado el registro correctamente ";
+					$consulta = $dblink -> query($query);
+						$respuestaOK = true;
+						$contenidoOK = "Registro Actualizado.";
+						$mensajeError = "Se ha consultado el registro correctamente ";
 			break;
-			case 'addModalidad':
+			case 'GuardarModalidad':
 				// consultar el registro antes de agregarlo.
 				// Armamos el query y iniciamos variables.
 				 $nombre = strtoupper($_POST['nombre_modalidad']);
@@ -379,7 +382,7 @@ if($errorDbConexion == false){
 			///////////////////////////////////////////////////////////////////////////////////////////////////
 			case 'BuscarCodigoGrado':
 				// Armamos el query.
-				$query = "SELECT id_grado_ano, nombre, codigo FROM grado_ano ORDER BY codigo DESC LIMIT 1";
+				$query = "SELECT * FROM grado_ano ORDER BY codigo DESC LIMIT 1";
 				// Ejecutamos el Query.
 				$fila_array = 0;
 				$consulta = $dblink -> query($query);
@@ -389,7 +392,7 @@ if($errorDbConexion == false){
 					while($listado = $consulta -> fetch(PDO::FETCH_BOTH))
 					{
 						$codigo = trim($listado['codigo']);
-						$datos[$fila_array]["codigo_grado"] = $codigo;	
+						$datos[$fila_array]["codigo"] = $codigo;
 					}
 				}
 			break;
@@ -424,7 +427,7 @@ if($errorDbConexion == false){
 					$mensajeError = "Se ha consultado el registro correctamente ";
 				}
 			break;
-			case 'editar_grado':
+			case 'EditarGrado':
 				// Armamos el query y iniciamos variables.
 					$query = "SELECT id_grado_ano, nombre, codigo FROM grado_ano WHERE id_grado_ano = ".$_POST['id_x']. " ORDER BY codigo ";
 				// Ejecutamos el Query.
@@ -449,7 +452,7 @@ if($errorDbConexion == false){
 					$mensajeError = "Se ha consultado el registro correctamente ";
 				}
 			break;
-			case 'modificar_grado':
+			case 'ActualizarGrado':
 				$id_grado = $_POST['id_x'];
 				$nombre = strtoupper($_POST['nombre_grado']);
 				// Armamos el query y iniciamos variables.
@@ -460,7 +463,7 @@ if($errorDbConexion == false){
 					$contenidoOK = "Registro Actualizado.";
 					$mensajeError = "Se ha consultado el registro correctamente ";
 			break;
-			case 'addGrado':
+			case 'GuardarGrado':
 				// consultar el registro antes de agregarlo.
 				// Armamos el query y iniciamos variables.
 				 $nombre = strtoupper($_POST['nombre_grado']);
@@ -760,7 +763,13 @@ if($errorDbConexion == false){
 else{
 	$mensajeError = 'No se puede establecer conexión con la base de datos';}
 
-if($_POST['accion'] == "eliminar_annlectivo" || $_POST['accion'] == "BuscarSeccion" || $_POST['accion'] == "modificar_seccion" || $_POST['accion'] == "addSeccion" || $_POST['accion'] == "BuscarAnnLectivo" || $_POST['accion'] == "addAnnLectivo" || $_POST['accion'] == "BuscarGrado" || $_POST['accion'] == "addGrado" || $_POST['accion'] == "modificar_annlectivo" || $_POST['accion'] == "BuscarModalidad" || $_POST['accion'] == "modificar_modalidad" || $_POST['accion'] == "addModalidad" || $_POST['accion'] == "modificar_grado"
+if($_POST['accion'] == "eliminar_annlectivo" || $_POST['accion'] == "BuscarSeccion" 
+	|| $_POST['accion'] == "modificar_seccion" || $_POST['accion'] == "addSeccion" 
+	|| $_POST['accion'] == "BuscarAnnLectivo" || $_POST['accion'] == "addAnnLectivo"
+	|| $_POST['accion'] == "BuscarGrado" || $_POST['accion'] == "addGrado"
+	|| $_POST['accion'] == "modificar_annlectivo" || $_POST['accion'] == "BuscarModalidad"
+	|| $_POST['accion'] == "ActualizarModalidad" || $_POST['accion'] == "GuardarModalidad" 
+	|| $_POST['accion'] == "modificar_grado"
 	|| $_POST['accion'] == "BuscarAsignatura"
 	|| $_POST['accion'] == "GuardarAsignatura"
 	|| $_POST['accion'] == "ActualizarAsignatura"
@@ -773,9 +782,13 @@ $salidaJson = array("respuesta" => $respuestaOK,
 echo json_encode($salidaJson);
 }
 
-if($_POST['accion'] == "editar_modalidad" || $_POST['accion'] == "editar_annlectivo" || $_POST['accion'] == "editar_seccion" || $_POST['accion'] == "BuscarCodigoSeccion" || $_POST['accion'] == "BuscarCodigoAnnLectivo" || $_POST['accion'] == "editar_grado" || $_POST['accion'] == "BuscarCodigoGrado" || $_POST['accion'] == "BuscarCodigoModalidad" || $_POST['accion'] == "BuscarCodigoAsignatura" || $_POST['accion'] == "EditarAsignatura") {
-// Armamos array para convertir a JSON
-echo json_encode($datos);
+if($_POST['accion'] == "EditarModalidad" || $_POST['accion'] == "editar_annlectivo"
+|| $_POST['accion'] == "editar_seccion" || $_POST['accion'] == "BuscarCodigoSeccion" 
+|| $_POST['accion'] == "BuscarCodigoAnnLectivo" || $_POST['accion'] == "editar_grado" 
+|| $_POST['accion'] == "BuscarCodigoGrado" || $_POST['accion'] == "BuscarCodigoModalidad" 
+|| $_POST['accion'] == "BuscarCodigoAsignatura" || $_POST['accion'] == "EditarAsignatura") {
+	// Armamos array para convertir a JSON
+	echo json_encode($datos);
 }
 
 ?>
