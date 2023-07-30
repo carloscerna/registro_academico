@@ -997,7 +997,7 @@ function fechaYMD()
     
     return $fecha;
 }*/
-// Consulta a la tabla bachillerato.
+/* // Consulta a la tabla bachillerato./*
 function consulta_bachillerato($uno, $dos, $tres, $cuatro, $cinco, $t, $varbach, $varann, $vargrado,$varsecc,$vartur){
     $path_root=trim($_SERVER['DOCUMENT_ROOT']);
     $host=trim($_SERVER['HTTP_HOST']);
@@ -1142,7 +1142,7 @@ function consulta_bachillerato($uno, $dos, $tres, $cuatro, $cinco, $t, $varbach,
            print "</select><div id='bachillerato' style='display:none; color:red'>&nbsp;Turno inválido</div>";  
     }
 }
-
+*/ 
 /*SELECT para los convivencia y depende economicamente.*/
 function varios_select1()
 {
@@ -1163,19 +1163,20 @@ function varios_select1()
 }
 
 /*SELECT departamento municipio.*/
-function varios_select2()
+/* function varios_select2()
 {
     $path_root=trim($_SERVER['DOCUMENT_ROOT']);
     $host=trim($_SERVER['HTTP_HOST']);
     
     include("$path_root/registro_academico/inc/conexion_db2.php");
       $query = "SELECT codigo, nombre from departamento ORDER BY codigo";
-      $result = pg_query($db_link, $query);
+      $consulta = $dblink -> query($query);
         
                print "<label>Departamento:</label>
                        <select name = lstdepartamento>";
-                     while ($row = pg_fetch_row($result)){
-                         $fila1 = $row{0}; $fila2 = $row{1};
+					   while($listado = $consulta -> fetch(PDO::FETCH_BOTH)){
+                     
+                         $fila1 = $listado['codigo']; $fila2 = $listado['nombre'];
                          print "<option value = $fila1>$fila2</option>";}
                  print "</select>";
 
@@ -1188,7 +1189,7 @@ function varios_select2()
                          $fila1 = $row{0}; $fila2 = $row{1};
                          print "<option value = $fila1>$fila2</option>";}
                  print "</select>";
-}
+} */
 
 /*SELECT estado civil, nacionalidad, transporte*/
 function varios_select3()

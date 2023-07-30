@@ -34,6 +34,7 @@ if($errorDbConexion == false){
 		switch ($_POST['accion']) {
 		case 'BuscarTodos':
                 // armando el Query. Para la tabla alumno_matricula.
+				$id_ = $_POST['id_x'];
 			$query_alumno_matricula = "SELECT am.id_alumno_matricula, am.codigo_bach_o_ciclo, am.codigo_grado, am.codigo_seccion, am.codigo_ann_lectivo, am.retirado, 
 									am.repitente, am.codigo_turno, am.codigo_alumno, bach.nombre as nombre_modalidad, to_char(am.fecha_ingreso,'dd/mm/yyyy') as fecha_ingreso,
 									gan.nombre as nombre_grado, sec.nombre as nombre_seccion, ann.nombre as nombre_ann_lectivo, 
@@ -45,7 +46,7 @@ if($errorDbConexion == false){
 									INNER JOIN seccion sec ON sec.codigo = am.codigo_seccion 
 									INNER JOIN ann_lectivo ann ON ann.codigo = am.codigo_ann_lectivo
 									INNER JOIN turno tur ON tur.codigo = am.codigo_turno 
-									WHERE codigo_alumno = " . $_POST['id_x'] . "ORDER BY codigo_ann_lectivo";
+									WHERE codigo_alumno = '$id_' ORDER BY codigo_ann_lectivo";
 			
                 // Ejecutamos el Query. para la tabla alumno matricula.
                    $consulta_historial_matricula = $dblink -> query($query_alumno_matricula);
