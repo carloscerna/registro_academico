@@ -670,7 +670,7 @@ if($errorDbConexion == false){
 				// Armar Colores
 				$statusTipo = array ("01" => "btn-success", "02" => "btn-warning", "03" => "btn-danger");
 				// Armamos el query.
-					$query = "SELECT id_seccion, nombre, codigo FROM seccion ORDER BY codigo";
+					$query = "SELECT * FROM seccion ORDER BY codigo";
 				// Ejecutamos el Query.
 				$consulta = $dblink -> query($query);
 
