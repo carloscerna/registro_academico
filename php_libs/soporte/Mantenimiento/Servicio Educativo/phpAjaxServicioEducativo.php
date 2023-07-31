@@ -702,7 +702,7 @@ if($errorDbConexion == false){
 			case 'EditarSeccion':
 				$id_ = $_REQUEST['id_'];
 				// Armamos el query y iniciamos variables.
-					$query = "SELECT * FROM seccion WHERE id_seccion = '$id_' ORDER BY codigo ";
+					$query = "SELECT * FROM seccion WHERE id_seccion = '$id_' ORDER BY codigo";
 				// Ejecutamos el Query.
 				$consulta = $dblink -> query($query);
 
@@ -739,7 +739,7 @@ if($errorDbConexion == false){
 			case 'GuardarSeccion':
 				// consultar el registro antes de agregarlo.
 				// Armamos el query y iniciamos variables.
-				 $nombre = htmlspecialchars($_POST['DescripcionSeccion']);
+				 $nombre = strtoupper(htmlspecialchars($_POST['DescripcionSeccion']));
 				 $codigo = ($_POST['CodigoSeccion']);
 				 $query = "SELECT * FROM seccion WHERE codigo = '$codigo' or nombre = '$nombre' ORDER BY codigo";
 				// Ejecutamos el Query.
@@ -772,9 +772,9 @@ else{
 
 if($_POST['accion'] == "eliminar_annlectivo" || $_POST['accion'] == "BuscarSeccion" 
 	|| $_POST['accion'] == "ActualizarSeccion" || $_POST['accion'] == "GuardarSeccion" 
-	|| $_POST['accion'] == "BuscarAnnLectivo" || $_POST['accion'] == "addAnnLectivo"
+	|| $_POST['accion'] == "BuscarAnnLectivo" || $_POST['accion'] == "GuardarAnnLectivo"
 	|| $_POST['accion'] == "BuscarGrado" || $_POST['accion'] == "GuardarGrado"
-	|| $_POST['accion'] == "modificar_annlectivo" || $_POST['accion'] == "BuscarModalidad"
+	|| $_POST['accion'] == "ActualizarAnnLectivo" || $_POST['accion'] == "BuscarModalidad"
 	|| $_POST['accion'] == "ActualizarModalidad" || $_POST['accion'] == "GuardarModalidad" 
 	|| $_POST['accion'] == "ActualizarGrado"
 	|| $_POST['accion'] == "BuscarAsignatura"
@@ -789,8 +789,8 @@ $salidaJson = array("respuesta" => $respuestaOK,
 echo json_encode($salidaJson);
 }
 
-if($_POST['accion'] == "EditarModalidad" || $_POST['accion'] == "editar_annlectivo"
-|| $_POST['accion'] == "editar_seccion" || $_POST['accion'] == "BuscarCodigoSeccion" 
+if($_POST['accion'] == "EditarModalidad" || $_POST['accion'] == "EditarAnnLectivo"
+|| $_POST['accion'] == "EditarSeccion" || $_POST['accion'] == "BuscarCodigoSeccion" 
 || $_POST['accion'] == "BuscarCodigoAnnLectivo" || $_POST['accion'] == "editar_grado" 
 || $_POST['accion'] == "BuscarCodigoGrado" || $_POST['accion'] == "BuscarCodigoModalidad" 
 || $_POST['accion'] == "BuscarCodigoAsignatura" || $_POST['accion'] == "EditarAsignatura") {
