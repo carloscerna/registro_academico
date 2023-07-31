@@ -496,7 +496,7 @@ if($errorDbConexion == false){
 				///////////////////////////////////////////////////////////////////////////////////////////////////
 			case 'BuscarCodigoAnnLectivo':
 				// Armamos el query.
-				$query = "SELECT id_annlectivo, nombre, codigo, descripcion, fecha_inicio, fecha_fin, estatus FROM ann_lectivo ORDER BY codigo DESC LIMIT 1";
+				$query = "SELECT (codigo)::int FROM ann_lectivo ORDER BY codigo DESC LIMIT 1";
 				// Ejecutamos el Query.
 				$fila_array = 0;
 				$consulta = $dblink -> query($query);
@@ -506,7 +506,7 @@ if($errorDbConexion == false){
 					while($listado = $consulta -> fetch(PDO::FETCH_BOTH))
 					{
 						$codigo = trim($listado['codigo']);
-						$datos[$fila_array]["codigo_annlectivo"] = $codigo;	
+						$datos[$fila_array]["codigo_annlectivo"] = $codigo + 1;	
 					}
 				}
 			break;
@@ -514,7 +514,7 @@ if($errorDbConexion == false){
 				// Armar Colores
 				$statusTipo = array ("01" => "btn-success", "02" => "btn-warning", "03" => "btn-danger");
 				// Armamos el query.
-					$query = "SELECT id_annlectivo, nombre, codigo, descripcion, fecha_inicio, fecha_fin, estatus FROM ann_lectivo ORDER BY codigo";
+					$query = "SELECT * FROM ann_lectivo ORDER BY codigo";
 				// Ejecutamos el Query.
 				$consulta = $dblink -> query($query);
 
@@ -527,32 +527,33 @@ if($errorDbConexion == false){
 					// variables
 					$codigo = trim($listado['codigo']);
 					$nombre = trim($listado['nombre']);
-					$id_annlectivo = trim($listado['id_annlectivo']);
+					$id_ = trim($listado['id_annlectivo']);
 					$descripcion = trim($listado['descripcion']);
 					$fecha_inicio = trim($listado['fecha_inicio']);
 					$fecha_fin = trim($listado['fecha_fin']);
 					$estatus = trim($listado['estatus']);
 					$num++;
 						    
-						$contenidoOK .= '<tr>
-							<td class=centerTXT>'.$num
-							.'<td class=centerTXT>'.$id_annlectivo
-							.'<td class=centerTXT>'.$codigo
-							.'<td class=centerTXT>'.$nombre
-							.'<td class=centerTXT>'.$descripcion
-							.'<td class=centerTXT>'.$fecha_inicio
-							.'<td class=centerTXT>'.$fecha_fin
-							.'<td class=centerTXT>'.$estatus
-							.'<td class = centerTXT><a data-accion=editar_annlectivo class="btn btn-xs btn-primary" href='.$listado['id_annlectivo'].'>Editar</a>'
-							.'<td class = centerTXT><a data-accion=eliminar_annlectivo class="btn btn-xs btn-primary" href='.$listado['id_annlectivo'].'>Eliminar</a>'
+						$contenidoOK .= "<tr>
+							<td><input type=checkbox class=case name=chk$id_ id=chk$id_>
+							<td>$num
+							<td>$id_annlectivo
+							<td>$codigo
+							<td>$nombre
+							<td>$descripcion
+							<td>$fecha_inicio
+							<td>$fecha_fin
+							<td>$estatus
+							<td><a data-accion=editar_annlectivo class='btn btn-xs btn-info' href=$id_>Editar</a>"
 							;
 					}
 					$mensajeError = "Se ha consultado el registro correctamente ";
 				}
 			break;
-			case 'editar_annlectivo':
+			case 'EditarAnnLectivo':
+				$id_ = $_REQUEST['IdAnnLectivo'];
 				// Armamos el query y iniciamos variables.
-					$query = "SELECT id_annlectivo, nombre, codigo, descripcion, fecha_inicio, fecha_fin, estatus FROM ann_lectivo WHERE id_annlectivo = ".$_POST['id_x']. " ORDER BY codigo ";
+					$query = "SELECT * FROM ann_lectivo WHERE id_annlectivo = '$id_' ORDER BY codigo";
 				// Ejecutamos el Query.
 					$consulta = $dblink -> query($query);
 
@@ -583,7 +584,7 @@ if($errorDbConexion == false){
 					$mensajeError = "Se ha consultado el registro correctamente ";
 				}
 			break;
-			case 'modificar_annlectivo':
+			case 'ActualizarAnnLectivo':
 				$id_annlectivo = $_POST['IdAnnLectivo'];
 				$descripcion = strtoupper($_POST['descripcion']);
 				$estatus = trim($_POST['estatus']);
@@ -598,7 +599,7 @@ if($errorDbConexion == false){
 					$contenidoOK = "Registro Actualizado.";
 					$mensajeError = "Se ha consultado el registro correctamente ";
 			break;
-			case 'addAnnLectivo':
+			case 'GuardarAnnLectivo':
 				// consultar el registro antes de agregarlo.
 				// Armamos el query y iniciamos variables.
 				 $nombre = strtoupper($_POST['nombreAnnLectivo']);
@@ -610,7 +611,7 @@ if($errorDbConexion == false){
 
 				 if($estatus == "yes"){$estatus = 1;}else{$estatus = 0;}
 				 // Ar,ar qieru àra evañiar-
-				 $query = "SELECT id_annlectivo, nombre, codigo FROM ann_lectivo WHERE codigo = '".$codigo_annlectivo. "' ORDER BY codigo ";
+				 $query = "SELECT id_annlectivo, nombre, codigo FROM ann_lectivo WHERE codigo = '$codigo_annlectivo' ORDER BY codigo";
 				// Ejecutamos el Query.
 				$consulta = $dblink -> query($query);
 
