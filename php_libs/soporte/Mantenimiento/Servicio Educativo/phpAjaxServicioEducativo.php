@@ -525,24 +525,18 @@ if($errorDbConexion == false){
 					while($listado = $consulta -> fetch(PDO::FETCH_BOTH))
 					{
 					// variables
-					$codigo = trim($listado['codigo']);
-					$nombre = trim($listado['nombre']);
 					$id_ = trim($listado['id_annlectivo']);
+					$codigo = trim($listado['codigo']);
 					$descripcion = trim($listado['descripcion']);
-					$fecha_inicio = trim($listado['fecha_inicio']);
-					$fecha_fin = trim($listado['fecha_fin']);
 					$estatus = trim($listado['estatus']);
 					$num++;
 						    
 						$contenidoOK .= "<tr>
 							<td><input type=checkbox class=case name=chk$id_ id=chk$id_>
 							<td>$num
-							<td>$id_annlectivo
+							<td>$id_
 							<td>$codigo
-							<td>$nombre
 							<td>$descripcion
-							<td>$fecha_inicio
-							<td>$fecha_fin
 							<td>$estatus
 							<td><a data-accion=editar_annlectivo class='btn btn-xs btn-info' href=$id_>Editar</a>"
 							;
