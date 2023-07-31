@@ -306,7 +306,7 @@ $segundos = $seg_ini-($horas*3600)-($minutos*60);
 /////////////////////////////////////////////////////////////////////////////////////////
 //				**	Cambiar grado o bachillerato.
 /////////////////////////////////////////////////////////////////////////////////////////
-function genera_año_lectivo()
+/* function genera_año_lectivo()
 {
 	$consulta=pg_query("SELECT nombre, codigo FROM ann_lectivo ORDER BY codigo");
 
@@ -328,7 +328,7 @@ function genera_bach()
 		while($registro=pg_fetch_assoc($consulta)){
 		   echo "<option value='".$registro['codigo_bachillerato']."'>".$registro['nombre_bachillerato']."</option>";}
 	   echo "</select>";
-}
+} */
 /////////////////////////////////////////////////////////////////////////////////////////
 //				**	Calcular la Extraedad o Sobreedad.
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -1192,7 +1192,7 @@ function varios_select1()
 } */
 
 /*SELECT estado civil, nacionalidad, transporte*/
-function varios_select3()
+/* function varios_select3()
 {
   print"<label>Estado Civil:</label>
                <select name = lstestadocivil>
@@ -1211,5 +1211,5 @@ function varios_select3()
                     <option>Privado</option>
                     <option>Peatonal</option>
                     <option>Otro</option></select>";
-}
+} */
 ?>

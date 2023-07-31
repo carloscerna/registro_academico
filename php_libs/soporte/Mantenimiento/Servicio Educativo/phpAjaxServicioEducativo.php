@@ -308,10 +308,10 @@ if($errorDbConexion == false){
 						$contenidoOK .= "<tr>
 							<td><input type=checkbox class=case name=chk$id_ id=chk$id_>
 							<td>$num
-							<td class=centerTXT>$id_
-							<td class=centerTXT>$codigo
-							<td class=centerTXT>$nombre
-							<td class = centerTXT><a data-accion=EditarModalidad class='btn btn-xs btn-info' href=$id_>Editar</a>"
+							<td>$id_
+							<td>$codigo
+							<td>$nombre
+							<td><a data-accion=EditarModalidad class='btn btn-xs btn-info' href=$id_>Editar</a>"
 							;
 					}
 					$mensajeError = "Se ha consultado el registro correctamente ";
@@ -413,23 +413,25 @@ if($errorDbConexion == false){
 					// variables
 					$codigo = trim($listado['codigo']);
 					$nombre = trim($listado['nombre']);
-					$id_grado = trim($listado['id_grado_ano']);
+					$id_ = trim($listado['id_grado_ano']);
 					$num++;
 						    
-						$contenidoOK .= '<tr>
-							<td class=centerTXT>'.$num
-							.'<td class=centerTXT>'.$id_grado
-							.'<td class=centerTXT>'.$codigo
-							.'<td class=centerTXT>'.$nombre
-							.'<td class = centerTXT><a data-accion=editar_grado class="btn btn-xs btn-primary" href='.$listado['id_grado_ano'].'>Editar</a>'
+						$contenidoOK .= "<tr>
+							<td><input type=checkbox class=case name=chk$id_ id=chk$id_>
+							<td>$num
+							<td>$id_
+							<td>$codigo
+							<td>$nombre
+							<td><a data-accion=EditarGrado class='btn btn-xs btn-info' href=$id_>Editar</a>"
 							;
 					}
 					$mensajeError = "Se ha consultado el registro correctamente ";
 				}
 			break;
 			case 'EditarGrado':
+				$id_ = $_REQUEST['id_'];
 				// Armamos el query y iniciamos variables.
-					$query = "SELECT id_grado_ano, nombre, codigo FROM grado_ano WHERE id_grado_ano = ".$_POST['id_x']. " ORDER BY codigo ";
+					$query = "SELECT id_grado_ano, nombre, codigo FROM grado_ano WHERE id_grado_ano = $id_ ORDER BY codigo ";
 				// Ejecutamos el Query.
 				$consulta = $dblink -> query($query);
 
@@ -445,7 +447,7 @@ if($errorDbConexion == false){
 					$codigo = trim($listado['codigo']);
 					
 					$datos[$fila_array]["id_grado"] = $id_grado_ano;
-					$datos[$fila_array]["codigo_grado"] = $codigo;
+					$datos[$fila_array]["codigo"] = $codigo;
 					$datos[$fila_array]["nombre"] = $nombre;
 					$fila_array++;
 					}
@@ -453,10 +455,12 @@ if($errorDbConexion == false){
 				}
 			break;
 			case 'ActualizarGrado':
-				$id_grado = $_POST['id_x'];
-				$nombre = strtoupper($_POST['nombre_grado']);
+				$id_ = $_POST['IdGrado'];
+				$nombre = htmlspecialchars($_POST['DescripcionGrado']);
 				// Armamos el query y iniciamos variables.
-					$query = "UPDATE grado_ano SET nombre = '$nombre' WHERE id_grado_ano = ". $id_grado;
+					$query = "UPDATE grado_ano SET 
+						nombre = '$nombre' 
+							WHERE id_grado_ano = $id_";
 				// Ejecutamos el Query.
 				$consulta = $dblink -> query($query);
 					$respuestaOK = true;
@@ -466,9 +470,9 @@ if($errorDbConexion == false){
 			case 'GuardarGrado':
 				// consultar el registro antes de agregarlo.
 				// Armamos el query y iniciamos variables.
-				 $nombre = strtoupper($_POST['nombre_grado']);
-				 $codigo_grado = ($_POST['codigo_grado']);
-				 $query = "SELECT id_grado_ano, nombre, codigo FROM grado_ano WHERE codigo = '".$codigo_grado. "' ORDER BY codigo ";
+				 $nombre = htmlspecialchars(trim($_POST['DescripcionGrado']));
+				 $codigo = ($_POST['CodigoGrado']);
+				 $query = "SELECT * FROM grado_ano WHERE codigo = '$codigo' ORDER BY codigo ";
 				// Ejecutamos el Query.
 				$consulta = $dblink -> query($query);
 
@@ -478,12 +482,13 @@ if($errorDbConexion == false){
 					$mensajeError = "Este registro ya Existe.";
 				}else{
 				// proceso para grabar el registro
-					$query = "INSERT INTO grado_ano (nombre, codigo) VALUES ('$nombre','$codigo_grado')";
+					$query = "INSERT INTO grado_ano (nombre, codigo) 
+								VALUES ('$nombre','$codigo')";
 				// Ejecutamos el Query.
-				$consulta = $dblink -> query($query);
-					$respuestaOK = true;
-					$contenidoOK = "Registro Agregado.";
-					$mensajeError = "Se ha consultado el registro correctamente ";
+					$consulta = $dblink -> query($query);
+						$respuestaOK = true;
+						$contenidoOK = "Registro Agregado.";
+						$mensajeError = "Se ha consultado el registro correctamente ";
 				}
 			break;	
 				///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -647,7 +652,7 @@ if($errorDbConexion == false){
 			///////////////////////////////////////////////////////////////////////////////////////////////////
 			case 'BuscarCodigoSeccion':
 				// Armamos el query.
-				$query = "SELECT id_seccion, nombre, codigo FROM seccion ORDER BY codigo DESC LIMIT 1";
+				$query = "SELECT (codigo)::int FROM seccion ORDER BY codigo DESC LIMIT 1";
 				// Ejecutamos el Query.
 				$fila_array = 0;
 				$consulta = $dblink -> query($query);
@@ -657,7 +662,7 @@ if($errorDbConexion == false){
 					while($listado = $consulta -> fetch(PDO::FETCH_BOTH))
 					{
 						$codigo = trim($listado['codigo']);
-						$datos[$fila_array]["codigo_seccion"] = $codigo;	
+						$datos[$fila_array]["codigo"] = $codigo + 1;	
 					}
 				}
 			break;
@@ -678,24 +683,25 @@ if($errorDbConexion == false){
 					// variables
 					$codigo = trim($listado['codigo']);
 					$nombre = trim($listado['nombre']);
-					$id_seccion = trim($listado['id_seccion']);
+					$id_ = trim($listado['id_seccion']);
 					$num++;
 						    
-						$contenidoOK .= '<tr>
-							<td class=centerTXT>'.$num
-							.'<td class=centerTXT>'.$id_seccion
-							.'<td class=centerTXT>'.$codigo
-							.'<td class=centerTXT>'.$nombre
-							.'<td class = centerTXT><a data-accion=editar_seccion class="btn btn-xs btn-primary" href='.$listado['id_seccion'].'>Editar</a>'
-							.'<td class = centerTXT><a data-accion=eliminar_seccion class="btn btn-xs btn-primary" href='.$listado['id_seccion'].'>Eliminar</a>'
+						$contenidoOK .= "<tr>
+							<td><input type=checkbox class=case name=chk$id_ id=chk$id_>
+							<td>$num
+							<td>$id_
+							<td>$codigo
+							<td>$nombre
+							<td><a data-accion=EditarSeccion class='btn btn-xs btn-info' href=$id_>Editar</a>"
 							;
 					}
 					$mensajeError = "Se ha consultado el registro correctamente ";
 				}
 			break;
-			case 'editar_seccion':
+			case 'EditarSeccion':
+				$id_ = $_REQUEST['id_'];
 				// Armamos el query y iniciamos variables.
-					$query = "SELECT id_seccion, nombre, codigo FROM seccion WHERE id_seccion = ".$_POST['id_x']. " ORDER BY codigo ";
+					$query = "SELECT * FROM seccion WHERE id_seccion = '$id_' ORDER BY codigo ";
 				// Ejecutamos el Query.
 				$consulta = $dblink -> query($query);
 
@@ -718,23 +724,23 @@ if($errorDbConexion == false){
 					$mensajeError = "Se ha consultado el registro correctamente ";
 				}
 			break;
-			case 'modificar_seccion':
-				$id_seccion = $_POST['id_x'];
-				$nombre = strtoupper($_POST['nombre_seccion']);
+			case 'ActualizarSeccion':
+				$id_ = $_POST['IdSeccion'];
+				$nombre = strtoupper(htmlspecialchars($_POST['DescripcionSeccion']));
 				// Armamos el query y iniciamos variables.
-					$query = "UPDATE seccion SET nombre = '$nombre' WHERE id_seccion = ". $id_seccion;
+					$query = "UPDATE seccion SET nombre = '$nombre' WHERE id_seccion=$id_";
 				// Ejecutamos el Query.
 				$consulta = $dblink -> query($query);
 					$respuestaOK = true;
 					$contenidoOK = "Registro Actualizado.";
 					$mensajeError = "Se ha consultado el registro correctamente ";
 			break;
-			case 'addSeccion':
+			case 'GuardarSeccion':
 				// consultar el registro antes de agregarlo.
 				// Armamos el query y iniciamos variables.
-				 $nombre = strtoupper($_POST['nombre_seccion']);
-				 $codigo_seccion = ($_POST['codigo_seccion']);
-				 $query = "SELECT id_seccion, nombre, codigo FROM seccion WHERE codigo = '".$codigo_seccion. "' ORDER BY codigo ";
+				 $nombre = htmlspecialchars($_POST['DescripcionSeccion']);
+				 $codigo = ($_POST['CodigoSeccion']);
+				 $query = "SELECT * FROM seccion WHERE codigo = '$codigo' or nombre = '$nombre' ORDER BY codigo";
 				// Ejecutamos el Query.
 				$consulta = $dblink -> query($query);
 
@@ -744,7 +750,7 @@ if($errorDbConexion == false){
 					$mensajeError = "Este registro ya Existe.";
 				}else{
 				// proceso para grabar el registro
-					$query = "INSERT INTO seccion (nombre, codigo) VALUES ('$nombre','$codigo_seccion')";
+					$query = "INSERT INTO seccion (nombre, codigo) VALUES ('$nombre','$codigo')";
 				// Ejecutamos el Query.
 				$consulta = $dblink -> query($query);
 					$respuestaOK = true;
@@ -764,12 +770,12 @@ else{
 	$mensajeError = 'No se puede establecer conexión con la base de datos';}
 
 if($_POST['accion'] == "eliminar_annlectivo" || $_POST['accion'] == "BuscarSeccion" 
-	|| $_POST['accion'] == "modificar_seccion" || $_POST['accion'] == "addSeccion" 
+	|| $_POST['accion'] == "ActualizarSeccion" || $_POST['accion'] == "GuardarSeccion" 
 	|| $_POST['accion'] == "BuscarAnnLectivo" || $_POST['accion'] == "addAnnLectivo"
-	|| $_POST['accion'] == "BuscarGrado" || $_POST['accion'] == "addGrado"
+	|| $_POST['accion'] == "BuscarGrado" || $_POST['accion'] == "GuardarGrado"
 	|| $_POST['accion'] == "modificar_annlectivo" || $_POST['accion'] == "BuscarModalidad"
 	|| $_POST['accion'] == "ActualizarModalidad" || $_POST['accion'] == "GuardarModalidad" 
-	|| $_POST['accion'] == "modificar_grado"
+	|| $_POST['accion'] == "ActualizarGrado"
 	|| $_POST['accion'] == "BuscarAsignatura"
 	|| $_POST['accion'] == "GuardarAsignatura"
 	|| $_POST['accion'] == "ActualizarAsignatura"
@@ -783,8 +789,8 @@ echo json_encode($salidaJson);
 }
 
 if($_POST['accion'] == "EditarModalidad" || $_POST['accion'] == "editar_annlectivo"
-|| $_POST['accion'] == "editar_seccion" || $_POST['accion'] == "BuscarCodigoSeccion" 
-|| $_POST['accion'] == "BuscarCodigoAnnLectivo" || $_POST['accion'] == "editar_grado" 
+|| $_POST['accion'] == "EditarSeccion" || $_POST['accion'] == "BuscarCodigoSeccion" 
+|| $_POST['accion'] == "BuscarCodigoAnnLectivo" || $_POST['accion'] == "EditarGrado" 
 || $_POST['accion'] == "BuscarCodigoGrado" || $_POST['accion'] == "BuscarCodigoModalidad" 
 || $_POST['accion'] == "BuscarCodigoAsignatura" || $_POST['accion'] == "EditarAsignatura") {
 	// Armamos array para convertir a JSON

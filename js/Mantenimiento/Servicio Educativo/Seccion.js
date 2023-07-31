@@ -1,7 +1,7 @@
 // id de user global
 var idUser_ok = 0;
-var accion_grado_ok = 'noAccion';
-var accion_grado = "";
+var accion_seccion_ok = 'noAccion';
+var accion_seccion = "";
 var Id_Editar_Eliminar = 0;
 var Accion_Editar_Eliminar = "noAccion";
 var codigo_se = "";
@@ -12,7 +12,7 @@ $(function(){
 //
 //  INVISILBLE TODOS LOS MENSAJES.
 //
-    $("#AlertSEGrado").css("display", "none");
+    $("#AlertSESeccion").css("display", "none");
     //
 //  OPCIONES PARA EL TAB NAV
 //
@@ -24,9 +24,9 @@ $(function(){
         $TextoTab = $(this).text();
   
         
-        if($TextoTab == "Grado"){
+        if($TextoTab == "Sección"){
             // Borrar información de la Tabla.
-                $('#listaContenidoSEGrado').empty();
+                $('#listaContenidoSESeccion').empty();
         }else{
             //alert("Nav-Tab " + $TextoTab);
         }
@@ -35,18 +35,18 @@ $(function(){
         // SELECFT ON ONCHANGE
         //
             /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        // BUSCAR REGISTROS (Grado CREADAS)
+        // BUSCAR REGISTROS (Seccion CREADAS)
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         ///////////////////////////////////////////////////
 		// funcionalidad del botón que abre el formulario
 		///////////////////////////////////////////////////
-	    $("#VentanaGrado").on('hidden.bs.modal', function () {
+	    $("#VentanaSeccion").on('hidden.bs.modal', function () {
             // Limpiar variables Text, y textarea
-				$("#formVentanaGrado")[0].reset();
-                $('#formVentanaGrado').trigger("reset");
+				$("#formVentanaSeccion")[0].reset();
+                $('#formVentanaSeccion').trigger("reset");
 				$("label.error").remove();
-                accion_grado = "";
+                accion_seccion = "";
             // 
 		});
     });
@@ -54,42 +54,42 @@ $(function(){
     // FUNCIONALIDAD DE LOS DIFERENTES BOTONES
     //
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    // BLOQUE PARA ADMINISTRAR LAS GradoS.
+    // BLOQUE PARA ADMINISTRAR LAS SeccionS.
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //
         // BLOQUE EXTRAER INFORMACIÓN DEL REGISTROS (ASIGANTURAS)
         //
-		$('body').on('click','#listaContenidoSEGrado a',function (e){
+		$('body').on('click','#listaContenidoSESeccion a',function (e){
 			e.preventDefault();
 			// Id Usuario
     			Id_Editar_Eliminar = $(this).attr('href');
 	    		accion_ok = $(this).attr('data-accion');
-                    // EDITAR LA Grado
-                    if($(this).attr('data-accion') == 'EditarGrado'){
+                    // EDITAR LA Seccion
+                    if($(this).attr('data-accion') == 'EditarSeccion'){
                         // Valor de la acción
-                            $('#accion_grado').val('ActualizarGrado');
-                            accion_grado = 'EditarGrado';
+                            $('#accion_seccion').val('ActualizarSeccion');
+                            accion_seccion = 'EditarSeccion';
                             
                             // obtener el valor del id.
                             var id_ = $(this).parent().parent().children('td:eq(2)').text();
                             
                             // Llamar al archivo php para hacer la consulta y presentar los datos.
-                            $.post("php_libs/soporte/Mantenimiento/Servicio Educativo/phpAjaxServicioEducativo.php",  { id_: id_, accion: accion_grado},
+                            $.post("php_libs/soporte/Mantenimiento/Servicio Educativo/phpAjaxServicioEducativo.php",  { id_: id_, accion: accion_seccion},
                                 function(data) {
                                 // Llenar el formulario con los datos del registro seleccionado tabs-1
                                 // Datos Generales
-                                    $('#IdGrado').val(data[0].id_grado);
-                                    $('#CodigoGrado').val(data[0].codigo);
-                                    $('#DescripcionGrado').val(data[0].nombre);
+                                    $('#IdSeccion').val(data[0].id_seccion);
+                                    $('#CodigoSeccion').val(data[0].codigo);
+                                    $('#DescripcionSeccion').val(data[0].nombre);
                                     // Abrir ventana modal.
-                                    $('#VentanaGrado').modal("show");
-                                    $("label[for=LblTituloGrado]").text("Grado | Actualizar");
-                                    // reestablecer el accion_Grado a=ActulizarGrado.
-                                    accion_grado = "ActualizarGrado";
+                                    $('#VentanaSeccion').modal("show");
+                                    $("label[for=LblTituloSeccion]").text("Seccion | Actualizar");
+                                    // reestablecer el accion_seccion a=ActulizarSeccion.
+                                    accion_seccion = "ActualizarSeccion";
                                 },"json");
                     }
-                    // ELIMINAR REGISTRO Grado.
-                    if($(this).attr('data-accion') == 'eliminar_Grado'){
+                    // ELIMINAR REGISTRO Seccion.
+                    if($(this).attr('data-accion') == 'eliminar_Seccion'){
                         //	ENVIAR MENSAJE CON SWEETALERT 2, PARA CONFIRMAR SI ELIMINA EL REGISTRO.
                         const swalWithBootstrapButtons = Swal.mixin({
                             customClass: {
@@ -122,14 +122,14 @@ $(function(){
                                     dataType: "json",                     
                                     url:"php_libs/soporte/Mantenimiento/Servicio Educativo/phpAjaxServicioEducativo.php",                     
                                     data: {                     
-                                            accion_buscar: 'eliminar_Grado', codigo_id_: Id_Editar_Eliminar,
+                                            accion_buscar: 'eliminar_Seccion', codigo_id_: Id_Editar_Eliminar,
                                             },                     
                                     success: function(response) {                     
                                             if (response.respuesta === true) {                     		
                                                 // Asignamos valor a la variable acción
-                                                    $('#accion_grado').val('BuscarGrado');
+                                                    $('#accion_seccion').val('BuscarSeccion');
                                                     var codigo_se = $("#lstcodigose").val();
-                                                    accion_grado = 'BuscarGrado';
+                                                    accion_seccion = 'BuscarSeccion';
                                                     //
                                                     //  CONDICONAR EL SELECT SERVICIO EDUCATIVO.
                                                     //
@@ -138,7 +138,7 @@ $(function(){
                                                         return;
                                                     }
                                                     // Llamar al archivo php para hacer la consulta y presentar los datos.
-                                                    $.post("php_libs/soporte/Mantenimiento/Servicio Educativo/phpAjaxServicioEducativo.php",  {accion: accion_grado, codigo_se: codigo_se},
+                                                    $.post("php_libs/soporte/Mantenimiento/Servicio Educativo/phpAjaxServicioEducativo.php",  {accion: accion_seccion, codigo_se: codigo_se},
                                                         function(response) {
                                                         if (response.respuesta === true) {
                                                             toastr["info"]('Registros Encontrados', "Sistema");
@@ -172,15 +172,15 @@ $(function(){
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// ACTIVAR Y DESACTIVAR CHECKBOX DE LA TABLA.
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	$("#checkBoxAllSEGrado").on("change", function () {
+	$("#checkBoxAllSESeccion").on("change", function () {
 		$("#listadoContenidoSE tbody input[type='checkbox'].case").prop("checked", this.checked);
 	});
 	
-	$("#listadoContenidoSEGrado tbody").on("change", "input[type='checkbox'].case", function () {
-	  if ($("#listadoContenidoSEGrado tbody input[type='checkbox'].case").length == $("#listadoContenidoSEGrado tbody input[type='checkbox'].case:checked").length) {
-		  $("#checkBoxAllSEGrado").prop("checked", true);
+	$("#listadoContenidoSESeccion tbody").on("change", "input[type='checkbox'].case", function () {
+	  if ($("#listadoContenidoSESeccion tbody input[type='checkbox'].case").length == $("#listadoContenidoSESeccion tbody input[type='checkbox'].case:checked").length) {
+		  $("#checkBoxAllSESeccion").prop("checked", true);
 	  } else {
-		  $("#checkBoxAllSEGrado").prop("checked", false);
+		  $("#checkBoxAllSESeccion").prop("checked", false);
 	  }
 	 });	
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -189,13 +189,13 @@ $(function(){
         //
         //  funcion click
         //
-            $('#goBuscarSEGrado').on('click',function(){
+            $('#goBuscarSESeccion').on('click',function(){
                 // Asignamos valor a la variable acción
-                    $('#accion_Grado').val('BuscarGrado');
+                    $('#accion_seccion').val('BuscarSeccion');
                     codigo_se = $("#lstcodigose").val();
-                    accion_grado = 'BuscarGrado';
+                    accion_seccion = 'BuscarSeccion';
                     // Llamar al archivo php para hacer la consulta y presentar los datos.
-                    $.post("php_libs/soporte/Mantenimiento/Servicio Educativo/phpAjaxServicioEducativo.php",  {accion: accion_grado},
+                    $.post("php_libs/soporte/Mantenimiento/Servicio Educativo/phpAjaxServicioEducativo.php",  {accion: accion_seccion},
                         function(response) {
                         if (response.respuesta === true) {
                             toastr["info"]('Registros Encontrados', "Sistema");
@@ -203,51 +203,51 @@ $(function(){
                         if (response.respuesta === false) {
                             toastr["warning"]('Registros No Encontrados', "Sistema");
                         }                                                                                    // si es exitosa la operación
-                            $('#listaContenidoSEGrado').empty();
-                            $('#listaContenidoSEGrado').append(response.contenido);
+                            $('#listaContenidoSESeccion').empty();
+                            $('#listaContenidoSESeccion').append(response.contenido);
                         },"json");
             });
             //////////////////////////////////////////////////////////////////////////////////
             /* VER #CONTROLES CREADOS */
             //////////////////////////////////////////////////////////////////////////////////
-            $('#goNuevoSEGrado').on('click', function(){
+            $('#goNuevoSESeccion').on('click', function(){
                 // Abrir ventana modal.
-                    $('#VentanaGrado').modal("show");
-                    $("label[for=LblTituloGrado]").text("Grado | Nuevo");
+                    $('#VentanaSeccion').modal("show");
+                    $("label[for=LblTituloSeccion]").text("Seccion | Nuevo");
                 // BUSCAR Y GENERAR NUEVO CODIGO PARA LA ASIGNATURA.
                 //
                 // BUSCAR EL ÚLTINMO DE LA ASIGNATURA PARA ASIGNARLE A UN NUEVO REGISTRO.
-                    accion_grado = 'BuscarCodigoGrado';
+                    accion_seccion = 'BuscarCodigoSeccion';
                     // Llamar al archivo php para hacer la consulta y presentar los datos.
-                            $.post("php_libs/soporte/Mantenimiento/Servicio Educativo/phpAjaxServicioEducativo.php",  {accion: accion_grado},
+                            $.post("php_libs/soporte/Mantenimiento/Servicio Educativo/phpAjaxServicioEducativo.php",  {accion: accion_seccion},
                                 function(data) {
                                     // si es exitosa la operación
-                                        $('#CodigoGrado').val(data[0].codigo);
+                                        $('#CodigoSeccion').val(data[0].codigo);
                                 },"json");
                     // RETORNAR EL VALOR DEL ACCION SEGUN ETIQUETA LABEL.
-                        msjEtiqueta = $("label[for=LblTituloGrado]").text();
-                            if(msjEtiqueta == "Grado | Actualizar")
+                        msjEtiqueta = $("label[for=LblTituloSeccion]").text();
+                            if(msjEtiqueta == "Seccion | Actualizar")
                             {
-                                accion_grado = "ActualizarGrado";
+                                accion_seccion = "ActualizarSeccion";
                             }else{
-                                accion_grado = "GuardarGrado";
+                                accion_seccion = "GuardarSeccion";
                             }
             });
             //
             // ENVIO DE DATOS Y VALIDAR INFORMACION DEL FORM
             //
-            $('#goGuardarGrado').on( 'click', function () {
+            $('#goGuardarSeccion').on( 'click', function () {
                 // enviar form
-                    $('#formVentanaGrado').submit();
+                    $('#formVentanaSeccion').submit();
             });
             //	  
             // Validar Formulario para la buscque de registro segun el criterio.   
             // PARA GUARDAR O ACTUALIZAR.
-            $('#formVentanaGrado').validate({
+            $('#formVentanaSeccion').validate({
                 ignore:"",
                 rules:{
-                        DescripcionGrado: {required: true, minlength: 4},
-                        CodigoGrado:{required: true, minlength: 2},
+                        DescripcionSeccion: {required: true, minlength: 1},
+                        CodigoSeccion:{required: true, minlength: 2},
                         },
                         errorElement: "em",
                         errorPlacement: function ( error, element ) {
@@ -271,7 +271,7 @@ $(function(){
                             });            
                         },
                     submitHandler: function(){	
-                        var str = $('#formVentanaGrado').serialize();
+                        var str = $('#formVentanaSeccion').serialize();
                         //alert(str);
                     ///////////////////////////////////////////////////////////////			
                     // Inicio del Ajax. guarda o Actualiza los datos del Formualrio.
@@ -284,7 +284,7 @@ $(function(){
                             type: "POST",
                             dataType: "json",
                             url:"php_libs/soporte/Mantenimiento/Servicio Educativo/phpAjaxServicioEducativo.php",
-                            data:str + "&accion=" + accion_grado + "&id=" + Math.random(),
+                            data:str + "&accion=" + accion_seccion + "&id=" + Math.random(),
                             success: function(response){
                                 // Validar mensaje de error
                                 if(response.respuesta == false){
@@ -293,12 +293,12 @@ $(function(){
                                 else{
                                     toastr["success"](response.mensaje, "Sistema");
                                     // Abrir ventana modal.
-                                         $('#VentanaGrado').modal("hide");
-                                         $("#formVentanaGrado")[0].reset();
+                                         $('#VentanaSeccion').modal("hide");
+                                         $("#formVentanaSeccion")[0].reset();
                                     // Llamar al archivo php para hacer la consulta y presentar los datos.
-                                        $('#accion_Grado').val('BuscarGrado');
-                                        accion_grado = 'BuscarGrado';
-                                        $.post("php_libs/soporte/Mantenimiento/Servicio Educativo/phpAjaxServicioEducativo.php",  {accion: accion_grado, codigo_se: codigo_se},
+                                        $('#accion_seccion').val('BuscarSeccion');
+                                        accion_seccion = 'BuscarSeccion';
+                                        $.post("php_libs/soporte/Mantenimiento/Servicio Educativo/phpAjaxServicioEducativo.php",  {accion: accion_seccion, codigo_se: codigo_se},
                                             function(response) {
                                                 if (response.respuesta === true) {
                                                     toastr["info"]('Registros Encontrados', "Sistema");
@@ -306,8 +306,8 @@ $(function(){
                                                 if (response.respuesta === false) {
                                                     toastr["warning"]('Registros No Encontrados', "Sistema");
                                                 }                                                                                    // si es exitosa la operación
-                                                    $('#listaContenidoSEGrado').empty();
-                                                    $('#listaContenidoSEGrado').append(response.contenido);
+                                                    $('#listaContenidoSESeccion').empty();
+                                                    $('#listaContenidoSESeccion').append(response.contenido);
                                             },"json");
                                     }               
                             },

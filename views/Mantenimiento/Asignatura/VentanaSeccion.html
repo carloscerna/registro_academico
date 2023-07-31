@@ -1,0 +1,77 @@
+<!-- VENTANA MODAL - MODIFICAR LA FECHA DE LA FACTURA -->
+<div class="row mt-3">
+<div class="col">
+<div class="modal fade" data-backdrop="static" data-keyboard="false" id="VentanaSeccion" tabindex="-1" role="dialog" aria-labelledby="VentanaSeccion" aria-hidden="true">
+<div class="modal-dialog modal-md">
+	<div class="modal-content">
+		<div class="modal-header bg-gradient-navy p-1">
+			<h6 class="modal-title" id="">
+        <span class="fad fa-layer-group"></span>
+          <label for="LblTituloSeccion">Seccion | </label>
+      </h6>
+			<button class="close" type = "button" data-dismiss="modal" aria-label="Cerrar" id="VentanaSeccion1">
+				<span aria-hidden="true">&times;</span>
+			</button>
+		</div>
+		<!-- FORMULARIO PRINCIPAL. -->
+		<form action="" method="post" name="formVentanaSeccion" id="formVentanaSeccion" role="form" enctype="multipart/form-data">
+      <!-- SECCION DEL HIDDEN INPUT-->
+      <input type="hidden" id="accion_Seccion" name="accion_Seccion" value="GuardarSeccion">
+
+			<div class="modal-body">
+				<div class="container">
+					<div class="row">
+						<div class="col-12 col-md-12 col-lg-12 col-xl-12">
+                <fieldset id="FieldsetBusquedaTiquete">
+                    <legend> Sección | Sistema Educativo</legend>
+                        <div class="row">
+                            <div class="col col-md-12 col-lg-12 col-xl-12">
+                                <div class="input-group">
+                                    <span class="input-group-text text-info" id="TextoSESeccion" name="TextoSE"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </fieldset>
+
+                    <fieldset id="FieldsetProduccion">
+                        <legend> Sección | Información General</legend>
+                            <div class="row">
+                                <div class="col">
+                                    <div class="input-group">
+                                        <div class="input-group mb-1">
+                                            <div class="input-group-prepend">
+                                              <span class="input-group-text bg-gradient-gray-dark" id="basic-addon2">Id</span>
+                                            </div>
+                                            <input type="text" class="form-control text-bold text-blue" id="IdSeccion" name = "IdSeccion" placeholder="" aria-label="IdSeccion" aria-describedby="basic-addon2" readonly>
+                                          </div>
+                                    </div>
+                                    <div class="input-group">
+                                        <div class="input-group mb-1">
+                                            <div class="input-group-prepend">
+                                              <span class="input-group-text bg-gradient-gray-dark" id="basic-addon3">Código</span>
+                                            </div>
+                                            <input type="text" class="form-control text-bold text-blue" id="CodigoSeccion" name="CodigoSeccion" placeholder="" aria-label="CodigoSeccion" aria-describedby="basic-addon3">
+                                          </div>
+                                    </div>
+                                    <div class="form-group">
+                                      <label for="DescripcionSeccion">Descripción</label>
+                                      <textarea id="DescripcionSeccion" class="form-control" name="DescripcionSeccion" autofocus></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                    </fieldset>
+                </div>
+              </div> <!-- ROW -->
+            </div> <!-- CONTAINER -->
+          </div> <!-- MODAL BODY -->
+            <!-- footer modal -->
+            <div class="modal-footer bg-gradient-cyan p-0">
+              <button class="btn btn-default" data-dismiss="modal" type="button">Cerrar</button>
+              <input class="btn btn-primary" type="button" value="Guardar" name="goGuardarSeccion" id="goGuardarSeccion">
+            </div>
+        </form> <!-- from principal -->
+	</div>
+</div>
+</div>
+</div>			
+</div>
