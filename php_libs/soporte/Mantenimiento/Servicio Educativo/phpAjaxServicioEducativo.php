@@ -431,9 +431,9 @@ if($errorDbConexion == false){
 			case 'EditarGrado':
 				$id_ = $_REQUEST['id_'];
 				// Armamos el query y iniciamos variables.
-					$query = "SELECT id_grado_ano, nombre, codigo FROM grado_ano WHERE id_grado_ano = $id_ ORDER BY codigo ";
+					$query = "SELECT id_grado_ano, nombre, codigo FROM grado_ano WHERE id_grado_ano = ".$_POST['id_x']. " ORDER BY codigo ";
 				// Ejecutamos el Query.
-				$consulta = $dblink -> query($query);
+					$consulta = $dblink -> query($query);
 
 				if($consulta -> rowCount() != 0){
 					$respuestaOK = true;
@@ -789,8 +789,8 @@ echo json_encode($salidaJson);
 }
 
 if($_POST['accion'] == "EditarModalidad" || $_POST['accion'] == "editar_annlectivo"
-|| $_POST['accion'] == "EditarSeccion" || $_POST['accion'] == "BuscarCodigoSeccion" 
-|| $_POST['accion'] == "BuscarCodigoAnnLectivo" || $_POST['accion'] == "EditarGrado" 
+|| $_POST['accion'] == "editar_seccion" || $_POST['accion'] == "BuscarCodigoSeccion" 
+|| $_POST['accion'] == "BuscarCodigoAnnLectivo" || $_POST['accion'] == "editar_grado" 
 || $_POST['accion'] == "BuscarCodigoGrado" || $_POST['accion'] == "BuscarCodigoModalidad" 
 || $_POST['accion'] == "BuscarCodigoAsignatura" || $_POST['accion'] == "EditarAsignatura") {
 	// Armamos array para convertir a JSON
