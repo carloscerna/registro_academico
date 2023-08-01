@@ -816,7 +816,7 @@ if($errorDbConexion == false){
 					{
 					// variables
 					$codigo = trim($listado['codigo']);
-					$nombre = trim($listado['nombre']);
+					$nombre = trim($listado['descripcion']);
 					$id_ = trim($listado['id_servicio_educativo']);
 					$num++;
 						    
@@ -826,13 +826,13 @@ if($errorDbConexion == false){
 							<td>$id_
 							<td>$codigo
 							<td>$nombre
-							<td><a data-accion=EditarSeccion class='btn btn-xs btn-info' href=$id_>Editar</a>"
+							<td><a data-accion=EditarSe class='btn btn-xs btn-info' href=$id_>Editar</a>"
 							;
 					}
 					$mensajeError = "Se ha consultado el registro correctamente ";
 				}
 			break;
-			case 'EditarSeccion':
+			case 'EditarSe':
 				$id_ = $_REQUEST['id_'];
 				// Armamos el query y iniciamos variables.
 					$query = "SELECT * FROM catalogo_servicio_educativo WHERE id_servicio_educativo = '$id_' ORDER BY codigo";
@@ -847,7 +847,7 @@ if($errorDbConexion == false){
 					{
 					// variables
 					$id_ = trim($listado['id_servicio_educativo']);
-					$nombre = trim($listado['nombre']);
+					$nombre = trim($listado['descripcion']);
 					$codigo = trim($listado['codigo']);
 					
 					$datos[$fila_array]["id_servicio_educativo"] = $id_;
@@ -858,23 +858,23 @@ if($errorDbConexion == false){
 					$mensajeError = "Se ha consultado el registro correctamente ";
 				}
 			break;
-			case 'ActualizarSeccion':
+			case 'ActualizarSe':
 				$id_ = $_POST['IdServicioEducativo'];
 				$nombre = strtoupper(htmlspecialchars($_POST['DescripcionServicioEducativo']));
 				// Armamos el query y iniciamos variables.
-					$query = "UPDATE catalogo_servicio_educativo SET nombre = '$nombre' WHERE id_servicio_educativo=$id_";
+					$query = "UPDATE catalogo_servicio_educativo SET descripcion = '$nombre' WHERE id_servicio_educativo=$id_";
 				// Ejecutamos el Query.
 				$consulta = $dblink -> query($query);
 					$respuestaOK = true;
 					$contenidoOK = "Registro Actualizado.";
 					$mensajeError = "Se ha consultado el registro correctamente ";
 			break;
-			case 'GuardarSeccion':
+			case 'GuardarSe':
 				// consultar el registro antes de agregarlo.
 				// Armamos el query y iniciamos variables.
 				 $nombre = strtoupper(htmlspecialchars($_POST['DescripcionServicioEducativo']));
 				 $codigo = ($_POST['CodigoServicioEducativo']);
-				 $query = "SELECT * FROM catalogo_servicio_educativo WHERE codigo = '$codigo' or nombre = '$nombre' ORDER BY codigo";
+				 $query = "SELECT * FROM catalogo_servicio_educativo WHERE codigo = '$codigo' or descripcion = '$nombre' ORDER BY codigo";
 				// Ejecutamos el Query.
 				$consulta = $dblink -> query($query);
 
@@ -914,6 +914,8 @@ if($_POST['accion'] == "eliminar_annlectivo" || $_POST['accion'] == "BuscarSecci
 	|| $_POST['accion'] == "GuardarAsignatura"
 	|| $_POST['accion'] == "ActualizarAsignatura"
 	|| $_POST['accion'] == "eliminar_asignatura"
+	|| $_POST['accion'] == "BuscarSe" || $_POST['accion'] == "GuardarSe"
+	|| $_POST['accion'] == "ActualizarSe"
 	) {
 // Armamos array para convertir a JSON
 $salidaJson = array("respuesta" => $respuestaOK,
@@ -926,7 +928,8 @@ if($_POST['accion'] == "EditarModalidad" || $_POST['accion'] == "EditarAnnLectiv
 || $_POST['accion'] == "EditarSeccion" || $_POST['accion'] == "BuscarCodigoSeccion" 
 || $_POST['accion'] == "BuscarCodigoAnnLectivo" || $_POST['accion'] == "editar_grado" 
 || $_POST['accion'] == "BuscarCodigoGrado" || $_POST['accion'] == "BuscarCodigoModalidad" 
-|| $_POST['accion'] == "BuscarCodigoAsignatura" || $_POST['accion'] == "EditarAsignatura") {
+|| $_POST['accion'] == "BuscarCodigoAsignatura" || $_POST['accion'] == "EditarAsignatura"
+|| $_POST['accion'] == "BuscarCodigoSe"  || $_POST['accion'] == "EditarSe") {
 	// Armamos array para convertir a JSON
 	echo json_encode($datos);
 }

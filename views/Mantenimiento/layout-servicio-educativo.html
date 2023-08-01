@@ -13,6 +13,7 @@
     $('[data-toggle="tooltip"]').tooltip();
   })
 </script>
+<script type="text/JavaScript" src="js/Mantenimiento/Servicio Educativo/ServiciosEducativos.js"></script>
 <script type="text/JavaScript" src="js/Mantenimiento/Servicio Educativo/Asignatura.js"></script>
 <script type="text/JavaScript" src="js/Mantenimiento/Servicio Educativo/Nivel.js"></script>
 <script type="text/JavaScript" src="js/Mantenimiento/Servicio Educativo/Grado.js"></script>
@@ -421,11 +422,13 @@
 <!-- Loading Screen -->
   {% include 'loading-screen.html' %}
 <!-- plantilla que contiene el . -->
+  {% include 'Mantenimiento/Asignatura/VentanaServiciosEducativos.html' %}  
   {% include 'Mantenimiento/Asignatura/VentanaAsignatura.html' %}
   {% include 'Mantenimiento/Asignatura/VentanaModalidad.html' %}
   {% include 'Mantenimiento/Asignatura/VentanaGrado.html' %}
   {% include 'Mantenimiento/Asignatura/VentanaSeccion.html' %}
   {% include 'Mantenimiento/Asignatura/VentanaAnnLectivo.html' %}
+
 <!-- FINAL DEL BLOQUE DE CONTENIDO.-->
 {% endblock %}  
 
