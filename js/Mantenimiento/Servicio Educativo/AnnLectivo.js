@@ -76,11 +76,15 @@ $(function(){
                             // Llamar al archivo php para hacer la consulta y presentar los datos.
                             $.post("php_libs/soporte/Mantenimiento/Servicio Educativo/phpAjaxServicioEducativo.php",  { id_: id_, accion: accion_annlectivo},
                                 function(data) {
-                                // Llenar el formulario con los datos del registro seleccionado tabs-1
                                 // Datos Generales
-                                    $('#IdAnnLectivo').val(data[0].id_seccion);
+                                    listar_CodigoEstatus(data[0].codigo_estatus);
+                                //
+                                    $('#IdAnnLectivo').val(data[0].id_);
                                     $('#CodigoAnnLectivo').val(data[0].codigo);
-                                    $('#DescripcionAnnLectivo').val(data[0].nombre);
+                                    $('#DescripcionAnnLectivo').val(data[0].descripcion);
+                                    $('#AnnLectivo').val(data[0].nombre_año);
+                                    $('#FechaInicio').val(data[0].fecha_inicio);
+                                    $('#FechaFin').val(data[0].fecha_fin);
                                     // Abrir ventana modal.
                                     $('#VentanaAnnLectivo').modal("show");
                                     $("label[for=LblTituloAnnLectivo]").text("AnnLectivo | Actualizar");
@@ -232,6 +236,8 @@ $(function(){
                             }else{
                                 accion_annlectivo = "GuardarAnnLectivo";
                             }
+                    // buscar codigo estatus en nuevo
+                        listar_CodigoEstatus();
             });
             //
             // ENVIO DE DATOS Y VALIDAR INFORMACION DEL FORM
@@ -246,7 +252,7 @@ $(function(){
             $('#formVentanaAnnLectivo').validate({
                 ignore:"",
                 rules:{
-                        DescripcionAnnLectivo: {required: true, minlength: 1},
+                        DescripcionAnnLectivo: {required: true, maxlength: 30},
                         CodigoAnnLectivo:{required: true, minlength: 2},
                         },
                         errorElement: "em",
@@ -298,7 +304,7 @@ $(function(){
                                     // Llamar al archivo php para hacer la consulta y presentar los datos.
                                         $('#accion_annlectivo').val('BuscarAnnLectivo');
                                         accion_annlectivo = 'BuscarAnnLectivo';
-                                        $.post("php_libs/soporte/Mantenimiento/Servicio Educativo/phpAjaxServicioEducativo.php",  {accion: accion_annlectivo, codigo_se: codigo_se},
+                                        $.post("php_libs/soporte/Mantenimiento/Servicio Educativo/phpAjaxServicioEducativo.php",  {accion: accion_annlectivo},
                                             function(response) {
                                                 if (response.respuesta === true) {
                                                     toastr["info"]('Registros Encontrados', "Sistema");
@@ -326,3 +332,24 @@ function configureLoadingScreen(screen){
             screen.fadeOut();
         });
     }
+    ///////////////////////////////////////////////////////////////////////
+// TODAS LAS TABLAS VAN HA ESTAR EN ASIGNATURA.*******************
+// FUNCION LISTAR TABLA catalogo_estatus
+////////////////////////////////////////////////////////////
+function listar_CodigoEstatus(CodigoEstatus){
+    var miselect=$("#lstAnnLectivo");
+    /* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
+    miselect.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
+    
+    $.post("includes/cargar_estatus.php",
+        function(data) {
+            miselect.empty();
+            for (var i=0; i<data.length; i++) {
+                if(CodigoEstatus == data[i].codigo){
+                    miselect.append('<option value="' + data[i].codigo + '" selected>' + data[i].descripcion + '</option>');
+                }else{
+                    miselect.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');
+                }
+            }
+    }, "json");    
+}

@@ -416,6 +416,7 @@ if($errorDbConexion == false){
 					$id_ = trim($listado['id_grado_ano']);
 					$num++;
 						    
+
 						$contenidoOK .= "<tr>
 							<td><input type=checkbox class=case name=chk$id_ id=chk$id_>
 							<td>$num
@@ -506,7 +507,7 @@ if($errorDbConexion == false){
 					while($listado = $consulta -> fetch(PDO::FETCH_BOTH))
 					{
 						$codigo = trim($listado['codigo']);
-						$datos[$fila_array]["codigo_annlectivo"] = $codigo + 1;	
+						$datos[$fila_array]["codigo"] = $codigo + 1;	
 					}
 				}
 			break;
@@ -527,25 +528,33 @@ if($errorDbConexion == false){
 					// variables
 					$id_ = trim($listado['id_annlectivo']);
 					$codigo = trim($listado['codigo']);
+					$nombre_año = trim($listado['nombre']);
 					$descripcion = trim($listado['descripcion']);
-					$estatus = trim($listado['estatus']);
+					$estatus = trim($listado['codigo_estatus']);
 					$num++;
-						    
+
+					// VARIABLES ESTATUS.
+					if($estatus == '01'){
+						$estatus = "<td><span class='badge badge-pill badge-info'>Activo</span></td>";
+					}else{
+						$estatus = "<td><span class='badge badge-pill badge-danger'>Inactivo</span></td>";
+					}
 						$contenidoOK .= "<tr>
 							<td><input type=checkbox class=case name=chk$id_ id=chk$id_>
 							<td>$num
 							<td>$id_
 							<td>$codigo
+							<td>$nombre_año
 							<td>$descripcion
-							<td>$estatus
-							<td><a data-accion=editar_annlectivo class='btn btn-xs btn-info' href=$id_>Editar</a>"
+							$estatus
+							<td><a data-accion=EditarAnnLectivo class='btn btn-xs btn-info' data-toggle='tooltip' data-placement='top' title='Editar' href=$id_><i class='fas fa-edit'></i></a>"
 							;
 					}
 					$mensajeError = "Se ha consultado el registro correctamente ";
 				}
 			break;
 			case 'EditarAnnLectivo':
-				$id_ = $_REQUEST['IdAnnLectivo'];
+				$id_ = $_REQUEST['id_'];
 				// Armamos el query y iniciamos variables.
 					$query = "SELECT * FROM ann_lectivo WHERE id_annlectivo = '$id_' ORDER BY codigo";
 				// Ejecutamos el Query.
@@ -564,29 +573,42 @@ if($errorDbConexion == false){
 					$descripcion = trim($listado['descripcion']);
 					$fecha_inicio = trim($listado['fecha_inicio']);
 					$fecha_fin = trim($listado['fecha_fin']);
-					$estatus = trim($listado['estatus']);
+					$codigo_estatus = trim($listado['codigo_estatus']);
 					
-					$datos[$fila_array]["id_annlectivo"] = $id_annlectivo;
+					$datos[$fila_array]["id_"] = $id_annlectivo;
 					$datos[$fila_array]["codigo"] = $codigo;
-					$datos[$fila_array]["nombre"] = $nombre;
+					$datos[$fila_array]["nombre_año"] = $nombre;
 					$datos[$fila_array]["descripcion"] = $descripcion;
 					$datos[$fila_array]["fecha_inicio"] = $fecha_inicio;
 					$datos[$fila_array]["fecha_fin"] = $fecha_fin;
-					$datos[$fila_array]["estatus"] = $estatus;
+					$datos[$fila_array]["codigo_estatus"] = $codigo_estatus;
 					$fila_array++;
 					}
 					$mensajeError = "Se ha consultado el registro correctamente ";
 				}
 			break;
 			case 'ActualizarAnnLectivo':
-				$id_annlectivo = $_POST['IdAnnLectivo'];
-				$descripcion = strtoupper($_POST['descripcion']);
-				$estatus = trim($_POST['estatus']);
+				$id_ = $_POST['IdAnnLectivo'];
+				$nombre_año = htmlspecialchars(trim($_POST['AnnLectivo']));
+				$descripcion = htmlspecialchars(trim($_POST['DescripcionAnnLectivo']));
+				$codigo_estatus = trim($_POST['lstAnnLectivo']);
+				$fecha_inicio = ($_POST['FechaInicio']);
+				$fecha_fin = ($_POST['FechaFin']);
+				// VALIDAR ESTATUS CON FALSE O TRUE
+					if($codigo_estatus == '01'){
+						$estatus = '1';
+					}else{
+						$estatus = '0';
+					}
 				// Armamos el query y iniciamos variables.
 					$query = "UPDATE ann_lectivo SET
-						descripcion = '$descripcion',
-						estatus = '$estatus'
-							WHERE id_annlectivo = ". $id_annlectivo;
+							nombre = '$nombre_año',
+							descripcion = '$descripcion',
+							codigo_estatus = '$codigo_estatus',
+							estatus = '$estatus',
+							fecha_inicio = '$fecha_inicio',
+							fecha_fin = '$fecha_fin'
+								WHERE id_annlectivo = ". $id_;
 				// Ejecutamos el Query.
 				$consulta = $dblink -> query($query);
 					$respuestaOK = true;
@@ -596,16 +618,21 @@ if($errorDbConexion == false){
 			case 'GuardarAnnLectivo':
 				// consultar el registro antes de agregarlo.
 				// Armamos el query y iniciamos variables.
-				 $nombre = strtoupper($_POST['nombreAnnLectivo']);
-				 $codigo_annlectivo = ($_POST['codigoAnnLectivo']);
-				 $descripcion = ($_POST['descripcion']);
-				 $fecha_inicio = ($_POST['fecha_inicio']);
-				 $fecha_fin = ($_POST['fecha_fin']);
-				 $estatus = ($_POST['estatus']);
+				 $nombre_año = htmlspecialchars(trim($_POST['AnnLectivo']));
+				 $codigo = ($_POST['CodigoAnnLectivo']);
+				 $descripcion = ($_POST['DescripcionAnnLectivo']);
+				 $fecha_inicio = ($_POST['FechaInicio']);
+				 $fecha_fin = ($_POST['FechaFin']);
+				 $codigo_estatus = ($_POST['lstAnnLectivo']);
 
-				 if($estatus == "yes"){$estatus = 1;}else{$estatus = 0;}
+				// VALIDAR ESTATUS CON FALSE O TRUE
+					if($codigo_estatus == '01'){
+						$estatus = true;
+					}else{
+						$estatus = false;
+					}
 				 // Ar,ar qieru àra evañiar-
-				 $query = "SELECT id_annlectivo, nombre, codigo FROM ann_lectivo WHERE codigo = '$codigo_annlectivo' ORDER BY codigo";
+				 $query = "SELECT * FROM ann_lectivo WHERE codigo = '$codigo' ORDER BY codigo";
 				// Ejecutamos el Query.
 				$consulta = $dblink -> query($query);
 
@@ -615,7 +642,8 @@ if($errorDbConexion == false){
 					$mensajeError = "No Registro";
 				}else{
 				// proceso para grabar el registro
-					$query = "INSERT INTO ann_lectivo (nombre, codigo, descripcion, fecha_inicio, fecha_fin, estatus) VALUES ('$nombre','$codigo_annlectivo','$descripcion','$fecha_inicio','$fecha_fin','$estatus')";
+					$query = "INSERT INTO ann_lectivo (nombre, codigo, descripcion, fecha_inicio, fecha_fin, estatus, codigo_estatus)
+							VALUES ('$nombre_año','$codigo','$descripcion','$fecha_inicio','$fecha_fin','$estatus','$codigo_estatus')";
 				// Ejecutamos el Query.
 				$consulta = $dblink -> query($query);
 					$respuestaOK = true;
@@ -746,6 +774,117 @@ if($errorDbConexion == false){
 				}else{
 				// proceso para grabar el registro
 					$query = "INSERT INTO seccion (nombre, codigo) VALUES ('$nombre','$codigo')";
+				// Ejecutamos el Query.
+				$consulta = $dblink -> query($query);
+					$respuestaOK = true;
+					$contenidoOK = "Registro Agregado.";
+					$mensajeError = "Se ha consultado el registro correctamente ";
+				}
+			break;	
+			///////////////////////////////////////////////////////////////////////////////////////////////////
+			////////////// BLOQUE DE REGISTRO GESTION (SERVICIOS EDUCATIVOS)
+			///////////////////////////////////////////////////////////////////////////////////////////////////
+			case 'BuscarCodigoSe':
+				// Armamos el query.
+				$query = "SELECT (codigo)::int FROM catalogo_servicio_educativo ORDER BY codigo DESC LIMIT 1";
+				// Ejecutamos el Query.
+				$fila_array = 0;
+				$consulta = $dblink -> query($query);
+
+				if($consulta -> rowCount() != 0){
+					$respuestaOK = true;
+					while($listado = $consulta -> fetch(PDO::FETCH_BOTH))
+					{
+						$codigo = trim($listado['codigo']);
+						$datos[$fila_array]["codigo"] = $codigo + 1;	
+					}
+				}
+			break;
+			case 'BuscarSe':
+				// Armar Colores
+				$statusTipo = array ("01" => "btn-success", "02" => "btn-warning", "03" => "btn-danger");
+				// Armamos el query.
+					$query = "SELECT * FROM catalogo_servicio_educativo ORDER BY codigo";
+				// Ejecutamos el Query.
+				$consulta = $dblink -> query($query);
+
+				if($consulta -> rowCount() != 0){
+					$respuestaOK = true;
+					$num = 0;
+					// convertimos el objeto
+					while($listado = $consulta -> fetch(PDO::FETCH_BOTH))
+					{
+					// variables
+					$codigo = trim($listado['codigo']);
+					$nombre = trim($listado['nombre']);
+					$id_ = trim($listado['id_servicio_educativo']);
+					$num++;
+						    
+						$contenidoOK .= "<tr>
+							<td><input type=checkbox class=case name=chk$id_ id=chk$id_>
+							<td>$num
+							<td>$id_
+							<td>$codigo
+							<td>$nombre
+							<td><a data-accion=EditarSeccion class='btn btn-xs btn-info' href=$id_>Editar</a>"
+							;
+					}
+					$mensajeError = "Se ha consultado el registro correctamente ";
+				}
+			break;
+			case 'EditarSeccion':
+				$id_ = $_REQUEST['id_'];
+				// Armamos el query y iniciamos variables.
+					$query = "SELECT * FROM catalogo_servicio_educativo WHERE id_servicio_educativo = '$id_' ORDER BY codigo";
+				// Ejecutamos el Query.
+				$consulta = $dblink -> query($query);
+
+				if($consulta -> rowCount() != 0){
+					$respuestaOK = true;
+					$fila_array = 0;
+					// convertimos el objeto
+					while($listado = $consulta -> fetch(PDO::FETCH_BOTH))
+					{
+					// variables
+					$id_ = trim($listado['id_servicio_educativo']);
+					$nombre = trim($listado['nombre']);
+					$codigo = trim($listado['codigo']);
+					
+					$datos[$fila_array]["id_servicio_educativo"] = $id_;
+					$datos[$fila_array]["codigo"] = $codigo;
+					$datos[$fila_array]["nombre"] = $nombre;
+					$fila_array++;
+					}
+					$mensajeError = "Se ha consultado el registro correctamente ";
+				}
+			break;
+			case 'ActualizarSeccion':
+				$id_ = $_POST['IdServicioEducativo'];
+				$nombre = strtoupper(htmlspecialchars($_POST['DescripcionServicioEducativo']));
+				// Armamos el query y iniciamos variables.
+					$query = "UPDATE catalogo_servicio_educativo SET nombre = '$nombre' WHERE id_servicio_educativo=$id_";
+				// Ejecutamos el Query.
+				$consulta = $dblink -> query($query);
+					$respuestaOK = true;
+					$contenidoOK = "Registro Actualizado.";
+					$mensajeError = "Se ha consultado el registro correctamente ";
+			break;
+			case 'GuardarSeccion':
+				// consultar el registro antes de agregarlo.
+				// Armamos el query y iniciamos variables.
+				 $nombre = strtoupper(htmlspecialchars($_POST['DescripcionServicioEducativo']));
+				 $codigo = ($_POST['CodigoServicioEducativo']);
+				 $query = "SELECT * FROM catalogo_servicio_educativo WHERE codigo = '$codigo' or nombre = '$nombre' ORDER BY codigo";
+				// Ejecutamos el Query.
+				$consulta = $dblink -> query($query);
+
+				if($consulta -> rowCount() != 0){
+					$respuestaOK = false;
+					$contenidoOK = "Este registro ya Existe";
+					$mensajeError = "Este registro ya Existe.";
+				}else{
+				// proceso para grabar el registro
+					$query = "INSERT INTO catalogo_servicio_educativo (nombre, codigo) VALUES ('$nombre','$codigo')";
 				// Ejecutamos el Query.
 				$consulta = $dblink -> query($query);
 					$respuestaOK = true;
