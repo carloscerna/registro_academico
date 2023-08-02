@@ -4,7 +4,7 @@
 // Incluimos el archivo de funciones y conexión a la base de datos
     include($path_root."/registro_academico/includes/mainFunctions_conexion.php");
 // armando el Query.
-    $query = "SELECT codigo, descripcion from catalogo_periodo ORDER BY codigo";
+    $query = "SELECT id_, descripcion from catalogo_periodo ORDER BY id_";
 // Ejecutamos el Query.
     $consulta = $dblink -> query($query);
 // Inicializando el array
@@ -13,7 +13,7 @@
     while($listado = $consulta -> fetch(PDO::FETCH_BOTH))
     {
         // Nombres de los campos de la tabla.
-            $codigo = $listado['codigo']; $descripcion = $listado['descripcion'];
+            $codigo = $listado['id_']; $descripcion = $listado['descripcion'];
 	      // Rellenando la array.
         $datos[$fila_array]["codigo"] = $codigo;
         $datos[$fila_array]["descripcion"] = ($descripcion);

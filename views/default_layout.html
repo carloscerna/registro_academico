@@ -11,7 +11,7 @@
 	=            Include CSS files           =
 	==============================================-->
   <!-- TOASTER -->
-    <link rel="stylesheet" href="js/toastr/toastr.css" >
+    <link rel="stylesheet" href="js/toastr/toastr.min.css" >
   <!-- Font Awesome Icons -->
   <link rel="stylesheet" href="js/plugins/fontawesome-pro-5.14.0-web/css/all.min.css">
 
@@ -158,23 +158,23 @@
 
 	<!-- CONFIGURACIÓN DE TOASTR -->
 	<script type="text/javascript">
-		toastr.options = {
-            "closeButton": false,
-            "debug": false,
-            "newestOnTop": false,
-            "progressBar": false,
-            "positionClass": "toast-top-right",
-            "preventDuplicates": false,
-            "onclick": null,
-            "showDuration": "300",
-            "hideDuration": "1000",
-            "timeOut": "5000",
-            "extendedTimeOut": "1000",
-            "showEasing": "swing",
-            "hideEasing": "linear",
-            "showMethod": "fadeIn",
-            "hideMethod": "fadeOut"
-	};
+    toastr.options = {
+      "closeButton": true,
+      "debug": false,
+      "newestOnTop": false,
+      "progressBar": false,
+      "positionClass": "toast-top-center",
+      "preventDuplicates": false,
+      "onclick": null,
+      "showDuration": "200",
+      "hideDuration": "500",
+      "timeOut": "5000",
+      "extendedTimeOut": "500",
+      "showEasing": "swing",
+      "hideEasing": "linear",
+      "showMethod": "fadeIn",
+      "hideMethod": "fadeOut"
+    }
 	</script>
 	<!-- BOTON ARRIBA SCRIPT -->
 	<script>

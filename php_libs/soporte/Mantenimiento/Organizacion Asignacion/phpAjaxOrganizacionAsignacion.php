@@ -19,7 +19,7 @@ $contenidoOK = "";
     
 // Incluimos el archivo de funciones y conexión a la base de datos
 
-include($path_root."/registro_web/includes/mainFunctions_conexion.php");
+include($path_root."/registro_academico/includes/mainFunctions_conexion.php");
 
 // Validar conexión con la base de datos
 if($errorDbConexion == false){
@@ -73,15 +73,16 @@ if($errorDbConexion == false){
 							<td>$nombre_modalidad
 							<td>$nombre_periodo
 							<td><a data-accion=EditarHorarios class='btn btn-xs btn-info' data-toggle='tooltip' data-placement='top' title='Editar' href=$id_><i class='fas fa-edit'></i></a>
-							<td><a data-accion=EliminarHorarios class='btn btn-xs btn-warning' data-toggle='tooltip' data-placement='top' title='Eliminar' href=$id_><i class='fas fa-trash'></i></a>"
+							<a data-accion=EliminarHorarios class='btn btn-xs btn-warning' data-toggle='tooltip' data-placement='top' title='Eliminar' href=$id_><i class='fas fa-trash'></i></a>"
 							;
 					}
 					$mensajeError = "Se ha consultado el registro correctamente ";
 				}
 			break;
 			case 'EditarHorarios':
+				$id_ = $_REQUEST['id_'];
 				// Armamos el query y iniciamos variables.
-					$query = "SELECT * FROM periodo_calendario WHERE id_ = '$id_' ORDER BY codigo";
+					$query = "SELECT * FROM periodo_calendario WHERE id_ = '$id_'";
 				// Ejecutamos el Query.
 					$consulta = $dblink -> query($query);
 
@@ -93,12 +94,19 @@ if($errorDbConexion == false){
 					{
 					// variables
 						$id_ = trim($listado['id_']);
-						$nombre = trim($listado['nombre']);
-						$codigo = trim($listado['codigo']);
-						
-						$datos[$fila_array]["id_"] = $id_bachillerato_ciclo;
-						$datos[$fila_array]["codigo_modalidad"] = $codigo;
-						$datos[$fila_array]["nombre"] = $nombre;
+						$codigo_estatus = trim($listado['codigo_estatus']);
+						$codigo_periodo = trim($listado['codigo_periodo']);
+						$fecha_desde = trim($listado['fecha_desde']);
+						$fecha_hasta = trim($listado['fecha_hasta']);
+						$fecha_registro_academico = trim($listado['fecha_registro_academico']);
+
+						$datos[$fila_array]["id_"] = $id_;
+						$datos[$fila_array]["codigo_estatus"] = $codigo_estatus;
+						$datos[$fila_array]["codigo_periodo"] = $codigo_periodo;
+						$datos[$fila_array]["fecha_desde"] = $fecha_desde;
+						$datos[$fila_array]["fecha_hasta"] = $fecha_hasta;
+						$datos[$fila_array]["fecha_registro_academico"] = $fecha_registro_academico;
+
 						$fila_array++;
 					}
 					$mensajeError = "Se ha consultado el registro correctamente ";
@@ -118,19 +126,32 @@ if($errorDbConexion == false){
 			case 'GuardarHorarios':
 				// consultar el registro antes de agregarlo.
 				// Armamos el query y iniciamos variables.
-				 $codigo_annlectivo = ($_POST['lstannlectivo']);
-				 $codigo_modalidad = ($_POST['lstmodalidad']);
-				 $query = "SELECT * FROM organizar_ann_lectivo_ciclos WHERE codigo_ann_lectivo = '$codigo_annlectivo' and codigo_bachillerato = '$codigo_modalidad'";
+					$codigo_annlectivo = ($_POST['codigo_annlectivo']);
+					$codigo_modalidad = ($_POST['codigo_modalidad']);
+					$codigo_estatus = $_REQUEST['lstHorarios'];
+					$codigo_periodo = ($_POST['lstPeriodosHorarios']);
+					$FechaInicio = ($_POST['FechaInicio']);
+					$FechaFin = ($_POST['FechaFin']);
+					$FechaRA = ($_POST['FechaRA']);
+				// ESTATUS
+					if($codigo_estatus == '01'){
+						$estatus = "1";
+					}else{
+						$estatus = "0";
+					}
+				 	$query = "SELECT * FROM periodo_calendario 
+						WHERE codigo_annlectivo = '$codigo_annlectivo' and codigo_modalidad = '$codigo_modalidad' and codigo_periodo = '$codigo_periodo'";
 				// Ejecutamos el Query.
 				$consulta = $dblink -> query($query);
 
 				if($consulta -> rowCount() != 0){
 					$respuestaOK = false;
 					$contenidoOK = "Este registro ya Existe";
-					$mensajeError = "Si Existe";
+					$mensajeError = "El Nivel y Periodo ya Existen.";
 				}else{
 				// proceso para grabar el registro
-					$query = "INSERT INTO organizar_ann_lectivo_ciclos (codigo_ann_lectivo, codigo_bachillerato) VALUES ('$codigo_annlectivo','$codigo_modalidad')";
+					$query = "INSERT INTO periodo_calendario (codigo_annlectivo, codigo_modalidad, fecha_desde, fecha_hasta, fecha_registro_academico, codigo_periodo, codigo_estatus, estatus) 
+							VALUES ('$codigo_annlectivo','$codigo_modalidad','$FechaInicio','$FechaFin','$FechaRA','$codigo_periodo','$codigo_estatus','$estatus')";
 				// Ejecutamos el Query.
 				$consulta = $dblink -> query($query);
 					$respuestaOK = true;
@@ -1044,7 +1065,7 @@ if($errorDbConexion == false){
 else{
 	$mensajeError = 'No se puede establecer conexión con la base de datos';}
 
-if($_POST['accion'] == "BuscarHorarios" || $_POST['accion'] == "BuscarGradoSeccion" || $_POST['accion'] == "modificar_seccion" 
+if($_POST['accion'] == "BuscarHorarios" || $_POST['accion'] == "GuardarHorarios" || $_POST['accion'] == "modificar_seccion" 
 || $_POST['accion'] == "GuardarGradoSeccion" || $_POST['accion'] == "BuscarAnnLectivo" || $_POST['accion'] == "addAnnLectivo" || $_POST['accion'] == "BuscarGrado" 
 || $_POST['accion'] == "addGrado" || $_POST['accion'] == "modificar_annlectivo" || $_POST['accion'] == "BuscarAnnLectivoModalidad" || $_POST['accion'] == "modificar_modalidad" 
 || $_POST['accion'] == "eliminar_modalidad" || $_POST['accion'] == "GuardarAnnLectivoModalidad" || $_POST['accion'] == "BuscarAA" || $_POST['accion'] == "GuardarAA" 

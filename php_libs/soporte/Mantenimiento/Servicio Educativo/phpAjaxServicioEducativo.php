@@ -19,7 +19,7 @@ $contenidoOK = "";
     
 // Incluimos el archivo de funciones y conexión a la base de datos
 
-include($path_root."/registro_web/includes/mainFunctions_conexion.php");
+include($path_root."/registro_academico/includes/mainFunctions_conexion.php");
 
 // Validar conexión con la base de datos
 if($errorDbConexion == false){

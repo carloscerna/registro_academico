@@ -230,7 +230,7 @@ $(function(){
                                 },"json");
                     // RETORNAR EL VALOR DEL ACCION SEGUN ETIQUETA LABEL.
                         msjEtiqueta = $("label[for=LblTituloAnnLectivo]").text();
-                            if(msjEtiqueta == "Año Lectivo | Actualizar")
+                            if(msjEtiqueta == "Horarios | Actualizar")
                             {
                                 accion_annlectivo = "ActualizarAnnLectivo";
                             }else{

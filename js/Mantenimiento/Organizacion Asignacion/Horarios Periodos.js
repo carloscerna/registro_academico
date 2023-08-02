@@ -77,10 +77,10 @@ $(function(){
                 Id_Editar_Eliminar = $(this).attr('href');
                 accion_ok = $(this).attr('data-accion');
                     // EDITAR LA ASIGNATURA
-                    if($(this).attr('data-accion') == 'editar_asignatura'){
+                    if($(this).attr('data-accion') == 'EditarHorarios'){
                         // Valor de la acción
-                            $('#accion_asignatura').val('ActualizarAsignatura');
-                            accion = 'EditarAsignatura';
+                            $('#accion_horarios').val('EditarHorarios');
+                            accion = 'EditarHorarios';
                             
                             // obtener el valor del id.
                             var id_ = $(this).parent().parent().children('td:eq(2)').text();
@@ -90,29 +90,30 @@ $(function(){
                                 function(data) {
                                 // Llenar el formulario con los datos del registro seleccionado tabs-1
                                 // Datos Generales
-                                    codigo_se = $("#lstcodigose").val();
-                                    texto_se = $("#lstcodigose option:selected").html();
-                                    $("#TextoSE").text(texto_se);
+                                    texto_annlectivo_horarios = $("#lstAnnLectivoHorarios option:selected").html();
+                                    codigo_annlectivo_horarios = $("#lstAnnLectivoHorarios option:selected").val();
+                                    texto_modalidad_horarios = $("#lstModalidadHorarios option:selected").html();
+                                    codigo_modalidad_horarios = $("#lstModalidadHorarios option:selected").val();
+                                    //
+                                    $("#TextoAnnLectivoHorarios").text(texto_annlectivo_horarios);
+                                    $("#TextoModalidadesHorarios").text(texto_modalidad_horarios);
                                     //
                                     listar_CodigoEstatus(data[0].codigo_estatus);
-                                    listar_CodigoAreaAsignatura(data[0].codigo_area);
-                                    listar_CodigoAreaAsignaturaDimension(data[0].codigo_area_dimension);
-                                    listar_CodigoAreaAsignaturaSubdimension(data[0].codigo_area, data[0].codigo_area_dimension, data[0].codigo_area_subdimension);
-                                    listar_CodigoIndicadorCalificacion(data[0].codigo_cc);
+                                    listar_CodigoPeriodos(data[0].codigo_periodo);
                                     //
-                                    $('#IdAsignatura').val(data[0].id_asignatura);
-                                    $('#CodigoAsignatura').val(data[0].codigo);
-                                    $('#OrdenAsignatura').val(data[0].ordenar);
-                                    $('#DescripcionAsignatura').val(data[0].nombre);
+                                    $('#IdHorarios').val(data[0].id_);
+                                    $('#FechaInicio').val(data[0].fecha_desde);
+                                    $('#FechaFin').val(data[0].fecha_hasta);
+                                    $('#FechaRA').val(data[0].fecha_registro_academico);
                                     // Abrir ventana modal.
-                                    $('#VentanaAsignatura').modal("show");
-                                    $("label[for=LblTitulo]").text("Asignatura | Actualizar");
+                                    $('#VentanaHorariosPeriodos').modal("show");
+                                    $("label[for=LblTituloHorarios]").text("Horarios | Actualizar");
                                     // reestablecer el accion a=ActulizarAsignatura.
-                                    accion = "ActualizarAsignatura";
+                                    accion = "ActualizarHorarios";
                                 },"json");
                     }
                     // ELIMINAR REGISTRO ASIGNATURA.
-                    if($(this).attr('data-accion') == 'eliminar_asignatura'){
+                    if($(this).attr('data-accion') == 'EliminarHorarios'){
                         //	ENVIAR MENSAJE CON SWEETALERT 2, PARA CONFIRMAR SI ELIMINA EL REGISTRO.
                         const swalWithBootstrapButtons = Swal.mixin({
                             customClass: {
@@ -150,9 +151,8 @@ $(function(){
                                     success: function(response) {                     
                                             if (response.respuesta === true) {                     		
                                                 // Asignamos valor a la variable acción
-                                                    $('#accion_asignatura').val('BuscarAsignatura');
-                                                    var codigo_se = $("#lstcodigose").val();
-                                                    accion = 'BuscarAsignatura';
+                                                    $('#accion_horarios').val('BuscarHorarios');
+                                                    accion = 'BuscarHorarios';
                                                     //
                                                     //  CONDICONAR EL SELECT SERVICIO EDUCATIVO.
                                                     //
@@ -161,7 +161,7 @@ $(function(){
                                                         return;
                                                     }
                                                     // Llamar al archivo php para hacer la consulta y presentar los datos.
-                                                    $.post("php_libs/soporte/Mantenimiento/Organizacion Asignacion/phpAjaxOrganizacionAsignacion.php",  {accion: accion, codigo_se: codigo_se},
+                                                    $.post("php_libs/soporte/Mantenimiento/Organizacion Asignacion/phpAjaxOrganizacionAsignacion.php",  {accion: accion},
                                                         function(response) {
                                                         if (response.respuesta === true) {
                                                             toastr["info"]('Registros Encontrados', "Sistema");
@@ -238,7 +238,7 @@ $(function(){
                             toastr["info"]('Registros Encontrados', "Sistema");
                         }
                         if (response.respuesta === false) {
-                            toastr["warning"]('Registros No Encontrados', "Sistema");
+                            toastr["error"]('Registros No Encontrados', "Sistema");
                         }                                                                                    // si es exitosa la operación
                             $('#listaContenidoHorarios').empty();
                             $('#listaContenidoHorarios').append(response.contenido);
@@ -252,7 +252,7 @@ $(function(){
                 codigo_annlectivo_horarios = $("#lstAnnLectivoHorarios option:selected").val();
                 texto_modalidad_horarios = $("#lstModalidadHorarios option:selected").html();
                 codigo_modalidad_horarios = $("#lstModalidadHorarios option:selected").val();
-                accion = 'GuardarAsignatura';
+                accion = 'GuardarHorarios';
                 $('#accion_horarios').val('GuardarHorarios');
 
                 //
@@ -262,16 +262,30 @@ $(function(){
                     $("#AlertHorarios").css("display", "block");
                     $("#TextoAlertHorarios").text("Debe Seleccionar un Año Lectivo para Crear uno Nuevo Horario.");
                     return;
-                }else{
+                }
+                if(codigo_modalidad_horarios == "00"){
+                    $("#AlertHorarios").css("display", "block");
+                    $("#TextoAlertHorarios").text("Debe Seleccionar un Nivel para Buscar.");
+                    return;
+                }
+                
                     $("#TextoAnnLectivoHorarios").text(texto_annlectivo_horarios);
-                    $("#TextoModalidadesHorarios").text(texto_annlectivo_horarios);
+                    $("#TextoModalidadesHorarios").text(texto_modalidad_horarios);
                     // buscare codigo estatus
                         listar_CodigoEstatus();
                         listar_CodigoPeriodos();
-                }
+                
                 // Abrir ventana modal.
                 $('#VentanaHorariosPeriodos').modal("show");
                 $("label[for=LblTituloHorarios]").text("Horarios | Nuevo");
+                    // RETORNAR EL VALOR DEL ACCION SEGUN ETIQUETA LABEL.
+                    msjEtiqueta = $("label[for=LblTituloHorarios]").text();
+                    if(msjEtiqueta == "Horarios | Actualizar")
+                    {
+                        accion_horarios = "ActualizarHorarios";
+                    }else{
+                        accion_horarios = "GuardarHorarios";
+                    }
             });
             //
             // ENVIO DE DATOS Y VALIDAR INFORMACION DEL FORM para guardar o Actualizar.
@@ -286,9 +300,9 @@ $(function(){
             $('#formVentanaHorarios').validate({
                 ignore:"",
                 rules:{
-                        DescripcionAsignatura: {required: true, minlength: 4},
-                        CodigoAsignatura:{required: true, minlength: 2},
-                        lstIndicadorCalificacion: {required: true},
+                        FechaRA: {required: true},
+                        FechaFin: {required: true},
+                        FechaInicio: {required: true},
                         },
                         errorElement: "em",
                         errorPlacement: function ( error, element ) {
@@ -312,22 +326,8 @@ $(function(){
                             });            
                         },
                     submitHandler: function(){	
-                        var str = $('#formVentanaAsignatura').serialize();
+                        var str = $('#formVentanaHorarios').serialize();
                         //alert(str);
-                    // VALIDAR LOS SELECT...
-                    //
-                        if($('#lstArea').val() == '00'){
-                            alert("Debe seleccionar Area de la Asignatura.");
-                            return;
-                        }
-                        if($('#lstDimension').val() == '00'){
-                            alert("Debe seleccionar Dimensión de la Asignatura.");
-                            return;
-                        }
-                        if($('#lstSubDimension').val() == '00'){
-                            alert("Debe seleccionar Subdimensión de la Asignatura.");
-                            return;
-                        }
                     ///////////////////////////////////////////////////////////////			
                     // Inicio del Ajax. guarda o Actualiza los datos del Formualrio.
                     ///////////////////////////////////////////////////////////////
@@ -339,7 +339,7 @@ $(function(){
                             type: "POST",
                             dataType: "json",
                             url:"php_libs/soporte/Mantenimiento/Organizacion Asignacion/phpAjaxOrganizacionAsignacion.php",
-                            data:str + "&CodigoSE=" + codigo_se + "&accion=" + accion + "&id=" + Math.random(),
+                            data:str + "&accion=" + accion_horarios + "&id=" + Math.random() + "&codigo_annlectivo=" + codigo_annlectivo_horarios + "&codigo_modalidad=" + codigo_modalidad_horarios,
                             success: function(response){
                                 // Validar mensaje de error
                                 if(response.respuesta == false){
@@ -348,12 +348,12 @@ $(function(){
                                 else{
                                     toastr["success"](response.mensaje, "Sistema");
                                     // Abrir ventana modal.
-                                        $('#VentanaAsignatura').modal("hide");
-                                        $("#formVentanaAsignatura")[0].reset();
+                                        $('#VentanaHorariosPeriodos').modal("hide");
+                                        $("#formVentanaHorarios")[0].reset();
                                     // Llamar al archivo php para hacer la consulta y presentar los datos.
-                                        $('#accion_asignatura').val('BuscarAsignatura');
-                                        accion = 'BuscarAsignatura';
-                                        $.post("php_libs/soporte/Mantenimiento/Organizacion Asignacion/phpAjaxOrganizacionAsignacion.php",  {accion: accion, codigo_se: codigo_se},
+                                        $('#accion_horarios').val('BuscarHorarios');
+                                        accion = 'BuscarHorarios';
+                                        $.post("php_libs/soporte/Mantenimiento/Organizacion Asignacion/phpAjaxOrganizacionAsignacion.php",  {accion: accion, codigo_annlectivo: codigo_annlectivo_horarios, codigo_modalidad: codigo_modalidad_horarios},
                                             function(response) {
                                                 if (response.respuesta === true) {
                                                     toastr["info"]('Registros Encontrados', "Sistema");
@@ -361,8 +361,8 @@ $(function(){
                                                 if (response.respuesta === false) {
                                                     toastr["warning"]('Registros No Encontrados', "Sistema");
                                                 }                                                                                    // si es exitosa la operación
-                                                    $('#listaContenidoSE').empty();
-                                                    $('#listaContenidoSE').append(response.contenido);
+                                                    $('#listaContenidoHorarios').empty();
+                                                    $('#listaContenidoHorarios').append(response.contenido);
                                             },"json");
                                     }               
                             },
