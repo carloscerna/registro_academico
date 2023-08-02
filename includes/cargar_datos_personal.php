@@ -1,8 +1,8 @@
 <?php
 // ruta de los archivos con su carpeta
     $path_root=trim($_SERVER['DOCUMENT_ROOT']);
-// Incluimos el archivo de funciones y conexión a la base de datos
-include($path_root."/registro_web/includes/mainFunctions_conexion.php");
+// Incluimos el archivo de funciones y conexiï¿½n a la base de datos
+include($path_root."/registro_academico/includes/mainFunctions_conexion.php");
 // variables que traer el ID DEL ALUMNO.
 
 // armando el Query. PARA LA TABLA ALUMNO.
@@ -17,7 +17,7 @@ $query_historial = "SELECT id_personal_bitacora, codigo_personal, fecha_ob, hist
 	  FROM personal_historial
 	  WHERE id_personal_bitacora = ".
 	  $_POST['id_x']." ORDER BY fecha_ob";
-// armando el Query. PARA LA TABLA TIPO DE CONTRATACIÓN..
+// armando el Query. PARA LA TABLA TIPO DE CONTRATACIï¿½N..
 $query_contratacion = "SELECT ps.id_personal_salario, ps.codigo_personal, ps.codigo_rubro, ps.codigo_tipo_contratacion, ps.codigo_tipo_descuento, ps.salario,
 						cat_c.codigo, cat_c.nombre as nombre_contratacion, cat_d.codigo, cat_d.descripcion as nombre_descuento, cat_r.codigo, cat_r.descripcion as nombre_rubro
 						FROM personal_salario ps
@@ -68,7 +68,7 @@ $datos=array(); $fila_array = 0;
 	// Nombres de los campos de la tabla. tercer tab.
      $codigo_estatus = trim($listado['codigo_estatus']);
          
-	 // Debera crerase en las tablas correspondientes los campos para poder rellenar dicha información.
+	 // Debera crerase en las tablas correspondientes los campos para poder rellenar dicha informaciï¿½n.
 	 // Rellenando la array. primer tabs-1
      $datos[$fila_array]["nombres"] = $nombres;
 	 $datos[$fila_array]["apellidos"] = $apellidos;

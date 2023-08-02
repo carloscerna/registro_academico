@@ -64,7 +64,7 @@ if($errorDbConexion == false){
 					$nombre_modalidad = trim($listado['descripcion_modalidad']);
 					$nombre_periodo = trim($listado['descripcion_periodo']);
 					$num++;
-						    
+					//
 						$contenidoOK .= "<tr>
 							<td><input type=checkbox class=case name=chk$id_ id=chk$id_>
 							<td>$num

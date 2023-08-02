@@ -1,7 +1,7 @@
 <!-- VENTANA MODAL - MODIFICAR LA FECHA DE LA FACTURA -->
 <div class="row mt-3">
 <div class="col">
-<div class="modal fade" data-backdrop="static" data-keyboard="false" id="VentanaHorarios" tabindex="-1" role="dialog" aria-labelledby="VentanaHorarios" aria-hidden="true">
+<div class="modal fade" data-backdrop="static" data-keyboard="false" id="VentanaHorariosPeriodos" tabindex="-1" role="dialog" aria-labelledby="VentanaHorariosPeriodos" aria-hidden="true">
 <div class="modal-dialog modal-md">
 	<div class="modal-content">
 		<div class="modal-header bg-gradient-navy p-1">
@@ -16,19 +16,22 @@
 		<!-- FORMULARIO PRINCIPAL. -->
 		<form action="" method="post" name="formVentanaHorarios" id="formVentanaHorarios" role="form" enctype="multipart/form-data">
       <!-- SECCION DEL HIDDEN INPUT-->
-      <input type="hidden" id="accion_Horarios" name="accion_Horarios" value="GuardarHorarios">
+      <input type="hidden" id="accion_horarios" name="accion_horarios" value="GuardarHorarios">
 
 			<div class="modal-body">
 				<div class="container">
 					<div class="row">
 						<div class="col-12 col-md-12 col-lg-12 col-xl-12">
                 <fieldset id="FieldsetBusquedaTiquete">
-                    <legend> Horarios | Sistema Educativo</legend>
+                    <legend> Horarios | Organización y Asignación</legend>
                         <div class="row">
                             <div class="col col-md-12 col-lg-12 col-xl-12">
                                 <div class="input-group">
-                                    <span class="input-group-text text-info" id="TextoSEHorarios" name="TextoSE"></span>
+                                    <span class="input-group-text text-info" id="TextoAnnLectivoHorarios" name="TextoAnnLectivoHorarios">Año lectivo</span>
                                 </div>
+                                <div class="input-group">
+                                  <span class="input-group-text text-info" id="TextoModalidadesHorarios" name="TextoModalidadesHorarios">Modalidad</span>
+                              </div>
                             </div>
                         </div>
                     </fieldset>
@@ -41,6 +44,10 @@
                                     <span class="input-group-text">Estatus</span>
                                     <select class="custom-select" name="lstHorarios" id="lstHorarios"></select>
                                   </div>
+                                  <div class="input-group">
+                                    <span class="input-group-text">Períodos</span>
+                                    <select class="custom-select" name="lstPeriodosHorarios" id="lstPeriodosHorarios"></select>
+                                  </div>
                                     <div class="input-group">
                                         <div class="input-group mb-1">
                                             <div class="input-group-prepend">
@@ -50,22 +57,12 @@
                                           </div>
                                     </div>
                                     <div class="input-group">
-                                      <div class="input-group mb-1">
-                                        <div class="input-group-prepend">
-                                          <span class="input-group-text bg-gradient-gray-dark" id="basic-addon3">Año</span>
-                                        </div>
-                                          <input type="number" class="form-control text-bold" id="Horarios" name="Horarios" placeholder="" aria-label="Horarios" aria-describedby="basic-addon3" autocomplete="nope">
-                                        </div>
                                         <div class="input-group mb-1">
                                             <div class="input-group-prepend">
                                               <span class="input-group-text bg-gradient-gray-dark" id="basic-addon4">Código</span>
                                             </div>
                                             <input type="text" class="form-control text-bold" id="CodigoHorarios" name="CodigoHorarios" placeholder="" aria-label="CodigoHorarios" aria-describedby="basic-addon4" autocomplete="nope" readonly>
                                         </div>
-                                    </div>
-                                    <div class="form-group">
-                                      <label for="DescripcionHorarios">Descripción</label>
-                                      <textarea id="DescripcionHorarios" class="form-control" name="DescripcionHorarios" maxlength="30"></textarea>
                                     </div>
                                     <div class="input-group mb-1">
                                       <div class="input-group-prepend">
@@ -78,6 +75,12 @@
                                         <span class="input-group-text bg-gradient-gray-dark" id="basic-addon7">Fecha Fin</span>
                                       </div>
                                       <input type="date" min='1900-01-01' max='9999-12-31' class="form-control" id="FechaFin" name="FechaFin" placeholder="" aria-label="FechaFin" aria-describedby="basic-addon7" autocomplete="nope">
+                                    </div>
+                                    <div class="input-group mb-1">
+                                      <div class="input-group-prepend">
+                                        <span class="input-group-text bg-gradient-gray-dark" id="basic-addon8">Fecha Registro Académico</span>
+                                      </div>
+                                      <input type="date" min='1900-01-01' max='9999-12-31' class="form-control" id="FechaRA" name="FechaFin" placeholder="" aria-label="FechaRA" aria-describedby="basic-addon8" autocomplete="nope">
                                     </div>
                                 </div>
                             </div>

@@ -7,7 +7,7 @@ if(isset($_POST["personal_da"])){
 	$personal_da = $_POST["personal_da"];
 }
 // Incluimos el archivo de funciones y conexión a la base de datos
-include($path_root."/registro_web/includes/mainFunctions_conexion.php");
+include($path_root."/registro_academico/includes/mainFunctions_conexion.php");
 // VALIDAR SI ES UN SUBDIRECTOR O DIRECTOR.
 if($_SESSION['codigo_perfil'] == '03'){
 // Obtener el valor del turno de la tabla Personal Responsable Licencia.

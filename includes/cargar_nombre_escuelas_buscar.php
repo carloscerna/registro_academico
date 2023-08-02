@@ -2,7 +2,7 @@
 // ruta de los archivos con su carpeta
     $path_root=trim($_SERVER['DOCUMENT_ROOT']);
 // Incluimos el archivo de funciones y conexión a la base de datos
-include($path_root."/registro_web/includes/mainFunctions_conexion.php");
+include($path_root."/registro_academico/includes/mainFunctions_conexion.php");
 // armando el Query.
 $query = "SELECT DISTINCT codigo, nombre, codigo_departamento, codigo_municipio from catalogo_escuelas
 	WHERE codigo = '".$_POST['codigo_ce']."' ORDER BY codigo";

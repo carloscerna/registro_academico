@@ -2,7 +2,7 @@
 // ruta de los archivos con su carpeta
     $path_root=trim($_SERVER['DOCUMENT_ROOT']);
 // Incluimos el archivo de funciones y conexi�n a la base de datos
-	include($path_root."/registro_web/includes/mainFunctions_conexion.php");
+	include($path_root."/registro_academico/includes/mainFunctions_conexion.php");
 // Ar,ar Qieru cpm varoab�e-
 	$ciclo = $_POST["elegido"];
 	$query = "SELECT ga.codigo as codigo_grado, ga.nombre as nombre_grado from grado_ano ga ORDER BY codigo_grado";

@@ -6,7 +6,7 @@ $directorio = opendir('../files/'.$codigo_institucion);
 // Inicializando el array
 $datos=array(); $fila_array = 0;
 // Iniciar Bucle que recorre el directorio
-    while ($elemento = utf8_decode(readdir($directorio)))
+    while ($elemento = (readdir($directorio)))
     {
         if($elemento !='.' &&  $elemento != '..'){
             if(is_dir('../files/'.$codigo_institucion . "/" . $elemento))

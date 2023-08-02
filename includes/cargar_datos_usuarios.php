@@ -1,8 +1,8 @@
 <?php
 // ruta de los archivos con su carpeta
     $path_root=trim($_SERVER['DOCUMENT_ROOT']);
-// Incluimos el archivo de funciones y conexión a la base de datos
-include($path_root."/registro_web/includes/mainFunctions_conexion.php");
+// Incluimos el archivo de funciones y conexiï¿½n a la base de datos
+include($path_root."/registro_academico/includes/mainFunctions_conexion.php");
 // variables que traer el ID DEL ALUMNO.
 
 // armando el Query. PARA LA TABLA ALUMNO.
@@ -19,7 +19,7 @@ include($path_root."/registro_web/includes/mainFunctions_conexion.php");
 $datos=array(); $fila_array = 0;
 // Recorriendo la Tabla con PDO::        
          // Rellenando la array. cuarto tabs-4. Padre/Madre/Encargado.
-	 // Debera crerase en las tablas correspondientes los campos para poder rellenar dicha información.
+	 // Debera crerase en las tablas correspondientes los campos para poder rellenar dicha informaciï¿½n.
             if($consulta_usuario -> rowCount() != 0){		
                 while($listadoUsuarios = $consulta_usuario -> fetch(PDO::FETCH_BOTH))
                   {

@@ -4,12 +4,10 @@ var accion_ok = 'noAccion';
 var accion = "";
 var Id_Editar_Eliminar = 0;
 var Accion_Editar_Eliminar = "noAccion";
-var codigo_area = "";
-var CodigoIndicador = "";
-var CodigoDimension = "";
-var CodigoSubDimension = "";
-var codigo_se = "";
-var texto_se = "";
+var codigo_annlectivo_horarios = "";
+var texto_annlectivo_horarios = "";
+var codigo_modalidad_horarios = "";
+var texto_modalidad_horarios = "";
 var msjEtiqueta = "";
 // INICIO DE LA FUNCION PRINCIPAL.
 $(function(){
@@ -21,12 +19,11 @@ $(function(){
 //  OPCIONES PARA EL TAB NAV
 //
     $(document).ready(function () {
-           //
-    // ÑO,ÒAR DATPS DEPÈNDIENTE DEL TAB DE NAV
-    //
+        //
+        // ÑO,ÒAR DATPS DEPÈNDIENTE DEL TAB DE NAV
+        //
     $("#NavOrganizacionAsignacion ul.nav > li > a").on("click", function () {
         $TextoTab = $(this).text();
-  
         
         if($TextoTab == "Horarios"){
             // Borrar información de la Tabla.
@@ -35,11 +32,10 @@ $(function(){
             // Select a 00...
                 $("#LstAnnLectivo").val('00')
                 $("#LstNivel").val('00')
-  
         }else{
             //alert("Nav-Tab " + $TextoTab);
         }
-      });
+    });
         //
         // SELECFT ON ONCHANGE
         //
@@ -47,99 +43,20 @@ $(function(){
         // BUSCAR REGISTROS (HORARIOS CREADAS)
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////
         // funcion onchange.
-        $('#LstAnnLectivo').on('change', function() {
+        $('#lstAnnLectivoHorarios').on('change', function() {
             $("#AlertHorarios").css("display", "none");
-          });
-        // funcion onchange.
-        $('#lstArea').on('change', function() {
-            CodigoArea = $("#lstArea").val();
-
-            var miselect=$("#lstDimension");
-            /* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
-            miselect.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
-            
-            $.post("includes/cargar-area-dimension.php", {CodigoArea: CodigoArea},
-                function(data) {
-                    miselect.empty();
-                    miselect.append("<option value='00'>Seleccionar...</option>");
-                    for (var i=0; i<data.length; i++) {
-                        if(CodigoDimension == data[i].codigo){
-                            miselect.append('<option value="' + data[i].codigo + '" selected>' + data[i].descripcion + '</option>');
-                        }else{
-                            miselect.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');
-                        }
-                    }
-            }, "json");  
-          });
-        // funcion onchange.
-        $('#lstDimension').on('change', function() {
-            CodigoArea = $("#lstArea").val();
-            CodigoDimension = $("#lstDimension").val();
-            // seelct a modificar o rellenar
-            var miselect=$("#lstSubDimension");
-            /* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
-            miselect.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
-            // ajax.
-            $.post("includes/cargar-area-subdimension.php", {CodigoArea: CodigoArea, CodigoDimension: CodigoDimension},
-                function(data) {
-                    miselect.empty();
-                    miselect.append("<option value='00'>Seleccionar...</option>");
-                    for (var i=0; i<data.length; i++) {
-                        if(CodigoSubDimension == data[i].codigo){
-                            miselect.append('<option value="' + data[i].codigo + '" selected>' + data[i].descripcion + '</option>');
-                        }else{
-                            miselect.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');
-                        }
-                    }
-            }, "json");  
- 
-        // funcion onchange.
-        $('#lstSubDimension').on('change', function() {
-                // seelct a modificar o rellenar
-                var miselect=$("#lstIndicadorCalificacion");
-                /* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
-                miselect.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
-                // ajax.
-                $.post("includes/cargar-cc.php", 
-                    function(data) {
-                        miselect.empty();
-                        miselect.append("<option value='00'>Seleccionar...</option>");
-                        for (var i=0; i<data.length; i++) {
-                            if(CodigoIndicador == data[i].codigo){
-                                miselect.append('<option value="' + data[i].codigo + '" selected>' + data[i].descripcion + '</option>');
-                            }else{
-                                miselect.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');
-                            }
-                        }
-                }, "json");  
-            //
-            // BUSCAR Y GENERAR NUEVO CODIGO PARA LA ASIGNATURA.
-            //
-                    // BUSCAR EL ÚLTINMO DE LA ASIGNATURA PARA ASIGNARLE A UN NUEVO REGISTRO.
-                    accion = 'BuscarCodigoAsignatura';
-                    // Llamar al archivo php para hacer la consulta y presentar los datos.
-                            $.post("php_libs/soporte/Mantenimiento/Organizacion Asignacion/phpAjaxOrganizacionAsignacion.php",  {accion: accion},
-                                function(data) {
-                                    // si es exitosa la operación
-                                        $('#CodigoAsignatura').val(data[0].codigo_asignatura);
-                                },"json");
-                    // RETORNAR EL VALOR DEL ACCION SEGUN ETIQUETA LABEL.
-                    msjEtiqueta = $("label[for=LblTitulo]").text();
-                            if(msjEtiqueta == "Asignatura | Actualizar")
-                            {
-                                accion = "ActualizarAsignatura";
-                            }else{
-                                accion = "GuardarAsignatura";
-                            }
-          });
-          });
+        });
+        // Nivel o Modalidad.
+        $('#lstModalidadHorarios').on('change', function() {
+            $("#AlertHorarios").css("display", "none");
+        });
         ///////////////////////////////////////////////////
 		// funcionalidad del botón que abre el formulario
 		///////////////////////////////////////////////////
-	    $("#VentanaHorariosPeriodos").on('hidden.bs.modal', function () {
+        $("#VentanaHorariosPeriodos").on('hidden.bs.modal', function () {
             // Limpiar variables Text, y textarea
-				$("#formVentanaAsignatura")[0].reset();
-                $('#formVentanaAsignatura').trigger("reset");
+				$("#formVentanaHorarios")[0].reset();
+                $('#formVentanaHorarios').trigger("reset");
 				$("label.error").remove();
                 accion = "";
             // 
@@ -157,8 +74,8 @@ $(function(){
 		$('body').on('click','#listaContenidoHorarios a',function (e){
 			e.preventDefault();
 			// Id Usuario
-    			Id_Editar_Eliminar = $(this).attr('href');
-	    		accion_ok = $(this).attr('data-accion');
+                Id_Editar_Eliminar = $(this).attr('href');
+                accion_ok = $(this).attr('data-accion');
                     // EDITAR LA ASIGNATURA
                     if($(this).attr('data-accion') == 'editar_asignatura'){
                         // Valor de la acción
@@ -283,12 +200,12 @@ $(function(){
 	});
 	
 	$("#listadoContenidoHorarios tbody").on("change", "input[type='checkbox'].case", function () {
-	  if ($("#listadoContenidoHorarios tbody input[type='checkbox'].case").length == $("#listadoContenidoHorarios tbody input[type='checkbox'].case:checked").length) {
-		  $("#checkBoxAllHorarios").prop("checked", true);
-	  } else {
-		  $("#checkBoxAllHorarios").prop("checked", false);
-	  }
-	 });	
+        if ($("#listadoContenidoHorarios tbody input[type='checkbox'].case").length == $("#listadoContenidoHorarios tbody input[type='checkbox'].case:checked").length) {
+            $("#checkBoxAllHorarios").prop("checked", true);
+        } else {
+            $("#checkBoxAllHorarios").prop("checked", false);
+        }
+    });	
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// ACTIVAR Y DESACTIVAR CHECKBOX DE LA TABLA.
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////     
@@ -298,24 +215,24 @@ $(function(){
             $('#goBuscarHorarios').on('click',function(){
                 // Asignamos valor a la variable acción
                     $('#accion_horarios').val('BuscarHorarios');
-                    codigo_annlectivo = $("#lstAnnLectivoHorarios").val();
-                    codigo_modalidad = $("#lstModalidadHorarios").val();
+                    codigo_annlectivo_horarios = $("#lstAnnLectivoHorarios").val();
+                    codigo_modalidad_horarios = $("#lstModalidadHorarios").val();
                     accion = 'BuscarHorarios';
                     //
                     //  CONDICONAR EL SELECT HORARIOS DE PERIODOS..
                     //
-                    if(codigo_annlectivo == "00"){
-                        $("#AlertSEHorarios").css("display", "block");
+                    if(codigo_annlectivo_horarios == "00"){
+                        $("#AlertHorarios").css("display", "block");
                         $("#TextoAlertHorarios").text("Debe Seleccionar Año Lectivo para Buscar.");
                         return;
                     }
-                    if(codigo_modalidad == "00"){
-                        $("#AlertSEHorarios").css("display", "block");
+                    if(codigo_modalidad_horarios == "00"){
+                        $("#AlertHorarios").css("display", "block");
                         $("#TextoAlertHorarios").text("Debe Seleccionar un Nivel para Buscar.");
                         return;
                     }
                     // Llamar al archivo php para hacer la consulta y presentar los datos.
-                    $.post("php_libs/soporte/Mantenimiento/Organizacion Asignacion/phpAjaxOrganizacionAsignacion.php",  {accion: accion, codigo_annlectivo: codigo_annlectivo, codigo_modalidad: codigo_modalidad},
+                    $.post("php_libs/soporte/Mantenimiento/Organizacion Asignacion/phpAjaxOrganizacionAsignacion.php",  {accion: accion, codigo_annlectivo: codigo_annlectivo_horarios, codigo_modalidad: codigo_modalidad_horarios},
                         function(response) {
                         if (response.respuesta === true) {
                             toastr["info"]('Registros Encontrados', "Sistema");
@@ -331,34 +248,37 @@ $(function(){
             /* VER #CONTROLES CREADOS */
             //////////////////////////////////////////////////////////////////////////////////
             $('#goNuevoHorarios').on('click', function(){
-                texto_se = $("#lstcodigose option:selected").html();
-                codigo_se = $("#lstcodigose").val();
+                texto_annlectivo_horarios = $("#lstAnnLectivoHorarios option:selected").html();
+                codigo_annlectivo_horarios = $("#lstAnnLectivoHorarios option:selected").val();
+                texto_modalidad_horarios = $("#lstModalidadHorarios option:selected").html();
+                codigo_modalidad_horarios = $("#lstModalidadHorarios option:selected").val();
                 accion = 'GuardarAsignatura';
-                $('#accion_asignatura').val('GuardarAsignatura');
+                $('#accion_horarios').val('GuardarHorarios');
 
                 //
                 //  CONDICONAR EL SELECT SERVICIO EDUCATIVO.
                 //
-                if(codigo_se == "00"){
-                    $("#AlertSE").css("display", "block");
-                    $("#TextoAlert").text("Debe Seleccionar un Organizacion Asignacion para Crear uno Nuevo.");
+                if(codigo_annlectivo_horarios == "00"){
+                    $("#AlertHorarios").css("display", "block");
+                    $("#TextoAlertHorarios").text("Debe Seleccionar un Año Lectivo para Crear uno Nuevo Horario.");
                     return;
                 }else{
-                    $("#TextoSE").text(texto_se);
+                    $("#TextoAnnLectivoHorarios").text(texto_annlectivo_horarios);
+                    $("#TextoModalidadesHorarios").text(texto_annlectivo_horarios);
                     // buscare codigo estatus
-                    listar_CodigoEstatus();
-                    listar_CodigoAreaAsignatura();
+                        listar_CodigoEstatus();
+                        listar_CodigoPeriodos();
                 }
                 // Abrir ventana modal.
-                $('#VentanaAsignatura').modal("show");
-                $("label[for=LblTitulo]").text("Asignatura | Nuevo");
+                $('#VentanaHorariosPeriodos').modal("show");
+                $("label[for=LblTituloHorarios]").text("Horarios | Nuevo");
             });
             //
-            // ENVIO DE DATOS Y VALIDAR INFORMACION DEL FORM
+            // ENVIO DE DATOS Y VALIDAR INFORMACION DEL FORM para guardar o Actualizar.
             //
             $('#goGuardarHorarios').on( 'click', function () {
                 // enviar form
-                    $('#formVentanaAsignatura').submit();
+                    $('#formVentanaHorarios').submit();
             });
             //	  
             // Validar Formulario para la buscque de registro segun el criterio.   
@@ -428,8 +348,8 @@ $(function(){
                                 else{
                                     toastr["success"](response.mensaje, "Sistema");
                                     // Abrir ventana modal.
-                                         $('#VentanaAsignatura').modal("hide");
-                                         $("#formVentanaAsignatura")[0].reset();
+                                        $('#VentanaAsignatura').modal("hide");
+                                        $("#formVentanaAsignatura")[0].reset();
                                     // Llamar al archivo php para hacer la consulta y presentar los datos.
                                         $('#accion_asignatura').val('BuscarAsignatura');
                                         accion = 'BuscarAsignatura';
@@ -448,7 +368,7 @@ $(function(){
                             },
                         });
                     },
-           });
+            });
 }); // FIN DEL FUNCTION.
 //
 // Mensaje de Carga de Ajax.
@@ -461,12 +381,12 @@ function configureLoadingScreen(screen){
             screen.fadeOut();
         });
     }
-    ///////////////////////////////////////////////////////////////////////
+ ///////////////////////////////////////////////////////////////////////
 // TODAS LAS TABLAS VAN HA ESTAR EN ASIGNATURA.*******************
 // FUNCION LISTAR TABLA catalogo_estatus
 ////////////////////////////////////////////////////////////
 function listar_CodigoEstatus(CodigoEstatus){
-    var miselect=$("#lstEstatus");
+    var miselect=$("#lstHorarios");
     /* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
     miselect.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
     
@@ -482,87 +402,20 @@ function listar_CodigoEstatus(CodigoEstatus){
             }
     }, "json");    
 }
-   ///////////////////////////////////////////////////////////////////////
+ ///////////////////////////////////////////////////////////////////////
 // TODAS LAS TABLAS VAN HA ESTAR EN ASIGNATURA.*******************
-// FUNCION LISTAR TABLA catalogo_area_asignatura
+// FUNCION LISTAR TABLA catalogo_estatus
 ////////////////////////////////////////////////////////////
-function listar_CodigoAreaAsignatura(CodigoAreaAsignatura){
-    var miselect=$("#lstArea");
+function listar_CodigoPeriodos(CodigoPeriodos){
+    var miselect=$("#lstPeriodosHorarios");
     /* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
     miselect.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
-    //
-    $.post("includes/cargar-area-asignatura.php",
+    
+    $.post("includes/cargar_periodos.php",
         function(data) {
             miselect.empty();
-            miselect.append("<option value='00'>Seleccionar...</option>");
             for (var i=0; i<data.length; i++) {
-                if(CodigoAreaAsignatura == data[i].codigo){
-                    miselect.append('<option value="' + data[i].codigo + '" selected>' + data[i].descripcion + '</option>');
-                }else{
-                    miselect.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');
-                }
-            }
-    }, "json");    
-}
-   ///////////////////////////////////////////////////////////////////////
-// TODAS LAS TABLAS VAN HA ESTAR EN ASIGNATURA.*******************
-// FUNCION LISTAR TABLA catalogo_area_dimension
-////////////////////////////////////////////////////////////
-function listar_CodigoAreaAsignaturaDimension(CodigoAreaDimension){
-    var miselect=$("#lstDimension");
-    /* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
-    miselect.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
-    //
-    $.post("includes/cargar-area-dimension.php", {CodigoArea: CodigoAreaDimension},
-        function(data) {
-            miselect.empty();
-            miselect.append("<option value='00'>Seleccionar...</option>");
-            for (var i=0; i<data.length; i++) {
-                if(CodigoAreaDimension == data[i].codigo){
-                    miselect.append('<option value="' + data[i].codigo + '" selected>' + data[i].descripcion + '</option>');
-                }else{
-                    miselect.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');
-                }
-            }
-    }, "json");    
-}
-   ///////////////////////////////////////////////////////////////////////
-// TODAS LAS TABLAS VAN HA ESTAR EN ASIGNATURA.*******************
-// FUNCION LISTAR TABLA catalogo_area_subdimension
-////////////////////////////////////////////////////////////
-function listar_CodigoAreaAsignaturaSubdimension(CodigoArea, CodigoAreaDimension, CodigoSubdimension){
-    var miselect=$("#lstSubDimension");
-    /* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
-    miselect.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
-    //
-    $.post("includes/cargar-area-subdimension.php", {CodigoArea: CodigoArea, CodigoDimension: CodigoAreaDimension},
-        function(data) {
-            miselect.empty();
-            miselect.append("<option value='00'>Seleccionar...</option>");
-            for (var i=0; i<data.length; i++) {
-                if(CodigoSubdimension == data[i].codigo){
-                    miselect.append('<option value="' + data[i].codigo + '" selected>' + data[i].descripcion + '</option>');
-                }else{
-                    miselect.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');
-                }
-            }
-    }, "json");    
-}
-   ///////////////////////////////////////////////////////////////////////
-// TODAS LAS TABLAS VAN HA ESTAR EN ASIGNATURA.*******************
-// FUNCION LISTAR TABLA catalogo Indicador Calificaciones
-////////////////////////////////////////////////////////////
-function listar_CodigoIndicadorCalificacion(CodigoIndicadorCalificacion){
-    var miselect=$("#lstIndicadorCalificacion");
-    /* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
-    miselect.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
-    //
-    $.post("includes/cargar-cc.php",
-        function(data) {
-            miselect.empty();
-            miselect.append("<option value='00'>Seleccionar...</option>");
-            for (var i=0; i<data.length; i++) {
-                if(CodigoIndicadorCalificacion == data[i].codigo){
+                if(CodigoPeriodos == data[i].codigo){
                     miselect.append('<option value="' + data[i].codigo + '" selected>' + data[i].descripcion + '</option>');
                 }else{
                     miselect.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');

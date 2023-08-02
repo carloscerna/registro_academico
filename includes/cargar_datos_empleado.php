@@ -2,7 +2,7 @@
 // ruta de los archivos con su carpeta
     $path_root=trim($_SERVER['DOCUMENT_ROOT']);
 // Incluimos el archivo de funciones y conexión a la base de datos
-include($path_root."/registro_web/includes/mainFunctions_conexion.php");
+include($path_root."/registro_academico/includes/mainFunctions_conexion.php");
 // armando el Query. PARA LA TABLA EMPLEADOS.
 $query = "SELECT emp.id_empleado, emp.nombres, emp.apellidos, emp.direccion, emp.tel_residencia, emp.tel_celular, emp.cod_genero,
 	  emp.cod_estado_civil, emp.cod_nivel_escolaridad, emp.email, emp.num_dui, emp.fecha_nacimiento, emp.edad,
