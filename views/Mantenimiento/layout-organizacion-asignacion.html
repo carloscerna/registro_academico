@@ -13,12 +13,8 @@
     $('[data-toggle="tooltip"]').tooltip();
   })
 </script>
-<script type="text/JavaScript" src="js/Mantenimiento/Servicio Educativo/ServiciosEducativos.js"></script>
-<script type="text/JavaScript" src="js/Mantenimiento/Servicio Educativo/Asignatura.js"></script>
-<script type="text/JavaScript" src="js/Mantenimiento/Servicio Educativo/Nivel.js"></script>
-<script type="text/JavaScript" src="js/Mantenimiento/Servicio Educativo/Grado.js"></script>
-<script type="text/JavaScript" src="js/Mantenimiento/Servicio Educativo/Seccion.js"></script>
-<script type="text/JavaScript" src="js/Mantenimiento/Servicio Educativo/AnnLectivo.js"></script>
+<script type="text/JavaScript" src="js/Mantenimiento/Organizacion Asignacion/Horarios Periodos.js"></script>
+
 <!-- <script src="./node_modules/bootstrap/dist/js/bootstrap.js"></script> -->
 
 </script>
@@ -31,20 +27,48 @@
 </script>
 <!-- DEFINIR PARA SERVICIO EDUCATIVO CARGAR DATOS-->
 <script>
-  $(document).ready(function () { 
-      var miselect=$("#lstcodigose");
-      /* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
-      miselect.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
-      
-      $.post("includes/cargar-servicio-educativo.php",
-        function(data) {
-          miselect.empty();
-          miselect.append("<option value='00'>Seleccionar...</option>");
-          for (var i=0; i<data.length; i++) {
-            miselect.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');
-          }			
-      }, "json");
-    })
+	// Carga la INformación de Tabla Año Lectivo.
+	$(document).ready(function()
+	{
+			var miselect=$("#lstAnnLectivoHorarios");
+			/* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
+			miselect.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
+			
+			$.post("includes/cargar-ann-lectivo.php",
+				function(data) {
+					miselect.empty();
+					miselect.append("<option value=''>Seleccionar...</option>");
+					for (var i=0; i<data.length; i++) {
+						miselect.append('<option value="' + data[i].codigo + '">' + data[i].nombre + '</option>');
+					}
+			}, "json");
+   	// Información del año lectivo y modalidad.
+	$(document).ready(function()
+	{
+	// Parametros para el lstmuncipio.
+	$("#lstAnnLectivoHorarios").change(function () {
+  	    // ACTIVAR SELECT DEL AÑO LECTIVO
+			$('#lstModalidadHorarios').prop('disabled',false);
+       var miselect=$("#lstModalidadHorarios");
+		    /* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
+         miselect.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
+			
+   		$("#lstAnnLectivoHorarios option:selected").each(function () {
+         elegido=$(this).val();
+            annlectivo=$("#lstAnnLectivoHorarios").val();
+            $.post("includes/cargar-bachillerato.php", { annlectivo: annlectivo },
+			      function(data){
+                    miselect.empty();
+                    miselect.append("<option value=''>Seleccionar...</option>");
+                    for (var i=0; i<data.length; i++) {
+                    miselect.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');
+                    }
+          }, "json");			
+	    });
+	});
+	});
+
+	});
 </script>
 {% endblock %}
 
@@ -61,7 +85,7 @@
         <div class="col-sm-6">
           <ol class="breadcrumb float-sm-right">
             <li class="breadcrumb-item"><a href="index.php">Home</a></li>
-            <li class="breadcrumb-item active">Servicios Educativos</li>
+            <li class="breadcrumb-item active">Organización y Asignación</li>
           </ol>
         </div>
       </div>
@@ -77,27 +101,27 @@
             <!-- INICIO DEL CARD-->
               <div class="card">
                 <div class="card-header bg-gradient-navy">
-                  <h3 class="card-title"><i class="fal fa-school"></i> Servicios</h3>
+                  <h3 class="card-title"><i class="fal fa-sitemap"></i> Organización y Asignación</h3>
                 </div>
                     <!-- /.card-header -->
                     <div class="card-body">
                       <!-- Nav tabs ASIGNATURA, MODALIDAD, GRADO, SECCION Y AÑO LECTIVO-->
-                      <nav id="NavServicioEducativo">
+                      <nav id="NavOrganizacionAsignacion">
                         <ul class="nav nav-pills mb-3" id="pills-tab" role="list">
                           <li class="nav-item">
-                            <a class="nav-link active" id="pills-se-tab" data-toggle="pill" href="#pills-se" role="tab" aria-controls="pills-se" aria-selected="true">Servicios Educativos</a>
+                            <a class="nav-link active" id="pills-horarios-tab" data-toggle="pill" href="#pills-horarios" role="tab" aria-controls="pills-horarios" aria-selected="true">Horarios</a>
                           </li>
                           <li class="nav-item">
-                            <a class="nav-link" id="pills-home-tab" data-toggle="pill" href="#pills-home" role="tab" aria-controls="pills-home" aria-selected="false">Asignaturas</a>
+                            <a class="nav-link" id="pills-home-tab" data-toggle="pill" href="#pills-home" role="tab" aria-controls="pills-home" aria-selected="false">Niveles</a>
                           </li>
                           <li class="nav-item">
-                            <a class="nav-link" id="pills-modalidad-tab" data-toggle="pill" href="#pills-nivel" role="tab" aria-controls="pills-profile" aria-selected="false">Nivel</a>
+                            <a class="nav-link" id="pills-modalidad-tab" data-toggle="pill" href="#pills-nivel" role="tab" aria-controls="pills-profile" aria-selected="false">Grados y Secciones</a>
                           </li>
                           <li class="nav-item">
-                            <a class="nav-link" id="pills-grado-tab" data-toggle="pill" href="#pills-grado" role="tab" aria-controls="pills-contact" aria-selected="false">Grado</a>
+                            <a class="nav-link" id="pills-grado-tab" data-toggle="pill" href="#pills-grado" role="tab" aria-controls="pills-contact" aria-selected="false">Docentes y Niveles</a>
                           </li>
                           <li class="nav-item">
-                            <a class="nav-link" id="pills-seccion-tab" data-toggle="pill" href="#pills-seccion" role="tab" aria-controls="pills-contact" aria-selected="false">Sección</a>
+                            <a class="nav-link" id="pills-seccion-tab" data-toggle="pill" href="#pills-seccion" role="tab" aria-controls="pills-contact" aria-selected="false">Asignaturas/Niveles</a>
                           </li>
                           <li class="nav-item">
                             <a class="nav-link" id="pills-annlectivo-tab" data-toggle="pill" href="#pills-annlectivo" role="tab" aria-controls="pills-contact" aria-selected="false">Año Lectivo</a>
@@ -107,46 +131,51 @@
                       
                       <div class="tab-content" id="pills-tabContent">
                          <!-- NAV TAB SERVICIOS EDUCATIVOS. *INICIO*-->
-                          <div class="tab-pane fade show active" id="pills-se" role="tabpanel" aria-labelledby="pills-se-tab">
+                          <div class="tab-pane fade show active" id="pills-horarios" role="tabpanel" aria-labelledby="pills-horarios-tab">
                               <!-- NAV TAB SECCION *INICIO*-->
-                              <form class="form-inline" id="FormSE" name="FormSE">
+                              <form class="form-inline" id="FormHorarios" name="FormHorarios">
                                 <div class="form-group mb-2 mx-sm-3">
-                                  <label for="lstcodigoSeccion">Servicios Educativos</label>
+                                  <label for="lstAnnLectivo">Año Lectivo</label>
+                                  <select class="form-control mx-sm-3" id="lstAnnLectivoHorarios" name="lstAnnLectivoHorarios"></select>
+
+                                  <label for="lstModalidad">Nivel</label>
+                                  <select class="form-control mx-sm-3" id="lstModalidadHorarios" name="lstModalidadHorarios"></select>
                                 </div>
-                                  <button type="button" id="goBuscarSe" aria-label="goBuscarSe" class="btn btn-info mb-2 mx-sm-1" tabindex="-1" data-toggle="tooltip" data-placement="top" title="Buscar">
+                                  <button type="button" id="goBuscarHorarios" aria-label="goBuscarHorarios" class="btn btn-info mb-2 mx-sm-1" tabindex="-1" data-toggle="tooltip" data-placement="top" title="Buscar">
                                     <i class="fal fa-search"></i>
                                   </button>
-                                  <button type="button" id="goNuevoSe" aria-label="goNuevoSe" class="btn btn-primary mb-2" tabindex="-1" data-toggle="tooltip" data-placement="top" title="Nuevo">
+                                  <button type="button" id="goNuevoHorarios" aria-label="goNuevoHorarios" class="btn btn-primary mb-2" tabindex="-1" data-toggle="tooltip" data-placement="top" title="Nuevo">
                                     <i class="far fa-layer-plus"></i>
                                   </button>                                 
                               </form>
-                              <div class="alert alert-danger" role="alert" id="AlertSe">
-                                <span id="TextoAlertSe">...</span>
+                              <div class="alert alert-danger" role="alert" id="AlertHorarios">
+                                <span id="TextoAlertHorarios">...</span>
                               </div>
                                     <!-- TABLA CON LOS DATOS DEL SERVICIO EDUCATIVO. -->  
                                         <div class="modal-body">
                                           <div class="row bg-cyan">
                                             <div class="col">
-                                              <label for="">Servicios Educativos</label>
+                                              <label for="">Horario de Períodos</label>
                                             </div>
                                           </div>
                                             <div class="col">
-                                              <table id="listadoContenidoSE" class="table table-striped table-bordered table-hover table-condensed">
+                                              <table id="listadoContenidoHorarios" class="table table-striped table-bordered table-hover table-condensed">
                                                 <thead>
                                                   <tr>
-                                                    <th><input type=checkbox name="checkBoxAllSe" id="checkBoxAllSe" data-toggle=tooltip data-placement=top title='Marcar/Desmarcar Todo'>
-                                                      <button type="button" id="goEliminarSe" aria-label="goEliminarSe" class="btn btn-link" tabindex="-1" data-toggle="tooltip" data-placement="top" title="Eliminar Seleccionados...">
+                                                    <th><input type=checkbox name="checkBoxAllHorarios" id="checkBoxAllHorarios" data-toggle=tooltip data-placement=top title='Marcar/Desmarcar Todo'>
+                                                      <button type="button" id="goEliminarHorarios" aria-label="goEliminarHorarios" class="btn btn-link" tabindex="-1" data-toggle="tooltip" data-placement="top" title="Eliminar Seleccionados...">
                                                         <i class="fad fa-trash"></i>
                                                       </button>
                                                     </th>
                                                     <th>#</th>
                                                     <th>id</th>
-                                                    <th>Código</th>
-                                                    <th>Descripción</th>
+                                                    <th>Año Lectivo</th>
+                                                    <th>Nivel</th>
+                                                    <th>Período</th>
                                                     <th></th>
                                                   </tr>
                                                 </thead>
-                                                  <tbody id="listaContenidoSe">
+                                                  <tbody id="listaContenidoHorarios">
                                                 
                                                   </tbody>                            
                                                 <tfoot>
@@ -422,12 +451,7 @@
 <!-- Loading Screen -->
   {% include 'loading-screen.html' %}
 <!-- plantilla que contiene el . -->
-  {% include 'Mantenimiento/Servicios Educativos/VentanaServiciosEducativos.html' %}  
-  {% include 'Mantenimiento/Servicios Educativos/VentanaAsignatura.html' %}
-  {% include 'Mantenimiento/Servicios Educativos/VentanaModalidad.html' %}
-  {% include 'Mantenimiento/Servicios Educativos/VentanaGrado.html' %}
-  {% include 'Mantenimiento/Servicios Educativos/VentanaSeccion.html' %}
-  {% include 'Mantenimiento/Servicios Educativos/VentanaAnnLectivo.html' %}
+  {% include 'Mantenimiento/Organizacion/VentanaHorariosPeriodos.html' %}  
 
 <!-- FINAL DEL BLOQUE DE CONTENIDO.-->
 {% endblock %}  
