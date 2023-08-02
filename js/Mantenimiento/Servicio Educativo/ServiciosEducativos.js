@@ -78,7 +78,7 @@ $(function(){
                                 function(data) {
                                 // Llenar el formulario con los datos del registro seleccionado tabs-1
                                 // Datos Generales
-                                    $('#IdServiciosEducativos').val(data[0].id_servicios_educativos);
+                                    $('#IdServiciosEducativos').val(data[0].id_servicio_educativo);
                                     $('#CodigoServiciosEducativos').val(data[0].codigo);
                                     $('#DescripcionServiciosEducativos').val(data[0].nombre);
                                     // Abrir ventana modal.

@@ -859,10 +859,10 @@ if($errorDbConexion == false){
 				}
 			break;
 			case 'ActualizarSe':
-				$id_ = $_POST['IdServicioEducativo'];
-				$nombre = strtoupper(htmlspecialchars($_POST['DescripcionServicioEducativo']));
+				$id_ = $_POST['IdServiciosEducativos'];
+				$nombre = trim(htmlspecialchars($_POST['DescripcionServiciosEducativos']));
 				// Armamos el query y iniciamos variables.
-					$query = "UPDATE catalogo_servicio_educativo SET descripcion = '$nombre' WHERE id_servicio_educativo=$id_";
+					$query = "UPDATE catalogo_servicio_educativo SET descripcion = '$nombre' WHERE id_servicio_educativo = '$id_'";
 				// Ejecutamos el Query.
 				$consulta = $dblink -> query($query);
 					$respuestaOK = true;
@@ -872,8 +872,8 @@ if($errorDbConexion == false){
 			case 'GuardarSe':
 				// consultar el registro antes de agregarlo.
 				// Armamos el query y iniciamos variables.
-				 $nombre = strtoupper(htmlspecialchars($_POST['DescripcionServicioEducativo']));
-				 $codigo = ($_POST['CodigoServicioEducativo']);
+				 $nombre = trim(htmlspecialchars($_POST['DescripcionServiciosEducativos']));
+				 $codigo = ($_POST['CodigoServiciosEducativos']);
 				 $query = "SELECT * FROM catalogo_servicio_educativo WHERE codigo = '$codigo' or descripcion = '$nombre' ORDER BY codigo";
 				// Ejecutamos el Query.
 				$consulta = $dblink -> query($query);
@@ -884,7 +884,7 @@ if($errorDbConexion == false){
 					$mensajeError = "Este registro ya Existe.";
 				}else{
 				// proceso para grabar el registro
-					$query = "INSERT INTO catalogo_servicio_educativo (nombre, codigo) VALUES ('$nombre','$codigo')";
+					$query = "INSERT INTO catalogo_servicio_educativo (descripcion, codigo) VALUES ('$nombre','$codigo')";
 				// Ejecutamos el Query.
 				$consulta = $dblink -> query($query);
 					$respuestaOK = true;

@@ -228,7 +228,7 @@ for ($i=0;$i<count($codigo_asignatura_t);$i++)
     // variables.
     $mystring = str_replace(['\\', '/', '*','"',':',',','(',')'], ' ', $mystring);
     $cantidad_caracteres = strlen($mystring);
-    if($cantidad_caracteres >= 10){$cantidad_caracteres = 110;}
+    if($cantidad_caracteres >= 10){$cantidad_caracteres = 9000;}
     $findme   = '.';
     $pos = strpos($mystring, $findme);
 
