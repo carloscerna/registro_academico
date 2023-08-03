@@ -39,7 +39,7 @@ if($errorDbConexion == false){
 				$codigo_annlectivo = $_POST['codigo_annlectivo'];
 				$codigo_modalidad = $_POST['codigo_modalidad'];
 				// Armamos el query.
-					$query = "SELECT pc.id_, pc.codigo_modalidad, ann.nombre as descripcion_annlectivo,
+					$query = "SELECT pc.id_, pc.codigo_modalidad, pc.codigo_estatus, ann.nombre as descripcion_annlectivo,
 						bach.codigo, bach.nombre as descripcion_modalidad,
 						cat_p.codigo, cat_p.descripcion as descripcion_periodo
 							FROM periodo_calendario pc
@@ -63,7 +63,14 @@ if($errorDbConexion == false){
 					$nombre_annlectivo = trim($listado['descripcion_annlectivo']);
 					$nombre_modalidad = trim($listado['descripcion_modalidad']);
 					$nombre_periodo = trim($listado['descripcion_periodo']);
+					$codigo_estatus = trim($listado['codigo_estatus']);
 					$num++;
+					// VARIABLES ESTATUS.
+					if($codigo_estatus == '01'){
+						$estatus = "<td><span class='badge badge-pill badge-info'>Activo</span></td>";
+					}else{
+						$estatus = "<td><span class='badge badge-pill badge-danger'>Inactivo</span></td>";
+					}
 					//
 						$contenidoOK .= "<tr>
 							<td><input type=checkbox class=case name=chk$id_ id=chk$id_>
@@ -72,6 +79,7 @@ if($errorDbConexion == false){
 							<td>$nombre_annlectivo
 							<td>$nombre_modalidad
 							<td>$nombre_periodo
+							$estatus
 							<td><a data-accion=EditarHorarios class='btn btn-xs btn-info' data-toggle='tooltip' data-placement='top' title='Editar' href=$id_><i class='fas fa-edit'></i></a>
 							<a data-accion=EliminarHorarios class='btn btn-xs btn-warning' data-toggle='tooltip' data-placement='top' title='Eliminar' href=$id_><i class='fas fa-trash'></i></a>"
 							;
@@ -113,10 +121,30 @@ if($errorDbConexion == false){
 				}
 			break;
 			case 'ActualizarHorarios':
-				$id_modalidad = $_POST['id_x'];
-				$nombre = strtoupper($_POST['nombre_modalidad']);
+				$id_ = $_POST['IdHorarios'];
 				// Armamos el query y iniciamos variables.
-					$query = "UPDATE bachillerato_ciclo SET nombre = '$nombre' WHERE id_bachillerato_ciclo = ". $id_modalidad;
+				$codigo_annlectivo = ($_POST['codigo_annlectivo']);
+				$codigo_modalidad = ($_POST['codigo_modalidad']);
+				$codigo_estatus = $_REQUEST['lstHorarios'];
+				$codigo_periodo = ($_POST['lstPeriodosHorarios']);
+				$FechaInicio = ($_POST['FechaInicio']);
+				$FechaFin = ($_POST['FechaFin']);
+				$FechaRA = ($_POST['FechaRA']);
+			// ESTATUS
+				if($codigo_estatus == '01'){
+					$estatus = "1";
+				}else{
+					$estatus = "0";
+				}
+				// Armamos el query y iniciamos variables.
+					$query = "UPDATE periodo_calendario 
+							SET fecha_desde = '$FechaInicio',
+								fecha_hasta = '$FechaFin',
+								fecha_registro_academico = '$FechaRA',
+								codigo_periodo = '$codigo_periodo',
+								codigo_estatus = '$codigo_estatus',
+								estatus = '$estatus'
+									WHERE id_ = '$id_'";
 				// Ejecutamos el Query.
 				$consulta = $dblink -> query($query);
 					$respuestaOK = true;
@@ -1065,7 +1093,7 @@ if($errorDbConexion == false){
 else{
 	$mensajeError = 'No se puede establecer conexión con la base de datos';}
 
-if($_POST['accion'] == "BuscarHorarios" || $_POST['accion'] == "GuardarHorarios" || $_POST['accion'] == "modificar_seccion" 
+if($_POST['accion'] == "BuscarHorarios" || $_POST['accion'] == "GuardarHorarios" || $_POST['accion'] == "ActualizarHorarios" 
 || $_POST['accion'] == "GuardarGradoSeccion" || $_POST['accion'] == "BuscarAnnLectivo" || $_POST['accion'] == "addAnnLectivo" || $_POST['accion'] == "BuscarGrado" 
 || $_POST['accion'] == "addGrado" || $_POST['accion'] == "modificar_annlectivo" || $_POST['accion'] == "BuscarAnnLectivoModalidad" || $_POST['accion'] == "modificar_modalidad" 
 || $_POST['accion'] == "eliminar_modalidad" || $_POST['accion'] == "GuardarAnnLectivoModalidad" || $_POST['accion'] == "BuscarAA" || $_POST['accion'] == "GuardarAA" 

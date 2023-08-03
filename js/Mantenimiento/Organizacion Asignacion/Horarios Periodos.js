@@ -1,6 +1,6 @@
 // id de user global
 var idUser_ok = 0;
-var accion_ok = 'noAccion';
+var accion_horarios = 'noAccion';
 var accion = "";
 var Id_Editar_Eliminar = 0;
 var Accion_Editar_Eliminar = "noAccion";
@@ -109,7 +109,7 @@ $(function(){
                                     $('#VentanaHorariosPeriodos').modal("show");
                                     $("label[for=LblTituloHorarios]").text("Horarios | Actualizar");
                                     // reestablecer el accion a=ActulizarAsignatura.
-                                    accion = "ActualizarHorarios";
+                                    accion_horarios = "ActualizarHorarios";
                                 },"json");
                     }
                     // ELIMINAR REGISTRO ASIGNATURA.
