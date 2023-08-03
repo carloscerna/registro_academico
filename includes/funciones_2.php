@@ -51,10 +51,10 @@ function replace_3($string){
 	// Reemplazar caracteres especiales
 	$string = str_replace(
 		array(
-			 "¡", "!", "", "¿", "?", "(", ")", "[", "]", "{", "}", "`", "´",
-			 "º", "ª", "|", "@", "·", "#", "~", "$", "%", "&", "€", "¬", "", "'",
-			 "^", "*", "+", "¨", ";", ",", ":", "", ""),
-			 '',
+			"¡", "!", "", "¿", "?", "(", ")", "[", "]", "{", "}", "`", "´",
+			"º", "ª", "|", "@", "·", "#", "~", "$", "%", "&", "€", "¬", "", "'",
+			"^", "*", "+", "¨", ";", ",", ":", "", ""),
+			'',
 		$string
 	);
 	// MODIFCIADO PARA NO COLOCAR EL GUION ENTRE LOS NOMBRES DE LOS ARCHIVOS QUE SE GUADARN LOCALMENTE.

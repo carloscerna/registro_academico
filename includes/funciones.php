@@ -5,7 +5,7 @@
 function CrearDirectorios($ruta_url,$nombre_ann_lectivo,$codigo_modalidad,$codigo_destino,$numero_periodo){
 	global $DestinoArchivo;
 	$codigo_institucion = $_SESSION["codigo"];
-// Crear Carpeta en C:\TempSistemaRegistro/
+	// Crear Carpeta en C:\TempSistemaRegistro/
 	$TempSistema = "c:/TempSistemaRegistro"; $CarpetaArchivo = "Carpetas";
 	if(!file_exists($TempSistema)){
 		mkdir ($TempSistema);
@@ -16,15 +16,15 @@ function CrearDirectorios($ruta_url,$nombre_ann_lectivo,$codigo_modalidad,$codig
 	mkdir ($TempSistema."/".$CarpetaArchivo);
 	chmod($TempSistema."/".$CarpetaArchivo,07777);
 }
-/*
-	ORDEN DE LOS DIRECTORES SEGÚN MATRIZ.
-	0 - Archivos
-	1 - Nominas
-	2 - Cuadro Calificaciones.
-	3 - Exportar Calificaciones - Siges
-	4 - Boleta de Calificaciones.
-	5 - 
-*/
+	/*
+		ORDEN DE LOS DIRECTORES SEGÚN MATRIZ.
+		0 - Archivos
+		1 - Nominas
+		2 - Cuadro Calificaciones.
+		3 - Exportar Calificaciones - Siges
+		4 - Boleta de Calificaciones.
+		5 - 
+	*/
 	$DestinoArchivo = "";
 	$nombre_directorios = array("$TempSistema/$CarpetaArchivo/$codigo_institucion/",
 						"$TempSistema/$CarpetaArchivo/$codigo_institucion/Nominas/",
@@ -237,63 +237,62 @@ if($codigo_destino === 4){
 function segundosToCadenaD($min)
 {
 
-     $dias = floor($min/300);
-     $horas = $min%300;
-     $residuo_dias = $horas%300;
-     $horas = floor($residuo_dias/60);
-     $residuo_minutos = $residuo_dias%60;
-     $minutos = $residuo_minutos;
-    return $dias;
+	$dias = floor($min/300);
+	$horas = $min%300;
+	$residuo_dias = $horas%300;
+	$horas = floor($residuo_dias/60);
+	$residuo_minutos = $residuo_dias%60;
+	$minutos = $residuo_minutos;
+	return $dias;
 }
 
 function segundosToCadenaH($min)
 {
-
-     $dias = floor($min/300);
-     $horas = $min%300;
-     $residuo_dias = $horas%300;
-     $horas = floor($residuo_dias/60);
-     $residuo_minutos = $residuo_dias%60;
-     $minutos = $residuo_minutos;
-    return $horas;
+	$dias = floor($min/300);
+	$horas = $min%300;
+	$residuo_dias = $horas%300;
+	$horas = floor($residuo_dias/60);
+	$residuo_minutos = $residuo_dias%60;
+	$minutos = $residuo_minutos;
+		return $horas;
 }
 
 function segundosToCadenaM($min)
 {
 
-     $dias = floor($min/300);
-     $horas = $min%300;
-     $residuo_dias = $horas%300;
-     $horas = floor($residuo_dias/60);
-     $residuo_minutos = $residuo_dias%60;
-     $minutos = $residuo_minutos;
-    return $minutos;
+	$dias = floor($min/300);
+	$horas = $min%300;
+	$residuo_dias = $horas%300;
+	$horas = floor($residuo_dias/60);
+	$residuo_minutos = $residuo_dias%60;
+	$minutos = $residuo_minutos;
+		return $minutos;
 }
 
 function segundosToCadena($min)
 {
-  $cadena = '';
-     $dias = floor($min/300);
-     $horas = $min%300;
-     $residuo_dias = $horas%300;
-     $horas = floor($residuo_dias/60);
-     $residuo_minutos = $residuo_dias%60;
-     $minutos = $residuo_minutos;
-     $cadena = $dias.'d'.$horas.'h'.$minutos.'m';
-    return $cadena;
+	$cadena = '';
+	$dias = floor($min/300);
+	$horas = $min%300;
+	$residuo_dias = $horas%300;
+	$horas = floor($residuo_dias/60);
+	$residuo_minutos = $residuo_dias%60;
+	$minutos = $residuo_minutos;
+	$cadena = $dias.'d'.$horas.'h'.$minutos.'m';
+		return $cadena;
 }
 
 function segundosToCadenaHorasMinustos($min)
 {
-  $cadena = '';
-     $dias = floor($min/300);
-     $horas = $min%300;
-     $residuo_dias = $horas%300;
-     $horas = floor($residuo_dias/60);
-     $residuo_minutos = $residuo_dias%60;
-     $minutos = $residuo_minutos;
-     $cadena = $horas.'h '.$minutos.'m';
-    return $cadena;
+	$cadena = '';
+	$dias = floor($min/300);
+	$horas = $min%300;
+	$residuo_dias = $horas%300;
+	$horas = floor($residuo_dias/60);
+	$residuo_minutos = $residuo_dias%60;
+	$minutos = $residuo_minutos;
+	$cadena = $horas.'h '.$minutos.'m';
+		return $cadena;
 }
 
 function conversor_segundos($seg_ini) {
@@ -601,7 +600,7 @@ function genera_bach()
 		
 		if($nota_final < 6 && $recuperacion != 0){
 			// calcular la nota entre dos.
-			 $nota = round(($nota_final+$recuperacion)/2,0);}
+		$nota = round(($nota_final+$recuperacion)/2,0);}
 		else{
 			$nota = number_format($nota_final,0);}
 		
@@ -760,30 +759,30 @@ function genera_bach()
 ////////////////////////////////////////////////////
 function cambiar_grado($grado)
 	{
-	  $nuevo_grado = "";
-					
+	$nuevo_grado = "";
+	//				
 	switch ($grado)
 		{
-    		case "Primero":
-        	$nuevo_grado = "primer"; break;
-        	case "Segundo":
-        			$nuevo_grado = "segundo"; break;
-        		case "Tercero":
-        			$nuevo_grado = "tercer"; break;
-        		case "Cuarto":
-        			$nuevo_grado = "cuarto"; break;
-        		case "Quinto":
-        			$nuevo_grado = "quinto"; break;
-        		case "Sexto":
-        			$nuevo_grado = "sexto"; break;
-        		case "Séptimo":
-        			$nuevo_grado = "séptimo"; break;
-        		case "Octavo":
-        			$nuevo_grado = "octavo"; break;
-        		case "Noveno":
-        			$nuevo_grado = "noveno"; break;
-      		}
-					return $nuevo_grado;
+			case "Primero":
+			$nuevo_grado = "primer"; break;
+			case "Segundo":
+					$nuevo_grado = "segundo"; break;
+				case "Tercero":
+					$nuevo_grado = "tercer"; break;
+				case "Cuarto":
+					$nuevo_grado = "cuarto"; break;
+				case "Quinto":
+					$nuevo_grado = "quinto"; break;
+				case "Sexto":
+					$nuevo_grado = "sexto"; break;
+				case "Séptimo":
+					$nuevo_grado = "séptimo"; break;
+				case "Octavo":
+					$nuevo_grado = "octavo"; break;
+				case "Noveno":
+					$nuevo_grado = "noveno"; break;
+			}
+				return $nuevo_grado;
 	}
 	////////////////////////////////////////////////////
 //	Obtener el Grado superior a partir del actual.
@@ -794,29 +793,29 @@ function grado_superior($grado)
 	switch ($grado)
 	{
 		case "Kinder":
-   			$nuevo_grado = "preparatoria"; break;
+			$nuevo_grado = "preparatoria"; break;
 		case "Preparatoria":
-       			$nuevo_grado = "primer grado"; break;
+				$nuevo_grado = "primer grado"; break;
 		case "Primero":
-       			$nuevo_grado = "grado inmediato superior"; break;
-       		case "Segundo":
-       			$nuevo_grado = "grado inmediato superior"; break;
-       		case "Tercero":
-       			$nuevo_grado = "grado inmediato superior"; break;
-       		case "Cuarto":
-       			$nuevo_grado = "grado inmediato superior"; break;
-       		case "Quinto":
-       			$nuevo_grado = "grado inmediato superior"; break;
-       		case "Sexto":
-			 //$nuevo_grado = "séptimo"; break;
-       			$nuevo_grado = "grado inmediato superior"; break;
-       		case "Séptimo":
-       			$nuevo_grado = "grado inmediato superior"; break;
-       		case "Octavo":
-       			$nuevo_grado = "grado inmediato superior"; break;
-       		case "Noveno":
-       			$nuevo_grado = ""; break;
-      		}
+			$nuevo_grado = "grado inmediato superior"; break;
+		case "Segundo":
+			$nuevo_grado = "grado inmediato superior"; break;
+		case "Tercero":
+			$nuevo_grado = "grado inmediato superior"; break;
+		case "Cuarto":
+			$nuevo_grado = "grado inmediato superior"; break;
+		case "Quinto":
+			$nuevo_grado = "grado inmediato superior"; break;
+		case "Sexto":
+			//$nuevo_grado = "séptimo"; break;
+			$nuevo_grado = "grado inmediato superior"; break;
+		case "Séptimo":
+			$nuevo_grado = "grado inmediato superior"; break;
+		case "Octavo":
+			$nuevo_grado = "grado inmediato superior"; break;
+		case "Noveno":
+			$nuevo_grado = ""; break;
+		}
 					return $nuevo_grado;
 	}
 ////////////////////////////////////////////////////
@@ -853,40 +852,38 @@ function contar_promovidos($x1, $x2, $nota_e){
 
 function contar_promovidos_media($x1, $x2, $nota_e){
 	global $contar_p_m, $contar_r_m, $contar_p_f, $contar_r_f, $si_aprobado, $no_aprobado;;
-	
-		   if($x1 == 'm' && $x2 >= 6){$contar_p_m++;}
-		   if($x1 == 'm' && $x2 < 6){$contar_r_m++;}
-	   
-		   if($x1 == 'f' && $x2 >= 6){$contar_p_f++;}
-		   if($x1 == 'f' && $x2 < 6){$contar_r_f++;}
-	   
-		   
-	   if($x2 >= $nota_e){$si_aprobado++;}
-	   if($x2 < $nota_e){$no_aprobado++;}
-	   return ;
-   }
+	//
+		if($x1 == 'm' && $x2 >= 6){$contar_p_m++;}
+		if($x1 == 'm' && $x2 < 6){$contar_r_m++;}
+	//
+		if($x1 == 'f' && $x2 >= 6){$contar_p_f++;}
+		if($x1 == 'f' && $x2 < 6){$contar_r_f++;}
+	//	
+		if($x2 >= $nota_e){$si_aprobado++;}
+		if($x2 < $nota_e){$no_aprobado++;}
+			return ;
+}
 ////////////////////////////////////////////////////
 //Aprobados o Reprobados
 ////////////////////////////////////////////////////
 function cambiar_aprobado_reprobado_m($ap_re){
     $ap_res = '';
-    	if($ap_re !=0){
-    		if($ap_re >= 6){$ap_res = "A";}else{$ap_res = "R";}}
-    	else{
-    		$ap_res = ' ';}
-    
+		if($ap_re !=0){
+			if($ap_re >= 6){$ap_res = "A";}else{$ap_res = "R";}}
+		else{
+			$ap_res = ' ';}
     return $ap_res;
 }
 ////////////////////////////////////////////////////
 //Aprobados o Reprobados
 ////////////////////////////////////////////////////
 function cambiar_aprobado_reprobado_b($ap_re){
-    $ap_res = '';
-    	if($ap_re !=0){
-    		if($ap_re >= 5){$ap_res = "A";}else{$ap_res = "R";}}
-    	else{
-    		$ap_res = ' ';}
-    
+	$ap_res = '';
+		if($ap_re !=0){
+			if($ap_re >= 5){$ap_res = "A";}else{$ap_res = "R";}}
+		else{
+			$ap_res = ' ';}
+    //
     return $ap_res;
 }
 
@@ -895,12 +892,12 @@ function cambiar_aprobado_reprobado_b($ap_re){
 ////////////////////////////////////////////////////
 function cambiar_concepto($concepto){
     $conceptos = '';
-	if($concepto == 0){$conceptos = "";}	
-	if($concepto >= 1 && $concepto <5){$conceptos = "B";}
-    if($concepto >= 5 && $concepto < 7){$conceptos = "B";}
-    if($concepto >= 7 && $concepto < 9){$conceptos = "MB";}
-    if($concepto >= 9 && $concepto <= 10){$conceptos = "E";}
-    
+		if($concepto == 0){$conceptos = "";}	
+		if($concepto >= 1 && $concepto <5){$conceptos = "B";}
+		if($concepto >= 5 && $concepto < 7){$conceptos = "B";}
+		if($concepto >= 7 && $concepto < 9){$conceptos = "MB";}
+		if($concepto >= 9 && $concepto <= 10){$conceptos = "E";}
+    //
     return $conceptos;
 }
 
@@ -910,7 +907,7 @@ function cambiar_concepto_letras($concepto){
     if($concepto >= 5 && $concepto <= 6){$conceptos = "Bueno";}
     if($concepto >= 7 && $concepto <= 8){$conceptos = "Muy Bueno";}
     if($concepto >= 9 && $concepto <= 10){$conceptos = "Excelente";}
-    
+    //
     return $conceptos;
 }
 
@@ -920,7 +917,7 @@ function cambiar_concepto_letras_prepa($concepto){
     if($concepto >= 5 && $concepto <= 6){$conceptos = "DB";}
     if($concepto >= 7 && $concepto <= 8){$conceptos = "DM";}
     if($concepto >= 9 && $concepto <= 10){$conceptos = "DA";}
-    
+    //
     return $conceptos;
 }
 ////////////////////////////////////////////////////
@@ -997,219 +994,5 @@ function fechaYMD()
     
     return $fecha;
 }*/
-/* // Consulta a la tabla bachillerato./*
-function consulta_bachillerato($uno, $dos, $tres, $cuatro, $cinco, $t, $varbach, $varann, $vargrado,$varsecc,$vartur){
-    $path_root=trim($_SERVER['DOCUMENT_ROOT']);
-    $host=trim($_SERVER['HTTP_HOST']);
-    
-    include("$path_root/registro_academico/inc/conexion_db2.php");
-    
-    if ($t == 1){$true = 'disabled';}else{$true = '';}
-    
-    if ($uno == 1)
-    {
-       $query = "SELECT codigo, nombre from bachillerato_ciclo ORDER BY codigo";
-        
-       $result1 = pg_query($db_link, $query) or die ('No hay datos que Mostrar');
-       
-       
-            if($varbach==''){
-                $varbachillerato = 'Seleccionar...';}
-                    else{$varbachillerato = $varbach;}  // evaluar si se ha ejecutado el POST.
-                    
-            if(isset($_POST["lstbachillerato"])){
-                $varbachillerato = $_POST["lstbachillerato"];}
-                    
-           print "<label>Bachillerato o Ciclo:</label><select name = lstbachillerato id='bachillerato'>";
 
-                if($varbachillerato == 'Seleccionar...'){print "<option selected>$varbachillerato</option>";}
-
-            while ($row = pg_fetch_assoc($result1)){
-              $codigos = $row['codigo'];
-              $nombres = $row['nombre'];
-                    if($varbachillerato == $codigos){
-                        print "<option value = $codigos selected>$nombres</option>";}
-                    else{
-                         print "<option value = $codigos>$nombres</option>";}}
-           print "</select><div id='bachillerato' style='display:none; color:red'>&nbsp;Bachillerato inválido</div>";  
-    }
-    
-    if ($dos == 1)
-    {
-       // bucle para imprimir datos de la tabla ann_lectivo.
-       $query = "SELECT codigo, nombre from ann_lectivo ORDER BY codigo";
-       $result = pg_query($db_link, $query) or die ('No hay datos que Mostrar');
-
-                    if($varann ==''){
-                        $varannlectivo = 'Seleccionar...';}
-                    else{$varannlectivo = $varann;} // evaluar si se ha ejecutado el POST.
-
-            if(isset($_POST["lstannlectivo"])){
-                $varannlectivo = $_POST["lstannlectivo"];}
-                            
-           print "<label>Año Lectivo:</label><select name = lstannlectivo id='annlectivo' $true>";
-                
-                if($varannlectivo == 'Seleccionar...'){print "<option selected>$varannlectivo</option>";}
-
-            while ($row = pg_fetch_assoc($result)){
-              $codigos = $row['codigo'];
-              $nombres = $row['nombre'];
-                    if($varannlectivo == $row['codigo']){
-                        print "<option value = $codigos selected>$nombres</option>";}
-                    else{
-                         print "<option value = $codigos>$nombres</option>";}}
-
-           print "</select><div id='annlectivo' style='display:none; color:red'>&nbsp;Año Lectivo inválido</div>";  
-    }
-
-    if ($tres == 1)
-    {
-       $query = "SELECT codigo, nombre from grado_ano ORDER BY codigo";
-       $result = pg_query($db_link, $query) or die ('No hay datos que Mostrar');
-       
-                    if($vargrado ==''){
-                        $vargradoann = 'Seleccionar...';}
-                    else{$vargradoann = $vargrado;} // evaluar si se ha ejecutado el POST.
-
-            if(isset($_POST["lstgradoann"])){
-                $vargradoann = $_POST["lstgradoann"];}
-                            
-           print "<label>Grado o Año:</label><select name = lstgradoann id='grado'>";
-
-                if($vargradoann == 'Seleccionar...'){print "<option selected>$vargradoann</option>";}
-
-            while ($row = pg_fetch_assoc($result)){
-              $codigos = $row['codigo'];
-              $nombres = $row['nombre'];
-                    if($vargradoann == $row['codigo']){
-                        print "<option value = $codigos selected>$nombres</option>";}
-                    else{
-                         print "<option value = $codigos>$nombres</option>";}}
-           print "</select><div id='grado' style='display:none; color:red'>&nbsp;Grado inválido</div>";    
-    }
-    
-    if ($cuatro == 1)
-    {
-       // bucle para imprimir datos de la tabla ann_lectivo.
-       $query = "SELECT codigo, nombre from seccion ORDER BY codigo";
-       $result = pg_query($db_link, $query) or die ('No hay datos que Mostrar');
-
-                    if($varsecc ==''){
-                        $varseccion = 'Seleccionar...';}
-                    else{$varseccion = $varsecc;}   // evaluar si se ha ejecutado el POST.
-
-            if(isset($_POST["lstseccion"])){
-                $varseccion = $_POST["lstseccion"];}
-                            
-           print "<label></label><select name = lstseccion id='seccion' style='width:auto;'>";
-                
-                if($varseccion == 'Seleccionar...'){print "<option selected>$varseccion</option>";}
-
-            while ($row = pg_fetch_assoc($result)){
-                    if($varseccion == $row['codigo']){
-                        print "<option value = $row[codigo] selected>$row[nombre]</option>";}
-                    else{
-                         print "<option value = $row[codigo]>$row[nombre]</option>";}}
-
-           print "</select><div id='seccion' style='display:none; color:red'>&nbsp;Sección inválida</div>";
-    }
-    
-    if ($cinco == 1)
-    {
-       $query = "SELECT codigo, nombre from turno ORDER BY codigo";
-        
-       $result1 = pg_query($db_link, $query) or die ('No hay datos que Mostrar');
-       
-       
-            if($vartur==''){
-                $varturno = 'Seleccionar...';}
-                    else{$varturno = $vartur;}  // evaluar si se ha ejecutado el POST.
-                    
-            if(isset($_POST["lstturno"])){
-                $varturno = $_POST["lstturno"];}
-                    
-           print "<label>Turno:</label><select name = lstturno id = turno>";
-
-                if($varturno == 'Seleccionar...'){print "<option selected>$varturno</option>";}
-
-            while ($row = pg_fetch_assoc($result1)){
-              $codigos = $row['codigo'];
-              $nombres = $row['nombre'];
-                    if($varturno == $codigos){
-                        print "<option value = $codigos selected>$nombres</option>";}
-                    else{
-                         print "<option value = $codigos>$nombres</option>";}}
-           print "</select><div id='bachillerato' style='display:none; color:red'>&nbsp;Turno inválido</div>";  
-    }
-}
-*/ 
-/*SELECT para los convivencia y depende economicamente.*/
-function varios_select1()
-{
-    print"<label>Convivencia:</label>
-               <select name = lstconvivencia>
-                    <option selected>Padre y Madre</option>
-                    <option>Padre</option>
-                    <option>Madre</option>
-                    <option>Abuelo</option>
-                    <option>Abuela</option>
-                    <option>Otro</option></select>
-          <label>Depende Economicamente:</label>
-               <select name = lstdependeeconomicamente>
-                    <option selected>Padre y Madre</option>
-                    <option>Padre</option>
-                    <option>Madre</option>
-                    <option>Otro</option></select>";
-}
-
-/*SELECT departamento municipio.*/
-/* function varios_select2()
-{
-    $path_root=trim($_SERVER['DOCUMENT_ROOT']);
-    $host=trim($_SERVER['HTTP_HOST']);
-    
-    include("$path_root/registro_academico/inc/conexion_db2.php");
-      $query = "SELECT codigo, nombre from departamento ORDER BY codigo";
-      $consulta = $dblink -> query($query);
-        
-               print "<label>Departamento:</label>
-                       <select name = lstdepartamento>";
-					   while($listado = $consulta -> fetch(PDO::FETCH_BOTH)){
-                     
-                         $fila1 = $listado['codigo']; $fila2 = $listado['nombre'];
-                         print "<option value = $fila1>$fila2</option>";}
-                 print "</select>";
-
-               $query = "SELECT codigo, nombre from municipio ORDER BY codigo";
-               $result = pg_query($db_link, $query);
-        
-               print "<label>Municipio:</label>
-                       <select name = lstmunicipio>";
-                     while ($row = pg_fetch_row($result)){
-                         $fila1 = $row{0}; $fila2 = $row{1};
-                         print "<option value = $fila1>$fila2</option>";}
-                 print "</select>";
-} */
-
-/*SELECT estado civil, nacionalidad, transporte*/
-/* function varios_select3()
-{
-  print"<label>Estado Civil:</label>
-               <select name = lstestadocivil>
-                    <option selected>Soltero(a)</option>
-                    <option>Casado(a)</option></select>
-               
-
-          <label>Nacionalidad:</label>
-               <select name = lstnacionalidad>
-                    <option selected>Salvadoreño(a)</option>
-                    <option>Otro</option></select>
-                    
-          <label>Transporte:</label>
-               <select name = lsttransporte>
-                    <option selected>Público</option>
-                    <option>Privado</option>
-                    <option>Peatonal</option>
-                    <option>Otro</option></select>";
-} */
 ?>

@@ -39,7 +39,8 @@ if($errorDbConexion == false){
 				$codigo_annlectivo = $_POST['codigo_annlectivo'];
 				$codigo_modalidad = $_POST['codigo_modalidad'];
 				// Armamos el query.
-					$query = "SELECT pc.id_, pc.codigo_modalidad, pc.codigo_estatus, ann.nombre as descripcion_annlectivo,
+					$query = "SELECT pc.id_, pc.codigo_modalidad, pc.codigo_estatus, pc.fecha_desde, pc.fecha_hasta, pc.fecha_registro_academico,
+						ann.nombre as descripcion_annlectivo,
 						bach.codigo, bach.nombre as descripcion_modalidad,
 						cat_p.codigo, cat_p.descripcion as descripcion_periodo
 							FROM periodo_calendario pc
@@ -64,6 +65,9 @@ if($errorDbConexion == false){
 					$nombre_modalidad = trim($listado['descripcion_modalidad']);
 					$nombre_periodo = trim($listado['descripcion_periodo']);
 					$codigo_estatus = trim($listado['codigo_estatus']);
+					$fecha_desde = cambiaf_a_normal(trim($listado['fecha_desde']));
+					$fecha_hasta = cambiaf_a_normal(trim($listado['fecha_hasta']));
+					$fecha_registro_academico = cambiaf_a_normal(trim($listado['fecha_registro_academico']));
 					$num++;
 					// VARIABLES ESTATUS.
 					if($codigo_estatus == '01'){
@@ -76,9 +80,10 @@ if($errorDbConexion == false){
 							<td><input type=checkbox class=case name=chk$id_ id=chk$id_>
 							<td>$num
 							<td>$id_
-							<td>$nombre_annlectivo
-							<td>$nombre_modalidad
 							<td>$nombre_periodo
+							<td>$fecha_desde
+							<td>$fecha_hasta
+							<td>$fecha_registro_academico
 							$estatus
 							<td><a data-accion=EditarHorarios class='btn btn-xs btn-info' data-toggle='tooltip' data-placement='top' title='Editar' href=$id_><i class='fas fa-edit'></i></a>
 							<a data-accion=EliminarHorarios class='btn btn-xs btn-warning' data-toggle='tooltip' data-placement='top' title='Eliminar' href=$id_><i class='fas fa-trash'></i></a>"
@@ -107,7 +112,7 @@ if($errorDbConexion == false){
 						$fecha_desde = trim($listado['fecha_desde']);
 						$fecha_hasta = trim($listado['fecha_hasta']);
 						$fecha_registro_academico = trim($listado['fecha_registro_academico']);
-
+					//
 						$datos[$fila_array]["id_"] = $id_;
 						$datos[$fila_array]["codigo_estatus"] = $codigo_estatus;
 						$datos[$fila_array]["codigo_periodo"] = $codigo_periodo;
@@ -130,7 +135,7 @@ if($errorDbConexion == false){
 				$FechaInicio = ($_POST['FechaInicio']);
 				$FechaFin = ($_POST['FechaFin']);
 				$FechaRA = ($_POST['FechaRA']);
-			// ESTATUS
+				// ESTATUS
 				if($codigo_estatus == '01'){
 					$estatus = "1";
 				}else{
@@ -150,7 +155,7 @@ if($errorDbConexion == false){
 					$respuestaOK = true;
 					$contenidoOK = "Registro Actualizado.";
 					$mensajeError = "Se ha consultado el registro correctamente ";
-			break;
+				break;
 			case 'GuardarHorarios':
 				// consultar el registro antes de agregarlo.
 				// Armamos el query y iniciamos variables.
@@ -188,6 +193,21 @@ if($errorDbConexion == false){
 				}
 			break;
 			case 'EliminarHorarios':
+				$id_ = $_REQUEST['id_'];
+						// Armamos el query
+						$query = "DELETE FROM periodo_calendario WHERE id_ = '$id_'";
+						// Ejecutamos el query
+							$count = $dblink -> exec($query);
+						// Validamos que se haya actualizado el registro
+						if($count != 0){
+							$respuestaOK = true;
+							$mensajeError = "Se ha eliminado el registro correctamente";
+
+							$contenidoOK = "Se ha Eliminado $count Registro(s).";
+						}else{
+							$mensajeError = "No se ha eliminado el registro";
+						}
+			break;
 			///////////////////////////////////////////////////////////////////////////////////////////////////
 			////////////// BLOQUE DE REGISTRO ORGANIZACION MODALIDAD Y AÑO LECTIVO.
 			///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -219,7 +239,7 @@ if($errorDbConexion == false){
 					$nombre_modalidad = trim($listado['nombre_modalidad']);
 					$nombre_ann_lectivo = trim($listado['nombre_ann_lectivo']);
 					$num++;
-						    
+					// variables Json
 						$contenidoOK .= '<tr>
 							<td class=centerTXT>'.$num
 							.'<td class=centerTXT>'.$id_org_ann_lectivo_ciclos
@@ -273,12 +293,12 @@ if($errorDbConexion == false){
 			case 'GuardarAnnLectivoModalidad':
 				// consultar el registro antes de agregarlo.
 				// Armamos el query y iniciamos variables.
-				 $codigo_annlectivo = ($_POST['lstannlectivo']);
-				 $codigo_modalidad = ($_POST['lstmodalidad']);
-				 $query = "SELECT * FROM organizar_ann_lectivo_ciclos WHERE codigo_ann_lectivo = '$codigo_annlectivo' and codigo_bachillerato = '$codigo_modalidad'";
+					$codigo_annlectivo = ($_POST['lstannlectivo']);
+					$codigo_modalidad = ($_POST['lstmodalidad']);
+						$query = "SELECT * FROM organizar_ann_lectivo_ciclos WHERE codigo_ann_lectivo = '$codigo_annlectivo' and codigo_bachillerato = '$codigo_modalidad'";
 				// Ejecutamos el Query.
 				$consulta = $dblink -> query($query);
-
+				//
 				if($consulta -> rowCount() != 0){
 					$respuestaOK = false;
 					$contenidoOK = "Este registro ya Existe";
@@ -1091,25 +1111,28 @@ if($errorDbConexion == false){
 		$mensajeError = 'No se puede ejecutar la aplicación';}
 }
 else{
-	$mensajeError = 'No se puede establecer conexión con la base de datos';}
-
-if($_POST['accion'] == "BuscarHorarios" || $_POST['accion'] == "GuardarHorarios" || $_POST['accion'] == "ActualizarHorarios" 
-|| $_POST['accion'] == "GuardarGradoSeccion" || $_POST['accion'] == "BuscarAnnLectivo" || $_POST['accion'] == "addAnnLectivo" || $_POST['accion'] == "BuscarGrado" 
-|| $_POST['accion'] == "addGrado" || $_POST['accion'] == "modificar_annlectivo" || $_POST['accion'] == "BuscarAnnLectivoModalidad" || $_POST['accion'] == "modificar_modalidad" 
-|| $_POST['accion'] == "eliminar_modalidad" || $_POST['accion'] == "GuardarAnnLectivoModalidad" || $_POST['accion'] == "BuscarAA" || $_POST['accion'] == "GuardarAA" 
-|| $_POST['accion'] == "eliminar_aaa" || $_POST['accion'] == "BuscarPM" || $_POST['accion'] == "GuardarPM" || $_POST['accion'] == "eliminar_pda" 
-|| $_POST['accion'] == "ActualizarCS" || $_POST['accion'] == "eliminar_grado_seccion" ) {
+	$mensajeError = 'No se puede establecer conexión con la base de datos';
+}	// FIN DE LA CONDICON PRINCRIPAL
+// CONDICIONES RESULTADO DEL JSON Y DATA[]
+if($_POST['accion'] == "BuscarHorarios" || $_POST['accion'] == "GuardarHorarios" || $_POST['accion'] == "ActualizarHorarios"  || $_POST['accion'] == "EliminarHorarios"  
+	|| $_POST['accion'] == "BuscarAnnLectivo" || $_POST['accion'] == "addAnnLectivo" || $_POST['accion'] == "BuscarGrado" 
+	|| $_POST['accion'] == "addGrado" || $_POST['accion'] == "modificar_annlectivo" || $_POST['accion'] == "BuscarAnnLectivoModalidad" || $_POST['accion'] == "modificar_modalidad" 
+	|| $_POST['accion'] == "eliminar_modalidad" || $_POST['accion'] == "GuardarAnnLectivoModalidad" || $_POST['accion'] == "BuscarAA" || $_POST['accion'] == "GuardarAA" 
+	|| $_POST['accion'] == "eliminar_aaa" || $_POST['accion'] == "BuscarPM" || $_POST['accion'] == "GuardarPM" || $_POST['accion'] == "eliminar_pda" 
+	|| $_POST['accion'] == "ActualizarCS" || $_POST['accion'] == "eliminar_grado_seccion" )
+{
 // Armamos array para convertir a JSON
-$salidaJson = array("respuesta" => $respuestaOK,
+	$salidaJson = array("respuesta" => $respuestaOK,
 		"mensaje" => $mensajeError,
 		"contenido" => $contenidoOK);
-echo json_encode($salidaJson);
+			echo json_encode($salidaJson);
 }
-
+// data[]
 if($_POST['accion'] == "EditarHorarios" || $_POST['accion'] == "editar_annlectivo" || $_POST['accion'] == "editar_seccion" || $_POST['accion'] == "BuscarCodigoSeccion" 
-	|| $_POST['accion'] == "BuscarCodigoAnnLectivo" || $_POST['accion'] == "editar_grado" || $_POST['accion'] == "BuscarCodigoGrado" || $_POST['accion'] == "BuscarCodigoModalidad") {
+	|| $_POST['accion'] == "BuscarCodigoAnnLectivo" || $_POST['accion'] == "editar_grado" || $_POST['accion'] == "BuscarCodigoGrado" || $_POST['accion'] == "BuscarCodigoModalidad")
+{
 // Armamos array para convertir a JSON
-echo json_encode($datos);
+	echo json_encode($datos);
 }
 
 ?>

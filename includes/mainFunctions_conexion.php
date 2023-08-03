@@ -87,14 +87,14 @@ function cambiaf_a_normal($fecha)
 // fecha año/mes/dia.
 function fechaYMD()
 {
-// Inciar variable global datos y mensajes de error.
+	// Inciar variable global datos y mensajes de error.
     date_default_timezone_set('America/El_Salvador');
     $day=date("d");
     $month=date("m");
     $year=date("Y");
     $date=$day."/".$month."/".$year;
     $fecha=$year."-".$month."-".$day;
-    
+    //
     return $fecha;
 }
 ?>

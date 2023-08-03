@@ -146,35 +146,25 @@ $(function(){
                                     dataType: "json",                     
                                     url:"php_libs/soporte/Mantenimiento/Organizacion Asignacion/phpAjaxOrganizacionAsignacion.php",                     
                                     data: {                     
-                                            accion_buscar: 'eliminar_asignatura', codigo_id_: Id_Editar_Eliminar,
+                                            accion_buscar: 'EliminarHorarios', id_: Id_Editar_Eliminar,
                                             },                     
                                     success: function(response) {                     
                                             if (response.respuesta === true) {                     		
                                                 // Asignamos valor a la variable acción
                                                     $('#accion_horarios').val('BuscarHorarios');
-                                                    accion = 'BuscarHorarios';
-                                                    //
-                                                    //  CONDICONAR EL SELECT SERVICIO EDUCATIVO.
-                                                    //
-                                                    if(codigo_se == "00"){
-                                                        $("#AlertSE").css("display", "block");
-                                                        return;
-                                                    }
+                                                    accion_horarios = 'BuscarHorarios';
                                                     // Llamar al archivo php para hacer la consulta y presentar los datos.
-                                                    $.post("php_libs/soporte/Mantenimiento/Organizacion Asignacion/phpAjaxOrganizacionAsignacion.php",  {accion: accion},
+                                                    $.post("php_libs/soporte/Mantenimiento/Organizacion Asignacion/phpAjaxOrganizacionAsignacion.php",  {accion: accion, codigo_annlectivo: codigo_annlectivo_horarios, codigo_modalidad: codigo_modalidad_horarios},
                                                         function(response) {
-                                                        if (response.respuesta === true) {
-                                                            toastr["info"]('Registros Encontrados', "Sistema");
-                                                        }
-                                                        if (response.respuesta === false) {
-                                                            toastr["warning"]('Registros No Encontrados', "Sistema");
-                                                        }                                                                                    // si es exitosa la operación
-                                                            $('#listaContenidoSE').empty();
-                                                            $('#listaContenidoSE').append(response.contenido);
+                                                            if (response.respuesta === true) {
+                                                                toastr["info"]('Registros Encontrados', "Sistema");
+                                                            }
+                                                            if (response.respuesta === false) {
+                                                                toastr["warning"]('Registros No Encontrados', "Sistema");
+                                                            }                                                                                    // si es exitosa la operación
+                                                                $('#listaContenidoHorarios').empty();
+                                                                $('#listaContenidoHorarios').append(response.contenido);
                                                         },"json");
-                                            }
-                                            if (response.respuesta === false) {                     		
-                                                toastr["info"]('Registro no Eliminado... El còdigo está está activo en la Tabla Notas.', "Sistema");
                                             }
                                     }                     
                                     });

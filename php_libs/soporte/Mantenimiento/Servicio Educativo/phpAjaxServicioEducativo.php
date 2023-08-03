@@ -115,15 +115,15 @@ if($errorDbConexion == false){
 			case 'GuardarAsignatura':
 				// consultar el registro antes de agregarlo.
 				// Armamos el query y iniciamos variables.
-				 $codigo_se = ($_POST['CodigoSE']);
-				 $codigo_cc = ($_POST['lstIndicadorCalificacion']);
-				 $codigo_area = ($_POST['lstArea']);
-				 $nombre_asignatura = ($_POST['DescripcionAsignatura']);
-				 $codigo_asignatura = ($_POST['CodigoAsignatura']);
-				 $codigo_dimension = ($_POST['lstDimension']);
-				 $codigo_subdimension = ($_POST['lstSubDimension']);
-				 $estatus_asignatura = ($_POST['lstEstatus']);
-				 $orden = ($_POST['OrdenAsignatura']);
+					$codigo_se = ($_POST['CodigoSE']);
+					$codigo_cc = ($_POST['lstIndicadorCalificacion']);
+					$codigo_area = ($_POST['lstArea']);
+					$nombre_asignatura = ($_POST['DescripcionAsignatura']);
+					$codigo_asignatura = ($_POST['CodigoAsignatura']);
+					$codigo_dimension = ($_POST['lstDimension']);
+					$codigo_subdimension = ($_POST['lstSubDimension']);
+					$estatus_asignatura = ($_POST['lstEstatus']);
+					$orden = ($_POST['OrdenAsignatura']);
 				// VALIDAR ESTATUS CON FALSE O TRUE
 					if($estatus_asignatura == '01'){
 						$estatus = true;
@@ -209,11 +209,11 @@ if($errorDbConexion == false){
 				$estatus_asignatura = ($_POST['lstEstatus']);
 				$orden = ($_POST['OrdenAsignatura']);
 			   // VALIDAR ESTATUS CON FALSE O TRUE
-				   if($estatus_asignatura == '01'){
-					   $estatus = '1';
-				   }else{
-					   $estatus = '0';
-				   }
+					if($estatus_asignatura == '01'){
+						$estatus = '1';
+					}else{
+						$estatus = '0';
+					}
 				// Armamos el query y iniciamos variables.
 					$query = "UPDATE asignatura SET
 								nombre = '$nombre_asignatura',
@@ -264,7 +264,6 @@ if($errorDbConexion == false){
 							$mensajeError = 'No se ha eliminado el registro '. $query . " - " . $query_buscar;
 						}
 					}
-
 			break;
 			///////////////////////////////////////////////////////////////////////////////////////////////////
 			////////////// BLOQUE DE REGISTRO GESTION (MODALIDAD)
