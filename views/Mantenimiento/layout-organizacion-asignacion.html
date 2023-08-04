@@ -14,6 +14,7 @@
   })
 </script>
 <script type="text/JavaScript" src="js/Mantenimiento/Organizacion Asignacion/Horarios Periodos.js"></script>
+<script type="text/JavaScript" src="js/Mantenimiento/Organizacion Asignacion/Nivel.js"></script>
 <!-- DEINIR EL AJAX START- STOP Y ERROR -->
 <script>
   $(document).ready(function () { 
@@ -41,27 +42,27 @@
    	// Información del año lectivo y modalidad.
 	$(document).ready(function()
 	{
-	// Parametros para el lstmuncipio.
-	$("#lstAnnLectivoHorarios").change(function () {
-  	    // ACTIVAR SELECT DEL AÑO LECTIVO
-			$('#lstModalidadHorarios').prop('disabled',false);
-        var miselect=$("#lstModalidadHorarios");
-          /* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
-          miselect.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
-        
-        $("#lstAnnLectivoHorarios option:selected").each(function () {
-          elegido=$(this).val();
-              annlectivo=$("#lstAnnLectivoHorarios").val();
-              $.post("includes/cargar-bachillerato.php", { annlectivo: annlectivo },
-              function(data){
-                      miselect.empty();
-                      miselect.append("<option value='00'>Seleccionar...</option>");
-                      for (var i=0; i<data.length; i++) {
-                      miselect.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');
-                      }
-            }, "json");			
-        });
-	});
+    // Parametros para el lstmuncipio.
+    $("#lstAnnLectivoHorarios").change(function () {
+          // ACTIVAR SELECT DEL AÑO LECTIVO
+        $('#lstModalidadHorarios').prop('disabled',false);
+          var miselect=$("#lstModalidadHorarios");
+            /* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
+            miselect.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
+          
+          $("#lstAnnLectivoHorarios option:selected").each(function () {
+            elegido=$(this).val();
+                annlectivo=$("#lstAnnLectivoHorarios").val();
+                $.post("includes/cargar-bachillerato.php", { annlectivo: annlectivo },
+                function(data){
+                        miselect.empty();
+                        miselect.append("<option value='00'>Seleccionar...</option>");
+                        for (var i=0; i<data.length; i++) {
+                        miselect.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');
+                        }
+              }, "json");			
+          });
+    });
 	});
 
 	});
@@ -108,27 +109,24 @@
                             <a class="nav-link active" id="pills-horarios-tab" data-toggle="pill" href="#pills-horarios" role="tab" aria-controls="pills-horarios" aria-selected="true">Horarios</a>
                           </li>
                           <li class="nav-item">
-                            <a class="nav-link" id="pills-home-tab" data-toggle="pill" href="#pills-home" role="tab" aria-controls="pills-home" aria-selected="false">Niveles</a>
+                            <a class="nav-link" id="pills-modalidad-tab" data-toggle="pill" href="#pills-modalidad" role="tab" aria-controls="pills-modalidad" aria-selected="false">Nivel</a>
                           </li>
                           <li class="nav-item">
-                            <a class="nav-link" id="pills-modalidad-tab" data-toggle="pill" href="#pills-nivel" role="tab" aria-controls="pills-profile" aria-selected="false">Grados y Secciones</a>
+                            <a class="nav-link" id="pills-grados-secciones-tab" data-toggle="pill" href="#pills-grados-secciones" role="tab" aria-controls="pills-grados-secciones" aria-selected="false">Grados y Secciones</a>
                           </li>
                           <li class="nav-item">
-                            <a class="nav-link" id="pills-grado-tab" data-toggle="pill" href="#pills-grado" role="tab" aria-controls="pills-contact" aria-selected="false">Docentes y Niveles</a>
+                            <a class="nav-link" id="pills-docentes-niveles-tab" data-toggle="pill" href="#pills-docentes-niveles" role="tab" aria-controls="pills-docentes-niveles" aria-selected="false">Docentes y Niveles</a>
                           </li>
                           <li class="nav-item">
-                            <a class="nav-link" id="pills-seccion-tab" data-toggle="pill" href="#pills-seccion" role="tab" aria-controls="pills-contact" aria-selected="false">Asignaturas/Niveles</a>
-                          </li>
-                          <li class="nav-item">
-                            <a class="nav-link" id="pills-annlectivo-tab" data-toggle="pill" href="#pills-annlectivo" role="tab" aria-controls="pills-contact" aria-selected="false">Año Lectivo</a>
+                            <a class="nav-link" id="pills-asignaturs-niveles-tab" data-toggle="pill" href="#pills-asignaturas-niveles" role="tab" aria-controls="pills-asignaturas-niveles" aria-selected="false">Asignaturas/Niveles</a>
                           </li>
                         </ul>
                       </nav>
-                      
+                      {# CONTENEDOR PRINCIPAL #}
                       <div class="tab-content" id="pills-tabContent">
-                         <!-- NAV TAB SERVICIOS EDUCATIVOS. *INICIO*-->
+                           <!-- NAV TAB ORGANIZACION. *INICIO*-->
                           <div class="tab-pane fade show active" id="pills-horarios" role="tabpanel" aria-labelledby="pills-horarios-tab">
-                              <!-- NAV TAB SECCION *INICIO*-->
+                              <!-- NAV TAB HOARIOS PARA CADA NIVEL *INICIO*-->
                               <form class="form-inline" id="FormHorarios" name="FormHorarios">
                                 <div class="form-group mb-2 mx-sm-3">
                                   <label for="lstAnnLectivoHorarios">Año Lectivo</label>
@@ -147,86 +145,33 @@
                               <div class="alert alert-danger" role="alert" id="AlertHorarios">
                                 <span id="TextoAlertHorarios">...</span>
                               </div>
-                                    <!-- TABLA CON LOS DATOS DEL SERVICIO EDUCATIVO. -->  
-                                        <div class="modal-body">
-                                          <div class="row bg-cyan">
-                                            <div class="col">
-                                              <label for="">Horario de Períodos</label>
-                                            </div>
-                                          </div>
-                                            <div class="col">
-                                              <table id="listadoContenidoHorarios" class="table table-striped table-bordered table-hover table-condensed">
-                                                <thead>
-                                                  <tr>
-                                                    <th><input type="checkbox" name="checkBoxAllHorarios" id="checkBoxAllHorarios" data-toggle="tooltip" data-placement="top" title="Marcar/Desmarcar Todo">
-                                                      <button type="button" id="goEliminarHorarios" aria-label="goEliminarHorarios" class="btn btn-link" tabindex="-1" data-toggle="tooltip" data-placement="top" title="Eliminar Seleccionados...">
-                                                        <i class="fad fa-trash"></i>
-                                                      </button>
-                                                    </th>
-                                                    <th>#</th>
-                                                    <th>id</th>
-                                                    <th>Período</th>
-                                                    <th>Fecha Inicio</th>
-                                                    <th>Fecha Fin</th>
-                                                    <th>Fecha RA</th>
-                                                    <th>Estatus</th>
-                                                    <th></th>
-                                                  </tr>
-                                                </thead>
-                                                  <tbody id="listaContenidoHorarios">
-                                                
-                                                  </tbody>                            
-                                                <tfoot>
-                                                </tfoot>
-                                            </table>
-                                          </div>
-                                        </div>
-                                        <!-- TABLA CON LOS DATOS DEL SERVICIO EDUCATIV. --> 
-                          </div>
-                         <!-- NAV TAB ASIGNATURAS *INICIO*-->
-                        <div class="tab-pane fade" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
-                          <form class="form-inline" id="FormServicioEducativo" name="FormServicioEducativo">
-                            <div class="form-group mb-2 mx-sm-3">
-                              <label for="lstcodigose">Servicio Educativo</label>
-                              <select class="form-control mx-sm-3" id="lstcodigose" name="lstcodigose"></select>
-                            </div>
-                              <button type="button" id="goBuscarSE" aria-label="goBuscarSE" class="btn btn-info mb-2 mx-sm-1" tabindex="-1" data-toggle="tooltip" data-placement="top" title="Buscar">
-                                <i class="fal fa-search"></i>
-                              </button>
-                              <button type="button" id="goNuevoSE" aria-label="goNuevoSE" class="btn btn-primary mb-2" tabindex="-1" data-toggle="tooltip" data-placement="top" title="Nuevo">
-                                <i class="far fa-layer-plus"></i>
-                              </button>                                 
-                          </form>
-                          <div class="alert alert-danger" role="alert" id="AlertSE">
-                            <span id="TextoAlert">...</span>
-                          </div>
                                 <!-- TABLA CON LOS DATOS DEL SERVICIO EDUCATIVO. -->  
                                     <div class="modal-body">
                                       <div class="row bg-cyan">
                                         <div class="col">
-                                          <label for="">Asignaturas</label>
+                                          <label for="">Horario de Períodos</label>
                                         </div>
                                       </div>
                                         <div class="col">
-                                          <table id="listadoContenidoSE" class="table table-striped table-bordered table-hover table-condensed">
+                                          <table id="listadoContenidoHorarios" class="table table-striped table-bordered table-hover table-condensed">
                                             <thead>
                                               <tr>
-                                                <th><input type=checkbox name="checkBoxAllSE" id="checkBoxAllSE" data-toggle=tooltip data-placement=top title='Marcar/Desmarcar Todo'>
-                                                  <button type="button" id="goEliminarSE" aria-label="goEliminarSE" class="btn btn-link" tabindex="-1" data-toggle="tooltip" data-placement="top" title="Eliminar Seleccionados...">
+                                                <th><input type="checkbox" name="checkBoxAllHorarios" id="checkBoxAllHorarios" data-toggle="tooltip" data-placement="top" title="Marcar/Desmarcar Todo">
+                                                  <button type="button" id="goEliminarHorarios" aria-label="goEliminarHorarios" class="btn btn-link" tabindex="-1" data-toggle="tooltip" data-placement="top" title="Eliminar Seleccionados...">
                                                     <i class="fad fa-trash"></i>
                                                   </button>
                                                 </th>
                                                 <th>#</th>
                                                 <th>id</th>
-                                                <th>Código</th>
-                                                <th>Area/Dimensión/Subdimensión</th>
-                                                <th>Descripción</th>
-                                                <th>Orden</th>
+                                                <th>Período</th>
+                                                <th>Fecha Inicio</th>
+                                                <th>Fecha Fin</th>
+                                                <th>Fecha RA</th>
                                                 <th>Estatus</th>
                                                 <th></th>
                                               </tr>
                                             </thead>
-                                              <tbody id="listaContenidoSE">
+                                              <tbody id="listaContenidoHorarios">
                                             
                                               </tbody>                            
                                             <tfoot>
@@ -234,37 +179,140 @@
                                         </table>
                                       </div>
                                     </div>
-                                    <!-- TABLA CON LOS DATOS DEL SERVICIO EDUCATIV. --> 
-                        </div> <!-- NAV TAB ASIGNATURAS FIN*-->
-                        <div class="tab-pane fade" id="pills-nivel" role="tabpanel" aria-labelledby="pills-nivel-tab">
-                            <!-- NAV TAB MODALIDAD *INICIO*-->
-                            <form class="form-inline" id="FormSEModalidad" name="FormSEModalidad">
+                                <!-- TABLA CON LOS DATOS DEL organizacion Horarios. --> 
+                          </div>
+                          <!-- NAV TAB ORGANIZACIONES DE NIVELES SEGUN AÑO LECTIVO *INICIO*-->
+                          <div class="tab-pane fade" id="pills-modalidad" role="tabpanel" aria-labelledby="pills-modalidad-tab">
+                               <!-- NAV TAB ORGANIZACION. NIVELES *INICIO*-->
+                            <form class="form-inline" id="FormModalidad" name="FormModalidad">
                               <div class="form-group mb-2 mx-sm-3">
-                                <label for="lstcodigoModalidad">Nivel</label>
+                                <label for="lstAnnLectivoModalidad">Año Lectivo</label>
+                                <select class="form-control mx-sm-3" id="lstAnnLectivoModalidad" name="lstAnnLectivoModalidad"></select>
+
+                                <label for="lstModalidad">Nivel</label>
+                                <select class="form-control mx-sm-3" id="lstModalidad" name="lstModalidad"></select>
                               </div>
-                                <button type="button" id="goBuscarSEModalidad" aria-label="goBuscarSEModalidad" class="btn btn-info mb-2 mx-sm-1" tabindex="-1" data-toggle="tooltip" data-placement="top" title="Buscar">
+                                <button type="button" id="goBuscarModalidad" aria-label="goBuscarModalidad" class="btn btn-info mb-2 mx-sm-1" tabindex="-1" data-toggle="tooltip" data-placement="top" title="Buscar">
                                   <i class="fal fa-search"></i>
                                 </button>
-                                <button type="button" id="goNuevoSEModalidad" aria-label="goNuevoSEModalidad" class="btn btn-primary mb-2" tabindex="-1" data-toggle="tooltip" data-placement="top" title="Nuevo">
+                                <button type="button" id="goGuardarModalidad" aria-label="goGuardarModalidad" class="btn btn-primary mb-2" tabindex="-1" data-toggle="tooltip" data-placement="top" title="Guardar">
+                                  <i class="fal fa-save"></i>
+                                </button>                                 
+                            </form>
+                            <div class="alert alert-danger" role="alert" id="AlertModalidad">
+                              <span id="TextoAlertModalidad">...</span>
+                            </div>
+                              <!-- TABLA CON LOS DATOS DEL SERVICIO EDUCATIVO. -->  
+                                  <div class="modal-body">
+                                    <div class="row bg-cyan">
+                                      <div class="col">
+                                        <label for="">Asignación Modalidad (Niveles) según Año Lectivo.</label>
+                                      </div>
+                                    </div>
+                                      <div class="col">
+                                        <table id="listadoContenidoModalidad" class="table table-striped table-bordered table-hover table-condensed">
+                                          <thead>
+                                            <tr>
+                                              <th><input type="checkbox" name="checkBoxAllModalidad" id="checkBoxAllModalidad" data-toggle="tooltip" data-placement="top" title="Marcar/Desmarcar Todo">
+                                                <button type="button" id="goEliminarModalidad" aria-label="goEliminarModalidad" class="btn btn-link" tabindex="-1" data-toggle="tooltip" data-placement="top" title="Eliminar Seleccionados...">
+                                                  <i class="fad fa-trash"></i>
+                                                </button>
+                                              </th>
+                                              <th>#</th>
+                                              <th>id</th>
+                                              <th>Código</th>
+                                              <th>Descripción</th>
+                                              <th></th>
+                                            </tr>
+                                          </thead>
+                                            <tbody id="listaContenidoModalidad">
+                                          
+                                            </tbody>                            
+                                          <tfoot>
+                                          </tfoot>
+                                      </table>
+                                    </div>
+                                  </div>
+                                        <!-- TABLA CON LOS DATOS DEL Organización niveles. --> 
+                          </div> <!-- NAV TAB MODALIDAD FIN*-->
+                          <div class="tab-pane fade" id="pills-grados-secciones" role="tabpanel" aria-labelledby="pills-grados-secciones-tab">
+                                <!-- NAV TAB GRADO *INICIO*-->
+                                <form class="form-inline" id="FormSEGrado" name="FormSEGrado">
+                                  <div class="form-group mb-2 mx-sm-3">
+                                    <label for="lstcodigoGrado">Grado</label>
+                                  </div>
+                                    <button type="button" id="goBuscarSEGrado" aria-label="goBuscarSEGrado" class="btn btn-info mb-2 mx-sm-1" tabindex="-1" data-toggle="tooltip" data-placement="top" title="Buscar">
+                                      <i class="fal fa-search"></i>
+                                    </button>
+                                    <button type="button" id="goNuevoSEGrado" aria-label="goNuevoSEGrado" class="btn btn-primary mb-2" tabindex="-1" data-toggle="tooltip" data-placement="top" title="Nuevo">
+                                      <i class="far fa-layer-plus"></i>
+                                    </button>                                 
+                                </form>
+                                <div class="alert alert-danger" role="alert" id="AlertSEGrado">
+                                  <span id="TextoAlert">...</span>
+                                </div>
+                                      <!-- TABLA CON LOS DATOS DEL SERVICIO EDUCATIVO. -->  
+                                          <div class="modal-body">
+                                            <div class="row bg-cyan">
+                                              <div class="col">
+                                                <label for="">Grado </label>
+                                              </div>
+                                            </div>
+                                              <div class="col">
+                                                <table id="listadoContenidoSEGrado" class="table table-striped table-bordered table-hover table-condensed">
+                                                  <thead>
+                                                    <tr>
+                                                      <th><input type=checkbox name="checkBoxAllSEGrado" id="checkBoxAllSEGrado" data-toggle=tooltip data-placement=top title='Marcar/Desmarcar Todo'>
+                                                        <button type="button" id="goEliminarSEGrado" aria-label="goEliminarSEGrado" class="btn btn-link" tabindex="-1" data-toggle="tooltip" data-placement="top" title="Eliminar Seleccionados...">
+                                                          <i class="fad fa-trash"></i>
+                                                        </button>
+                                                      </th>
+                                                      <th>#</th>
+                                                      <th>id</th>
+                                                      <th>Código</th>
+                                                      <th>Descripción</th>
+                                                      <th></th>
+                                                    </tr>
+                                                  </thead>
+                                                    <tbody id="listaContenidoSEGrado">
+                                                  
+                                                    </tbody>                            
+                                                  <tfoot>
+                                                  </tfoot>
+                                              </table>
+                                            </div>
+                                          </div>
+                                          <!-- TABLA CON LOS DATOS DEL SERVICIO EDUCATIV. --> 
+                          </div> <!-- NAV TAB grados-secciones FIN*-->
+                          <div class="tab-pane fade" id="pills-docentes-niveles" role="tabpanel" aria-labelledby="pills-docentes-niveles-tab">
+                            <!-- NAV TAB SECCION *INICIO*-->
+                            <form class="form-inline" id="FormSESeccion" name="FormSESeccion">
+                              <div class="form-group mb-2 mx-sm-3">
+                                <label for="lstcodigoSeccion">Sección</label>
+                              </div>
+                                <button type="button" id="goBuscarSESeccion" aria-label="goBuscarSESeccion" class="btn btn-info mb-2 mx-sm-1" tabindex="-1" data-toggle="tooltip" data-placement="top" title="Buscar">
+                                  <i class="fal fa-search"></i>
+                                </button>
+                                <button type="button" id="goNuevoSESeccion" aria-label="goNuevoSESeccion" class="btn btn-primary mb-2" tabindex="-1" data-toggle="tooltip" data-placement="top" title="Nuevo">
                                   <i class="far fa-layer-plus"></i>
                                 </button>                                 
                             </form>
-                            <div class="alert alert-danger" role="alert" id="AlertSEModalidad">
+                            <div class="alert alert-danger" role="alert" id="AlertSESeccion">
                               <span id="TextoAlert">...</span>
                             </div>
                                   <!-- TABLA CON LOS DATOS DEL SERVICIO EDUCATIVO. -->  
                                       <div class="modal-body">
                                         <div class="row bg-cyan">
                                           <div class="col">
-                                            <label for="">Modalidad Educativa</label>
+                                            <label for="">Sección</label>
                                           </div>
                                         </div>
                                           <div class="col">
-                                            <table id="listadoContenidoSEModalidad" class="table table-striped table-bordered table-hover table-condensed">
+                                            <table id="listadoContenidoSESeccion" class="table table-striped table-bordered table-hover table-condensed">
                                               <thead>
                                                 <tr>
-                                                  <th><input type=checkbox name="checkBoxAllSEModalidad" id="checkBoxAllSEModalidad" data-toggle=tooltip data-placement=top title='Marcar/Desmarcar Todo'>
-                                                    <button type="button" id="goEliminarSEModalidad" aria-label="goEliminarSEModalidad" class="btn btn-link" tabindex="-1" data-toggle="tooltip" data-placement="top" title="Eliminar Seleccionados...">
+                                                  <th><input type=checkbox name="checkBoxAllSESeccion" id="checkBoxAllSESeccion" data-toggle=tooltip data-placement=top title='Marcar/Desmarcar Todo'>
+                                                    <button type="button" id="goEliminarSESeccion" aria-label="goEliminarSESeccion" class="btn btn-link" tabindex="-1" data-toggle="tooltip" data-placement="top" title="Eliminar Seleccionados...">
                                                       <i class="fad fa-trash"></i>
                                                     </button>
                                                   </th>
@@ -275,7 +323,7 @@
                                                   <th></th>
                                                 </tr>
                                               </thead>
-                                                <tbody id="listaContenidoSEModalidad">
+                                                <tbody id="listaContenidoSESeccion">
                                               
                                                 </tbody>                            
                                               <tfoot>
@@ -284,158 +332,59 @@
                                         </div>
                                       </div>
                                       <!-- TABLA CON LOS DATOS DEL SERVICIO EDUCATIV. --> 
-                        </div> <!-- NAV TAB MODALIDAD FIN*-->
-                        <div class="tab-pane fade" id="pills-grado" role="tabpanel" aria-labelledby="pills-grado-tab">
-                              <!-- NAV TAB GRADO *INICIO*-->
-                              <form class="form-inline" id="FormSEGrado" name="FormSEGrado">
-                                <div class="form-group mb-2 mx-sm-3">
-                                  <label for="lstcodigoGrado">Grado</label>
-                                </div>
-                                  <button type="button" id="goBuscarSEGrado" aria-label="goBuscarSEGrado" class="btn btn-info mb-2 mx-sm-1" tabindex="-1" data-toggle="tooltip" data-placement="top" title="Buscar">
-                                    <i class="fal fa-search"></i>
-                                  </button>
-                                  <button type="button" id="goNuevoSEGrado" aria-label="goNuevoSEGrado" class="btn btn-primary mb-2" tabindex="-1" data-toggle="tooltip" data-placement="top" title="Nuevo">
-                                    <i class="far fa-layer-plus"></i>
-                                  </button>                                 
-                              </form>
-                              <div class="alert alert-danger" role="alert" id="AlertSEGrado">
-                                <span id="TextoAlert">...</span>
+                          </div> <!-- NAV TAB docentes-niveles FIN*-->
+                          <div class="tab-pane fade" id="pills-asignaturas-niveles" role="tabpanel" aria-labelledby="pills-asignaturas-niveles-tab">
+                            <!-- NAV TAB AÑO LECTIVO *INICIO*-->
+                            <form class="form-inline" id="FormSEAnnLectivo" name="FormSEAnnLectivo">
+                              <div class="form-group mb-2 mx-sm-3">
+                                <label for="lstcodigoAnnLectivo">Año Lectivo</label>
                               </div>
-                                    <!-- TABLA CON LOS DATOS DEL SERVICIO EDUCATIVO. -->  
-                                        <div class="modal-body">
-                                          <div class="row bg-cyan">
-                                            <div class="col">
-                                              <label for="">Grado </label>
-                                            </div>
-                                          </div>
-                                            <div class="col">
-                                              <table id="listadoContenidoSEGrado" class="table table-striped table-bordered table-hover table-condensed">
-                                                <thead>
-                                                  <tr>
-                                                    <th><input type=checkbox name="checkBoxAllSEGrado" id="checkBoxAllSEGrado" data-toggle=tooltip data-placement=top title='Marcar/Desmarcar Todo'>
-                                                      <button type="button" id="goEliminarSEGrado" aria-label="goEliminarSEGrado" class="btn btn-link" tabindex="-1" data-toggle="tooltip" data-placement="top" title="Eliminar Seleccionados...">
-                                                        <i class="fad fa-trash"></i>
-                                                      </button>
-                                                    </th>
-                                                    <th>#</th>
-                                                    <th>id</th>
-                                                    <th>Código</th>
-                                                    <th>Descripción</th>
-                                                    <th></th>
-                                                  </tr>
-                                                </thead>
-                                                  <tbody id="listaContenidoSEGrado">
-                                                
-                                                  </tbody>                            
-                                                <tfoot>
-                                                </tfoot>
-                                            </table>
+                                <button type="button" id="goBuscarSEAnnLectivo" aria-label="goBuscarSEAnnLectivo" class="btn btn-info mb-2 mx-sm-1" tabindex="-1" data-toggle="tooltip" data-placement="top" title="Buscar">
+                                  <i class="fal fa-search"></i>
+                                </button>
+                                <button type="button" id="goNuevoSEAnnLectivo" aria-label="goNuevoSEAnnLectivo" class="btn btn-primary mb-2" tabindex="-1" data-toggle="tooltip" data-placement="top" title="Nuevo">
+                                  <i class="far fa-layer-plus"></i>
+                                </button>                                 
+                            </form>
+                            <div class="alert alert-danger" role="alert" id="AlertSEAnnLectivo">
+                              <span id="TextoAlertAnnLectivo">...</span>
+                            </div>
+                                  <!-- TABLA CON LOS DATOS DEL SERVICIO EDUCATIVO. -->  
+                                      <div class="modal-body">
+                                        <div class="row bg-cyan">
+                                          <div class="col">
+                                            <label for="">Año Lectivo</label>
                                           </div>
                                         </div>
-                                        <!-- TABLA CON LOS DATOS DEL SERVICIO EDUCATIV. --> 
-                          </div> <!-- NAV TAB GRADO FIN*-->
-                        <div class="tab-pane fade" id="pills-seccion" role="tabpanel" aria-labelledby="pills-seccion-tab">
-                          <!-- NAV TAB SECCION *INICIO*-->
-                          <form class="form-inline" id="FormSESeccion" name="FormSESeccion">
-                            <div class="form-group mb-2 mx-sm-3">
-                              <label for="lstcodigoSeccion">Sección</label>
-                            </div>
-                              <button type="button" id="goBuscarSESeccion" aria-label="goBuscarSESeccion" class="btn btn-info mb-2 mx-sm-1" tabindex="-1" data-toggle="tooltip" data-placement="top" title="Buscar">
-                                <i class="fal fa-search"></i>
-                              </button>
-                              <button type="button" id="goNuevoSESeccion" aria-label="goNuevoSESeccion" class="btn btn-primary mb-2" tabindex="-1" data-toggle="tooltip" data-placement="top" title="Nuevo">
-                                <i class="far fa-layer-plus"></i>
-                              </button>                                 
-                          </form>
-                          <div class="alert alert-danger" role="alert" id="AlertSESeccion">
-                            <span id="TextoAlert">...</span>
-                          </div>
-                                <!-- TABLA CON LOS DATOS DEL SERVICIO EDUCATIVO. -->  
-                                    <div class="modal-body">
-                                      <div class="row bg-cyan">
-                                        <div class="col">
-                                          <label for="">Sección</label>
+                                          <div class="col">
+                                            <table id="listadoContenidoSEAnnLectivo" class="table table-striped table-bordered table-hover table-condensed">
+                                              <thead>
+                                                <tr>
+                                                  <th><input type=checkbox name="checkBoxAllSEAnnLectivo" id="checkBoxAllSEAnnLectivo" data-toggle=tooltip data-placement=top title='Marcar/Desmarcar Todo'>
+                                                    <button type="button" id="goEliminarSEAnnLectivo" aria-label="goEliminarSEAnnLectivo" class="btn btn-link" tabindex="-1" data-toggle="tooltip" data-placement="top" title="Eliminar Seleccionados...">
+                                                      <i class="fad fa-trash"></i>
+                                                    </button>
+                                                  </th>
+                                                  <th>#</th>
+                                                  <th>id</th>
+                                                  <th>Código</th>
+                                                  <th>Año</th>
+                                                  <th>Descripción</th>
+                                                  <th>Estatus</th>
+                                                  <th></th>
+                                                </tr>
+                                              </thead>
+                                                <tbody id="listaContenidoSEAnnLectivo">
+                                              
+                                                </tbody>                            
+                                              <tfoot>
+                                              </tfoot>
+                                          </table>
                                         </div>
                                       </div>
-                                        <div class="col">
-                                          <table id="listadoContenidoSESeccion" class="table table-striped table-bordered table-hover table-condensed">
-                                            <thead>
-                                              <tr>
-                                                <th><input type=checkbox name="checkBoxAllSESeccion" id="checkBoxAllSESeccion" data-toggle=tooltip data-placement=top title='Marcar/Desmarcar Todo'>
-                                                  <button type="button" id="goEliminarSESeccion" aria-label="goEliminarSESeccion" class="btn btn-link" tabindex="-1" data-toggle="tooltip" data-placement="top" title="Eliminar Seleccionados...">
-                                                    <i class="fad fa-trash"></i>
-                                                  </button>
-                                                </th>
-                                                <th>#</th>
-                                                <th>id</th>
-                                                <th>Código</th>
-                                                <th>Descripción</th>
-                                                <th></th>
-                                              </tr>
-                                            </thead>
-                                              <tbody id="listaContenidoSESeccion">
-                                            
-                                              </tbody>                            
-                                            <tfoot>
-                                            </tfoot>
-                                        </table>
-                                      </div>
-                                    </div>
-                                    <!-- TABLA CON LOS DATOS DEL SERVICIO EDUCATIV. --> 
-                        </div> <!-- NAV TAB SECCION FIN*-->
-                        <div class="tab-pane fade" id="pills-annlectivo" role="tabpanel" aria-labelledby="pills-annlectivo-tab">
-                           <!-- NAV TAB AÑO LECTIVO *INICIO*-->
-                          <form class="form-inline" id="FormSEAnnLectivo" name="FormSEAnnLectivo">
-                            <div class="form-group mb-2 mx-sm-3">
-                              <label for="lstcodigoAnnLectivo">Año Lectivo</label>
-                            </div>
-                              <button type="button" id="goBuscarSEAnnLectivo" aria-label="goBuscarSEAnnLectivo" class="btn btn-info mb-2 mx-sm-1" tabindex="-1" data-toggle="tooltip" data-placement="top" title="Buscar">
-                                <i class="fal fa-search"></i>
-                              </button>
-                              <button type="button" id="goNuevoSEAnnLectivo" aria-label="goNuevoSEAnnLectivo" class="btn btn-primary mb-2" tabindex="-1" data-toggle="tooltip" data-placement="top" title="Nuevo">
-                                <i class="far fa-layer-plus"></i>
-                              </button>                                 
-                          </form>
-                          <div class="alert alert-danger" role="alert" id="AlertSEAnnLectivo">
-                            <span id="TextoAlertAnnLectivo">...</span>
-                          </div>
-                                <!-- TABLA CON LOS DATOS DEL SERVICIO EDUCATIVO. -->  
-                                    <div class="modal-body">
-                                      <div class="row bg-cyan">
-                                        <div class="col">
-                                          <label for="">Año Lectivo</label>
-                                        </div>
-                                      </div>
-                                        <div class="col">
-                                          <table id="listadoContenidoSEAnnLectivo" class="table table-striped table-bordered table-hover table-condensed">
-                                            <thead>
-                                              <tr>
-                                                <th><input type=checkbox name="checkBoxAllSEAnnLectivo" id="checkBoxAllSEAnnLectivo" data-toggle=tooltip data-placement=top title='Marcar/Desmarcar Todo'>
-                                                  <button type="button" id="goEliminarSEAnnLectivo" aria-label="goEliminarSEAnnLectivo" class="btn btn-link" tabindex="-1" data-toggle="tooltip" data-placement="top" title="Eliminar Seleccionados...">
-                                                    <i class="fad fa-trash"></i>
-                                                  </button>
-                                                </th>
-                                                <th>#</th>
-                                                <th>id</th>
-                                                <th>Código</th>
-                                                <th>Año</th>
-                                                <th>Descripción</th>
-                                                <th>Estatus</th>
-                                                <th></th>
-                                              </tr>
-                                            </thead>
-                                              <tbody id="listaContenidoSEAnnLectivo">
-                                            
-                                              </tbody>                            
-                                            <tfoot>
-                                            </tfoot>
-                                        </table>
-                                      </div>
-                                    </div>
-                                    <!-- TABLA CON LOS DATOS DEL SERVICIO EDUCATIV. --> 
-                        </div> <!-- NAV TAB AÑO LECTIVO FIN*-->
+                                      <!-- TABLA CON LOS DATOS DEL SERVICIO EDUCATIV. --> 
+                          </div> <!-- NAV TAB asignaturas-niveles FIN*-->
                       </div>
-
                     </div> <!-- CARD BODY-->
                 <div class="card-footer"></div>
               </div> <!-- /.card -->

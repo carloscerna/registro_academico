@@ -211,20 +211,21 @@ if($errorDbConexion == false){
 			///////////////////////////////////////////////////////////////////////////////////////////////////
 			////////////// BLOQUE DE REGISTRO ORGANIZACION MODALIDAD Y AÑO LECTIVO.
 			///////////////////////////////////////////////////////////////////////////////////////////////////
-			case 'BuscarAnnLectivoModalidad':
+			case 'BuscarModalidad':
 				// Armar Colores
 				$statusTipo = array ("01" => "btn-success", "02" => "btn-warning", "03" => "btn-danger");
-				$codigo_ann_lectivo = $_POST['codigo_annlectivo'];
+				$codigo_annlectivo = $_POST['codigo_annlectivo'];
+				$codigo_modalidad = $_POST['codigo_modalidad'];
 				// Armamos el query.
 					$query = "SELECT orgac.id_organizar_ann_lectivo_ciclos, orgac.codigo_ann_lectivo, orgac.codigo_bachillerato,
 							ann.nombre as nombre_ann_lectivo, bach.nombre as nombre_modalidad
 								FROM organizar_ann_lectivo_ciclos orgac
 								INNER JOIN ann_lectivo ann ON ann.codigo = orgac.codigo_ann_lectivo
 								INNER JOIN bachillerato_ciclo bach ON bach.codigo = orgac.codigo_bachillerato
-								WHERE orgac.codigo_ann_lectivo = '$codigo_ann_lectivo' ORDER BY orgac.codigo_bachillerato";
+								WHERE orgac.codigo_ann_lectivo = '$codigo_annlectivo' ORDER BY orgac.codigo_bachillerato";
 				// Ejecutamos el Query.
-				$consulta = $dblink -> query($query);
-
+					$consulta = $dblink -> query($query);
+				//
 				if($consulta -> rowCount() != 0){
 					$mensaje = "Si Registro";
 					$respuestaOK = true;
@@ -232,69 +233,29 @@ if($errorDbConexion == false){
 					// convertimos el objeto
 					while($listado = $consulta -> fetch(PDO::FETCH_BOTH))
 					{
-					// variables
-					$codigo_modalidad = trim($listado['codigo_bachillerato']);
-					$codigo_ann_lectivo = trim($listado['codigo_ann_lectivo']);
-					$id_org_ann_lectivo_ciclos = trim($listado['id_organizar_ann_lectivo_ciclos']);
-					$nombre_modalidad = trim($listado['nombre_modalidad']);
-					$nombre_ann_lectivo = trim($listado['nombre_ann_lectivo']);
-					$num++;
+						// variablesç
+						$id_ = trim($listado['id_organizar_ann_lectivo_ciclos']);
+						$codigo_modalidad = trim($listado['codigo_bachillerato']);
+						$nombre_modalidad = trim($listado['nombre_modalidad']);
+						$num++;
 					// variables Json
-						$contenidoOK .= '<tr>
-							<td class=centerTXT>'.$num
-							.'<td class=centerTXT>'.$id_org_ann_lectivo_ciclos
-							.'<td class=centerTXT>'.$codigo_ann_lectivo
-							.'<td class=centerTXT>'.$nombre_ann_lectivo
-							.'<td class=centerTXT>'.$codigo_modalidad
-							.'<td class=centerTXT>'.$nombre_modalidad
-							.'<td class = centerTXT><a data-accion=editar_modalidad class="btn btn-xs btn-primary" href='.$listado['id_organizar_ann_lectivo_ciclos'].'>Editar</a>'
-							.'<td class = centerTXT><a data-accion=eliminar_modalidad class="btn btn-xs btn-primary" href='.$listado['id_organizar_ann_lectivo_ciclos'].'>Eliminar</a>'
-							;
+						$contenidoOK .= "<tr>
+							<td><input type=checkbox class=case name=chk$id_ id=chk$id_>
+							<td>$num
+							<td>$id_
+							<td>$codigo_modalidad
+							<td>$nombre_modalidad
+							<td><a data-accion=EliminarModalidad class='btn btn-xs btn-warning' data-toggle='tooltip' data-placement='top' title='Eliminar' href=$id_><i class='fas fa-trash'></i></a>"
+						;
 					}
 					$mensajeError = "Si Registro";
 				}
 			break;
-			case 'editar_modalidad':
-				// Armamos el query y iniciamos variables.
-					$query = "SELECT id_bachillerato_ciclo, nombre, codigo FROM bachillerato_ciclo WHERE id_bachillerato_ciclo = ".$_POST['id_x']. " ORDER BY codigo ";
-				// Ejecutamos el Query.
-				$consulta = $dblink -> query($query);
-
-				if($consulta -> rowCount() != 0){
-					$respuestaOK = true;
-					$fila_array = 0;
-					// convertimos el objeto
-					while($listado = $consulta -> fetch(PDO::FETCH_BOTH))
-					{
-					// variables
-					$id_bachillerato_ciclo = trim($listado['id_bachillerato_ciclo']);
-					$nombre = trim($listado['nombre']);
-					$codigo = trim($listado['codigo']);
-					
-					$datos[$fila_array]["id_modalidad"] = $id_bachillerato_ciclo;
-					$datos[$fila_array]["codigo_modalidad"] = $codigo;
-					$datos[$fila_array]["nombre"] = $nombre;
-					$fila_array++;
-					}
-					$mensajeError = "Se ha consultado el registro correctamente ";
-				}
-			break;
-			case 'modificar_modalidad':
-				$id_modalidad = $_POST['id_x'];
-				$nombre = strtoupper($_POST['nombre_modalidad']);
-				// Armamos el query y iniciamos variables.
-					$query = "UPDATE bachillerato_ciclo SET nombre = '$nombre' WHERE id_bachillerato_ciclo = ". $id_modalidad;
-				// Ejecutamos el Query.
-				$consulta = $dblink -> query($query);
-					$respuestaOK = true;
-					$contenidoOK = "Registro Actualizado.";
-					$mensajeError = "Se ha consultado el registro correctamente ";
-			break;
-			case 'GuardarAnnLectivoModalidad':
+			case 'GuardarModalidad':
 				// consultar el registro antes de agregarlo.
-				// Armamos el query y iniciamos variables.
-					$codigo_annlectivo = ($_POST['lstannlectivo']);
-					$codigo_modalidad = ($_POST['lstmodalidad']);
+					// Armamos el query y iniciamos variables.
+					$codigo_annlectivo = $_POST['codigo_annlectivo'];
+					$codigo_modalidad = $_POST['codigo_modalidad'];
 						$query = "SELECT * FROM organizar_ann_lectivo_ciclos WHERE codigo_ann_lectivo = '$codigo_annlectivo' and codigo_bachillerato = '$codigo_modalidad'";
 				// Ejecutamos el Query.
 				$consulta = $dblink -> query($query);
@@ -302,7 +263,7 @@ if($errorDbConexion == false){
 				if($consulta -> rowCount() != 0){
 					$respuestaOK = false;
 					$contenidoOK = "Este registro ya Existe";
-					$mensajeError = "Si Existe";
+					$mensajeError = "Nivel ya fue Guardado para el Año Lectivo.";
 				}else{
 				// proceso para grabar el registro
 					$query = "INSERT INTO organizar_ann_lectivo_ciclos (codigo_ann_lectivo, codigo_bachillerato) VALUES ('$codigo_annlectivo','$codigo_modalidad')";
@@ -310,28 +271,26 @@ if($errorDbConexion == false){
 				$consulta = $dblink -> query($query);
 					$respuestaOK = true;
 					$contenidoOK = "Registro Agregado";
-					$mensajeError = "Si Registro";
+					$mensajeError = "Registro Guardado.";
 				}
 			break;
-			case 'eliminar_modalidad':
+			case 'EliminarModalidad':
 				// Armamos el query
-				$query = sprintf("DELETE FROM organizar_ann_lectivo_ciclos WHERE id_organizar_ann_lectivo_ciclos = %s",
-				$_POST['id_user']);
-
+				$id_ = $_REQUEST["id_"];
+					$query = "DELETE FROM organizar_ann_lectivo_ciclos WHERE id_organizar_ann_lectivo_ciclos = '$id_'";
 				// Ejecutamos el query
 					$count = $dblink -> exec($query);
-				
 				// Validamos que se haya actualizado el registro
 				if($count != 0){
 					$respuestaOK = true;
-					$mensajeError = 'Se ha eliminado el registro correctamente'.$query;
+					$mensajeError = 'Se ha eliminado el registro correctamente';
 
 					$contenidoOK = 'Se ha Eliminado '.$count.' Registro(s).';
 
 				}else{
-					$mensajeError = 'No se ha eliminado el registro'.$query;
+					$mensajeError = 'No se ha eliminado el registro';
 				}
-				break;
+			break;
 			///////////////////////////////////////////////////////////////////////////////////////////////////
 			////////////// BLOQUE DE REGISTRO GESTION (ASIGNACIOND E ASIGNATURAS A LAS MODALIDADES)
 			///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1115,11 +1074,8 @@ else{
 }	// FIN DE LA CONDICON PRINCRIPAL
 // CONDICIONES RESULTADO DEL JSON Y DATA[]
 if($_POST['accion'] == "BuscarHorarios" || $_POST['accion'] == "GuardarHorarios" || $_POST['accion'] == "ActualizarHorarios"  || $_POST['accion'] == "EliminarHorarios"  
-	|| $_POST['accion'] == "BuscarAnnLectivo" || $_POST['accion'] == "addAnnLectivo" || $_POST['accion'] == "BuscarGrado" 
-	|| $_POST['accion'] == "addGrado" || $_POST['accion'] == "modificar_annlectivo" || $_POST['accion'] == "BuscarAnnLectivoModalidad" || $_POST['accion'] == "modificar_modalidad" 
-	|| $_POST['accion'] == "eliminar_modalidad" || $_POST['accion'] == "GuardarAnnLectivoModalidad" || $_POST['accion'] == "BuscarAA" || $_POST['accion'] == "GuardarAA" 
-	|| $_POST['accion'] == "eliminar_aaa" || $_POST['accion'] == "BuscarPM" || $_POST['accion'] == "GuardarPM" || $_POST['accion'] == "eliminar_pda" 
-	|| $_POST['accion'] == "ActualizarCS" || $_POST['accion'] == "eliminar_grado_seccion" )
+	|| $_POST['accion'] == "BuscarModalidad" || $_POST['accion'] == "GuardarModalidad" || $_POST['accion'] == "EliminarModalidad"
+	)
 {
 // Armamos array para convertir a JSON
 	$salidaJson = array("respuesta" => $respuestaOK,
@@ -1128,8 +1084,8 @@ if($_POST['accion'] == "BuscarHorarios" || $_POST['accion'] == "GuardarHorarios"
 			echo json_encode($salidaJson);
 }
 // data[]
-if($_POST['accion'] == "EditarHorarios" || $_POST['accion'] == "editar_annlectivo" || $_POST['accion'] == "editar_seccion" || $_POST['accion'] == "BuscarCodigoSeccion" 
-	|| $_POST['accion'] == "BuscarCodigoAnnLectivo" || $_POST['accion'] == "editar_grado" || $_POST['accion'] == "BuscarCodigoGrado" || $_POST['accion'] == "BuscarCodigoModalidad")
+if($_POST['accion'] == "EditarHorarios"
+	)
 {
 // Armamos array para convertir a JSON
 	echo json_encode($datos);
