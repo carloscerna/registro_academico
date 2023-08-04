@@ -186,11 +186,15 @@
                                <!-- NAV TAB ORGANIZACION. NIVELES *INICIO*-->
                             <form class="form-inline" id="FormModalidad" name="FormModalidad">
                               <div class="form-group mb-2 mx-sm-3">
-                                <label for="lstAnnLectivoModalidad">Año Lectivo</label>
-                                <select class="form-control mx-sm-3" id="lstAnnLectivoModalidad" name="lstAnnLectivoModalidad"></select>
-
-                                <label for="lstModalidad">Nivel</label>
-                                <select class="form-control mx-sm-3" id="lstModalidad" name="lstModalidad"></select>
+                                {# SELECT DEL AÑO LECTIVO)#}
+                                  <label for="lstAnnLectivoModalidad">Año Lectivo</label>
+                                  <select class="form-control mx-sm-3" id="lstAnnLectivoModalidad" name="lstAnnLectivoModalidad"></select>
+                                {# SELECT DEL NIVEL (MODALIDAD) #}
+                                  <label for="lstModalidad">Nivel</label>
+                                  <select class="form-control mx-sm-3" id="lstModalidad" name="lstModalidad"></select>
+                                {# SELECT DEL SERVICIO EDUCATIVO (COMPONENTES DE ESTUDIO) #}
+                                  <label for="lstModalidadServicioEducativo">Servicio Educativo</label>
+                                  <select class="form-control mx-sm-3" id="lstModalidadServicioEducativo" name="lstModalidadServicioEducativo"></select>
                               </div>
                                 <button type="button" id="goBuscarModalidad" aria-label="goBuscarModalidad" class="btn btn-info mb-2 mx-sm-1" tabindex="-1" data-toggle="tooltip" data-placement="top" title="Buscar">
                                   <i class="fal fa-search"></i>
@@ -222,6 +226,7 @@
                                               <th>id</th>
                                               <th>Código</th>
                                               <th>Descripción</th>
+                                              <th>Servicio Educativo</th>
                                               <th></th>
                                             </tr>
                                           </thead>

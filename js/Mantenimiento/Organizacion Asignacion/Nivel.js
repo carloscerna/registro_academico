@@ -17,8 +17,7 @@ $(function(){
 //  OPCIONES PARA EL TAB NAV
 //
     $(document).ready(function () {
-        var miselect = "";
-        miselect=$("#lstAnnLectivoModalidad");
+        var miselect=$("#lstAnnLectivoModalidad");
         /* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
         miselect.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
         
@@ -30,7 +29,7 @@ $(function(){
                     miselect.append('<option value="' + data[i].codigo + '">' + data[i].nombre + '</option>');
                 }
         }, "json");
-
+        // LISTADO DE LAS MODALIDES
             var miselect2=$("#lstModalidad");
             /* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
                 miselect2.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
@@ -43,6 +42,19 @@ $(function(){
                             miselect2.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');
                         }
                 }, "json");			
+        // LISTAR PARA EL SERVIICO EDUCATIVO - COMPONENTES DE ESTUDIOS.
+            var miselect3=$("#lstModalidadServicioEducativo");
+            /* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
+            miselect3.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
+            
+            $.post("includes/cargar-servicio-educativo.php",
+                function(data) {
+                miselect3.empty();
+                miselect3.append("<option value='00'>Seleccionar...</option>");
+                for (var i=0; i<data.length; i++) {
+                    miselect3.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');
+                }			
+            }, "json");
         //
         // ÑO,ÒAR DATPS DEPÈNDIENTE DEL TAB DE NAV
         //
@@ -271,7 +283,7 @@ $(function(){
                                     },
                             invalidHandler: function() {
                                 setTimeout(function() {
-                                    toastr.error("Faltan Datos...");
+                                    toastr["error"]("Falta Información en el Formulario.", "Sistema");
                             });            
                         },
                     submitHandler: function(){	
@@ -296,8 +308,8 @@ $(function(){
                                 }
                                 else{
                                     toastr["success"](response.mensaje, "Sistema");
-                                    // Abrir ventana modal.
-                                        $("#FormModalidad")[0].reset();
+                                    // Reiniciar los valores del Formulario.
+                                        //$("#FormModalidad").trigger("reset");
                                     // Llamar al archivo php para hacer la consulta y presentar los datos.
                                         $('#accion_modalidad').val('BuscarModalidad');
                                         accion = 'BuscarModalidad';
