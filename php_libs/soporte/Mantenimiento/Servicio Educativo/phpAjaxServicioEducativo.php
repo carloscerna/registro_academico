@@ -431,7 +431,7 @@ if($errorDbConexion == false){
 			case 'EditarGrado':
 				$id_ = $_REQUEST['id_'];
 				// Armamos el query y iniciamos variables.
-					$query = "SELECT id_grado_ano, nombre, codigo FROM grado_ano WHERE id_grado_ano = ".$_POST['id_x']. " ORDER BY codigo ";
+					$query = "SELECT * FROM grado_ano WHERE id_grado_ano = '$id_' ORDER BY codigo";
 				// Ejecutamos el Query.
 					$consulta = $dblink -> query($query);
 
@@ -465,7 +465,7 @@ if($errorDbConexion == false){
 				$consulta = $dblink -> query($query);
 					$respuestaOK = true;
 					$contenidoOK = "Registro Actualizado.";
-					$mensajeError = "Se ha consultado el registro correctamente ";
+					$mensajeError = "Registro Actualizado.";
 			break;
 			case 'GuardarGrado':
 				// consultar el registro antes de agregarlo.
@@ -925,7 +925,7 @@ echo json_encode($salidaJson);
 
 if($_POST['accion'] == "EditarModalidad" || $_POST['accion'] == "EditarAnnLectivo"
 || $_POST['accion'] == "EditarSeccion" || $_POST['accion'] == "BuscarCodigoSeccion" 
-|| $_POST['accion'] == "BuscarCodigoAnnLectivo" || $_POST['accion'] == "editar_grado" 
+|| $_POST['accion'] == "BuscarCodigoAnnLectivo" || $_POST['accion'] == "EditarGrado" 
 || $_POST['accion'] == "BuscarCodigoGrado" || $_POST['accion'] == "BuscarCodigoModalidad" 
 || $_POST['accion'] == "BuscarCodigoAsignatura" || $_POST['accion'] == "EditarAsignatura"
 || $_POST['accion'] == "BuscarCodigoSe"  || $_POST['accion'] == "EditarSe") {

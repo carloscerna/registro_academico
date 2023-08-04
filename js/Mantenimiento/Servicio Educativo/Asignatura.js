@@ -458,18 +458,19 @@ function configureLoadingScreen(screen){
 // FUNCION LISTAR TABLA catalogo_estatus
 ////////////////////////////////////////////////////////////
 function listar_CodigoEstatus(CodigoEstatus){
-    var miselect=$("#lstEstatus");
+    var miselect2=$("#lstAsignaturaEstatus");
     /* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
-    miselect.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
+    miselect2.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
     
     $.post("includes/cargar_estatus.php",
         function(data) {
-            miselect.empty();
+            miselect2.empty();
+            miselect2.append("<option value='00'>Seleccionar...</option>");
             for (var i=0; i<data.length; i++) {
                 if(CodigoEstatus == data[i].codigo){
-                    miselect.append('<option value="' + data[i].codigo + '" selected>' + data[i].descripcion + '</option>');
+                    miselect2.append('<option value="' + data[i].codigo + '" selected>' + data[i].descripcion + '</option>');
                 }else{
-                    miselect.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');
+                    miselect2.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');
                 }
             }
     }, "json");    
