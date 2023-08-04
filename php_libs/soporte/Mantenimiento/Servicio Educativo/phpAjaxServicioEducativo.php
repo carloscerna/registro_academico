@@ -122,7 +122,7 @@ if($errorDbConexion == false){
 					$codigo_asignatura = ($_POST['CodigoAsignatura']);
 					$codigo_dimension = ($_POST['lstDimension']);
 					$codigo_subdimension = ($_POST['lstSubDimension']);
-					$estatus_asignatura = ($_POST['lstEstatus']);
+					$estatus_asignatura = ($_POST['lstAsignaturaEstatus']);
 					$orden = ($_POST['OrdenAsignatura']);
 				// VALIDAR ESTATUS CON FALSE O TRUE
 					if($estatus_asignatura == '01'){
@@ -206,7 +206,7 @@ if($errorDbConexion == false){
 				$codigo_asignatura = ($_POST['CodigoAsignatura']);
 				$codigo_dimension = ($_POST['lstDimension']);
 				$codigo_subdimension = ($_POST['lstSubDimension']);
-				$estatus_asignatura = ($_POST['lstEstatus']);
+				$estatus_asignatura = ($_POST['lstAsignaturaEstatus']);
 				$orden = ($_POST['OrdenAsignatura']);
 			   // VALIDAR ESTATUS CON FALSE O TRUE
 					if($estatus_asignatura == '01'){
@@ -414,8 +414,7 @@ if($errorDbConexion == false){
 					$nombre = trim($listado['nombre']);
 					$id_ = trim($listado['id_grado_ano']);
 					$num++;
-						    
-
+					//
 						$contenidoOK .= "<tr>
 							<td><input type=checkbox class=case name=chk$id_ id=chk$id_>
 							<td>$num

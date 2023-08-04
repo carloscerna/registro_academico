@@ -175,7 +175,7 @@ $(function(){
                                     texto_se = $("#lstcodigose option:selected").html();
                                     $("#TextoSE").text(texto_se);
                                     //
-                                    listar_CodigoEstatus(data[0].codigo_estatus);
+                                    listar_CodigoEstatusAsignatura(data[0].codigo_estatus);
                                     listar_CodigoAreaAsignatura(data[0].codigo_area);
                                     listar_CodigoAreaAsignaturaDimension(data[0].codigo_area_dimension);
                                     listar_CodigoAreaAsignaturaSubdimension(data[0].codigo_area, data[0].codigo_area_dimension, data[0].codigo_area_subdimension);
@@ -338,7 +338,7 @@ $(function(){
                 }else{
                     $("#TextoSE").text(texto_se);
                     // buscare codigo estatus
-                    listar_CodigoEstatus();
+                    listar_CodigoEstatusAsignatura();
                     listar_CodigoAreaAsignatura();
                 }
                 // Abrir ventana modal.
@@ -457,7 +457,7 @@ function configureLoadingScreen(screen){
 // TODAS LAS TABLAS VAN HA ESTAR EN ASIGNATURA.*******************
 // FUNCION LISTAR TABLA catalogo_estatus
 ////////////////////////////////////////////////////////////
-function listar_CodigoEstatus(CodigoEstatus){
+function listar_CodigoEstatusAsignatura(CodigoEstatus){
     var miselect2=$("#lstAsignaturaEstatus");
     /* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
     miselect2.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
@@ -553,7 +553,6 @@ function listar_CodigoIndicadorCalificacion(CodigoIndicadorCalificacion){
     $.post("includes/cargar-cc.php",
         function(data) {
             miselect.empty();
-            miselect.append("<option value='00'>Seleccionar...</option>");
             for (var i=0; i<data.length; i++) {
                 if(CodigoIndicadorCalificacion == data[i].codigo){
                     miselect.append('<option value="' + data[i].codigo + '" selected>' + data[i].descripcion + '</option>');
