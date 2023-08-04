@@ -217,12 +217,14 @@ if($errorDbConexion == false){
 				$codigo_annlectivo = $_POST['codigo_annlectivo'];
 				$codigo_modalidad = $_POST['codigo_modalidad'];
 				// Armamos el query.
-					$query = "SELECT orgac.id_organizar_ann_lectivo_ciclos, orgac.codigo_ann_lectivo, orgac.codigo_bachillerato,
+					$query = "SELECT orgac.id_organizar_ann_lectivo_ciclos, orgac.codigo_ann_lectivo, orgac.codigo_bachillerato, orgac.codigo_servicio_educativo,
+							cat_se.descripcion as descripcion_se,
 							ann.nombre as nombre_ann_lectivo, bach.nombre as nombre_modalidad
 								FROM organizar_ann_lectivo_ciclos orgac
 								INNER JOIN ann_lectivo ann ON ann.codigo = orgac.codigo_ann_lectivo
 								INNER JOIN bachillerato_ciclo bach ON bach.codigo = orgac.codigo_bachillerato
-								WHERE orgac.codigo_ann_lectivo = '$codigo_annlectivo' ORDER BY orgac.codigo_bachillerato";
+								INNER JOIN catalogo_servicio_educativo cat_se ON cat_se.codigo = orgac.codigo_servicio_educativo
+								WHERE orgac.codigo_ann_lectivo = '$codigo_annlectivo' ORDER BY orgac.id_organizar_ann_lectivo_ciclos";
 				// Ejecutamos el Query.
 					$consulta = $dblink -> query($query);
 				//
@@ -237,6 +239,7 @@ if($errorDbConexion == false){
 						$id_ = trim($listado['id_organizar_ann_lectivo_ciclos']);
 						$codigo_modalidad = trim($listado['codigo_bachillerato']);
 						$nombre_modalidad = trim($listado['nombre_modalidad']);
+						$nombre_se = trim($listado['descripcion_se']);
 						$num++;
 					// variables Json
 						$contenidoOK .= "<tr>
@@ -245,6 +248,7 @@ if($errorDbConexion == false){
 							<td>$id_
 							<td>$codigo_modalidad
 							<td>$nombre_modalidad
+							<td>$nombre_se
 							<td><a data-accion=EliminarModalidad class='btn btn-xs btn-warning' data-toggle='tooltip' data-placement='top' title='Eliminar' href=$id_><i class='fas fa-trash'></i></a>"
 						;
 					}
@@ -256,7 +260,9 @@ if($errorDbConexion == false){
 					// Armamos el query y iniciamos variables.
 					$codigo_annlectivo = $_POST['codigo_annlectivo'];
 					$codigo_modalidad = $_POST['codigo_modalidad'];
-						$query = "SELECT * FROM organizar_ann_lectivo_ciclos WHERE codigo_ann_lectivo = '$codigo_annlectivo' and codigo_bachillerato = '$codigo_modalidad'";
+					$codigo_se = $_REQUEST['lstModalidadServicioEducativo'];
+						$query = "SELECT * FROM organizar_ann_lectivo_ciclos 
+							WHERE codigo_ann_lectivo = '$codigo_annlectivo' and codigo_bachillerato = '$codigo_modalidad' and codigo_servicio_educativo = '$codigo_se'";
 				// Ejecutamos el Query.
 				$consulta = $dblink -> query($query);
 				//
@@ -266,7 +272,8 @@ if($errorDbConexion == false){
 					$mensajeError = "Nivel ya fue Guardado para el Año Lectivo.";
 				}else{
 				// proceso para grabar el registro
-					$query = "INSERT INTO organizar_ann_lectivo_ciclos (codigo_ann_lectivo, codigo_bachillerato) VALUES ('$codigo_annlectivo','$codigo_modalidad')";
+					$query = "INSERT INTO organizar_ann_lectivo_ciclos (codigo_ann_lectivo, codigo_bachillerato, codigo_servicio_educativo) 
+						VALUES ('$codigo_annlectivo','$codigo_modalidad','$codigo_se')";
 				// Ejecutamos el Query.
 				$consulta = $dblink -> query($query);
 					$respuestaOK = true;
@@ -289,6 +296,122 @@ if($errorDbConexion == false){
 
 				}else{
 					$mensajeError = 'No se ha eliminado el registro';
+				}
+			break;
+			///////////////////////////////////////////////////////////////////////////////////////////////////
+			////////////// BLOQUE DE REGISTRO ORGANIZACION GRADOS,SECCIÓN Y TURNO.
+			///////////////////////////////////////////////////////////////////////////////////////////////////
+			case 'BuscarGradoSeccion':
+				// Armar Colores
+				$statusTipo = array ("01" => "btn-success", "02" => "btn-warning", "03" => "btn-danger");
+				$codigo_ann_lectivo = trim($_POST["codigo_annlectivo"]);
+				$codigo_modalidad = trim($_POST["codigo_modalidad"]);
+				// Armamos el query.
+					$query = "SELECT org.id_grados_secciones, org.codigo_bachillerato, org.codigo_grado, org.codigo_seccion, org.codigo_ann_lectivo, org.codigo_turno,
+							ann.nombre as nombre_ann_lectivo, bach.nombre as nombre_modalidad, gr.nombre as nombre_grado, sec.nombre as nombre_seccion, tur.nombre as nombre_turno
+							FROM organizacion_grados_secciones org 
+								INNER JOIN ann_lectivo ann ON ann.codigo = org.codigo_ann_lectivo
+								INNER JOIN bachillerato_ciclo bach ON bach.codigo = org.codigo_bachillerato
+								INNER JOIN grado_ano gr ON gr.codigo = org.codigo_grado
+								INNER JOIN seccion sec ON sec.codigo = org.codigo_seccion
+								INNER JOIN turno tur ON tur.codigo = org.codigo_turno
+									WHERE org.codigo_ann_lectivo = '$codigo_ann_lectivo' and org.codigo_bachillerato = '$codigo_modalidad' ORDER BY org.codigo_ann_lectivo, org.codigo_bachillerato, org.codigo_grado, org.codigo_seccion, org.codigo_turno";
+				// Ejecutamos el Query.
+				$consulta = $dblink -> query($query);
+
+				if($consulta -> rowCount() != 0){
+					$respuestaOK = true;
+					$num = 0;
+					// convertimos el objeto
+					while($listado = $consulta -> fetch(PDO::FETCH_BOTH))
+					{
+						// variables
+						$id_ = trim($listado['id_grados_secciones']);
+						$nombre_grado = trim($listado['nombre_grado']);
+						$nombre_seccion = trim($listado['nombre_seccion']);
+						$nombre_turno = trim($listado['nombre_turno']);
+							$num++;
+						//
+						$contenidoOK .= '<tr>
+							<td class=centerTXT>'.$num
+							.'<td class=centerTXT>'.$id_
+							.'<td class=centerTXT>'.$codigo_ann_lectivo
+							.'<td class=centerTXT>'.$nombre_ann_lectivo
+							.'<td class=centerTXT>'.$codigo_modalidad
+							.'<td class=centerTXT>'.$nombre_modalidad
+							.'<td class=centerTXT>'.$codigo_grado
+							.'<td class=centerTXT>'.$nombre_grado
+							.'<td class=centerTXT>'.$codigo_seccion
+							.'<td class=centerTXT>'.$nombre_seccion
+							.'<td class=centerTXT>'.$codigo_turno
+							.'<td class=centerTXT>'.$nombre_turno
+							.'<td class = centerTXT><a data-accion=editar_seccion class="btn btn-xs btn-primary" href='.$listado['id_grados_secciones'].'>Editar</a>'
+							.'<td class = centerTXT><a data-accion=eliminar_grado_seccion class="btn btn-xs btn-primary" href='.$listado['id_grados_secciones'].'>Eliminar</a>'
+							;
+					}
+					$mensajeError = "Si Registro";
+				}
+			break;
+			case 'editar_seccion':
+				// Armamos el query y iniciamos variables.
+					$query = "SELECT id_seccion, nombre, codigo FROM seccion WHERE id_seccion = ".$_POST['id_x']. " ORDER BY codigo ";
+				// Ejecutamos el Query.
+				$consulta = $dblink -> query($query);
+
+				if($consulta -> rowCount() != 0){
+					$respuestaOK = true;
+					$fila_array = 0;
+					// convertimos el objeto
+					while($listado = $consulta -> fetch(PDO::FETCH_BOTH))
+					{
+					// variables
+					$id_seccion = trim($listado['id_seccion']);
+					$nombre = trim($listado['nombre']);
+					$codigo = trim($listado['codigo']);
+					
+					$datos[$fila_array]["id_seccion"] = $id_seccion;
+					$datos[$fila_array]["codigo"] = $codigo;
+					$datos[$fila_array]["nombre"] = $nombre;
+					$fila_array++;
+					}
+					$mensajeError = "Se ha consultado el registro correctamente ";
+				}
+			break;
+			case 'modificar_seccion':
+				$id_seccion = $_POST['id_x'];
+				$nombre = strtoupper($_POST['nombre_seccion']);
+				// Armamos el query y iniciamos variables.
+					$query = "UPDATE seccion SET nombre = '$nombre' WHERE id_seccion = ". $id_seccion;
+				// Ejecutamos el Query.
+				$consulta = $dblink -> query($query);
+					$respuestaOK = true;
+					$contenidoOK = "Registro Actualizado.";
+					$mensajeError = "Se ha consultado el registro correctamente ";
+			break;
+			case 'GuardarGradoSeccion':
+				// consultar el registro antes de agregarlo.
+				// Armamos el query y iniciamos variables.
+				 $codigo_ann_lectivo = ($_POST['lstannlectivoGradoSeccion']);
+				 $codigo_modalidad = ($_POST['lstmodalidadGradoSeccion']);
+				 $codigo_grado = $_POST["lstgradoseccion"];
+				 $codigo_seccion = $_POST["lstseccion"];
+				 $codigo_turno = $_POST["lstturno"];
+				 $query = "SELECT * FROM organizacion_grados_secciones WHERE codigo_ann_lectivo = '$codigo_ann_lectivo' and codigo_bachillerato = '$codigo_modalidad' and codigo_grado = '$codigo_grado' and codigo_seccion = '$codigo_seccion' and codigo_turno = '$codigo_turno'";
+				// Ejecutamos el Query.
+				$consulta = $dblink -> query($query);
+
+				if($consulta -> rowCount() != 0){
+					$respuestaOK = false;
+					$contenidoOK = "";
+					$mensajeError = "Si Existe";
+				}else{
+				// proceso para grabar el registro
+					$query = "INSERT INTO organizacion_grados_secciones (codigo_ann_lectivo, codigo_bachillerato, codigo_grado, codigo_seccion, codigo_turno) VALUES ('$codigo_ann_lectivo','$codigo_modalidad','$codigo_grado','$codigo_seccion','$codigo_turno')";
+				// Ejecutamos el Query.
+				$consulta = $dblink -> query($query);
+					$respuestaOK = true;
+					$contenidoOK = "";
+					$mensajeError = "Si Registro";
 				}
 			break;
 			///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -841,127 +964,6 @@ if($errorDbConexion == false){
 						$codigo = trim($listado['codigo']);
 						$datos[$fila_array]["codigo_seccion"] = $codigo;	
 					}
-				}
-			break;
-			case 'BuscarGradoSeccion':
-				// Armar Colores
-				$statusTipo = array ("01" => "btn-success", "02" => "btn-warning", "03" => "btn-danger");
-				$codigo_ann_lectivo = trim($_POST["codigo_annlectivo"]);
-				$codigo_modalidad = trim($_POST["codigo_modalidad"]);
-				// Armamos el query.
-					$query = "SELECT org.id_grados_secciones, org.codigo_bachillerato, org.codigo_grado, org.codigo_seccion, org.codigo_ann_lectivo, org.codigo_turno,
-							ann.nombre as nombre_ann_lectivo, bach.nombre as nombre_modalidad, gr.nombre as nombre_grado, sec.nombre as nombre_seccion, tur.nombre as nombre_turno
-							FROM organizacion_grados_secciones org 
-								INNER JOIN ann_lectivo ann ON ann.codigo = org.codigo_ann_lectivo
-								INNER JOIN bachillerato_ciclo bach ON bach.codigo = org.codigo_bachillerato
-								INNER JOIN grado_ano gr ON gr.codigo = org.codigo_grado
-								INNER JOIN seccion sec ON sec.codigo = org.codigo_seccion
-								INNER JOIN turno tur ON tur.codigo = org.codigo_turno
-									WHERE org.codigo_ann_lectivo = '$codigo_ann_lectivo' and org.codigo_bachillerato = '$codigo_modalidad' ORDER BY org.codigo_ann_lectivo, org.codigo_bachillerato, org.codigo_grado, org.codigo_seccion, org.codigo_turno";
-				// Ejecutamos el Query.
-				$consulta = $dblink -> query($query);
-
-				if($consulta -> rowCount() != 0){
-					$respuestaOK = true;
-					$num = 0;
-					// convertimos el objeto
-					while($listado = $consulta -> fetch(PDO::FETCH_BOTH))
-					{
-					// variables
-					$codigo_ann_lectivo = trim($listado['codigo_ann_lectivo']);
-					$nombre_ann_lectivo = trim($listado['nombre_ann_lectivo']);
-					$nombre_modalidad = trim($listado['nombre_modalidad']);
-					$codigo_modalidad = trim($listado['codigo_bachillerato']);
-					$codigo_grado = trim($listado['codigo_grado']);
-					$nombre_grado = trim($listado['nombre_grado']);
-					$nombre_seccion = trim($listado['nombre_seccion']);
-					$codigo_seccion = trim($listado['codigo_seccion']);
-					$codigo_turno = trim($listado['codigo_turno']);
-					$nombre_turno = trim($listado['nombre_turno']);
-					$id_ = trim($listado['id_grados_secciones']);
-					//$id_ = trim($listado['id_grados_secciones']) . "-" . $codigo_modalidad . "-" . $codigo_grado . "-" . $codigo_seccion . "-" . $codigo_turno . "-" . $codigo_ann_lectivo;
-					$num++;
-						    
-						$contenidoOK .= '<tr>
-							<td class=centerTXT>'.$num
-							.'<td class=centerTXT>'.$id_
-							.'<td class=centerTXT>'.$codigo_ann_lectivo
-							.'<td class=centerTXT>'.$nombre_ann_lectivo
-							.'<td class=centerTXT>'.$codigo_modalidad
-							.'<td class=centerTXT>'.$nombre_modalidad
-							.'<td class=centerTXT>'.$codigo_grado
-							.'<td class=centerTXT>'.$nombre_grado
-							.'<td class=centerTXT>'.$codigo_seccion
-							.'<td class=centerTXT>'.$nombre_seccion
-							.'<td class=centerTXT>'.$codigo_turno
-							.'<td class=centerTXT>'.$nombre_turno
-							.'<td class = centerTXT><a data-accion=editar_seccion class="btn btn-xs btn-primary" href='.$listado['id_grados_secciones'].'>Editar</a>'
-							.'<td class = centerTXT><a data-accion=eliminar_grado_seccion class="btn btn-xs btn-primary" href='.$listado['id_grados_secciones'].'>Eliminar</a>'
-							;
-					}
-					$mensajeError = "Si Registro";
-				}
-			break;
-			case 'editar_seccion':
-				// Armamos el query y iniciamos variables.
-					$query = "SELECT id_seccion, nombre, codigo FROM seccion WHERE id_seccion = ".$_POST['id_x']. " ORDER BY codigo ";
-				// Ejecutamos el Query.
-				$consulta = $dblink -> query($query);
-
-				if($consulta -> rowCount() != 0){
-					$respuestaOK = true;
-					$fila_array = 0;
-					// convertimos el objeto
-					while($listado = $consulta -> fetch(PDO::FETCH_BOTH))
-					{
-					// variables
-					$id_seccion = trim($listado['id_seccion']);
-					$nombre = trim($listado['nombre']);
-					$codigo = trim($listado['codigo']);
-					
-					$datos[$fila_array]["id_seccion"] = $id_seccion;
-					$datos[$fila_array]["codigo"] = $codigo;
-					$datos[$fila_array]["nombre"] = $nombre;
-					$fila_array++;
-					}
-					$mensajeError = "Se ha consultado el registro correctamente ";
-				}
-			break;
-			case 'modificar_seccion':
-				$id_seccion = $_POST['id_x'];
-				$nombre = strtoupper($_POST['nombre_seccion']);
-				// Armamos el query y iniciamos variables.
-					$query = "UPDATE seccion SET nombre = '$nombre' WHERE id_seccion = ". $id_seccion;
-				// Ejecutamos el Query.
-				$consulta = $dblink -> query($query);
-					$respuestaOK = true;
-					$contenidoOK = "Registro Actualizado.";
-					$mensajeError = "Se ha consultado el registro correctamente ";
-			break;
-			case 'GuardarGradoSeccion':
-				// consultar el registro antes de agregarlo.
-				// Armamos el query y iniciamos variables.
-				 $codigo_ann_lectivo = ($_POST['lstannlectivoGradoSeccion']);
-				 $codigo_modalidad = ($_POST['lstmodalidadGradoSeccion']);
-				 $codigo_grado = $_POST["lstgradoseccion"];
-				 $codigo_seccion = $_POST["lstseccion"];
-				 $codigo_turno = $_POST["lstturno"];
-				 $query = "SELECT * FROM organizacion_grados_secciones WHERE codigo_ann_lectivo = '$codigo_ann_lectivo' and codigo_bachillerato = '$codigo_modalidad' and codigo_grado = '$codigo_grado' and codigo_seccion = '$codigo_seccion' and codigo_turno = '$codigo_turno'";
-				// Ejecutamos el Query.
-				$consulta = $dblink -> query($query);
-
-				if($consulta -> rowCount() != 0){
-					$respuestaOK = false;
-					$contenidoOK = "";
-					$mensajeError = "Si Existe";
-				}else{
-				// proceso para grabar el registro
-					$query = "INSERT INTO organizacion_grados_secciones (codigo_ann_lectivo, codigo_bachillerato, codigo_grado, codigo_seccion, codigo_turno) VALUES ('$codigo_ann_lectivo','$codigo_modalidad','$codigo_grado','$codigo_seccion','$codigo_turno')";
-				// Ejecutamos el Query.
-				$consulta = $dblink -> query($query);
-					$respuestaOK = true;
-					$contenidoOK = "";
-					$mensajeError = "Si Registro";
 				}
 			break;
 			///////////////////////////////////////////////////////////////////////////////////////////////////
