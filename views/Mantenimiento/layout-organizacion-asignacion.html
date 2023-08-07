@@ -101,10 +101,10 @@
                   <h3 class="card-title"><i class="fal fa-sitemap"></i> Organización y Asignación</h3>
                 </div>
                     <!-- /.card-header -->
-                    <div class="card-body">
+                    <div class="card-body m-1 p-1">
                       <!-- Nav tabs ASIGNATURA, MODALIDAD, GRADO, SECCION Y AÑO LECTIVO-->
                       <nav id="NavOrganizacionAsignacion">
-                        <ul class="nav nav-pills mb-3" id="pills-tab" role="list">
+                        <ul class="nav nav-pills mb-1 mt-1" id="pills-tab" role="list">
                           <li class="nav-item">
                             <a class="nav-link active" id="pills-horarios-tab" data-toggle="pill" href="#pills-horarios" role="tab" aria-controls="pills-horarios" aria-selected="true">Horarios</a>
                           </li>
@@ -126,25 +126,37 @@
                       <div class="tab-content" id="pills-tabContent">
                            <!-- NAV TAB ORGANIZACION. *INICIO*-->
                           <div class="tab-pane fade show active" id="pills-horarios" role="tabpanel" aria-labelledby="pills-horarios-tab">
-                              <!-- NAV TAB HOARIOS PARA CADA NIVEL *INICIO*-->
-                              <form class="form-inline" id="FormHorarios" name="FormHorarios">
-                                <div class="form-group mb-2 mx-sm-3">
-                                  <label for="lstAnnLectivoHorarios">Año Lectivo</label>
-                                  <select class="form-control mx-sm-3" id="lstAnnLectivoHorarios" name="lstAnnLectivoHorarios"></select>
-
-                                  <label for="lstModalidadHorarios">Nivel</label>
-                                  <select class="form-control mx-sm-3" id="lstModalidadHorarios" name="lstModalidadHorarios"></select>
+                                <!-- botoneeras y alertas-->
+                                <div class="bg-secondary text-white">
+                                    <button type="button" id="goBuscarHorarios" aria-label="goBuscarHorarios" class="btn btn-info" tabindex="-1" data-toggle="tooltip" data-placement="top" title="Buscar">
+                                      <i class="fal fa-search"></i>
+                                    </button>
+                                    <button type="button" id="goNuevoHorarios" aria-label="goNuevoHorarios" class="btn btn-primary" tabindex="-1" data-toggle="tooltip" data-placement="top" title="Nuevo">
+                                      <i class="far fa-layer-plus"></i>
+                                    </button>                                 
+                                    {# TEXTO DE MENSAJE CON ALERT. #}
+                                    <div class="alert alert-danger p-1 m-1" role="alert" id="AlertHorarios">
+                                      <span id="TextoAlertHorarios">...</span>
+                                    </div>
                                 </div>
-                                  <button type="button" id="goBuscarHorarios" aria-label="goBuscarHorarios" class="btn btn-info mb-2 mx-sm-1" tabindex="-1" data-toggle="tooltip" data-placement="top" title="Buscar">
-                                    <i class="fal fa-search"></i>
-                                  </button>
-                                  <button type="button" id="goNuevoHorarios" aria-label="goNuevoHorarios" class="btn btn-primary mb-2" tabindex="-1" data-toggle="tooltip" data-placement="top" title="Nuevo">
-                                    <i class="far fa-layer-plus"></i>
-                                  </button>                                 
-                              </form>
-                              <div class="alert alert-danger" role="alert" id="AlertHorarios">
-                                <span id="TextoAlertHorarios">...</span>
-                              </div>
+
+                              <!-- NAV TAB HOARIOS PARA CADA NIVEL *INICIO*-->
+                              <form class="form" id="FormHorarios" name="FormHorarios">
+                                <div class="row">
+                                  <div class="col-md-3 col-lg-4 col-12">
+                                    <div class="form-group">
+                                      <label for="lstAnnLectivoHorarios">Año Lectivo</label>
+                                      <select class="form-control mx-sm-3" id="lstAnnLectivoHorarios" name="lstAnnLectivoHorarios"></select>
+                                    </div>
+                                  </div>
+                                  <div class="form-group">
+                                    <div class="col-md-9 col-lg-8 col-12">
+                                      <label for="lstModalidadHorarios">Nivel</label>
+                                      <select class="form-control mx-sm-3" id="lstModalidadHorarios" name="lstModalidadHorarios"></select>
+                                    </div>
+                                  </div>
+                                </div>
+                              </form>                                  
                                 <!-- TABLA CON LOS DATOS DEL SERVICIO EDUCATIVO. -->  
                                     <div class="modal-body">
                                       <div class="row bg-cyan">
@@ -183,37 +195,53 @@
                           </div>
                           <!-- NAV TAB ORGANIZACIONES DE NIVELES SEGUN AÑO LECTIVO *INICIO*-->
                           <div class="tab-pane fade" id="pills-modalidad" role="tabpanel" aria-labelledby="pills-modalidad-tab">
-                               <!-- NAV TAB ORGANIZACION. NIVELES *INICIO*-->
-                            <form class="form-inline" id="FormModalidad" name="FormModalidad">
-                              <div class="form-group mb-2 mx-sm-3">
-                                {# SELECT DEL AÑO LECTIVO)#}
-                                  <label for="lstAnnLectivoModalidad">Año Lectivo</label>
-                                  <select class="form-control mx-sm-3" id="lstAnnLectivoModalidad" name="lstAnnLectivoModalidad"></select>
-                                {# SELECT DEL NIVEL (MODALIDAD) #}
-                                  <label for="lstModalidad">Nivel</label>
-                                  <select class="form-control mx-sm-3" id="lstModalidad" name="lstModalidad"></select>
-                                {# SELECT DEL SERVICIO EDUCATIVO (COMPONENTES DE ESTUDIO) #}
-                                  <label for="lstModalidadServicioEducativo">Servicio Educativo</label>
-                                  <select class="form-control mx-sm-3" id="lstModalidadServicioEducativo" name="lstModalidadServicioEducativo"></select>
-                              </div>
-                                <button type="button" id="goBuscarModalidad" aria-label="goBuscarModalidad" class="btn btn-info mb-2 mx-sm-1" tabindex="-1" data-toggle="tooltip" data-placement="top" title="Buscar">
+                            <!-- botoneeras y alertas-->
+                            <div class="bg-secondary text-white">
+                              <div class="form-group">
+                                <button type="button" id="goBuscarModalidad" aria-label="goBuscarModalidad" class="btn btn-info" tabindex="-1" data-toggle="tooltip" data-placement="top" title="Buscar">
                                   <i class="fal fa-search"></i>
                                 </button>
-                                <button type="button" id="goGuardarModalidad" aria-label="goGuardarModalidad" class="btn btn-primary mb-2" tabindex="-1" data-toggle="tooltip" data-placement="top" title="Guardar">
+                                <button type="button" id="goGuardarModalidad" aria-label="goGuardarModalidad" class="btn btn-primary" tabindex="-1" data-toggle="tooltip" data-placement="top" title="Guardar">
                                   <i class="fal fa-save"></i>
                                 </button>                                 
-                            </form>
-                            <div class="alert alert-danger" role="alert" id="AlertModalidad">
-                              <span id="TextoAlertModalidad">...</span>
+                              </div>
+                                <div class="alert alert-danger p-1 m-1" role="alert" id="AlertModalidad">
+                                  <span id="TextoAlertModalidad">...</span>
+                                </div>
                             </div>
-                              <!-- TABLA CON LOS DATOS DEL SERVICIO EDUCATIVO. -->  
-                                  <div class="modal-body">
-                                    <div class="row bg-cyan">
-                                      <div class="col">
-                                        <label for="">Asignación Modalidad (Niveles) según Año Lectivo.</label>
+                               <!-- NAV TAB ORGANIZACION. NIVELES *INICIO*-->
+                                <form class="form" id="FormModalidad" name="FormModalidad">
+                                  <div class="row">
+                                      <div class="col-md-3 col-lg-4 col-12">
+                                        <div class="form-group">
+                                          {# SELECT DEL AÑO LECTIVO #}
+                                          <label for="lstAnnLectivoModalidad">Año Lectivo</label>
+                                          <select class="form-control" id="lstAnnLectivoModalidad" name="lstAnnLectivoModalidad"></select>
+                                        </div>
                                       </div>
-                                    </div>
+                                      <div class="col-md-9 col-lg-8 col-12">
+                                        <div class="form-group">
+                                          {# SELECT DEL NIVEL (MODALIDAD) #}
+                                          <label for="lstModalidad">Nivel</label>
+                                          <select class="form-control" id="lstModalidad" name="lstModalidad"></select>
+                                        </div>
+                                      </div>
                                       <div class="col">
+                                        <div class="form-group">
+                                          {#SELECT DEL SERVICIO EDUCATIVO (COMPONENTES DE ESTUDIO) #}
+                                          <label for="lstModalidadServicioEducativo">Servicio Educativo</label>
+                                          <select class="form-control" id="lstModalidadServicioEducativo" name="lstModalidadServicioEducativo"></select>
+                                        </div>
+                                      </div>
+                                      <div class="col">
+
+                                      </div>
+                                      
+                                  </div>
+                                </form>
+                              <!-- TABLA CON LOS DATOS DEL SERVICIO EDUCATIVO. -->  
+                              <div class="bg-info text-white">_Asignación Modalidad (Niveles) según Año Lectivo_</div>
+                                  <div class="modal-body">
                                         <table id="listadoContenidoModalidad" class="table table-striped table-bordered table-hover table-condensed">
                                           <thead>
                                             <tr>
@@ -230,16 +258,12 @@
                                               <th></th>
                                             </tr>
                                           </thead>
-                                            <tbody id="listaContenidoModalidad">
-                                          
-                                            </tbody>                            
+                                            <tbody id="listaContenidoModalidad"></tbody>                            
                                           <tfoot>
                                           </tfoot>
                                       </table>
-                                    </div>
-                                  </div>
-                                        <!-- TABLA CON LOS DATOS DEL Organización niveles. --> 
-                          </div> <!-- NAV TAB MODALIDAD FIN*-->
+                                  </div> <!-- TABLA CON LOS DATOS DEL Organización niveles. --> 
+                          </div> <!-- ***NAV TAB MODALIDAD FIN***-->
                           <div class="tab-pane fade" id="pills-grados-secciones" role="tabpanel" aria-labelledby="pills-grados-secciones-tab">
                                 <!-- NAV TAB GRADO *INICIO*-->
                                 <form class="form-inline" id="FormSEGrado" name="FormSEGrado">
