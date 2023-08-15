@@ -42,7 +42,12 @@ $datos=array(); $fila_array = 0;
     $origen = $ruta;
     $objPHPExcel = $objReader->load($origen);
 // Número de hoja.
-   $numero_de_hoja = 1;
+// VERIUICAR EL NUMERO DE HOJA A CONSULTAR SEGUN LA MODALIDAD.
+    if($modalidad == "13" || $modalidad == "14"){
+      $numero_de_hoja = 1;
+    }else{
+      $numero_de_hoja = 0;
+    }
    $objPHPExcel->setActiveSheetIndex($numero_de_hoja);
    $celda_a1 = $objPHPExcel->getActiveSheet()->getCell("A1")->getValue();
    /*
