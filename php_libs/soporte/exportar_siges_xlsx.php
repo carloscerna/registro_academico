@@ -132,7 +132,7 @@ $query_todas  = "SELECT DISTINCT ON (aaa.codigo_asignatura) aaa.codigo_asignacio
                       if($codigo_grado == "I3" || $codigo_grado == "4P" || $codigo_grado == "5P" || $codigo_grado == "6P" || $codigo_grado == "01")
                       {
                         $nombre_asignatura = (trim($row['nombre_asignatura']));
-                        $nombre_asignatura = str_replace(['á','é','í','ó','ú','“','”','`','´','Ñ','ñ','.', '\\', '/', '*',' " ',':',","], '$', $nombre_asignatura);
+                        $nombre_asignatura = str_replace(['á','é','í','ó','ú','“','”','`','´','Ñ','ñ','.', '\\', '/', '*',' " ',':',","], '-', $nombre_asignatura);
                         $nombre_asignatura_t[] = trim($nombre_asignatura);
                         $nombre_area_dimension_t[] = trim($row['descripcion_area_dimension']);
                         $nombre_area_subdimension_t[] = trim($row['descripcion_area_subdimension']);
@@ -218,7 +218,7 @@ for ($i=0;$i<count($codigo_asignatura_t);$i++)
     // variables.
     //$mystring = str_replace(['/', '*','"',':',',','(',')','.'], ' ', $mystring);
     $cantidad_caracteres = strlen($mystring);
-    if($cantidad_caracteres >= 10){$cantidad_caracteres = 60;}
+    if($cantidad_caracteres >= 10){$cantidad_caracteres = 100;}
     $findme   = '.';
     $pos = strpos($mystring, $findme);
 
@@ -382,7 +382,9 @@ for ($i=0;$i<count($codigo_asignatura_t);$i++)
                         // Condicionar las resuestas y mensajes.
                         $mensajeError .= "<tr><td>" .$nombre_asignatura . "</td></tr>";
                    }else if($periodo == "Periodo 1" || $periodo == "Periodo 2" || $periodo == "Periodo 3" || $periodo == "Periodo 4" || $periodo == "Periodo 5"){
-                    $nombre_archivo = htmlspecialchars(substr($codigo_asignatura_t[$i].'-'.$nombre_asignatura,0,90) . ".xlsx");
+                    //$nombre_archivo = htmlspecialchars(substr($codigo_asignatura_t[$i].'-'.$nombre_asignatura,0,90) . ".xlsx");
+                    //$nombre_archivo = $codigo_asignatura_t[$i].'-'.$nombre_asignatura . ".xlsx";
+                    $nombre_archivo = $nombre_asignatura . ".xlsx";
                       // Grabar el archivo.
                       $objWriter->save($DestinoArchivo.$nombre_directorio_mgs."/".$nombre_archivo);
                         // cambiar permisos del archivo antes grabado.
