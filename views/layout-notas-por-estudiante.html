@@ -45,7 +45,7 @@ $(document).ready(function()
 {% endblock %}
 
 {% block contenidos %}
- <!-- Content Wrapper. Contains page content -->
+<!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
     <!-- Content Header (Page header) -->
     <section class="content-header p-0">
@@ -63,7 +63,6 @@ $(document).ready(function()
         </div>
       </div><!-- /.container-fluid -->
     </section>
-
 <!-- Main content -->
     <section class="content">
       <div class="container-fluid">
@@ -95,7 +94,7 @@ $(document).ready(function()
                     <!-- / CODIGO NIE  -->
                     <label class="col-sm-4 col-form-label" for="codigo_nie">NIE</label>
                     <div class="col-sm-4">
-                      <input type="text" class="form-control positive-integer" id="codigo_nie" name="codigo_nie" onkeypress='return validarEntero(this);' autofocus>  
+                      <input type="text" class="form-control positive-integer" id="codigo_nie" name="codigo_nie" onkeypress='return validarEntero(this);' autofocus autocomplete="disabled">
                     </div>
                     <div class="col-sm-4">
                         <button type="submit" class="btn btn-info" id = "goCalificacionBuscar">
@@ -115,11 +114,12 @@ $(document).ready(function()
                     <div class="form-group row">
                       <label class="col-sm-4 col-form-label" for="lstperiodo">Período</label>
                       <div class="col-sm-6">
-                        <select id="LstPeriodo" name="LstPeriodo" class="custom-select"></select>
+                        <select id="LstPeriodo" name="LstPeriodo" class="custom-select" aria-label="LstPeriodo"></select>
                       </div>
                     </div>
-              </div>
-            </form>
+                  </form>
+                </div>
+
                 <!-- /.card-body -->
                 <div class="card-footer">
                   <input type="hidden" id="accion_actualizar" name="accion_actualizar" value = "">
@@ -145,22 +145,21 @@ $(document).ready(function()
                       </div>
                     </div>
                     <div class="col col-md-6 col-lg-6 d-flex justify-content-end">
-                      <button type="button" class="btn btn-dark" id = "goNotasImprimir" disabled="disabled">
+                      <button type="button" class="btn btn-dark" id="goNotasImprimir" disabled="disabled" aria-label="goNotasImprimir" title="">
                         <span class="fas fa-print"></span>
                       </button>
                     </div>
                   </div>
                 </div>
-            </div>
-            <!-- /.card -->
+            </div> <!-- /.card -->
           </div> <!--/.col (left) -->
         </div>
           <!-- right column -->
           <div class="row">
             <div class="col">
-             <div class="card card-secondary w-100 mx-auto" id="tabstabla">
+              <div class="card card-secondary w-100 mx-auto" id="tabstabla">
                 <div class="card-header">
-                  <h3 class="card-title"><label for="titulo_tabla" class="custom-control-label">Estudiante.</label></h3>
+                  <h3 class="card-title"><label for="titulo_tabla" class="form-label">Estudiante.</label></h3>
                 </div>
                 <!-- /.card-header -->
                 <div class="card-body p-0">
@@ -170,32 +169,33 @@ $(document).ready(function()
                         <th>N°</th>
                         <th>Área</th>
                         <th>Componente del Plan de Estudio</th>
-                        <th>Calificación</th>
+                        <th>Actividad 1 (35%)</th>
+                        <th>Actividad 2 (35%)</th>
+                        <th>Actividad PO (30%)</th>
+                        <th>Refuerzo</th>
+                        <th>Promedio</th>
                         <th>Observación</th>
                       </tr>                    
                     </thead>
-                    <tbody id="listaCalificacionPorEstudianteOK">
-                     
-                    </tbody>
+                    <tbody id="listaCalificacionPorEstudianteOK"></tbody>
                   </table>
                 </div><!-- /.card-body -->
                 <!-- /.card-footer -->
-                 <div class="card-footer">
-                  <button type="button" class="btn btn-secondary btn-md" id = "goNotasActualizar" disabled="disabled">
-                    <span class="fas fa-save"></span> Guardar
-                  </button>
+                  <div class="card-footer">
+                    <button type="button" class="btn btn-secondary btn-md" id = "goNotasActualizar" disabled="disabled">
+                      <span class="fas fa-save"></span> Guardar
+                    </button>
                   </div>
               </div>
             <!-- /.card -->
             </div><!-- /.col rigth -->
           </div> <!-- CLASS ROW PARA EL INGRESO DE NOTAS. -->
+      </div>
     </section>
   </div> <!-- /.Content Wrapper. Caontains page content -->			
-
 <!-- Loading Screen -->
   {% include 'loading-screen.html' %}
-
-  {% endblock %}
+{% endblock %}
 
 {% block menu %}
 <!-- plantilla que contiene el menú principal. -->

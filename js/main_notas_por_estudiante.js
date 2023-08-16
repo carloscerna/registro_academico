@@ -59,33 +59,83 @@ $('#goNotasActualizar').on('click',function(){
     var codigo_modalidad = $("#codigo_bachillerato").val();
     var $objCuerpoTabla=$("#tablaNotas").children().prev().parent();
     var nota_ = []; var id_notas_ = []; var fila = 0;
+    var nota_a1 = []; var nota_a2 = []; var nota_a3 = []; var nota_re = [];
 // recorre el contenido de la tabla.
-$objCuerpoTabla.find("tbody tr").each(function(){
-    var id_notas =$(this).find('td').eq(0).find("input[name='id_notas']").val();
-    var nota =$(this).find('td').eq(3).find("input[name='nota']").val();
+    $objCuerpoTabla.find("tbody tr").each(function(){
+        var id_notas =$(this).find('td').eq(0).find("input[name='id_notas']").val();
+        var nota_a1_ =$(this).find('td').eq(3).find("input[name='nota_a1']").val();    
+        var nota_a2_ =$(this).find('td').eq(4).find("input[name='nota_a2']").val();    
+        var nota_a3_ =$(this).find('td').eq(5).find("input[name='nota_a3']").val();    
+        var nota_re_ =$(this).find('td').eq(6).find("input[name='nota_re']").val();    
     // dar valor a las arrays.
-        nota_[fila]=nota;
+        nota_a1[fila]=nota_a1_;
+        nota_a2[fila]=nota_a2_;
+        nota_a3[fila]=nota_a3_;
+        nota_re[fila]=nota_re_;
         id_notas_[fila]=id_notas;
         fila = fila + 1;
 }); // FIN DE RECORRIDO DE LA TABLA.
 // INICIA EJECUCIÓN Y ENVIO DE DATOS POR AJAX.
-$.ajax({
-    beforeSend: function(){
-},
-    cache: false,
-    type: "POST",
-    dataType: "json",
-    url:"php_libs/soporte/phpAjaxCalificacionPorEstudiante.php",
-    data: {
-            accion: accion_buscar, fila: fila, periodo: periodo, id_notas_: id_notas_, nota_:nota_, codigo_modalidad: codigo_modalidad
-            },
-    success: function(response) {
-            if (response.respuesta === true) {
-                // Mensaje del Sistema.
-                toastr["success"](response.mensaje, "Sistema");
-            }
-    }
-});                
+    $.ajax({
+        beforeSend: function(){
+    },
+        cache: false,
+        type: "POST",
+        dataType: "json",
+        url:"php_libs/soporte/phpAjaxCalificacionPorEstudiante.php",
+        data: {
+                accion: accion_buscar, fila: fila, periodo: periodo, 
+                id_notas_: id_notas_, 
+                nota_a1: nota_a1, nota_a2: nota_a2, nota_a3: nota_a3, nota_re: nota_re,
+                codigo_modalidad: codigo_modalidad
+                },
+            success: function(response) {
+                if (response.respuesta === true) {
+                    // Mensaje del Sistema.
+                    toastr["success"](response.mensaje, "Sistema");
+                    accion_buscar = 'BuscarCalificacion';
+                        // Crear variables
+                        codigo_nie = $("#codigo_nie").val();
+                        codigo_alumno = $("#codigo_alumno").val();
+                        codigo_matricula = $("#codigo_matricula").val();
+                        codigo_grado = $("#codigo_grado").val();
+                        codigo_annlectivo = $("#lstannlectivo").val();
+                        codigo_periodo = $("#LstPeriodo").val();
+                        str = "codigo_nie="+codigo_nie+"&codigo_alumno="+codigo_alumno+"&codigo_matricula="+codigo_matricula+"&codigo_grado="+codigo_grado+"&codigo_annlectivo="+codigo_annlectivo+"&codigo_periodo="+codigo_periodo+"&accion_buscar="+accion_buscar;
+                    // Ejecutar Ajax
+                            $.ajax({
+                                beforeSend: function(){
+                                    $('#listaCalificacionPorEstudianteOK').empty();
+                                },
+                                cache: false,
+                                type: "POST",
+                                dataType: "json",
+                                url:"php_libs/soporte/phpAjaxCalificacionPorEstudiante.php",
+                                data: str + "&id=" + Math.random(),
+                                success: function(response){
+                                    // Validar respuesta
+                                    if(response.respuesta === false){
+                                        toastr["error"](response.mensaje, "Sistema");
+                                        //$('#listaCalificacionPorEstudianteOK').empty();
+                                    }
+                                    if(response.respuesta === true){
+                                    // Mostrar resultado cuando se ha encontra registros.
+                                        toastr["info"](response.mensaje, "Sistema");
+                                            //$('#listaCalificacionPorEstudianteOK').empty();
+                                            $('#listaCalificacionPorEstudianteOK').append(response.contenido);
+                                            // activar botón guardar.
+                                            $("#goNotasActualizar").attr("disabled",false);
+                                            // activar botón imprimir.
+                                            $("#goNotasImprimir").attr("disabled",false);
+                                        }
+                                },
+                                    error:function(){
+                                        toastr["error"](response.mensaje, "Sistema");
+                                }
+                        });
+                }
+        }
+    });                
 });
 ////////////////////////////////////////////////////////////////////////////////////////////////
 // BUSQUEDA DE CALIFICACIONES DEPENDIENDO DEL PERIODO.
@@ -137,7 +187,7 @@ $.ajax({
                     toastr["error"](response.mensaje, "Sistema");
             }
     });
-});
+    });
 ////////////////////////////////////////////////////////////////////////////////////////////////
 // BUSQUEDA DE REGISRO PARA ACTUALIZAR LAS NOTAS.
 ////////////////////////////////////////////////////////////////////////////////////////////////        

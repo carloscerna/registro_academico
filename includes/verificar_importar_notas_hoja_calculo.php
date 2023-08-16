@@ -32,7 +32,7 @@ $datos=array(); $fila_array = 0;
 // Time zone.
     date_default_timezone_set('America/El_Salvador');
 // set codings.
-    $objPHPExcel->_defaultEncoding = 'ISO-8859-1';
+    //$objPHPExcel->_defaultEncoding = 'ISO-8859-1';
 // Set default font
     $objPHPExcel->getDefaultStyle()->getFont()->setName('Arial');
     $objPHPExcel->getDefaultStyle()->getFont()->setSize(10);
@@ -43,7 +43,7 @@ $datos=array(); $fila_array = 0;
     $objPHPExcel = $objReader->load($origen);
 // Número de hoja.
 // VERIUICAR EL NUMERO DE HOJA A CONSULTAR SEGUN LA MODALIDAD.
-    if($modalidad == "13" || $modalidad == "14"){
+    if($modalidad == "13" || $modalidad == "14" || $modalidad == "01"){
       $numero_de_hoja = 1;
     }else{
       $numero_de_hoja = 0;

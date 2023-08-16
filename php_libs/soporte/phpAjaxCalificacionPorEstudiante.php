@@ -13,6 +13,7 @@ $codigo_matricula = "";
 $codigo_grado = "";
 $periodo = "";
 $observacion = "";
+$calificacion_A1 = 0; $calificacion_A2 = 0; $calificacion_PO = 0; $calificacion_RE = 0;
 // ruta de los archivos con su carpeta
     $path_root=trim($_SERVER['DOCUMENT_ROOT']);
 // Incluimos el archivo de funciones y conexi�n a la base de datos
@@ -92,15 +93,19 @@ if($errorDbConexion == false){
 					NombreCampos($periodo);
 				// Armar la consulta para las diferencias opciones de actualiaci�n de notas.
 					$query_calificacion = "SELECT n.id_notas, n.codigo_asignatura, asig.nombre AS nombre_asignatura,
-						n.nota_p_p_1, n.nota_p_p_2, n.nota_p_p_3, n.nota_p_p_4, n.nota_p_p_5, n.recuperacion, n.nota_recuperacion_2, n.nota_institucional, n.nota_final,
-						n.observacion_1, n.observacion_2, n.observacion_3, n.observacion_4, n.observacion_5, n.observacion_r1, n.observacion_r2,
-						asig.codigo_area, cat_area.descripcion as nombre_area
-						FROM nota n
-						INNER JOIN asignatura asig ON asig.codigo = n.codigo_asignatura 
-						INNER JOIN catalogo_area_asignatura cat_area ON cat_area.codigo = asig.codigo_area 
-						INNER JOIN a_a_a_bach_o_ciclo aaa ON aaa.codigo_asignatura = n.codigo_asignatura AND aaa.codigo_ann_lectivo = '$codigo_annlectivo' AND aaa.codigo_grado = '$codigo_grado'
-						WHERE n.codigo_alumno ='$codigo_alumno' and n.codigo_matricula = '$codigo_matricula'
-						ORDER BY aaa.orden";	
+						n.nota_a1_1, n.nota_a2_1, n.nota_a3_1, n.nota_r_1, n.nota_p_p_1, n.observacion_1,
+						n.nota_a1_2, n.nota_a2_2, n.nota_a3_2, n.nota_r_2, n.nota_p_p_2, n.observacion_2,
+						n.nota_a1_3, n.nota_a2_3, n.nota_a3_3, n.nota_r_3, n.nota_p_p_3, n.observacion_3,
+						n.nota_a1_4, n.nota_a2_4, n.nota_a3_4, n.nota_r_4, n.nota_p_p_4, n.observacion_4,
+						n.nota_a1_5, n.nota_a2_5, n.nota_a3_5, n.nota_r_5, n.nota_p_p_5, n.observacion_5,
+						n.recuperacion, n.nota_recuperacion_2, n.nota_institucional, n.nota_final, n.observacion_r1, n.observacion_r2,
+							asig.codigo_area, cat_area.descripcion as nombre_area
+								FROM nota n
+									INNER JOIN asignatura asig ON asig.codigo = n.codigo_asignatura 
+									INNER JOIN catalogo_area_asignatura cat_area ON cat_area.codigo = asig.codigo_area 
+									INNER JOIN a_a_a_bach_o_ciclo aaa ON aaa.codigo_asignatura = n.codigo_asignatura AND aaa.codigo_ann_lectivo = '$codigo_annlectivo' AND aaa.codigo_grado = '$codigo_grado'
+										WHERE n.codigo_alumno ='$codigo_alumno' and n.codigo_matricula = '$codigo_matricula'
+											ORDER BY aaa.orden";	
 				// Ejecutamos el Query.
 				$consulta = $dblink -> query($query_calificacion);
                 // Recorrer la consulta.
@@ -117,35 +122,47 @@ if($errorDbConexion == false){
 						$nombre_asignatura = trim($listado['nombre_asignatura']);
 						$id_notas = $listado['id_notas'];
                         $nota_ = (trim($listado[$nota_p_p]));
+						$actividad_1 = $listado[$calificacion_A1];
+						$actividad_2 = $listado[$calificacion_A2];
+						$actividad_3 = $listado[$calificacion_PO];
+						$actividad_re = $listado[$calificacion_RE];
 						$observacion_ = (trim($listado[$observacion]));
 						// CAMBIAR COLOR DE LA FILA SEGUN NOTA.
 						if($nota_ == 0){
-							$color_fila = '<tr style=background:#2980B9><td>';
+							$color_fila = '<tr style=background:#C9FC98><td>';
 							}else{
 							$color_fila = '<tr style=background:##FBFCFC><td>';
 							}
-						
+						//
 						if($periodo == 'R1' || $periodo == "R2")
 						{
 							if($codigo_area == '01'){
-								$contenidoOK .= $color_fila.$num
-                                .'<input type=hidden name=id_notas value = '.$id_notas.'>'
-                                .'<td>'.$nombre_area
-                                .'<td>'.$nombre_asignatura
-                                ."<td><div class='d-flex justify-content-end'><input type=text name=nota $valor_m_m value = '$nota_' onkeypress='return validarCualquierNumero(this);' class='form-control decimal-1-places text-right' style='width:40%'></div>"
-                                ."<td><div class='d-flex justify-content-end'><input type=text name=observacion class=form-control  value = $observacion_></div>"
+								$contenidoOK .= "$color_fila$num
+                                <input type=hidden name=id_notas value = '$id_notas'>
+                                <td>$nombre_area
+                                <td>$nombre_asignatura
+								<td><div class='d-flex justify-content-end'><input type=text name=nota_a1 value = '$actividad_1' onkeypress='return validarCualquierNumero(this);' class='form-control decimal-1-places text-right' style='width:40%'></div>
+								<td><div class='d-flex justify-content-end'><input type=text name=nota_a2 value = '$actividad_2' onkeypress='return validarCualquierNumero(this);' class='form-control decimal-1-places text-right' style='width:40%'></div>
+								<td><div class='d-flex justify-content-end'><input type=text name=nota_a3 value = '$actividad_3' onkeypress='return validarCualquierNumero(this);' class='form-control decimal-1-places text-right' style='width:40%'></div>
+								<td><div class='d-flex justify-content-end'><input type=text name=nota_re value = '$actividad_re' onkeypress='return validarCualquierNumero(this);' class='form-control decimal-1-places text-right' style='width:40%'></div>
+                                <td><div class='d-flex justify-content-end'><input type=text name=nota value = '$nota_' onkeypress='return validarCualquierNumero(this);' class='form-control decimal-1-places text-right' style='width:40%'></div>
+                                <td><div class='d-flex justify-content-end'><input type=text name=observacion class=form-control  value=$observacion_></div>"
 								;
 							}
 						}
 						// Imprimir� cuando se refiera al per�odo 1, 2 , 3 ,4, etc.
 						if($periodo != 'R1' && $periodo != 'R2')
 						{
-							$contenidoOK .= $color_fila.$num
-								.'<input type=hidden name=id_notas value = '.$id_notas.'>'
-                                .'<td>'.$nombre_area
-                                .'<td>'.$nombre_asignatura
-                                ."<td><div class='d-flex justify-content-start'><input type=text name=nota $valor_m_m value = '$nota_' onkeypress='return validarCualquierNumero(this);' class='form-control decimal-1-places text-right' style='width:40%'></div>"
-                                ."<td><div class='d-flex justify-content-end'><input type=text name=observacion class=form-control value = $observacion_></div>"
+							$contenidoOK .= "$color_fila$num
+								<input type=hidden name=id_notas value = '$id_notas'>
+                                <td>$nombre_area
+                                <td>$nombre_asignatura
+								<td><div class='d-flex justify-content-end'><input type=text name=nota_a1 value='$actividad_1' onkeypress='return validarCualquierNumero(this);' class='form-control decimal-1-places text-right' style='width:40%'></div>
+								<td><div class='d-flex justify-content-end'><input type=text name=nota_a2 value='$actividad_2' onkeypress='return validarCualquierNumero(this);' class='form-control decimal-1-places text-right' style='width:40%'></div>
+								<td><div class='d-flex justify-content-end'><input type=text name=nota_a3 value='$actividad_3' onkeypress='return validarCualquierNumero(this);' class='form-control decimal-1-places text-right' style='width:40%'></div>
+								<td><div class='d-flex justify-content-end'><input type=text name=nota_re value='$actividad_re' onkeypress='return validarCualquierNumero(this);' class='form-control decimal-1-places text-right' style='width:40%'></div>
+                                <td class='bg-cyan'><div class='d-flex justify-content-end'><input type=text name=nota value='$nota_' class='form-control' readonly></div>
+                                <td><div class='d-flex justify-content-end'><input type=text name=observacion class=form-control value = $observacion_></div>"
 								;							
 						}
 					}	// Recorrido de la Tabla.
@@ -161,14 +178,17 @@ if($errorDbConexion == false){
 					$mensajeError =  'Calificaicones No Encontradas';
 				}
 			break;
-
 			case 'ActualizarCalificaciones':			
 				// DECLARAR ARRAY ULTIZADAS EN LA ACTULIZACIÓN
 				$codigo_alumno = array(); $codigo_matricula = array(); $codigo_asignatura = array(); $codigo_modalidad = array();
 				$id_notas = array(); $nota = array();
 				// armar variables y consulta Query.
 				$id_notas[] = $_POST["id_notas_"];
-				$nota[] = $_POST["nota_"];
+				$nota_a1[] = $_POST["nota_a1"];
+				$nota_a2[] = $_POST["nota_a2"];
+				$nota_a3[] = $_POST["nota_a3"];
+				$nota_re[] = $_POST["nota_re"];
+
 				$fila = $_POST["fila"];
 				$periodo = $_POST["periodo"];
 				$codigo_modalidad = $_POST["codigo_modalidad"];
@@ -177,50 +197,64 @@ if($errorDbConexion == false){
 				// recorrer la array para extraer los datos.
 				for($i=0;$i<=$fila-1;$i++){
 					$id_notas_ = $id_notas[0][$i];
-					$nota_ = $nota[0][$i];
+					$nota_a1_ = $nota_a1[0][$i];
+					$nota_a2_ = $nota_a2[0][$i];
+					$nota_a3_ = $nota_a3[0][$i];
+					$nota_re_ = $nota_re[0][$i];
 					// CONDICIONAR SI ES MAYOR DE 10.0
-                    if($nota_ > 10){
+                    /*if($nota_ > 10){
                         $nota_ = 1;
-                    }
+                    }*/
 					// armar sql. actualización de calificación en la tabla nota.
-						$query = "UPDATE nota SET $nota_p_p = '$nota_' WHERE id_notas = '$id_notas_'";
+						$query = "UPDATE nota SET 
+									$calificacion_A1 = '$nota_a1_',
+									$calificacion_A2 = '$nota_a2_',
+									$calificacion_PO = '$nota_a3_',
+									$calificacion_RE = '$nota_re_' 
+										WHERE id_notas = '$id_notas_'";
 					// Ejecutamos el Query.
 						$consulta = $dblink -> query($query);
 				}
-
 				// recorrer la array para extraer los datos.
+				// ACTUALIZACION DE LA CALIFICACION FINAL.
 				for($k=0;$k<=$fila-1;$k++){
 					//
 					$id_notas_ = $id_notas[0][$k];
-					// Actualizar nota final.
+					// Actualizar nota final. EDUCACION BASICA Y TERCER CICLO
 					if ($codigo_modalidad >= '03' && $codigo_modalidad <= '05'){
+						// Actualizar nota por promedio.
+							$query_calificacion_periodo = "UPDATE nota SET
+															$nota_p_p = (select round(($calificacion_A1 * 0.35) + ($calificacion_A2 * 0.35) + ($calificacion_PO * 0.30),0) as promedio_periodo 
+																FROM nota WHERE id_notas = '$id_notas_') WHERE id_notas = '$id_notas_'";
+						// Ejectuamos query.
+							$consulta_nota_periodo = $dblink -> query($query_calificacion_periodo);											
+						// Actualización Nota Final.
 						$query_nota_final = "UPDATE nota SET
 							nota_final = (select round((nota_p_p_1 + nota_p_p_2 + nota_p_p_3)/3,0) as promedio
 							from nota WHERE id_notas = '$id_notas_')
-							                WHERE id_notas = '$id_notas_'";
+								WHERE id_notas = '$id_notas_'";
 					// Ejectuamos query.
 						$consulta_nota_final = $dblink -> query($query_nota_final);
 					}
+					// EDUCACIÓN MEDIA GENERAL Y TECNICO
 					if ($codigo_modalidad >= '06' && $codigo_modalidad <= '09'){
 						$query_nota_final = "UPDATE nota SET
 							nota_final = (select round((nota_p_p_1 + nota_p_p_2 + nota_p_p_3 + nota_p_p_4)/4,0) as promedio
 							from nota WHERE id_notas = '$id_notas_')
-							                WHERE id_notas = '$id_notas_'";
+									WHERE id_notas = '$id_notas_'";
 					// Ejectuamos query.
 						$consulta_nota_final = $dblink -> query($query_nota_final);
 					}
-
-					// CALCULO PARA NOCTURNA 5 MODULOS.
+					// CALCULO PARA NOCTURNA 5 MODULOS. NOCTURNA
 					if ($codigo_modalidad >= '10' && $codigo_modalidad <= '12'){
 						$query_nota_final = "UPDATE nota SET
 							nota_final = (select round((nota_p_p_1 + nota_p_p_2 + nota_p_p_3 + nota_p_p_4 + nota_p_p_5)/5,0) as promedio
 							from nota WHERE id_notas = '$id_notas_')
-							                WHERE id_notas = '$id_notas_'";
+								WHERE id_notas = '$id_notas_'";
 					// Ejectuamos query.
 						$consulta_nota_final = $dblink -> query($query_nota_final);
 					}
 				}
-					
 				$respuestaOK = true;
 				$contenidoOK = '';
 				$mensajeError =  'Registros Actualizados.';
@@ -251,16 +285,40 @@ $salidaJson = array("respuesta" => $respuestaOK,
 echo json_encode($salidaJson);
 
 function NombreCampos($periodo){
-	global $periodo, $observacion, $nota_p_p;
+	$numero_periodo = 1; // Valor por defecto del período.
+	$campo_periodos = array('','nota_p_p_');	// Matriz para el nombre del campo períodos.
+	$campo_actividades = array('nota_a1_','nota_a2_','nota_a3_','nota_r_');	// Matriz para el nombre del campo Actividades.
+	$campo_observaciones = array('','observacion_');	// Mattriz para el nombre del campo Observación.
 
-	if($periodo == "Periodo 1"){$nota_p_p = "nota_p_p_1"; $observacion = "observacion_1";}
-	if($periodo == "Periodo 2"){$nota_p_p = "nota_p_p_2"; $observacion = "observacion_2";}
-	if($periodo == "Periodo 3"){$nota_p_p = "nota_p_p_3"; $observacion = "observacion_3";}
-	if($periodo == "Periodo 4"){$nota_p_p = "nota_p_p_4"; $observacion = "observacion_4";}
-	if($periodo == "Periodo 5"){$nota_p_p = "nota_p_p_5"; $observacion = "observacion_5";}
-	if($periodo == "R1"){$nota_p_p = "recuperacion"; $observacion = "observacion_r1";}
-	if($periodo == "R2"){$nota_p_p = "nota_recuperacion_2"; $observacion = "observacion_r2";}
-	if($periodo == "Nota PAES"){$nota_p_p = "nota_paes"; }
+	global $periodo, $observacion, $nota_p_p, $calificacion_A1, $calificacion_A2, $calificacion_PO, $calificacion_RE;
+
+	switch ($periodo) {
+		case 'Periodo 1':
+			$numero_periodo = 1;
+		break;
+		case 'Periodo 2':
+			$numero_periodo = 2;
+		break;
+		case 'Periodo 3':
+			$numero_periodo = 3;
+		break;
+		case 'Periodo 4':
+			$numero_periodo = 4;
+		break;
+		case 'Periodo 5':
+			$numero_periodo = 5;
+		break;
+	}
+	// cambiar el nombre del cambipo segun el valor de Periodo y Numero Periodo.
+		$nota_p_p = $campo_periodos[1] . $numero_periodo;
+		$calificacion_A1 = $campo_actividades[0] . $numero_periodo;
+		$calificacion_A2 = $campo_actividades[1] . $numero_periodo;
+		$calificacion_PO = $campo_actividades[2] . $numero_periodo;
+		$calificacion_RE = $campo_actividades[3] . $numero_periodo;
+		$observacion = $campo_observaciones[1] . $numero_periodo;
+			if($periodo == "R1"){$nota_p_p = "recuperacion"; $observacion = "observacion_r1";}
+			if($periodo == "R2"){$nota_p_p = "nota_recuperacion_2"; $observacion = "observacion_r2";}
+			if($periodo == "Nota PAES"){$nota_p_p = "nota_paes"; }
 	return true;
 }
 ?>
