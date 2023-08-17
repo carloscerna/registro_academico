@@ -196,7 +196,7 @@ var NuevoRegistro = function(){
 									$("#lstDepartamentoP").val(codigo_departamento_p);
 									/* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
 									miselect_departamento_p.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
-	                                    $.post("includes/cargar_departamento.php",
+										$.post("includes/cargar_departamento.php",
                                             function(data){
 												miselect_departamento_p.empty();
                                                     for (var i=0; i<data.length; i++) {
@@ -205,29 +205,29 @@ var NuevoRegistro = function(){
                                                         }else{
                                                             miselect_departamento_p.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');
                                                         }
-                                                       }
-                                                   }, "json");   
+														}
+													}, "json");   
                                     /// Seleccionar municipio en base al departamento guardado.
                                     var miselect_p=$("#lstMunicipioP");
                                     var codigo_municipio_p = data[1].codigo_municipio;
 									/* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
 									miselect_p.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
-                                                                //departamento=$("#lstDepartamento").val();
-                                                                 $.post("includes/cargar_municipio.php", { departamento: codigo_departamento_p },
-                                                                                function(data){
-                                                                                 miselect_p.empty();
-                                                                                   for (var i=0; i<data.length; i++) {
-                                                                                                if(codigo_municipio_p == data[i].codigo){
-                                                                                                   miselect_p.append('<option value="' + data[i].codigo + '" selected>' + data[i].descripcion + '</option>');             
-                                                                                                }else{
-                                                                                                   miselect_p.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');
-                                                                                                }
-                                                                                      }
-                                                                }, "json");		 							  
+											//departamento=$("#lstDepartamento").val();
+												$.post("includes/cargar_municipio.php", { departamento: codigo_departamento_p },
+															function(data){
+																miselect_p.empty();
+																for (var i=0; i<data.length; i++) {
+																			if(codigo_municipio_p == data[i].codigo){
+																				miselect_p.append('<option value="' + data[i].codigo + '" selected>' + data[i].descripcion + '</option>');             
+																			}else{
+																				miselect_p.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');
+																			}
+																	}
+											}, "json");		 							  
 							        // chekear responsable.
-                                       if (data[1].encargado_bollean == "1") {
-                                                $("#encargadop").prop("checked", true);
-                                       }
+										if (data[1].encargado_bollean == "1") {
+												$("#encargadop").prop("checked", true);
+										}
 					// bloque para data[2].
 						$('#txtidem').val(data[2].id_alumno_encargado);                
 						$('#nombrem').val(data[2].nombres);                
@@ -264,37 +264,37 @@ var NuevoRegistro = function(){
                                     var codigo_municipio_m = data[2].codigo_municipio;
 									/* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
 									miselect_m.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
-                                                                //departamento=$("#lstDepartamento").val();
-                                                                 $.post("includes/cargar_municipio.php", { departamento: codigo_departamento_m },
-                                                                                function(data){
-                                                                                 miselect_m.empty();
-                                                                                   for (var i=0; i<data.length; i++) {
-                                                                                                if(codigo_municipio_m == data[i].codigo){
-                                                                                                   miselect_m.append('<option value="' + data[i].codigo + '" selected>' + data[i].descripcion + '</option>');             
-                                                                                                }else{
-                                                                                                   miselect_m.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');
-                                                                                                }
-                                                                                      }
-                                                                }, "json");                                                                 
+										//departamento=$("#lstDepartamento").val();
+											$.post("includes/cargar_municipio.php", { departamento: codigo_departamento_m },
+														function(data){
+															miselect_m.empty();
+															for (var i=0; i<data.length; i++) {
+																		if(codigo_municipio_m == data[i].codigo){
+																			miselect_m.append('<option value="' + data[i].codigo + '" selected>' + data[i].descripcion + '</option>');             
+																		}else{
+																			miselect_m.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');
+																		}
+																}
+										}, "json");                                                                 
 								   //**************chekear responsable.*************************************************************
-                                       if (data[2].encargado_bollean == "1") {
-                                                $("#encargadom").prop("checked", true);
-                                       }		
+										if (data[2].encargado_bollean == "1") {
+												$("#encargadom").prop("checked", true);
+										}		
 									// blorque para data[3].
-                                       $('#txtideo').val(data[3].id_alumno_encargado);
-                                       $('#nombreo').val(data[3].nombres);
-                                       $('#lugaro').val(data[3].lugar_trabajo);
-                                       $('#poo').val(data[3].profesion);
-                                       $('#duio').val(data[3].dui);
-                                       $('#telefonoo').val(data[3].telefono);
-                                       $('#direcciono').val(data[3].direccion);
-                                   // chekear responsable.
-                                       if (data[3].encargado_bollean == "1") {
-                                                $("#encargadoo").prop("checked", true);
-                                       }
-									   
-									    
-									   $('#txtfechanacimientoo').val(data[3].fecha_nacimiento);
+										$('#txtideo').val(data[3].id_alumno_encargado);
+										$('#nombreo').val(data[3].nombres);
+										$('#lugaro').val(data[3].lugar_trabajo);
+										$('#poo').val(data[3].profesion);
+										$('#duio').val(data[3].dui);
+										$('#telefonoo').val(data[3].telefono);
+										$('#direcciono').val(data[3].direccion);
+									// chekear responsable.
+										if (data[3].encargado_bollean == "1") {
+												$("#encargadoo").prop("checked", true);
+										}
+										
+										
+										$('#txtfechanacimientoo').val(data[3].fecha_nacimiento);
                                     ///
                                     //// SELECT
                                         $('#lstNacionalidadO').val(data[3].codigo_nacionalidad);

@@ -16,11 +16,11 @@
       $(".positive-integer").numeric({ decimal: false, negative: false }, function() { this.value = ""; this.focus(); });
     }
     // VALIDAR NUMEROS PARA LA TABLA.
-    	function validarCualquierNumero(elemento){
-            console.log(elemento.value);
-            $(".decimal-1-places").numeric({negative: false, decimalPlaces: 1});
-            if (elemento.value < 0){elemento.value = ""; this.focus();}
-            if (elemento.value > 10){elemento.value = ""; this.focus();}
+      function validarCualquierNumero(elemento){
+        console.log(elemento.value);
+        $(".decimal-1-places").numeric({negative: false, decimalPlaces: 1});
+        if (elemento.value < 0){elemento.value = ""; this.focus();}
+        if (elemento.value > 10){elemento.value = ""; this.focus();}
       }
     </script>
 <!-- cargar datos del nombre del archivo. -->
@@ -28,6 +28,7 @@
 // Carga la INformación de Tabla Año Lectivo.
 $(document).ready(function()
 {
+  // RELLENAR EL SELECT CON EL AÑO LECTIO
     var ver_ann_lectivo = "si";
 			var miselect=$("#lstannlectivo");
 			/* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
@@ -40,6 +41,9 @@ $(document).ready(function()
 						miselect.append('<option value="' + data[i].codigo + '">' + data[i].nombre + '</option>');
 					}
 			}, "json");
+    // imagen para body imagen
+    	// FOTO DEL ALUMNO.
+		$(".card-img-top").attr("src", "../registro_academico/img/avatar_masculino.png");		
 });
 </script>
 {% endblock %}
@@ -77,49 +81,61 @@ $(document).ready(function()
               <!-- /.card-header -->
               <!-- card body - form start -->
               <div class="card-body">
-                <form action="" method="post" name="formCalificacionPorEstudiante" id="formCalificacionPorEstudiante" class="form-horizontal">
-                    <!-- / variable ACCION -->
-                        <input type="hidden" id="accion_buscar" name="accion_buscar" value = "BuscarEstudiante" class="{required:true}">
-                    <!-- / CODIGO MATRICULA  -->
-                        <input type="hidden" id="codigo_matricula" name="codigo_matricula" value = "">
-                    <!-- / CODIGO ALUMNO  -->
-                    <input type="hidden" id="codigo_alumno" name="codigo_alumno" value = "">
-                    <!-- / CODIGO GRADO -->
-                    <input type="hidden" id="codigo_grado" name="codigo_grado" value = "">
-                    <!-- / todos  -->
-                    <input type="hidden" id="todos" name="todos" value = "">
-                    <!-- / CODIGO BACHILLERATO  -->
-                    <input type="hidden" id="codigo_bachillerato" name="codigo_bachillerato" value = "">
-                    <div class="form-group row">
-                    <!-- / CODIGO NIE  -->
-                    <label class="col-sm-4 col-form-label" for="codigo_nie">NIE</label>
-                    <div class="col-sm-4">
-                      <input type="text" class="form-control positive-integer" id="codigo_nie" name="codigo_nie" onkeypress='return validarEntero(this);' autofocus autocomplete="disabled">
-                    </div>
-                    <div class="col-sm-4">
-                        <button type="submit" class="btn btn-info" id = "goCalificacionBuscar">
-                            <span class="fas fa-search"></span> Buscar
-                        </button>
-                    </div>
+                <div class="modal-body row">
+                  <div class="col-md-9">
+                    <form action="" method="post" name="formCalificacionPorEstudiante" id="formCalificacionPorEstudiante" class="form-horizontal">
+                        <!-- / variable ACCION -->
+                            <input type="hidden" id="accion_buscar" name="accion_buscar" value = "BuscarEstudiante" class="{required:true}">
+                        <!-- / CODIGO MATRICULA  -->
+                            <input type="hidden" id="codigo_matricula" name="codigo_matricula" value = "">
+                        <!-- / CODIGO ALUMNO  -->
+                        <input type="hidden" id="codigo_alumno" name="codigo_alumno" value = "">
+                        <!-- / CODIGO GRADO -->
+                        <input type="hidden" id="codigo_grado" name="codigo_grado" value = "">
+                        <!-- / todos  -->
+                        <input type="hidden" id="todos" name="todos" value = "">
+                        <!-- / CODIGO BACHILLERATO  -->
+                        <input type="hidden" id="codigo_bachillerato" name="codigo_bachillerato" value = "">
+                        <div class="form-group row">
+                        <!-- / CODIGO NIE  -->
+                        <label class="col-sm-4 col-form-label" for="codigo_nie">NIE</label>
+                        <div class="col-sm-4">
+                          <input type="text" class="form-control positive-integer" id="codigo_nie" name="codigo_nie" onkeypress='return validarEntero(this);' autofocus autocomplete="disabled">
+                        </div>
+                        <div class="col-sm-4">
+                            <button type="submit" class="btn btn-info" id = "goCalificacionBuscar">
+                                <span class="fas fa-search"></span> Buscar
+                            </button>
+                        </div>
+                      </div>
+                      <!-- / AÑO LECTIVO -->
+                        <div class="form-group row">
+                          <label class="col-sm-4 col-form-label" for="lstannlectivo">Año Lectivo</label>
+                          <div class="col-sm-6">
+                            <select id="lstannlectivo" name="lstannlectivo" class="custom-select"></select>
+                          </div>
+                        </div>
+
+                        <!-- / PRIODO O TRIMESTRE. -->
+                        <div class="form-group row">
+                          <label class="col-sm-4 col-form-label" for="lstperiodo">Período</label>
+                          <div class="col-sm-6">
+                            <select id="LstPeriodo" name="LstPeriodo" class="custom-select" aria-label="LstPeriodo"></select>
+                          </div>
+                        </div>
+                    </form>
                   </div>
-                  <!-- / AÑO LECTIVO -->
-                    <div class="form-group row">
-                      <label class="col-sm-4 col-form-label" for="lstannlectivo">Año Lectivo</label>
-                      <div class="col-sm-6">
-                        <select id="lstannlectivo" name="lstannlectivo" class="custom-select"></select>
-                      </div>
-                    </div>
-
-                    <!-- / PRIODO O TRIMESTRE. -->
-                    <div class="form-group row">
-                      <label class="col-sm-4 col-form-label" for="lstperiodo">Período</label>
-                      <div class="col-sm-6">
-                        <select id="LstPeriodo" name="LstPeriodo" class="custom-select" aria-label="LstPeriodo"></select>
-                      </div>
-                    </div>
-                  </form>
+                  <div class="col-md-3">
+                      <form method="post" action="#" enctype="multipart/form-data">
+                        <div class="card p-1 m-1">
+                          <div class="card-body">
+                            <img class="card-img-top img-bordered rounded float-right" src="#" alt="Foto Estudiante">
+                          </div>
+                        </div>
+                      </form>
+                  </div> 
                 </div>
-
+              </div>
                 <!-- /.card-body -->
                 <div class="card-footer">
                   <input type="hidden" id="accion_actualizar" name="accion_actualizar" value = "">

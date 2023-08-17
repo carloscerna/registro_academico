@@ -1,4 +1,4 @@
- {# Heredando la plantilla principal #}
+{# Heredando la plantilla principal #}
 
 {% extends 'default_layout.html' %}
 
@@ -48,34 +48,32 @@ legend {
     <script type="text/JavaScript" src="js/main_nuevo_editar_estudiante_portafolio.js"></script>
 
 <script>
- 
 $(document).ready(function() { 
  	// colocar la misma dirección en la del encargado.
-	  $("#direccion_alumno").keyup(function () {
+    $("#direccion_alumno").keyup(function () {
               var value = $(this).val();
               $("#direccionp").val(value);
               $("#direccionm").val(value);
               $("#direcciono").val(value);
           });
 // Jquery-mask - entrado de datos.
- jQuery(function($){
+  jQuery(function($){
      // Form Users Agregar.
-     $("#telresidencia").mask("9999-9999");
-     $("#telcelular").mask("9999-9999");
-     
-     $("#duip").mask("99999999-9");
-     $("#telefonop").mask("9999-9999");
-     
-     $("#duim").mask("99999999-9");
-     $("#telefonom").mask("9999-9999");
-     
-     $("#duio").mask("99999999-9");
-     $("#telefonoo").mask("9999-9999");
+      $("#telresidencia").mask("9999-9999");
+      $("#telcelular").mask("9999-9999");
+      
+      $("#duip").mask("99999999-9");
+      $("#telefonop").mask("9999-9999");
+      
+      $("#duim").mask("99999999-9");
+      $("#telefonom").mask("9999-9999");
+      
+      $("#duio").mask("99999999-9");
+      $("#telefonoo").mask("9999-9999");
   });   
 	});
- 
- /* SCRIPT PARA SUBIR LA FOTO DEL ALUMNO.*/
-$(document).ready(function() {
+  /* SCRIPT PARA SUBIR LA FOTO DEL ALUMNO.*/
+  $(document).ready(function() {
     $(".upload").on('click', function() {
         var formData = new FormData();
         var files = $('#imagenFoto')[0].files[0];
@@ -125,7 +123,7 @@ $(document).ready(function() {
     });
 });
 </script>
- <script language="javascript">
+<script language="javascript">
 	// VALIDAR LOS ENTER EN EL FORMULARIO.
 $(document).ready(function() {
   $('form').keypress(function(e){   
@@ -166,887 +164,879 @@ $(document).ready(function() {
 
   <!-- Main content -->
     <section class="content">
-     <!-- FORM PRINCIPAL -->
-     <form action="" method="post" id="formUsers" name="formUsers" role="form" enctype="multipart/form-data">
-     <div class="tab-content tab-validate"> <!-- VALIDATE DE TODO EL DIV PARA LOS DIFERENTES INPUT'S -->
+      <!-- FORM PRINCIPAL -->
+      <form action="" method="post" id="formUsers" name="formUsers" role="form" enctype="multipart/form-data">
+      <div class="tab-content tab-validate"> <!-- VALIDATE DE TODO EL DIV PARA LOS DIFERENTES INPUT'S -->
         <!-- INPUT HIDE CONTROLA EL GUARDO DEL REGISTRO..            
         <input type="hidden" id="accion_buscar" name="accion_buscar" value = "GenerarCodigoNuevo" class="{required:true}">-->            
-        <input type="hidden" id="id_user" name="id_user" value = '{{ id }}'>            
-        <input type="hidden" id="accion" name="accion" value = '{{ accion }}'>            
+        <input type="hidden" id="id_user" name="id_user" value = "{{ id }}">            
+        <input type="hidden" id="accion" name="accion" value = "{{ accion }}">            
         <!-- VARIABLES PARA LA MATRICULA CUANDO SEA NUEVO -->
-        <input type="hidden" id="valor_ann" name="valor_ann" value = '{{ valor_c_ann_lectivo }}'>
-        <input type="hidden" id="valor_modalidad" name="valor_modalidad" value = '{{ valor_c_modalidad }}'>
-        <input type="hidden" id="valor_gst" name="valor_gst" value = '{{ valor_c_grado_seccion_turno }}'>
+        <input type="hidden" id="valor_ann" name="valor_ann" value = "{{ valor_c_ann_lectivo }}">
+        <input type="hidden" id="valor_modalidad" name="valor_modalidad" value = "{{ valor_c_modalidad }}">
+        <input type="hidden" id="valor_gst" name="valor_gst" value = "{{ valor_c_grado_seccion_turno }}">
         <!-- VARIABLES PARA LA MATRICULA CUANDO SEA NUEVO -->
-      <div class="row">
-        <div class="col-12">
-          <div class="card">
-            <div class="card-header">
-              <h3 class="card-title">
-                <label for="LblNombre"></label>
-              </h3>
-            </div>
-            <!-- /.card-header -->
-            <div class="card-body">
-            <!-- Nav tabs -->
-            <div class="container h-100 py-2">
-              <ul class="nav nav-tabs border-0" id="myTab" role="tablist">
-                <li class="nav-item">
-                    <a class="nav-link active border border-primary border-bottom-0" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Estudiante</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link border border-warning border-bottom-0" id="responsable-tab" data-toggle="tab" href="#responsable" role="tab" aria-controls="responsable" aria-selected="false">Responsables</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link border border-danger border-bottom-0" id="bitacora-tab" data-toggle="tab" href="#bitacora" role="tab" aria-controls="bitacora" aria-selected="false">Bitacora Matricula</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link border border-info border-bottom-0" id="settings-tab" data-toggle="tab" href="#settings" role="tab" aria-controls="settings" aria-selected="false">Configuración</a>
-                </li>
-                <!-- CONFIGURACIÓN PARA MATRICULAR TAB -->
-                <li class="nav-item">
-                    <a class="nav-link border border-info border-bottom-0" id="matricular-tab" data-toggle="tab" href="#matricular" role="tab" aria-controls="matricular" aria-selected="false">Matricular</a>
-                </li>
-                <!-- PARA EL PORTAFOLIO TAB -->
-                <li class="nav-time">
-                  <a class="nav-link border border-secondary border-bottom-0" id="digitalizacion-tab" data-toggle="tab" href="#digitalizacion" role="tab" aria-controls="digitalizacion" aria-selected="true">Portafolio</a>
-                </li>                                
-              </ul>
-              <!-- Tab panes -->
-              <div class="tab-content h-75">
-                <div class="tab-pane h-100 p-2 active border border-primary" id="home" role="tabpanel" aria-labelledby="home-tab">
-                      <!-- MODAL BODY ROW -->
-                      <div class="modal-body row">
-                        <div class="col-md-8">
-                            <!-- INICIO DEL FORMULARIO -->
-                            <fieldset>
-                                <legend>Información General</legend>
-                                    <div class="form-group row">
-                                      <label class="col-lg-3 col-form-label form-control-label">Nombres</label>
-                                        <div class="col-lg-9">
-                                          <input class="form-control" type="text" id="txtnombres" name="txtnombres" maxlength="60" required="required" onchange='conMayusculas(this);' aria-label="Nombres del Estudiante">
+        <div class="row">
+          <div class="col-12">
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title">
+                  <label for="LblNombre"></label>
+                </h3>
+              </div>
+              <!-- /.card-header -->
+              <div class="card-body">
+                <!-- Nav tabs -->
+                <div class="container h-100 py-2">
+                  <ul class="nav nav-tabs border-0" id="myTab" role="list">
+                    <li class="nav-item">
+                        <a class="nav-link active border border-primary border-bottom-0" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Estudiante</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link border border-warning border-bottom-0" id="responsable-tab" data-toggle="tab" href="#responsable" role="tab" aria-controls="responsable" aria-selected="false">Responsables</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link border border-danger border-bottom-0" id="bitacora-tab" data-toggle="tab" href="#bitacora" role="tab" aria-controls="bitacora" aria-selected="false">Bitacora Matricula</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link border border-info border-bottom-0" id="settings-tab" data-toggle="tab" href="#settings" role="tab" aria-controls="settings" aria-selected="false">Configuración</a>
+                    </li>
+                    <!-- CONFIGURACIÓN PARA MATRICULAR TAB -->
+                    <li class="nav-item">
+                        <a class="nav-link border border-info border-bottom-0" id="matricular-tab" data-toggle="tab" href="#matricular" role="tab" aria-controls="matricular" aria-selected="false">Matricular</a>
+                    </li>
+                    <!-- PARA EL PORTAFOLIO TAB -->
+                    <li class="nav-time">
+                      <a class="nav-link border border-secondary border-bottom-0" id="digitalizacion-tab" data-toggle="tab" href="#digitalizacion" role="tab" aria-controls="digitalizacion" aria-selected="true">Portafolio</a>
+                    </li>                                
+                  </ul>
+                  <!-- Tab panes -->
+                  <div class="tab-content h-75">
+                    <div class="tab-pane h-100 p-2 active border border-primary" id="home" role="tabpanel" aria-labelledby="home-tab">
+                          <!-- MODAL BODY ROW -->
+                          <div class="modal-body row">
+                            <div class="col-md-8">
+                                <!-- INICIO DEL FORMULARIO -->
+                                <fieldset>
+                                    <legend>Información General</legend>
+                                        <div class="form-group row">
+                                          <label class="col-lg-3 col-form-label form-control-label">Nombres</label>
+                                            <div class="col-lg-9">
+                                              <input class="form-control" type="text" id="txtnombres" name="txtnombres" maxlength="60" required="required" onchange="conMayusculas(this);" aria-label="Nombres del Estudiante">
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="form-group row">
-                                      <label class="col-lg-3 col-form-label form-control-label">Apellido Paterno</label>
-                                      <div class="col-lg-9">
-                                        <input class="form-control" type="text" id="apellido_paterno" name="apellido_paterno" maxlength="30" onchange='conMayusculas(this);'>
-                                      </div>
-                                    </div>
-                                    <div class="form-group row">
-                                      <label class="col-lg-3 col-form-label form-control-label">Apellido Materno</label>
-                                      <div class="col-lg-9">
-                                        <input class="form-control" type="text" id="apellido_materno" name="apellido_materno" maxlength="30" onchange='conMayusculas(this);'>
-                                      </div>
-                                    </div>
-                                    <div class="form-group row">
-                                      <label class="col-lg-3 col-form-label form-control-label">Dirección</label>
-                                      <div class="col-lg-9">
-                                        <textarea style="height: 60px;" id="direccion_alumno" name="direccion_alumno" class="form-control"></textarea>
-                                      </div>
-                                    </div>
-                                    <div class="form-group row">
-                                      <label class="col-lg-3 col-form-label form-control-label">Tipo de Medicamento</label>
-                                      <div class="col-lg-9">
-                                        <textarea style="height: 60px;" id="medicamento" name="medicamento_alumno" class="form-control"></textarea>
-                                      </div>
-                                    </div>
-                                    <div class="form-group row">
-                                      <label class="col-lg-3 col-form-label form-control-label">N.º Residencia</label>
-                                      <div class="col-lg-9">
-                                        <input class="form-control" type="text" name="telresidencia" id="telresidencia">
-                                      </div>
-                                    </div>
-                                    <div class="form-group row">
-                                      <label class="col-lg-3 col-form-label form-control-label">N.º Celular</label>
-                                      <div class="col-lg-9">
-                                        <input class="form-control" type="text" name="telcelular" id="telcelular">
-                                      </div>
-                                    </div>
-                                    <div class="form-group row">
-                                      <label class="col-lg-3 col-form-label form-control-label">E@mail</label>
-                                      <div class="col-lg-9">
-                                        <input type="text" name="email_alumno" id="email_alumno" placeholder="123@host.com" class="form-control">
-                                      </div>
-                                    </div>
-                            </fieldset>
-                            <!-- INICIO DEL FORMULARIO -->
-                        </div>
-                        <div class="col-md-4">
-                          <!-- Your second column here -->
-                          <div class="input-group mb-3">
-                            <div class="input-group-prepend">
-                              <span class="input-group-text">NIE:</span>
+                                        <div class="form-group row">
+                                          <label class="col-lg-3 col-form-label form-control-label">Apellido Paterno</label>
+                                          <div class="col-lg-9">
+                                            <input class="form-control" type="text" id="apellido_paterno" name="apellido_paterno" maxlength="30" onchange="conMayusculas(this);" aria-label="ApellidoPaterno">
+                                          </div>
+                                        </div>
+                                        <div class="form-group row">
+                                          <label class="col-lg-3 col-form-label form-control-label">Apellido Materno</label>
+                                          <div class="col-lg-9">
+                                            <input class="form-control" type="text" id="apellido_materno" name="apellido_materno" maxlength="30" onchange="conMayusculas(this);" aria-label="ApellidoMaterno">
+                                          </div>
+                                        </div>
+                                        <div class="form-group row">
+                                          <label class="col-lg-3 col-form-label form-control-label">Dirección</label>
+                                          <div class="col-lg-9">
+                                            <textarea id="direccion_alumno" name="direccion_alumno" class="form-control" aria-label="DireccionAlumno"></textarea>
+                                          </div>
+                                        </div>
+                                        <div class="form-group row">
+                                          <label class="col-lg-3 col-form-label form-control-label">Tipo de Medicamento</label>
+                                          <div class="col-lg-9">
+                                            <textarea id="medicamento" name="medicamento_alumno" class="form-control" aria-label="MedicamenteAlumno"></textarea>
+                                          </div>
+                                        </div>
+                                        <div class="form-group row">
+                                          <label class="col-lg-3 col-form-label form-control-label">N.º Residencia</label>
+                                          <div class="col-lg-9">
+                                            <input class="form-control" type="text" name="telresidencia" id="telresidencia" aria-label="TelResidencia">
+                                          </div>
+                                        </div>
+                                        <div class="form-group row">
+                                          <label class="col-lg-3 col-form-label form-control-label">N.º Celular</label>
+                                          <div class="col-lg-9">
+                                            <input class="form-control" type="text" name="telcelular" id="telcelular" aria-label="TelCeluar">
+                                          </div>
+                                        </div>
+                                        <div class="form-group row">
+                                          <label class="col-lg-3 col-form-label form-control-label">E@mail</label>
+                                          <div class="col-lg-9">
+                                            <input type="text" name="email_alumno" id="email_alumno" placeholder="123@host.com" class="form-control">
+                                          </div>
+                                        </div>
+                                </fieldset>
+                                <!-- INICIO DEL FORMULARIO -->
                             </div>
-                            <input type="number" class="form-control" id="nie" name="nie">
-                          </div>
-                              <form method="post" action="#" enctype="multipart/form-data">
-                                <div class="card">
-                                  <img class="card-img-top" src="" alt="Foto Estudiante">
-                                  <div class="card-body">
-                                    <h4 class="card-title"><label for="NombreUser"></label></h4>
-                                    <p class="card-text"></p>
-                                    <div class="form-group">
-                                     <label for="exampleInputFile">Foto</label>
-                                     <div class="input-group">
-                                       <div class="custom-file">
-                                         <input type="file" class="custom-file-input" id="imagenFoto" name="imagenFoto">
-                                         <label class="custom-file-label selected" for="imagenFoto"></label>
-                                       </div>
-                                       <div class="input-group-append">
-                                         <input type="button" class="btn btn-primary upload" value="Subir">
-                                       </div>
-                                     </div>
+                            <div class="col-md-4">
+                              <!-- Your second column here -->
+                              <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                  <span class="input-group-text">NIE:</span>
+                                </div>
+                                <input type="number" class="form-control" id="nie" name="nie" aria-label="Nie">
+                              </div>
+                                  <form method="post" action="#" enctype="multipart/form-data">
+                                    <div class="card">
+                                      <img class="card-img-top" src="#" alt="Foto Estudiante">
+                                      <div class="card-body">
+                                        <h4 class="card-title"><label for="NombreUser"></label></h4>
+                                        <p class="card-text"></p>
+                                        <div class="form-group">
+                                        <label for="exampleInputFile">Foto</label>
+                                        <div class="input-group">
+                                          <div class="custom-file">
+                                            <input type="file" class="custom-file-input" id="imagenFoto" name="imagenFoto" aria-label="ImagenFoto">
+                                            <label class="custom-file-label selected" for="imagenFoto"></label>
+                                          </div>
+                                          <div class="input-group-append">
+                                            <input type="button" class="btn btn-primary upload" value="Subir">
+                                          </div>
+                                        </div>
+                                        </div>
+                                      </div>
                                     </div>
+                                  </form>
+                            </div>
+                          </div><!-- FIN MODAL BODY INFORMACIÓN GENERAL-->
+                        <!-- MODAL BODY ROW PARTIDA DE NACIMIENTO -->
+                          <div class="modal-body row">
+                            <div class="col-md-7">
+                                <!-- INICIO DEL FORMULARIO -->
+                                <fieldset>
+                                    <legend>Información Partida de Nacimiento</legend>
+                                    <!-- PESTAÑA DATOS PERSONALES - INPUT  Fecha nacimiento, edad, genero y estado civil-->
+                                        <div class="form-group row">
+                                          <label class="col-lg-3 col-form-label form-control-label">Fecha Nacimiento</label>
+                                          <div class="col-lg-9">
+                                            <input class="form-control" type="date" id="txtfechanacimiento" name="fechanacimiento" onblur="calcular_edad(this.value);" aria-label="FechaNacimiento">
+                                            <p><label for="lbl_edad_y_mes" class="control-label"></label></p>
+                                          </div>
+                                        </div>
+                                        <div class="form-group row">
+                                          <label class="col-lg-3 col-form-label form-control-label">Edad</label>
+                                          <div class="col-lg-9">
+                                            <input class="form-control" type="text" id="txtedad" name="txtedad" value = "0" readonly="readonly" aria-label="TxtEdad">
+                                            <input type="hidden" name= "edad_enviar" id="edad_enviar" value = "00" class="form-control">
+                                          </div>
+                                        </div>
+                                        <div class="form-group row">
+                                          <label class="col-lg-3 col-form-label form-control-label">Género</label>
+                                          <div class="col-lg-9">
+                                            <select class="custom-select" id="lstgenero" name="lstgenero" aria-label="LstGenero"></select>
+                                          </div>
+                                        </div>
+                                        <div class="form-group row">
+                                          <label class="col-lg-3 col-form-label form-control-label">Estado Civil</label>
+                                          <div class="col-lg-9">
+                                            <select class="custom-select" id="lstEstadoCivil" name="lstEstadoCivil" aria-label="LstEstadoCivil"></select>
+                                          </div>
+                                        </div>
+                                        <!-- PESTAÑA DATOS PERSONALES - INPUT Número, folio, tomo, libro.-->
+                                        <div class="form-group row">
+                                          <label class="col-lg-3 col-form-label form-control-label">Número</label>
+                                          <div class="col-lg-9">
+                                            <input type="text" name= "numero_pn" id="numero_pn" value = "0" class="form-control" aria-label="NumeroPn">
+                                          </div>
+                                        </div>
+                                        <div class="form-group row">
+                                          <label class="col-lg-3 col-form-label form-control-label">Folio</label>
+                                          <div class="col-lg-9">
+                                            <input type="text" name= "folio_pn" id="folio_pn" value = "0" class="form-control" aria-label="FolioPn">
+                                          </div>
+                                        </div>
+                                        <div class="form-group row">
+                                          <label class="col-lg-3 col-form-label form-control-label">Tomo</label>
+                                          <div class="col-lg-9">
+                                            <input type="text" name= "tomo_pn" id="tomo_pn" value = "0" class="form-control" aria-label="TomoPn">
+                                          </div>
+                                        </div>
+                                        <div class="form-group row">
+                                          <label class="col-lg-3 col-form-label form-control-label">Libro</label>
+                                          <div class="col-lg-9">
+                                            <input type="text" name= "libro_pn" id="libro_pn" value = "0" class="form-control" aria-label="LibroPN">
+                                          </div>
+                                        </div>
+                                </fieldset>
+                                <!-- INICIO DEL FORMULARIO -->
+                            </div>
+                            <div class="col-md-5">
+                              <!-- Your second column here  -->
+                                <form method="post" action="#" enctype="multipart/form-data">
+                                    <div class="card">
+                                    <button type="button" id="Imprimir" class="btn btn-success">Imprimir</button>
+                                      <img class="card-img-top-2 img-fluid" src="#" alt="Partida de Nacimiento">
+                                      <div class="card-body">
+                                        <h4 class="card-title"><label for="Pn"></label></h4>
+                                        <p class="card-text"></p>
+                                        <div class="form-group">
+                                        <label for="exampleInputFile">Imagen</label>
+                                        <div class="input-group">
+                                          <div class="custom-file">
+                                            <input type="file" class="custom-file-input" id="imagenPn" name="imagenPn">
+                                            <label class="custom-file-label" for="imagenPn">Seleccionar Archivo...</label>
+                                          </div>
+                                          <div class="input-group-append">
+                                            <input type="button" class="btn btn-primary upload-Pn" value="Subir">
+                                          </div>
+                                        </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                </form>
+                            </div>
+                          </div><!-- FIN MODAL BODY PARTIDA DE NACIMIENTO -->                      
+                        <!-- MODAL BODY ROW PARTIDA DE NACIMIENTO -->
+                          <div class="modal-body row">
+                            <div class="col-md-6">
+                                <!-- INICIO DEL FORMULARIO RESIDENCIA -->
+                                <fieldset>
+                                    <legend>Residencia y Otros</legend>
+                                    <!-- PESTAÑA DATOS PERSONALES - INPUT Departamento, Municipio.-->
+                                        <div class="form-group row">
+                                          <label class="col-lg-3 col-form-label form-control-label">Zona Residencia</label>
+                                          <div class="col-lg-9">
+                                            <select id="lstZonaResidencia" name="lstzonaresidencia" class="custom-select" aria-label="LstZonaResidencia"></select>
+                                          </div>
+                                        </div>
+                                        <div class="form-group row">
+                                          <label class="col-lg-3 col-form-label form-control-label">Departamento</label>
+                                          <div class="col-lg-9">
+                                            <select id="lstDepartamento" name="lstdepartamento" class="custom-select" aria-label="LstDepartamento"></select>
+                                          </div>
+                                        </div>
+                                        <div class="form-group row">
+                                          <label class="col-lg-3 col-form-label form-control-label">Municipio</label>
+                                          <div class="col-lg-9">
+                                            <select id="lstMunicipio" name="lstmunicipio" class="custom-select" aria-label="LstMunicipio"></select>
+                                          </div>
+                                        </div>
+                                        <div class="form-group row">
+                                          <label class="col-lg-3 col-form-label form-control-label">Cantón</label>
+                                          <div class="col-lg-9">
+                                            <select id="lstcanton" name="lstcanton" class="custom-select" aria-label="LstCanton"></select>
+                                          </div>
+                                        </div>
+                                        <!-- PESTAÑA DATOS PERSONALES - INPUT Número, folio, tomo, libro.-->
+                                        <div class="form-group row">
+                                          <label class="col-lg-3 col-form-label form-control-label">Caserío</label>
+                                          <div class="col-lg-9">
+                                            <select id="lstcaserio" name="lstcaserio" class="custom-select" aria-label="LstCaserio"></select>
+                                          </div>
+                                        </div>
+                                        <div class="form-group row">
+                                          <label class="col-lg-3 col-form-label form-control-label">Dirección</label>
+                                          <div class="col-lg-9">
+                                          </div>
+                                        </div>
+                                </fieldset>
+                                <!-- INICIO DEL FORMULARIO -->
+                            </div>
+                            <div class="col-md-6">
+                              <!-- Your second column here -->
+                                        <div class="form-group row">
+                                          <label class="col-lg-3 col-form-label form-control-label">Estado Familiar</label>
+                                          <div class="col-lg-9">
+                                            <select id="lstEstadoFamiliar" name="lstestadofamiliar" class="custom-select" aria-label="LstEstadoFamiliar"></select>
+                                          </div>
+                                        </div>
+                                        <div class="form-group row">
+                                          <label class="col-lg-3 col-form-label form-control-label">Actividad Económica</label>
+                                          <div class="col-lg-9">
+                                            <select id="lstActividadEconomica" name="lstactividadeconomica" class="custom-select" aria-label="LstActividadEconomica"></select>							
+                                          </div>
+                                        </div>
+                                        <div class="form-group row">
+                                          <label class="col-lg-3 col-form-label form-control-label">Tipo Discapacidad</label>
+                                          <div class="col-lg-9">
+                                            <select id="lstTipoDiscapacidad" name="lsttipodiscapacidad" class="custom-select" aria-label="LstTipoDiscapacidad"></select>						
+                                          </div>
+                                        </div>
+                                        <div class="form-group row">
+                                          <label class="col-lg-3 col-form-label form-control-label">Servicio de Apoyo Educativo</label>
+                                          <div class="col-lg-9">
+                                            <select id="lstServicioApoyoEducativo" name= "lstservicioapoyoeducativo" class="custom-select" aria-label="LstServicioApoyoEducativo"></select>
+                                          </div>
+                                        </div>
+                            </div>
+                          </div><!-- FIN MODAL BODY RESIDENCIA -->
+                    </div>
+                    <!-- ******************************************************************************************************************* -->
+                    <!-- ******************************************************************************************************************* -->
+                    <div class="tab-pane h-100 p-3 border border-warning" id="responsable" role="tabpanel" aria-labelledby="responsable-tab">
+                      <!-- INICIO DEL TAB RESPONSABLES. -->
+                        <div class="modal-body row">
+                          <div class="col">
+                          <!-- INICIO DEL FORMULARIO -->
+                          <!-- INFORMACIÓN DEL PADRE -->
+                            <fieldset>
+                              <legend>Información del Padre
+                                <input type="hidden" name="txtidep" id="txtidep">
+                                <!-- radio -->
+                                <div class="form-group">
+                                  <div class="custom-control custom-radio">
+                                    <input class="custom-control-input" type="radio" id="encargadop" name="rdencargado" value="Padre" onclick = "PasarFocoPadre();" checked="checked">
+                                    <label for="encargadop" class="custom-control-label">Responsable</label>
                                   </div>
                                 </div>
-                              </form>
-                        </div>
-                      </div><!-- FIN MODAL BODY INFORMACIÓN GENERAL-->
-                    <!-- MODAL BODY ROW PARTIDA DE NACIMIENTO -->
-                      <div class="modal-body row">
-                        <div class="col-md-7">
-                            <!-- INICIO DEL FORMULARIO -->
-                            <fieldset>
-                                <legend>Información Partida de Nacimiento</legend>
-                                <!-- PESTAÑA DATOS PERSONALES - INPUT  Fecha nacimiento, edad, genero y estado civil-->
-                                    <div class="form-group row">
-                                      <label class="col-lg-3 col-form-label form-control-label">Fecha Nacimiento</label>
+                              </legend>
+                              <div class="modal-body row">
+                                <div class="col-md-6">
+                                <!-- FECHA NACIMIENTO, NACIONALIDAD, ESTADO FAMILIAR, ZONA, DEPARTAMENTO, MUNICIPIO -->
+                                  <div class="form-group row">
+                                    <label class="col-lg-3 col-form-label form-control-label" for="TxtFechaNacimientoP">Fecha Nacimiento</label>
                                       <div class="col-lg-9">
-                                        <input class="form-control" type="date" id="txtfechanacimiento" name="fechanacimiento" onblur="calcular_edad(this.value);">
-                                        <p><label for="lbl_edad_y_mes" class="control-label" style="color: blue;"></label></p>
+                                        <input class="form-control" type="date" id="txtfechanacimientop" name="txtfechanacimientop" aria-label="TxtFechaNacimientoP">
                                       </div>
-                                    </div>
-                                    <div class="form-group row">
-                                      <label class="col-lg-3 col-form-label form-control-label">Edad</label>
+                                  </div>
+                                  <div class="form-group row">
+                                    <label class="col-lg-3 col-form-label form-control-label" for="lstnacionalidadp">Nacionalidad</label>
                                       <div class="col-lg-9">
-                                        <input class="form-control" type="text" id="txtedad" name="txtedad" value = "0" readonly="readonly" style="width: 100px;">
-                                        <input type="hidden" name= "edad_enviar" id="edad_enviar" value = "00" class="form-control">
+                                        <select id="lstNacionalidadP" name="lstNacionalidadP" class="custom-select" aria-label="lstnacionalidadp"></select>							
                                       </div>
-                                    </div>
-                                    <div class="form-group row">
-                                      <label class="col-lg-3 col-form-label form-control-label">Género</label>
-                                      <div class="col-lg-9">
-                                        <select class="custom-select" id="lstgenero" name="lstgenero"></select>
-                                      </div>
-                                    </div>
-                                    <div class="form-group row">
-                                      <label class="col-lg-3 col-form-label form-control-label">Estado Civil</label>
-                                      <div class="col-lg-9">
-                                        <select class="custom-select" id="lstEstadoCivil" name="lstEstadoCivil"></select>
-                                      </div>
-                                    </div>
-                                    <!-- PESTAÑA DATOS PERSONALES - INPUT Número, folio, tomo, libro.-->
-                                    <div class="form-group row">
-                                      <label class="col-lg-3 col-form-label form-control-label">Número</label>
-                                      <div class="col-lg-9">
-                                        <input type="text" name= "numero_pn" id="numero_pn" value = "0" class="form-control">
-                                      </div>
-                                    </div>
-                                    <div class="form-group row">
-                                      <label class="col-lg-3 col-form-label form-control-label">Folio</label>
-                                      <div class="col-lg-9">
-                                        <input type="text" name= "folio_pn" id="folio_pn" value = "0" class="form-control">
-                                      </div>
-                                    </div>
-                                    <div class="form-group row">
-                                      <label class="col-lg-3 col-form-label form-control-label">Tomo</label>
-                                      <div class="col-lg-9">
-                                        <input type="text" name= "tomo_pn" id="tomo_pn" value = "0" class="form-control">
-                                      </div>
-                                    </div>
-                                    <div class="form-group row">
-                                      <label class="col-lg-3 col-form-label form-control-label">Libro</label>
-                                      <div class="col-lg-9">
-                                        <input type="text" name= "libro_pn" id="libro_pn" value = "0" class="form-control">
-                                      </div>
-                                    </div>
-                            </fieldset>
-                            <!-- INICIO DEL FORMULARIO -->
-                        </div>
-                        <div class="col-md-5">
-                          <!-- Your second column here  -->
-                            <form method="post" action="#" enctype="multipart/form-data">
-                                <div class="card" style="width: 18rem;">
-                                 <button type="button" id="Imprimir" class="btn btn-success">Imprimir</button>
-                                  <img class="card-img-top-2 img-fluid" src="" alt="Partida de Nacimiento">
-                                  <div class="card-body">
-                                    <h4 class="card-title"><label for="Pn"></label></h4>
-                                    <p class="card-text"></p>
-                                    <div class="form-group">
-                                     <label for="exampleInputFile">Imagen</label>
-                                     <div class="input-group">
-                                       <div class="custom-file">
-                                         <input type="file" class="custom-file-input" id="imagenPn" name="imagenPn">
-                                         <label class="custom-file-label" for="imagenPn">Seleccionar Archivo...</label>
-                                       </div>
-                                       <div class="input-group-append">
-                                         <input type="button" class="btn btn-primary upload-Pn" value="Subir">
-                                       </div>
-                                     </div>
+                                  </div>
+                                  <div class="form-group row">
+                                    <label class="col-lg-3 col-form-label form-control-label">Estado Familiar</label>
+                                    <div class="col-lg-9">
+                                      <select id="lstEstadoFamiliarP" name="lstEstadoFamiliarP" class="custom-select" aria-label="LstEstadoFamiliarP"></select>							
                                     </div>
                                   </div>
-                                </div>
-                            </form>
-                        </div>
-                      </div><!-- FIN MODAL BODY PARTIDA DE NACIMIENTO -->                      
-                    <!-- MODAL BODY ROW PARTIDA DE NACIMIENTO -->
-                      <div class="modal-body row">
-                        <div class="col-md-6">
-                            <!-- INICIO DEL FORMULARIO RESIDENCIA -->
-                            <fieldset>
-                                <legend>Residencia y Otros</legend>
-                                <!-- PESTAÑA DATOS PERSONALES - INPUT Departamento, Municipio.-->
-                                    <div class="form-group row">
-                                      <label class="col-lg-3 col-form-label form-control-label">Zona Residencia</label>
-                                      <div class="col-lg-9">
-                                        <select id="lstZonaResidencia" name="lstzonaresidencia" class="custom-select"></select>
-                                      </div>
+                                  <div class="form-group row">
+                                    <label class="col-lg-3 col-form-label form-control-label">Zona</label>
+                                    <div class="col-lg-9">
+                                      <select id="lstZonaResidenciaP" name="lstZonaResidenciaP" class="custom-select" aria-label="LstZonaResidenciaP"></select>	
                                     </div>
-                                    <div class="form-group row">
-                                      <label class="col-lg-3 col-form-label form-control-label">Departamento</label>
-                                      <div class="col-lg-9">
-                                        <select id="lstDepartamento" name="lstdepartamento" class="custom-select"></select>
-                                      </div>
+                                  </div>
+                                  <div class="form-group row">
+                                    <label class="col-lg-3 col-form-label form-control-label">Departamento</label>
+                                    <div class="col-lg-9">
+                                      <select id="lstDepartamentoP" name="lstDepartamentoP" class="custom-select" aria-label="LstDepartamentoP"></select>
                                     </div>
-                                    <div class="form-group row">
-                                      <label class="col-lg-3 col-form-label form-control-label">Municipio</label>
-                                      <div class="col-lg-9">
-                                        <select id="lstMunicipio" name="lstmunicipio" class="custom-select"></select>
-                                      </div>
+                                  </div>
+                                  <div class="form-group row">
+                                    <label class="col-lg-3 col-form-label form-control-label">Municipio</label>
+                                    <div class="col-lg-9">
+                                      <select id="lstMunicipioP" name="lstMunicipioP" class="custom-select" aria-label="LstMunicipioP"></select>
                                     </div>
-                                    <div class="form-group row">
-                                      <label class="col-lg-3 col-form-label form-control-label">Cantón</label>
-                                      <div class="col-lg-9">
-                                        <select id="lstcanton" name="lstcanton" class="custom-select"></select>
-                                      </div>
+                                  </div>
+                                </div> <!-- FIN DEL PRIMER bloque.-->
+                                <!-- inicia segundo bloque.-->
+                                <div class="col-md-6">
+                              <!-- NOMBRES, LUGAR DE TRABAJO, PROFESION U OFICIO, DUI, TELEFONO , DIRECCIÓN -->
+                                <div class="form-group row">
+                                  <label class="col-lg-3 col-form-label form-control-label" for="NombreP">Nombres</label>
+                                    <div class="col-lg-9">
+                                      <input class="form-control" name = "txtnombrep" id = "nombrep" type="text" onchange="conMayusculas(this);" aria-label="NombreP">
                                     </div>
-                                    <!-- PESTAÑA DATOS PERSONALES - INPUT Número, folio, tomo, libro.-->
-                                    <div class="form-group row">
-                                      <label class="col-lg-3 col-form-label form-control-label">Caserío</label>
-                                      <div class="col-lg-9">
-                                        <select id="lstcaserio" name="lstcaserio" class="custom-select"></select>
-                                      </div>
+                                  </div>
+                                  <div class="form-group row">
+                                  <label class="col-lg-3 col-form-label form-control-label" for="LugarP">Lugar de Trabajo</label>
+                                    <div class="col-lg-9">
+                                      <input class="form-control" name = "txtlugarp" id = "lugarp" type= "text" onchange="conMayusculas(this);" aria-label="LugarP">
                                     </div>
-                                    <div class="form-group row">
-                                      <label class="col-lg-3 col-form-label form-control-label">Dirección</label>
-                                      <div class="col-lg-9">
-                                      </div>
+                                  </div>                        
+                                  <div class="form-group row">
+                                  <label class="col-lg-3 col-form-label form-control-label" for="TxtPop">Profesión u Oficio</label>
+                                    <div class="col-lg-9">
+                                      <input class="form-control" name="txtpop" id ="pop" type="text" onchange="conMayusculas(this);" aria-label="TxtPop">								
                                     </div>
+                                  </div>                        
+                                  <div class="form-group row">
+                                  <label class="col-lg-3 col-form-label form-control-label">N.º DUI</label>
+                                    <div class="col-lg-9">
+                                      <input class="form-control" name="txtduip" id="duip" type="text" aria-label="TxtDuiP">
+                                    </div>
+                                  </div>
+                                  <div class="form-group row">
+                                  <label class="col-lg-3 col-form-label form-control-label">Teléfono</label>
+                                    <div class="col-lg-9">
+                                      <input class="form-control" name="txttelefonop" id="telefonop" type="text" aria-label="TelefonoP">
+                                    </div>
+                                  </div>
+                                  <div class="form-group row">
+                                    <label class="col-lg-3 col-form-label form-control-label" for="TxtDireccionP">Dirección</label>
+                                      <div class="col-lg-9">
+                                        <textarea class="form-control" name="txtdireccionp" id="direccionp" aria-label="TxtDireccionP"></textarea>
+                                      </div>
+                                  </div>                        
+                                </div> <!-- DIV 2 DEL RESPONSABLE MADRE-->
+                              </div> <!-- FIN DEL MODAL  RESPONSABLE MADRE-->
                             </fieldset>
-                            <!-- INICIO DEL FORMULARIO -->
-                        </div>
-                        <div class="col-md-6">
-                          <!-- Your second column here -->
-                                    <div class="form-group row">
-                                      <label class="col-lg-3 col-form-label form-control-label">Estado Familiar</label>
-                                      <div class="col-lg-9">
-                                        <select id="lstEstadoFamiliar" name="lstestadofamiliar" class="custom-select"></select>
-                                      </div>
+                            <!-- FIN INFORMACIÓN DEL PADRE -->
+                            <!-- INFORMACIÓN DEL MADRE -->
+                            <fieldset>
+                              <legend>Información de la Madre
+                                <input type="hidden" name="txtidem" id="txtidem">
+                                <div class="form-group">
+                                  <div class="custom-control custom-radio">
+                                    <input class="custom-control-input" type="radio" id="encargadom" name="rdencargado" value="Madre" onclick = "PasarFocoMadre();">
+                                    <label for="encargadom" class="custom-control-label">Responsable</label>
+                                  </div>
+                                </div>
+                              </legend>
+                              <div class="modal-body row">
+                                <div class="col-md-6">
+                                <!-- FECHA NACIMIENTO, NACIONALIDAD, ESTADO FAMILIAR, ZONA, DEPARTAMENTO, MUNICIPIO -->
+                                  <div class="form-group row">
+                                    <label class="col-lg-3 col-form-label form-control-label" for="txtfechanacimientom">Fecha Nacimiento</label>
+                                    <div class="col-lg-9">
+                                      <input class="form-control" type="date" id="txtfechanacimientom" name="txtfechanacimientom" aria-labelledby="txtfechanacimientom">
                                     </div>
-                                    <div class="form-group row">
-                                      <label class="col-lg-3 col-form-label form-control-label">Actividad Económica</label>
-                                      <div class="col-lg-9">
-                                        <select id="lstActividadEconomica" name="lstactividadeconomica" class="custom-select"></select>							
-                                      </div>
+                                  </div>
+                                  
+                                  <div class="form-group row">
+                                    <label class="col-lg-3 col-form-label form-control-label" for="nacionalidad">Nacionalidad</label>
+                                    <div class="col-lg-9">
+                                      <select id="lstNacionalidadM" name="lstNacionalidadM" class="custom-select" aria-label="nacionalidad"></select>							
                                     </div>
-                                    <div class="form-group row">
-                                      <label class="col-lg-3 col-form-label form-control-label">Tipo Discapacidad</label>
-                                      <div class="col-lg-9">
-                                        <select id="lstTipoDiscapacidad" name="lsttipodiscapacidad" class="custom-select"></select>						
-                                      </div>
+                                  </div>
+                                  
+                                  <div class="form-group row">
+                                    <label class="col-lg-3 col-form-label form-control-label" for="lsTEstadofmiliarm">Estado Familiar</label>
+                                    <div class="col-lg-9">
+                                      <select id="lstEstadoFamiliarM" name="lstEstadoFamiliarM" class="custom-select" aria-label="lstEstadosFamiliarM"></select>							
                                     </div>
-                                    <div class="form-group row">
-                                      <label class="col-lg-3 col-form-label form-control-label">Servicio de Apoyo Educativo</label>
-                                      <div class="col-lg-9">
-                                        <select id="lstServicioApoyoEducativo" name= "lstservicioapoyoeducativo" class="custom-select"></select>
-                                      </div>
+                                  </div>
+                                  
+                                  <div class="form-group row">
+                                    <label class="col-lg-3 col-form-label form-control-label">Zona</label>
+                                    <div class="col-lg-9">
+                                      <select id="lstZonaResidenciaM" name="lstZonaResidenciaM" class="custom-select" aria-label="lstzonaResidenciaM"></select>	
                                     </div>
-                        </div>
-                      </div><!-- FIN MODAL BODY RESIDENCIA -->
-                </div>
-                <!-- ******************************************************************************************************************* -->
-                <!-- ******************************************************************************************************************* -->
-                <div class="tab-pane h-100 p-3 border border-warning" id="responsable" role="tabpanel" aria-labelledby="responsable-tab">
-                 <!-- INICIO DEL TAB RESPONSABLES. -->
-                 <div class="modal-body row">
-                  <div class="col">
-                   <!-- INICIO DEL FORMULARIO -->
-                   <!-- INFORMACIÓN DEL PADRE -->
-                    <fieldset>
-                     <legend>Información del Padre
-                      <input type=hidden name=txtidep id=txtidep>
-                      <!-- radio -->
-                      <div class="form-group">
-                        <div class="custom-control custom-radio">
-                          <input class="custom-control-input" type="radio" id="encargadop" name="rdencargado" value="Padre" onclick = "PasarFocoPadre();" checked="checked">
-                          <label for="encargadop" class="custom-control-label">Responsable</label>
-                        </div>
-                      </div>
-                     </legend>
-                     <div class="modal-body row">
-                        <div class="col-md-6">
-                         <!-- FECHA NACIMIENTO, NACIONALIDAD, ESTADO FAMILIAR, ZONA, DEPARTAMENTO, MUNICIPIO -->
-                           <div class="form-group row">
-                            <label class="col-lg-3 col-form-label form-control-label">Fecha Nacimiento</label>
-                             <div class="col-lg-9">
-                              <input class="form-control" type="date" id="txtfechanacimientop" name="txtfechanacimientop">
-                             </div>
-                           </div>
-                           
-                           <div class="form-group row">
-                            <label class="col-lg-3 col-form-label form-control-label">Nacionalidad</label>
-                             <div class="col-lg-9">
-                              <select id="lstNacionalidadP" name="lstNacionalidadP" class="custom-select"></select>							
-                             </div>
-                           </div>
-                           
-                           <div class="form-group row">
-                            <label class="col-lg-3 col-form-label form-control-label">Estado Familiar</label>
-                             <div class="col-lg-9">
-                              <select id="lstEstadoFamiliarP" name="lstEstadoFamiliarP" class="custom-select"></select>							
-                             </div>
-                           </div>
-                           
-                           <div class="form-group row">
-                            <label class="col-lg-3 col-form-label form-control-label">Zona</label>
-                             <div class="col-lg-9">
-                              <select id="lstZonaResidenciaP" name="lstZonaResidenciaP" class="custom-select"></select>	
-                             </div>
-                           </div>
-                           
-                           <div class="form-group row">
-                            <label class="col-lg-3 col-form-label form-control-label">Departamento</label>
-                             <div class="col-lg-9">
-                              <select id="lstDepartamentoP" name="lstDepartamentoP" class="custom-select"></select>
-                             </div>
-                           </div>
-                           
-                           <div class="form-group row">
-                            <label class="col-lg-3 col-form-label form-control-label">Municipio</label>
-                             <div class="col-lg-9">
-                              <select id="lstMunicipioP" name="lstMunicipioP" class="custom-select"></select>
-                             </div>
-                           </div>
-                        </div> <!-- FIN DEL PRIMER bloque.-->
-                        <!-- inicia segundo bloque.-->
-                        <div class="col-md-6">
-                      <!-- NOMBRES, LUGAR DE TRABAJO, PROFESION U OFICIO, DUI, TELEFONO , DIRECCIÓN -->
-                        <div class="form-group row">
-                         <label class="col-lg-3 col-form-label form-control-label">Nombres</label>
-                          <div class="col-lg-9">
-                            <input class="form-control" name = "txtnombrep" id = "nombrep" type="text" onchange="conMayusculas(this);">
+                                  </div>
+                                  
+                                  <div class="form-group row">
+                                    <label class="col-lg-3 col-form-label form-control-label">Departamento</label>
+                                    <div class="col-lg-9">
+                                      <select id="lstDepartamentoM" name="lstDepartamentoM" class="custom-select" aria-label="lstDepartamentoM"></select>
+                                    </div>
+                                  </div>
+                                  
+                                  <div class="form-group row">
+                                    <label class="col-lg-3 col-form-label form-control-label">Municipio</label>
+                                    <div class="col-lg-9">
+                                      <select id="lstMunicipioM" name="lstMunicipioM" class="custom-select" aria-label="lstMunicipioM"></select>
+                                    </div>
+                                  </div>
+                                </div> <!-- FIN DEL PRIMER bloque.-->
+                                <!-- inicia segundo bloque.-->
+                                <div class="col-md-6">
+                              <!-- NOMBRES, LUGAR DE TRABAJO, PROFESION U OFICIO, DUI, TELEFONO , DIRECCIÓN -->
+                                <div class="form-group row">
+                                <label class="col-lg-3 col-form-label form-control-label">Nombres</label>
+                                  <div class="col-lg-9">
+                                    <input class="form-control" name = "txtnombrem" id = "nombrem" type="text" onchange="conMayusculas(this);" aria-label="txtnombrem">
+                                  </div>
+                                </div>
+                                <div class="form-group row">
+                                <label class="col-lg-3 col-form-label form-control-label">Lugar de Trabajo</label>
+                                  <div class="col-lg-9">
+                                    <input class="form-control" name = "txtlugarm" id = "lugarm" type= "text" onchange="conMayusculas(this);" aria-label="lugarm">
+                                  </div>
+                                </div>                        
+                                <div class="form-group row">
+                                <label class="col-lg-3 col-form-label form-control-label">Profesión u Oficio</label>
+                                  <div class="col-lg-9">
+                                    <input class="form-control" name="txtpom" id ="pom" type="text" onchange="conMayusculas(this);" aria-label="pom">								
+                                  </div>
+                                </div>                        
+                                <div class="form-group row">
+                                <label class="col-lg-3 col-form-label form-control-label">N.º DUI</label>
+                                  <div class="col-lg-9">
+                                    <input class="form-control" name="txtduim" id="duim" type="text" aria-label="duim">
+                                  </div>
+                                </div>
+                                <div class="form-group row">
+                                <label class="col-lg-3 col-form-label form-control-label">Teléfono</label>
+                                  <div class="col-lg-9">
+                                    <input class="form-control" name="txttelefonom" id="telefonom" type="text" aria-label="telefonom">
+                                  </div>
+                                </div>
+                                <div class="form-group row">
+                                <label class="col-lg-3 col-form-label form-control-label">Dirección</label>
+                                  <div class="col-lg-9">
+                                    <textarea class="form-control" name="txtdireccionm" id="direccionm" aria-label="direccionm"></textarea>
+                                  </div>
+                                </div>                        
+                                </div> <!-- DIV 2 DEL RESPONSABLE MADRE-->
+                                
+                              </div> <!-- FIN DEL MODAL  RESPONSABLE MADRE-->
+                            </fieldset>
+                            <!-- FIN INFORMACIÓN DEL MADRE -->
+                            <!-- INFORMACIÓN DEL ENCARGADO -->
+                            <fieldset>
+                              <legend>Información del Encargado
+                              <input type="hidden" name="txtideo" id="txtideo">
+                              <!-- radio -->
+                              <div class="form-group">
+                                <div class="custom-control custom-radio">
+                                  <input class="custom-control-input" type="radio" id="encargadoo" name="rdencargado" value="Otro" onclick = "PasarFocoOtros();">
+                                  <label for="encargadoo" class="custom-control-label">Responsable</label>
+                                </div>
+                              </div>
+                            </legend>
+                              <div class="modal-body row">
+                                <div class="col-md-6">
+                                <!-- FECHA NACIMIENTO, NACIONALIDAD, ESTADO FAMILIAR, ZONA, DEPARTAMENTO, MUNICIPIO -->
+                                  <div class="form-group row">
+                                    <label class="col-lg-3 col-form-label form-control-label">Fecha Nacimiento</label>
+                                    <div class="col-lg-9">
+                                      <input class="form-control" type="date" id="txtfechanacimientoo" name="txtfechanacimientoo" aria-label="txtfechanacimientoo">
+                                    </div>
+                                  </div>
+                                  
+                                  <div class="form-group row">
+                                    <label class="col-lg-3 col-form-label form-control-label">Nacionalidad</label>
+                                    <div class="col-lg-9">
+                                      <select id="lstNacionalidadO" name="lstNacionalidadO" class="custom-select" aria-label="lstNacionalidadO"></select>							
+                                    </div>
+                                  </div>
+                                  
+                                  <div class="form-group row">
+                                    <label class="col-lg-3 col-form-label form-control-label">Estado Familiar</label>
+                                    <div class="col-lg-9">
+                                      <select id="lstEstadoFamiliarO" name="lstEstadoFamiliarO" class="custom-select" aria-label="lstEstadoFamiliarO"></select>							
+                                    </div>
+                                  </div>
+                                  
+                                  <div class="form-group row">
+                                    <label class="col-lg-3 col-form-label form-control-label">Zona</label>
+                                    <div class="col-lg-9">
+                                      <select id="lstZonaResidenciaO" name="lstZonaResidenciaO" class="custom-select" aria-label="lstZonaResidenciaO"></select>	
+                                    </div>
+                                  </div>
+                                  
+                                  <div class="form-group row">
+                                    <label class="col-lg-3 col-form-label form-control-label">Departamento</label>
+                                    <div class="col-lg-9">
+                                      <select id="lstDepartamentoO" name="lstDepartamentoO" class="custom-select" aria-label="lstDepartamentoO"></select>
+                                    </div>
+                                  </div>
+                                  
+                                  <div class="form-group row">
+                                    <label class="col-lg-3 col-form-label form-control-label">Municipio</label>
+                                    <div class="col-lg-9">
+                                      <select id="lstMunicipioO" name="lstMunicipioO" class="custom-select" aria-label="lstMunicipioO"></select>
+                                    </div>
+                                  </div>
+                                </div> <!-- FIN DEL PRIMER bloque.-->
+                                <!-- inicia segundo bloque.-->
+                                <div class="col-md-6">
+                                  <!-- NOMBRES, LUGAR DE TRABAJO, PROFESION U OFICIO, DUI, TELEFONO , DIRECCIÓN -->
+                                  <div class="form-group row">
+                                    <label class="col-lg-3 col-form-label form-control-label">Nombres</label>
+                                    <div class="col-lg-9">
+                                      <input class="form-control" name = "txtnombreo" id = "nombreo" type="text" onchange="conMayusculas(this);" aria-label="nombreo">
+                                    </div>
+                                  </div>
+                                  <div class="form-group row">
+                                    <label class="col-lg-3 col-form-label form-control-label">Lugar de Trabajo</label>
+                                    <div class="col-lg-9">
+                                      <input class="form-control" name = "txtlugaro" id = "lugaro" type= "text" onchange="conMayusculas(this);" aria-label="lugaro">
+                                    </div>
+                                  </div>                        
+                                  <div class="form-group row">
+                                    <label class="col-lg-3 col-form-label form-control-label">Profesión u Oficio</label>
+                                    <div class="col-lg-9">
+                                      <input class="form-control" name="txtpoo" id ="poo" type="text" onchange="conMayusculas(this);" aria-label="poo">								
+                                    </div>
+                                  </div>                        
+                                  <div class="form-group row">
+                                    <label class="col-lg-3 col-form-label form-control-label">N.º DUI</label>
+                                    <div class="col-lg-9">
+                                      <input class="form-control" name="txtduio" id="duio" type="text" aria-label="duio">
+                                    </div>
+                                  </div>
+                                  <div class="form-group row">
+                                    <label class="col-lg-3 col-form-label form-control-label">Teléfono</label>
+                                    <div class="col-lg-9">
+                                      <input class="form-control" name="txttelefonoo" id="telefonoo" type="text" aria-label="telefonoo">
+                                    </div>
+                                  </div>
+                                  <div class="form-group row">
+                                    <label class="col-lg-3 col-form-label form-control-label">Dirección</label>
+                                    <div class="col-lg-9">
+                                      <textarea class="form-control" name="txtdirecciono" id="direcciono" aria-label="direcciono"></textarea>
+                                    </div>
+                                  </div>                        
+                                </div> <!-- DIV 2 DEL RESPONSABLE MADRE-->
+                              </div> <!-- CIERRO DE MODAL BODY ROW-->
+                            </fieldset>
+                            <!-- FIN INFORMACIÓN DEL ENCARGADO -->
                           </div>
-                        </div>
-                        <div class="form-group row">
-                         <label class="col-lg-3 col-form-label form-control-label">Lugar de Trabajo</label>
-                          <div class="col-lg-9">
-                            <input class="form-control" name = "txtlugarp" id = "lugarp" type= "text" onchange="conMayusculas(this);">
-                          </div>
-                        </div>                        
-                        <div class="form-group row">
-                         <label class="col-lg-3 col-form-label form-control-label">Profesión u Oficio</label>
-                          <div class="col-lg-9">
-                            <input class="form-control" name="txtpop" id ="pop" type="text" onchange="conMayusculas(this);">								
-                          </div>
-                        </div>                        
-                        <div class="form-group row">
-                         <label class="col-lg-3 col-form-label form-control-label">N.º DUI</label>
-                          <div class="col-lg-9">
-                            <input class="form-control" name="txtduip" id="duip" type="text">
-                          </div>
-                        </div>
-                        <div class="form-group row">
-                         <label class="col-lg-3 col-form-label form-control-label">Teléfono</label>
-                          <div class="col-lg-9">
-                            <input class="form-control" name="txttelefonop" id="telefonop" type="text">
-                          </div>
-                        </div>
-                        <div class="form-group row">
-                         <label class="col-lg-3 col-form-label form-control-label">Dirección</label>
-                          <div class="col-lg-9">
-                            <textarea class="form-control" name="txtdireccionp" id="direccionp" style="height: 60px;"></textarea>
-                          </div>
-                        </div>                        
-                        </div> <!-- DIV 2 DEL RESPONSABLE MADRE-->
-                        
-                      </div> <!-- FIN DEL MODAL  RESPONSABLE MADRE-->
-                    </fieldset>
-                    <!-- FIN INFORMACIÓN DEL PADRE -->
-                   <!-- INFORMACIÓN DEL MADRE -->
-                    <fieldset>
-                     <legend>Información de la Madre
-                      <input type="hidden" name="txtidem" id="txtidem">
-                      <div class="form-group">
-                        <div class="custom-control custom-radio">
-                          <input class="custom-control-input" type="radio" id="encargadom" name="rdencargado" value="Madre" onclick = "PasarFocoMadre();">
-                          <label for="encargadom" class="custom-control-label">Responsable</label>
-                        </div>
-                      </div>
-                     </legend>
-                      <div class="modal-body row">
-                        <div class="col-md-6">
-                         <!-- FECHA NACIMIENTO, NACIONALIDAD, ESTADO FAMILIAR, ZONA, DEPARTAMENTO, MUNICIPIO -->
-                           <div class="form-group row">
-                            <label class="col-lg-3 col-form-label form-control-label">Fecha Nacimiento</label>
-                             <div class="col-lg-9">
-                              <input class="form-control" type="date" id="txtfechanacimientom" name="txtfechanacimientom">
-                             </div>
-                           </div>
-                           
-                           <div class="form-group row">
-                            <label class="col-lg-3 col-form-label form-control-label">Nacionalidad</label>
-                             <div class="col-lg-9">
-                              <select id="lstNacionalidadM" name="lstNacionalidadM" class="custom-select"></select>							
-                             </div>
-                           </div>
-                           
-                           <div class="form-group row">
-                            <label class="col-lg-3 col-form-label form-control-label">Estado Familiar</label>
-                             <div class="col-lg-9">
-                              <select id="lstEstadoFamiliarM" name="lstEstadoFamiliarM" class="custom-select"></select>							
-                             </div>
-                           </div>
-                           
-                           <div class="form-group row">
-                            <label class="col-lg-3 col-form-label form-control-label">Zona</label>
-                             <div class="col-lg-9">
-                              <select id="lstZonaResidenciaM" name="lstZonaResidenciaM" class="custom-select"></select>	
-                             </div>
-                           </div>
-                           
-                           <div class="form-group row">
-                            <label class="col-lg-3 col-form-label form-control-label">Departamento</label>
-                             <div class="col-lg-9">
-                              <select id="lstDepartamentoM" name="lstDepartamentoM" class="custom-select"></select>
-                             </div>
-                           </div>
-                           
-                           <div class="form-group row">
-                            <label class="col-lg-3 col-form-label form-control-label">Municipio</label>
-                             <div class="col-lg-9">
-                              <select id="lstMunicipioM" name="lstMunicipioM" class="custom-select"></select>
-                             </div>
-                           </div>
-                        </div> <!-- FIN DEL PRIMER bloque.-->
-                        <!-- inicia segundo bloque.-->
-                        <div class="col-md-6">
-                      <!-- NOMBRES, LUGAR DE TRABAJO, PROFESION U OFICIO, DUI, TELEFONO , DIRECCIÓN -->
-                        <div class="form-group row">
-                         <label class="col-lg-3 col-form-label form-control-label">Nombres</label>
-                          <div class="col-lg-9">
-                            <input class="form-control" name = "txtnombrem" id = "nombrem" type="text" onchange="conMayusculas(this);">
-                          </div>
-                        </div>
-                        <div class="form-group row">
-                         <label class="col-lg-3 col-form-label form-control-label">Lugar de Trabajo</label>
-                          <div class="col-lg-9">
-                            <input class="form-control" name = "txtlugarm" id = "lugarm" type= "text" onchange="conMayusculas(this);">
-                          </div>
-                        </div>                        
-                        <div class="form-group row">
-                         <label class="col-lg-3 col-form-label form-control-label">Profesión u Oficio</label>
-                          <div class="col-lg-9">
-                            <input class="form-control" name="txtpom" id ="pom" type="text" onchange="conMayusculas(this);">								
-                          </div>
-                        </div>                        
-                        <div class="form-group row">
-                         <label class="col-lg-3 col-form-label form-control-label">N.º DUI</label>
-                          <div class="col-lg-9">
-                            <input class="form-control" name="txtduim" id="duim" type="text">
-                          </div>
-                        </div>
-                        <div class="form-group row">
-                         <label class="col-lg-3 col-form-label form-control-label">Teléfono</label>
-                          <div class="col-lg-9">
-                            <input class="form-control" name="txttelefonom" id="telefonom" type="text">
-                          </div>
-                        </div>
-                        <div class="form-group row">
-                         <label class="col-lg-3 col-form-label form-control-label">Dirección</label>
-                          <div class="col-lg-9">
-                            <textarea class="form-control" name="txtdireccionm" id="direccionm" style="height: 60px;"></textarea>
-                          </div>
-                        </div>                        
-                        </div> <!-- DIV 2 DEL RESPONSABLE MADRE-->
-                        
-                      </div> <!-- FIN DEL MODAL  RESPONSABLE MADRE-->
-                    </fieldset>
-                    <!-- FIN INFORMACIÓN DEL MADRE -->
-                     <!-- INFORMACIÓN DEL ENCARGADO -->
-                    <fieldset>
-                     <legend>Información del Encargado
-                     <input type="hidden" name="txtideo" id="txtideo">
-                      <!-- radio -->
-                      <div class="form-group">
-                        <div class="custom-control custom-radio">
-                          <input class="custom-control-input" type="radio" id="encargadoo" name="rdencargado" value="Otro" onclick = "PasarFocoOtros();">
-                          <label for="encargadoo" class="custom-control-label">Responsable</label>
-                        </div>
-                      </div>
-                     </legend>
-                      <div class="modal-body row">
-                        <div class="col-md-6">
-                         <!-- FECHA NACIMIENTO, NACIONALIDAD, ESTADO FAMILIAR, ZONA, DEPARTAMENTO, MUNICIPIO -->
-                           <div class="form-group row">
-                            <label class="col-lg-3 col-form-label form-control-label">Fecha Nacimiento</label>
-                             <div class="col-lg-9">
-                              <input class="form-control" type="date" id="txtfechanacimientoo" name="txtfechanacimientoo">
-                             </div>
-                           </div>
-                           
-                           <div class="form-group row">
-                            <label class="col-lg-3 col-form-label form-control-label">Nacionalidad</label>
-                             <div class="col-lg-9">
-                              <select id="lstNacionalidadO" name="lstNacionalidadO" class="custom-select"></select>							
-                             </div>
-                           </div>
-                           
-                           <div class="form-group row">
-                            <label class="col-lg-3 col-form-label form-control-label">Estado Familiar</label>
-                             <div class="col-lg-9">
-                              <select id="lstEstadoFamiliarO" name="lstEstadoFamiliarO" class="custom-select"></select>							
-                             </div>
-                           </div>
-                           
-                           <div class="form-group row">
-                            <label class="col-lg-3 col-form-label form-control-label">Zona</label>
-                             <div class="col-lg-9">
-                              <select id="lstZonaResidenciaO" name="lstZonaResidenciaO" class="custom-select"></select>	
-                             </div>
-                           </div>
-                           
-                           <div class="form-group row">
-                            <label class="col-lg-3 col-form-label form-control-label">Departamento</label>
-                             <div class="col-lg-9">
-                              <select id="lstDepartamentoO" name="lstDepartamentoO" class="custom-select"></select>
-                             </div>
-                           </div>
-                           
-                           <div class="form-group row">
-                            <label class="col-lg-3 col-form-label form-control-label">Municipio</label>
-                             <div class="col-lg-9">
-                              <select id="lstMunicipioO" name="lstMunicipioO" class="custom-select"></select>
-                             </div>
-                           </div>
-                        </div> <!-- FIN DEL PRIMER bloque.-->
-                        <!-- inicia segundo bloque.-->
-                        <div class="col-md-6">
-                           <!-- NOMBRES, LUGAR DE TRABAJO, PROFESION U OFICIO, DUI, TELEFONO , DIRECCIÓN -->
-                           <div class="form-group row">
-                            <label class="col-lg-3 col-form-label form-control-label">Nombres</label>
-                             <div class="col-lg-9">
-                               <input class="form-control" name = "txtnombreo" id = "nombreo" type="text" onchange="conMayusculas(this);">
-                             </div>
-                           </div>
-                           <div class="form-group row">
-                            <label class="col-lg-3 col-form-label form-control-label">Lugar de Trabajo</label>
-                             <div class="col-lg-9">
-                               <input class="form-control" name = "txtlugaro" id = "lugaro" type= "text" onchange="conMayusculas(this);">
-                             </div>
-                           </div>                        
-                           <div class="form-group row">
-                            <label class="col-lg-3 col-form-label form-control-label">Profesión u Oficio</label>
-                             <div class="col-lg-9">
-                               <input class="form-control" name="txtpoo" id ="poo" type="text" onchange="conMayusculas(this);">								
-                             </div>
-                           </div>                        
-                           <div class="form-group row">
-                            <label class="col-lg-3 col-form-label form-control-label">N.º DUI</label>
-                             <div class="col-lg-9">
-                               <input class="form-control" name="txtduio" id="duio" type="text">
-                             </div>
-                           </div>
-                           <div class="form-group row">
-                            <label class="col-lg-3 col-form-label form-control-label">Teléfono</label>
-                             <div class="col-lg-9">
-                               <input class="form-control" name="txttelefonoo" id="telefonoo" type="text">
-                             </div>
-                           </div>
-                           <div class="form-group row">
-                            <label class="col-lg-3 col-form-label form-control-label">Dirección</label>
-                             <div class="col-lg-9">
-                               <textarea class="form-control" name="txtdirecciono" id="direcciono" style="height: 60px;"></textarea>
-                             </div>
-                           </div>                        
-                        </div> <!-- DIV 2 DEL RESPONSABLE MADRE-->
-                    </fieldset>
-                    <!-- FIN INFORMACIÓN DEL ENCARGADO -->
-                  </div>
-                 </div>
-                </div> <!-- FIN DEL TAB RESPONSABLES. -->
-                <!-- ******************************************************************************************************************* -->
-                <!-- ******************************************************************************************************************* -->
-                <div class="tab-pane h-100 p-3 border border-danger" id="bitacora" role="tabpanel" aria-labelledby="bitacora-tab">
-                 <!-- INICIO DE DATOS DE LA MATRICLA DEL ALUMNO -->
-                 <div class="modal-body row">
-                  <div class="col-md-7">
-                   <!-- checkbox -->
-                      <div class="form-group">
-                          <div class="custom-control custom-checkbox">
-                           <input class="custom-control-input" type="checkbox" id="chktraslado" name="chktraslado">
-                           <label for="chktraslado" class="custom-control-label">Información Adicional para las Constancias.</label>
-                          </div>
-                      </div>
-                   <div class="form-group">
-                         <label>Dirección</label>
-                          <div class="col-lg-9">
-                            <textarea class="form-control" rows="3" cols="40" name="txttraslado" id="txttraslado">El cual solicita traslado al Centro Educativo que usted dirige por cambio de domicilio.</textarea>
-                          </div>
-                   </div>
-                  </div>
-                   <!-- SELECT ESTUDIO, CONDUCTA Y BOTONES DE CHECK --> 
-                  <div class="col-md-5">
-                    <div class="form-group row">
-                      <label class="col-lg-3 col-form-label form-control-label">Estudia(ó)</label>
-                        <div class="col-lg-9">
-                           <select class="custom-select" name="estudia" id="lstestudia"> 
-                            <option selected>Estudia</option>
-                            <option>Estudió</option>
-                            <option>Estudió y Aprobó</option>
-                           </select>
-                        </div>
+                        </div> <!-- FIN DEL TAB RESPONSABLES. -->
                     </div>
-                    <div class="form-group row">
-                      <label class="col-lg-3 col-form-label form-control-label">Conducta</label>
-                        <div class="col-lg-9">
-                           <select class="custom-select" name="conducta" id="lstconducta"> 
-                            <option selected>Buena</option>
-                            <option>Muy Buena</option>
-                            <option>Excelente</option>
-                           </select>
+                    <!-- ******************************************************************************************************************* -->
+                    <!-- ******************************************************************************************************************* -->
+                    <div class="tab-pane h-100 p-3 border border-danger" id="bitacora" role="tabpanel" aria-labelledby="bitacora-tab">
+                      <!-- INICIO DE DATOS DE LA MATRICLA DEL ALUMNO -->
+                      <div class="modal-body row">
+                      <div class="col-md-7">
+                        <!-- checkbox -->
+                          <div class="form-group">
+                              <div class="custom-control custom-checkbox">
+                                <input class="custom-control-input" type="checkbox" id="chktraslado" name="chktraslado">
+                                <label for="chktraslado" class="custom-control-label">Información Adicional para las Constancias.</label>
+                              </div>
+                          </div>
+                        <div class="form-group">
+                            <label>Dirección</label>
+                              <div class="col-lg-9">
+                                <textarea class="form-control" rows="3" cols="40" name="txttraslado" id="txttraslado" aria-label="txttraslado">El cual solicita traslado al Centro Educativo que usted dirige por cambio de domicilio.</textarea>
+                              </div>
+                      </div>
+                      </div>
+                      <!-- SELECT ESTUDIO, CONDUCTA Y BOTONES DE CHECK --> 
+                      <div class="col-md-5">
+                        <div class="form-group row">
+                          <label class="col-lg-3 col-form-label form-control-label">Estudia(ó)</label>
+                            <div class="col-lg-9">
+                                <select class="custom-select" name="estudia" id="lstestudia" aria-label="lstestudia"> 
+                                  <option selected>Estudia</option>
+                                  <option>Estudió</option>
+                                  <option>Estudió y Aprobó</option>
+                                </select>
+                            </div>
                         </div>
+                        <div class="form-group row">
+                          <label class="col-lg-3 col-form-label form-control-label">Conducta</label>
+                            <div class="col-lg-9">
+                                <select class="custom-select" name="conducta" id="lstconducta" aria-label="lstconducta"> 
+                                  <option selected>Buena</option>
+                                  <option>Muy Buena</option>
+                                  <option>Excelente</option>
+                                </select>
+                            </div>
+                        </div>
+                          <!-- checkbox -->
+                          <div class="form-group">
+                            <div class="form-check">
+                              <input class="form-check-input" type="checkbox" name="chkfirma" id="chkfirma" aria-label="chkfirma">
+                              <label class="form-check-label">Firma</label>
+                            </div>
+                            <div class="form-check">
+                              <input class="form-check-input" type="checkbox" name="chksello" id="chksello" aria-label="chksello">
+                              <label class="form-check-label">Sello</label>
+                            </div>
+                            <div class="form-check">
+                              <input class="form-check-input" type="checkbox" name="chkfoto" id="chkfoto" aria-label="chkfoto">
+                              <label class="form-check-label">Foto</label>
+                            </div>
+                            <div class="custom-control custom-checkbox">
+                              <input class="custom-control-input" type="checkbox" id="chkCrearArchivoPdf">
+                              <label for="chkCrearArchivoPdf" class="custom-control-label">Crear Archivo PDF</label>
+                            </div>
+                          </div>
+                      </div> 
                     </div>
-                      <!-- checkbox -->
-                      <div class="form-group">
-                        <div class="form-check">
-                          <input class="form-check-input" type="checkbox" name="chkfirma" id="chkfirma">
-                          <label class="form-check-label">Firma</label>
-                        </div>
-                        <div class="form-check">
-                          <input class="form-check-input" type="checkbox" name="chksello" id="chksello">
-                          <label class="form-check-label">Sello</label>
-                        </div>
-                        <div class="form-check">
-                          <input class="form-check-input" type="checkbox" name="chkfoto" id="chkfoto">
-                          <label class="form-check-label">Foto</label>
-                        </div>
-                        <div class="custom-control custom-checkbox">
-                          <input class="custom-control-input" type="checkbox" id="chkCrearArchivoPdf">
-                          <label for="chkCrearArchivoPdf" class="custom-control-label">Crear Archivo PDF</label>
+                    <!-- BITACORA DE LA MATRICULA -->
+                      <div class="modal-body row">
+                        <div class="col">
+                            <table id="listadoMatricula" class="table table-striped table-bordered display responsive nowrap">
+                              <thead>
+                                <tr>
+                                  <th>Acción</th>
+                                  <th>Id</th>
+                                  <th>Código</th>
+                                  <th>Ingreso</th>
+                                  <th>Descripción</th>
+                                </tr>
+                              </thead>
+                              <tbody id="listaMatricula"></tbody>
+                            </table>
                         </div>
                       </div>
-                  </div> 
-                 </div>
-                 
-                 <!-- BITACORA DE LA MATRICULA -->
-                 <div class="modal-body row">
-                  <div class="col">
-                   <table id="listadoMatricula" class="table table-striped table-bordered display responsive nowrap" style="width: 100%;">
-                      <thead>
-                       <tr>
-                        <th>Acción</th>
-                        <th>Id</th>
-                        <th>Código</th>
-                        <th>Ingreso</th>
-                        <th>Descripción</th>
-                       </tr>
-                     </thead>
-                     
-                      <tbody id="listaMatricula">
-                      </tbody>
-                   </table>
-                  </div>
-                 </div>
-                </div>
-                <!-- FIN DE DATOS DE LA MATRICLA DEL ALUMNO -->
-                <!-- ******************************************************************************************************************* -->
-                <!-- ******************************************************************************************************************* -->
-                <div class="tab-pane h-100 p-3 border border-info" id="settings" role="tabpanel" aria-labelledby="settings-tab">
+                    </div>
+                    <!-- FIN DE DATOS DE LA MATRICLA DEL ALUMNO -->
+                    <!-- ******************************************************************************************************************* -->
+                    <!-- ******************************************************************************************************************* -->
+                    <div class="tab-pane h-100 p-3 border border-info" id="settings" role="tabpanel" aria-labelledby="settings-tab">
                           <div class="input-group mb-3">
                             <div class="input-group-prepend">
                               <span class="input-group-text">Código</span>
                             </div>
-                            <input type="text" class="form-control" id="txtcodigo" name="textcodigo" readonly="readonly">
+                            <input type="text" class="form-control" id="txtcodigo" name="textcodigo" readonly="readonly" aria-label="txtcodigo">
                           </div>
                           <div class="input-group mb-3">
                             <div class="input-group-prepend">
                               <span class="input-group-text">Estatus</span>
                             </div>
-                            <select class="form-control"  id="lstEstatus" name="lstEstatus"></select>
+                            <select class="form-control"  id="lstEstatus" name="lstEstatus" aria-label="lstEstatus"></select>
                           </div>                          
-                </div>
-                <!-- FIN DE DATOS DE CONFIGURACIÓN -->
-                <!-- ******************************************************************************************************************* -->
-                <!-- ******************************************************************************************************************* -->
-                <div class="tab-pane h-100 p-3 border border-info" id="matricular" role="tabpanel" aria-labelledby="matricular-tab">
-                      <div class="card card-primary w-50 mx-auto">
-                        <div class="card-header">
-                          <h3 class="card-title">Seleccione. Matricula</h3>
-                        </div>
-                        <!-- /.card-header -->
-                        <!-- card body - form start -->
-
-                        <div class="card-body">
-                            <!-- checkbox -->
-                            <div class="form-group">
-                              <div class="custom-control custom-checkbox">
-                              <input class="custom-control-input" type="checkbox" id="chkCrearMatricula" name="chkCrearMatricula">
-                              <label for="chkCrearMatricula" class="custom-control-label">Crear Matricula</label>
-                              </div>
-                             </div>
-                           <!-- / AÑO LECTIVO -->
-                              <div class="form-group row">
-                                <label class="col-sm-4 col-form-label" for="lstannlectivo">Año Lectivo</label>
-                                <div class="col-sm-6">
-                                  <select id="lstannlectivo" name="lstannlectivo" autofocus class="custom-select" required="required"></select>
-                                </div>
-                              </div>
-                              <!-- / MODALIDAD -->
-                              <div class="form-group row">
-                                <label class="col-sm-4 col-form-label" for="lstmodalidad">Modalidad</label>
-                                <div class="col-sm-6">
-                                  <select id="lstmodalidad" name="lstmodalidad" class="custom-select" required="required"></select>
-                                </div>
-                              </div>
-                              <!-- / GRADO, SECCION Y TURNO -->
-                              <div class="form-group row">
-                                <label class="col-sm-4 col-form-label" for="lstgradoseccion">Grado - Sección - turno</label>
-                                <div class="col-sm-6">
-                                  <select id="lstgradoseccion" name="lstgradoseccion" class="custom-select" required="required" ></select>
-                                </div>
-                              </div>
-                             <!-- / GRADO, SECCION Y TURNO -->
-                              <div class="form-group row">
-                               <label class="col-lg-3 col-form-label form-control-label">Fecha Matricula</label>
-                                <div class="col-lg-9">
-                                 <input class="form-control" type="date" id="txtfechaMatricula" name="txtfechaMatricula">
-                               </div>
-                             </div>
-                        </div>
-                          <!-- /.card-body -->
-                          <div class="card-footer d-flex justify-content-center">
-                          </div>
-                      </div>
-                </div>
-                <!-- FIN DE DATOS DE DATOS DE LA MATRICLA DEL ALUMNO -->
-                <!-- ******************************************************************************************************************* -->
-                <!-- ******************************************************************************************************************* -->
-                <!-- Tab DIGITALIZACIÓN DOCUMENTOS -->
-                <div class="tab-pane p-2 border border-secondary" id="digitalizacion" role="tabpanel" aria-labelledby="digitalizacion-tab">
-                  <div class="modal-body row">
-                    <div class="col-md-12">
-                        <!-- EN LA DIGITALICACION DOCUMENOTS-->
-                        <fieldset>
-                            <div class="row">
-                              <div class="col-lg-8 d-flex justify-content-start">
-                                <h2><label for="LblPortafolio" style="color: black;">Portafolio</label></h2>
-                              </div>
-                              <div class="col-lg-4 d-flex justify-content-end">
-                                  <input class="btn btn-primary" type="button" value="Agregar" name="goNuevoPortafolio" id="goNuevoPortafolio" style="width: 100%;">
-                                  <input class="btn btn-primary" type="button" value="Ver" name="goVerPortafolio" id="goVerPortafolio" style="display: none; width: 100%;">
-                              </div>
-                            </div>
-                            <section id="EditarNuevoPortafolio"  style="display: none; background-color: #F5F5F5; box-shadow: #99FFFF;">
-                              <div class="row">                                   
-                                    <!-- .col para FORMULARIO DE LOS DATOS.. -->
-                                    <div class="col col-sm-12 col-md-12 col-lg-6">
-                                      <!-- Default form subscription -->
-                                      <form name="formPortafolio" id="formPortafolio" class="text-center border border-light p-5" action="#!">
-                                        <input type="hidden" id="accionPortafolio" name="accionPortafolio" value = 'AgregarNuevo'>            
-                                        <input type="hidden" id="IdPortafolio" name="IdPortafolio" value = '0'>            
-                                            <div class="card">
-
-                                              <div class="card-body">
-                                                <div class="form-group text-left">    
-                                                  <!-- FECHA -->
-                                                  <label class="form-label form-control-label">Fecha</label>
-                                                  <input class="form-control" type="date" id="txtFechaPortafolio" name="txtFechaPortafolio" tabindex="1">  
-                                                  <!-- TÍTULO -->
-                                                  <label class="form-label form-control-label">Título</label>
-                                                  <input class="form-control" type="text" id="TituloPortafolio" name="TituloPortafolio" tabindex="2">  
-                                                  <!-- DESCRIPCION -->
-                                                  <div class="md-form amber-textarea">
-                                                    <i class="fas fa-pencil-alt prefix"></i>
-                                                    <textarea class="form-control md-textarea" id="txtComentarioPortafolio" name="txtComentarioPortafolio" tabindex="3" rows="3"></textarea>
-                                                    <label for="txtComentarioPortafolio">Descripción</label>
-                                                  </div>
-                                                </div>
-                                              </div>
-
-                                              <!-- CARD FOOTER - BOTONES GUARDAR -->
-                                              <div class="card-footer">
-                                                <div class="d-flex justify-content-start align-items-start">
-                                                  <input type="button" class="btn btn-secondary" value="Agregar Otro..." data-toggle="tooltip" data-placement="top" title="Agregar" id = "goAgregarPortafolio"  style="display: none;">
-                                                </div>
-
-                                                  <div class="d-flex justify-content-end align-items-end">
-                                                    <button class="btn btn-success" data-toggle="tooltip" data-placement="top" title="Guardar" id = "goGuardarPortafolio">
-                                                      <span class="fas fa-save"> Guardar </span>
-                                                    </button>
-                                                  </div>
-                                              </div>
-                                          </div>  <!-- fin del card -->
-                                      </form> <!-- fin DEL FORMULARIO CONTACTO--> 
-                                    </div>  <!-- FIN DEL COLUM 8 -->
-
-                                    <!-- .col para subir la imagen. -->
-                                    <!-- .** ** ** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **-->
-                                    <div class="col col-sm-12 col-md-12 col-lg-6">
-                                      <form name="formImagen" id="formImagen" class="text-center border border-light p-5" action="#!">
-                                      <div class="card" style="width: 18rem;">
-                                        <div class="card-head ">
-                                              <div id="estilo_foto">             
-                                                <p id="AgregarFoto">Agregar Archivo</p>
-                                                  <input type="file" value="" name="fileupPortafolio" id="fileupPortafolio" disabled>
-                                              </div>
-                                              <label class="text-center" id="namefilePortafolio"></label>
-                                                <span class="imguploadPortafolio ok"><i class="fa fa-check"></i></span>
-                                                <span class="imguploadPortafolio stop"><i class="fa fa-times"></i></span>
-                                        </div>
-                                          <div class="card-body">
-                                            <form method="post" action="#" enctype="multipart/form-data">
-                                              <img class="card-img-top-Portafolio img-fluid" id="ImagenPortafolio" src="" style="display: none;">
-                                              <iframe id='iframePDF' frameborder='0' scrolling='no' width='100%' height='250px' src='' style="display: none;"></iframe>
-                                            </form>
-                                          </div>
-                                          <div class="card-footer text-center">
-                                            <input type="button" class="btn btn-primary btn-block uploadPortafolio" value="Subir" id="SubirImagenPortafolio" disabled>
-                                          </div>
-                                      </div>                                  
-                                      </form>
-                                    </div>
-                              </div>  <!-- div class row  - fin -->
-                            </section>  <!-- FIN DEL SECTION -->
-                            <section id="ListarPortafolio">
-                                    <!-- MOSTRAR IMAGENES SEGUN EL REGISTRO.-->
-                                      <!-- Card -->
-                                      <!-- Card -->
-                                  <!-- MOSTRAR IMAGENES SEGUN EL REGISTRO.-->
-                            </section>
-                      </fieldset>
                     </div>
+                    <!-- FIN DE DATOS DE CONFIGURACIÓN -->
+                    <!-- ******************************************************************************************************************* -->
+                    <!-- ******************************************************************************************************************* -->
+                    <div class="tab-pane h-100 p-3 border border-info" id="matricular" role="tabpanel" aria-labelledby="matricular-tab">
+                          <div class="card card-primary w-50 mx-auto">
+                            <div class="card-header">
+                              <h3 class="card-title">Seleccione. Matricula</h3>
+                            </div>
+                            <!-- /.card-header -->
+                            <!-- card body - form start -->
+
+                            <div class="card-body">
+                                <!-- checkbox -->
+                                <div class="form-group">
+                                  <div class="custom-control custom-checkbox">
+                                  <input class="custom-control-input" type="checkbox" id="chkCrearMatricula" name="chkCrearMatricula">
+                                  <label for="chkCrearMatricula" class="custom-control-label">Crear Matricula</label>
+                                  </div>
+                                </div>
+                              <!-- / AÑO LECTIVO -->
+                                  <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label" for="lstannlectivo">Año Lectivo</label>
+                                    <div class="col-sm-6">
+                                      <select id="lstannlectivo" name="lstannlectivo" autofocus class="custom-select" required="required"></select>
+                                    </div>
+                                  </div>
+                                  <!-- / MODALIDAD -->
+                                  <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label" for="lstmodalidad">Modalidad</label>
+                                    <div class="col-sm-6">
+                                      <select id="lstmodalidad" name="lstmodalidad" class="custom-select" required="required"></select>
+                                    </div>
+                                  </div>
+                                  <!-- / GRADO, SECCION Y TURNO -->
+                                  <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label" for="lstgradoseccion">Grado - Sección - turno</label>
+                                    <div class="col-sm-6">
+                                      <select id="lstgradoseccion" name="lstgradoseccion" class="custom-select" required="required" ></select>
+                                    </div>
+                                  </div>
+                                <!-- / GRADO, SECCION Y TURNO -->
+                                  <div class="form-group row">
+                                  <label class="col-lg-3 col-form-label form-control-label" for="txtfechaMatricula">Fecha Matricula</label>
+                                    <div class="col-lg-9">
+                                    <input class="form-control" type="date" id="txtfechaMatricula" name="txtfechaMatricula" aria-label="txtfechaMatricula">
+                                  </div>
+                                </div>
+                            </div>
+                              <!-- /.card-body -->
+                              <div class="card-footer d-flex justify-content-center">
+                              </div>
+                          </div>
+                    </div>
+                    <!-- FIN DE DATOS DE DATOS DE LA MATRICLA DEL ALUMNO -->
+                    <!-- ******************************************************************************************************************* -->
+                    <!-- ******************************************************************************************************************* -->
+                    <!-- Tab DIGITALIZACIÓN DOCUMENTOS -->
+                    <div class="tab-pane p-2 border border-secondary" id="digitalizacion" role="tabpanel" aria-labelledby="digitalizacion-tab">
+                      <div class="modal-body row">
+                        <div class="col-md-12">
+                            <!-- EN LA DIGITALICACION DOCUMENOTS-->
+                            <fieldset>
+                                <div class="row">
+                                  <div class="col-lg-8 d-flex justify-content-start">
+                                    <h2><label for="LblPortafolio" style="color: black;">Portafolio</label></h2>
+                                  </div>
+                                  <div class="col-lg-4 d-flex justify-content-end">
+                                      <input class="btn btn-primary" type="button" value="Agregar" name="goNuevoPortafolio" id="goNuevoPortafolio" style="width: 100%;">
+                                      <input class="btn btn-primary" type="button" value="Ver" name="goVerPortafolio" id="goVerPortafolio" style="display: none; width: 100%;">
+                                  </div>
+                                </div>
+                                <section id="EditarNuevoPortafolio"  style="display: none; background-color: #F5F5F5; box-shadow: #99FFFF;">
+                                  <div class="row">                                   
+                                        <!-- .col para FORMULARIO DE LOS DATOS.. -->
+                                        <div class="col col-sm-12 col-md-12 col-lg-6">
+                                          <!-- Default form subscription -->
+                                          <form name="formPortafolio" id="formPortafolio" class="text-center border border-light p-5" action="#!">
+                                            <input type="hidden" id="accionPortafolio" name="accionPortafolio" value = "AgregarNuevo">            
+                                            <input type="hidden" id="IdPortafolio" name="IdPortafolio" value = "0">            
+                                                <div class="card">
+
+                                                  <div class="card-body">
+                                                    <div class="form-group text-left">    
+                                                      <!-- FECHA -->
+                                                      <label class="form-label form-control-label">Fecha</label>
+                                                      <input class="form-control" type="date" id="txtFechaPortafolio" name="txtFechaPortafolio" tabindex="1">  
+                                                      <!-- TÍTULO -->
+                                                      <label class="form-label form-control-label">Título</label>
+                                                      <input class="form-control" type="text" id="TituloPortafolio" name="TituloPortafolio" tabindex="2">  
+                                                      <!-- DESCRIPCION -->
+                                                      <div class="md-form amber-textarea">
+                                                        <i class="fas fa-pencil-alt prefix"></i>
+                                                        <textarea class="form-control md-textarea" id="txtComentarioPortafolio" name="txtComentarioPortafolio" tabindex="3" rows="3"></textarea>
+                                                        <label for="txtComentarioPortafolio">Descripción</label>
+                                                      </div>
+                                                    </div>
+                                                  </div>
+
+                                                  <!-- CARD FOOTER - BOTONES GUARDAR -->
+                                                  <div class="card-footer">
+                                                    <div class="d-flex justify-content-start align-items-start">
+                                                      <input type="button" class="btn btn-secondary" value="Agregar Otro..." data-toggle="tooltip" data-placement="top" title="Agregar" id = "goAgregarPortafolio"  style="display: none;">
+                                                    </div>
+
+                                                      <div class="d-flex justify-content-end align-items-end">
+                                                        <button class="btn btn-success" data-toggle="tooltip" data-placement="top" title="Guardar" id = "goGuardarPortafolio" type="button">
+                                                          <span class="fas fa-save"> Guardar </span>
+                                                        </button>
+                                                      </div>
+                                                  </div>
+                                              </div>  <!-- fin del card -->
+                                          </form> <!-- fin DEL FORMULARIO CONTACTO--> 
+                                        </div>  <!-- FIN DEL COLUM 8 -->
+
+                                        <!-- .col para subir la imagen. -->
+                                        <!-- .** ** ** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **-->
+                                        <div class="col col-sm-12 col-md-12 col-lg-6">
+                                          <form name="formImagen" id="formImagen" class="text-center border border-light p-5" action="#!">
+                                          <div class="card" style="width: 18rem;">
+                                            <div class="card-head ">
+                                                  <div id="estilo_foto">             
+                                                    <p id="AgregarFoto">Agregar Archivo</p>
+                                                      <input type="file" value="" name="fileupPortafolio" id="fileupPortafolio" disabled>
+                                                  </div>
+                                                  <label class="text-center" id="namefilePortafolio"></label>
+                                                    <span class="imguploadPortafolio ok"><i class="fa fa-check"></i></span>
+                                                    <span class="imguploadPortafolio stop"><i class="fa fa-times"></i></span>
+                                            </div>
+                                              <div class="card-body">
+                                                <form method="post" action="#" enctype="multipart/form-data">
+                                                  <img class="card-img-top-Portafolio img-fluid" id="ImagenPortafolio" src="#" style="display: none;">
+                                                  <iframe id="iframePDF" frameborder="0" scrolling="no" width="100%" height="250px" src="#" style="display: none;"></iframe>
+                                                </form>
+                                              </div>
+                                              <div class="card-footer text-center">
+                                                <input type="button" class="btn btn-primary btn-block uploadPortafolio" value="Subir" id="SubirImagenPortafolio" disabled>
+                                              </div>
+                                          </div>                                  
+                                          </form>
+                                        </div>
+                                  </div>  <!-- div class row  - fin -->
+                                </section>  <!-- FIN DEL SECTION -->
+                                <section id="ListarPortafolio">
+                                        <!-- MOSTRAR IMAGENES SEGUN EL REGISTRO.-->
+                                          <!-- Card -->
+                                          <!-- Card -->
+                                      <!-- MOSTRAR IMAGENES SEGUN EL REGISTRO.-->
+                                </section>
+                          </fieldset>
+                        </div>
+                      </div>
+                    </div> <!-- FIN DIGITALACIÓN DOCUMENTACIÓN -->
+                        <!-- FIN DE PORTAFOLIO -->
+                        <!-- ******************************************************************************************************************* -->
+                        <!-- ******************************************************************************************************************* -->
                   </div>
-                </div> <!-- FIN DIGITALACIÓN DOCUMENTACIÓN -->
-                    <!-- FIN DE PORTAFOLIO -->
-                    <!-- ******************************************************************************************************************* -->
-                    <!-- ******************************************************************************************************************* -->
-              </div>
-            </div>
-            </div> <!-- /.card-body -->
-            <!-- /.card-footer -->
-            <div class="card-footer">
-              <div class="form-group row">
-               <div class="col d-flex justify-content-center">
-                <input class="btn btn-primary btn-sm" type="submit" value="Guardar" name="Guardar">
-               </div>
-              </div>              
-            </div>
-          </div> <!-- /.card -->
-          </div> <!-- VALIDATE DE TODO EL DIV PARA LOS DIFERENTES INPUT'S -->
-     </form> <!-- fin del form -->            
+                </div>
+                </div> <!-- /.card-body -->
+                <!-- /.card-footer -->
+                <div class="card-footer">
+                  <div class="form-group row">
+                    <div class="col d-flex justify-content-center">
+                      <input class="btn btn-primary btn-sm" type="submit" value="Guardar" name="Guardar">
+                    </div>
+                  </div>              
+                </div>
+              </div> <!-- /.card -->
+            </div> <!-- VALIDATE DE TODO EL DIV PARA LOS DIFERENTES INPUT'S -->
+          </div>
         </div>
-      </div>
+      </form> <!-- fin del form -->            
     </section>
 </div> <!-- /.content-Wrapper, Contains page content. -->
 {% endblock %}

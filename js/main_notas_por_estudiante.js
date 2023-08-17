@@ -282,6 +282,17 @@ submitHandler: function(){
                             miLstPeriodo.append('<option value="R1">Recuperación 1</option>');
                             miLstPeriodo.append('<option value="R2">Recuperación 2</option>');
                         }
+          				// FOTO DEL ALUMNO.
+                        if(response.url_foto == "foto_no_disponible.jpg")
+                        {
+                            if(response.codigo_genero == "01"){
+                                $(".card-img-top").attr("src", "../registro_academico/img/avatar_masculino.png");
+                            }else{
+                                $(".card-img-top").attr("src", "../registro_academico/img/avatar_femenino.png");
+                            }
+                        }else{
+                            $(".card-img-top").attr("src", "../registro_academico/img/fotos/" + response.codigo_institucion + "/" + response.url_foto);	
+                        }
                 }
         },
             error:function(){
@@ -301,9 +312,9 @@ function AbrirVentana(url)
 }
 // Pasar foco cuando seleccionar un encargado.
 function PasarFoco()
-   {
-       $('#codigo_nie').focus();
-   }
+    {
+        $('#codigo_nie').focus();
+    }
 // Mensaje de Carga de Ajax.
 function configureLoadingScreen(screen){
     $(document)

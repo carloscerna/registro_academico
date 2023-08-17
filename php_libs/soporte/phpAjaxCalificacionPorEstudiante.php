@@ -13,6 +13,9 @@ $codigo_matricula = "";
 $codigo_grado = "";
 $periodo = "";
 $observacion = "";
+$codigo_institucion = "";
+$codigo_genero = "";
+$url_foto = "";
 $calificacion_A1 = 0; $calificacion_A2 = 0; $calificacion_PO = 0; $calificacion_RE = 0;
 // ruta de los archivos con su carpeta
     $path_root=trim($_SERVER['DOCUMENT_ROOT']);
@@ -33,18 +36,19 @@ if($errorDbConexion == false){
 			case 'BuscarEstudiante':
 				$codigo_annlectivo = $_REQUEST["lstannlectivo"];
 				$codigo_nie = $_REQUEST["codigo_nie"];
+				$codigo_institucion = $_SESSION['codigo_institucion'];
 				// Modificar forma de búsqueda.
 				$query_estudiante = "SELECT am.id_alumno_matricula, am.codigo_alumno, am.codigo_grado, am.codigo_bach_o_ciclo, am.codigo_seccion, am.codigo_turno,
-									btrim(a.nombre_completo || CAST(' ' as VARCHAR) || a.apellido_paterno || CAST(' ' AS VARCHAR) || a.apellido_materno) as nombre_completo_alumno,
+									btrim(a.nombre_completo || CAST(' ' as VARCHAR) || a.apellido_paterno || CAST(' ' AS VARCHAR) || a.apellido_materno) as nombre_completo_alumno, a.foto, a.codigo_genero,
 									bach.nombre as nombre_modalidad, gr.nombre as nombre_grado, sec.nombre as nombre_seccion, cat_tur.nombre as nombre_turno
-									FROM alumno_matricula am
-									INNER JOIN alumno a ON a.id_alumno = am.codigo_alumno
-									INNER JOIN bachillerato_ciclo bach ON bach.codigo = am.codigo_bach_o_ciclo 
-									INNER JOIN grado_ano gr ON gr.codigo = am.codigo_grado 
-									INNER JOIN seccion sec ON sec.codigo = am.codigo_seccion 
-									INNER JOIN turno cat_tur ON cat_tur.codigo = am.codigo_turno 
-									WHERE am.codigo_alumno = (select id_alumno from alumno a where codigo_nie = '$codigo_nie') AND
-									am.codigo_ann_lectivo = '$codigo_annlectivo'";
+										FROM alumno_matricula am
+										INNER JOIN alumno a ON a.id_alumno = am.codigo_alumno
+										INNER JOIN bachillerato_ciclo bach ON bach.codigo = am.codigo_bach_o_ciclo 
+										INNER JOIN grado_ano gr ON gr.codigo = am.codigo_grado 
+										INNER JOIN seccion sec ON sec.codigo = am.codigo_seccion 
+										INNER JOIN turno cat_tur ON cat_tur.codigo = am.codigo_turno 
+											WHERE am.codigo_alumno = (select id_alumno from alumno a where codigo_nie = '$codigo_nie') AND
+											am.codigo_ann_lectivo = '$codigo_annlectivo'";
 				// Ejecutamos el Query.
 				$consulta = $dblink -> query($query_estudiante);
                 // Recorrer la consulta.
@@ -63,6 +67,8 @@ if($errorDbConexion == false){
 						$codigo_seccion = $listado['codigo_seccion'];
 						$codigo_turno = $listado['codigo_turno'];
 						$codigo_modalidad = $listado['codigo_bach_o_ciclo'];
+						$url_foto = $listado['foto'];
+						$codigo_genero = $listado['codigo_genero'];
 						
 						$titulo_tabla = $nombre_estudiante . " - " . $nombre_modalidad . " - " . $nombre_grado . " '" . $nombre_seccion . "' - " . $nombre_turno;
 						$todos = $codigo_modalidad . $codigo_grado . $codigo_seccion . $codigo_annlectivo . $codigo_turno;
@@ -279,7 +285,10 @@ $salidaJson = array("respuesta" => $respuestaOK,
 		"codigo_modalidad" => $codigo_modalidad,
 		"codigo_matricula" => $codigo_matricula,
 		"codigo_alumno" => $codigo_alumno,
-		"codigo_grado" => $codigo_grado
+		"codigo_grado" => $codigo_grado,
+		"url_foto" => $url_foto,
+		"codigo_genero" => $codigo_genero,
+		"codigo_institucion" => $codigo_institucion
 	);
 // 	encode por JSON.
 echo json_encode($salidaJson);

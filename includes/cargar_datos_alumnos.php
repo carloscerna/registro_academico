@@ -39,8 +39,7 @@ $codigo_institucion = $_SESSION['codigo_institucion'];
       while($listado = $consulta -> fetch(PDO::FETCH_BOTH))
 	{
    // campo de la foto.
-
-	 $url_foto = trim($listado['foto']);
+    $url_foto = trim($listado['foto']);
     $url_pn = trim($listado['ruta_pn']);
     $archivo_origen = $path_root."/registro_academico/img/Pn/".$codigo_institucion."/".$url_pn;
     if(!file_exists($archivo_origen)){
