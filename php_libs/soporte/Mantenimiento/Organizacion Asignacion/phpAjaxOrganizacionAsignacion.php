@@ -301,13 +301,13 @@ if($errorDbConexion == false){
 			///////////////////////////////////////////////////////////////////////////////////////////////////
 			////////////// BLOQUE DE REGISTRO ORGANIZACION GRADOS,SECCIÓN Y TURNO.
 			///////////////////////////////////////////////////////////////////////////////////////////////////
-			case 'BuscarGradoSeccion':
+			case 'BuscarSeGST':
 				// Armar Colores
 				$statusTipo = array ("01" => "btn-success", "02" => "btn-warning", "03" => "btn-danger");
 				$codigo_ann_lectivo = trim($_POST["codigo_annlectivo"]);
 				$codigo_modalidad = trim($_POST["codigo_modalidad"]);
 				// Armamos el query.
-					$query = "SELECT org.id_grados_secciones, org.codigo_bachillerato, org.codigo_grado, org.codigo_seccion, org.codigo_ann_lectivo, org.codigo_turno,
+					$query = "SELECT org.id_grados_secciones, org.codigo_bachillerato, org.codigo_grado, org.codigo_seccion, org.codigo_ann_lectivo, org.codigo_turno, cat_se.descripcion as descripcion_se,
 							ann.nombre as nombre_ann_lectivo, bach.nombre as nombre_modalidad, gr.nombre as nombre_grado, sec.nombre as nombre_seccion, tur.nombre as nombre_turno
 							FROM organizacion_grados_secciones org 
 								INNER JOIN ann_lectivo ann ON ann.codigo = org.codigo_ann_lectivo
@@ -315,10 +315,11 @@ if($errorDbConexion == false){
 								INNER JOIN grado_ano gr ON gr.codigo = org.codigo_grado
 								INNER JOIN seccion sec ON sec.codigo = org.codigo_seccion
 								INNER JOIN turno tur ON tur.codigo = org.codigo_turno
+								INNER JOIN catalogo_servicio_educativo cat_se ON cat_se.codigo = org.codigo_servicio_educativo
 									WHERE org.codigo_ann_lectivo = '$codigo_ann_lectivo' and org.codigo_bachillerato = '$codigo_modalidad' ORDER BY org.codigo_ann_lectivo, org.codigo_bachillerato, org.codigo_grado, org.codigo_seccion, org.codigo_turno";
 				// Ejecutamos el Query.
 				$consulta = $dblink -> query($query);
-
+				//
 				if($consulta -> rowCount() != 0){
 					$respuestaOK = true;
 					$num = 0;
@@ -327,26 +328,24 @@ if($errorDbConexion == false){
 					{
 						// variables
 						$id_ = trim($listado['id_grados_secciones']);
+						$nombre_modalidad = trim($listado['nombre_modalidad']);
 						$nombre_grado = trim($listado['nombre_grado']);
 						$nombre_seccion = trim($listado['nombre_seccion']);
 						$nombre_turno = trim($listado['nombre_turno']);
+						$nombre_se = trim($listado['descripcion_se']);
 							$num++;
 						//
-						$contenidoOK .= '<tr>
-							<td class=centerTXT>'.$num
-							.'<td class=centerTXT>'.$id_
-							.'<td class=centerTXT>'.$codigo_ann_lectivo
-							.'<td class=centerTXT>'.$nombre_ann_lectivo
-							.'<td class=centerTXT>'.$codigo_modalidad
-							.'<td class=centerTXT>'.$nombre_modalidad
-							.'<td class=centerTXT>'.$codigo_grado
-							.'<td class=centerTXT>'.$nombre_grado
-							.'<td class=centerTXT>'.$codigo_seccion
-							.'<td class=centerTXT>'.$nombre_seccion
-							.'<td class=centerTXT>'.$codigo_turno
-							.'<td class=centerTXT>'.$nombre_turno
-							.'<td class = centerTXT><a data-accion=editar_seccion class="btn btn-xs btn-primary" href='.$listado['id_grados_secciones'].'>Editar</a>'
-							.'<td class = centerTXT><a data-accion=eliminar_grado_seccion class="btn btn-xs btn-primary" href='.$listado['id_grados_secciones'].'>Eliminar</a>'
+						$contenidoOK .= "<tr>
+							<td><input type=checkbox class=case name=chk$id_ id=chk$id_>
+							<td>$num
+							<td>$id_
+							<td>$nombre_modalidad
+							<td>$nombre_se
+							<td>$nombre_grado
+							<td>$nombre_seccion
+							<td>$nombre_turno
+							<td><a data-accion=EditarSeGST class='btn btn-xs btn-info' data-toggle='tooltip' data-placement='top' title='Editar' href=$id_><i class='fas fa-edit'></i></a>
+							<a data-accion=EliminarSeGST class='btn btn-xs btn-warning' data-toggle='tooltip' data-placement='top' title='Eliminar' href=$id_><i class='fas fa-trash'></i></a>"
 							;
 					}
 					$mensajeError = "Si Registro";
@@ -1076,8 +1075,7 @@ else{
 }	// FIN DE LA CONDICON PRINCRIPAL
 // CONDICIONES RESULTADO DEL JSON Y DATA[]
 if($_POST['accion'] == "BuscarHorarios" || $_POST['accion'] == "GuardarHorarios" || $_POST['accion'] == "ActualizarHorarios"  || $_POST['accion'] == "EliminarHorarios"  
-	|| $_POST['accion'] == "BuscarModalidad" || $_POST['accion'] == "GuardarModalidad" || $_POST['accion'] == "EliminarModalidad"
-	)
+	|| $_POST['accion'] == "BuscarModalidad" || $_POST['accion'] == "GuardarModalidad" || $_POST['accion'] == "EliminarModalidad" || $_POST['accion'] == "BuscarSeGST"  )
 {
 // Armamos array para convertir a JSON
 	$salidaJson = array("respuesta" => $respuestaOK,

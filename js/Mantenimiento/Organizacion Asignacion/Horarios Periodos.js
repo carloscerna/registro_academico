@@ -16,26 +16,26 @@ $(function(){
 //
     $("#AlertHorarios").css("display", "none");
     //
-//  OPCIONES PARA EL TAB NAV
-//
+    //  OPCIONES PARA EL TAB NAV
+    //
     $(document).ready(function () {
         //
         // ÑO,ÒAR DATPS DEPÈNDIENTE DEL TAB DE NAV
         //
-    $("#NavOrganizacionAsignacion ul.nav > li > a").on("click", function () {
-        $TextoTab = $(this).text();
-        
-        if($TextoTab == "Horarios"){
-            // Borrar información de la Tabla.
-                $('#listaContenidoHorarios').empty();
-                $("#AlertHorarios").css("display", "none");
-            // Select a 00...
-                $("#LstAnnLectivo").val('00')
-                $("#LstNivel").val('00')
-        }else{
-            //alert("Nav-Tab " + $TextoTab);
-        }
-    });
+        $("#NavOrganizacionAsignacion ul.nav > li > a").on("click", function () {
+            $TextoTab = $(this).text();
+            
+            if($TextoTab == "Horarios"){
+                // Borrar información de la Tabla.
+                    $('#listaContenidoHorarios').empty();
+                    $("#AlertHorarios").css("display", "none");
+                // Select a 00...
+                    $("#LstAnnLectivo").val('00')
+                    $("#LstNivel").val('00')
+            }else{
+                //alert("Nav-Tab " + $TextoTab);
+            }
+        });
         //
         // SELECFT ON ONCHANGE
         //
