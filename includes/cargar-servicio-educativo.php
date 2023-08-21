@@ -3,22 +3,22 @@
     $path_root=trim($_SERVER['DOCUMENT_ROOT']);
 	$verificar_ann_lectivo = "no";
 // Incluimos el archivo de funciones y conexión a la base de datos
-include($path_root."/registro_academico/includes/mainFunctions_conexion.php");
+	include($path_root."/registro_academico/includes/mainFunctions_conexion.php");
 // armando el Query.
-		$query = "SELECT codigo, descripcion FROM catalogo_servicio_educativo ORDER BY codigo ASC ";
+	$query = "SELECT codigo, descripcion FROM catalogo_servicio_educativo ORDER BY codigo ASC ";
 // Ejecutamos el Query.
-   $consulta = $dblink -> query($query);
+	$consulta = $dblink -> query($query);
 // Inicializando el array
-$datos=array(); $fila_array = 0;
+	$datos=array(); $fila_array = 0;
 // Recorriendo la Tabla con PDO::
-      while($listado = $consulta -> fetch(PDO::FETCH_BOTH))
-	{
-         // Nombres de los campos de la tabla.
-	 $codigo = trim($listado['codigo']); $descripcion = $listado['descripcion'];
-	 // Rellenando la array.
-		$datos[$fila_array]["codigo"] = $codigo;
-		$datos[$fila_array]["descripcion"] = ($descripcion);
-	   $fila_array++;
+	while($listado = $consulta -> fetch(PDO::FETCH_BOTH))
+		{
+        	// Nombres de los campos de la tabla.
+				$codigo = trim($listado['codigo']); $descripcion = $listado['descripcion'];
+	 		// Rellenando la array.
+				$datos[$fila_array]["codigo"] = $codigo;
+				$datos[$fila_array]["descripcion"] = ($descripcion);
+				$fila_array++;
         }
 // Enviando la matriz con Json.
 echo json_encode($datos);	

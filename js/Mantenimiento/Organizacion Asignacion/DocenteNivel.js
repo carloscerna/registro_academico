@@ -1,6 +1,6 @@
 // id de user global
 var idUser_ok = 0;
-var accion_gst = 'noAccion';
+var accion_dn = 'noAccion';
 var accion = "";
 var Id_Editar_Eliminar = 0;
 var Accion_Editar_Eliminar = "noAccion";
@@ -12,12 +12,12 @@ $(function(){
 //
 //  INVISILBLE TODOS LOS MENSAJES.
     //  
-    $("#AlertSeGST").css("display", "none");
+    $("#AlertDN").css("display", "none");
     //
 //  OPCIONES PARA EL TAB NAV
 //
     $(document).ready(function () {
-        var miselect=$("#lstAnnLectivoSeGST");
+        var miselect=$("#lstAnnLectivoDN");
         /* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
         miselect.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
         
@@ -32,16 +32,16 @@ $(function(){
         //
         // CUANDO EL VALOR DE ANNLECTIVO CAMBIA.
         //
-        $("#lstAnnLectivoSeGST").change(function ()
+        $("#lstAnnLectivoDN").change(function ()
         {
             // LISTADO DE LAS MODALIDES
-            var miselect2=$("#lstModalidadSeGST");
+            var miselect2=$("#lstModalidadDN");
             /* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
                 miselect2.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
             //        
-                $("#lstAnnLectivoSeGST option:selected").each(function () {
+                $("#lstAnnLectivoDN option:selected").each(function () {
                     elegido=$(this).val();
-                        annlectivo=$("#lstAnnLectivoSeGST").val();
+                        annlectivo=$("#lstAnnLectivoDN").val();
                         $.post("includes/cargar-bachillerato.php", { annlectivo: annlectivo },
                         function(data){
                                 miselect2.empty();
@@ -53,45 +53,29 @@ $(function(){
                 });
         });
         // CUANDO EL VALOR DE NIVEL O MODALIDAD CAMBIE.
-        $("#lstModalidadSeGST").change(function () {
-            $("#lstModalidadSeGST option:selected").each(function () {
+        $("#lstModalidadDN").change(function () {
+            $("#lstModalidadDN option:selected").each(function () {
                 elegido=$(this).val();
-                modalidad=$("#lstModalidadSeGST").val();
+                modalidad=$("#lstModalidadDN").val();
                 // validar
                     if(modalidad == "00"){
                         // borrar el contenido de la Tabla.
-                            $('#listaContenidoSeGST').empty();
+                            $('#listaContenidoDN').empty();
                         // limpiar select
-                        var miselect3=$("#lstSeGST");
-                        var miselect4=$("#lstGradoSeGST");
-                        var miselect5=$("#lstSeccionSeGST");
-                        var miselect6=$("#lstTurnoSeGST");
-                            miselect3.empty();
+                        var miselect3=$("#lstAnnLectivoDN");
+                        var miselect4=$("#lstModalidad");
+                        var miselect5=$("#lstDocenteNivel");
                             miselect4.empty();
                             miselect5.empty();
-                            miselect6.empty();
                     }else{
                         // borrar el contenido de la Tabla.
-                            $('#listaContenidoSeGST').empty();
+                            $('#listaContenidoDN').empty();
                         // LISTAR PARA EL SERVIICO EDUCATIVO - COMPONENTES DE ESTUDIOS.
-                        var miselect3=$("#lstSeGST");
-                        /* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
-                        miselect3.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
-                        
-                        $.post("includes/cargar-servicio-educativo.php",
-                            function(data) {
-                            miselect3.empty();
-                            miselect3.append("<option value='00'>Seleccionar...</option>");
-                            for (var i=0; i<data.length; i++) {
-                                miselect3.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');
-                            }			
-                        }, "json");
-                        // LISTAR PARA EL SERVIICO EDUCATIVO - grado.
-                        var miselect4=$("#lstGradoSeGST");
+                        var miselect4=$("#lstDocenteNivel");
                         /* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
                         miselect4.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
                         
-                        $.post("includes/cargar-grado.php",
+                        $.post("includes/cargar_nombre_personal.php",
                             function(data) {
                             miselect4.empty();
                             miselect4.append("<option value='00'>Seleccionar...</option>");
@@ -99,30 +83,18 @@ $(function(){
                                 miselect4.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');
                             }			
                         }, "json");
-                        // LISTAR PARA EL SERVIICO EDUCATIVO - SECCION
-                        var miselect5=$("#lstSeccionSeGST");
+
+                        // LISTAR PARA EL SERVIICO EDUCATIVO - turno
+                        var miselect5=$("#lstTurnoDN");
                         /* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
                         miselect5.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
                         
-                        $.post("includes/cargar-seccion.php",
+                        $.post("includes/cargar-turno.php",
                             function(data) {
                             miselect5.empty();
                             miselect5.append("<option value='00'>Seleccionar...</option>");
                             for (var i=0; i<data.length; i++) {
                                 miselect5.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');
-                            }			
-                        }, "json");
-                        // LISTAR PARA EL SERVIICO EDUCATIVO - turno
-                        var miselect6=$("#lstTurnoSeGST");
-                        /* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
-                        miselect6.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
-                        
-                        $.post("includes/cargar-turno.php",
-                            function(data) {
-                            miselect6.empty();
-                            miselect6.append("<option value='00'>Seleccionar...</option>");
-                            for (var i=0; i<data.length; i++) {
-                                miselect6.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');
                             }			
                         }, "json");
                     }
@@ -134,13 +106,13 @@ $(function(){
     $("#NavOrganizacionAsignacion ul.nav > li > a").on("click", function () {
         TextoTab = $(this).text();
         //alert(TextoTab);
-        if(TextoTab == "Grado/Sección/Turno"){
+        if(TextoTab == "Docente/Nivel"){
             // Borrar información de la Tabla.
-                $('#listaContenidoSeGST').empty();
-                $("#AlertSeGST").css("display", "none");
+                $('#listaContenidoDN').empty();
+                $("#AlertDN").css("display", "none");
             // Select a 00...
-                $("#lstAnnLectivoSeGST").val('00')
-                $("#lstModalidadSeGST").val('00')
+                $("#lstAnnLectivoDN").val('00')
+                $("#lstModalidadDN").val('00')
         }else{
             //alert("Nav-Tab " + $TextoTab);
         }
@@ -152,20 +124,20 @@ $(function(){
         // BUSCAR REGISTROS (HORARIOS CREADAS)
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////
         // funcion onchange.
-        $('#lstAnnLectivoSeGST').on('change', function() {
-            $("#AlertSeGST").css("display", "none");
+        $('#lstAnnLectivoDN').on('change', function() {
+            $("#AlertDN").css("display", "none");
         });
         // Nivel o SeGST.
-        $('#lstModalidadSeGST').on('change', function() {
-            $("#AlertSeGST").css("display", "none");
+        $('#lstModalidadDN').on('change', function() {
+            $("#AlertDN").css("display", "none");
         });
         ///////////////////////////////////////////////////
 		// funcionalidad del botón que abre el formulario
 		///////////////////////////////////////////////////
-        $("#VentanaSeGST").on('hidden.bs.modal', function () {
+        $("#VentanaDN").on('hidden.bs.modal', function () {
             // Limpiar variables Text, y textarea
-				$("#formVentanaSeGST")[0].reset();
-                $('#formVentanaSeGST').trigger("reset");
+				$("#formVentanaDN")[0].reset();
+                $('#formVentanaDN').trigger("reset");
 				$("label.error").remove();
                 accion = "";
             // 
@@ -176,16 +148,16 @@ $(function(){
     //
     // BLOQUE EXTRAER INFORMACIÓN DEL REGISTROS)
     //
-    $('body').on('click','#listaContenidoSeGST a',function (e){
+    $('body').on('click','#listaContenidoDN a',function (e){
         e.preventDefault();
         // Id Usuario
             Id_Editar_Eliminar = $(this).attr('href');
             accion_ok = $(this).attr('data-accion');
                 // EDITAR LA ASIGNATURA
-                if($(this).attr('data-accion') == 'EditarSeGST'){
+                if($(this).attr('data-accion') == 'EditarDN'){
                         // Valor de la acción
-                        $('#accion_gst').val('EditarSeGST');
-                        accion = 'EditarGST';
+                        $('#accion_dn').val('EditarDN');
+                        accion = 'EditarDN';
                         
                         // obtener el valor del id.
                         var id_ = $(this).parent().parent().children('td:eq(2)').text();
@@ -195,25 +167,25 @@ $(function(){
                             function(data) {
                             // Llenar el formulario con los datos del registro seleccionado tabs-1
                             // Datos Generales
-                                texto_annlectivo_gst = $("#lstAnnLectivoSeGST option:selected").html();
-                                codigo_annlectivo_gst = $("#lstAnnLectivoSeGST option:selected").val();
-                                texto_modalidad_gst = $("#lstModalidadSeGST option:selected").html();
-                                codigo_modalidad_gst = $("#lstModalidadSeGST option:selected").val();
+                                texto_annlectivo_dn = $("#lstAnnLectivoDN option:selected").html();
+                                codigo_annlectivo_dn = $("#lstAnnLectivoDN option:selected").val();
+                                texto_modalidad_dn = $("#lstModalidadDN option:selected").html();
+                                codigo_modalidad_dn = $("#lstModalidadDN option:selected").val();
                                 //
-                                $("#TextoAnnLectivoSeGST").text(texto_annlectivo_gst);
-                                $("#TextoModalidadesSeGST").text(texto_modalidad_gst);
+                                $("#TextoAnnLectivoDN").text(texto_annlectivo_dn);
+                                $("#TextoModalidadesDN").text(texto_modalidad_dn);
                                 //
-                                listar_CodigoSeGST(data[0].codigo_se);
+                                listar_CodigoDN(data[0].codigo_se);
                                 //
                                 // Abrir ventana modal.
-                                $('#VentanaSeGST').modal("show");
-                                $("label[for=LblTituloSeGST]").text("Grado/Sección/Turno | Actualizar");
+                                $('#VentanaDN').modal("show");
+                                $("label[for=LblTituloDN]").text("Docente/Nivel | Actualizar");
                                 // reestablecer el accion a=ActulizarAsignatura.
-                                accion_gst = "ActualizarGST";
+                                accion_dn = "ActualizarDN";
                             },"json");
                 }
                 // ELIMINAR REGISTRO ASIGNATURA.
-                if($(this).attr('data-accion') == 'EliminarSeGST'){
+                if($(this).attr('data-accion') == 'EliminarDN'){
                     //	ENVIAR MENSAJE CON SWEETALERT 2, PARA CONFIRMAR SI ELIMINA EL REGISTRO.
                     const swalWithBootstrapButtons = Swal.mixin({
                         customClass: {
@@ -246,13 +218,14 @@ $(function(){
                                 dataType: "json",                     
                                 url:"php_libs/soporte/Mantenimiento/Organizacion Asignacion/phpAjaxOrganizacionAsignacion.php",                     
                                 data: {                     
-                                        accion_buscar: 'EliminarSeGST', id_: Id_Editar_Eliminar,
+                                        accion_buscar: 'EliminarDN', id_: Id_Editar_Eliminar,
                                         },                     
                                 success: function(response) {                     
                                         if (response.respuesta === true) {                     		
+                                            toastr["info"]('Registros Eliminados', "Sistema");
                                             // Asignamos valor a la variable acción
-                                                $('#accion_modalidad').val('BuscarSeGST');
-                                                accion_modalidad = 'BuscarSeGST';
+                                                $('#accion_dn').val('BuscarDN');
+                                                accion = 'BuscarDN';
                                                 // Llamar al archivo php para hacer la consulta y presentar los datos.
                                                 $.post("php_libs/soporte/Mantenimiento/Organizacion Asignacion/phpAjaxOrganizacionAsignacion.php",  {accion: accion, codigo_annlectivo: codigo_annlectivo, codigo_modalidad: codigo_modalidad},
                                                     function(response) {
@@ -262,8 +235,8 @@ $(function(){
                                                         if (response.respuesta === false) {
                                                             toastr["warning"]('Registros No Encontrados', "Sistema");
                                                         }                                                                                    // si es exitosa la operación
-                                                            $('#listaContenidoSeGST').empty();
-                                                            $('#listaContenidoSeGST').append(response.contenido);
+                                                            $('#listaContenidoDN').empty();
+                                                            $('#listaContenidoDN').append(response.contenido);
                                                     },"json");
                                         }
                                 }                     
@@ -285,15 +258,15 @@ $(function(){
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// ACTIVAR Y DESACTIVAR CHECKBOX DE LA TABLA.
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	$("#checkBoxAllSeGST").on("change", function () {
-		$("#listadoContenidoSeGST tbody input[type='checkbox'].case").prop("checked", this.checked);
+	$("#checkBoxAllDN").on("change", function () {
+		$("#listadoContenidoDN tbody input[type='checkbox'].case").prop("checked", this.checked);
 	});
 	
-	$("#listadoContenidoSeGST tbody").on("change", "input[type='checkbox'].case", function () {
-        if ($("#listadoContenidoSeGST tbody input[type='checkbox'].case").length == $("#listadoContenidoSeGST tbody input[type='checkbox'].case:checked").length) {
-            $("#checkBoxAllSeGST").prop("checked", true);
+	$("#listadoContenidoDN tbody").on("change", "input[type='checkbox'].case", function () {
+        if ($("#listadoContenidoDN tbody input[type='checkbox'].case").length == $("#listadoContenidoDN tbody input[type='checkbox'].case:checked").length) {
+            $("#checkBoxAllDN").prop("checked", true);
         } else {
-            $("#checkBoxAllSeGST").prop("checked", false);
+            $("#checkBoxAllDN").prop("checked", false);
         }
     });	
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -302,22 +275,22 @@ $(function(){
     //
     //  funcion click
     //
-        $('#goBuscarSeGST').on('click',function(){
+        $('#goBuscarDN').on('click',function(){
             // Asignamos valor a la variable acción
-                codigo_annlectivo = $("#lstAnnLectivoSeGST").val();
-                codigo_modalidad = $("#lstModalidadSeGST").val();
-                accion = 'BuscarSeGST';
+                codigo_annlectivo = $("#lstAnnLectivoDN").val();
+                codigo_modalidad = $("#lstModalidadDN").val();
+                accion = 'BuscarDN';
                 //
                 //  CONDICONAR EL SELECT ...
                 //
                 if(codigo_annlectivo == "00"){
-                    $("#AlertSeGST").css("display", "block");
-                    $("#TextoAlertSeGST").text("Debe Seleccionar Año Lectivo para Buscar.");
+                    $("#AlertDN").css("display", "block");
+                    $("#TextoAlertDN").text("Debe Seleccionar Año Lectivo para Buscar.");
                     return;
                 }
                 if(codigo_modalidad == "00"){
-                    $("#AlertSeGST").css("display", "block");
-                    $("#TextoAlertSeGST").text("Debe Seleccionar la Modalidad para Buscar.");
+                    $("#AlertDN").css("display", "block");
+                    $("#TextoAlertDN").text("Debe Seleccionar la Modalidad para Buscar.");
                     return;
                 }
                 // Llamar al archivo php para hacer la consulta y presentar los datos.
@@ -329,68 +302,80 @@ $(function(){
                     if (response.respuesta === false) {
                         toastr["error"]('Registros No Encontrados', "Sistema");
                     }                                                                                    // si es exitosa la operación
-                        $('#listaContenidoSeGST').empty();
-                        $('#listaContenidoSeGST').append(response.contenido);
+                        $('#listaContenidoDN').empty();
+                        $('#listaContenidoDN').append(response.contenido);
                     },"json");
         });
         //////////////////////////////////////////////////////////////////////////////////
         /* VER #CONTROLES CREADOS */
         //////////////////////////////////////////////////////////////////////////////////
-        $('#goGuardarSeGST').on('click', function(){
-            codigo_annlectivo = $("#lstAnnLectivoSeGST").val();
-            codigo_modalidad = $("#lstModalidadSeGST").val();
-            accion = 'GuardarSeGST';
-                $('#accion_gst').val('GuardarSeGST');
+        $('#goGuardarDN').on('click', function(){
+            codigo_annlectivo = $("#lstAnnLectivoDN").val();
+            codigo_modalidad = $("#lstModalidadDN").val();
+            codigo_dn = $("#lstDocenteNivel").val();
+            codigo_turno = $("#lstTurnoDN").val();
+            accion = 'GuardarDN';
+                $('#accion_dn').val('GuardarDN');
             //
             //  CONDICONAR EL SELECT SERVICIO EDUCATIVO.
             //
             if(codigo_annlectivo == "00"){
-                $("#AlertSeGST").css("display", "block");
-                $("#TextoAlertSeGST").text("Debe Seleccionar un Año Lectivo para Guardar un Nivel.");
+                $("#AlertDN").css("display", "block");
+                $("#TextoAlertDN").text("Debe Seleccionar un Año Lectivo para Guardar un Nivel.");
                 return;
             }
             if(codigo_modalidad == "00"){
-                $("#AlertSeGST").css("display", "block");
-                $("#TextoAlertSeGST").text("Debe Seleccionar un Nivel para Guardar.");
+                $("#AlertDN").css("display", "block");
+                $("#TextoAlertDN").text("Debe Seleccionar un Nivel para Guardar.");
+                return;
+            }
+            if(codigo_turno == "00"){
+                $("#AlertDN").css("display", "block");
+                $("#TextoAlertDN").text("Debe Seleccionar un Turno para Guardar.");
+                return;
+            }
+            if(codigo_dn == "00"){
+                $("#AlertDN").css("display", "block");
+                $("#TextoAlertDN").text("Debe Seleccionar un Docente para Guardar.");
                 return;
             }
             // enviar form
-                $('#FormSeGST').submit();
+                $('#FormDN').submit();
         });
         //////////////////////////////////////////////////////////////////////////////////
         /* VER #CONTROLES CREADOS */
         //////////////////////////////////////////////////////////////////////////////////
-        $('#goActualizarSeGST').on('click', function(){
-            codigo_annlectivo = $("#lstAnnLectivoSeGST").val();
-            codigo_modalidad = $("#lstModalidadSeGST").val();
-            codigo_servicio_educativo = $("#formVentanaSeGST select[name=lstSeGST]").val();
-            accion = 'ActualizarSeGST';
-                $('#accion_gst').val('ActualizarSeGST');
+        $('#goActualizarDN').on('click', function(){
+            codigo_annlectivo = $("#lstAnnLectivoDN").val();
+            codigo_modalidad = $("#lstModalidadDN").val();
+            codigo_servicio_educativo = $("#formVentanaDN select[name=lstDN]").val();
+            accion = 'ActualizarDN';
+                $('#accion_dn').val('ActualizarDN');
             //
             //  CONDICONAR EL SELECT SERVICIO EDUCATIVO.
             //
             if(codigo_annlectivo == "00"){
-                $("#AlertSeGST").css("display", "block");
-                $("#TextoAlertSeGST").text("Debe Seleccionar un Año Lectivo para Guardar un Nivel.");
+                $("#AlertDN").css("display", "block");
+                $("#TextoAlertDN").text("Debe Seleccionar un Año Lectivo para Guardar un Nivel.");
                 return;
             }
             if(codigo_modalidad == "00"){
-                $("#AlertSeGST").css("display", "block");
-                $("#TextoAlertSeGST").text("Debe Seleccionar un Nivel para Guardar.");
+                $("#AlertDN").css("display", "block");
+                $("#TextoAlertDN").text("Debe Seleccionar un Nivel para Guardar.");
                 return;
             }
             if(codigo_servicio_educativo == "00"){
-                $("#AlertSeGST").css("display", "block");
-                $("#TextoAlertSeGST").text("Debe Seleccionar un Servicio Educativo para Guardar.");
+                $("#AlertDN").css("display", "block");
+                $("#TextoAlertDN").text("Debe Seleccionar un Servicio Educativo para Guardar.");
                 return;
             }
             // enviar form
-                $('#formVentanaSeGST').submit();
+                $('#formVentanaDN').submit();
         });
         //	  
         // Validar Formulario para la buscque de registro segun el criterio.   
         // ACTUALIZAR
-        $('#formVentanaSeGST').validate({
+        $('#formVentanaDN').validate({
             ignore:"",
             rules:{
                     lstSeGST: {required: true},
@@ -417,7 +402,7 @@ $(function(){
                         });            
                     },
                 submitHandler: function(){	
-                    var str = $('#formVentanaSeGST').serialize();
+                    var str = $('#formVentanaDN').serialize();
                     //alert(str);
                 ///////////////////////////////////////////////////////////////			
                 // Inicio del Ajax. guarda o Actualiza los datos del Formualrio.
@@ -439,12 +424,12 @@ $(function(){
                             else{
                                 toastr["success"](response.mensaje, "Sistema");
                                 // Abrir ventana modal.
-                                $('#VentanaSeGST').modal("hide");
+                                $('#VentanaDN').modal("hide");
                                 // Reiniciar los valores del Formulario.
-                                    $("#formVentana1SeGST").trigger("reset");
+                                    $("#formVentanaDN").trigger("reset");
                                 // Llamar al archivo php para hacer la consulta y presentar los datos.
-                                    $('#accion_modalidad').val('BuscarSeGST');
-                                    accion = 'BuscarSeGST';
+                                    $('#accion_dn').val('BuscarDN');
+                                    accion = 'BuscarDN';
                                     $.post("php_libs/soporte/Mantenimiento/Organizacion Asignacion/phpAjaxOrganizacionAsignacion.php",  {accion: accion, codigo_annlectivo: codigo_annlectivo, codigo_modalidad: codigo_modalidad},
                                         function(response) {
                                             if (response.respuesta === true) {
@@ -453,8 +438,8 @@ $(function(){
                                             if (response.respuesta === false) {
                                                 toastr["warning"]('Registros No Encontrados', "Sistema");
                                             }                                                                                    // si es exitosa la operación
-                                                $('#listaContenidoSeGST').empty();
-                                                $('#listaContenidoSeGST').append(response.contenido);
+                                                $('#listaContenidoDN').empty();
+                                                $('#listaContenidoDN').append(response.contenido);
                                         },"json");
                                 }               
                         },
@@ -462,10 +447,10 @@ $(function(){
                 },
         });
         // PARA GUARDAR O ACTUALIZAR.
-        $('#FormSeGST').validate({
+        $('#FormDN').validate({
             ignore:"",
             rules:{
-                    lstAnnLectivoSeGST: {required: true},
+                    lstAnnLectivoDN: {required: true},
                     },
                     errorElement: "em",
                     errorPlacement: function ( error, element ) {
@@ -489,7 +474,7 @@ $(function(){
                         });            
                     },
                 submitHandler: function(){	
-                    var str = $('#FormSeGST').serialize();
+                    var str = $('#FormDN').serialize();
                     //alert(str);
                 ///////////////////////////////////////////////////////////////			
                 // Inicio del Ajax. guarda o Actualiza los datos del Formualrio.
@@ -513,8 +498,8 @@ $(function(){
                                 // Reiniciar los valores del Formulario.
                                     //$("#FormSeGST").trigger("reset");
                                 // Llamar al archivo php para hacer la consulta y presentar los datos.
-                                    $('#accion_modalidad').val('BuscarSeGST');
-                                    accion = 'BuscarSeGST';
+                                    $('#accion_dn').val('BuscarDN');
+                                    accion = 'BuscarDN';
                                     $.post("php_libs/soporte/Mantenimiento/Organizacion Asignacion/phpAjaxOrganizacionAsignacion.php",  {accion: accion, codigo_annlectivo: codigo_annlectivo, codigo_modalidad: codigo_modalidad},
                                         function(response) {
                                             if (response.respuesta === true) {
@@ -523,8 +508,8 @@ $(function(){
                                             if (response.respuesta === false) {
                                                 toastr["warning"]('Registros No Encontrados', "Sistema");
                                             }                                                                                    // si es exitosa la operación
-                                                $('#listaContenidoSeGST').empty();
-                                                $('#listaContenidoSeGST').append(response.contenido);
+                                                $('#listaContenidoDN').empty();
+                                                $('#listaContenidoDN').append(response.contenido);
                                         },"json");
                                 }               
                         },
@@ -547,12 +532,12 @@ function configureLoadingScreen(screen){
 // TODAS LAS TABLAS VAN HA ESTAR EN organizaciones grado-seccion-turno.*******************
 // FUNCION LISTAR TABLA catalogo_servicio_educativo
 ////////////////////////////////////////////////////////////
-function listar_CodigoSeGST(CodigoSeGST){
-    var miselect=$("#formVentanaSeGST select[name=lstSeGST]");
+function listar_CodigoDN(CodigoDN){
+    var miselect=$("#formVentanaDN select[name=lstDocenteNivel]");
     /* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
     miselect.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
     
-    $.post("includes/cargar-servicio-educativo.php",
+    $.post("includes/cargar_nombre_personal.php",
         function(data) {
             miselect.empty();
             for (var i=0; i<data.length; i++) {
