@@ -40,7 +40,6 @@ $(function(){
                 miselect2.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
             //        
                 $("#lstAnnLectivoAAG option:selected").each(function () {
-                    elegido=$(this).val();
                         annlectivo=$("#lstAnnLectivoAAG").val();
                         $.post("includes/cargar-bachillerato.php", { annlectivo: annlectivo },
                         function(data){
@@ -55,7 +54,7 @@ $(function(){
         // CUANDO EL VALOR DE NIVEL O MODALIDAD CAMBIE.
         $("#lstModalidadAAG").change(function () {
             $("#lstModalidadAAG option:selected").each(function () {
-                elegido=$(this).val();
+                codigo_annlectivo=$("#lstAnnLectivoAAG").val();
                 modalidad=$("#lstModalidadAAG").val();
                 // validar
                     if(modalidad == "00"){
@@ -64,18 +63,20 @@ $(function(){
                         // limpiar select
                         var miselect3=$("#lstAnnLectivoAAG");
                         var miselect4=$("#lstModalidad");
-                        var miselect5=$("#lstDocenteNivel");
+                        var miselect5=$("#lstGradoAAG");
+                        var miselect5=$("#lstAAG");
                             miselect4.empty();
                             miselect5.empty();
+                            miselect6.empty();
                     }else{
                         // borrar el contenido de la Tabla.
                             $('#listaContenidoAAG').empty();
                         // LISTAR PARA EL SERVIICO EDUCATIVO - COMPONENTES DE ESTUDIOS.
-                        var miselect4=$("#lstDocenteNivel");
+                        var miselect4=$("#lstGradoAAG");
                         /* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
                         miselect4.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
                         
-                        $.post("includes/cargar_nombre_personal.php",
+                        $.post("includes/cargar-nombre-asignatura.php",{codigo_modalidad: modalidad, codigo_annlectivo: codigo_annlectivo},
                             function(data) {
                             miselect4.empty();
                             miselect4.append("<option value='00'>Seleccionar...</option>");
@@ -85,11 +86,11 @@ $(function(){
                         }, "json");
 
                         // LISTAR PARA EL SERVIICO EDUCATIVO - turno
-                        var miselect5=$("#lstTurnoAAG");
+                        var miselect5=$("#lstAAG");
                         /* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
                         miselect5.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
                         
-                        $.post("includes/cargar-turno.php",
+                        $.post("includes/cargar-.php",
                             function(data) {
                             miselect5.empty();
                             miselect5.append("<option value='00'>Seleccionar...</option>");
