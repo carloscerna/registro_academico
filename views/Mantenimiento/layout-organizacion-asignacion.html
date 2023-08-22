@@ -17,6 +17,7 @@
 <script type="text/JavaScript" src="js/Mantenimiento/Organizacion Asignacion/Nivel.js"></script>
 <script type="text/JavaScript" src="js/Mantenimiento/Organizacion Asignacion/GradoSeccionTurno.js"></script>
 <script type="text/JavaScript" src="js/Mantenimiento/Organizacion Asignacion/DocenteNivel.js"></script>
+<script type="text/JavaScript" src="js/Mantenimiento/Organizacion Asignacion/AsignarAsignaturaGrados.js"></script>
 <!-- DEINIR EL AJAX START- STOP Y ERROR -->
 <script>
   $(document).ready(function () { 
@@ -441,55 +442,82 @@
                               </div> <!-- TABLA CON LOS DATOS DEL Organización niveles. --> 
                           </div> <!-- NAV TAB docentes-niveles FIN*-->
                           <div class="tab-pane fade" id="pills-asignaturas-niveles" role="tabpanel" aria-labelledby="pills-asignaturas-niveles-tab">
-                            <!-- NAV TAB AÑO LECTIVO *INICIO*-->
-                            <form class="form-inline" id="FormSEAnnLectivo" name="FormSEAnnLectivo">
-                              <div class="form-group mb-2 mx-sm-3">
-                                <label for="lstcodigoAnnLectivo">Año Lectivo</label>
+                            <!-- NAV TAB ASIGNAR ASIGNATURAS A GRADOS *INICIO*-->
+                              <!-- botoneeras y alertas-->
+                              <div class="bg-secondary text-white">
+                                <div class="form-group">
+                                  <button type="button" id="goBuscarAAG" aria-label="goBuscarAAG" class="btn btn-info" tabindex="-1" data-toggle="tooltip" data-placement="top" title="Buscar">
+                                    <i class="fal fa-search"></i>
+                                  </button>
+                                  <button type="button" id="goGuardarAAG" aria-label="goGuardarAAG" class="btn btn-primary" tabindex="-1" data-toggle="tooltip" data-placement="top" title="Guardar">
+                                    <i class="fal fa-save"></i>
+                                  </button>                                 
+                                </div>
+                                  <div class="alert alert-danger p-1 m-1" role="alert" id="AlertAAG">
+                                    <span id="TextoAlertAAG">...</span>
+                                  </div>
                               </div>
-                                <button type="button" id="goBuscarSEAnnLectivo" aria-label="goBuscarSEAnnLectivo" class="btn btn-info mb-2 mx-sm-1" tabindex="-1" data-toggle="tooltip" data-placement="top" title="Buscar">
-                                  <i class="fal fa-search"></i>
-                                </button>
-                                <button type="button" id="goNuevoSEAnnLectivo" aria-label="goNuevoSEAnnLectivo" class="btn btn-primary mb-2" tabindex="-1" data-toggle="tooltip" data-placement="top" title="Nuevo">
-                                  <i class="far fa-layer-plus"></i>
-                                </button>                                 
-                            </form>
-                            <div class="alert alert-danger" role="alert" id="AlertSEAnnLectivo">
-                              <span id="TextoAlertAnnLectivo">...</span>
-                            </div>
-                                  <!-- TABLA CON LOS DATOS DEL SERVICIO EDUCATIVO. -->  
-                                      <div class="modal-body">
-                                        <div class="row bg-cyan">
-                                          <div class="col">
-                                            <label for="">Año Lectivo</label>
-                                          </div>
-                                        </div>
-                                          <div class="col">
-                                            <table id="listadoContenidoSEAnnLectivo" class="table table-striped table-bordered table-hover table-condensed">
-                                              <thead>
-                                                <tr>
-                                                  <th><input type=checkbox name="checkBoxAllSEAnnLectivo" id="checkBoxAllSEAnnLectivo" data-toggle=tooltip data-placement=top title='Marcar/Desmarcar Todo'>
-                                                    <button type="button" id="goEliminarSEAnnLectivo" aria-label="goEliminarSEAnnLectivo" class="btn btn-link" tabindex="-1" data-toggle="tooltip" data-placement="top" title="Eliminar Seleccionados...">
-                                                      <i class="fad fa-trash"></i>
-                                                    </button>
-                                                  </th>
-                                                  <th>#</th>
-                                                  <th>id</th>
-                                                  <th>Código</th>
-                                                  <th>Año</th>
-                                                  <th>Descripción</th>
-                                                  <th>Estatus</th>
-                                                  <th></th>
-                                                </tr>
-                                              </thead>
-                                                <tbody id="listaContenidoSEAnnLectivo">
-                                              
-                                                </tbody>                            
-                                              <tfoot>
-                                              </tfoot>
-                                          </table>
-                                        </div>
+                              <!-- NAV TAB FORM - ORGANIZACION. NIVELES *INICIO*-->
+                              <form class="form" id="FormAAG" name="FormAAG">
+                                <div class="row">
+                                  <!-- PRIMER COL AÑO LECTIVO Y MODALIDAD-->
+                                    <div class="col-md-4 col-lg-4 col-12">
+                                      <div class="form-group">
+                                        {# SELECT DEL AÑO LECTIVO #}
+                                        <label for="lstAnnLectivoAAG">Año Lectivo</label>
+                                        <select class="form-control" id="lstAnnLectivoAAG" name="lstAnnLectivoAAG" aria-label="lstAnnlectivoAAG"></select>
                                       </div>
-                                      <!-- TABLA CON LOS DATOS DEL SERVICIO EDUCATIV. --> 
+                                    </div>
+                                    <!-- SEGUNDO COL SERVICIIO EDUCATIVO MODALIDAD-->
+                                    <div class="col-md-4 col-lg-4 col-12">
+                                      <div class="form-group">
+                                        {# SELECT DEL NIVEL (MODALIDAD) #}
+                                        <label for="lstModalidadAAG">Nivel</label>
+                                        <select class="form-control" id="lstModalidadAAG" name="lstModalidadAAG" aria-label="lstModalidadAAG"></select>
+                                      </div>
+                                    </div>
+                                  <!-- SEGUNDO COL SERVICIO EDUCATIVO GRADO SECCION TURNO-->
+                                  <div class="col-md-4 col-lg-4 col-12">
+                                    <div class="form-group">
+                                      {#SELECT DEL SERVICIO EDUCATIVO (GRADO) #}
+                                      <label for="lstDocenteNivel">Docente</label>
+                                      <select class="form-control" id="lstGradoAAG" name="lstGradoAAG" aria-label="lstGradoAAG"></select>
+                                    </div>
+                                  </div>
+                                  <!-- SEGUNDO COL SERVICIO EDUCATIVO GRADO SECCION TURNO-->
+                                  <div class="col-md-4 col-lg-4 col-12">
+                                    <div class="form-group">
+                                      {#SELECT DEL SERVICIO EDUCATIVO (ASIGNATURA) #}
+                                      <label for="lstAAG">Turno</label>
+                                      <select class="form-control" id="lstAAG" name="lstAAG" aria-label="lstAAG"></select>
+                                    </div>
+                                  </div>
+                                </div>
+                              </form>
+                              <!-- TABLA CON LOS DATOS DEL SERVICIO EDUCATIVO. -->  
+                              <div class="bg-info text-white">_Asignación Servicio Educativo (Asignaturas) según Año Lectivo_</div>
+                              <div class="modal-body">
+                                    <table id="listadoContenidoAAG" class="table table-striped table-bordered table-hover table-condensed">
+                                      <thead>
+                                        <tr>
+                                          <th><input type="checkbox" name="checkBoxAllAAG" id="checkBoxAllAAG" data-toggle="tooltip" data-placement="top" title="Marcar/Desmarcar Todo">
+                                            <button type="button" id="goEliminarAAG" aria-label="goEliminarAAG" class="btn btn-link" tabindex="-1" data-toggle="tooltip" data-placement="top" title="Eliminar Seleccionados...">
+                                              <i class="fad fa-trash"></i>
+                                            </button>
+                                          </th>
+                                          <th>#</th>
+                                          <th>id</th>
+                                          <th>Area/Dimensión/SubDimensión</th>
+                                          <th>Componente del Plan de Estudio</th>
+                                          <th>Orden</th>
+                                          <th></th>
+                                        </tr>
+                                      </thead>
+                                        <tbody id="listaContenidoAAG"></tbody>                            
+                                      <tfoot>
+                                      </tfoot>
+                                  </table>
+                              </div> <!-- TABLA CON LOS DATOS DEL Organización niveles. --> 
                           </div> <!-- NAV TAB asignaturas-niveles FIN*-->
                       </div>
                     </div> <!-- CARD BODY-->
@@ -508,6 +536,7 @@
   {% include 'Mantenimiento/Organizacion/VentanaHorariosPeriodos.html' %}  
   {% include 'Mantenimiento/Organizacion/VentanaGradoSeccionTurno.html' %}  
   {% include 'Mantenimiento/Organizacion/VentanaDocenteNivel.html' %}  
+  {% include 'Mantenimiento/Organizacion/VentanaAsignarAsignaturaGrados.html' %}  
 
 <!-- FINAL DEL BLOQUE DE CONTENIDO.-->
 {% endblock %}  
