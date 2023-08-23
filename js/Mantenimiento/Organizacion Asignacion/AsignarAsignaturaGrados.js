@@ -54,6 +54,10 @@ $(function(){
         // CUANDO EL VALOR DE NIVEL O MODALIDAD CAMBIE.
         $("#lstModalidadAAG").change(function () {
             $("#lstModalidadAAG option:selected").each(function () {
+                // limpiar select componenete del plan d estudio.
+                var miselect5=$("#lstAAG");
+                    miselect5.empty();
+                //
                 codigo_annlectivo=$("#lstAnnLectivoAAG").val();
                 modalidad=$("#lstModalidadAAG").val();
                 // validar
@@ -76,7 +80,7 @@ $(function(){
                         /* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
                         miselect4.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
                         
-                        $.post("includes/cargar-nombre-asignatura.php",{codigo_modalidad: modalidad, codigo_annlectivo: codigo_annlectivo},
+                        $.post("includes/cargar-nombre-grado-se.php",{codigo_modalidad: modalidad, codigo_annlectivo: codigo_annlectivo},
                             function(data) {
                             miselect4.empty();
                             miselect4.append("<option value='00'>Seleccionar...</option>");
@@ -84,23 +88,46 @@ $(function(){
                                 miselect4.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');
                             }			
                         }, "json");
-
-                        // LISTAR PARA EL SERVIICO EDUCATIVO - turno
-                        var miselect5=$("#lstAAG");
-                        /* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
-                        miselect5.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
-                        
-                        $.post("includes/cargar-.php",
-                            function(data) {
-                            miselect5.empty();
-                            miselect5.append("<option value='00'>Seleccionar...</option>");
-                            for (var i=0; i<data.length; i++) {
-                                miselect5.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');
-                            }			
-                        }, "json");
                     }
             });
         });
+                // CUANDO EL VALOR DE NIVEL O GRADO - SERVICIO EDUCATIVO CAMBIE.
+                $("#lstGradoAAG").change(function () {
+                    $("#lstGradoAAG option:selected").each(function () {
+                        codigo_annlectivo=$("#lstAnnLectivoAAG").val();
+                        modalidad=$("#lstModalidadAAG").val();
+                        codigo_grado_se = this.value;
+                        // validar
+                            if(modalidad == "00"){
+                                // borrar el contenido de la Tabla.
+                                    $('#listaContenidoAAG').empty();
+                                // limpiar select
+                                var miselect3=$("#lstAnnLectivoAAG");
+                                var miselect4=$("#lstModalidad");
+                                var miselect5=$("#lstGradoAAG");
+                                var miselect5=$("#lstAAG");
+                                    miselect4.empty();
+                                    miselect5.empty();
+                                    miselect6.empty();
+                            }else{
+                                // borrar el contenido de la Tabla.
+                                    $('#listaContenidoAAG').empty();
+                                // LISTAR PARA EL SERVIICO EDUCATIVO - COMPONENTES DE ESTUDIOS.
+                                var miselect=$("#lstAAG");
+                                /* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
+                                miselect.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
+                                
+                                $.post("includes/cargar-nombre-asignatura.php",{codigo_modalidad: modalidad, codigo_annlectivo: codigo_annlectivo, codigo_grado_se: codigo_grado_se},
+                                    function(data) {
+                                    miselect.empty();
+                                    miselect.append("<option value='00'>Seleccionar...</option>");
+                                    for (var i=0; i<data.length; i++) {
+                                        miselect.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');
+                                    }			
+                                }, "json");
+                            }
+                    });
+                });
         ////////////////////////////////////////////////////////////////////////////
         // ÑO,ÒAR DATPS DEPÈNDIENTE DEL TAB DE NAV
         //////////////////////////////////////////////////////////////////////////
