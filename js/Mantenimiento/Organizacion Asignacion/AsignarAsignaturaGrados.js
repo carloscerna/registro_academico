@@ -91,50 +91,50 @@ $(function(){
                     }
             });
         });
-                // CUANDO EL VALOR DE NIVEL O GRADO - SERVICIO EDUCATIVO CAMBIE.
-                $("#lstGradoAAG").change(function () {
-                    $("#lstGradoAAG option:selected").each(function () {
-                        codigo_annlectivo=$("#lstAnnLectivoAAG").val();
-                        modalidad=$("#lstModalidadAAG").val();
-                        codigo_grado_se = this.value;
-                        // validar
-                            if(modalidad == "00"){
-                                // borrar el contenido de la Tabla.
-                                    $('#listaContenidoAAG').empty();
-                                // limpiar select
-                                var miselect3=$("#lstAnnLectivoAAG");
-                                var miselect4=$("#lstModalidad");
-                                var miselect5=$("#lstGradoAAG");
-                                var miselect5=$("#lstAAG");
-                                    miselect4.empty();
-                                    miselect5.empty();
-                                    miselect6.empty();
-                            }else{
-                                // borrar el contenido de la Tabla.
-                                    $('#listaContenidoAAG').empty();
-                                // LISTAR PARA EL SERVIICO EDUCATIVO - COMPONENTES DE ESTUDIOS.
-                                var miselect=$("#lstAAG");
-                                /* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
-                                miselect.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
-                                
-                                $.post("includes/cargar-nombre-asignatura.php",{codigo_modalidad: modalidad, codigo_annlectivo: codigo_annlectivo, codigo_grado_se: codigo_grado_se},
-                                    function(data) {
-                                    miselect.empty();
-                                    miselect.append("<option value='00'>Seleccionar...</option>");
-                                    for (var i=0; i<data.length; i++) {
-                                        miselect.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');
-                                    }			
-                                }, "json");
-                            }
-                    });
-                });
+        // CUANDO EL VALOR DE NIVEL O GRADO - SERVICIO EDUCATIVO CAMBIE.
+        $("#lstGradoAAG").change(function () {
+            $("#lstGradoAAG option:selected").each(function () {
+                codigo_annlectivo=$("#lstAnnLectivoAAG").val();
+                modalidad=$("#lstModalidadAAG").val();
+                codigo_grado_se = this.value;
+                // validar
+                    if(modalidad == "00"){
+                        // borrar el contenido de la Tabla.
+                            $('#listaContenidoAAG').empty();
+                        // limpiar select
+                        var miselect3=$("#lstAnnLectivoAAG");
+                        var miselect4=$("#lstModalidad");
+                        var miselect5=$("#lstGradoAAG");
+                        var miselect5=$("#lstAAG");
+                            miselect4.empty();
+                            miselect5.empty();
+                            miselect6.empty();
+                    }else{
+                        // borrar el contenido de la Tabla.
+                            $('#listaContenidoAAG').empty();
+                        // LISTAR PARA EL SERVIICO EDUCATIVO - COMPONENTES DE ESTUDIOS.
+                        var miselect=$("#lstAAG");
+                        /* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
+                        miselect.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
+                        
+                        $.post("includes/cargar-nombre-asignatura.php",{codigo_modalidad: modalidad, codigo_annlectivo: codigo_annlectivo, codigo_grado_se: codigo_grado_se},
+                            function(data) {
+                            miselect.empty();
+                            miselect.append("<option value='00'>Seleccionar...</option>");
+                            for (var i=0; i<data.length; i++) {
+                                miselect.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');
+                            }			
+                        }, "json");
+                    }
+            });
+        });
         ////////////////////////////////////////////////////////////////////////////
         // ÑO,ÒAR DATPS DEPÈNDIENTE DEL TAB DE NAV
         //////////////////////////////////////////////////////////////////////////
     $("#NavOrganizacionAsignacion ul.nav > li > a").on("click", function () {
         TextoTab = $(this).text();
         //alert(TextoTab);
-        if(TextoTab == "Docente/Nivel"){
+        if(TextoTab == "Asignaturas/Niveles"){
             // Borrar información de la Tabla.
                 $('#listaContenidoAAG').empty();
                 $("#AlertAAG").css("display", "none");
@@ -308,6 +308,7 @@ $(function(){
             // Asignamos valor a la variable acción
                 codigo_annlectivo = $("#lstAnnLectivoAAG").val();
                 codigo_modalidad = $("#lstModalidadAAG").val();
+                codigo_grado_se = $("#lstGradoAAG").val();
                 accion = 'BuscarAAG';
                 //
                 //  CONDICONAR EL SELECT ...
@@ -322,8 +323,14 @@ $(function(){
                     $("#TextoAlertAAG").text("Debe Seleccionar la Modalidad para Buscar.");
                     return;
                 }
+                if(codigo_grado_se == "00"){
+                    $("#AlertAAG").css("display", "block");
+                    $("#TextoAlertAAG").text("Debe Seleccionar un Grado para Buscar.");
+                    return;
+                }
                 // Llamar al archivo php para hacer la consulta y presentar los datos.
-                $.post("php_libs/soporte/Mantenimiento/Organizacion Asignacion/phpAjaxOrganizacionAsignacion.php",  {accion: accion, codigo_annlectivo: codigo_annlectivo, codigo_modalidad: codigo_modalidad},
+                $.post("php_libs/soporte/Mantenimiento/Organizacion Asignacion/phpAjaxOrganizacionAsignacion.php",
+                    {accion: accion, codigo_annlectivo: codigo_annlectivo, codigo_modalidad: codigo_modalidad, codigo_grado_se: codigo_grado_se},
                     function(response) {
                     if (response.respuesta === true) {
                         toastr["info"]('Registros Encontrados', "Sistema");

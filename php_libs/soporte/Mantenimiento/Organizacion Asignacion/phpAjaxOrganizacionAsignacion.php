@@ -573,22 +573,28 @@ if($errorDbConexion == false){
 			///////////////////////////////////////////////////////////////////////////////////////////////////
 			////////////// BLOQUE DE REGISTRO GESTION (ASIGNACION DE ASIGNATURAS A GRADOS)
 			///////////////////////////////////////////////////////////////////////////////////////////////////
-			case 'BuscarAA':
+			case 'BuscarAAG':
 				// Armar Colores
 				$statusTipo = array ("01" => "btn-success", "02" => "btn-warning", "03" => "btn-danger");
 				$codigo_annlectivo = $_POST["codigo_annlectivo"];
 				$codigo_modalidad = $_POST["codigo_modalidad"];
-				$codigo_grado = $_POST["codigo_grado"];
+				$codigo_grado_se_post = explode("-",$_POST["codigo_grado_se"]);
+				$codigo_grado = $codigo_grado_se_post[0];
+				$codigo_se = $codigo_grado_se_post[1];
 				// Armamos el query.
-					$query = "SELECT aaa.codigo_asignacion, aaa.codigo_bach_o_ciclo, aaa.codigo_asignatura, aaa.codigo_ann_lectivo, aaa.codigo_sirai, aaa.codigo_grado, aaa.id_asignacion, aaa.orden,
-								ann.nombre as nombre_ann_lectivo, bach.nombre as nombre_modalidad, gr.nombre as nombre_grado, asig.codigo as codigo_asignatura, asig.nombre as nombre_asignatura
-							FROM a_a_a_bach_o_ciclo aaa
-								INNER JOIN ann_lectivo ann ON ann.codigo = aaa.codigo_ann_lectivo
-								INNER JOIN bachillerato_ciclo bach ON bach.codigo = aaa.codigo_bach_o_ciclo
-								INNER JOIN grado_ano gr ON gr.codigo = aaa.codigo_grado
-								INNER JOIN asignatura asig ON asig.codigo = aaa.codigo_asignatura
-									WHERE aaa.codigo_bach_o_ciclo = '$codigo_modalidad' and aaa.codigo_ann_lectivo = '$codigo_annlectivo' and aaa.codigo_grado = '$codigo_grado'
-									ORDER BY aaa.orden";
+					$query = "SELECT DISTINCT aaa.codigo_asignacion, aaa.id_asignacion, aaa.orden, 
+						asig.codigo as codigo_asignatura, asig.nombre as nombre_asignatura,
+						cat_area_di.descripcion as descripcion_area_dimension, cat_area_subdi.descripcion as descripcion_area_subdimension,
+						cat_area.descripcion as nombre_area
+						FROM a_a_a_bach_o_ciclo aaa 
+						INNER JOIN ann_lectivo ann ON ann.codigo = aaa.codigo_ann_lectivo 
+						INNER JOIN bachillerato_ciclo bach ON bach.codigo = aaa.codigo_bach_o_ciclo 
+						INNER JOIN grado_ano gr ON gr.codigo = aaa.codigo_grado INNER JOIN asignatura asig ON asig.codigo = aaa.codigo_asignatura 
+						INNER JOIN catalogo_area_asignatura cat_area ON cat_area.codigo = asig.codigo_area 
+						INNER JOIN catalogo_area_dimension cat_area_di ON cat_area_di.codigo = asig.codigo_area_dimension
+						INNER JOIN catalogo_area_subdimension cat_area_subdi ON cat_area_subdi.codigo =  asig.codigo_area_subdimension
+							WHERE aaa.codigo_bach_o_ciclo = '$codigo_modalidad' and aaa.codigo_ann_lectivo = '$codigo_annlectivo' and aaa.codigo_grado = '$codigo_grado'
+								ORDER BY aaa.orden";
 				// Ejecutamos el Query.
 				$consulta = $dblink -> query($query);
 
@@ -599,33 +605,30 @@ if($errorDbConexion == false){
 					while($listado = $consulta -> fetch(PDO::FETCH_BOTH))
 					{
 					// variables
-					$codigo_ann_lectivo = trim($listado['codigo_ann_lectivo']);
-					$nombre_ann_lectivo = trim($listado['nombre_ann_lectivo']);
-					$nombre_modalidad = trim($listado['nombre_modalidad']);
-					$codigo_modalidad = trim($listado['codigo_bach_o_ciclo']);
-					$codigo_grado = trim($listado['codigo_grado']);
-					$nombre_grado = trim($listado['nombre_grado']);
-					$codigo_asignatura = trim($listado["codigo_asignatura"]);
-					$nombre_asignatura = trim($listado["nombre_asignatura"]);
-					$codigo_sirai = trim($listado["codigo_sirai"]);
-					$orden = trim($listado["orden"]);
-					$id_ = trim($listado['id_asignacion']);
-					$num++;
-						$contenidoOK .= '<tr>
-							<td class=centerTXT>'.$num
-							.'<td class=centerTXT>'.$id_
-							.'<td class=centerTXT>'.$codigo_ann_lectivo
-							.'<td class=centerTXT>'.$nombre_ann_lectivo
-							.'<td class=centerTXT>'.$codigo_modalidad
-							.'<td class=centerTXT>'.$nombre_modalidad
-							.'<td class=centerTXT>'.$codigo_grado
-							.'<td class=centerTXT>'.$nombre_grado
-							.'<td class=centerTXT>'.$codigo_asignatura
-							.'<td class=centerTXT>'.$nombre_asignatura
-							.'<td class=centerTXT>'."<input type=text id=codigo_sirai name=codigo_sirai value ='$codigo_sirai' class=form-control>"
-							.'<td class=centerTXT>'."<input type=number id=orden name=orden value ='$orden' class=form-control>"
-							.'<td class = centerTXT><a data-accion=editar_aaa class="btn btn-xs btn-primary" href='.$listado['id_asignacion'].'>Editar</a>'
-							.'<td class = centerTXT><a data-accion=eliminar_aaa class="btn btn-xs btn-primary" href='.$listado['id_asignacion'].'>Eliminar</a>'
+						$id_ = trim($listado['id_asignacion']);
+						$nombre_area = trim($listado["nombre_area"]);
+						$nombre_area_dimension = trim($listado['descripcion_area_dimension']);
+						$nombre_area_subdimension = trim($listado['descripcion_area_subdimension']);
+						$nombre_asignatura = trim($listado["nombre_asignatura"]);
+						$orden = trim($listado["orden"]);
+					// validar el nombre de la asignatura con su area, dimension y subdimension.
+						if($nombre_area_dimension == "Ninguno"){
+							$nombre_area_dimension_subdimension_asignatura = $nombre_area . " - " . $nombre_asignatura;
+						}else{
+							$nombre_area_dimension_subdimension_asignatura = $nombre_area . "-" . $nombre_area_dimension . "-" . $nombre_area_subdimension . "-" . $nombre_asignatura;
+						}
+					//
+					//
+						$num++;
+						$contenidoOK .= "<tr>
+							<td><input type=checkbox class=case name=chk$id_ id=chk$id_>
+							<td>$num
+							<td>$id_
+							<td>$nombre_area_dimension_subdimension_asignatura
+							<td>$nombre_asignatura
+							<td>$orden
+							<td><a data-accion=EditarAAG class='btn btn-xs btn-info' data-toggle='tooltip' data-placement='top' title='Editar' href=$id_><i class='fas fa-edit'></i></a>
+							<a data-accion=EliminarAAG class='btn btn-xs btn-warning' data-toggle='tooltip' data-placement='top' title='Eliminar' href=$id_><i class='fas fa-trash'></i></a>"
 							;
 					}
 					$mensajeError = "Si Registro";
@@ -946,7 +949,8 @@ else{
 // CONDICIONES RESULTADO DEL JSON Y DATA[]
 if($_POST['accion'] == "BuscarHorarios" || $_POST['accion'] == "GuardarHorarios" || $_POST['accion'] == "ActualizarHorarios"  || $_POST['accion'] == "EliminarHorarios"  
 	|| $_POST['accion'] == "BuscarModalidad" || $_POST['accion'] == "GuardarModalidad" || $_POST['accion'] == "EliminarModalidad" || $_POST['accion'] == "BuscarSeGST" || $_POST['accion'] == "ActualizarSeGST"
-	|| $_POST['accion'] == "BuscarDN" || $_POST['accion'] == "GuardarDN" || $_POST['accion'] == "ActualizarDN")
+	|| $_POST['accion'] == "BuscarDN" || $_POST['accion'] == "GuardarDN" || $_POST['accion'] == "ActualizarDN"
+	|| $_POST["accion"] == "BuscarAAG")
 {
 // Armamos array para convertir a JSON
 	$salidaJson = array("respuesta" => $respuestaOK,
