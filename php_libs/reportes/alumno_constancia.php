@@ -89,12 +89,12 @@ function Footer()
     
     //Firma Director.
     if($firma == 'yes'){
-	$img = $_SERVER['DOCUMENT_ROOT'].'/registro_academico/img/'.$_SESSION['imagen_firma'];;
-	$this->Image($img,130,2000,10,10);
+	$img = $_SERVER['DOCUMENT_ROOT'].'/registro_academico/img/'.$_SESSION['imagen_firma'];
+	$this->Image($img,130,208,45,20);
     }
     if($sello == 'yes'){
-	$img_sello = $_SERVER['DOCUMENT_ROOT'].'/registro_academico/img/'.$_SESSION['imagen_sello'];;
-	$this->Image($img_sello,95,200,30,30);
+	$img_sello = $_SERVER['DOCUMENT_ROOT'].'/registro_academico/img/'.$_SESSION['imagen_sello'];
+	$this->Image($img_sello,107,200,30,30);
     }
     
     //Nombre Director
