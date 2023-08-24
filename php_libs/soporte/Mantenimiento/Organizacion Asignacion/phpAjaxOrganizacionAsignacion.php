@@ -563,11 +563,11 @@ if($errorDbConexion == false){
 					$consulta = $dblink -> query($query);
 				// Validamos que se haya actualizado el registro
 					if($consulta -> rowCount() != 0){
-						$mensajeError = 'No se ha eliminado el registro';
-					}else{
 						$respuestaOK = true;
 						$mensajeError = 'Se ha eliminado el registro correctamente';
 						$contenidoOK = 'Se ha Eliminado Registro(s).';
+					}else{
+						$mensajeError = 'No se ha eliminado el registro';
 					}
 			break;
 			///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -634,84 +634,17 @@ if($errorDbConexion == false){
 					$mensajeError = "Si Registro";
 				}
 			break;
-			case 'GuardarAA':
+			case 'GuardarAAG':
 				// consultar el registro antes de agregarlo.
+					$TodasLasAsignaturas = "no";
 				// Armamos el query y iniciamos variables.
-				 $codigo_ann_lectivo = ($_POST['lstannlectivoAA']);
-				 $codigo_modalidad = ($_POST['lstmodalidadAA']);
-				 $codigo_grado = $_POST["lstgradoAA"];
-				 $codigo_asignatura = $_POST["lstasignatura"];
-                 $TodasLasAsignaturas = $_POST["TodasLasAsignaturas"];
-                 ///////////////////////////////////////////////////////////////////////////////////////////////
-                 //// cambiar codigo para el servicio educativo
-                 ///////////////////////////////////////////////////////////////////////////////////////////////
-                 // CONDIONAL PARA EDUCACION INICIAL sección 1, 2, 3.
-                            if($codigo_modalidad == "01")
-                            {
-                                if($codigo_grado == 'I1'){$codigo_se = "01";}
-                                if($codigo_grado == 'I2'){$codigo_se = "02";}
-                                if($codigo_grado == 'I3'){$codigo_se = "03";}
-                                
-                            }
-                            
-                            // CONDIONAL PARA Parvularia, sección 4, 5, 6.
-                            if($codigo_modalidad == "02")
-                            {
-                                if($codigo_grado == '4P'){$codigo_se = "04";}
-                                if($codigo_grado == '5P'){$codigo_se = "05";}
-                                if($codigo_grado == '6P'){$codigo_se = "06";}
-                                
-                            }
-                            // CONDIONAL PARA PRIMER CICLO Y SEGUNDO CICLO
-                            if($codigo_modalidad >="03" and $codigo_modalidad <= "04")
-                            {
-                                $codigo_se = "07";
-                            }
-                            // CONDIONAL PARA PRIMER CICLO Y SEGUNDO CICLO
-                            if($codigo_modalidad >="05" and $codigo_modalidad <= "05")
-                            {
-                                $codigo_se = "08";
-                            }
-                            // CONDIONAL PARA EL BACHILLERATO GENERAL
-                            if($codigo_modalidad == "06")
-                            {
-                                    $codigo_se = "09";
-                            }
-                            // CONDIONAL PARA EL BACHILLERATO TECNICO 
-                            if($codigo_modalidad == "07")
-                            {
-                                    $codigo_se = "10";
-                            }
-                            // CONDIONAL PARA EL BACHILLERATO TECNICO  TERCER AÑO CONTADOR
-                            if($codigo_modalidad == "09")
-                            {
-                                    $codigo_se = "11";
-                            }
-                            // CONDIONAL PARA EL TERCER CICLO NOCTURNA MF.
-                            if($codigo_modalidad == "10")
-                            {
-                                    $codigo_se = "13";
-                            }
-                            // CONDIONAL PARA EL BACHILLERATO GENERAL  NOCTURNA MF.
-                            if($codigo_modalidad == "11")
-                            {
-                                    $codigo_se = "14";
-                            }
-							// CONDIONAL PARA EDUCACIÓN PARVULARIA - ESTANDAR DE DESARROLLO.
-							if($codigo_modalidad == "13")
-							{
-								if($codigo_grado == '4P'){$codigo_se = "16";}
-                                if($codigo_grado == '5P'){$codigo_se = "17";}
-                                if($codigo_grado == '6P'){$codigo_se = "18";}
-							}
-							// CONDIONAL PARA EDUCACIÓN BASICA - ESTANDAR DE DESARROLLO.
-							if($codigo_modalidad == "14")
-							{
-								if($codigo_grado == '01'){$codigo_se = "19";}
-							}
-                            if($_SESSION['codigo_perfil'] == '06'){
-                            
-                            }
+					$codigo_annlectivo = ($_POST['lstAnnLectivoAAG']);
+					$codigo_modalidad = ($_POST['lstModalidadAAG']);
+					$codigo_grado_se = explode("-", $_POST["lstGradoAAG"]);
+					$codigo_grado = $codigo_grado_se[0];
+					$codigo_servicio_educativo = $codigo_grado_se[1];
+					$codigo_asignatura = $_POST["lstAAG"];
+					$TodasLasAsignaturas = $_POST["TodasLasAsignaturas"];
                  ///////////////////////////////////////////////////////////////////////////////////////////////
                  //// SI TODAS LAS ASIGNATURAS ES IGUAL A YES
                  ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -751,32 +684,31 @@ if($errorDbConexion == false){
                                    $numero++;
                                 } // final del while para recorrer las asignaturas
                  }else{
-                    ///////////////////////////////////////////////////////////////////////////////////////////////
-                    // PROCESO PARA GUARDAR UNA SOLA ASIGNATURA.
-                    ///////////////////////////////////////////////////////////////////////////////////////////////
-                        // VERFICAR SI NO EXISTE ASIGNATURA.
-                        $query = "SELECT * FROM a_a_a_bach_o_ciclo WHERE codigo_ann_lectivo = '$codigo_ann_lectivo' and codigo_bach_o_ciclo = '$codigo_modalidad' and codigo_grado = '$codigo_grado' and codigo_asignatura = '$codigo_asignatura'";
-                       // Ejecutamos el Query.
-                       $consulta = $dblink -> query($query);
-       
-                       if($consulta -> rowCount() != 0){
-                           $respuestaOK = false;
-                           $contenidoOK = "";
-                           $mensajeError = "Si Existe";
-                       }else{
-                       // proceso para grabar el registro
-                           $query = "INSERT INTO a_a_a_bach_o_ciclo (codigo_ann_lectivo, codigo_bach_o_ciclo, codigo_asignacion, codigo_grado, codigo_asignatura) VALUES ('$codigo_ann_lectivo','$codigo_modalidad','$codigo_modalidad','$codigo_grado','$codigo_asignatura')";
-                       // Ejecutamos el Query.
-                       $consulta = $dblink -> query($query);
-                           $respuestaOK = true;
-                           $contenidoOK = "";
-                           $mensajeError = "Si Registro";
-                       }                    
-                 }
-                 
-
+					///////////////////////////////////////////////////////////////////////////////////////////////
+					// PROCESO PARA GUARDAR UNA SOLA ASIGNATURA.
+					///////////////////////////////////////////////////////////////////////////////////////////////
+						// VERFICAR SI NO EXISTE ASIGNATURA.
+						$query = "SELECT * FROM a_a_a_bach_o_ciclo 
+									WHERE codigo_ann_lectivo = '$codigo_annlectivo' and codigo_bach_o_ciclo = '$codigo_modalidad' and codigo_grado = '$codigo_grado' and codigo_asignatura = '$codigo_asignatura'";
+						// Ejecutamos el Query.
+						$consulta = $dblink -> query($query);
+		
+						if($consulta -> rowCount() != 0){
+							$respuestaOK = false;
+							$contenidoOK = "";
+							$mensajeError = "El Registro del Componente ya Existe.";
+						}else{
+						// proceso para grabar el registro
+							$query = "INSERT INTO a_a_a_bach_o_ciclo (codigo_ann_lectivo, codigo_bach_o_ciclo, codigo_asignacion, codigo_grado, codigo_asignatura) VALUES ('$codigo_annlectivo','$codigo_modalidad','$codigo_modalidad','$codigo_grado','$codigo_asignatura')";
+						// Ejecutamos el Query.
+						$consulta = $dblink -> query($query);
+							$respuestaOK = true;
+							$contenidoOK = "";
+							$mensajeError = "El Registro fue Guardado Correctamente.";
+						}                    
+					}
 			break;
-			case 'ActualizarCS':		
+			case 'ActualizarAAG':		
 				// armar variables y consulta Query.
 				$codigo_aa[] = $_POST["codigo_aa"];
 				$codigo_asignatura[] = $_POST["codigo_asignatura"];
@@ -815,126 +747,22 @@ if($errorDbConexion == false){
 				$contenidoOK = 'Registros Actualizados.';
 				$mensajeError =  'Si Registro';
 			break;		
-			case 'eliminar_aaa':
-				$query = sprintf("DELETE FROM a_a_a_bach_o_ciclo WHERE id_asignacion = %s",
-				$_POST['id_user']);
-
+			case 'EliminarAAG':
+				// Variable
+				$id_ = $_POST['id_'];
+				// Armamos el query
+					$query = "DELETE FROM a_a_a_bach_o_ciclo WHERE id_asignacion = '$id_'";
 				// Ejecutamos el query
-					$count = $dblink -> exec($query);
-				
+					$consulta = $dblink -> query($query);
 				// Validamos que se haya actualizado el registro
-				if($count != 0){
-					$respuestaOK = true;
-					$mensajeError = 'Se ha eliminado el registro correctamente'.$query;
-
-					$contenidoOK = 'Se ha Eliminado '.$count.' Registro(s).';
-
-				}else{
-					$mensajeError = 'No se ha eliminado el registro'.$query;
-				}
-				break;
-			case 'editar_grado':
-				// Armamos el query y iniciamos variables.
-					$query = "SELECT id_grado_ano, nombre, codigo FROM grado_ano WHERE id_grado_ano = ".$_POST['id_x']. " ORDER BY codigo ";
-				// Ejecutamos el Query.
-				$consulta = $dblink -> query($query);
-
-				if($consulta -> rowCount() != 0){
-					$respuestaOK = true;
-					$fila_array = 0;
-					// convertimos el objeto
-					while($listado = $consulta -> fetch(PDO::FETCH_BOTH))
-					{
-					// variables
-					$id_grado_ano = trim($listado['id_grado_ano']);
-					$nombre = trim($listado['nombre']);
-					$codigo = trim($listado['codigo']);
-					
-					$datos[$fila_array]["id_grado"] = $id_grado_ano;
-					$datos[$fila_array]["codigo_grado"] = $codigo;
-					$datos[$fila_array]["nombre"] = $nombre;
-					$fila_array++;
-					}
-					$mensajeError = "Se ha consultado el registro correctamente ";
-				}
-			break;
-			case 'modificar_grado':
-				$id_grado = $_POST['id_x'];
-				$nombre = strtoupper($_POST['nombre_grado']);
-				// Armamos el query y iniciamos variables.
-					$query = "UPDATE grado_ano SET nombre = '$nombre' WHERE id_grado_ano = ". $id_grado;
-				// Ejecutamos el Query.
-				$consulta = $dblink -> query($query);
-					$respuestaOK = true;
-					$contenidoOK = "Registro Actualizado.";
-					$mensajeError = "Se ha consultado el registro correctamente ";
-			break;
-			case 'addGrado':
-				// consultar el registro antes de agregarlo.
-				// Armamos el query y iniciamos variables.
-				 $nombre = strtoupper($_POST['nombre_grado']);
-				 $codigo_grado = ($_POST['codigo_grado']);
-				 $query = "SELECT id_grado_ano, nombre, codigo FROM grado_ano WHERE codigo = '".$codigo_grado. "' ORDER BY codigo ";
-				// Ejecutamos el Query.
-				$consulta = $dblink -> query($query);
-
-				if($consulta -> rowCount() != 0){
-					$respuestaOK = false;
-					$contenidoOK = "Este registro ya Existe";
-					$mensajeError = "Este registro ya Existe.";
-				}else{
-				// proceso para grabar el registro
-					$query = "INSERT INTO grado_ano (nombre, codigo) VALUES ('$nombre','$codigo_grado')";
-				// Ejecutamos el Query.
-				$consulta = $dblink -> query($query);
-					$respuestaOK = true;
-					$contenidoOK = "Registro Agregado.";
-					$mensajeError = "Se ha consultado el registro correctamente ";
-				}
-			break;
-			case 'eliminar_grado_seccion':
-				// consultar el registro antes de agregarlo.
-				 $id_ = ($_POST['id_']);
-					$query = "SELECT * FROM organizacion_grados_secciones WHERE id_grados_secciones = '$id_'";
-					// Ejecutamos el Query.
-						$consulta = $dblink -> query($query);
-
-					 while($listado = $consulta -> fetch(PDO::FETCH_BOTH))
-                                {
-                                 // Nombres de los campos de la tabla.
-                                  $codigo_modalidad = trim($listado['codigo_bachillerato']);
-								  $codigo_grado = trim($listado['codigo_grado']);
-								  $codigo_seccion = trim($listado['codigo_seccion']);
-								  $codigo_turno = trim($listado['codigo_turno']);
-								  $codigo_ann_lectivo = trim($listado['codigo_ann_lectivo']);
-                                } // final del while para recorrer las asignaturas
-				//	BUSCAR EN LA MARICULA SI EXISTE UN DATO.
-						$query_matricula = "SELECT * FROM alumno_matricula WHERE codigo_grado = '$codigo_grado' and codigo_bach_o_ciclo = '$codigo_modalidad' and codigo_ann_lectivo = '$codigo_ann_lectivo' and codigo_seccion = '$codigo_seccion' and codigo_turno = '$codigo_turno'";
-						$consulta_matricula = $dblink -> query($query_matricula);
-				//
-				if($consulta_matricula -> rowCount() != 0){
-					$respuestaOK = false;
-					$contenidoOK = "Este grado ya tiene registros";
-					$mensajeError = "Este grado ya tiene registros";
-				}else{
-					// Armamos el query
-					$query_eliminar = "DELETE FROM organizacion_grados_secciones WHERE id_grados_secciones = '$id_'";
-
-					// Ejecutamos el query
-						$count = $dblink -> exec($query_eliminar);
-
-					// Validamos que se haya actualizado el registro
-					if($count != 0){
+					if($consulta -> rowCount() != 0){
 						$respuestaOK = true;
-						$mensajeError = 'Se ha eliminado el registro correctamente'.$query;
-
-						$contenidoOK = 'Se ha Eliminado '.$count.' Registro(s).';
-
+						$mensajeError = 'Se ha eliminado el registro correctamente';
+						$contenidoOK = 'Se ha Eliminado Registro(s).';
 					}else{
-						$mensajeError = 'No se ha eliminado el registro'.$query;
+						$mensajeError = 'No se ha eliminado el registro';
 					}
-				}
-			break;	
+				break;
 			default:
 				$mensajeError = 'No Registro';
 			break;
@@ -950,7 +778,7 @@ else{
 if($_POST['accion'] == "BuscarHorarios" || $_POST['accion'] == "GuardarHorarios" || $_POST['accion'] == "ActualizarHorarios"  || $_POST['accion'] == "EliminarHorarios"  
 	|| $_POST['accion'] == "BuscarModalidad" || $_POST['accion'] == "GuardarModalidad" || $_POST['accion'] == "EliminarModalidad" || $_POST['accion'] == "BuscarSeGST" || $_POST['accion'] == "ActualizarSeGST"
 	|| $_POST['accion'] == "BuscarDN" || $_POST['accion'] == "GuardarDN" || $_POST['accion'] == "ActualizarDN"
-	|| $_POST["accion"] == "BuscarAAG")
+	|| $_POST["accion"] == "BuscarAAG" || $_POST['accion'] == "GuardarAAG" || $_POST['accion'] == "EliminarAAG")
 {
 // Armamos array para convertir a JSON
 	$salidaJson = array("respuesta" => $respuestaOK,

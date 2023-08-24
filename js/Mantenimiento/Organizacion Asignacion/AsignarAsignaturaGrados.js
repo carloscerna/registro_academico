@@ -7,6 +7,9 @@ var Accion_Editar_Eliminar = "noAccion";
 var codigo_annlectivo = "";
 var codigo_modalidad = "";
 var msjEtiqueta = "";
+var codigo_grado_se = "";
+var codigo_asignatura = "";
+var codigo_servicio_educativo = "";
 // INICIO DE LA FUNCION PRINCIPAL.
 $(function(){
 //
@@ -256,7 +259,7 @@ $(function(){
                                                 $('#accion_aag').val('BuscarAAG');
                                                 accion = 'BuscarAAG';
                                                 // Llamar al archivo php para hacer la consulta y presentar los datos.
-                                                $.post("php_libs/soporte/Mantenimiento/Organizacion Asignacion/phpAjaxOrganizacionAsignacion.php",  {accion: accion, codigo_annlectivo: codigo_annlectivo, codigo_modalidad: codigo_modalidad},
+                                                $.post("php_libs/soporte/Mantenimiento/Organizacion Asignacion/phpAjaxOrganizacionAsignacion.php",  {accion: accion, codigo_annlectivo: codigo_annlectivo, codigo_modalidad: codigo_modalidad, codigo_grado_se: codigo_grado_se},
                                                     function(response) {
                                                         if (response.respuesta === true) {
                                                             toastr["info"]('Registros Encontrados', "Sistema");
@@ -346,33 +349,33 @@ $(function(){
         /* VER #CONTROLES CREADOS */
         //////////////////////////////////////////////////////////////////////////////////
         $('#goGuardarAAG').on('click', function(){
+            // Asignamos valor a la variable acción
             codigo_annlectivo = $("#lstAnnLectivoAAG").val();
             codigo_modalidad = $("#lstModalidadAAG").val();
-            codigo_aag = $("#lstDocenteNivel").val();
-            codigo_turno = $("#lstTurnoAAG").val();
+            codigo_grado_se = $("#lstGradoAAG").val();
+            codigo_asignatura = $("#lstAAG").val();
             accion = 'GuardarAAG';
-                $('#accion_aag').val('GuardarAAG');
             //
-            //  CONDICONAR EL SELECT SERVICIO EDUCATIVO.
+            //  CONDICONAR EL SELECT ...
             //
             if(codigo_annlectivo == "00"){
                 $("#AlertAAG").css("display", "block");
-                $("#TextoAlertAAG").text("Debe Seleccionar un Año Lectivo para Guardar un Nivel.");
+                $("#TextoAlertAAG").text("Debe Seleccionar Año Lectivo.");
                 return;
             }
             if(codigo_modalidad == "00"){
                 $("#AlertAAG").css("display", "block");
-                $("#TextoAlertAAG").text("Debe Seleccionar un Nivel para Guardar.");
+                $("#TextoAlertAAG").text("Debe Seleccionar la Modalidad.");
                 return;
             }
-            if(codigo_turno == "00"){
+            if(codigo_grado_se == "00"){
                 $("#AlertAAG").css("display", "block");
-                $("#TextoAlertAAG").text("Debe Seleccionar un Turno para Guardar.");
+                $("#TextoAlertAAG").text("Debe Seleccionar un Grado.");
                 return;
             }
-            if(codigo_aag == "00"){
+            if(codigo_asignatura == "00"){
                 $("#AlertAAG").css("display", "block");
-                $("#TextoAlertAAG").text("Debe Seleccionar un Docente para Guardar.");
+                $("#TextoAlertAAG").text("Debe Seleccionar una Asignatura.");
                 return;
             }
             // enviar form
@@ -460,6 +463,8 @@ $(function(){
                                             }                                                                                    // si es exitosa la operación
                                                 $('#listaContenidoAAG').empty();
                                                 $('#listaContenidoAAG').append(response.contenido);
+                                                //
+                                                $("#AlertAAG").css("display", "none");
                                         },"json");
                                 }               
                         },
@@ -501,13 +506,13 @@ $(function(){
                 ///////////////////////////////////////////////////////////////
                     $.ajax({
                         beforeSend: function(){
-
+                            if($('#TodasLasAsignaturas').is(":checked")) {TodasLasAsignaturas = 'yes';}else{TodasLasAsignaturas = "no"}
                         },
                         cache: false,
                         type: "POST",
                         dataType: "json",
                         url:"php_libs/soporte/Mantenimiento/Organizacion Asignacion/phpAjaxOrganizacionAsignacion.php",
-                        data:str + "&accion=" + accion + "&id=" + Math.random() + "&codigo_annlectivo=" + codigo_annlectivo + "&codigo_modalidad=" + codigo_modalidad,
+                        data:str + "&accion=" + accion + "&id=" + Math.random() + "&codigo_annlectivo=" + codigo_annlectivo + "&codigo_modalidad=" + codigo_modalidad + "&TodasLasAsignaturas=" + TodasLasAsignaturas,
                         success: function(response){
                             // Validar mensaje de error
                             if(response.respuesta == false){
@@ -520,7 +525,7 @@ $(function(){
                                 // Llamar al archivo php para hacer la consulta y presentar los datos.
                                     $('#accion_aag').val('BuscarAAG');
                                     accion = 'BuscarAAG';
-                                    $.post("php_libs/soporte/Mantenimiento/Organizacion Asignacion/phpAjaxOrganizacionAsignacion.php",  {accion: accion, codigo_annlectivo: codigo_annlectivo, codigo_modalidad: codigo_modalidad},
+                                    $.post("php_libs/soporte/Mantenimiento/Organizacion Asignacion/phpAjaxOrganizacionAsignacion.php",  {accion: accion, codigo_annlectivo: codigo_annlectivo, codigo_modalidad: codigo_modalidad, codigo_grado_se: codigo_grado_se},
                                         function(response) {
                                             if (response.respuesta === true) {
                                                 toastr["info"]('Registros Encontrados', "Sistema");
@@ -530,6 +535,8 @@ $(function(){
                                             }                                                                                    // si es exitosa la operación
                                                 $('#listaContenidoAAG').empty();
                                                 $('#listaContenidoAAG').append(response.contenido);
+                                                //
+                                                $("#AlertAAG").css("display", "none");
                                         },"json");
                                 }               
                         },

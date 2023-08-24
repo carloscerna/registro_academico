@@ -490,7 +490,11 @@
                                       {#SELECT DEL SERVICIO EDUCATIVO (ASIGNATURA) #}
                                       <label for="lstAAG">Componente del Plan de Estudio</label>
                                       <select class="form-control" id="lstAAG" name="lstAAG" aria-label="lstAAG"></select>
-                                    </div>
+                                    </div> 
+                                    <div class="form-group form-check">
+                                      <input type="checkbox" class="form-check-input" id="TodasLasAsignaturas" name="TodasLasAsignaturas" aria-label="TodasLasAsignaturas">
+                                        <label class="form-check-label" for="TodasLasAsignaturas">Todas las asignaturas.</label>
+                                    </div>                                  
                                   </div>
                                 </div>
                               </form>
@@ -529,7 +533,7 @@
       </div> <!-- /. tab-content-->
     </div> <!-- /. CONTAINER FLUID-->
   </section>
- </div> <!-- CONTENT WRAPPER-->
+  </div> <!-- CONTENT WRAPPER-->
 <!-- Loading Screen -->
   {% include 'loading-screen.html' %}
 <!-- plantilla que contiene el . -->
