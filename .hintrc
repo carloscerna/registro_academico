@@ -3,6 +3,12 @@
     "development"
   ],
   "hints": {
-    "axe/aria": "off"
+    "axe/aria": "off",
+    "axe/structure": [
+      "default",
+      {
+        "list": "off"
+      }
+    ]
   }
 }

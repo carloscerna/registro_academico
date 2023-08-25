@@ -1,38 +1,43 @@
 {# Heredando la plantilla principal #}
-
-
 {% extends 'default_layout.html' %}
 
+{% block extraCSS %}
+<style>
+  #GraficosTablas{
+    display: none;
+  }
+</style>
+{% endblock %}
 {% block javascripts %}
- <!-- JS SCRIPT  -->
+<!-- JS SCRIPT  -->
   <script type="text/JavaScript" src="js/carga-datos-indicadores-educativos.js"></script>
   <script type="text/JavaScript" src="js/main_reportes-indicadores.js"></script>
-
   <script type="text/JavaScript" src="js/main_graficos_indicadores.js"></script>
   <script type="text/JavaScript" src="js/main_actualizar_indicadores.js"></script>
-  <script src="js/Chart.js-2.7.0/dist/Chart.bundle.js"></script>
-  <script src="js/Chart.js-2.7.0/samples/utils.js"></script>
-
-<!-- DEINIR EL AJAX START- STOP Y ERROR -->
-<script>
-  $(document).ready(function () { 
-    /*$(document).ajaxStart(function () {
-        $('#myModal').modal('show');
-    });*/
-    $(document).ajaxStop(function () {
-        $('#myModal').modal('hide');
+  <!-- CHART JS-->
+  <script type="text/JavaScript" src="js/Chart.js-2.7.0/dist/Chart.bundle.js"></script>
+  <script type="text/JavaScript" src="js/Chart.js-2.7.0/samples/utils.js"></script>
+  <!-- DEINIR EL AJAX START- STOP Y ERROR -->
+  <script>
+    $(document).ready(function () { 
+      /*$(document).ajaxStart(function () {
+          $('#myModal').modal('show');
+      });*/
+      $(document).ajaxStop(function () {
+          $('#myModal').modal('hide');
+      });
+      $(document).ajaxError(function () {
+          $('#myModal').modal('hide');
+      });   
     });
-    $(document).ajaxError(function () {
-        $('#myModal').modal('hide');
-    });   
-  });
-</script>
+  </script>
+<!-- JS SCRIPT  -->
   {% endblock %}
 
 {% block contenidos %}
 <!-- Page header -->
 <!-- Content Wrapper. Contains page content -->
-  <div class="content-wrapper">
+  <div class="content-wrapper fondoBody">
     <!-- Content Header (Page header) -->
     <div class="content-header p-0">
       <div class="container-fluid">
@@ -51,7 +56,7 @@
     </div>
     <!-- /.content-header -->
     
-   <!-- Main content -->
+  <!-- Main content -->
     <section class="content">
       <div class="container-fluid">
       <!-- SELECCION DEL AÑO LECTIVO -->
@@ -70,12 +75,12 @@
                 <!-- / BOTONES -->
                 <div class="col-12 col-sm-12 col-md-6 col-lg-7 col-xl-7 align-content-center">
                   <div class="btn-group">
-                    <button type="submit" class="btn btn-info" alt="Buscar" id = "goCABuscar">
+                    <button type="submit" class="btn btn-info" alt="Buscar" id="goCABuscar" aria-label="goCABuscar">
                       <span class="fal fa-search"></span>
                     </button>
                     <div class="btn-group">
                       <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown">
-                         Actualizar
+                          Actualizar
                       </button>
                       <div class="dropdown-menu">
                         <button type="button" class="btn btn-sm btn-secondary" id = "goActualizarRepitentes">
@@ -128,7 +133,7 @@
             <!-- small box -->
             <div class="small-box bg-success">
               <div class="inner">
-                <h3><sup style="font-size: 20px"></sup></h3>
+                <h3><sup></sup></h3>
 
                 <p>Personal</p>
               </div>
@@ -180,7 +185,7 @@
     </section>
 
     <!-- GRAFICOS  y TABLA-->  
-    <section style="display: none;">
+    <section id="GraficosTablas">
       <div class="row">
             <!-- GRAFICOS -->
         <div class="col col-md-6 col-lg-6 col-xl-6">
@@ -195,12 +200,12 @@
                 <button type="button" class="btn btn-success">
                   Total <span class="badge badge-light" id="MatriculaTotal">0</span>
                 </button>
-           <div>
-             <canvas id="GraficoMatricula" height="300px"></canvas>    
+            <div>
+              <canvas id="GraficoMatricula" height="300px"></canvas>    
           </div>
         </div>
         </div>
-       <!-- TABLA DE INDICADORES -->
+        <!-- TABLA DE INDICADORES -->
           <div class="col col-md-6 col-lg-6 col-xl-6">
             <div class="jumbotron">
               <h2>Matricula</h2>
@@ -221,30 +226,28 @@
               </table>             
             </div>
           </div>
-       </div>
+        </div>
     </section>
   </div> <!-- /.content-Wrapper, Contains page content. -->
-<!-- Modal VENTANA EN ESPERA.-->
-<div id="myModal" class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static" 
-  data-keyboard="false">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel"><label for="VerificarActualizar">Actualizando...</label></h5>
-      </div>
-      <div class="modal-body">
-        <div class="d-flex justify-content-center mb-3">
-          <img src="img/ajax-loader.gif" width="45" height="45" alt="Loading...">
+  <!-- Modal VENTANA EN ESPERA. PHP-AJAX- CUANDO SE ESTA CARGANDO UN ARCHIVO-->
+  <div id="myModal" class="modal fadeIn" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel"><label for="VerificarActualizar">Actualizando...</label></h5>
         </div>
-      </div>
-      <div class="modal-footer">
-        <label for="NombreArchivo"></label>
+        <div class="modal-body">
+          <div class="d-flex justify-content-center mb-3">
+            <img src="img/ajax-loader.gif" width="45" height="45" alt="Loading...">
+          </div>
+        </div>
+          <div class="modal-footer">
+            <label for="NombreArchivo"></label>
+          </div>
       </div>
     </div>
-  </div>
-</div>  
+  </div>  
   {% endblock %}
-
 {% block loginUser %}
 <!--	{% include 'layout-login-user.html' %} -->
 {% endblock %}
