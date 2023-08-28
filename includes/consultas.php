@@ -357,15 +357,15 @@ function consultas($ejecutar,$cerrar,$codigo_bachillerato,$codigo_grado,$codigo_
     if($ejecutar == 13)
     {
         $query = "SELECT org.codigo_bachillerato as codigo_modalidad, org.codigo_grado, org.codigo_seccion, org.codigo_ann_lectivo, org.codigo_turno,
-			        sec.nombre as nombre_seccion, ann.nombre as nombre_ann_lectivo, gan.nombre as nombre_grado, bach.nombre as nombre_bachillerato, tur.nombre as nombre_turno
-			            FROM organizacion_grados_secciones org
-                            INNER JOIN bachillerato_ciclo bach ON bach.codigo = org.codigo_bachillerato
-                            INNER JOIN grado_ano gan ON gan.codigo = org.codigo_grado
-                            INNER JOIN seccion sec ON sec.codigo = org.codigo_seccion
-                            INNER JOIN ann_lectivo ann ON ann.codigo = org.codigo_ann_lectivo
-                            INNER JOIN turno tur ON tur.codigo = org.codigo_turno
-                             WHERE org.codigo_ann_lectivo = '".$codigo_bachillerato.
-                                "' ORDER BY codigo_turno, codigo_bachillerato, codigo_grado, codigo_seccion";
+                sec.nombre as nombre_seccion, ann.nombre as nombre_ann_lectivo, gan.nombre as nombre_grado, bach.nombre as nombre_bachillerato, tur.nombre as nombre_turno
+                    FROM organizacion_grados_secciones org
+                        INNER JOIN bachillerato_ciclo bach ON bach.codigo = org.codigo_bachillerato
+                        INNER JOIN grado_ano gan ON gan.codigo = org.codigo_grado
+                        INNER JOIN seccion sec ON sec.codigo = org.codigo_seccion
+                        INNER JOIN ann_lectivo ann ON ann.codigo = org.codigo_ann_lectivo
+                        INNER JOIN turno tur ON tur.codigo = org.codigo_turno
+                            WHERE org.codigo_ann_lectivo = '$codigo_bachillerato'
+                                ORDER BY codigo_grado, codigo_bachillerato, codigo_seccion, codigo_turno";
     // ejecutar la consulta.
 	    $result = $db_link -> query($query);
 	    $result_encabezado = $db_link -> query($query);

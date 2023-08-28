@@ -313,6 +313,8 @@ $(function(){
                 codigo_modalidad = $("#lstModalidadAAG").val();
                 codigo_grado_se = $("#lstGradoAAG").val();
                 accion = 'BuscarAAG';
+                // DESACTIVAR MENSAJE
+                    $("#AlertAAG").css("display", "none");
                 //
                 //  CONDICONAR EL SELECT ...
                 //
@@ -355,6 +357,8 @@ $(function(){
             codigo_grado_se = $("#lstGradoAAG").val();
             codigo_asignatura = $("#lstAAG").val();
             accion = 'GuardarAAG';
+            // DESACTIVAR MENSAJE
+            $("#AlertAAG").css("display", "none");
             //
             //  CONDICONAR EL SELECT ...
             //
@@ -432,7 +436,24 @@ $(function(){
                 ///////////////////////////////////////////////////////////////
                     $.ajax({
                         beforeSend: function(){
+                            // Información de la tabla para actualizar código sirai.
+                                var $objCuerpoTabla=$("#listaContenidoAAG").children().prev().parent();
+                                var codigo_aa_ = []; var codigo_sirai_ = []; var orden_ = []; var codigo_asignatura_ = [];
+                                var fila = 0;
+                            // recorre el contenido de la tabla.
+                                $objCuerpoTabla.find("tbody tr").each(function(){
+                                    var codigo_aa = $(this).find('td').eq(1).html();
+                                    var codigo_asignatura =$(this).find('td').eq(8).html();
+                                    var codigo_sirai =$(this).find('td').eq(10).find("input[name='codigo_sirai']").val();
+                                    var orden =$(this).find('td').eq(11).find("input[name='orden']").val();
+                            // dar valor a las arrays.
+                                codigo_asignatura_[fila]= codigo_asignatura;
+                                codigo_aa_[fila]= codigo_aa;
+                                    codigo_sirai_[fila]=codigo_sirai;
+                                    orden_[fila]=orden;
 
+                                    fila = fila + 1;
+                            });
                         },
                         cache: false,
                         type: "POST",
