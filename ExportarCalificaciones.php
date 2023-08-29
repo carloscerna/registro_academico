@@ -11,7 +11,7 @@ if(empty($_SESSION['userNombre']))
 $root = '';
     include('includes/templateEngine.inc.php');
 
-    $twig->display('layout-notas-exportar.html',array(
+    $twig->display('LayoutExportarCalificaciones.html',array(
         "userName" => $_SESSION['userNombre'],
         "userID" => $_SESSION['userID'],
         "codigo_perfil" => $_SESSION['codigo_perfil'],

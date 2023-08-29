@@ -30,7 +30,6 @@ $('#formExportarNotas').validate({
 					//variables checked
 					var TodasLasAsignaturas = ""; 
 					if($('#TodasLasAsignaturas').is(":checked")) {TodasLasAsignaturas = 'yes';}
-					// Ajax.
 				$.ajax({
 					beforeSend: function(){
 						$('#tabstabla').show();
@@ -38,15 +37,14 @@ $('#formExportarNotas').validate({
 					cache: false,
 					type: "POST",
 					dataType: "json",
-					url:"php_libs/soporte/exportar_siges_xlsx.php",
+					url:"php_libs/soporte/ExportarCalificaciones.php",
 					data:str + "&id=" + Math.random() + "&TodasLasAsignaturas=" + TodasLasAsignaturas,
 						success: function(response){
 								// Validar mensaje de error
 								if(response.respuesta == true){
-									toastr["info"]('Archivo Creado con Éxito!!!', "Sistema");
+									toastr["info"](response.mensaje, "Sistema");
 										$('#listaNotasExportarOK').empty();
-										$('#listaNotasExportarOK').append("<tr><td>Archivo Creado.</tr></td>");
-										$('#listaNotasExportarOK').append("<tr><td class=text-success>"+response.mensaje+"</tr></td>");
+										$('#listaNotasExportarOK').append(response.contenido);
 								}
 							},
 			error:function(){

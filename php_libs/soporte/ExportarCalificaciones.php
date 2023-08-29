@@ -10,13 +10,12 @@
     include($path_root."/registro_academico/php_libs/fpdf/fpdf.php");
 // cambiar a utf-8.
     header("Content-Type: text/html; charset='UTF-8'");    
-// variables y consulta a la tabla.
   //
   // Establecer formato para la fecha.
   // 
     date_default_timezone_set('America/El_Salvador');
     setlocale(LC_TIME, 'spanish');
-	//
+	// Variables y $_REQUEST(), $_POST();
     $db_link = $dblink;
     $respuestaOK = false;
     $mensajeError = "";
@@ -25,7 +24,6 @@
     $URLNombreArchivo = "";
     $todasLasAsignaturas = "no";
     $todasLasAsignaturas  = $_REQUEST["TodasLasAsignaturas"];
-// buscar la consulta y la ejecuta.
 // call the autoload
     require $path_root."/registro_academico/vendor/autoload.php";
 // load phpspreadsheet class using namespaces.
@@ -35,22 +33,17 @@
 // Creamos un objeto Spreadsheet object
     $objPHPExcel = new Spreadsheet();
 // Time zone.
-    //echo date('H:i:s') . " Set Time Zone"."<br />";
     date_default_timezone_set('America/El_Salvador');
-// set codings.
-    //$objPHPExcel->_defaultEncoding = 'ISO-8859-1';
 // Set default font
-    //echo date('H:i:s') . " Set default font"."<br />";
     $objPHPExcel->getDefaultStyle()->getFont()->setName('Arial');
     $objPHPExcel->getDefaultStyle()->getFont()->setSize(10);
-// Leemos un archivo Excel 2007
+// Leemos un archivo Excel 2007-Office 365.
     $objReader = \PhpOffice\PhpSpreadsheet\IOFactory::createReader("Xlsx");
     $origen = $path_root."/registro_academico/formatos_hoja_de_calculo/";
     $objPHPExcel = $objReader->load($origen."Formato - Importar Notas SIGES.xlsx");
-// Leemos el archivo CVS
 // Indicamos que se pare en la hoja uno del libro
     $objPHPExcel->setActiveSheetIndex(0);
-//Escribimos en la hoja en la celda NIE, CALIFICACION, FECHA, OBSERVACIÓN Y CODIGO ASIGNATURA
+// Escribimos en la hoja en la celda NIE, CALIFICACION, FECHA, OBSERVACIÓN Y CODIGO ASIGNATURA
     $objPHPExcel->getActiveSheet()->SetCellValue('A1', 'NIE');
     $objPHPExcel->getActiveSheet()->SetCellValue('B1', 'Calificacion');
     $objPHPExcel->getActiveSheet()->SetCellValue('C1', 'Fecha');
@@ -59,6 +52,23 @@
     $objPHPExcel->getActiveSheet()->SetCellValue('F1', 'Nombre del Alumno');
     $objPHPExcel->getActiveSheet()->SetCellValue('G1', 'Grado');
     $objPHPExcel->getActiveSheet()->SetCellValue('H1', 'Sección');
+    // AJUSTAR AUTOMATICAMENTE EL ANCHO DE LAS COLUMNAS.
+    foreach(range('A','B') as $columnID) {
+      $objPHPExcel->getActiveSheet()->getColumnDimension($columnID)
+          ->setAutoSize(true);
+      }
+      foreach(range('C','D') as $columnID) {
+      $objPHPExcel->getActiveSheet()->getColumnDimension($columnID)
+          ->setAutoSize(true);
+      }
+      foreach(range('E','F') as $columnID) {
+      $objPHPExcel->getActiveSheet()->getColumnDimension($columnID)
+          ->setAutoSize(true);
+      }   
+      foreach(range('G','H') as $columnID) {
+      $objPHPExcel->getActiveSheet()->getColumnDimension($columnID)
+          ->setAutoSize(true);
+      }
 // variables y consulta a la tabla.
       $codigo_all = $_REQUEST["lstmodalidad"] . substr($_REQUEST["lstgradoseccion"],0,4) . $_REQUEST["lstannlectivo"];
       $periodo = $_REQUEST["lstperiodo"];
@@ -70,7 +80,7 @@
       $codigo_grado = substr($codigo_all,2,2);
       $codigo_seccion = substr($codigo_all,4,2);
       $codigo_annlectivo = substr($codigo_all,6,2);
-// Evaluador nota para basica y parvularia
+// Evaluador nota para basica y parvularia, Extraer el nombre del grado
       if($codigo_modalidad >= '03' and $codigo_modalidad <="12"){
           if($periodo == "Periodo 1"){$nota_p_p = "nota_p_p_1";}
           if($periodo == "Periodo 2"){$nota_p_p = "nota_p_p_2";}
@@ -203,7 +213,7 @@ if($todasLasAsignaturas == "yes"){
                   $result = $db_link -> query($query);
   }
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-// RECORRER L ATABLA Y GUARDAR LOS DATOS.
+// RECORRER LA TABLA Y GUARDAR LOS DATOS.
 // Correlativo, numero de linea.
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 if($todasLasAsignaturas == "yes"){    
@@ -389,7 +399,7 @@ else{
   //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   // CUANDO SOLO SE HA SELECCIONADO PARA UNA SOLA ASIGNATURA
   //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  $num = 0; $fila_excel = 1; $valor_uno = 1;
+  $num = 1; $fila_excel = 1; $valor_uno = 1;
         while($row = $result -> fetch(PDO::FETCH_BOTH))
             {
               $nombre_annlectivo = trim($row['nombre_ann_lectivo']);
@@ -400,7 +410,7 @@ else{
               $codigo_area = trim($row['codigo_area']);
               // Variable para saber si la asignatura es de concepto o de calificación.
               $codigo_cc = (trim($row['codigo_cc']));               
-                $num++; $fila_excel++;     
+              $fila_excel++;     
               //Escribimos en la hoja en la celda e3. NIE, CALFICIACION, FECHA, OBSERVACION, ASIGNATURA.
                 $objPHPExcel->getActiveSheet()->SetCellValue("A".$fila_excel, TRIM($row['codigo_nie']));
               // Evaluar si la asignatura es de CONCEPTO O CALIFICACIÓN.
@@ -439,102 +449,68 @@ else{
                       default:
                         echo "";
                     }
-
-                  // fecha y estilo de la fecha.
-                     $objPHPExcel->getActiveSheet()->getStyle('C'.$fila_excel) 
-                         ->getNumberFormat() 
-                         ->setFormatCode( 
-                         \PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_DATE_DDMMYYYY 
-                         ); 
-                  // convertir A FORMATO DE FECHA
-                   $excelDateValue = \PhpOffice\PhpSpreadsheet\Shared\Date::PHPToExcel( 
-                              $fecha );
-                  // GRABAR EL VALOR
-                  $objPHPExcel->getActiveSheet()->SetCellValue("C".$fila_excel, $excelDateValue);              
-                  // Observaciones
-                  $objPHPExcel->getActiveSheet()->SetCellValue("D".$fila_excel, $observaciones);
-                  // Código Asignatura
-                  $objPHPExcel->getActiveSheet()->SetCellValue("E".$fila_excel, TRIM($row['codigo_sirai']));
-                  // nombre completo del alumno por orden de apellidos
-                  $objPHPExcel->getActiveSheet()->SetCellValue("F".$fila_excel, TRIM($row['apellido_alumno']));
-                  // NOMBRE GRADO
-                  $objPHPExcel->getActiveSheet()->SetCellValue("G".$fila_excel, TRIM($row['nombre_grado']));
-                  // NOMBRE SECCION
-                  $objPHPExcel->getActiveSheet()->SetCellValue("H".$fila_excel, TRIM($row['nombre_seccion']));
-              } // WHILE QUE RECORRE LA BASE DE DATOS.
-                // AJUSTAR AUTOMATICAMENTE EL ANCHO DE LAS COLUMNAS.
-                foreach(range('A','B') as $columnID) {
-                 $objPHPExcel->getActiveSheet()->getColumnDimension($columnID)
-                     ->setAutoSize(true);
+                     // fecha y estilo de la fecha.
+                      $objPHPExcel->getActiveSheet()->getStyle('C'.$fila_excel) 
+                      ->getNumberFormat() 
+                      ->setFormatCode( 
+                      \PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_DATE_DDMMYYYY 
+                      ); 
+                      // convertir A FORMATO DE FECHA
+                      $excelDateValue = \PhpOffice\PhpSpreadsheet\Shared\Date::PHPToExcel( 
+                                $fecha );
+                      $excelDateValue = \PhpOffice\PhpSpreadsheet\Shared\Date::PHPToExcel($fecha);  // Fecha.
+                    //
+                    $objPHPExcel->getActiveSheet()->SetCellValue("C".$fila_excel, $excelDateValue); // Fecha.
+                    $objPHPExcel->getActiveSheet()->SetCellValue("D".$fila_excel, $observaciones);                // Observaciones
+                    $objPHPExcel->getActiveSheet()->SetCellValue("E".$fila_excel, TRIM($row['codigo_sirai']));    // Código Asignatura
+                    $objPHPExcel->getActiveSheet()->SetCellValue("F".$fila_excel, TRIM($row['apellido_alumno'])); // nombre completo del alumno por orden de apellidos
+                    $objPHPExcel->getActiveSheet()->SetCellValue("G".$fila_excel, TRIM($row['nombre_grado']));    // NOMBRE GRADO
+                    $objPHPExcel->getActiveSheet()->SetCellValue("H".$fila_excel, TRIM($row['nombre_seccion']));  // NOMBRE SECCION
+            } // WHILE QUE RECORRE LA BASE DE DATOS. 
+                  $objWriter = new Xlsx($objPHPExcel); //Grabar el archivo en formato XLS
+                // Verificar si Existe el directorio archivos.
+                $codigo_modalidad = $codigo_bachillerato;
+                $nombre_ann_lectivo = $nombre_annlectivo;
+                $codigo_destino = 3;               // Tipo de Carpeta a Grabar.
+                CrearDirectorios($path_root,$nombre_ann_lectivo,$codigo_modalidad,$codigo_destino,$periodo); // Crear Carpeta.
+                $nombre_directorio_mgs = replace_3(trim($nombre_bachillerato."-".$nombre_grado."-".$nombre_seccion));               // Unir Modalidad - Grado y Sección.
+                if(!file_exists($DestinoArchivo . $nombre_directorio_mgs)){ // Con el nombre de la modalidad - grado - sección.
+                    mkdir ($DestinoArchivo . $nombre_directorio_mgs);                   // Para Nóminas. Escolanadamente. PERIODO
+                      chmod ($DestinoArchivo . $nombre_directorio_mgs,07777);
                 }
-                foreach(range('C','D') as $columnID) {
-                 $objPHPExcel->getActiveSheet()->getColumnDimension($columnID)
-                     ->setAutoSize(true);
-                }
-                foreach(range('E','F') as $columnID) {
-                 $objPHPExcel->getActiveSheet()->getColumnDimension($columnID)
-                     ->setAutoSize(true);
-                }   
-                foreach(range('G','H') as $columnID) {
-                 $objPHPExcel->getActiveSheet()->getColumnDimension($columnID)
-                     ->setAutoSize(true);
-                } 
-              //Grabar el archivo en formato CVS    
-                 $objWriter = new Xlsx($objPHPExcel);
-             // Verificar si Existe el directorio archivos.
-               $codigo_modalidad = $codigo_bachillerato;
-               $nombre_ann_lectivo = $nombre_annlectivo;
-              // Tipo de Carpeta a Grabar.
-               $codigo_destino = 3;
-               CrearDirectorios($path_root,$nombre_ann_lectivo,$codigo_modalidad,$codigo_destino,$periodo);
-              // Crear Carpeta.
-              // Unir Modalidad - Grado y Sección.
-               $nombre_directorio_mgs = replace_3(trim($nombre_bachillerato."-".$nombre_grado."-".$nombre_seccion));
-              // Con el nombre de la modalidad - grado - sección.
-               if(!file_exists($DestinoArchivo . $nombre_directorio_mgs)){
-                  // Para Nóminas. Escolanadamente. PERIODO
-                     mkdir ($DestinoArchivo . $nombre_directorio_mgs);
-                     chmod ($DestinoArchivo . $nombre_directorio_mgs,07777);
-                 }
-                 
-              // Destino Archivo.
-               //$DestinoArchivo = $DestinoArchivo . $nombre_directorio_mgs;
-              // Nombre del archivo. Sólo el nombre de la Asignatura.
-              if($nota_p_p_ == "Alertas" && $codigo_area == '09'){
-                $nombre_archivo = htmlspecialchars(substr($nombre_asignatura,0,110) . ".xlsx");
-                  // Grabar el archivo.
-                $objWriter->save($DestinoArchivo.$nombre_directorio_mgs."/".$nombre_archivo);
+              if($nota_p_p_ == "Alertas" && $codigo_area == '09'){             // Destino Archivo.
+                $nombre_archivo = htmlspecialchars(substr($nombre_asignatura,0,110) . ".xlsx"); // Nombre del archivo. Sólo el nombre de la Asignatura.
+                $objWriter->save($DestinoArchivo.$nombre_directorio_mgs."/".$nombre_archivo);                   // Grabar el archivo.
                   // cambiar permisos del archivo antes grabado.
                 chmod($DestinoArchivo.$nombre_directorio_mgs."/".$nombre_archivo,07777);
                   // Condicionar las resuestas y mensajes.
               }else{
-                $nombre_archivo = htmlspecialchars(substr($nombre_asignatura,0,110) . ".xlsx");
-                // ruta completa
+                $nombre_archivo = htmlspecialchars($nombre_asignatura . ".xlsx");                 // ruta completa
                 $URLNombreArchivo = $DestinoArchivo.$nombre_directorio_mgs."/".$nombre_archivo;
-                  // Grabar el archivo.
-                  if(strlen($URLNombreArchivo) >= 250){
+                  if(strlen($URLNombreArchivo) >= 250){ // VALIDAMOS PARA QUE NO EXCEDA DE 250 CARACTERES.
                     $URLNombreArchivo = substr($URLNombreArchivo,0,245) . ".xlsx";
                   }
-                //$objWriter->save($DestinoArchivo.$nombre_directorio_mgs."/".$nombre_archivo);
-                $objWriter->save($URLNombreArchivo);
-                  // cambiar permisos del archivo antes grabado.
-                //chmod($DestinoArchivo.$nombre_directorio_mgs."/".$nombre_archivo,07777);
-                  
-                  // Condicionar las resuestas y mensajes.
-              }
-               
-               $respuestaOK = true;
-               $mensajeError = $nombre_asignatura . "";//"Codigo Modalidad:   $codigo_modalidad  Nombre asignatura:  $nombre_asignatura ";
-               $contenidoOK = $DestinoArchivo;
-                // Armamos array para convertir a JSON
-               $salidaJson = array("respuesta" => $respuestaOK,
-                "mensaje" => $mensajeError,
-                "contenido" => $contenidoOK);              
+                $objWriter->save($URLNombreArchivo);  // Guardar el archivo.
+                // GUARDAR PARA LA VARIABLE CONTENIDOOK
+                $contenidoOK .= "<tr>
+                  <td>$num
+                  <td>$nombre_archivo
+                ";
+              }              
+                $respuestaOK = true;
+                $mensajeError = "¡¡¡ :) Archivo Creado con Éxito :) !!!";
              } // ELSE PARA UNA SOLA ASIGNATURA.
 ///
 ///
 //}  /// FIRN DEL FOR QUE CONTIENE EL NUMERO DE ASIGNATURAS SELECCIONADAS.
 ///
 ///
+ // Armamos array para convertir a JSON
+  $salidaJson = array(
+    "respuesta" => $respuestaOK,
+    "mensaje" => $mensajeError,
+    "contenido" => $contenidoOK
+  );              
+// Salida del JSON
   echo json_encode($salidaJson);
 ?>
