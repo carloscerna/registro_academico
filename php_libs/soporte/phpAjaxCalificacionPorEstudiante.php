@@ -147,11 +147,11 @@ if($errorDbConexion == false){
                                 <input type=hidden name=id_notas value = '$id_notas'>
                                 <td>$nombre_area
                                 <td>$nombre_asignatura
-								<td><div class='d-flex justify-content-end'><input type=text name=nota_a1 value = '$actividad_1' onkeypress='return validarCualquierNumero(this);' class='form-control decimal-1-places text-right' style='width:40%'></div>
-								<td><div class='d-flex justify-content-end'><input type=text name=nota_a2 value = '$actividad_2' onkeypress='return validarCualquierNumero(this);' class='form-control decimal-1-places text-right' style='width:40%'></div>
-								<td><div class='d-flex justify-content-end'><input type=text name=nota_a3 value = '$actividad_3' onkeypress='return validarCualquierNumero(this);' class='form-control decimal-1-places text-right' style='width:40%'></div>
-								<td><div class='d-flex justify-content-end'><input type=text name=nota_re value = '$actividad_re' onkeypress='return validarCualquierNumero(this);' class='form-control decimal-1-places text-right' style='width:40%'></div>
-                                <td><div class='d-flex justify-content-end'><input type=text name=nota value = '$nota_' onkeypress='return validarCualquierNumero(this);' class='form-control decimal-1-places text-right' style='width:40%'></div>
+								<td><div class='d-flex justify-content-end'><input type=text name=nota_a1 value = '$actividad_1' onkeypress='return validarCualquierNumero(this);' class='form-control decimal-1-places text-right'></div>
+								<td><div class='d-flex justify-content-end'><input type=text name=nota_a2 value = '$actividad_2' onkeypress='return validarCualquierNumero(this);' class='form-control decimal-1-places text-right'></div>
+								<td><div class='d-flex justify-content-end'><input type=text name=nota_a3 value = '$actividad_3' onkeypress='return validarCualquierNumero(this);' class='form-control decimal-1-places text-right'></div>
+								<td><div class='d-flex justify-content-end'><input type=text name=nota_re value = '$actividad_re' onkeypress='return validarCualquierNumero(this);' class='form-control decimal-1-places text-right'></div>
+                                <td><div class='d-flex justify-content-end'><input type=text name=nota value = '$nota_' onkeypress='return validarCualquierNumero(this);' class='form-control decimal-1-places text-right'></div>
                                 <td><div class='d-flex justify-content-end'><input type=text name=observacion class=form-control  value=$observacion_></div>"
 								;
 							}
@@ -163,10 +163,10 @@ if($errorDbConexion == false){
 								<input type=hidden name=id_notas value = '$id_notas'>
                                 <td>$nombre_area
                                 <td>$nombre_asignatura
-								<td><div class='d-flex justify-content-end'><input type=text name=nota_a1 value='$actividad_1' onkeypress='return validarCualquierNumero(this);' class='form-control decimal-1-places text-right' style='width:40%'></div>
-								<td><div class='d-flex justify-content-end'><input type=text name=nota_a2 value='$actividad_2' onkeypress='return validarCualquierNumero(this);' class='form-control decimal-1-places text-right' style='width:40%'></div>
-								<td><div class='d-flex justify-content-end'><input type=text name=nota_a3 value='$actividad_3' onkeypress='return validarCualquierNumero(this);' class='form-control decimal-1-places text-right' style='width:40%'></div>
-								<td><div class='d-flex justify-content-end'><input type=text name=nota_re value='$actividad_re' onkeypress='return validarCualquierNumero(this);' class='form-control decimal-1-places text-right' style='width:40%'></div>
+								<td><div class='d-flex justify-content-end'><input type=text name=nota_a1 value='$actividad_1' onkeypress='return validarCualquierNumero(this);' class='form-control decimal-1-places text-right'></div>
+								<td><div class='d-flex justify-content-end'><input type=text name=nota_a2 value='$actividad_2' onkeypress='return validarCualquierNumero(this);' class='form-control decimal-1-places text-right'></div>
+								<td><div class='d-flex justify-content-end'><input type=text name=nota_a3 value='$actividad_3' onkeypress='return validarCualquierNumero(this);' class='form-control decimal-1-places text-right'></div>
+								<td><div class='d-flex justify-content-end'><input type=text name=nota_re value='$actividad_re' onkeypress='return validarCualquierNumero(this);' class='form-control decimal-1-places text-right'></div>
                                 <td class='bg-cyan'><div class='d-flex justify-content-end'><input type=text name=nota value='$nota_' class='form-control' readonly></div>
                                 <td><div class='d-flex justify-content-end'><input type=text name=observacion class=form-control value = $observacion_></div>"
 								;							
@@ -207,63 +207,34 @@ if($errorDbConexion == false){
 					$nota_a2_ = $nota_a2[0][$i];
 					$nota_a3_ = $nota_a3[0][$i];
 					$nota_re_ = $nota_re[0][$i];
-					// CONDICIONAR SI ES MAYOR DE 10.0
-                    /*if($nota_ > 10){
-                        $nota_ = 1;
-                    }*/
-					// armar sql. actualización de calificación en la tabla nota.
-						$query = "UPDATE nota SET 
-									$calificacion_A1 = '$nota_a1_',
-									$calificacion_A2 = '$nota_a2_',
-									$calificacion_PO = '$nota_a3_',
-									$calificacion_RE = '$nota_re_' 
-										WHERE id_notas = '$id_notas_'";
-					// Ejecutamos el Query.
-						$consulta = $dblink -> query($query);
+				// armar sql. actualización de calificación en la tabla nota.
+					$query = "UPDATE nota SET 
+								$calificacion_A1 = '$nota_a1_',
+								$calificacion_A2 = '$nota_a2_',
+								$calificacion_PO = '$nota_a3_',
+								$calificacion_RE = '$nota_re_' 
+									WHERE id_notas = '$id_notas_'";
+				// Ejecutamos el Query.
+					$consulta = $dblink -> query($query);
 				}
 				// recorrer la array para extraer los datos.
 				// ACTUALIZACION DE LA CALIFICACION FINAL.
 				for($k=0;$k<=$fila-1;$k++){
 					//
 					$id_notas_ = $id_notas[0][$k];
-					// Actualizar nota final. EDUCACION BASICA Y TERCER CICLO
-					if ($codigo_modalidad >= '03' && $codigo_modalidad <= '05'){
-						// Actualizar nota por promedio.
-							$query_calificacion_periodo = "UPDATE nota SET
-															$nota_p_p = (select round(($calificacion_A1 * 0.35) + ($calificacion_A2 * 0.35) + ($calificacion_PO * 0.30),0) as promedio_periodo 
-																FROM nota WHERE id_notas = '$id_notas_') WHERE id_notas = '$id_notas_'";
-						// Ejectuamos query.
-							$consulta_nota_periodo = $dblink -> query($query_calificacion_periodo);											
-						// Actualización Nota Final.
-						$query_nota_final = "UPDATE nota SET
-							nota_final = (select round((nota_p_p_1 + nota_p_p_2 + nota_p_p_3)/3,0) as promedio
-							from nota WHERE id_notas = '$id_notas_')
-								WHERE id_notas = '$id_notas_'";
-					// Ejectuamos query.
-						$consulta_nota_final = $dblink -> query($query_nota_final);
-					}
-					// EDUCACIÓN MEDIA GENERAL Y TECNICO
-					if ($codigo_modalidad >= '06' && $codigo_modalidad <= '09'){
-						$query_nota_final = "UPDATE nota SET
-							nota_final = (select round((nota_p_p_1 + nota_p_p_2 + nota_p_p_3 + nota_p_p_4)/4,0) as promedio
-							from nota WHERE id_notas = '$id_notas_')
-									WHERE id_notas = '$id_notas_'";
-					// Ejectuamos query.
-						$consulta_nota_final = $dblink -> query($query_nota_final);
-					}
-					// CALCULO PARA NOCTURNA 5 MODULOS. NOCTURNA
-					if ($codigo_modalidad >= '10' && $codigo_modalidad <= '12'){
-						$query_nota_final = "UPDATE nota SET
-							nota_final = (select round((nota_p_p_1 + nota_p_p_2 + nota_p_p_3 + nota_p_p_4 + nota_p_p_5)/5,0) as promedio
-							from nota WHERE id_notas = '$id_notas_')
-								WHERE id_notas = '$id_notas_'";
-					// Ejectuamos query.
-						$consulta_nota_final = $dblink -> query($query_nota_final);
-					}
+					$nota_a1_ = $nota_a1[0][$k];
+					$nota_a2_ = $nota_a2[0][$k];
+					$nota_a3_ = $nota_a3[0][$k];
+					$nota_re_ = $nota_re[0][$k];
+					// 
+						CalculoCalificacionPromedio();	// En base a la calificación de cada una de las actividades para el Promedio.
+						CalculoCalificacionRecuperacion(); // En base si existe una calificación en Recuperación.
+						CalculoCalificacionFinal($codigo_modalidad); // En base a cada Calificación de período recalcular el Promedio Final.
 				}
-				$respuestaOK = true;
-				$contenidoOK = '';
-				$mensajeError =  'Registros Actualizados.';
+				//
+					$respuestaOK = true;
+					$contenidoOK = '';
+					$mensajeError =  'Registros Actualizados.';
 			break;
 		
 			default:
@@ -292,7 +263,7 @@ $salidaJson = array("respuesta" => $respuestaOK,
 	);
 // 	encode por JSON.
 echo json_encode($salidaJson);
-
+// extraer los nombres de los campos de la tabla
 function NombreCampos($periodo){
 	$numero_periodo = 1; // Valor por defecto del período.
 	$campo_periodos = array('','nota_p_p_');	// Matriz para el nombre del campo períodos.
@@ -330,4 +301,53 @@ function NombreCampos($periodo){
 			if($periodo == "Nota PAES"){$nota_p_p = "nota_paes"; }
 	return true;
 }
+// Calculo del Promedio.
+function CalculoCalificacionPromedio(){
+	global $calificacion_A1, $calificacion_A2, $calificacion_PO, $calificacion_RE,
+		$id_notas_, $nota_p_p, $dblink;
+		// Actualizar nota por promedio.
+			$query_calificacion_periodo = "UPDATE nota SET
+				$nota_p_p = (select round(($calificacion_A1 * 0.35) + ($calificacion_A2 * 0.35) + ($calificacion_PO * 0.30),0) as promedio_periodo 
+					FROM nota WHERE id_notas = '$id_notas_') WHERE id_notas = '$id_notas_'";
+		// Ejectuamos query.
+			$consulta_nota_periodo = $dblink -> query($query_calificacion_periodo);											
+}
+// Cálculo de la Nota Recuperación si es diferente de CERO.
+function CalculoCalificacionRecuperacion(){
+	global $nota_re_, $nota_a1_, $nota_a2_, $id_notas_, $nota_p_p, $calificacion_A1, $calificacion_A2, $calificacion_RE, $calificacion_PO, $dblink;
+	// RECALCULAR PROMEDIO EN A1 O A2. cuando exista recuperación.
+	if($nota_re_ <> 0){
+		if($nota_a1_ > $nota_a2_){
+			$query_calificacion_periodo_re = "UPDATE nota SET $nota_p_p = round(($calificacion_A1 * 0.35) + ($calificacion_RE * 0.35) + ($calificacion_PO * 0.30),0)
+				WHERE id_notas = '$id_notas_'";
+		}else{
+			$query_calificacion_periodo_re = "UPDATE nota SET $nota_p_p = round(($calificacion_RE * 0.35) + ($calificacion_A2 * 0.35) + ($calificacion_PO * 0.30),0)
+				WHERE id_notas = '$id_notas_'";		
+		}
+		// Ejectuamos query si existe Recalcular Promedio Recuperación.
+			$consulta_nota_periodo_re = $dblink -> query($query_calificacion_periodo_re);											
+	}
+}
+// Calculo de la Nota Final.
+function CalculoCalificacionFinal($codigo_modalidad){
+	global $id_notas_, $dblink;
+	$CamposNotaFinal = array("round((nota_p_p_1 + nota_p_p_2 + nota_p_p_3)/3,0) as promedio","round((nota_p_p_1 + nota_p_p_2 + nota_p_p_3 + nota_p_p_4)/4,0) as promedio","round((nota_p_p_1 + nota_p_p_2 + nota_p_p_3 + nota_p_p_4 + nota_p_p_5)/5,0) AS promedio");
+	$Nivel = 0;
+	// Verificar el valor delNivel para el array a utilizar para el cualculo del promedio final.
+	if ($codigo_modalidad >= '03' && $codigo_modalidad <= '05'){
+		$Nivel = 0;	//EDUCACION BASICA Y TERCER CICLO
+	}
+	if ($codigo_modalidad >= '06' && $codigo_modalidad <= '09'){
+		$Nivel = 1;// EDUCACION MEDIA GENERAL Y TVC
+	}
+	if ($codigo_modalidad >= '10' && $codigo_modalidad <= '12'){
+		$Nivel = 2;	// NOCTURNA TERCER CICLO Y EDUCACIÓN MEDIA
+	}
+	// Nota Final Promedio.
+		$query_nota_final = "UPDATE nota SET
+			nota_final = (SELECT $CamposNotaFinal[$Nivel] FROM nota WHERE id_notas = '$id_notas_') WHERE id_notas = '$id_notas_'";
+	// Ejectuamos query.
+		$consulta_nota_final = $dblink -> query($query_nota_final);
+}
+
 ?>

@@ -27,9 +27,18 @@ $('#formExportarNotas').validate({
 				},
 			submitHandler: function(){
 				var str = $('#formExportarNotas').serialize();
+					$('#listaNotasExportarOK').empty();	// Limpiar tabla Información Exportar.
 					//variables checked
 					var TodasLasAsignaturas = ""; 
 					if($('#TodasLasAsignaturas').is(":checked")) {TodasLasAsignaturas = 'yes';}
+					var Exportar = {};
+					Exportar['NombreAnnLectivo'] = $("#lstannlectivo option:selected").text();	// Año Lectivo
+					Exportar['NombreNivel'] = $("#lstmodalidad option:selected").text();	// Nivel
+					Exportar['NombreGST'] = $("#lstgradoseccion option:selected").text(); // Grado Seccion Turno
+					Exportar['NombreAsignatura'] = $("#lstasignatura option:selected").text();	// Asignatura
+					Exportar['NombrePeriodo'] = $("#lstperiodo option:selected").text();	// Periodo
+					console.log(Exportar);
+					var DatosExportar = JSON.stringify(Exportar);
 				$.ajax({
 					beforeSend: function(){
 						$('#tabstabla').show();
@@ -38,7 +47,7 @@ $('#formExportarNotas').validate({
 					type: "POST",
 					dataType: "json",
 					url:"php_libs/soporte/ExportarCalificaciones.php",
-					data:str + "&id=" + Math.random() + "&TodasLasAsignaturas=" + TodasLasAsignaturas,
+					data: str + "&id=" + Math.random() + "&TodasLasAsignaturas=" + TodasLasAsignaturas + "&Exportar=" + DatosExportar,
 						success: function(response){
 								// Validar mensaje de error
 								if(response.respuesta == true){

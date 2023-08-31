@@ -53,9 +53,8 @@
         miselect.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
         
         $("#lstannlectivo option:selected").each(function () {
-          elegido=$(this).val();
-          annlectivo=$("#lstannlectivo").val();
-          $.post("includes/cargar-bachillerato.php", { annlectivo: annlectivo },
+          codigo_annlectivo = $("#lstannlectivo").val();
+          $.post("includes/cargar-bachillerato.php", { annlectivo: codigo_annlectivo },
                 function(data){
             miselect.empty();
             miselect.append('<option value="">Seleccionar...</option>');
