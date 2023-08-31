@@ -10,7 +10,7 @@
     header("Content-Type: text/html; charset='UTF-8'");     // cambiar a utf-8.
     date_default_timezone_set('America/El_Salvador');  // Establecer formato para la fecha.
     setlocale(LC_TIME, 'spanish');
-	// Variables y $_REQUEST(), $_POST();
+// Variables y $_REQUEST(), $_POST();
     $db_link = $dblink;
     $respuestaOK = false;
     $mensajeError = "";
@@ -253,6 +253,7 @@ function ExcelInicial(){
           ->setAutoSize(true);
       }
 }
+// ESCRIBE EL NOMBRE DEL ARCHIVO.
 function NombreArchivoExcel(){
   global $objPHPExcel, $codigo_bachillerato, $nombre_annlectivo, $path_root, $nombre_modalidad, $nombre_grado, $nombre_seccion, $periodo,
           $DestinoArchivo, $nota_p_p_, $codigo_area, $NombreAsignatura, $contenidoOK, $num, $salidaJson, $num;
@@ -303,6 +304,7 @@ function NombreArchivoExcel(){
         "contenido" => $contenidoOK
       );  
 }
+// CONSULTA SOBRE LA TABLA SOLO POR UNA ASIGNATURA.
 function BuscarPorCodigoTabla($codigo_asignatura){
   global $codigo_annlectivo, $codigo_bachillerato, $codigo_all, $codigo_asignatura, $codigo_grado, $db_link, $result;
   // Armar query y ejecutarlo. para consultar la tabla por codigo asignatura.
