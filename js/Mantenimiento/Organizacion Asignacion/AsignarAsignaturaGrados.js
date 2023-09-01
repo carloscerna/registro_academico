@@ -386,7 +386,7 @@ $(function(){
                 $('#FormAAG').submit();
         });
         //////////////////////////////////////////////////////////////////////////////////
-        /* VER #CONTROLES CREADOS */
+        /* ACTUALIZAR DATOS DE LA ASIGNATURA #CONTROLES CREADOS */
         //////////////////////////////////////////////////////////////////////////////////
         $('#goActualizarAAG').on('click', function(){
             codigo_annlectivo = $("#lstAnnLectivoAAG").val();

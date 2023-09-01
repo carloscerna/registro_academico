@@ -648,42 +648,42 @@ if($errorDbConexion == false){
                  ///////////////////////////////////////////////////////////////////////////////////////////////
                  //// SI TODAS LAS ASIGNATURAS ES IGUAL A YES
                  ///////////////////////////////////////////////////////////////////////////////////////////////
-                 if($TodasLasAsignaturas == "yes"){
-                    $numero = 1;
-                     $query_todas = "SELECT codigo as codigo_asignatura, nombre as nombre_asignatura, ordenar
-                                FROM asignatura
-                                  WHERE imprimir = 'true' and estatus = 'true' and codigo_servicio_educativo = '$codigo_se'
-                                    ORDER BY codigo_servicio_educativo, codigo_area, id_asignatura";
-                     $consulta_todas = $dblink -> query($query_todas);
-                    // recorrer las asignaturas
-                            while($listado = $consulta_todas -> fetch(PDO::FETCH_BOTH))
-                                {
-                                 // Nombres de los campos de la tabla.
-                                  $codigo_asignatura = trim($listado['codigo_asignatura']);
-								  $ordenar = trim($listado['ordenar']);
-                                                          // VERFICAR SI NO EXISTE ASIGNATURA.
-                                    $query_buscar = "SELECT * FROM a_a_a_bach_o_ciclo WHERE codigo_ann_lectivo = '$codigo_ann_lectivo' and codigo_bach_o_ciclo = '$codigo_modalidad' and codigo_grado = '$codigo_grado' and codigo_asignatura = '$codigo_asignatura'";
-                                   // Ejecutamos el Query.
-                                   $consulta_buscar = $dblink -> query($query_buscar);
-                   
-                                   if($consulta_buscar -> rowCount() != 0){
-                                       $respuestaOK = false;
-                                       $contenidoOK = "";
-                                       $mensajeError = "Si Existe";
-                                   }else{
-                                   // proceso para grabar el registro
-                                       $query = "INSERT INTO a_a_a_bach_o_ciclo (codigo_ann_lectivo, codigo_bach_o_ciclo, codigo_asignacion, codigo_grado, codigo_asignatura, orden) VALUES ('$codigo_ann_lectivo','$codigo_modalidad','$codigo_modalidad','$codigo_grado','$codigo_asignatura','$ordenar')";
-                                   // Ejecutamos el Query.
-                                        $consulta = $dblink -> query($query);
-                                    // variables de retorno.
-                                       $respuestaOK = true;
-                                       $contenidoOK = $query;
-                                       $mensajeError = "Si Registro";
-                                   }
-                                   // Incrementar para el numero de orden.
-                                   $numero++;
-                                } // final del while para recorrer las asignaturas
-                 }else{
+				if($TodasLasAsignaturas == "yes"){
+					$numero = 1;
+					$query_todas = "SELECT codigo as codigo_asignatura, nombre as nombre_asignatura, ordenar
+								FROM asignatura
+								WHERE imprimir = 'true' and estatus = 'true' and codigo_servicio_educativo = '$codigo_se'
+									ORDER BY codigo_servicio_educativo, codigo_area, id_asignatura";
+					$consulta_todas = $dblink -> query($query_todas);
+					// recorrer las asignaturas
+							while($listado = $consulta_todas -> fetch(PDO::FETCH_BOTH))
+								{
+								// Nombres de los campos de la tabla.
+								$codigo_asignatura = trim($listado['codigo_asignatura']);
+								$ordenar = trim($listado['ordenar']);
+														// VERFICAR SI NO EXISTE ASIGNATURA.
+									$query_buscar = "SELECT * FROM a_a_a_bach_o_ciclo WHERE codigo_ann_lectivo = '$codigo_ann_lectivo' and codigo_bach_o_ciclo = '$codigo_modalidad' and codigo_grado = '$codigo_grado' and codigo_asignatura = '$codigo_asignatura'";
+								// Ejecutamos el Query.
+								$consulta_buscar = $dblink -> query($query_buscar);
+				
+								if($consulta_buscar -> rowCount() != 0){
+									$respuestaOK = false;
+									$contenidoOK = "";
+									$mensajeError = "Si Existe";
+								}else{
+								// proceso para grabar el registro
+									$query = "INSERT INTO a_a_a_bach_o_ciclo (codigo_ann_lectivo, codigo_bach_o_ciclo, codigo_asignacion, codigo_grado, codigo_asignatura, orden) VALUES ('$codigo_ann_lectivo','$codigo_modalidad','$codigo_modalidad','$codigo_grado','$codigo_asignatura','$ordenar')";
+								// Ejecutamos el Query.
+										$consulta = $dblink -> query($query);
+									// variables de retorno.
+									$respuestaOK = true;
+									$contenidoOK = $query;
+									$mensajeError = "Si Registro";
+								}
+								// Incrementar para el numero de orden.
+								$numero++;
+								} // final del while para recorrer las asignaturas
+				}else{
 					///////////////////////////////////////////////////////////////////////////////////////////////
 					// PROCESO PARA GUARDAR UNA SOLA ASIGNATURA.
 					///////////////////////////////////////////////////////////////////////////////////////////////

@@ -100,7 +100,7 @@ if($errorDbConexion == false){
 							<td>$codigo
 							<td>$nombre_area
 							<td>$nombre
-							<td>$ordenar
+							<td><input type=number id=orden name=orden value ='$ordenar' class=form-control>
 							$estatus
 							<td><a data-accion=editar_asignatura class='btn btn-xs btn-info' href=$id_-$codigo tabindex='-1' data-toggle='tooltip' data-placement='top' title='Editar'><i class='fad fa-edit'></i></a>
 							<a data-accion=eliminar_asignatura class='btn btn-xs btn-warning' href=$id_-$codigo tabindex='-1' data-toggle='tooltip' data-placement='top' title='Eliminar'><i class='fad fa-trash'></i></a>
@@ -264,6 +264,36 @@ if($errorDbConexion == false){
 							$mensajeError = 'No se ha eliminado el registro '. $query . " - " . $query_buscar;
 						}
 					}
+			break;
+			case 'ActualizarOrden':		
+				// armar variables y consulta Query.
+				$id_asignatura[] = $_POST["id_asignatura"];
+				$codigo_asignatura[] = $_POST["codigo_asignatura"];
+				$estatus[] = $_POST["estatus"];
+				$orden[] = $_POST["orden"];
+				// Variales.
+				$fila = $_POST["fila"];
+					$fila = $fila - 1;
+				// recorrer la array para extraer los datos.
+				for($i=0;$i<=$fila;$i++){
+					$id_asignatura_ = $id_asignatura[0][$i];
+					$codigo_asignatura_ = $codigo_asignatura[0][$i];
+					$estatus_ = $estatus[0][$i];
+					$orden_ = $orden[0][$i];
+					// armar sql para actualizar tabla a_a_a_bacho_o_ciclo
+						$query_aaa = "UPDATE a_a_a_bach_o_ciclo SET orden = '$orden_' WHERE codigo_asignatura = '$codigo_asignatura_'";
+							$consulta_aaa = $dblink -> query($query_aa); // Ejecutamos el Query.
+					// armar sql para actualizar tabla nota.
+						$query_aa_nota = "UPDATE nota SET orden = '$orden_' WHERE codigo_asignatura = '$codigo_asignatura_'";
+							$consulta_aa_nota = $dblink -> query($query_aa_nota); 				// Ejecutamos el Query.
+					// armar sql para actualizar tabla asignatura.
+						$query_asignatura = "UPDATE asignatura SET ordenar = '$orden_' WHERE id_asignatura = '$id_asignatura_'";
+							$consulta_asignatura = $dblink -> query($query_asignatura); 				// Ejecutamos el Query.
+				}
+
+				$respuestaOK = true;
+				$contenidoOK = '';
+				$mensajeError =  'Registro Actualizado';
 			break;
 			///////////////////////////////////////////////////////////////////////////////////////////////////
 			////////////// BLOQUE DE REGISTRO GESTION (MODALIDAD)

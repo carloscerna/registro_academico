@@ -293,8 +293,8 @@ $(function(){
                                 else{
                                     toastr["success"](response.mensaje, "Sistema");
                                     // Abrir ventana modal.
-                                         $('#VentanaSe').modal("hide");
-                                         $("#formVentanaSe")[0].reset();
+                                        $('#VentanaSe').modal("hide");
+                                        $("#formVentanaSe")[0].reset();
                                     // Llamar al archivo php para hacer la consulta y presentar los datos.
                                         $('#accion_servicios_educativos').val('BuscarSe');
                                         accion_servicios_educativos = 'BuscarSe';
@@ -313,7 +313,7 @@ $(function(){
                             },
                         });
                     },
-           });
+            });
 }); // FIN DEL FUNCTION.
 //
 // Mensaje de Carga de Ajax.

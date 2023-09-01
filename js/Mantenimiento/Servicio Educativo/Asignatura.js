@@ -17,27 +17,22 @@ $(function(){
 //  INVISILBLE TODOS LOS MENSAJES.
 //
     $("#AlertSE").css("display", "none");
-    //
 //  OPCIONES PARA EL TAB NAV
 //
     $(document).ready(function () {
-           //
     // ÑO,ÒAR DATPS DEPÈNDIENTE DEL TAB DE NAV
     //
     $("#NavServicioEducativo ul.nav > li > a").on("click", function () {
         $TextoTab = $(this).text();
-  
-        
         if($TextoTab == "Asignaturas"){
             // Borrar información de la Tabla.
                 $('#listaContenidoSE').empty();
             // Select a 00...
                 $("#lstcodigose").val('00')
-  
         }else{
             //alert("Nav-Tab " + $TextoTab);
         }
-      });
+    });
         //
         // SELECFT ON ONCHANGE
         //
@@ -47,15 +42,14 @@ $(function(){
         // funcion onchange.
         $('#lstcodigose').on('change', function() {
             $("#AlertSE").css("display", "none");
-          });
+        });
         // funcion onchange.
         $('#lstArea').on('change', function() {
             CodigoArea = $("#lstArea").val();
-
             var miselect=$("#lstDimension");
             /* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
             miselect.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
-            
+            //            
             $.post("includes/cargar-area-dimension.php", {CodigoArea: CodigoArea},
                 function(data) {
                     miselect.empty();
@@ -68,7 +62,7 @@ $(function(){
                         }
                     }
             }, "json");  
-          });
+        });
         // funcion onchange.
         $('#lstDimension').on('change', function() {
             CodigoArea = $("#lstArea").val();
@@ -130,11 +124,11 @@ $(function(){
                                 accion = "GuardarAsignatura";
                             }
           });
-          });
+        });
         ///////////////////////////////////////////////////
 		// funcionalidad del botón que abre el formulario
 		///////////////////////////////////////////////////
-	    $("#VentanaAsignatura").on('hidden.bs.modal', function () {
+        $("#VentanaAsignatura").on('hidden.bs.modal', function () {
             // Limpiar variables Text, y textarea
 				$("#formVentanaAsignatura")[0].reset();
                 $('#formVentanaAsignatura').trigger("reset");
@@ -149,23 +143,20 @@ $(function(){
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // BLOQUE PARA ADMINISTRAR LAS ASIGNATURAS.
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    //
         // BLOQUE EXTRAER INFORMACIÓN DEL REGISTROS (ASIGANTURAS)
         //
 		$('body').on('click','#listaContenidoSE a',function (e){
 			e.preventDefault();
 			// Id Usuario
-    			Id_Editar_Eliminar = $(this).attr('href');
-	    		accion_ok = $(this).attr('data-accion');
+                Id_Editar_Eliminar = $(this).attr('href');
+                accion_ok = $(this).attr('data-accion');
                     // EDITAR LA ASIGNATURA
                     if($(this).attr('data-accion') == 'editar_asignatura'){
                         // Valor de la acción
                             $('#accion_asignatura').val('ActualizarAsignatura');
                             accion = 'EditarAsignatura';
-                            
                             // obtener el valor del id.
                             var id_ = $(this).parent().parent().children('td:eq(2)').text();
-                            
                             // Llamar al archivo php para hacer la consulta y presentar los datos.
                             $.post("php_libs/soporte/Mantenimiento/Servicio Educativo/phpAjaxServicioEducativo.php",  { id_: id_, accion: accion},
                                 function(data) {
@@ -280,28 +271,22 @@ $(function(){
 		$("#listadoContenidoSE tbody input[type='checkbox'].case").prop("checked", this.checked);
 	});
 	
-	$("#listadoContenidoSE tbody").on("change", "input[type='checkbox'].case", function () {
-	  if ($("#listadoContenidoSE tbody input[type='checkbox'].case").length == $("#listadoContenidoSE tbody input[type='checkbox'].case:checked").length) {
-		  $("#checkBoxAllSE").prop("checked", true);
-	  } else {
-		  $("#checkBoxAllSE").prop("checked", false);
-	  }
-	 });	
+    $("#listadoContenidoSE tbody").on("change", "input[type='checkbox'].case", function () {
+        if ($("#listadoContenidoSE tbody input[type='checkbox'].case").length == $("#listadoContenidoSE tbody input[type='checkbox'].case:checked").length) {
+            $("#checkBoxAllSE").prop("checked", true);
+        } else {
+            $("#checkBoxAllSE").prop("checked", false);
+        }
+        });	
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	// ACTIVAR Y DESACTIVAR CHECKBOX DE LA TABLA.
+	// ACTIVAR Y DESACTIVAR CHECKBOX DE LA TABLA. BUSCAR SERVICIO EDUCATIVO
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////     
-        //
-        //  funcion click
-        //
             $('#goBuscarSE').on('click',function(){
                 // Asignamos valor a la variable acción
                     $('#accion_asignatura').val('BuscarAsignatura');
                     codigo_se = $("#lstcodigose").val();
                     accion = 'BuscarAsignatura';
-                    //
-                    //  CONDICONAR EL SELECT SERVICIO EDUCATIVO.
-                    //
-                    if(codigo_se == "00"){
+                    if(codigo_se == "00"){                    //  CONDICONAR EL SELECT SERVICIO EDUCATIVO.
                         $("#AlertSE").css("display", "block");
                         $("#TextoAlert").text("Debe Seleccionar un Servicio Educativo para Buscar.");
                         return;
@@ -352,7 +337,65 @@ $(function(){
                 // enviar form
                     $('#formVentanaAsignatura').submit();
             });
-            //	  
+        //////////////////////////////////////////////////////////////////////////////////////////////
+        // Información para buscar Asignar Asignatura.
+        //////////////////////////////////////////////////////////////////////////////////////////////
+            $("#goActualizarOrden").on('click',function () {
+                var accion = "ActualizarOrden";
+                // Información de la tabla para actualizar código sirai.
+                    var $objCuerpoTabla=$("#listaContenidoSE").children().prev().parent();
+                    var id_asignatura_ = []; var orden_ = []; var codigo_asignatura_ = []; var estatus_ = [];
+                    var fila = 0;
+                // recorre el contenido de la tabla.
+                    $objCuerpoTabla.find("tbody tr").each(function(){
+                        var id_ = $(this).find('td').eq(1).html();
+                        var codigo_asignatura =$(this).find('td').eq(2).html();
+                        var orden =$(this).find('td').eq(6).find("input[name='orden']").val();
+                        var estatus =$(this).find('td').eq(7).html();
+                    // dar valor a las arrays.
+                        id_asignatura_[fila] = id_;
+                        codigo_asignatura_[fila] = codigo_asignatura;
+                        orden_[fila] = orden;
+                        codigo_[fila] = estatus;
+                            fila = fila + 1;
+                    });
+                    //
+                    $.ajax({
+                        beforeSend: function(){       
+                        },
+                        cache: false,
+                        type: "POST",
+                        dataType: "json",
+                        url:"php_libs/soporte/Mantenimiento/Servicio Educativo/phpAjaxServicioEducativo.php",
+                        data: {
+                                accion: accion, orden: orden_, fila: fila, estatus: estatus_,
+                                codigo_asignatura: codigo_asignatura_, id_asignatura: id_asignatura_
+                                },
+                        success: function(response) {
+                                // Validar mensaje de error
+                                if(response.respuesta == false){
+                                    toastr["error"](response.mensaje, "Sistema");
+                                }
+                                else{
+                                    toastr["success"](response.mensaje, "Sistema");
+                                    // Llamar al archivo php para hacer la consulta y presentar los datos.
+                                        $('#accion_asignatura').val('BuscarAsignatura');
+                                        accion = 'BuscarAsignatura';
+                                        $.post("php_libs/soporte/Mantenimiento/Servicio Educativo/phpAjaxServicioEducativo.php",  {accion: accion, codigo_se: codigo_se},
+                                            function(response) {
+                                                if (response.respuesta === true) {
+                                                    toastr["info"]('Registros Encontrados', "Sistema");
+                                                }
+                                                if (response.respuesta === false) {
+                                                    toastr["warning"]('Registros No Encontrados', "Sistema");
+                                                }                                                                                    // si es exitosa la operación
+                                                    $('#listaContenidoSE').empty();
+                                                    $('#listaContenidoSE').append(response.contenido);
+                                            },"json");
+                                    }    
+                        }
+                    });
+            }); 
             // Validar Formulario para la buscque de registro segun el criterio.   
             // PARA GUARDAR O ACTUALIZAR.
             $('#formVentanaAsignatura').validate({
@@ -440,7 +483,7 @@ $(function(){
                             },
                         });
                     },
-           });
+            });
 }); // FIN DEL FUNCTION.
 //
 // Mensaje de Carga de Ajax.
