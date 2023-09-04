@@ -277,17 +277,23 @@ if($errorDbConexion == false){
 				// recorrer la array para extraer los datos.
 				for($i=0;$i<=$fila;$i++){
 					$id_asignatura_ = $id_asignatura[0][$i];
-					$codigo_asignatura_ = $codigo_asignatura[0][$i];
+					$codigo_asignatura_ = trim($codigo_asignatura[0][$i]);
 					$estatus_ = $estatus[0][$i];
 					$orden_ = $orden[0][$i];
+					// cambiar estatus
+						if($estatus == "Activo"){
+							$codigo_estatus = "01";
+						}else{
+							$codigo_estatus = "02";
+						}
 					// armar sql para actualizar tabla a_a_a_bacho_o_ciclo
 						$query_aaa = "UPDATE a_a_a_bach_o_ciclo SET orden = '$orden_' WHERE codigo_asignatura = '$codigo_asignatura_'";
-							$consulta_aaa = $dblink -> query($query_aa); // Ejecutamos el Query.
+							$consulta_aaa = $dblink -> query($query_aaa); // Ejecutamos el Query.
 					// armar sql para actualizar tabla nota.
 						$query_aa_nota = "UPDATE nota SET orden = '$orden_' WHERE codigo_asignatura = '$codigo_asignatura_'";
 							$consulta_aa_nota = $dblink -> query($query_aa_nota); 				// Ejecutamos el Query.
 					// armar sql para actualizar tabla asignatura.
-						$query_asignatura = "UPDATE asignatura SET ordenar = '$orden_' WHERE id_asignatura = '$id_asignatura_'";
+						$query_asignatura = "UPDATE asignatura SET ordenar = '$orden_' WHERE id_asignatura = '$id_asignatura_' and codigo_estatus = '$codigo_estatus'";
 							$consulta_asignatura = $dblink -> query($query_asignatura); 				// Ejecutamos el Query.
 				}
 

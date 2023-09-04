@@ -343,20 +343,20 @@ $(function(){
             $("#goActualizarOrden").on('click',function () {
                 var accion = "ActualizarOrden";
                 // Información de la tabla para actualizar código sirai.
-                    var $objCuerpoTabla=$("#listaContenidoSE").children().prev().parent();
+                    var $objCuerpoTabla=$("#listadoContenidoSEAsignatura").children().prev().parent();
                     var id_asignatura_ = []; var orden_ = []; var codigo_asignatura_ = []; var estatus_ = [];
                     var fila = 0;
                 // recorre el contenido de la tabla.
                     $objCuerpoTabla.find("tbody tr").each(function(){
-                        var id_ = $(this).find('td').eq(1).html();
-                        var codigo_asignatura =$(this).find('td').eq(2).html();
+                        var id_ = $(this).find('td').eq(2).html();
+                        var codigo_asignatura =$(this).find('td').eq(3).html();
                         var orden =$(this).find('td').eq(6).find("input[name='orden']").val();
-                        var estatus =$(this).find('td').eq(7).html();
+                        var estatus =$(this).find('td').eq(7).text();
                     // dar valor a las arrays.
                         id_asignatura_[fila] = id_;
                         codigo_asignatura_[fila] = codigo_asignatura;
                         orden_[fila] = orden;
-                        codigo_[fila] = estatus;
+                        estatus_[fila] = estatus;
                             fila = fila + 1;
                     });
                     //
