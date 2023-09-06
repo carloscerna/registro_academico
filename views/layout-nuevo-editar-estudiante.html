@@ -146,13 +146,10 @@ $(document).ready(function() {
 <!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
     <!-- Content Header (Page header) -->
-    <section class="content-header">
+    <section class="content-header p-0">
       <div class="container-fluid">
-        <div class="row mb-1">
-          <div class="col-sm-6">
-            <h4><label for="txtEdicionNuevo">Edición</label></h4>
-          </div>
-          <div class="col-sm-6">
+        <div class="row m-1 p-0">
+          <div class="col col-sm-12 col-md-12 col-lg-12">
             <ol class="breadcrumb float-sm-right">
               <li class="breadcrumb-item"><a href="estudiantes.php">Buscar</a></li>
               <li class="breadcrumb-item active"><label for="iEdicionNuevo">Editar</label></li>
@@ -179,10 +176,23 @@ $(document).ready(function() {
         <div class="row">
           <div class="col-12">
             <div class="card">
-              <div class="card-header">
-                <h3 class="card-title">
-                  <label for="LblNombre"></label>
-                </h3>
+              <div class="card-header bg-gradient-navy m-1 p-1">
+                <div class="d-flex flex-row w-100 justify-content-between">
+                  <div>
+                    <h3 class="card-title">
+                      <label for="txtEdicionNuevo" class="text-white">Edición</label>
+                      <label for="LblNombre" class="text-white"></label>
+                    </h3>
+                  </div>
+                  <div class="m-0 p-0">
+                    <button type="button" id="goGuardar" aria-label="goGuardar" class="btn btn-primary mb-0 mx-sm-1" tabindex="-1" data-toggle="tooltip" data-placement="top" title="Guardar">
+                      <i class="fal fa-save"></i>
+                    </button>
+                    <button type="button" id="goImprimirPortada" aria-label="goImprimirPortada" class="btn btn-info mb-0 mx-sm-1" tabindex="-1" data-toggle="tooltip" data-placement="top" title="Imprimir Portada">
+                      <i class="fal fa-file-alt"></i>
+                    </button>
+                  </div>
+                </div>
               </div>
               <!-- /.card-header -->
               <div class="card-body">
@@ -928,33 +938,43 @@ $(document).ready(function() {
                         <div class="col-md-12">
                             <!-- EN LA DIGITALICACION DOCUMENOTS-->
                             <fieldset>
-                                <div class="row">
-                                  <div class="col-lg-8 d-flex justify-content-start">
-                                    <h2><label for="LblPortafolio" style="color: black;">Portafolio</label></h2>
-                                  </div>
-                                  <div class="col-lg-4 d-flex justify-content-end">
-                                      <input class="btn btn-primary" type="button" value="Agregar" name="goNuevoPortafolio" id="goNuevoPortafolio" style="width: 100%;">
-                                      <input class="btn btn-primary" type="button" value="Ver" name="goVerPortafolio" id="goVerPortafolio" style="display: none; width: 100%;">
-                                  </div>
+                              <div class="d-flex flex-row w-100 justify-content-between">
+                                <div>
+                                  <h3><label for="LblPortafolio" class="text-black">Portafolio</label></h3>
                                 </div>
-                                <section id="EditarNuevoPortafolio"  style="display: none; background-color: #F5F5F5; box-shadow: #99FFFF;">
+                                <div>
+                                  <button class="btn btn-primary" data-toggle="tooltip" data-placement="top" title="Agregar" id="goNuevoPortafolio" type="button">
+                                    <i class="fal fa-file-plus"></i>
+                                  </button>
+                                  <button class="btn btn-info" data-toggle="tooltip" data-placement="top" title="Buscar" id="goVerPortafolio" type="button">
+                                    <i class="fal fa-file-search"></i>
+                                  </button>
+                                </div>
+                              </div>
+                                <section id="EditarNuevoPortafolio">
                                   <div class="row">                                   
                                         <!-- .col para FORMULARIO DE LOS DATOS.. -->
                                         <div class="col col-sm-12 col-md-12 col-lg-6">
                                           <!-- Default form subscription -->
-                                          <form name="formPortafolio" id="formPortafolio" class="text-center border border-light p-5" action="#!">
-                                            <input type="hidden" id="accionPortafolio" name="accionPortafolio" value = "AgregarNuevo">            
-                                            <input type="hidden" id="IdPortafolio" name="IdPortafolio" value = "0">            
+                                          <form name="formPortafolio" id="formPortafolio" class="text-center border border-light p-5" action="#">
+                                            <input type="hidden" id="accionPortafolio" name="accionPortafolio" value = "AgregarNuevo" aria-label="AccionPortafolio">            
+                                            <input type="hidden" id="IdPortafolio" name="IdPortafolio" value = "0" aria-label="idPortafoio">            
                                                 <div class="card">
-
+                                                  <div class="card-header bg-gradient-navy">
+                                                    <div class="d-flex flex-row w-100 justify-content-between">
+                                                      <div>
+                                                        <label for="LblPortafolio" class="text-white">Portafolio</label>
+                                                      </div>
+                                                    </div>
+                                                  </div>
                                                   <div class="card-body">
                                                     <div class="form-group text-left">    
                                                       <!-- FECHA -->
                                                       <label class="form-label form-control-label">Fecha</label>
-                                                      <input class="form-control" type="date" id="txtFechaPortafolio" name="txtFechaPortafolio" tabindex="1">  
+                                                      <input class="form-control" type="date" id="txtFechaPortafolio" name="txtFechaPortafolio" tabindex="1" aria-label="FechaPortafolio">  
                                                       <!-- TÍTULO -->
                                                       <label class="form-label form-control-label">Título</label>
-                                                      <input class="form-control" type="text" id="TituloPortafolio" name="TituloPortafolio" tabindex="2">  
+                                                      <input class="form-control" type="text" id="TituloPortafolio" name="TituloPortafolio" tabindex="2" aria-label="TituloPortafolios">  
                                                       <!-- DESCRIPCION -->
                                                       <div class="md-form amber-textarea">
                                                         <i class="fas fa-pencil-alt prefix"></i>
@@ -967,12 +987,12 @@ $(document).ready(function() {
                                                   <!-- CARD FOOTER - BOTONES GUARDAR -->
                                                   <div class="card-footer">
                                                     <div class="d-flex justify-content-start align-items-start">
-                                                      <input type="button" class="btn btn-secondary" value="Agregar Otro..." data-toggle="tooltip" data-placement="top" title="Agregar" id = "goAgregarPortafolio"  style="display: none;">
+                                                      <input type="button" class="btn btn-secondary d-none" value="Agregar Otro..." data-toggle="tooltip" data-placement="top" title="Agregar" id = "goAgregarPortafolio">
                                                     </div>
 
                                                       <div class="d-flex justify-content-end align-items-end">
-                                                        <button class="btn btn-success" data-toggle="tooltip" data-placement="top" title="Guardar" id = "goGuardarPortafolio" type="button">
-                                                          <span class="fas fa-save"> Guardar </span>
+                                                        <button class="btn btn-primary" data-toggle="tooltip" data-placement="top" title="Guardar" id = "goGuardarPortafolio" type="submit">
+                                                          <i class="fal fa-save"></i>
                                                         </button>
                                                       </div>
                                                   </div>
@@ -988,7 +1008,7 @@ $(document).ready(function() {
                                             <div class="card-head ">
                                                   <div id="estilo_foto">             
                                                     <p id="AgregarFoto">Agregar Archivo</p>
-                                                      <input type="file" value="" name="fileupPortafolio" id="fileupPortafolio" disabled>
+                                                      <input type="file" value="" name="fileupPortafolio" id="fileupPortafolio" disabled aria-label="FileUpPortafolio">
                                                   </div>
                                                   <label class="text-center" id="namefilePortafolio"></label>
                                                     <span class="imguploadPortafolio ok"><i class="fa fa-check"></i></span>
@@ -1026,11 +1046,13 @@ $(document).ready(function() {
                 </div> <!-- /.card-body -->
                 <!-- /.card-footer -->
                 <div class="card-footer">
+                  <!--
                   <div class="form-group row">
                     <div class="col d-flex justify-content-center">
                       <input class="btn btn-primary btn-sm" type="submit" value="Guardar" name="Guardar">
                     </div>
-                  </div>              
+                  </div>
+                  -->              
                 </div>
               </div> <!-- /.card -->
             </div> <!-- VALIDATE DE TODO EL DIV PARA LOS DIFERENTES INPUT'S -->

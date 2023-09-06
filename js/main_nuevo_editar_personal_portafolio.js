@@ -101,7 +101,7 @@ $('#goNuevoPortafolio').on( 'click', function () {
 	// 	lIMPIAR SECTION QUE CONTIENE EL PORTAFOLIO.
 		$('#ListarPortafolio').empty();
 	//	ELIMINAR SCR DE LA IMAGEN
-		$('.card-img-top-Portafolio').attr('src','../acomtus/img/NoDisponible.jpg');
+		$('.card-img-top-Portafolio').attr('src','../registro_academico/img/NoDisponible.jpg');
 });	  
 
 // ventana modal. GENERAR NUEVO REGISTRO DEL PORTAFOLIO.
@@ -122,7 +122,7 @@ $('#goVerPortafolio').on( 'click', function () {
 	// 	VER PORTAFOLIO.
 		VerPortafolio();
 	//	ELIMINAR SCR DE LA IMAGEN
-		$('.card-img-top-Portafolio').attr('src','../acomtus/img/NoDisponible.jpg');
+		$('.card-img-top-Portafolio').attr('src','../registro_academico/img/NoDisponible.jpg');
 	//	Limpiar namefilePortafolio
 		$('#namefilePortafolio').html("<p>Sólo Imagénes!</p>");
 });

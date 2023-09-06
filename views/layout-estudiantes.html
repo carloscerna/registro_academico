@@ -65,22 +65,25 @@
   <!-- Main content -->
     <section class="content">
       <div class="row">
-        <div class="col-12">
+        <div class="col">
           <div class="card">
             <div class="card-header bg-gradient-navy">
-              <h3 class="card-title">Estudiantes</h3>
-               <!-- Buttons, labels, and many other things can be placed here! -->
-                <!-- Here is a label for example -->
-                <form  action="" method="post" name="formBuscar" id="formBuscar" role="form">
-                  <!-- INPUT HIDE CONTROLA EL GUARDO DEL REGISTRO..-->
-                  <input type="hidden" id="accion_buscar" name="accion_buscar" value = "GenerarCodigoNuevo" class="{required:true}">
-                      <!-- Contextual button for informational alert messages -->
-                      <button type="button" class="btn btn-success btn-md" data-toggle="tooltip" data-placement="top" title="Nuevo Estudiante" id = "goNuevoUser">
-                        <span class="fal fa-user-plus"></span>
-                      </button>
-                </form>
-              <div class="card-tools align-content-center">
-               
+              <div class="d-flex flex-row w-100 justify-content-between">
+                <div>
+                  <h3 class="card-title">Estudiantes</h3>
+                </div>
+                <div>
+                    <!-- Buttons, labels, and many other things can be placed here! -->
+                      <!-- Here is a label for example -->
+                      <form  action="" method="post" name="formBuscar" id="formBuscar" role="form">
+                        <!-- INPUT HIDE CONTROLA EL GUARDO DEL REGISTRO..-->
+                        <input type="hidden" id="accion_buscar" name="accion_buscar" value = "GenerarCodigoNuevo" class="{required:true}">
+                            <!-- Contextual button for informational alert messages -->
+                            <button type="button" class="btn btn-success btn-md" data-toggle="tooltip" data-placement="top" title="Nuevo Estudiante" id = "goNuevoUser">
+                              <span class="fal fa-user-plus"></span>
+                            </button>
+                      </form>
+                </div>
               </div>
             </div>
             <!-- /.card-header -->

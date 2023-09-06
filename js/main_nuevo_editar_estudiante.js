@@ -55,8 +55,10 @@ $(function(){ // INICIO DEL FUNCTION.
 			// OCULTAR TAB BITACORA MATRICULA
 			$("#bitacora-tab").hide();
 			// cambiar texto de label y enlace.
-			$("label[for='txtEdicionNuevo']").text("Nuevo");
+			$("label[for='txtEdicionNuevo']").text("Nuevo Registro");
 			$("label[for='iEdicionNuevo']").text("Nuevo");
+			// DESACTIVAR BOTONES O ACTIV AR
+			$("#goImprimirPortada").prop("disabled","true");
 		}				
 	});
 //////////////////////////////////////////////////////////////////////////////////
@@ -703,6 +705,12 @@ $(tbody).on("click","a.imprimir-titulo-tramite",function(){
        // Ejecutar la función
        AbrirVentana2(varenviar);
 	});
+////////////////////////////////////////////////////
+////// SUBMIT para el botón guardar
+////////////////////////////////////////////////////
+$("#goGuardar").click(function() {     
+	$('#formUsers').submit();
+ });
 }); // fin de la funcion principal ************************************/
 
 // Pasar foco cuando seleccionar un encargado.
