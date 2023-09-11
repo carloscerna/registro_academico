@@ -7,25 +7,21 @@
 <link rel="stylesheet" href="css/estilo_personal.css">
 <style>
 /* mensajes de error para el validate de los form de input*/
- input.error {
+input.error {
     border-color: #f00 !important;
 }
-
 small.required {
     color:#f00;
 }
-  
 /* when not active use specificity to override the !important on border-(color) */
 .nav-tabs .nav-link:not(.active) {
     border-color: transparent !important;
 }
-
 fieldset {
 	/*background-color: rgba(111, 66, 193, 0.3);*/
 	border-radius: 4px;
     border: 1px solid #ddd;
 }
-
 legend {
 	background-color: #fff;
 	border: 1px solid #ddd;
@@ -49,6 +45,8 @@ legend {
 
 <script>
 $(document).ready(function() { 
+  // Datatoggle
+    $('[data-toggle="tooltip"]').tooltip();
  	// colocar la misma dirección en la del encargado.
     $("#direccion_alumno").keyup(function () {
               var value = $(this).val();
@@ -145,6 +143,7 @@ $(document).ready(function() {
 {% block contenidos %}
 <!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
+  {#
     <!-- Content Header (Page header) -->
     <section class="content-header p-0">
       <div class="container-fluid">
@@ -158,7 +157,7 @@ $(document).ready(function() {
         </div>
       </div><!-- /.container-fluid -->
     </section>
-
+  #}
   <!-- Main content -->
     <section class="content">
       <!-- FORM PRINCIPAL -->
@@ -185,13 +184,13 @@ $(document).ready(function() {
                     </h3>
                   </div>
                   <div class="m-0 p-0">
-                    <button type="button" id="goGuardar" aria-label="goGuardar" class="btn btn-primary mb-0 mx-sm-1" tabindex="-1" data-toggle="tooltip" data-placement="top" title="Guardar">
+                    <button type="button" id="goGuardar" aria-label="goGuardar" class="btn btn-primary mb-0 mx-sm-1" tabindex="-1" data-toggle="tooltip" data-placement="left" title="Guardar">
                       <i class="fal fa-save"></i>
                     </button>
-                    <button type="button" id="goBuscar" aria-label="goBuscar" class="btn btn-secondary mb-0 mx-sm-1" tabindex="-1" data-toggle="tooltip" data-placement="top" title="Buscar">
+                    <button type="button" id="goBuscar" aria-label="goBuscar" class="btn btn-secondary mb-0 mx-sm-1" tabindex="-1" data-toggle="tooltip" data-placement="bottom" title="Buscar">
                       <i class="fal fa-search"></i>
                     </button>
-                    <button type="button" id="goImprimirPortada" aria-label="goImprimirPortada" class="btn btn-info mb-0 mx-sm-1" tabindex="-1" data-toggle="tooltip" data-placement="top" title="Imprimir Portada">
+                    <button type="button" id="goImprimirPortada" aria-label="goImprimirPortada" class="btn btn-info mb-0 mx-sm-1" tabindex="-1" data-toggle="tooltip" data-placement="bottom" title="Imprimir Portada">
                       <i class="fal fa-file-alt"></i>
                     </button>
                   </div>

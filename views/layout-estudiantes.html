@@ -6,6 +6,10 @@
     <!-- JS para esta página. -->
     <script type="text/JavaScript" src="js/main_estudiante.js"></script>
     <script>
+      $(document).ready(function () { 
+        $('[data-toggle="tooltip"]').tooltip();
+      })
+      //
         (function(){
             function removeAccents ( data ) {
                 if ( data.normalize ) {
@@ -19,9 +23,7 @@
               
                 return data;
             }
-              
             var searchType = jQuery.fn.DataTable.ext.type.search;
-              
             searchType.string = function ( data ) {
                 return ! data ?
                     '' :
@@ -29,7 +31,6 @@
                         removeAccents( data ) :
                         data;
             };
-              
             searchType.html = function ( data ) {
                 return ! data ?
                     '' :
@@ -37,7 +38,6 @@
                         removeAccents( data.replace( /<.*?>/g, '' ) ) :
                         data;
             };
-              
             }());
     </script>
 {% endblock %}
@@ -46,7 +46,7 @@
 <!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper fondoBody">
     <!-- Content Header (Page header) -->
-    <section class="content-header p-0">
+{#     <section class="content-header p-0">
       <div class="container-fluid">
         <div class="row mb-1">
           <div class="col-sm-6">
@@ -60,7 +60,7 @@
           </div>
         </div>
       </div><!-- /.container-fluid -->
-    </section>
+    </section> #}
     
   <!-- Main content -->
     <section class="content">
@@ -79,7 +79,7 @@
                         <!-- INPUT HIDE CONTROLA EL GUARDO DEL REGISTRO..-->
                         <input type="hidden" id="accion_buscar" name="accion_buscar" value = "GenerarCodigoNuevo" class="{required:true}">
                             <!-- Contextual button for informational alert messages -->
-                            <button type="button" class="btn btn-success btn-md" data-toggle="tooltip" data-placement="top" title="Nuevo Estudiante" id = "goNuevoUser">
+                            <button type="button" class="btn btn-success btn-md" data-toggle="tooltip" data-placement="left" title="Nuevo Estudiante" id = "goNuevoUser">
                               <span class="fal fa-user-plus"></span>
                             </button>
                       </form>
