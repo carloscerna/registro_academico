@@ -14,6 +14,11 @@ $(document).ready(function(){
 		{
 			$("#goVerPortafolio").attr("style", "display:none");
 		}
+		var display_2 =  $("#goAgregarPortafolio").css("display");
+		if(display_2!="none")
+		{
+			$("#goAgregarPortafolio").attr("style", "display:none");
+		}
 });
 
 $(function(){ // INICIO DEL FUNCTION.

@@ -706,10 +706,16 @@ $(function(){ // INICIO DEL FUNCTION.
 		AbrirVentana2(varenviar);
 		});
 	////////////////////////////////////////////////////
-	////// SUBMIT para el botón guardar
+	////// SUBMIT para el botón buscar otro estudiante.
 	////////////////////////////////////////////////////
 	$("#goBuscar").click(function() {     
 		window.location.href = 'estudiantes.php';
+	});
+	////////////////////////////////////////////////////
+	////// SUBMIT para el botón guardar
+	////////////////////////////////////////////////////
+	$("#goGuardar").click(function() {     
+		$("#formUsers").submit();
 	});
 }); // fin de la funcion principal ************************************/
 
