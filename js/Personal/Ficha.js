@@ -33,13 +33,11 @@ var listar = function(){
 		// Varaible de Entornos.php
 			var buscartodos = "BuscarTodos";
 		// Tabla que contrendrá los registros.
-			tabla = jQuery("#listado").DataTable({
+			let tabla = jQuery("#listado").DataTable({
+				"responsive": true,
+				"processing": true,
 				"lengthMenu": [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]],
 				"destroy": true,
-				"pageLength": 5,
-				"bLengthChange":false,
-				"searching":{"regex": true},
-				"async": false ,
 				"processing": true,
 				"ajax":{
 					method:"POST",
@@ -72,14 +70,6 @@ var listar = function(){
 				"language": idioma_espanol
 		});
 			obtener_data_editar("#listado tbody", tabla);
-			// CONFIGURAR EL FILTER A OTRO OBJETO.
-			document.getElementById("listado_filter").style.display="none";
-			$('input.global_filter').on( 'keyup click', function () {
-				filterGlobal();
-			} );
-			$('input.column_filter').on( 'keyup click', function () {
-				filterColumn( $(this).parents('tr').attr('data-column') );
-			});
 		};
 ///////////////////////////////////////////////////////////////////////////////
 // CONFIGURACIÓN DEL IDIOMA AL ESPAÑOL.
@@ -120,7 +110,7 @@ var obtener_data_editar = function(tbody, tabla){
 		
 		id_ = data[0];
 		accion = "EditarRegistro";	// variable global
-			window.location.href = 'editar_Nuevo_Personal.php?id='+id_+"&accion="+accion;
+			window.location.href = 'EditarNuevoFicha.php?id='+id_+"&accion="+accion;
 	});
 	///////////////////////////////////////////////////////////////////////////////
 //	FUNCION que al dar clic buscar el registro para posterior mente abri una
@@ -189,7 +179,6 @@ var obtener_data_editar = function(tbody, tabla){
 			})
 	});
 }; // Funcion principal dentro del DataTable.
-
 ///////////////////////////////////////////////////////////////////////////////
 //	FUNCION que al dar clic buscar el registro para posterior mente abri una
 // ventana modal. GENERAR NUEVO ESTUDIANTE
@@ -197,7 +186,7 @@ var obtener_data_editar = function(tbody, tabla){
 $('#goNuevoUser').on( 'click', function () {
 		accion = "AgregarNuevoPersonal";	// variable global
 		id_ = 0;
-			window.location.href = 'editar_Nuevo_Personal.php?id='+id_+"&accion="+accion;
+			window.location.href = 'EditarNuevoFicha.php?id='+id_+"&accion="+accion;
 });	  
 });	// final de FUNCTION.
 
