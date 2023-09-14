@@ -103,7 +103,7 @@ var obtener_data_editar = function(tbody, tabla){
 		
 		id_ = data[0];
 		accion = "EditarRegistro";	// variable global
-			window.location.href = 'editar_Nuevo_Estudiante.php?id='+id_+"&accion="+accion;
+			window.location.href = 'EditarNuevoEstudiante.php?id='+id_+"&accion="+accion;
 	});
 ///////////////////////////////////////////////////////////////////////////////
 //	FUNCION que al dar clic buscar el registro para posterior mente abri una
@@ -202,7 +202,7 @@ $(tbody).on("click","a.eliminar",function(){
 $('#goNuevoUser').on( 'click', function () {
 	accion = "AgregarNuevoEstudiante";	// variable global
 	id_ = 0;
-	window.location.href = 'editar_Nuevo_Estudiante.php?id='+id_+"&accion="+accion;
+	window.location.href = 'EditarNuevoEstudiante.php?id='+id_+"&accion="+accion;
 });	  
 });	// final de FUNCTION.
 //

@@ -709,7 +709,7 @@ $(function(){ // INICIO DEL FUNCTION.
 	////// SUBMIT para el botón buscar otro estudiante.
 	////////////////////////////////////////////////////
 	$("#goBuscar").click(function() {     
-		window.location.href = 'estudiantes.php';
+		window.location.href = 'Estudiantes.php';
 	});
 	////////////////////////////////////////////////////
 	////// SUBMIT para el botón guardar

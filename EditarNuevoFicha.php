@@ -14,7 +14,7 @@ $accion = $_REQUEST['accion'];
 $_SESSION['id_personal'] = $_REQUEST['id'];
     include('includes/templateEngine.inc.php');
 
-    $twig->display('layout-nuevo-editar-personal.html',array(
+    $twig->display('/Personal/EditarNuevoFicha.html',array(
         "userName" => $_SESSION['userNombre'],
         "userID" => $_SESSION['userID'],
         "codigo_perfil" => $_SESSION['codigo_perfil'],

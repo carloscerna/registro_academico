@@ -3,24 +3,25 @@
 {% extends 'default_layout.html' %}
 
 {% block extraCSS %}
+
 <!-- CSS ESTILO PLANTILLA PERSONAL -->
-  <link rel="stylesheet" href="css/estilo_personal.css">
+  {# <link rel="stylesheet" href="css/estilo_personal.css">
   <!-- Bootstrap core CSS -->
   <link href="js/plugins/mdb/css/bootstrap.min.css" rel="stylesheet">
   <!-- Material Design Bootstrap -->
   <link href="js/plugins/mdb/css/mdb.min.css" rel="stylesheet">
   <!-- Your custom styles (optional) -->
-  <link href="js/plugins/mdb/css/style.css" rel="stylesheet">
+  <link href="js/plugins/mdb/css/style.css" rel="stylesheet"> #}
 {% endblock %}
 
 {% block javascripts %}
 <!-- JS para esta página. -->
-  <!-- Bootstrap tooltips -->
+ {#  <!-- Bootstrap tooltips -->
   <script type="text/javascript" src="js/plugins/mdb/js/popper.min.js"></script>
   <!-- Bootstrap core JavaScript -->
   <script type="text/javascript" src="js/plugins/mdb/js/bootstrap.min.js"></script>
   <!-- MDB core JavaScript -->
-  <script type="text/javascript" src="js/plugins/mdb/js/mdb.min.js"></script>
+  <script type="text/javascript" src="js/plugins/mdb/js/mdb.min.js"></script> #}
 
   <script type="text/javascript" src="js/calcular_edad.js"></script>
   <script type="text/JavaScript" src="js/main_nuevo_editar_personal.js"></script>
@@ -131,22 +132,9 @@ jQuery(function($){
 {% block contenidos %}
 <!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
-    <!-- Content Header (Page header) -->
-    <section class="content-header">
-      <div class="container-fluid">
-        <div class="row mb-1">
-          <div class="col-sm-6">
-            <h4><label for="txtEdicionNuevo">Edición</label></h4>
-          </div>
-          <div class="col-sm-6">
-            <ol class="breadcrumb float-sm-right">
-              <li class="breadcrumb-item"><a href="personal.php" data-toggle="tooltip" data-placement="left" title="Personal">Buscar</a></li>
-              <li class="breadcrumb-item active"><label for="iEdicionNuevo">Editar</label></li>
-            </ol>
-          </div>
-        </div>
-      </div><!-- /.container-fluid -->
-    </section>
+    <!-- Content Header (Page header) 
+    lo reemplaze por un CARD
+    -->
 
   <!-- Main content -->
     <section class="content">
@@ -155,29 +143,41 @@ jQuery(function($){
      <div class="tab-content tab-validate"> <!-- VALIDATE DE TODO EL DIV PARA LOS DIFERENTES INPUT'S -->
         <!-- INPUT HIDE CONTROLA EL GUARDO DEL REGISTRO..            
         <input type="hidden" id="accion_buscar" name="accion_buscar" value = "GenerarCodigoNuevo" class="{required:true}">-->            
-        <input type="text" id="id_user" name="id_user" value = '{{ id }}'>            
-        <input type="text" id="accion" name="accion" value = '{{ accion }}'>            
-        <input type="text" id="txtId" name="txtId" value = ''>   
+        <input type="hidden" id="id_user" name="id_user" value = "{{ id }}">            
+        <input type="hidden" id="accion" name="accion" value = "{{ accion }}">            
+        <input type="hidden" id="txtId" name="txtId" value = "">   
         <!-- /.INPUT PARA EL MENU CONTEXTUAL 
         <input type="text" id="MenuTab" value='{{ codigo_perfil }}'>         -->
         <!-- VARIABLES PARA LA MATRICULA CUANDO SEA NUEVO -->
       <div class="row">
         <div class="col-12">
-          <div class="card card-success">
-            <div class="card-header">
-              <div class="row">
-                <div class="col-lg-4">
+          <div class="card">
+            <div class="card-header bg-gradient-navy m-1 p-1">
+              <div class="d-flex flex-row w-100 justify-content-between">
+                <div>
                   <h3 class="card-title">
+                    <label for="txtEdicionNuevo" class="text-white">Edición</label>
                     <label for="LblNombre"></label>
                   </h3>
                 </div>
+                <div class="m-0 p-0">
+                  <button type="button" id="goGuardar" aria-label="goGuardar" class="btn btn-primary mb-0 mx-sm-1" tabindex="-1" data-toggle="tooltip" data-placement="left" title="Guardar">
+                    <i class="fal fa-save"></i>
+                  </button>
+                  <button type="button" id="goBuscar" aria-label="goBuscar" class="btn btn-secondary mb-0 mx-sm-1" tabindex="-1" data-toggle="tooltip" data-placement="bottom" title="Buscar">
+                    <i class="fal fa-search"></i>
+                  </button>
+                  <button type="button" id="goImprimirPortada" aria-label="goImprimirPortada" class="btn btn-info mb-0 mx-sm-1" tabindex="-1" data-toggle="tooltip" data-placement="bottom" title="Imprimir Portada" disabled="disabled">
+                    <i class="fal fa-file-alt"></i>
+                  </button>
+                </div>
               </div>
-            </div>
+              </div>
             <!-- /.card-header -->
             <div class="card-body">
             <!-- Nav tabs -->
             <div class="container py-2">
-              <ul class="nav nav-tabs border-0" id="myTab" role="tablist">
+              <ul class="nav nav-tabs border-0" id="myTab" role="list">
                 <li class="nav-item">
                     <a class="nav-link active border border-primary border-bottom-0" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Empleado</a>
                 </li>
@@ -645,11 +645,7 @@ jQuery(function($){
             </div> <!-- /.card-body -->
             <!-- /.card-footer -->
             <div class="card-footer">
-              <div class="form-group row">
-               <div class="col d-flex justify-content-center">
-                <input class="btn btn-primary btn-rounded" type="submit" value="Guardar" id="Guardar" name="Guardar">
-               </div>
-              </div>              
+
             </div>
           </div> <!-- /.card -->
           </div> <!-- VALIDATE DE TODO EL DIV PARA LOS DIFERENTES INPUT'S -->
