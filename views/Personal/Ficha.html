@@ -4,7 +4,7 @@
 
 {% block javascripts %}
   <!-- JS para esta página. -->
-    <script type="text/JavaScript" src="js/main_personal.js"></script>
+    <script type="text/JavaScript" src="js/Personal/Ficha.js"></script>
     <script>   
         (function(){
             function removeAccents ( data ) {
@@ -16,12 +16,9 @@
                         .normalize('NFD')
                         .replace(/[\u0300-\u036f]/g, '');
                 }
-              
                 return data;
             }
-              
             var searchType = jQuery.fn.DataTable.ext.type.search;
-              
             searchType.string = function ( data ) {
                 return ! data ?
                     '' :
@@ -29,7 +26,6 @@
                         removeAccents( data ) :
                         data;
             };
-              
             searchType.html = function ( data ) {
                 return ! data ?
                     '' :
@@ -37,7 +33,6 @@
                         removeAccents( data.replace( /<.*?>/g, '' ) ) :
                         data;
             };
-              
             }());
     </script>
 {% endblock %}
@@ -61,19 +56,17 @@
         </div>
       </div><!-- /.container-fluid -->
     </section>
-
-
   <!-- Small boxes (Stat box) -->
   <div class="col-md-12">
     <div class="card card-success">
       <div class="card-header">
         <h3 class="card-title"><i class="fas fa-user-friends nav-icon"></i> BIENVENIDOS AL CONTENIDO DEL PERSONAL</h3>
           <!-- /.INPUT PARA EL MENU CONTEXTUAL -->
-          <input type="text" id="MenuContextual" value='{{ codigo_perfil }}'>
+          <input type="text" id="MenuContextual" value="{{ codigo_perfil }}" aria-label="CodigoPerfil">
           <!-- /.card-tools -->
 
         <div class="card-tools">
-          <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i>
+          <button type="button" class="btn btn-tool" data-card-widget="collapse" aria-labelledby="ToolsBoton" title="Hi"><i class="fas fa-minus"></i>
           </button>
         </div>
         <!-- /.card-tools -->
@@ -91,13 +84,13 @@
                     </div>
                 </div>
                 <div class="col-lg-2">
-                    <button class="btn btn-success" style="width:100%" data-toggle="tooltip" data-placement="top" title="Nuevo" id = "goNuevoUser">
+                    <button class="btn btn-success" data-toggle="tooltip" data-placement="top" title="Nuevo" id = "goNuevoUser">
                       <span class="fas fa-user-plus"> Nuevo Registro</span>
                     </button>
                 </div>
             </div>
         </div>
-          <table id="listado" class="table display responsive nowrap" style="width: 100%;">
+          <table id="listado" class="table display responsive nowrap">
             <thead>
                 <tr>
                   <th>Acción</th>

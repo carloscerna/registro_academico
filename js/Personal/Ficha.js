@@ -75,11 +75,11 @@ var listar = function(){
 			// CONFIGURAR EL FILTER A OTRO OBJETO.
 			document.getElementById("listado_filter").style.display="none";
 			$('input.global_filter').on( 'keyup click', function () {
-				 filterGlobal();
-			 } );
-			 $('input.column_filter').on( 'keyup click', function () {
-				 filterColumn( $(this).parents('tr').attr('data-column') );
-			 });
+				filterGlobal();
+			} );
+			$('input.column_filter').on( 'keyup click', function () {
+				filterColumn( $(this).parents('tr').attr('data-column') );
+			});
 		};
 ///////////////////////////////////////////////////////////////////////////////
 // CONFIGURACIÓN DEL IDIOMA AL ESPAÑOL.
@@ -104,10 +104,10 @@ var idioma_espanol = {
 			"sPrevious": "Anterior"
 			},
 			"oAria": {
-			    "sSortAscending":  ": Activar para ordenar la columna de manera ascendente",
-			    "sSortDescending": ": Activar para ordenar la columna de manera descendente"
+				"sSortAscending":  ": Activar para ordenar la columna de manera ascendente",
+				"sSortDescending": ": Activar para ordenar la columna de manera descendente"
 			}
-		 };	  
+		};	  
 
 var obtener_data_editar = function(tbody, tabla){
 ///////////////////////////////////////////////////////////////////////////////
@@ -136,13 +136,13 @@ var obtener_data_editar = function(tbody, tabla){
 //	ENVIAR MENSAJE CON SWEETALERT 2, PARA CONFIRMAR SI ELIMINA EL REGISTRO.
 		const swalWithBootstrapButtons = Swal.mixin({
 			customClass: {
-			  confirmButton: 'btn btn-success',
-			  cancelButton: 'btn btn-danger'
+				confirmButton: 'btn btn-success',
+				cancelButton: 'btn btn-danger'
 			},
 			buttonsStyling: false
-		  })
-		  
-		  swalWithBootstrapButtons.fire({
+		})
+		
+		swalWithBootstrapButtons.fire({
 			title: '¿Qué desea hacer?',
 			text: 'Eliminar el Registro Seleccionado!',
 			showCancelButton: true,
@@ -155,10 +155,10 @@ var obtener_data_editar = function(tbody, tabla){
 			stopKeydownPropagation: false,
 			closeButtonAriaLabel: 'Cerrar Alerta',
 			type: 'question'
-		  }).then((result) => {
+		}).then((result) => {
 			if (result.value) {
 			  // PROCESO PARA ELIMINAR REGISTRO.
-			  $.ajax({
+			$.ajax({
 				cache: false,
 				type: "POST",
 				dataType: "json",
@@ -177,16 +177,16 @@ var obtener_data_editar = function(tbody, tabla){
 			});
 			//////////////////////////////////////
 			} else if (
-			  /* Read more about handling dismissals below */
-			  result.dismiss === Swal.DismissReason.cancel
+				/* Read more about handling dismissals below */
+				result.dismiss === Swal.DismissReason.cancel
 			) {
-			  swalWithBootstrapButtons.fire(
+				swalWithBootstrapButtons.fire(
 				'Cancelar',
 				'Su Archivo no ha sido Eliminado :)',
 				'error'
-			  )
+				)
 			}
-		  })
+			})
 	});
 }; // Funcion principal dentro del DataTable.
 

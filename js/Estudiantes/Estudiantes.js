@@ -30,8 +30,9 @@ var listar = function(){
 		// Varaible de Entornos.php
 			var buscartodos = "BuscarTodos";
 		// Tabla que contrendrá los registros.
-			tabla = jQuery("#listadoEstudiantes").DataTable({
+			let tabla = jQuery("#listadoEstudiantes").DataTable({
 				"responsive": true,
+				"processing": true,
 				"lengthMenu": [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]],
 				"destroy": true,
 				"ajax":{
@@ -62,7 +63,7 @@ var listar = function(){
 				"language": idioma_espanol
 		});
 			obtener_data_editar("#listadoEstudiantes tbody", tabla);
-	  };
+};
 ///////////////////////////////////////////////////////////////////////////////
 // CONFIGURACIÓN DEL IDIOMA AL ESPAÑOL.
 ///////////////////////////////////////////////////////////////////////////////	
@@ -86,10 +87,10 @@ var idioma_espanol = {
 			"sPrevious": "Anterior"
 			},
 			"oAria": {
-			    "sSortAscending":  ": Activar para ordenar la columna de manera ascendente",
-			    "sSortDescending": ": Activar para ordenar la columna de manera descendente"
+				"sSortAscending":  ": Activar para ordenar la columna de manera ascendente",
+				"sSortDescending": ": Activar para ordenar la columna de manera descendente"
 			}
-		 };	  
+};	  
 
 var obtener_data_editar = function(tbody, tabla){
 ///////////////////////////////////////////////////////////////////////////////
@@ -111,12 +112,12 @@ var obtener_data_editar = function(tbody, tabla){
 	$(tbody).on("click","a.expediente",function(){
 		var data = tabla.row($(this).parents("tr")).data();
 		console.log(data); console.log(data[0]);
-		
+		// variables obtenida de DataTablet	
 		id_ = data[0];
-			// construir la variable con el url.
-               varenviar = "/registro_academico/php_libs/reportes/ficha_alumno.php?id_user="+id_;
-            // Ejecutar la función
-               AbrirVentana(varenviar);
+		// construir la variable con el url.
+			varenviar = "/registro_academico/php_libs/reportes/ficha_alumno.php?id_user="+id_;
+		// Ejecutar la función
+			AbrirVentana(varenviar);
 	});
 ///////////////////////////////////////////////////////////////////////////////
 //	FUNCION que al dar clic buscar el registro para posterior mente abri una
@@ -127,10 +128,10 @@ var obtener_data_editar = function(tbody, tabla){
 		console.log(data); console.log(data[0]);
 		
 		id_ = data[0];
-			// construir la variable con el url.
-               varenviar = "/registro_academico/php_libs/reportes/alumno_portada.php?txtidalumno="+id_;
-            // Ejecutar la función
-               AbrirVentana(varenviar);
+		// construir la variable con el url.
+			varenviar = "/registro_academico/php_libs/reportes/alumno_portada.php?txtidalumno="+id_;
+		// Ejecutar la función
+			AbrirVentana(varenviar);
 	});
 	///////////////////////////////////////////////////////////////////////////////
 //	FUNCION que al dar clic buscar el registro para posterior mente abri una
@@ -148,7 +149,6 @@ $(tbody).on("click","a.eliminar",function(){
 				},
 				buttonsStyling: false
 			})
-	
 			swalWithBootstrapButtons.fire({
 				title: '¿Qué desea hacer?',
 				text: 'Eliminar el Registro Seleccionado!',
@@ -194,20 +194,18 @@ $(tbody).on("click","a.eliminar",function(){
 				}
 			})
 });
-
-
 }; // Funcion principal dentro del DataTable.
 ///////////////////////////////////////////////////////////////////////////////
 //	FUNCION que al dar clic buscar el registro para posterior mente abri una
 // ventana modal. GENERAR NUEVO ESTUDIANTE
 ///////////////////////////////////////////////////////////////////////////////	  
 $('#goNuevoUser').on( 'click', function () {
-		accion = "AgregarNuevoEstudiante";	// variable global
-		id_ = 0;
-			window.location.href = 'editar_Nuevo_Estudiante.php?id='+id_+"&accion="+accion;
+	accion = "AgregarNuevoEstudiante";	// variable global
+	id_ = 0;
+	window.location.href = 'editar_Nuevo_Estudiante.php?id='+id_+"&accion="+accion;
 });	  
 });	// final de FUNCTION.
-
+//
 function AbrirVentana(url)
 {
     window.open(url, '_blank');
