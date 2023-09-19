@@ -90,7 +90,7 @@ var NuevoRegistro = function(){
         accion = "GenerarCodigoNuevo";
     // Generar el Código Nuevo.
         $.post("php_libs/soporte/NuevoEditarPersonal.php", {accion_buscar: accion, ann: ann},
-           function(data){
+            function(data){
            // Información de la Tabla Datos Personal.
             $("#txtcodigo").val(data[0].codigo_nuevo);
             toastr["info"]('Nuevo Código: ' + data[0].codigo_nuevo + ' Generado', "Sistema");
@@ -254,9 +254,9 @@ var NuevoRegistro = function(){
 		
 // Pasar foco cuando seleccionar un encargado.
 function PasarFoco()
-   {
-       $('#txtnombres').focus();
-   }
+    {
+        $('#txtnombres').focus();
+    }
 function LimpiarCampos(){
     $('#txtnombres').val('');
     $('#txtapellido').val('');
@@ -264,10 +264,10 @@ function LimpiarCampos(){
 ///////////////////////////////////////////////////////////
 // Convertir a mayúsculas cuando abandone el input.
 ////////////////////////////////////////////////////////////
-   function conMayusculas(field)
-   {
-        field.value = field.value.toUpperCase();
-   }
+function conMayusculas(field)
+{
+    field.value = field.value.toUpperCase();
+}
 ///////////////////////////////////////////////////////////
 // cargar diferentes lsitados.
 // FUNCION LISTAR CATALOGO PERFIL.
@@ -294,7 +294,7 @@ function listar_municipio(departamento,municipio){
         miselect.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
 
             $.post("includes/cargar_municipio.php", { departamento: departamento },
-                   function(data){
+                    function(data){
                 miselect.empty();
                 for (var i=0; i<data.length; i++) {
 					if(municipio == data[i].codigo){

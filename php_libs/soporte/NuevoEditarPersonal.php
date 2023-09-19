@@ -30,10 +30,9 @@ if($errorDbConexion == false){
 		}
 		// Verificamos las variables de acci�n
 		switch ($_POST['accion']) {
-			case 'GenerarCodigoNuevo':
+			case "GenerarCodigoNuevo":
 				$ann_ = substr(trim($_POST['ann']),2,2);	// Año en Curso. pasar a dos digitos.
-
-				$query = "SELECT id_personal FROM personal WHERE  = '$ann_'
+					$query = "SELECT id_personal FROM personal WHERE  = '$ann_'
 							ORDER BY codigo_empleado_numero_entero DESC LIMIT 1";
 				// Ejecutamos el Query.
 				$consulta = $dblink -> query($query);
@@ -50,7 +49,6 @@ if($errorDbConexion == false){
 						$codigo_nuevo = $codigo_nuevo . $ann_;
 						// retornar variable que contendrá el nuevo código.
 						$datos[$fila_array]["codigo_nuevo"] = $codigo_nuevo;
-						
 					}
 					$mensajeError = "Nuevo Código: " . $codigo_nuevo . "Generado.";
 				}
@@ -59,10 +57,9 @@ if($errorDbConexion == false){
 						$codigo_nuevo = "001" . $ann_;
 						// retornar variable que contendrá el nuevo código.
 						$datos[$fila_array]["codigo_nuevo"] = $codigo_nuevo;
-						
-					$respuestaOK = true;
-					$contenidoOK = '';
-					$mensajeError =  'No hay Generación de Código.';
+							$respuestaOK = true;
+							$contenidoOK = '';
+							$mensajeError =  'No hay Generación de Código.';
 				}
 			break;
 			case 'BuscarCodigo':
@@ -83,17 +80,17 @@ if($errorDbConexion == false){
 						}
 			break;
 			case 'BuscarPorId':
-				$id_x = trim($_POST['id_x']);
+				$id_ = trim($_POST['id_x']);
 				// Armamos el query.
 				$query = "SELECT p.id_personal, TRIM(p.nombres) as nombre, TRIM(p.apellidos) as apellido, btrim(p.nombres || CAST(' ' AS VARCHAR) || p.apellidos) AS nombre_empleado, p.telefono_residencia, p.telefono_celular,
-				p.fecha_nacimiento, p.edad, p.codigo_estatus, p.codigo_municipio, p.codigo_departamento, p.telefono_residencia, p.direccion, p.foto, p.codigo_genero, p.codigo_estado_civil, p.correo_electronico,
-				p.tipo_sangre, p.codigo_estudio, p.codigo_vivienda, p.codigo_afp, p.nombre_conyuge,
-				p.codigo_cargo, p.fecha_ingreso, p.fecha_retiro, 
-				p.numero_cuenta,
-				p.codigo_tipo_licencia, p.licencia, p.dui, p.nit, p.isss, p.afp,
-				p.comentario
+					p.fecha_nacimiento, p.edad, p.codigo_estatus, p.codigo_municipio, p.codigo_departamento, p.telefono_residencia, p.direccion, p.foto, p.codigo_genero, p.codigo_estado_civil, p.correo_electronico,
+					p.tipo_sangre, p.codigo_estudio, p.codigo_vivienda, p.codigo_afp, p.nombre_conyuge,
+					p.codigo_cargo, p.fecha_ingreso, p.fecha_retiro, 
+					p.numero_cuenta,
+					p.codigo_tipo_licencia, p.licencia, p.dui, p.nit, p.isss, p.afp,
+					p.comentario
 						FROM personal p
-							WHERE id_personal = '$id_x'
+							WHERE id_personal = '$id_'
 								ORDER BY nombre_empleado"
 						;
 				// Ejecutamos el Query.
@@ -109,7 +106,7 @@ if($errorDbConexion == false){
 							$nombre_empleado = trim($listado['nombre_empleado']);
 							$nombre = trim($listado['nombre']);
 							$apellido = trim($listado['apellido']);
-							
+							//
                             $fecha_nacimiento = trim($listado['fecha_nacimiento']);
 							$edad = trim($listado['edad']);
 							$codigo_genero = trim($listado['codigo_genero']);
@@ -119,21 +116,20 @@ if($errorDbConexion == false){
 							$codigo_vivienda = trim($listado['codigo_vivienda']);
 							$codigo_afp = trim($listado['codigo_afp']);
 							$nombre_conyuge = trim($listado['nombre_conyuge']);
-
-
+							//
 							$codigo_municipio = trim($listado['codigo_municipio']);
                             $codigo_departamento = trim($listado['codigo_departamento']);
 							$direccion = trim($listado['direccion']);
                             $telefono_fijo = trim($listado['telefono_residencia']);
                             $telefono_movil = trim($listado['telefono_celular']);
 							$correo_electronico = trim($listado['correo_electronico']);
-							
+							//
 							$codigo_cargo = trim($listado['codigo_cargo']);
 							$fecha_ingreso = trim($listado['fecha_ingreso']);
 							$fecha_retiro = trim($listado['fecha_retiro']);
-
+							//
 							$numero_cuenta = trim($listado['numero_cuenta']);
-
+							//
 							$codigo_licencia = trim($listado['codigo_tipo_licencia']);
 							$numero_licencia = trim($listado['licencia']);
 							$dui = trim($listado['dui']);
@@ -141,16 +137,13 @@ if($errorDbConexion == false){
 							$nit = trim($listado['nit']);
 							$afp = trim($listado['afp']);
 							$comentario = trim($listado['comentario']);
-							
-							//$ = trim($listado['']);
-							//$ = trim($listado['']);
 						//	Logo.
 							$url_foto = trim($listado['foto']);
 						// Rellenando la array.
 							$datos[$fila_array]["nombre_empleado"] = $nombre_empleado;
 							$datos[$fila_array]["nombre"] = $nombre;
 							$datos[$fila_array]["apellido"] = $apellido;
-							
+							//
 							$datos[$fila_array]["fecha_nacimiento"] = $fecha_nacimiento;
 							$datos[$fila_array]["edad"] = $edad;							
 							$datos[$fila_array]["codigo_genero"] = $codigo_genero;
@@ -160,20 +153,20 @@ if($errorDbConexion == false){
 							$datos[$fila_array]["codigo_vivienda"] = $codigo_vivienda;
 							$datos[$fila_array]["codigo_afp"] = $codigo_afp;
 							$datos[$fila_array]["nombre_conyuge"] = $nombre_conyuge;
-
+							//
 							$datos[$fila_array]["codigo_municipio"] = $codigo_municipio;
 							$datos[$fila_array]["codigo_departamento"] = $codigo_departamento;
 							$datos[$fila_array]["direccion"] = $direccion;
                             $datos[$fila_array]["telefono_fijo"] = $telefono_fijo;
                             $datos[$fila_array]["telefono_movil"] = $telefono_movil;
 							$datos[$fila_array]["correo_electronico"] = $correo_electronico;
-
+							//
 							$datos[$fila_array]["codigo_cargo"] = $codigo_cargo;
 							$datos[$fila_array]["fecha_ingreso"] = $fecha_ingreso;
 							$datos[$fila_array]["fecha_retiro"] = $fecha_retiro;
-							
+							//
 							$datos[$fila_array]["numero_cuenta"] = $numero_cuenta;
-							
+							//
 							$datos[$fila_array]["codigo_licencia"] = $codigo_licencia;
 							$datos[$fila_array]["numero_licencia"] = $numero_licencia;
 							$datos[$fila_array]["dui"] = $dui;
@@ -181,9 +174,7 @@ if($errorDbConexion == false){
 							$datos[$fila_array]["nit"] = $nit;
 							$datos[$fila_array]["afp"] = $afp;
 							$datos[$fila_array]["comentario"] = $comentario;
-
-							//$datos[$fila_array][""] = $;
-                            
+							//
 							$datos[$fila_array]["url_foto"] = $url_foto;
 					}
 					$mensajeError = "Si Registro";
@@ -194,7 +185,6 @@ if($errorDbConexion == false){
 					$mensajeError =  'No Registro';
 				}
 			break;
-
 			case 'AgregarNuevoPersonal':		
 				// armar variables.
 					// INFO 1
@@ -240,17 +230,17 @@ if($errorDbConexion == false){
 					$comentario = htmlspecialchars(trim($_POST['txtComentario']));
 				// Query
 					$query = "INSERT INTO personal (nombres, apellidos, fecha_nacimiento, edad, codigo_genero,
-					codigo_estado_civil, tipo_sangre, codigo_estudio, 
-					codigo_vivienda, codigo_afp, nombre_conyuge,
-					codigo_municipio, codigo_departamento, direccion,
-					telefono_residencia, telefono_celular, 
-					correo_electronico, codigo_cargo, fecha_ingreso, 
-					fecha_retiro, numero_cuenta,
-					codigo_tipo_licencia, licencia, dui, nit, afp, 
-					codigo_estatus)
+						codigo_estado_civil, tipo_sangre, codigo_estudio, 
+						codigo_vivienda, codigo_afp, nombre_conyuge,
+						codigo_municipio, codigo_departamento, direccion,
+						telefono_residencia, telefono_celular, 
+						correo_electronico, codigo_cargo, fecha_ingreso, 
+						fecha_retiro, numero_cuenta,
+						codigo_tipo_licencia, licencia, dui, nit, afp, 
+						codigo_estatus)
 						VALUES ('$nombre', '$apellido', '$fecha_nacimiento', '$edad', '$codigo_genero',
-						 	'$codigo_estado_civil', '$tipo_sangre', '$codigo_estudios', 
-							 '$codigo_tipo_vivienda', '$codigo_afp', '$nombre_conyuge',
+							'$codigo_estado_civil', '$tipo_sangre', '$codigo_estudios', 
+							'$codigo_tipo_vivienda', '$codigo_afp', '$nombre_conyuge',
 							'$codigo_municipio', '$codigo_departamento', '$direccion',
 							'$telefono_fijo', '$telefono_movil', 
 							'$correo_electronico', '$codigo_cargo', '$fecha_ingreso', 
@@ -270,7 +260,6 @@ if($errorDbConexion == false){
 						$mensajeError = "No se puede guardar el registro en la base de datos ".$query;
 					}
 			break;
-			
 			case 'EditarRegistro':
 				// INFO 1
 					$codigo_personal_2 = trim($_POST['txtId']);

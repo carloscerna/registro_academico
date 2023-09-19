@@ -35,7 +35,8 @@ if($errorDbConexion == false){
 		case 'BuscarTodos':
 				// Armamos el query.
 				$query = "SELECT p.id_personal, cat_cargo.descripcion, btrim(p.nombres || CAST(' ' AS VARCHAR) || p.apellidos) AS nombre_empleado, p.telefono_celular,
-                            to_char(p.fecha_nacimiento,'dd/mm/yyyy') as fecha_nacimiento, p.edad, p.codigo_estatus
+							to_char(p.fecha_nacimiento,'dd/mm/yyyy') as fecha_nacimiento, p.edad, p.codigo_estatus,
+							p.dui, p.nit, p.nip
                                 FROM personal p
 									INNER JOIN catalogo_cargo cat_cargo ON cat_cargo.codigo = p.codigo_cargo
                                     WHERE p.codigo_cargo <> ''

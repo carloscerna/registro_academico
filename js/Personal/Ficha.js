@@ -55,7 +55,9 @@ var listar = function(){
                     {"data":"nombre_empleado"},
 					{"data":"telefono_celular"},
                     {"data":"fecha_nacimiento"},
-                    {"data":"edad"},
+                    {"data":"dui"},
+					{"data":"nit"},
+					{"data":"nip"},
 					{"data":"codigo_estatus",
 						render: function(data, type, row){
 							if(data == '01'){

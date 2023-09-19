@@ -14,7 +14,7 @@ $accion = $_REQUEST['accion'];
 $_SESSION['Id_A'] = $_REQUEST['id'];
     include('includes/templateEngine.inc.php');
 
-    $twig->display('layout-nuevo-editar-estudiante.html',array(
+    $twig->display('Estudiantes/EditarNuevoEstudiante.html',array(
         "userName" => $_SESSION['userNombre'],
         "userID" => $_SESSION['userID'],
         "codigo_perfil" => $_SESSION['codigo_perfil'],
