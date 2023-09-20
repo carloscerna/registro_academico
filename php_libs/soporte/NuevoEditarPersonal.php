@@ -87,7 +87,7 @@ if($errorDbConexion == false){
 					p.tipo_sangre, p.codigo_estudio, p.codigo_vivienda, p.codigo_afp, p.nombre_conyuge,
 					p.codigo_cargo, p.fecha_ingreso, p.fecha_retiro, 
 					p.numero_cuenta,
-					p.codigo_tipo_licencia, p.licencia, p.dui, p.nit, p.isss, p.afp,
+					p.codigo_tipo_licencia, p.licencia, p.dui, p.nit, p.isss, p.afp, p.nip,
 					p.comentario
 						FROM personal p
 							WHERE id_personal = '$id_'

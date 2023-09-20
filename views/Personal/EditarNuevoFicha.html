@@ -53,19 +53,17 @@ $(document).ready(function() {
 // Jquery-mask - entrado de datos.
 jQuery(function($){
     // Form Users Agregar.
-     $("#telefono_fijo").mask("9999-9999");
-     $("#telefono_movil").mask("9999-9999");
-     $("#telefono_fax").mask("9999-9999");
+      $("#telefono_fijo").mask("9999-9999");
+      $("#telefono_movil").mask("9999-9999");
+      $("#telefono_fax").mask("9999-9999");
 
-     $("#txtDui").mask("99999999-9");
-     $("#txtNit").mask("9999-999999-999-9");
-
-     //$("#").mask("");
+      $("#txtNip").mask("999999999");
+      $("#txtDui").mask("99999999-9");
+      $("#txtNit").mask("9999-999999-999-9");
   }); 
 });
-
  /* SCRIPT PARA SUBIR LA FOTO.*/
- $(document).ready(function() {
+$(document).ready(function() {
   $('#fileup').change(function(){
 //here we take the file extension and set an array of valid extensions
     var res=$('#fileup').val();
@@ -99,7 +97,7 @@ jQuery(function($){
         formData.append('file',files);
         $.ajax({
             cache: false,
-            url: 'php_libs/soporte/upload_foto_personal.php',
+            url: 'php_libs/soporte/UploadFotoFicha.php',
             type: 'post',
             data: formData,
             contentType: false,
@@ -408,7 +406,7 @@ jQuery(function($){
                                       <div class="form-group">    
                                         <!-- N.º DUI -->
                                         <label class="form-label form-control-label">N.º NIP</label>
-                                        <input class="form-control" type="text" id="txtNip" name="txtNip" tabindex="10" aria-label="TxtNpi">
+                                        <input class="form-control" type="text" id="txtNip" name="txtNip" maxlength="10" tabindex="10" aria-label="TxtNpi">
                                         <!-- N.º ISSS -->
                                         <label class="form-label form-control-label">N.º ISSS</label>
                                         <input class="form-control" type="text" id="txtIsss" name="txtIsss" maxlength="10" tabindex="11" aria-label="TxtIsss">

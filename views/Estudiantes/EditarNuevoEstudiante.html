@@ -27,11 +27,12 @@ small.required {
 
 {% block javascripts %}
     <!-- JS para esta página. -->
-    <script type="text/JavaScript" src="js/main_nuevo_editar_estudiante.js"></script>
+    <script type="text/JavaScript" src="js/Estudiantes/EditarNuevoEstudiante.js"></script>
+    <script type="text/JavaScript" src="js/Estudiantes/EditarNuevoEstudiantePortafolio.js"></script>
     <script type="text/javascript" src="js/carga-alumnos.js"></script>
     <script type="text/JavaScript" src="js/calcular_edad.js"></script>
     <script type="text/javascript" src="js/jquery-mask/jquery.maskedinput.js"></script>
-    <script type="text/JavaScript" src="js/main_nuevo_editar_estudiante_portafolio.js"></script>
+
 
 <script>
 $(document).ready(function() { 
@@ -68,17 +69,19 @@ $(document).ready(function() {
         formData.append('file',files);
         $.ajax({
             //url: 'php_libs/soporte/upload.php',
-            url: 'php_libs/soporte/upload_foto.php',
+            url: 'php_libs/soporte/UploadFotoEstudiante.php',
             type: 'post',
             data: formData,
             contentType: false,
             processData: false,
             success: function(response) {
                 if (response != 0) {
-                    $('.card-img-top').removeAttr('src');
+                    //$('.card-img-top').removeAttr('src');
                     $(".card-img-top").attr("src", response);
+                    $('#namefile').html("Sólo Imagen!");
+                    toastr["success"]('Imagen Cargada...', "Sistema");
                 } else {
-                  alert('Formato de imagen incorrecto.');
+                  alert('Formato de imagen incorrecto.',"Sistema");
                 }
             }
         });
