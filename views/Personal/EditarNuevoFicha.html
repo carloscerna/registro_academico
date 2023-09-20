@@ -6,12 +6,20 @@
 
 <!-- CSS ESTILO PLANTILLA PERSONAL -->
   <link rel="stylesheet" href="css/estilo_personal.css">
+  
+  <style>
+    /* ANCHO DE CADA CARD*/
+    .card-width{
+      width: 18rem;
+    }
+  </style>
+  
 {% endblock %}
 
 {% block javascripts %}
 <!-- JS para esta página. -->
   <script type="text/javascript" src="js/calcular_edad.js"></script>
-  <script type="text/JavaScript" src="js/main_nuevo_editar_personal.js"></script>
+  <script type="text/JavaScript" src="js/Personal/EditarNuevoFicha.js"></script>
   <script type="text/JavaScript" src="js/main_nuevo_editar_personal_portafolio.js"></script>
   <script type="text/JavaScript" src="js/main_nuevo_editar_personal_historial.js"></script>
   <script type="text/javascript" src="js/jquery-mask/jquery.maskedinput.js"></script>
@@ -144,7 +152,7 @@ jQuery(function($){
                       <div>
                         <h3 class="card-title">
                           <label for="txtEdicionNuevo" class="text-white">Edición</label>
-                          <label for="LblNombre"></label>
+                          <label for="LblNombre" class="text-white"></label>
                         </h3>
                       </div>
                       <div class="m-0 p-0">
@@ -234,7 +242,7 @@ jQuery(function($){
                                             <div class="form-group row">
                                               <div class="col-lg-3"></div>
                                               <div class="col-lg-9">
-                                                <label for="lbl_edad_y_mes" class="control-label" style="color: blue;"></label>
+                                                <label for="lbl_edad_y_mes" class="control-label text-primary"></label>
                                               </div>
                                             </div>
                                       <!-- GÉNERO -->
@@ -285,7 +293,7 @@ jQuery(function($){
                               <!-- FOTO O IMAGEN DEL EMPLEADO-->
                                     <div class="col-md-4">
                                       <form name="formImagen" id="formImagen" class="text-center border border-light p-5" action="#!" enctype="multipart/form-data">
-                                        <div class="card" style="width: 18rem;">
+                                        <div class="card card-width">
                                           <div class="card-head">
                                                 <div id="estilo_foto">             
                                                   <p id="AgregarFoto">Agregar Foto</p>
@@ -326,7 +334,7 @@ jQuery(function($){
                                           <div class="form-group row">
                                             <label for="" class="col-lg-3 col-form-label form-control-label">Dirección</label>
                                             <div class="col-lg-9">
-                                              <textarea style="height: 60px;" id="direccion" name="direccion" class="form-control" aria-label="Direccion"></textarea>
+                                              <textarea id="direccion" name="direccion" class="form-control" aria-label="Direccion"></textarea>
                                             </div>
                                           </div>
                                           <!-- TELEFONO FIJO -->
@@ -367,9 +375,6 @@ jQuery(function($){
                                           <!-- CARGO -->
                                           <label class="form-label form-control-label">Cargo</label>
                                           <select class="custom-select" id="lstCargo" name="lstCargo" tabindex="1" autofocus aria-label="LstCargo"></select>
-                                          <!-- DEPARTAMENTO (CARGO) -->
-                                          <label class="form-label form-control-label">Departamento</label>
-                                          <select class="custom-select" id="lstCargoDepartamento" name="lstCargoDepartamento" tabindex="3" aria-label="LstCargoDepartamento"></select>
                                         </div>
                                     </div>
                                     <div class="col-md-4">
@@ -377,10 +382,6 @@ jQuery(function($){
                                           <!-- FECHA INGRESO  -->
                                           <label class="form-label form-control-label text-right">Fecha Ingreso</label>
                                           <input class="form-control" type="date" id="txtFechaIngreso" name="txtFechaIngreso" tabindex="1" aria-label="TxtFEchaIngreso">
-                                        
-                                          <!-- TALLER -->
-                                          <label class="form-label form-control-label">Taller</label>
-                                          <select class="custom-select" id="lstTaller" name="lstTaller" tabindex="4" aria-label="LstTaller"></select>
                                         </div>
                                     </div>
                                     <div class="col-md-4">
@@ -391,32 +392,6 @@ jQuery(function($){
                                       </div>
                                     </div>
                                   </div>
-                              </fieldset>
-                              <fieldset>
-                                <legend><span class="fas fa-edit"></span></legend>
-                                <div class="row">
-                                  <div class="col-md-4">
-                                      <div class="form-group">    
-                                        <!-- RUTA -->
-                                        <label class="form-label form-control-label">Ruta</label>
-                                        <select class="custom-select" id="lstRuta" name="lstRuta" tabindex="5" aria-label="LstRuta"></select>
-                                      </div>
-                                  </div>
-                                  <div class="col-md-4">
-                                    <div class="form-group">    
-                                      <!-- SOCIO -->
-                                      <label class="form-label form-control-label">Socio</label>
-                                      <select class="custom-select" id="lstSocio" name="lstSocio" tabindex="6" aria-label="LstSocio"></select>
-                                    </div>
-                                  </div>
-                                  <div class="col-md-4">
-                                      <div class="form-group">    
-                                        <!-- NÚMERO DE CUENTA DE AHORRO -->
-                                        <label class="form-label form-control-label"># Cuenta Ahorro</label>
-                                        <input class="form-control" type="text" id="txtCuentaAhorro" name="txtCuentaAhorro" maxlength="15" tabindex="7" aria-label="TxtCuentaAhorro">
-                                      </div>
-                                  </div>
-                                </div>
                               </fieldset>
                           </div> <!-- FIN COL MD 12 -->
                         </div> <!-- MODAL ROW -->
@@ -431,9 +406,9 @@ jQuery(function($){
                                 <div class="row">
                                   <div class="col-md-4">
                                       <div class="form-group">    
-                                        <!-- N.º CLASE DE LICENCIA -->
-                                        <label class="form-label form-control-label">Clase de Licencia</label>
-                                        <select class="custom-select" id="lstClaseLicencia" name="lstClaseLicencia" tabindex="8" aria-label="LstClaseLicencia"></select>
+                                        <!-- N.º DUI -->
+                                        <label class="form-label form-control-label">N.º NIP</label>
+                                        <input class="form-control" type="text" id="txtNip" name="txtNip" tabindex="10" aria-label="TxtNpi">
                                         <!-- N.º ISSS -->
                                         <label class="form-label form-control-label">N.º ISSS</label>
                                         <input class="form-control" type="text" id="txtIsss" name="txtIsss" maxlength="10" tabindex="11" aria-label="TxtIsss">
@@ -441,9 +416,6 @@ jQuery(function($){
                                   </div>
                                   <div class="col-md-4">
                                     <div class="form-group">
-                                      <!-- N.º DE LICENCIA -->
-                                      <label class="form-label form-control-label">N.º de Licencia</label>
-                                      <input class="form-control" type="text" id="txtNumeroLicencia" name="txtNumeroLicencia" maxlength="17" tabindex="9" aria-label="TxtNumeroLicencia">
                                       <!-- N.º NIT -->
                                       <label class="form-label form-control-label">N.º NIT</label>
                                       <input class="form-control" type="text" id="txtNit" name="txtNit" tabindex="12" aria-label="TxtNit">
@@ -481,14 +453,14 @@ jQuery(function($){
                                 <fieldset>
                                     <div class="row">
                                       <div class="col-lg-8 d-flex justify-content-start">
-                                        <h2><label for="LblHistorial" style="color: black;">Historial</label></h2>
+                                        <h2><label for="LblHistorial">Historial</label></h2>
                                       </div>
                                       <div class="col-lg-4 d-flex justify-content-end">
-                                          <input class="btn btn-primary" type="button" value="Agregar" name="goNuevoHistorial" id="goNuevoHistorial" style="width: 100%;">
-                                          <input class="btn btn-primary" type="button" value="Ver" name="goVerHistorial" id="goVerHistorial" style="display: none; width: 100%;">
+                                          <input class="btn btn-primary" type="button" value="Agregar" name="goNuevoHistorial" id="goNuevoHistorial">
+                                          <input class="btn btn-primary" type="button" value="Ver" name="goVerHistorial" id="goVerHistorial">
                                       </div>
                                     </div>
-                                    <section id="EditarNuevoHistorial"  style="display: none; background-color: #F5F5F5; box-shadow: #99FFFF;">
+                                    <section id="EditarNuevoHistorial">
                                       <div class="row">                                     
                                             <!-- .col para FORMULARIO DE LOS DATOS.. -->
                                             <div class="col-md-8">
@@ -502,14 +474,14 @@ jQuery(function($){
                                                         <div class="form-group text-left">    
                                                           <!-- FECHA -->
                                                           <label class="form-label form-control-label">Fecha</label>
-                                                          <input class="form-control" type="date" id="txtFechaHistorial" name="txtFechaHistorial" tabindex="1">  
+                                                          <input class="form-control" type="date" id="txtFechaHistorial" name="txtFechaHistorial" tabindex="1" aria-label="TxtFechaHistorial">  
                                                           <!-- TÍTULO -->
                                                           <label class="form-label form-control-label">Título</label>
-                                                          <input class="form-control" type="text" id="TituloHistorial" name="TituloHistorial" tabindex="2">  
+                                                          <input class="form-control" type="text" id="TituloHistorial" name="TituloHistorial" tabindex="2" aria-label="TituloHistorial">  
                                                           <!-- DESCRIPCION -->
                                                           <div class="md-form amber-textarea">
                                                             <i class="fas fa-pencil-alt prefix"></i>
-                                                            <textarea class="form-control md-textarea" id="txtComentarioHistorial" name="txtComentarioHistorial" tabindex="3" rows="3"></textarea>
+                                                            <textarea class="form-control md-textarea" id="txtComentarioHistorial" name="txtComentarioHistorial" tabindex="3" rows="3" aria-label="TxtComenatrioHistorial"></textarea>
                                                             <label for="txtComentarioPortafolio">Descripción</label>
                                                           </div>
                                                         </div>
@@ -546,23 +518,23 @@ jQuery(function($){
                               <fieldset>
                                   <div class="row">
                                     <div class="col-lg-8 d-flex justify-content-start">
-                                      <h2><label for="LblPortafolio" style="color: black;">Portafolio</label></h2>
+                                      <h2><label for="LblPortafolio">Portafolio</label></h2>
                                     </div>
                                     <div class="col-lg-4 d-flex justify-content-end">
-                                        <input class="btn btn-primary" type="button" value="Agregar" name="goNuevoPortafolio" id="goNuevoPortafolio" style="width: 100%;" aria-label="GoNuevoPortafolio">
-                                        <input class="btn btn-primary" type="button" value="Ver" name="goVerPortafolio" id="goVerPortafolio" style="display: none; width: 100%;">
+                                        <input class="btn btn-primary card-width" type="button" value="Agregar" name="goNuevoPortafolio" id="goNuevoPortafolio" aria-label="GoNuevoPortafolio">
+                                        <input class="btn btn-primary" type="button" value="Ver" name="goVerPortafolio" id="goVerPortafolio">
                                     </div>
                                   </div>
-                                  <section id="EditarNuevoPortafolio"  style="display: none; background-color: #F5F5F5; box-shadow: #99FFFF;">
+                                  <section id="EditarNuevoPortafolio">
                                     <div class="row">
                                           <!-- .col para subir la imagen. -->
                                           <div class="col-md-4">
                                             <form name="formImagen" id="formImagen" class="text-center border border-light p-5" action="#!">
-                                            <div class="card" style="width: 18rem;">
+                                            <div class="card card-width">
                                               <div class="card-head ">
                                                     <div id="estilo_foto">             
                                                       <p id="AgregarFoto">Agregar Foto</p>
-                                                        <input type="file" value="" name="fileupPortafolio" id="fileupPortafolio" disabled>
+                                                        <input type="file" value="" name="fileupPortafolio" id="fileupPortafolio" disabled aria-label="FileUpPortafolio">
                                                     </div>
                                                     <label class="text-center" id="namefilePortafolio"></label>
                                                       <span class="imguploadPortafolio ok"><i class="fa fa-check"></i></span>
@@ -570,7 +542,7 @@ jQuery(function($){
                                               </div>
                                                 <div class="card-body">
                                                   <form method="post" action="#" enctype="multipart/form-data">
-                                                    <img class="card-img-top-Portafolio img-fluid" id="ImagenPortafolio" src="#">
+                                                    <img class="card-img-top-Portafolio img-fluid" id="ImagenPortafolio" src="#" alt="ImagenPortafolio">
                                                   </form>
                                                 </div>
                                                 <div class="card-footer text-center">
@@ -592,10 +564,10 @@ jQuery(function($){
                                                       <div class="form-group text-left">    
                                                         <!-- FECHA -->
                                                         <label class="form-label form-control-label">Fecha</label>
-                                                        <input class="form-control" type="date" id="txtFechaPortafolio" name="txtFechaPortafolio" tabindex="1">  
+                                                        <input class="form-control" type="date" id="txtFechaPortafolio" name="txtFechaPortafolio" tabindex="1" aria-label="TxtFechaPortafolio">  
                                                         <!-- TÍTULO -->
                                                         <label class="form-label form-control-label">Título</label>
-                                                        <input class="form-control" type="text" id="TituloPortafolio" name="TituloPortafolio" tabindex="2">  
+                                                        <input class="form-control" type="text" id="TituloPortafolio" name="TituloPortafolio" tabindex="2" aria-label="TituloPortafolio">  
                                                         <!-- DESCRIPCION -->
                                                         <div class="md-form amber-textarea">
                                                           <i class="fas fa-pencil-alt prefix"></i>

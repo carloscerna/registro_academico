@@ -3,6 +3,7 @@ var id_ = 0;
 var buscartodos = "";
 var accionPortafolio = 'noAccion';
 var pagina = 1;
+// IDENTIFICAR QUE TAG INICIAN CON DISPLAY NONE.
 $(document).ready(function(){
 	var display =  $("#EditarNuevoPortafolio").css("display");
 		if(display!="none")

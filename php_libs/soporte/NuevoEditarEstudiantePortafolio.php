@@ -153,7 +153,7 @@ if($errorDbConexion == false){
 							$ruta_imagen = $url_pdf . $nombre_imagen;
 								$contenidoOK .="
 								<div class='card'>
-									<div class='card-header text-right'>$fecha</div>
+									<div class='card-header bg-gradient-navy text-right'>$fecha</div>
 									<div class='text-center'>
 										<a href='#' data-toggle='modal' data-target='#myModal$id_portafolio'>
 											<iframe id='iframePDF' frameborder='0' scrolling='no' width='100%' height='500px' src='$ruta_imagen'></iframe>											
@@ -163,7 +163,7 @@ if($errorDbConexion == false){
 										<h4 class='card-title'><a>$titulo</a></h4>
 										<p class='card-text'>$descripcion</p>
 									</div>
-									<div class='card-footer text-center'>
+									<div class='card-footer bg-gradient-navy text-center'>
 										<a data-accion=EditarRegistro class='btn btn-info btn-sm text-dark' alt='Editar' href='$id_portafolio-$id_alumno'>Editar</a>
 										<a data-accion=EliminarRegistro class='btn btn-warning btn-sm text-dark' alt='Editar' href='$id_portafolio-$id_alumno'>Eliminar</a>
 									</div>
@@ -187,7 +187,7 @@ if($errorDbConexion == false){
 							// 	SI ES UNA IMAGEN.
 							$contenidoOK .="
 							<div class='card'>
-								<div class='card-header text-right'>$fecha</div>
+								<div class='card-header bg-gradient-navy text-right'>$fecha</div>
 								<div class='text-center'>
 									<a href='#' data-toggle='modal' data-target='#myModal$id_portafolio'>
 										<img class='img-fluid rounded' src='$ruta_imagen' alt='Portafolio' style='width=auto; height=94;'>				
@@ -197,7 +197,7 @@ if($errorDbConexion == false){
 									<h4 class='card-title'><a>$titulo</a></h4>
 									<p class='card-text'>$descripcion</p>
 								</div>
-								<div class='card-footer text-center'>
+								<div class='card-footer text-center bg-gradient-navy'>
 									<a data-accion=EditarRegistro class='btn btn-info btn-sm text-dark' alt='Editar' href='$id_portafolio-$id_alumno'>Editar</a>
 									<a data-accion=EliminarRegistro class='btn btn-warning btn-sm text-dark' alt='Editar' href='$id_portafolio-$id_alumno'>Eliminar</a>
 								</div>

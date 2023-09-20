@@ -4,6 +4,34 @@ var buscartodos = "";
 var accion = 'noAccion';
 var MenuTab = "";
 var tableA = "";
+// IDENTIFICAR QUE TAG INICIAN CON DISPLAY NONE.
+$(document).ready(function(){
+	var display =  $("#EditarNuevoHistorial").css("display");
+		if(display!="none")
+		{
+			$("#EditarNuevoHistorial").attr("style", "display:none");
+		}
+		var display_1 =  $("#goVerHistorial").css("display");
+		if(display_1!="none")
+		{
+			$("#goVerHistorial").attr("style", "display:none");
+		}
+		var display_2 =  $("#EditarNuevoHistorial").css("display");
+		if(display_2!="none")
+		{
+			$("#EditarNuevoHistorial").attr("style", "display:none");
+		}
+        var display_3 =  $("#EditarNuevoPortafolio").css("display");
+		if(display_3!="none")
+		{
+			$("#EditarNuevoPortafolio").attr("style", "display:none");
+		}
+        var display_4 =  $("#goVerPortafolio").css("display");
+		if(display_4!="none")
+		{
+			$("#goVerPortafolio").attr("style", "display:none");
+		}
+});
 $(function(){ // INICIO DEL FUNCTION.
             // Escribir la fecha actual.
                 var now = new Date();                
@@ -109,12 +137,15 @@ var NuevoRegistro = function(){
 				function(data){
 				// Cargar valores a los objetos Llenar el formulario con los datos del registro seleccionado.
 				// Modificar label en la tabs-8.
-					$("label[for='LblNombre']").text(data[0].nombre_empleado);
+//					$("label[for='LblNombre']").text(data[0].nombre_empleado);
                 // datos para el card TITLE - INFORMACIÓN GENERAL
 					$('#txtId').val(id_);
                     $('#txtnombres').val(data[0].nombre);
                     $('#txtapellido').val(data[0].apellido);
-					
+					// Modificar el Card del Title
+					var nombres = data[0].nombre + " " + data[0].apellido +  " - Id: " + id_;
+					$("label[for='LblNombre']").text(nombres);
+                    //					
                     $('#txtfechanacimiento').val(data[0].fecha_nacimiento);
                     $('#txtedad').val(data[0].edad);
                     if(data[0].edad==''){
@@ -128,35 +159,21 @@ var NuevoRegistro = function(){
 					$('#lstVivienda').val(data[0].codigo_vivienda);
 					$('#lstAfp').val(data[0].codigo_afp);
 					$('#txtConyuge').val(data[0].nombre_conyuge);
-
 				// ACTUALIZAR DEPARTAMENTO Y MUNICIPIO.
-						listar_municipio(data[0].codigo_departamento, data[0].codigo_municipio)
-						$('#lstdepartamento').val(data[0].codigo_departamento);
-								$('#lstmunicipio').val(data[0].codigo_municipio);
+                    listar_municipio(data[0].codigo_departamento, data[0].codigo_municipio)
+                    $('#lstdepartamento').val(data[0].codigo_departamento);
+                    $('#lstmunicipio').val(data[0].codigo_municipio);
 					//
 					$('#direccion').val(data[0].direccion);
                     $('#telefono_fijo').val(data[0].telefono_fijo);
                     $('#telefono_movil').val(data[0].telefono_movil);
                     $('#correo_electronico').val(data[0].correo_electronico);
+                    //
                     $('#lstCargo').val(data[0].codigo_cargo);
-					if(data[0].codigo_cargo == ''){
-                        var codigo_cargo = 54;
-                        $('#lstCargo').val(codigo_cargo);
-                    }
+                    //
 					$('#txtFechaIngreso').val(data[0].fecha_ingreso);
 					$('#txtFechaRetiro').val(data[0].fecha_retiro);
-					$('#lstCargoDepartamento').val(data[0].cargo_departamento);
-					$('#lstTaller').val(data[0].cargo_taller);
-					if(data[0].cargo_taller == ''){
-                        var cargo_taller = '09';
-                        $('#lstTaller').val(cargo_taller);
-                    }
-					$('#lstRuta').val(data[0].codigo_ruta);
-					$('#lstSocio').val(data[0].codigo_socio);
-					$('#txtCuentaAhorro').val(data[0].numero_cuenta);
-
-					$('#lstClaseLicencia').val(data[0].codigo_licencia);
-					$('#txtNumeroLicencia').val(data[0].numero_licencia);
+                    $('#txtNip').val(data[0].nip);
 					$('#txtDui').val(data[0].dui);
 					$('#txtIsss').val(data[0].isss);
 					$('#txtNit').val(data[0].nit);
@@ -215,28 +232,28 @@ var NuevoRegistro = function(){
 			///////////////////////////////////////////////////////////////			
 			// Inicio del Ajax. guarda o Actualiza los datos del Formualrio.
 			///////////////////////////////////////////////////////////////
-		        $.ajax({
-		            beforeSend: function(){
-		                
-		            },
-		            cache: false,
-		            type: "POST",
-		            dataType: "json",
-		            url:"php_libs/soporte/NuevoEditarPersonal.php",
-		            data:str + "&id=" + Math.random(),
-		            success: function(response){
-		            	// Validar mensaje de error
-		            	if(response.respuesta == false){
+                $.ajax({
+                    beforeSend: function(){
+                        
+                    },
+                    cache: false,
+                    type: "POST",
+                    dataType: "json",
+                    url:"php_libs/soporte/NuevoEditarPersonal.php",
+                    data:str + "&id=" + Math.random(),
+                    success: function(response){
+                        // Validar mensaje de error
+                        if(response.respuesta == false){
                             toastr["error"](response.mensaje, "Sistema");
-		            	}
-		            	else{
+                        }
+                        else{
                             toastr["success"](response.mensaje, "Sistema");
-							//window.location.href = 'estudiantes.php';
+                            //window.location.href = 'estudiantes.php';
                             }               
-		            },
-		        });
-		    },
-   });
+                    },
+                });
+            },
+    });
 	////////////////////////////////////////////////////
 	////// SUBMIT para el botón buscar otro estudiante.
 	////////////////////////////////////////////////////

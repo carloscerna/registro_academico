@@ -128,14 +128,11 @@ if($errorDbConexion == false){
 							$fecha_ingreso = trim($listado['fecha_ingreso']);
 							$fecha_retiro = trim($listado['fecha_retiro']);
 							//
-							$numero_cuenta = trim($listado['numero_cuenta']);
-							//
-							$codigo_licencia = trim($listado['codigo_tipo_licencia']);
-							$numero_licencia = trim($listado['licencia']);
 							$dui = trim($listado['dui']);
 							$isss = trim($listado['isss']);
 							$nit = trim($listado['nit']);
 							$afp = trim($listado['afp']);
+							$nip = trim($listado['nip']);
 							$comentario = trim($listado['comentario']);
 						//	Logo.
 							$url_foto = trim($listado['foto']);
@@ -165,12 +162,9 @@ if($errorDbConexion == false){
 							$datos[$fila_array]["fecha_ingreso"] = $fecha_ingreso;
 							$datos[$fila_array]["fecha_retiro"] = $fecha_retiro;
 							//
-							$datos[$fila_array]["numero_cuenta"] = $numero_cuenta;
-							//
-							$datos[$fila_array]["codigo_licencia"] = $codigo_licencia;
-							$datos[$fila_array]["numero_licencia"] = $numero_licencia;
 							$datos[$fila_array]["dui"] = $dui;
 							$datos[$fila_array]["isss"] = $isss;
+							$datos[$fila_array]["nip"] = $nip;
 							$datos[$fila_array]["nit"] = $nit;
 							$datos[$fila_array]["afp"] = $afp;
 							$datos[$fila_array]["comentario"] = $comentario;
@@ -214,15 +208,8 @@ if($errorDbConexion == false){
 					$codigo_cargo = trim($_POST['lstCargo']);
 					$fecha_ingreso = trim($_POST['txtFechaIngreso']);
 					$fecha_retiro = trim($_POST['txtFechaRetiro']);
-					//$codigo_departamento_empresa = trim($_POST['lstCargoDepartamento']);
-					//$codigo_clasificacion_empresa = trim($_POST['lstTaller']);
 
-					//$codigo_ruta = trim($_POST['lstRuta']);
-					//$codigo_socio = trim($_POST['lstSocio']);
-					$numero_cuenta = trim($_POST['txtCuentaAhorro']);
-
-					$codigo_licencia = trim($_POST['lstClaseLicencia']);
-					$numero_licencia = trim($_POST['txtNumeroLicencia']);
+					$nip = trim($_POST['txtNip']);
 					$dui = trim($_POST['txtDui']);
 					$isss = trim($_POST['txtIsss']);
 					$nit = trim($_POST['txtNit']);
@@ -235,8 +222,7 @@ if($errorDbConexion == false){
 						codigo_municipio, codigo_departamento, direccion,
 						telefono_residencia, telefono_celular, 
 						correo_electronico, codigo_cargo, fecha_ingreso, 
-						fecha_retiro, numero_cuenta,
-						codigo_tipo_licencia, licencia, dui, nit, afp, 
+						fecha_retiro, dui, nit, afp, nip,
 						codigo_estatus)
 						VALUES ('$nombre', '$apellido', '$fecha_nacimiento', '$edad', '$codigo_genero',
 							'$codigo_estado_civil', '$tipo_sangre', '$codigo_estudios', 
@@ -244,8 +230,8 @@ if($errorDbConexion == false){
 							'$codigo_municipio', '$codigo_departamento', '$direccion',
 							'$telefono_fijo', '$telefono_movil', 
 							'$correo_electronico', '$codigo_cargo', '$fecha_ingreso', 
-							'$fecha_retiro', '$numero_cuenta',
-							'$codigo_licencia', '$numero_licencia', '$dui','$nit','$afp',
+							'$fecha_retiro',
+							'$dui','$nit','$afp', '$nip',
 							'$codigo_estatus')";
 					// Ejecutamos el query
 						$resultadoQuery = $dblink -> query($query);              
@@ -288,16 +274,9 @@ if($errorDbConexion == false){
 					$codigo_cargo = trim($_POST['lstCargo']);
 					$fecha_ingreso = trim($_POST['txtFechaIngreso']);
 					$fecha_retiro = trim($_POST['txtFechaRetiro']);
-					//$codigo_departamento_empresa = trim($_POST['lstCargoDepartamento']);
-					//$codigo_clasificacion_empresa = trim($_POST['lstTaller']);
 
-					//$codigo_ruta = trim($_POST['lstRuta']);
-					//$codigo_socio = trim($_POST['lstSocio']);
-					$numero_cuenta = trim($_POST['txtCuentaAhorro']);
-
-					$codigo_licencia = trim($_POST['lstClaseLicencia']);
-					$numero_licencia = trim($_POST['txtNumeroLicencia']);
 					$dui = trim($_POST['txtDui']);
+					$nip = trim($_POST['txtNip']);
 					$isss = trim($_POST['txtIsss']);
 					$nit = trim($_POST['txtNit']);
 					$afp = trim($_POST['txtNup']);
@@ -308,19 +287,17 @@ if($errorDbConexion == false){
 					// QUERY UPDATE.
 						$query_usuario = sprintf("UPDATE personal SET nombres = '%s', apellidos = '%s', fecha_nacimiento = '%s', edad = '%s', codigo_genero = '%s',
 							codigo_estado_civil = '%s', tipo_sangre = '%s', codigo_estudio = '%s', codigo_vivienda = '%s', codigo_afp = '%s', nombre_conyuge = '%s',
-						    codigo_municipio = '%s', codigo_departamento = '%s', direccion = '%s',
+							codigo_municipio = '%s', codigo_departamento = '%s', direccion = '%s',
 							telefono_residencia = '%s', telefono_celular = '%s', correo_electronico = '%s',
 							codigo_cargo = '%s', fecha_ingreso = '%s', fecha_retiro = '%s', 
-							numero_cuenta = '%s',
-							codigo_tipo_licencia = '%s', licencia = '%s', dui = '%s', nit = '%s', isss = '%s', afp = '%s',
+							dui = '%s', nit = '%s', isss = '%s', afp = '%s', nip = '%s'
 							comentario = '%s', codigo_estatus = '%s'
 							WHERE id_personal = %d",
 							$nombre, $apellido, $fecha_nacimiento, $edad, $codigo_genero, $codigo_estado_civil, $tipo_sangre, $codigo_estudios, $codigo_tipo_vivienda, $codigo_afp, $nombre_conyuge,
 							$codigo_municipio, $codigo_departamento, $direccion,
 							$telefono_fijo, $telefono_movil, $correo_electronico,
 							$codigo_cargo, $fecha_ingreso, $fecha_retiro, 
-							$numero_cuenta,
-							$codigo_licencia, $numero_licencia, $dui, $nit, $isss, $afp,
+							$dui, $nit, $isss, $afp, $nip,
 							$comentario, $codigo_estatus,
                             $codigo_personal);	
 
@@ -337,7 +314,7 @@ if($errorDbConexion == false){
 						$contenidoOK = $query_usuario.$codigo_personal;
 					}
 			break;
-			case 'BuscarCodigo':
+			case 'BuscarCodigos':
 				$codigo = trim($_POST['codigo']);
 				// Armamos el query.
 				$query = "SELECT id_personal, codigo FROM personal WHERE codigo = '$codigo'";

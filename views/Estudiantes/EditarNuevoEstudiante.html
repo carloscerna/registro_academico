@@ -17,20 +17,10 @@ small.required {
 .nav-tabs .nav-link:not(.active) {
     border-color: transparent !important;
 }
-fieldset {
-	/*background-color: rgba(111, 66, 193, 0.3);*/
-	border-radius: 4px;
-    border: 1px solid #ddd;
-}
-legend {
-	background-color: #fff;
-	border: 1px solid #ddd;
-	border-radius: 4px;
-	color: var(--green);
-	font-size: 17px;
-	font-weight: bold;
-	padding: 3px 5px 3px 7px;
-	width: auto;
+
+/* INTERNAS EN LA PAGINA WEB. */
+.card-width{
+  width: 18rem;
 }
 </style>
 {% endblock %}
@@ -871,9 +861,9 @@ $(document).ready(function() {
                     <!-- ******************************************************************************************************************* -->
                     <!-- ******************************************************************************************************************* -->
                     <div class="tab-pane h-100 p-3 border border-info" id="matricular" role="tabpanel" aria-labelledby="matricular-tab">
-                          <div class="card card-primary w-50 mx-auto">
-                            <div class="card-header">
-                              <h3 class="card-title">Seleccione. Matricula</h3>
+                          <div class="card w-50 mx-auto">
+                            <div class="card-header bg-gradient-cyan">
+                              <h3 class="card-title">Matricula</h3>
                             </div>
                             <!-- /.card-header -->
                             <!-- card body - form start -->
@@ -916,7 +906,7 @@ $(document).ready(function() {
                                 </div>
                             </div>
                               <!-- /.card-body -->
-                              <div class="card-footer d-flex justify-content-center">
+                              <div class="card-footer d-flex justify-content-center bg-gradient-cyan">
                               </div>
                           </div>
                     </div>
@@ -929,9 +919,10 @@ $(document).ready(function() {
                         <div class="col-md-12">
                             <!-- EN LA DIGITALICACION DOCUMENOTS-->
                             <fieldset>
-                              <div class="d-flex flex-row w-100 justify-content-between">
+                              <legend>Portafolio</legend>
+                              <div class="d-flex flex-row w-100 justify-content-between bg-gradient-cyan">
                                 <div>
-                                  <h3><label for="LblPortafolio" class="text-black">Portafolio</label></h3>
+                                  {# <h3><label for="LblPortafolio" class="text-black">Portafolio</label></h3> #}
                                 </div>
                                 <div>
                                   <button class="btn btn-primary" data-toggle="tooltip" data-placement="top" title="Agregar" id="goNuevoPortafolio" type="button">
@@ -976,7 +967,7 @@ $(document).ready(function() {
                                                   </div>
 
                                                   <!-- CARD FOOTER - BOTONES GUARDAR -->
-                                                  <div class="card-footer">
+                                                  <div class="card-footer bg-gradient-navy">
                                                     <div class="d-flex justify-content-start align-items-start">
                                                         <button type="button" class="btn btn-primary" data-toggle="tooltip" data-placement="top" title="Guardar Otro" id = "goAgregarPortafolio" aria-label="AgregarOtro">
                                                           <i class="fal fa-save"></i>
@@ -997,8 +988,8 @@ $(document).ready(function() {
                                         <!-- .** ** ** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **-->
                                         <div class="col col-sm-12 col-md-12 col-lg-6">
                                           <form name="formImagen" id="formImagen" class="text-center border border-light p-5" action="#!">
-                                          <div class="card" style="width: 18rem;">
-                                            <div class="card-head ">
+                                          <div class="card card-width">
+                                            <div class="card-header bg-gradient-navy">
                                                   <div id="estilo_foto">             
                                                     <p id="AgregarFoto">Agregar Archivo</p>
                                                       <input type="file" value="" name="fileupPortafolio" id="fileupPortafolio" disabled aria-label="FileUpPortafolio">
@@ -1009,11 +1000,11 @@ $(document).ready(function() {
                                             </div>
                                               <div class="card-body">
                                                 <form method="post" action="#" enctype="multipart/form-data">
-                                                  <img class="card-img-top-Portafolio img-fluid" id="ImagenPortafolio" src="#" style="display: none;">
-                                                  <iframe id="iframePDF" frameborder="0" scrolling="no" width="100%" height="250px" src="#" style="display: none;"></iframe>
+                                                  <img class="card-img-top-Portafolio img-fluid" id="ImagenPortafolio" src="#" alt="ImgPortafolio">
+                                                  <iframe id="iframePDF" frameborder="0" scrolling="no" width="100%" height="250px" src="#" title="Mi Pdf"></iframe>
                                                 </form>
                                               </div>
-                                              <div class="card-footer text-center">
+                                              <div class="card-footer text-center bg-gradient-navy">
                                                 <input type="button" class="btn btn-primary btn-block uploadPortafolio" value="Subir" id="SubirImagenPortafolio" disabled>
                                               </div>
                                           </div>                                  

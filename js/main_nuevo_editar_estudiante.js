@@ -7,6 +7,19 @@ var chksello = "no";
 var chkfirma = "no";
 var chkfoto = "no";
 var tableA = "";
+// IDENTIFICAR QUE TAG INICIAN CON DISPLAY NONE.
+$(document).ready(function(){
+	var display =  $("#ImagenPortafolio").css("display");
+		if(display!="none")
+		{
+			$("#ImagenPortafolio").attr("style", "display:none");
+		}
+		var display_1 =  $("#iframePDF").css("display");
+		if(display_1!="none")
+		{
+			$("#iframePDF").attr("style", "display:none");
+		}
+});
 $(function(){ // INICIO DEL FUNCTION.
 	// Escribir la fecha actual.
 		var now = new Date();                
@@ -42,9 +55,6 @@ $(function(){ // INICIO DEL FUNCTION.
 				miselect_o1.append('<option value="00" selected>...</option>');             
 				var miselect_g1=$("#lstgradoseccion");
 				miselect_g1.append('<option value="00" selected>...</option>');
-				
-				//$("#lstmodalidad").val("00");
-				//$("#lstgradoseccion").val("00");
 				listar();
 				VerPortafolio();	
 			}
