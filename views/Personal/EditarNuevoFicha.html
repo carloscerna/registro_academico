@@ -20,8 +20,8 @@
 <!-- JS para esta página. -->
   <script type="text/javascript" src="js/calcular_edad.js"></script>
   <script type="text/JavaScript" src="js/Personal/EditarNuevoFicha.js"></script>
-  <script type="text/JavaScript" src="js/main_nuevo_editar_personal_portafolio.js"></script>
-  <script type="text/JavaScript" src="js/main_nuevo_editar_personal_historial.js"></script>
+  <script type="text/JavaScript" src="js/Personal/EditarNuevoFichaPortafolio.js"></script>
+  <script type="text/JavaScript" src="js/Personal/EditarNuevoFichaHistorial.js"></script>
   <script type="text/javascript" src="js/jquery-mask/jquery.maskedinput.js"></script>
 <!-- JS para esta página. -->
 <script language="javascript">
@@ -97,7 +97,7 @@ $(document).ready(function() {
         formData.append('file',files);
         $.ajax({
             cache: false,
-            url: 'php_libs/soporte/UploadFotoFicha.php',
+            url: 'php_libs/soporte/Personal/UploadFotoFicha.php',
             type: 'post',
             data: formData,
             contentType: false,
@@ -449,15 +449,20 @@ $(document).ready(function() {
                             <div class="col-md-12">
                                 <!-- HISTORIAL -->
                                 <fieldset>
-                                    <div class="row">
-                                      <div class="col-lg-8 d-flex justify-content-start">
-                                        <h2><label for="LblHistorial">Historial</label></h2>
-                                      </div>
-                                      <div class="col-lg-4 d-flex justify-content-end">
-                                          <input class="btn btn-primary" type="button" value="Agregar" name="goNuevoHistorial" id="goNuevoHistorial">
-                                          <input class="btn btn-primary" type="button" value="Ver" name="goVerHistorial" id="goVerHistorial">
-                                      </div>
+                                  <legend>Historial</legend>
+                                  <div class="d-flex flex-row w-100 justify-content-between bg-gradient-cyan">
+                                    <div>
+                                      {# <h3><label for="LblPortafolio" class="text-black">Historial</label></h3> #}
                                     </div>
+                                    <div>
+                                      <button class="btn btn-primary" data-toggle="tooltip" data-placement="top" title="Agregar" id="goNuevoHistorial" type="button">
+                                        <i class="fal fa-file-plus"></i>
+                                      </button>
+                                      <button class="btn btn-info" data-toggle="tooltip" data-placement="top" title="Buscar" id="goVerHistorial" type="button">
+                                        <i class="fal fa-file-search"></i>
+                                      </button>
+                                    </div>
+                                  </div>  
                                     <section id="EditarNuevoHistorial">
                                       <div class="row">                                     
                                             <!-- .col para FORMULARIO DE LOS DATOS.. -->
@@ -486,10 +491,12 @@ $(document).ready(function() {
                                                       </div>
           
                                                       <!-- CARD FOOTER - BOTONES GUARDAR -->
-                                                      <div class="card-footer d-flex justify-content-end align-items-end">
-                                                        <button class="btn btn-success" data-toggle="tooltip" data-placement="top" title="Agregar" id = "goGuardarHistorial" type="button">
-                                                          <span class="fas fa-save"> Guardar </span>
-                                                        </button>
+                                                      <div class="card-footer bg-gradient-navy">
+                                                        <div class="d-flex justify-content-end align-items-end">
+                                                          <button class="btn btn-primary" data-toggle="tooltip" data-placement="top" title="Guardar" id = "goGuardarHistorial" type="submit">
+                                                            <span class="fal fa-save"></span>
+                                                          </button>
+                                                        </div>
                                                       </div>
                                                   </div>  <!-- fin del card -->
                                               </form> <!-- fin DEL FORMULARIO CONTACTO--> 

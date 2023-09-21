@@ -170,7 +170,7 @@ $(tbody).on("click","a.eliminar",function(){
 						cache: false,                     
 						type: "POST",                     
 						dataType: "json",                     
-						url:"php_libs/soporte/NuevoEditarEstudiante.php",                     
+						url:"php_libs/soporte/Estudiante/NuevoEditarEstudiante.php",                     
 						data: {                     
 								accion_buscar: 'eliminarEstudiante', id_estudiante: id_,
 								},                     

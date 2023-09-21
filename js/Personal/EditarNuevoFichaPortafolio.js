@@ -63,7 +63,7 @@ $(function(){ // INICIO DEL FUNCTION.
 		            cache: false,
 		            type: "POST",
 		            dataType: "json",
-		            url:"php_libs/soporte/NuevoEditarPersonalPortafolio.php",
+		            url:"php_libs/soporte/Personal/NuevoEditarPersonalPortafolio.php",
 		            data:str + "&id_user=" + id_personal,
 		            success: function(response){
 		            	// Validar mensaje de error PORTAFOLIO.
@@ -145,7 +145,7 @@ $('body').on('click','#ListarPortafolio a',function (e){
 			// Inicio del Ajax. guarda o Actualiza los datos del Formualrio.
 			///////////////////////////////////////////////////////////////
 		// DETARMINAR QUE SE VA EJECUTAR.	
-		$.post("php_libs/soporte/NuevoEditarPersonalPortafolio.php",  {accionPortafolio: accionPortafolio, id_p_p: Id_Editar_Eliminar},
+		$.post("php_libs/soporte/Personal/NuevoEditarPersonalPortafolio.php",  {accionPortafolio: accionPortafolio, id_p_p: Id_Editar_Eliminar},
 			function(data){
 				$("#txtFechaPortafolio").val(data[0].fecha);	
 				$("#TituloPortafolio").val(data[0].titulo);	
@@ -205,7 +205,7 @@ $('body').on('click','#ListarPortafolio a',function (e){
 				cache: false,
 				type: "POST",
 				dataType: "json",
-				url:"php_libs/soporte/NuevoEditarPersonalPortafolio.php",
+				url:"php_libs/soporte/Personal/NuevoEditarPersonalPortafolio.php",
 				data: "id_p_p=" + Id_Editar_Eliminar + "&accionPortafolio=" + accionPortafolio,
 				success: function(response){
 					// Validar mensaje de error proporcionado por el response. contenido.
@@ -271,7 +271,7 @@ $('body').on('click','#ListarPortafolio a',function (e){
 		  id_portafolio = $("#IdPortafolio").val();
 		  formData.append('file',files);
 		  $.ajax({
-			  url: 'php_libs/soporte/upload_foto_personal_portafolio.php',
+			  url: 'php_libs/soporte/Personal/UploadFichaPortafolio.php',
 			  type: 'post',
 			  data: formData,
 			  contentType: false,
@@ -313,7 +313,7 @@ function VerPortafolio() {
 		cache: false,
 		type: "POST",
 		dataType: "json",
-		url:"php_libs/soporte/NuevoEditarPersonalPortafolio.php",
+		url:"php_libs/soporte/Personal/NuevoEditarPersonalPortafolio.php",
 		data:"accionPortafolio=" + accionPortafolio,
 		success: function(response){
 			// Validar mensaje de error PORTAFOLIO.
@@ -342,7 +342,7 @@ function VerPortafolioPaginacion() {
 			cache: false,
 			type: "POST",
 			dataType: "json",
-			url:"php_libs/soporte/NuevoEditarPersonalPortafolio.php",
+			url:"php_libs/soporte/Personal/NuevoEditarPersonalPortafolio.php",
 			data:"accionPortafolio=" + accionPortafolio + "&page=" + pagina,
 			success: function(response){
 				// Validar mensaje de error PORTAFOLIO.

@@ -29,7 +29,7 @@ small.required {
     <!-- JS para esta página. -->
     <script type="text/JavaScript" src="js/Estudiantes/EditarNuevoEstudiante.js"></script>
     <script type="text/JavaScript" src="js/Estudiantes/EditarNuevoEstudiantePortafolio.js"></script>
-    <script type="text/javascript" src="js/carga-alumnos.js"></script>
+    <script type="text/javascript" src="js/Estudiantes/CargarDatosEstudiantes.js"></script>
     <script type="text/JavaScript" src="js/calcular_edad.js"></script>
     <script type="text/javascript" src="js/jquery-mask/jquery.maskedinput.js"></script>
 
@@ -68,8 +68,7 @@ $(document).ready(function() {
         var files = $('#imagenFoto')[0].files[0];
         formData.append('file',files);
         $.ajax({
-            //url: 'php_libs/soporte/upload.php',
-            url: 'php_libs/soporte/UploadFotoEstudiante.php',
+            url: 'php_libs/soporte/Estudiante/UploadFotoEstudiante.php',
             type: 'post',
             data: formData,
             contentType: false,
@@ -96,7 +95,7 @@ $(document).ready(function() {
         formData.append('file',files);
         $.ajax({
             //url: 'php_libs/soporte/upload.php',
-            url: 'php_libs/soporte/upload_pn.php',
+            url: 'php_libs/soporte/Estudiante/UploadPartidaNacimiento.php',
             type: 'post',
             data: formData,
             contentType: false,

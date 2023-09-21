@@ -41,7 +41,7 @@ var listar = function(){
 				"processing": true,
 				"ajax":{
 					method:"POST",
-					url:"php_libs/soporte/PersonalBuscar.php",
+					url:"php_libs/soporte/Personal/PersonalBuscar.php",
 					data: {"accion_buscar": buscartodos}
 				},
 				"columns":[
@@ -154,7 +154,7 @@ var obtener_data_editar = function(tbody, tabla){
 				cache: false,
 				type: "POST",
 				dataType: "json",
-				url:"php_libs/soporte/NuevoEditarPersonal.php",
+				url:"php_libs/soporte/Personal/NuevoEditarPersonal.php",
 				data: "id_user=" + id_ + "&accion=" + accion + "&nombre=" + nombre,
 				success: function(response){
 					// Validar mensaje de error proporcionado por el response. contenido.

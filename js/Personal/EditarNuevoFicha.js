@@ -117,7 +117,7 @@ var NuevoRegistro = function(){
     // Asignamos valor a la variable acción y asignar valor a accion
         accion = "GenerarCodigoNuevo";
     // Generar el Código Nuevo.
-        $.post("php_libs/soporte/NuevoEditarPersonal.php", {accion_buscar: accion, ann: ann},
+        $.post("php_libs/soporte/Personal/NuevoEditarPersonal.php", {accion_buscar: accion, ann: ann},
             function(data){
            // Información de la Tabla Datos Personal.
             $("#txtcodigo").val(data[0].codigo_nuevo);
@@ -133,7 +133,7 @@ var NuevoRegistro = function(){
 //////////////////////////////////////////////////////////////////////////////////
 	var listar = function(){
 		// DETARMINAR QUE SE VA EJECUTAR.	
-			$.post("php_libs/soporte/NuevoEditarPersonal.php",  { id_x: id_, accion: 'BuscarPorId' },
+			$.post("php_libs/soporte/Personal/NuevoEditarPersonal.php",  { id_x: id_, accion: 'BuscarPorId' },
 				function(data){
 				// Cargar valores a los objetos Llenar el formulario con los datos del registro seleccionado.
 				// Modificar label en la tabs-8.
@@ -239,7 +239,7 @@ var NuevoRegistro = function(){
                     cache: false,
                     type: "POST",
                     dataType: "json",
-                    url:"php_libs/soporte/NuevoEditarPersonal.php",
+                    url:"php_libs/soporte/Personal/NuevoEditarPersonal.php",
                     data:str + "&id=" + Math.random(),
                     success: function(response){
                         // Validar mensaje de error

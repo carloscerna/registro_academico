@@ -27,8 +27,8 @@ $(function(){ // INICIO DEL FUNCTION.
 				txtFechaHistorial: {required: true,},
 				TituloHistorial: {required: true,},
                 },
-		        errorElement: "em",
-		        errorPlacement: function ( error, element ) {
+				errorElement: "em",
+				errorPlacement: function ( error, element ) {
 					// Add the `invalid-feedback` class to the error element
 					error.addClass( "invalid-feedback" );
 					if ( element.prop( "type" ) === "checkbox" ) {
@@ -48,7 +48,7 @@ $(function(){ // INICIO DEL FUNCTION.
                             toastr.error("Faltan Datos...");
 					});            
 				},
-		    submitHandler: function(){	
+			submitHandler: function(){	
 			var str = $('#formHistorial').serialize();
 			var id_personal = 0;
 			id_personal = $("#id_user").val();
@@ -56,28 +56,28 @@ $(function(){ // INICIO DEL FUNCTION.
 			///////////////////////////////////////////////////////////////			
 			// Inicio del Ajax. guarda o Actualiza los datos del Formualrio.
 			///////////////////////////////////////////////////////////////
-		        $.ajax({
-		            beforeSend: function(){
-		                
-		            },
-		            cache: false,
-		            type: "POST",
-		            dataType: "json",
-		            url:"php_libs/soporte/NuevoEditarPersonalHistorial.php",
-		            data:str + "&id_user=" + id_personal,
-		            success: function(response){
-		            	// Validar mensaje de error PORTAFOLIO.
-		            	if(response.respuesta == false){
-                            toastr["error"](response.mensaje, "Sistema");
-		            	}
-		            	else{
+				$.ajax({
+					beforeSend: function(){
+						
+					},
+					cache: false,
+					type: "POST",
+					dataType: "json",
+					url:"php_libs/soporte/Personal/NuevoEditarPersonalHistorial.php",
+					data:str + "&id_user=" + id_personal,
+					success: function(response){
+						// Validar mensaje de error PORTAFOLIO.
+						if(response.respuesta == false){
+							toastr["error"](response.mensaje, "Sistema");
+						}
+						else{
 							toastr["success"](response.mensaje, "Sistema");
 							$("#IdHistorial").val(response.id_historial);
-                            }               
-		            },
-		        });
-		    },
-   });
+							}               
+					},
+				});
+			},
+	});
 // ventana modal. GENERAR NUEVO REGISTRO DEL PORTAFOLIO.
 ///////////////////////////////////////////////////////////////////////////////	  
 $('#goNuevoHistorial').on( 'click', function () {
@@ -135,7 +135,7 @@ $('body').on('click','#ListarHistorial a',function (e){
 			// Inicio del Ajax. guarda o Actualiza los datos del Formualrio.
 			///////////////////////////////////////////////////////////////
 		// DETARMINAR QUE SE VA EJECUTAR.	
-		$.post("php_libs/soporte/NuevoEditarPersonalHistorial.php",  {accionHistorial: accionHistorial, id_p_p: Id_Editar_Eliminar},
+		$.post("php_libs/soporte/Personal/NuevoEditarPersonalHistorial.php",  {accionHistorial: accionHistorial, id_p_p: Id_Editar_Eliminar},
 			function(data){
 				$("#txtFechaHistorial").val(data[0].fecha);	
 				$("#TituloHistorial").val(data[0].titulo);	
@@ -195,7 +195,7 @@ $('body').on('click','#ListarHistorial a',function (e){
 				cache: false,
 				type: "POST",
 				dataType: "json",
-				url:"php_libs/soporte/NuevoEditarPersonalHistorial.php",
+				url:"php_libs/soporte/Personal/NuevoEditarPersonalHistorial.php",
 				data: "id_p_p=" + Id_Editar_Eliminar + "&accionHistorial=" + accionHistorial,
 				success: function(response){
 					// Validar mensaje de error proporcionado por el response. contenido.
@@ -250,7 +250,7 @@ function VerHistorial() {
 		cache: false,
 		type: "POST",
 		dataType: "json",
-		url:"php_libs/soporte/NuevoEditarPersonalHistorial.php",
+		url:"php_libs/soporte/Personal/NuevoEditarPersonalHistorial.php",
 		data:"accionHistorial=" + accionHistorial,
 		success: function(response){
 			// Validar mensaje de error PORTAFOLIO.
@@ -279,7 +279,7 @@ function VerHistorialPaginacion() {
 			cache: false,
 			type: "POST",
 			dataType: "json",
-			url:"php_libs/soporte/NuevoEditarPersonalHistorial.php",
+			url:"php_libs/soporte/Personal/NuevoEditarPersonalHistorial.php",
 			data:"accionHistorial=" + accionHistorial + "&page=" + pagina,
 			success: function(response){
 				// Validar mensaje de error PORTAFOLIO.

@@ -71,7 +71,7 @@ $(function(){ // INICIO DEL FUNCTION.
 			var str = $('#formPortafolio').serialize();
 			var id_personal = 0;
 			id_personal = $("#id_user").val();
-			alert(str);
+			//alert(str);
 			///////////////////////////////////////////////////////////////			
 			// Inicio del Ajax. guarda o Actualiza los datos del Formualrio.
 			///////////////////////////////////////////////////////////////
@@ -82,7 +82,7 @@ $(function(){ // INICIO DEL FUNCTION.
 					cache: false,
 					type: "POST",
 					dataType: "json",
-					url:"php_libs/soporte/NuevoEditarEstudiantePortafolio.php",
+					url:"php_libs/soporte/Estudiante/NuevoEditarEstudiantePortafolio.php",
 					data:str + "&id_user=" + id_personal,
 					success: function(response){
 						// Validar mensaje de error PORTAFOLIO.
@@ -207,7 +207,7 @@ $(function(){ // INICIO DEL FUNCTION.
 				// Inicio del Ajax. guarda o Actualiza los datos del Formualrio.
 				///////////////////////////////////////////////////////////////
 			// DETARMINAR QUE SE VA EJECUTAR.	
-			$.post("php_libs/soporte/NuevoEditarEstudiantePortafolio.php",  {accionPortafolio: accionPortafolio, id_p_p: Id_Editar_Eliminar},
+			$.post("php_libs/soporte/Estudiante/NuevoEditarEstudiantePortafolio.php",  {accionPortafolio: accionPortafolio, id_p_p: Id_Editar_Eliminar},
 				function(data){
 					$("#txtFechaPortafolio").val(data[0].fecha);	
 					$("#TituloPortafolio").val(data[0].titulo);	
@@ -279,7 +279,7 @@ $(function(){ // INICIO DEL FUNCTION.
 					cache: false,
 					type: "POST",
 					dataType: "json",
-					url:"php_libs/soporte/NuevoEditarEstudiantePortafolio.php",
+					url:"php_libs/soporte/Estudiante/NuevoEditarEstudiantePortafolio.php",
 					data: "id_p_p=" + Id_Editar_Eliminar + "&accionPortafolio=" + accionPortafolio,
 					success: function(response){
 						// Validar mensaje de error proporcionado por el response. contenido.
@@ -345,7 +345,7 @@ $(function(){ // INICIO DEL FUNCTION.
 		id_portafolio = $("#IdPortafolio").val();
 		formData.append('file',files);
 		$.ajax({
-			url: 'php_libs/soporte/upload_foto_estudiante_portafolio.php',
+			url: 'php_libs/soporte/Estudiante/UploadPortafolio.php',
 			type: 'post',
 			dataType: "json",
 			data: formData,
@@ -415,7 +415,7 @@ function VerPortafolio() {
 		cache: false,
 		type: "POST",
 		dataType: "json",
-		url:"php_libs/soporte/NuevoEditarEstudiantePortafolio.php",
+		url:"php_libs/soporte/Estudiante/NuevoEditarEstudiantePortafolio.php",
 		data:"accionPortafolio=" + accionPortafolio,
 		success: function(response){
 			// Validar mensaje de error PORTAFOLIO.
@@ -444,7 +444,7 @@ function VerPortafolioPaginacion() {
 			cache: false,
 			type: "POST",
 			dataType: "json",
-			url:"php_libs/soporte/NuevoEditarEstudiantePortafolio.php",
+			url:"php_libs/soporte/Estudiante/NuevoEditarEstudiantePortafolio.php",
 			data:"accionPortafolio=" + accionPortafolio + "&page=" + pagina,
 			success: function(response){
 				// Validar mensaje de error PORTAFOLIO.
