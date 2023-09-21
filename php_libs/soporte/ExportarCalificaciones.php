@@ -116,11 +116,11 @@
     for ($i=0;$i<count($codigo_asignatura_t);$i++)        //// REPETIR EL PROCESO DEPENDE DE LAS ASIGNATURAS SELECCIONADAS.
       {
         // Nombre Original de la variables $NombreAsignatura.
-            $NombreAsignatura = $nombre_area[$i] . "-" . $nombre_area_dimension_t[$i] . '-' . $nombre_area_subdimension_t[$i] . '-' . trim($nombre_asignatura_t[$i]);         
+            $NombreAsignatura = $nombre_area_dimension_t[$i] . '-' . $nombre_area_subdimension_t[$i] . '-' . trim($nombre_asignatura_t[$i]);         
         // RECORRE LA MATRIZ CON LOS CODIGOS Y NOMBRES DE LAS ASIGNATURAS.
             /// 
             if(trim($nombre_area_subdimension_t[$i]) == 'Ninguno'){
-              $NombreAsignatura = $nombre_area[$i] . "-" . $nombre_area_dimension_t[$i] . '-' . $nombre_area_subdimension_t[$i] . '-' . trim($nombre_asignatura_t[$i]); 
+              $NombreAsignatura = $nombre_area_dimension_t[$i] . '-' . $nombre_area_subdimension_t[$i] . '-' . trim($nombre_asignatura_t[$i]); 
             }
         /// CONDICIONASL PARA AREA_SUBDIMENSION y AREA DIMENSION ES IGUAL A NINGUNO.
             if(trim($nombre_area_subdimension_t[$i]) == 'Ninguno' && trim($nombre_area_dimension_t[$i]) == 'Ninguno'){
@@ -128,7 +128,7 @@
             }
             // AREA DIMENSION ES IGUAL A NINGUNO
             if(trim($nombre_area_subdimension_t[$i]) == 'Ninguno' && trim($nombre_area_dimension_t[$i]) != 'Ninguno'){
-              $NombreAsignatura = $nombre_area[$i] . "-" . $nombre_area_dimension_t[$i] . '-' . trim($nombre_asignatura_t[$i]); 
+              $NombreAsignatura = $nombre_area_dimension_t[$i] . '-' . trim($nombre_asignatura_t[$i]); 
             }        
 
         // lo asigna para poder realizar la busqueda.

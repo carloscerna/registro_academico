@@ -587,7 +587,7 @@ $(function(){ // INICIO DEL FUNCTION.
 					cache: false,
 					type: "POST",
 					dataType: "json",
-					url:"php_libs/soporte/NuevoEditarEstudiante.php",
+					url:"php_libs/soporte/Estudiante/NuevoEditarEstudiante.php",
 					data:"&id=" + Math.random() + "&codigo_alumno=" + id_alumno + "&codigo_matricula=" + txtcodigomatricula + "&accion=" + accion,
 					success: function(response){
 						// Validar mensaje de error
@@ -671,7 +671,7 @@ $(function(){ // INICIO DEL FUNCTION.
 						cache: false,
 						type: "POST",
 						dataType: "json",
-						url:"php_libs/soporte/NuevoEditarEstudiante.php",
+						url:"php_libs/soporte/Estudiante/NuevoEditarEstudiante.php",
 						data:str + "&id=" + Math.random(),
 						success: function(response){
 							// Validar mensaje de error
