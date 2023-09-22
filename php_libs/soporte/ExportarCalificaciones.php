@@ -272,6 +272,7 @@ function NombreArchivoExcel(){
     $codigo_modalidad = $codigo_bachillerato; // Verificar si Existe el directorio archivos.
     $nombre_ann_lectivo = $nombre_annlectivo;
     $codigo_destino = 3; // Tipo de Carpeta a Grabar.
+    $longitudNombreArchivo = 235;
       CrearDirectorios($path_root,$nombre_ann_lectivo,$codigo_modalidad,$codigo_destino,$periodo); // Crear Carpeta.                  
   // Unir Modalidad - Grado y Sección.
     $nombre_directorio_mgs = replace_3(trim($nombre_modalidad."-" . $nombre_grado));
@@ -284,7 +285,9 @@ function NombreArchivoExcel(){
       $nombre_archivo = htmlspecialchars($NombreAsignatura . ".xlsx");                 // Nombre del Archivo.
       $URLNombreArchivo = $DestinoArchivo.$nombre_directorio_mgs."/".$nombre_archivo;
         if(strlen($URLNombreArchivo) >= 250){ // VALIDAMOS PARA QUE NO EXCEDA DE 250 CARACTERES.
-          $URLNombreArchivo = substr($URLNombreArchivo,0,245) . ".xlsx";
+          $URLNombreArchivo = substr($URLNombreArchivo,0,$longitudNombreArchivo) . ".xlsx";
+        }else{
+          $URLNombreArchivo = substr($URLNombreArchivo,0,$longitudNombreArchivo) . ".xlsx";
         }
       $objWriter->save($URLNombreArchivo);  // Guardar el archivo.
       // GUARDAR PARA LA VARIABLE CONTENIDOOK
@@ -296,8 +299,11 @@ function NombreArchivoExcel(){
       $nombre_archivo = htmlspecialchars($NombreAsignatura . ".xlsx");                 // Nombre del Archivo.
       $URLNombreArchivo = $DestinoArchivo.$nombre_directorio_mgs."/".$nombre_archivo;
         if(strlen($URLNombreArchivo) >= 250){ // VALIDAMOS PARA QUE NO EXCEDA DE 250 CARACTERES.
-          $URLNombreArchivo = substr($URLNombreArchivo,0,245) . ".xlsx";
+          $URLNombreArchivo = substr($URLNombreArchivo,0,$longitudNombreArchivo) . ".xlsx";
+        }else{
+          $URLNombreArchivo = substr($URLNombreArchivo,0,$longitudNombreArchivo) . ".xlsx";
         }
+        
       $objWriter->save($URLNombreArchivo);  // Guardar el archivo.
       // GUARDAR PARA LA VARIABLE CONTENIDOOK
       $contenidoOK .= "<tr>                 

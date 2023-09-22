@@ -3,6 +3,24 @@ var id_ = 0;
 var buscartodos = "";
 var accionPortafolio = 'noAccion';
 var pagina = 1;
+// IDENTIFICAR QUE TAG INICIAN CON DISPLAY NONE.
+$(document).ready(function(){
+	var display =  $("#EditarNuevoPortafolio").css("display");
+		if(display!="none")
+		{
+			$("#EditarNuevoPortafolio").attr("style", "display:none");
+		}
+		var display_1 =  $("#goVerPortafolio").css("display");
+		if(display_1!="none")
+		{
+			$("#goVerPortafolio").attr("style", "display:none");
+		}
+		var display_2 =  $("#goAgregarPortafolio").css("display");
+		if(display_2!="none")
+		{
+			$("#goAgregarPortafolio").attr("style", "display:none");
+		}
+});
 $(function(){ // INICIO DEL FUNCTION.
             // Escribir la fecha actual.
                 var now = new Date();                
@@ -21,14 +39,14 @@ $(function(){ // INICIO DEL FUNCTION.
 ///////////////////////////////////////////////////////
 // Validar Formulario, para posteriormente Guardar o Modificarlo.
  //////////////////////////////////////////////////////
-	$('#formPortafolio').validate({
+$('#formPortafolio').validate({
 		ignore:"",
 		rules:{
 				txtFechaPortafolio: {required: true,},
 				TituloPortafolio: {required: true,},
                 },
-		        errorElement: "em",
-		        errorPlacement: function ( error, element ) {
+				errorElement: "em",
+				errorPlacement: function ( error, element ) {
 					// Add the `invalid-feedback` class to the error element
 					error.addClass( "invalid-feedback" );
 					if ( element.prop( "type" ) === "checkbox" ) {
@@ -48,7 +66,7 @@ $(function(){ // INICIO DEL FUNCTION.
                             toastr.error("Faltan Datos...");
 					});            
 				},
-		    submitHandler: function(){	
+			submitHandler: function(){	
 			var str = $('#formPortafolio').serialize();
 			var id_personal = 0;
 			id_personal = $("#id_user").val();
@@ -56,30 +74,30 @@ $(function(){ // INICIO DEL FUNCTION.
 			///////////////////////////////////////////////////////////////			
 			// Inicio del Ajax. guarda o Actualiza los datos del Formualrio.
 			///////////////////////////////////////////////////////////////
-		        $.ajax({
-		            beforeSend: function(){
-		                
-		            },
-		            cache: false,
-		            type: "POST",
-		            dataType: "json",
-		            url:"php_libs/soporte/Personal/NuevoEditarPersonalPortafolio.php",
-		            data:str + "&id_user=" + id_personal,
-		            success: function(response){
-		            	// Validar mensaje de error PORTAFOLIO.
-		            	if(response.respuesta == false){
-                            toastr["error"](response.mensaje, "Sistema");
-		            	}
-		            	else{
-							toastr["success"](response.mensaje, "Sistema");
-							$("#fileupPortafolio").attr("disabled",false);		// Botón Subir Imagen Portafolio
-							$("#SubirImagenPortafolio").attr("disabled",false);		// Botón Subir Imagen Portafolio
-							$("#IdPortafolio").val(response.id_portafolio);
-                            }               
-		            },
-		        });
-		    },
-   });
+			$.ajax({
+				beforeSend: function(){
+					
+				},
+				cache: false,
+				type: "POST",
+				dataType: "json",
+				url:"php_libs/soporte/Personal/NuevoEditarPersonalPortafolio.php",
+				data:str + "&id_user=" + id_personal,
+				success: function(response){
+					// Validar mensaje de error PORTAFOLIO.
+					if(response.respuesta == false){
+						toastr["error"](response.mensaje, "Sistema");
+					}
+					else{
+						toastr["success"](response.mensaje, "Sistema");
+						$("#fileupPortafolio").attr("disabled",false);		// Botón Subir Imagen Portafolio
+						$("#SubirImagenPortafolio").attr("disabled",false);		// Botón Subir Imagen Portafolio
+						$("#IdPortafolio").val(response.id_portafolio);
+						}               
+				},
+			});
+		},
+});
 // ventana modal. GENERAR NUEVO REGISTRO DEL PORTAFOLIO.
 ///////////////////////////////////////////////////////////////////////////////	  
 $('#goNuevoPortafolio').on( 'click', function () {
@@ -264,30 +282,30 @@ $('body').on('click','#ListarPortafolio a',function (e){
 		  $("#SubirImagenPortafolio").attr("disabled",false);		// Botón Subir Imagen Portafolio
 	  }
   });
-  // CARGAR DEL ARCHIVO A LA TABLA CORRESPONDIENTE.
-	  $(".uploadPortafolio").on('click', function() {
-		  var formData = new FormData();
-		  var files = $('#fileupPortafolio')[0].files[0];
-		  id_portafolio = $("#IdPortafolio").val();
-		  formData.append('file',files);
-		  $.ajax({
-			  url: 'php_libs/soporte/Personal/UploadFichaPortafolio.php',
-			  type: 'post',
-			  data: formData,
-			  contentType: false,
-			  processData: false,
-			  success: function(response) {
-				  if (response != 0) {
-					  //$('.card-img-top-Portafolio').removeAttr('src');
-					  $(".card-img-top-Portafolio").attr("src", response);
-					  toastr["success"]('Imagen Cargada...', "Sistema");
-				  } else {
-					toastr["error"]('Formato de imagen incorrecto.', "Sistema");
-				  }
-			  }
-		  });
-		  return false;
-	  });	  
+// CARGAR DEL ARCHIVO A LA TABLA CORRESPONDIENTE.
+	$(".uploadPortafolio").on('click', function() {
+		var formData = new FormData();
+		var files = $('#fileupPortafolio')[0].files[0];
+		id_portafolio = $("#IdPortafolio").val();
+		formData.append('file',files);
+		$.ajax({
+			url: 'php_libs/soporte/Personal/UploadFichaPortafolio.php',
+			type: 'post',
+			data: formData,
+			contentType: false,
+			processData: false,
+			success: function(response) {
+				if (response != 0) {
+					//$('.card-img-top-Portafolio').removeAttr('src');
+					$(".card-img-top-Portafolio").attr("src", response);
+					toastr["success"]('Imagen Cargada...', "Sistema");
+				} else {
+				toastr["error"]('Formato de imagen incorrecto.', "Sistema");
+				}
+			}
+		});
+		return false;
+	});	  
 //************************************/
 }); // fin de la funcion principal ************************************/
 //************************************/		

@@ -198,7 +198,6 @@ if($errorDbConexion == false){
 					$mensajeError =  'No Hay Portafolio';
 				}
 			break;
-
 			case 'AgregarNuevo':		
 				// armar variables.
 				// PORTAFOLIO
@@ -206,7 +205,6 @@ if($errorDbConexion == false){
 					$fecha = trim($_POST['txtFechaPortafolio']);
 					$titulo = trim($_POST['TituloPortafolio']);
 					$descripcion = htmlspecialchars(trim($_POST['txtComentarioPortafolio']));
-						
 				// Query
 					$query = "INSERT INTO personal_portafolio (fecha, titulo, descripcion, id_personal)
 						VALUES ('$fecha','$titulo','$descripcion','$id_user')";
@@ -231,7 +229,6 @@ if($errorDbConexion == false){
 						$mensajeError = "No se puede guardar el registro en la base de datos ";
 					}
 			break;
-			
 			case 'EditarRegistro':
 				// PORTAFOLIO
 				$id_portafolio = trim($_POST['IdPortafolio']);

@@ -20,8 +20,8 @@
 <!-- JS para esta página. -->
   <script type="text/javascript" src="js/calcular_edad.js"></script>
   <script type="text/JavaScript" src="js/Personal/EditarNuevoFicha.js"></script>
-  <script type="text/JavaScript" src="js/Personal/EditarNuevoFichaPortafolio.js"></script>
   <script type="text/JavaScript" src="js/Personal/EditarNuevoFichaHistorial.js"></script>
+  <script type="text/JavaScript" src="js/Personal/EditarNuevoFichaPortafolio.js"></script>
   <script type="text/javascript" src="js/jquery-mask/jquery.maskedinput.js"></script>
 <!-- JS para esta página. -->
 <script language="javascript">
@@ -527,85 +527,106 @@ $(document).ready(function() {
                           <div class="col-md-12">
                               <!-- EN LA DIGITALICACION DOCUMENOTS-->
                               <fieldset>
-                                  <div class="row">
-                                    <div class="col-lg-8 d-flex justify-content-start">
-                                      <h2><label for="LblPortafolio">Portafolio</label></h2>
+                                <legend>Portafolio</legend>
+                                  <div class="d-flex flex-row w-100 justify-content-between bg-gradient-cyan">
+                                    <div>
+                                      {# <h3><label for="LblPortafolio" class="text-black">Portafolio</label></h3> #}
                                     </div>
-                                    <div class="col-lg-4 d-flex justify-content-end">
-                                        <input class="btn btn-primary card-width" type="button" value="Agregar" name="goNuevoPortafolio" id="goNuevoPortafolio" aria-label="GoNuevoPortafolio">
-                                        <input class="btn btn-primary" type="button" value="Ver" name="goVerPortafolio" id="goVerPortafolio">
+                                    <div>
+                                      <button class="btn btn-primary" data-toggle="tooltip" data-placement="top" title="Agregar" id="goNuevoPortafolio" type="button">
+                                        <i class="fal fa-file-plus"></i>
+                                      </button>
+                                      <button class="btn btn-info" data-toggle="tooltip" data-placement="top" title="Buscar" id="goVerPortafolio" type="button">
+                                        <i class="fal fa-file-search"></i>
+                                      </button>
                                     </div>
-                                  </div>
-                                  <section id="EditarNuevoPortafolio">
-                                    <div class="row">
-                                          <!-- .col para subir la imagen. -->
-                                          <div class="col-md-4">
-                                            <form name="formImagen" id="formImagen" class="text-center border border-light p-5" action="#!">
-                                            <div class="card card-width">
-                                              <div class="card-head ">
-                                                    <div id="estilo_foto">             
-                                                      <p id="AgregarFoto">Agregar Foto</p>
-                                                        <input type="file" value="" name="fileupPortafolio" id="fileupPortafolio" disabled aria-label="FileUpPortafolio">
-                                                    </div>
-                                                    <label class="text-center" id="namefilePortafolio"></label>
-                                                      <span class="imguploadPortafolio ok"><i class="fa fa-check"></i></span>
-                                                      <span class="imguploadPortafolio stop"><i class="fa fa-times"></i></span>
-                                              </div>
-                                                <div class="card-body">
-                                                  <form method="post" action="#" enctype="multipart/form-data">
-                                                    <img class="card-img-top-Portafolio img-fluid" id="ImagenPortafolio" src="#" alt="ImagenPortafolio">
-                                                  </form>
-                                                </div>
-                                                <div class="card-footer text-center">
-                                                  <input type="button" class="btn btn-primary btn-block uploadPortafolio" value="Subir" id="SubirImagenPortafolio" disabled>
-                                                </div>
-                                            </div>                                  
-                                            </form>
-                                          </div>
-                                          
-                                          <!-- .col para FORMULARIO DE LOS DATOS.. -->
-                                          <div class="col-md-8">
-                                            <!-- Default form subscription -->
-                                            <form name="formPortafolio" id="formPortafolio" class="text-center border border-light p-5" action="#!">
-                                              <input type="hidden" id="accionPortafolio" name="accionPortafolio" value = "AgregarNuevo">            
-                                              <input type="hidden" id="IdPortafolio" name="IdPortafolio" value = "0">            
-                                                  <div class="card">
-
-                                                    <div class="card-body">
-                                                      <div class="form-group text-left">    
-                                                        <!-- FECHA -->
-                                                        <label class="form-label form-control-label">Fecha</label>
-                                                        <input class="form-control" type="date" id="txtFechaPortafolio" name="txtFechaPortafolio" tabindex="1" aria-label="TxtFechaPortafolio">  
-                                                        <!-- TÍTULO -->
-                                                        <label class="form-label form-control-label">Título</label>
-                                                        <input class="form-control" type="text" id="TituloPortafolio" name="TituloPortafolio" tabindex="2" aria-label="TituloPortafolio">  
-                                                        <!-- DESCRIPCION -->
-                                                        <div class="md-form amber-textarea">
-                                                          <i class="fas fa-pencil-alt prefix"></i>
-                                                          <textarea class="form-control md-textarea" id="txtComentarioPortafolio" name="txtComentarioPortafolio" tabindex="3" rows="3"></textarea>
-                                                          <label for="txtComentarioPortafolio">Descripción</label>
-                                                        </div>
+                                </div>
+                                <section id="EditarNuevoPortafolio">
+                                  <div class="row">                                   
+                                        <!-- .col para FORMULARIO DE LOS DATOS.. -->
+                                        <div class="col col-sm-12 col-md-12 col-lg-6">
+                                          <!-- Default form subscription -->
+                                          <form name="formPortafolio" id="formPortafolio" class="text-center border border-light p-5" action="#">
+                                            <input type="hidden" id="accionPortafolio" name="accionPortafolio" value = "AgregarNuevo" aria-label="AccionPortafolio">            
+                                            <input type="hidden" id="IdPortafolio" name="IdPortafolio" value = "0" aria-label="idPortafoio">            
+                                                <div class="card">
+                                                  <div class="card-header bg-gradient-navy">
+                                                    <div class="d-flex flex-row w-100 justify-content-between">
+                                                      <div>
+                                                        <label for="LblPortafolio" class="text-white">Portafolio</label>
                                                       </div>
                                                     </div>
-        
-                                                    <!-- CARD FOOTER - BOTONES GUARDAR -->
-                                                    <div class="card-footer d-flex justify-content-end align-items-end">
-                                                      <button class="btn btn-success" data-toggle="tooltip" data-placement="top" title="Agregar" id = "goGuardarPortafolio" aria-labelledby="Agregar" type="button">
-                                                        <span class="fas fa-save"> Guardar </span>
-                                                      </button>
+                                                  </div>
+                                                  <div class="card-body">
+                                                    <div class="form-group text-left">    
+                                                      <!-- FECHA -->
+                                                      <label class="form-label form-control-label">Fecha</label>
+                                                      <input class="form-control" type="date" id="txtFechaPortafolio" name="txtFechaPortafolio" tabindex="1" aria-label="FechaPortafolio">  
+                                                      <!-- TÍTULO -->
+                                                      <label class="form-label form-control-label">Título</label>
+                                                      <input class="form-control" type="text" id="TituloPortafolio" name="TituloPortafolio" tabindex="2" aria-label="TituloPortafolios">  
+                                                      <!-- DESCRIPCION -->
+                                                      <div class="md-form amber-textarea">
+                                                        <i class="fas fa-pencil-alt prefix"></i>
+                                                        <textarea class="form-control md-textarea" id="txtComentarioPortafolio" name="txtComentarioPortafolio" tabindex="3" rows="3"></textarea>
+                                                        <label for="txtComentarioPortafolio">Descripción</label>
+                                                      </div>
                                                     </div>
-                                                </div>  <!-- fin del card -->
-                                            </form> <!-- fin DEL FORMULARIO CONTACTO--> 
-                                          </div>  <!-- FIN DEL COLUM 8 -->
-                                    </div>  <!-- div class row  - fin -->
-                                  </section>  <!-- FIN DEL SECTION -->
+                                                  </div>
+
+                                                  <!-- CARD FOOTER - BOTONES GUARDAR -->
+                                                  <div class="card-footer bg-gradient-navy">
+                                                    <div class="d-flex justify-content-start align-items-start">
+                                                        <button type="button" class="btn btn-primary" data-toggle="tooltip" data-placement="top" title="Guardar Otro" id = "goAgregarPortafolio" aria-label="AgregarOtro">
+                                                          <i class="fal fa-save"></i>
+                                                        </button>
+                                                    </div>
+
+                                                      <div class="d-flex justify-content-end align-items-end">
+                                                        <button class="btn btn-primary" data-toggle="tooltip" data-placement="top" title="Guardar" id = "goGuardarPortafolio" type="submit">
+                                                          <i class="fal fa-save"></i>
+                                                        </button>
+                                                      </div>
+                                                  </div>
+                                              </div>  <!-- fin del card -->
+                                          </form> <!-- fin DEL FORMULARIO CONTACTO--> 
+                                        </div>  <!-- FIN DEL COLUM 8 -->
+
+                                        <!-- .col para subir la imagen. -->
+                                        <!-- .** ** ** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **-->
+                                         <div class="col col-sm-12 col-md-12 col-lg-6">
+                                          <form name="formImagenPortafolio" id="formImagenPortafolio" class="text-center border border-light p-5" action="#!">
+                                          <div class="card">
+                                            <div class="card-header bg-gradient-navy">
+                                                  <div id="estilo_foto_portafolio">             
+                                                    <p id="AgregarFotoPortafolio">Agregar Archivo</p>
+                                                      <input type="file" value="" name="fileupPortafolio" id="fileupPortafolio" disabled aria-label="FileUpPortafolio">
+                                                  </div>
+                                                  <label class="text-center" id="namefilePortafolio"></label>
+                                                    <span class="imguploadPortafolio ok"><i class="fa fa-check"></i></span>
+                                                    <span class="imguploadPortafolio stop"><i class="fa fa-times"></i></span>
+                                            </div>
+                                              <div class="card-body">
+                                                <form method="post" action="#" enctype="multipart/form-data">
+                                                  <img class="card-img-top-Portafolio img-fluid" id="ImagenPortafolio" src="#" alt="ImgPortafolio">
+                                                  <iframe id="iframePDF" frameborder="0" scrolling="no" width="100%" height="250px" src="#" title="Mi Pdf"></iframe>
+                                                </form>
+                                              </div>
+                                              <div class="card-footer text-center bg-gradient-navy">
+                                                <input type="button" class="btn btn-primary btn-block uploadPortafolio" value="Subir" id="SubirImagenPortafolio" disabled>
+                                              </div>
+                                          </div>                                   
+                                          </form>
+                                        </div>
+                                  </div>  <!-- div class row  - fin -->
+                                </section>  <!-- FIN DEL SECTION -->
                                   <section id="ListarPortafolio">
                                           <!-- MOSTRAR IMAGENES SEGUN EL REGISTRO.-->
                                             <!-- Card -->
                                             <!-- Card -->
                                         <!-- MOSTRAR IMAGENES SEGUN EL REGISTRO.-->
                                   </section>
-                            </fieldset>
+                              </fieldset>
                           </div>
                         </div>
                       </div> <!-- FIN DIGITALACIÓN DOCUMENTACIÓN -->
@@ -616,7 +637,7 @@ $(document).ready(function() {
 
                   </div>
                 </div> <!-- /.card -->
-                </div> <!-- VALIDATE DE TODO EL DIV PARA LOS DIFERENTES INPUT'S -->
+              </div> <!-- VALIDATE DE TODO EL DIV PARA LOS DIFERENTES INPUT'S -->
             </div>
         </div>
     </form> <!-- fin del form -->            
