@@ -2,7 +2,7 @@
 // ruta de los archivos con su carpeta
     $path_root=trim($_SERVER['DOCUMENT_ROOT']);
 // Incluimos el archivo de funciones y conexión a la base de datos
-    include($path_root."/acomtus/includes/mainFunctions_conexion.php");
+    include($path_root."/registro_academico/includes/mainFunctions_conexion.php");
 // URL PARA GUARDAR LAS IMAGENES.
     $url_ = "/registro_academico/img/portafolio/";
     $small = 'thumbails/';
@@ -36,46 +36,48 @@ if (is_array($_FILES) && count($_FILES) > 0) {
                 }
             // REGISTRO CON UNLINK(). 
                 if(!empty($nombreArchivo)){
-                    if(file_exists($path_root.$url_.$id_personal."/".$nombreArchivo)){
-                        unlink($path_root.$url_.$id_personal."/".$nombreArchivo);				// imagen original.
+                    if(file_exists($path_root.$url_.$codigo_institucion."/".$nombreArchivo)){
+                        unlink($path_root.$url_.$codigo_institucion."/".$nombreArchivo);				// imagen original.
                     }
-                    if(file_exists($path_root.$url_.$id_personal."/".$small."/".$nombreArchivo)){
-                        unlink($path_root.$url_.$id_personal."/".$small."/".$nombreArchivo);	// imagen small
+                    if(file_exists($path_root.$url_.$codigo_institucion."/".$small."/".$nombreArchivo)){
+                        unlink($path_root.$url_.$codigo_institucion."/".$small."/".$nombreArchivo);	// imagen small
                     }
-                    if(file_exists($path_root.$url_.$id_personal."/".$large."/".$nombreArchivo)){
-                        unlink($path_root.$url_.$id_personal."/".$large."/".$nombreArchivo);	// imagen large	
+                    if(file_exists($path_root.$url_.$codigo_institucion."/".$large."/".$nombreArchivo)){
+                        unlink($path_root.$url_.$codigo_institucion."/".$large."/".$nombreArchivo);	// imagen large	
                     }
                 }
             //  Captura extensión del archivo tempral.
                 $extension = pathinfo($_FILES['file']['name'], PATHINFO_EXTENSION);
                 $nombreArchivo = "Portafolio"."-".$id_personal."-".$id_portafolio."-".$random.".".$extension;
             //  VERIFICAR SI EXISTE EL DIRECTORIO POR EL ID PERSONAL.
-                if(!file_exists($path_root.$url_.$id_personal)){
+                if(!file_exists($path_root.$url_.$codigo_institucion)){
                     // Crear el Directorio Principal Archvos...
-                        mkdir ($path_root.$url_.$id_personal."/");
-                        chmod($path_root.$url_.$id_personal."/",07777);
+                        mkdir ($path_root.$url_.$codigo_institucion."/");
+                        chmod($path_root.$url_.$codigo_institucion."/",07777);
                 }
             //  VERIFICAR SI EXISTE EL DIRECTORIO. SMALL
-                if(!file_exists($path_root.$url_.$id_personal."/".$small)){
+                if(!file_exists($path_root.$url_.$codigo_institucion."/".$small)){
                     // Crear el Directorio Principal Archvos...
-                        mkdir ($path_root.$url_.$id_personal."/".$small."/");
-                        chmod($path_root.$url_.$id_personal."/".$small."/",07777);
+                        mkdir ($path_root.$url_.$codigo_institucion."/".$small."/");
+                        chmod($path_root.$url_.$codigo_institucion."/".$small."/",07777);
                 }
             //  VERIFICAR SI EXISTE EL DIRECTORIO. SMALL
-                if(!file_exists($path_root.$url_.$id_personal."/".$large)){
+                if(!file_exists($path_root.$url_.$codigo_institucion."/".$large)){
                     // Crear el Directorio Principal Archvos...
-                        mkdir ($path_root.$url_.$id_personal."/".$large."/");
-                        chmod($path_root.$url_.$id_personal."/".$large."/",07777);
+                        mkdir ($path_root.$url_.$codigo_institucion."/".$large."/");
+                        chmod($path_root.$url_.$codigo_institucion."/".$large."/",07777);
                 }
             //  MOVER A LA CARPETA QUE SE VA CREANDO DE CADA USUARIO.
-                rename($path_root.$url_."/".$_FILES['file']['name'],$path_root.$url_.$id_personal."/".$nombreArchivo);
+                rename($path_root.$url_."/".$_FILES['file']['name'],$path_root.$url_.$codigo_institucion."/".$nombreArchivo);
             
             // UTILIZACIÓN DE LAS HERRAMIENTAS GD CON IMAGE.
+                // VALIDAR SI EL ARCHIVO ES PDF O IMAGEN
+                $archivo_validar_pdf = false;
                 //  Abrir foto original
                     if($_FILES["file"]["type"] == "image/jpeg"){
-                        $original = imagecreatefromjpeg($path_root.$url_.$id_personal."/".$nombreArchivo);
+                        $original = imagecreatefromjpeg($path_root.$url_.$codigo_institucion."/".$nombreArchivo);
                     }else if($_FILES["file"]["type"] == "image/png"){
-                        $original = imagecreatefrompng($path_root.$url_.$id_personal."/".$nombreArchivo);
+                        $original = imagecreatefrompng($path_root.$url_.$codigo_institucion."/".$nombreArchivo);
                     }else if(($_FILES['file']['type']) == 'application/pdf'){
                         $mensajeError = "Cargado Archivo PDF...";
                         $contenidoOK = "pdf";
@@ -100,7 +102,7 @@ if (is_array($_FILES) && count($_FILES) > 0) {
                         //  Copiar orignal --> copia
                             imagecopyresampled($copia, $original, 0,0,0,0, $ancho_nuevo, $alto_nuevo, $ancho_original, $alto_original );
                         //  Exportar y guardar imagen.
-                            imagejpeg( $copia, $path_root.$url_.$id_personal."/".$small."/".$nombreArchivo, 100);
+                            imagejpeg( $copia, $path_root.$url_.$codigo_institucion."/".$small."/".$nombreArchivo, 100);
                         //  ****************************************************************************************************************
                         //  ****************************************************************************************************************
 
@@ -114,7 +116,7 @@ if (is_array($_FILES) && count($_FILES) > 0) {
                         //  Copiar orignal --> copia
                             imagecopyresampled($copia, $original, 0,0,0,0, $ancho_nuevo, $alto_nuevo, $ancho_original, $alto_original );
                         //  Exportar y guardar imagen.
-                            imagejpeg( $copia, $path_root.$url_.$id_personal."/".$large."/".$nombreArchivo, 100);
+                            imagejpeg( $copia, $path_root.$url_.$codigo_institucion."/".$large."/".$nombreArchivo, 100);
                         //  ****************************************************************************************************************
                         //  ****************************************************************************************************************
                 // UTILIZACIÓN DE LAS HERRAMIENTAS GD CON IMAGE.
@@ -124,7 +126,7 @@ if (is_array($_FILES) && count($_FILES) > 0) {
                 $query = "UPDATE personal_portafolio SET url_imagen = '".$nombreArchivo."' WHERE id_ = ". $id_portafolio;
             // Ejecutamos el Query.
                 $consulta = $dblink -> query($query);
-                    echo "..".$url_.$id_personal."/".$nombreArchivo;
+                    $url_archivo = "..".$url_.$codigo_institucion."/".$nombreArchivo;
                     // Armamos array para convertir a JSON
                     $salidaJson = array("respuesta" => $respuestaOK,
                         "mensaje" => $mensajeError,

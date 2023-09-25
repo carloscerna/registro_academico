@@ -138,6 +138,7 @@ $(function(){ // INICIO DEL FUNCTION.
 		$("#goGuardarPortafolio").attr("disabled",false);
 	//	ELIMINAR SCR DE LA IMAGEN
 		$('.card-img-top-Portafolio').attr('src','../registro_academico/img/NoDisponible.jpg');
+		$('#iframePDF').attr('src','../registro_academico/img/ArchivoPdf.jpg');
 		$( ".imguploadPortafolio.ok" ).hide("slow");
 		PasarFoco();
 		}
@@ -164,6 +165,7 @@ $(function(){ // INICIO DEL FUNCTION.
 			$('#ListarPortafolio').empty();
 		//	ELIMINAR SCR DE LA IMAGEN
 			$('.card-img-top-Portafolio').attr('src','../registro_academico/img/NoDisponible.jpg');
+			$('#iframePDF').attr('src','../registro_academico/img/ArchivoPdf.jpg');
 	});	  
 
 	// ventana modal. GENERAR NUEVO REGISTRO DEL PORTAFOLIO.
@@ -185,6 +187,7 @@ $(function(){ // INICIO DEL FUNCTION.
 			VerPortafolio();
 		//	ELIMINAR SCR DE LA IMAGEN
 			$('.card-img-top-Portafolio').attr('src','../registro_academico/img/NoDisponible.jpg');
+			$('#iframePDF').attr('src','../registro_academico/img/ArchivoPdf.jpg');	
 		//	Limpiar namefilePortafolio
 			$('#namefilePortafolio').html("<p>Sólo Imagénes!</p>");
 	});
@@ -368,13 +371,6 @@ $(function(){ // INICIO DEL FUNCTION.
 					}
 					// descartivar boton subir imagen.
 					$("#SubirImagenPortafolio").attr("disabled",true);		// Botón Subir Imagen Portafolio
-		/*	  if (response != 0) {
-					//$('.card-img-top-Portafolio').removeAttr('src');
-					$(".card-img-top-Portafolio").attr("src", response);
-					toastr["success"]('Imagen Cargada...', "Sistema");
-				} else {
-				toastr["error"]('Formato de imagen incorrecto.', "Sistema");
-				}*/
 			}
 		});
 		return false;

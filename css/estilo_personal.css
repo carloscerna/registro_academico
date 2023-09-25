@@ -105,6 +105,17 @@ h4>strong{
     text-align: center;
     font-size: 18px;
 }
+#estilo_foto_portafolio{
+    padding: 5px;
+    background: red;
+    width: 100%;
+    position: relative;
+}
+#AgregarFotoPortafolio{
+    color: white;
+    text-align: center;
+    font-size: 18px;
+}
 #fileupPortafolio{
     position: absolute;
     left: 0;

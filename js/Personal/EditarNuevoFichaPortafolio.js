@@ -20,6 +20,21 @@ $(document).ready(function(){
 		{
 			$("#goAgregarPortafolio").attr("style", "display:none");
 		}
+		var display_3 =  $("#CargarArchivo").css("display");
+		if(display_3!="none")
+		{
+			$("#CargarArchivo").attr("style", "display:none");
+		}
+		var display_4 =  $("#iframePDF").css("display");
+		if(display_4!="none")
+		{
+			$("#iframePDF").attr("style", "display:none");
+		}
+		var display_5 =  $("#ImagenPortafolio").css("display");
+		if(display_5!="none")
+		{
+			$("#ImagenPortafolio").attr("style", "display:none");
+		}
 });
 $(function(){ // INICIO DEL FUNCTION.
             // Escribir la fecha actual.
@@ -87,12 +102,13 @@ $('#formPortafolio').validate({
 					// Validar mensaje de error PORTAFOLIO.
 					if(response.respuesta == false){
 						toastr["error"](response.mensaje, "Sistema");
+						$("#CargarArchivo").css("display","none");
 					}
 					else{
 						toastr["success"](response.mensaje, "Sistema");
 						$("#fileupPortafolio").attr("disabled",false);		// Botón Subir Imagen Portafolio
-						$("#SubirImagenPortafolio").attr("disabled",false);		// Botón Subir Imagen Portafolio
 						$("#IdPortafolio").val(response.id_portafolio);
+						$("#CargarArchivo").css("display","block");
 						}               
 				},
 			});
@@ -111,15 +127,17 @@ $('#goNuevoPortafolio').on( 'click', function () {
 	// Mostrar y Ocultar Botones.
 		$("#goVerPortafolio").css("display","block");		// Botón Ver
 		$("#goNuevoPortafolio").css("display","none");			// Botón Nuevo.
+		$("#CargarArchivo").css("display","none");
 	// Pasar foco.
 		$("#txtFechaPortafolio").focus();
 	// Desactivar botón subri imagen
 		$("#fileupPortafolio").attr("disabled",true);		// Botón Subir Imagen Portafolio
-		$("#SubirImagenPortafolio").attr("disabled",true);		// Botón Subir Imagen Portafolio
+		$("#CargarArchivo").css("display","none");
 	// 	lIMPIAR SECTION QUE CONTIENE EL PORTAFOLIO.
 		$('#ListarPortafolio').empty();
 	//	ELIMINAR SCR DE LA IMAGEN
 		$('.card-img-top-Portafolio').attr('src','../registro_academico/img/NoDisponible.jpg');
+		$('#iframePDF').attr('src','../registro_academico/img/ArchivoPdf.jpg');
 });	  
 
 // ventana modal. GENERAR NUEVO REGISTRO DEL PORTAFOLIO.
@@ -134,6 +152,7 @@ $('#goVerPortafolio').on( 'click', function () {
 	// Mostrar y Ocultar Botones.
 		$("#goVerPortafolio").css("display","none");		// Botón Ver
 		$("#goNuevoPortafolio").css("display","block");			// Botón Nuevo.
+		$("#CargarArchivo").css("display","none");
 	//	LIMPIAR VARIABLES.
 		$('#TituloPortafolio').val('');
 		$('#txtComentarioPortafolio').val('');
@@ -141,6 +160,7 @@ $('#goVerPortafolio').on( 'click', function () {
 		VerPortafolio();
 	//	ELIMINAR SCR DE LA IMAGEN
 		$('.card-img-top-Portafolio').attr('src','../registro_academico/img/NoDisponible.jpg');
+		$('#iframePDF').attr('src','../registro_academico/img/ArchivoPdf.jpg');
 	//	Limpiar namefilePortafolio
 		$('#namefilePortafolio').html("<p>Sólo Imagénes!</p>");
 });
@@ -172,8 +192,17 @@ $('body').on('click','#ListarPortafolio a',function (e){
 				$("#IdPortafolio").val(data[0].id_);	
 				var ruta_imagen = data[0].nombre_imagen
 				// Cambiar imagen
-				//$('.card-img-top-Portafolio').removeAttr('src');
-				$('#ImagenPortafolio').attr('src', ruta_imagen);
+				let text = ruta_imagen;
+				const myExtension = text.split(".");
+				if(myExtension[3] == "pdf"){
+					$('#iframePDF').attr('src',ruta_imagen)
+					$("#iframePDF").css("display","block");		// Botón Ver
+					$("#ImagenPortafolio").css("display","none");		// Botón Ver
+				}else{
+					$('#ImagenPortafolio').attr('src', ruta_imagen);
+					$("#ImagenPortafolio").css("display","block");		// Botón Ver
+					$("#iframePDF").css("display","none");
+				}
 				//$("#").val(data[0].);	
 				// Form Visible
 				$("#EditarNuevoPortafolio").css("display","block");
@@ -184,7 +213,7 @@ $('body').on('click','#ListarPortafolio a',function (e){
 					$("#goNuevoPortafolio").css("display","none");			// Botón Nuevo.
 				// Desactivar botón subri imagen
 					$("#fileupPortafolio").attr("disabled",false);		// Botón Subir Imagen Portafolio
-					$("#SubirImagenPortafolio").attr("disabled",true);		// Botón Subir Imagen Portafolio
+					$("#CargarArchivo").css("display","block");
 				// Limpiar EL PORTAFOLIO.
 					$('#ListarPortafolio').empty();
 					toastr["success"]("Registro Encontrado", "Sistema");
@@ -256,34 +285,31 @@ $('body').on('click','#ListarPortafolio a',function (e){
 /* */
  /* SCRIPT PARA SUBIR LA FOTO.*/
  /* */
- 	$('#fileupPortafolio').change(function(){
-  //here we take the file extension and set an array of valid extensions
-	  var res=$('#fileupPortafolio').val();
-	  var arr = res.split("\\");
-	  var filename=arr.slice(-1)[0];
-	  filextension=filename.split(".");
-	  filext="."+filextension.slice(-1)[0];
-	  valid=[".jpg",".png",".jpeg",".bmp"];
-  //if file is not valid we show the error icon, the red alert, and hide the submit button
-	  if (valid.indexOf(filext.toLowerCase())==-1){
-		  $( ".imguploadPortafolio.ok" ).hide("slow");
-		  $( ".imguploadPortafolio.stop" ).show("slow");
-		
-		  $('#namefilePortafolio').css({"color":"red","font-weight":700});
-		  $('#namefilePortafolio').html("No es una Imagen!");
-	  }else{
-		  //if file is valid we show the green alert and show the valid submit
-		  $( ".imguploadPortafolio.stop" ).hide("slow");
-		  $( ".imguploadPortafolio.ok" ).show("slow");
-		
-		  $('#namefilePortafolio').css({"color":"green","font-weight":700});
-		  $('#namefilePortafolio').html('Imagen!');
+	$('#fileupPortafolio').change(function(){
+	//here we take the file extension and set an array of valid extensions
+	var res=$('#fileupPortafolio').val();
+	var arr = res.split("\\");
+	var filename=arr.slice(-1)[0];
+	filextension=filename.split(".");
+	filext="."+filextension.slice(-1)[0];
+	valid=[".jpg",".png",".jpeg",".bmp",".pdf"];
+	//if file is not valid we show the error icon, the red alert, and hide the submit button
+	if (valid.indexOf(filext.toLowerCase())==-1){
+		$( ".imguploadPortafolio.ok" ).hide("slow");
+		$( ".imguploadPortafolio.stop" ).show("slow");
 
-		  $("#SubirImagenPortafolio").attr("disabled",false);		// Botón Subir Imagen Portafolio
-	  }
-  });
-// CARGAR DEL ARCHIVO A LA TABLA CORRESPONDIENTE.
-	$(".uploadPortafolio").on('click', function() {
+		$('#namefilePortafolio').css({"color":"red","font-weight":700});
+		$('#namefilePortafolio').html("Archivo Invalido: " + filename);
+	}else{
+		//if file is valid we show the green alert and show the valid submit
+		$( ".imguploadPortafolio.stop" ).hide("slow");
+		$( ".imguploadPortafolio.ok" ).show("slow");
+
+		$('#namefilePortafolio').css({"color":"green","font-weight":700});
+		$('#namefilePortafolio').html("Archivo: " + filename);
+
+		//$("#SubirImagenPortafolio").attr("disabled",false);		// Botón Subir Imagen Portafolio
+		// INICIO DE LA SUBAD ADE LA IMAGEN O ARCHIVO
 		var formData = new FormData();
 		var files = $('#fileupPortafolio')[0].files[0];
 		id_portafolio = $("#IdPortafolio").val();
@@ -291,29 +317,39 @@ $('body').on('click','#ListarPortafolio a',function (e){
 		$.ajax({
 			url: 'php_libs/soporte/Personal/UploadFichaPortafolio.php',
 			type: 'post',
+			dataType: "json",
 			data: formData,
 			contentType: false,
 			processData: false,
 			success: function(response) {
-				if (response != 0) {
-					//$('.card-img-top-Portafolio').removeAttr('src');
-					$(".card-img-top-Portafolio").attr("src", response);
-					toastr["success"]('Imagen Cargada...', "Sistema");
-				} else {
-				toastr["error"]('Formato de imagen incorrecto.', "Sistema");
+				if(response.contenido == "img"){
+					$("#iframePDF").css("display","none");
+					$(".card-img-top-Portafolio").css("display","block");
+					$(".card-img-top-Portafolio").attr("src", response.url);
+						toastr["success"](response.mensaje, "Sistema");	
 				}
+				
+				if (response.contenido == 'pdf') {
+					$("#iframePDF").css("display","block");
+					$(".card-img-top-Portafolio").css("display","none");
+					$("#iframePDF").attr("src", response.url);
+						toastr["success"](response.mensaje, "Sistema");	
+				}
+				// descartivar boton subir imagen.
+				//$("#SubirImagenPortafolio").attr("disabled",true);		// Botón Subir Imagen Portafolio
 			}
 		});
-		return false;
-	});	  
+		// FIN DE LA SUBIDA DE LA IMAGEN O ARCHIVO
+	}
+	});
 //************************************/
 }); // fin de la funcion principal ************************************/
 //************************************/		
 // Pasar foco cuando seleccionar un encargado.
 function PasarFoco()
-   {
-       $('#txtFechaPortafolio').focus();
-   }
+	{
+		$('#txtFechaPortafolio').focus();
+	}
 function LimpiarCampos(){
 	$('#TituloPortafolio').val('');
 	$('#txtComentarioPortafolio').val('');

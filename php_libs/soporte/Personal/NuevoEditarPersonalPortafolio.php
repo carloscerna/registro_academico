@@ -8,7 +8,6 @@ clearstatcache();
 header("Content-Type: text/html;charset=iso-8859-1");
 // Insertar y actualizar tabla de usuarios
 sleep(0);
-
 // Inicializamos variables de mensajes y JSON
 $respuestaOK = false;
 $mensajeError = "No se puede ejecutar la aplicaci�n";
@@ -20,11 +19,8 @@ $datos = array();
 $fila_array = 0;
 // ruta de los archivos con su carpeta
     $path_root=trim($_SERVER['DOCUMENT_ROOT']);
-
 // Incluimos el archivo de funciones y conexi�n a la base de datos
-
 include($path_root."/registro_academico/includes/mainFunctions_conexion.php");
-
 // Validar conexi�n con la base de datos
 if($errorDbConexion == false){
 	// Validamos qe existan las variables post
@@ -37,12 +33,13 @@ if($errorDbConexion == false){
 			case 'BuscarIdPortafolio':
 				$Id_personal = $_SESSION["id_personal"];
 				$id_p_p = trim($_POST['id_p_p']);
+				$codigo_institucion = $_SESSION["codigo_institucion"];
 				
 				$new = explode("-",$id_p_p);
 				$id_portafolio = $new[0];
 				$id_personal = $new[1];
 				// ARVAR EL URL DEPENDIENDO DEL CODIGO PERSONAL
-					$url_ = "../registro_academico/img/portafolio/" . $Id_personal . "/";
+					$url_ = "../registro_academico/img/portafolio/" . $codigo_institucion . "/";
 					$url_no = "../registro_academico/img/NoDisponible.jpg";
 					// Armamos el query.
 					$query = "SELECT * FROM personal_portafolio
@@ -91,13 +88,15 @@ if($errorDbConexion == false){
 				break;
 		case 'BuscarPorCodigoPersonal':
 			$Id_personal = $_SESSION["id_personal"];
+			$codigo_institucion = $_SESSION["codigo_institucion"];
 			$html = '';
 			if(!isset($_POST['page'])){$page = 1;}else{$page = $_POST['page'];}
 			$rowsPerPage = 3;
 			$offset = ($page - 1) * $rowsPerPage;
 			// ARVAR EL URL DEPENDIENDO DEL CODIGO PERSONAL
-				$url_ = "../registro_academico/img/portafolio/" . $Id_personal . "/" . "thumbails/";
-				$url_large = "../registro_academico/img/portafolio/" . $Id_personal . "/" . "large/";
+				$url_ = "../registro_academico/img/portafolio/" . $codigo_institucion . "/" . "thumbails/";
+				$url_pdf = "../registro_academico/img/portafolio/" . $codigo_institucion . "/";
+				$url_large = "../registro_academico/img/portafolio/" . $codigo_institucion . "/" . "large/";
 				$url_no = "../registro_academico/img/NoDisponible.jpg";
 				//	Total de registros.
 					$query_total = "SELECT * FROM personal_portafolio WHERE id_personal = '$Id_personal'";
@@ -130,6 +129,13 @@ if($errorDbConexion == false){
 							$descripcion = trim($listado['descripcion']);
 							$nombre_imagen = trim($listado['url_imagen']);
 							$id_personal = trim($listado['id_personal']);
+						// separar el nombre del archivo para saber su extension
+							if(!empty($nombre_imagen)){
+								$extension_ = explode(".",$nombre_imagen);
+								$extension_pdf = $extension_[1];
+							}else{
+								$extension_pdf = "";
+							}
 						//	VERIFICAR SI NO EXISTE LA IMAGEN.
 							if (empty($nombre_imagen)) {
 								$ruta_imagen = $url_no;
@@ -139,37 +145,75 @@ if($errorDbConexion == false){
 								$ruta_imagen_large = $url_large . $nombre_imagen;
 							}
 						// ENVIAR AL CONTENIDO AL SECTION.
-							$contenidoOK .="
-									<div class='card'>
-										<div class='card-header text-right'>$fecha</div>
-										<div class='text-center'>
-											<a href='#' data-toggle='modal' data-target='#myModal$id_portafolio'>
-												<img class='img-fluid rounded' src='$ruta_imagen' alt='Portafolio style='width=auto; height=94;'>
-											</a>
-										</div>
-										<div class='card-body'>
-											<h4 class='card-title'><a>$titulo</a></h4>
-											<p class='card-text'>$descripcion</p>
-										</div>
-										<div class='card-footer text-center'>
-											<a data-accion=EditarRegistro class='btn btn-info btn-sm text-dark' alt='Editar' href='$id_portafolio-$id_personal'>Editar</a>
-											<a data-accion=EliminarRegistro class='btn btn-warning btn-sm text-dark' alt='Editar' href='$id_portafolio-$id_personal'>Eliminar</a>
-										</div>
+
+						if($extension_pdf == "pdf"){
+							$ruta_imagen = $url_pdf . $nombre_imagen;
+								$contenidoOK .="
+								<div class='card'>
+									<div class='card-header bg-gradient-navy text-right'>$fecha</div>
+									<div class='text-center'>
+										<a href='#' data-toggle='modal' data-target='#myModal$id_portafolio'>
+											<iframe id='iframePDF' frameborder='0' scrolling='no' width='100%' height='500px' src='$ruta_imagen'></iframe>											
+										</a>
 									</div>
-							";
-							//<!-- The Modal -->
-								$contenidoOK .= "
-									<div class='modal fade' id='myModal$id_portafolio' tabaindex='-1' role='dialog' aria-labelledby='myModalLabel$id_portafolio' aria-hidden='true'>
-										<!-- Modal button close -->
-											<button type='button' class='close mr-2' data-dismiss='modal' aria-label='Close'>
-												<span aria-hidden='true'>&times;</span>
-											</button>
-										<!-- Modal body -->
-											<div class='modal-dialog modal-lg modal-dialog-centered' role='document'>
-												<img class='img-fluid rounded' src='$ruta_imagen_large'>
-											</div>
-									</div>";
-							//<!-- The Modal -->
+									<div class='card-body'>
+										<h4 class='card-title'><a>$titulo</a></h4>
+										<p class='card-text'>$descripcion</p>
+									</div>
+									<div class='card-footer bg-gradient-navy text-center'>
+										<a data-accion=EditarRegistro class='btn btn-info btn-sm text-dark' alt='Editar' href='$id_portafolio-$id_personal'>Editar</a>
+										<a data-accion=EliminarRegistro class='btn btn-warning btn-sm text-dark' alt='Editar' href='$id_portafolio-$id_personal'>Eliminar</a>
+									</div>
+								</div>
+						";
+						//<!-- The Modal -->
+							$contenidoOK .= "
+								<div class='modal fade' id='myModal$id_portafolio' tabaindex='-1' role='dialog' aria-labelledby='myModalLabel$id_portafolio' aria-hidden='true'>
+									<!-- Modal button close -->
+										<button type='button' class='close mr-2' data-dismiss='modal' aria-label='Close'>
+											<span aria-hidden='true'>&times;</span>
+										</button>
+									<!-- Modal body -->
+										<div class='modal-dialog modal-lg modal-dialog-centered' role='document'>
+											<iframe id='iframePDF' frameborder='0' scrolling='no' width='100%' height='500px' src='$ruta_imagen'></iframe>	
+										</div>
+								</div>";
+						//<!-- The Modal -->
+						}else{
+							//
+							// 	SI ES UNA IMAGEN.
+							$contenidoOK .="
+							<div class='card'>
+								<div class='card-header bg-gradient-navy text-right'>$fecha</div>
+								<div class='text-center'>
+									<a href='#' data-toggle='modal' data-target='#myModal$id_portafolio'>
+										<img class='img-fluid rounded' src='$ruta_imagen' alt='Portafolio' style='width=auto; height=94;'>				
+									</a>
+								</div>
+								<div class='card-body'>
+									<h4 class='card-title'><a>$titulo</a></h4>
+									<p class='card-text'>$descripcion</p>
+								</div>
+								<div class='card-footer text-center bg-gradient-navy'>
+									<a data-accion=EditarRegistro class='btn btn-info btn-sm text-dark' alt='Editar' href='$id_portafolio-$id_personal'>Editar</a>
+									<a data-accion=EliminarRegistro class='btn btn-warning btn-sm text-dark' alt='Editar' href='$id_portafolio-$id_personal'>Eliminar</a>
+								</div>
+							</div>
+					";
+					//<!-- The Modal -->
+						$contenidoOK .= "
+							<div class='modal fade' id='myModal$id_portafolio' tabaindex='-1' role='dialog' aria-labelledby='myModalLabel$id_portafolio' aria-hidden='true'>
+								<!-- Modal button close -->
+									<button type='button' class='close mr-2' data-dismiss='modal' aria-label='Close'>
+										<span aria-hidden='true'>&times;</span>
+									</button>
+								<!-- Modal body -->
+									<div class='modal-dialog modal-lg modal-dialog-centered' role='document'>
+										<img class='img-fluid rounded' src='$ruta_imagen_large'>
+									</div>
+							</div>";
+					//<!-- The Modal -->
+						}
 					}	// FIN DEL WHILE.
 					//	cierre de fila.
 						$contenidoOK .="</div></div>";
@@ -229,7 +273,7 @@ if($errorDbConexion == false){
 						$mensajeError = "No se puede guardar el registro en la base de datos ";
 					}
 			break;
-			case 'EditarRegistro':
+			case "EditarRegistro":
 				// PORTAFOLIO
 				$id_portafolio = trim($_POST['IdPortafolio']);
 				$Id_personal = $_SESSION["id_personal"];
@@ -260,6 +304,7 @@ if($errorDbConexion == false){
 			break;
 			case 'EliminarRegistro':
 				$id_p_p = trim($_POST['id_p_p']);
+				$codigo_institucion = $_SESSION["codigo_institucion"];
 				$small = 'thumbails/';
 				$large = 'large/';
 
@@ -283,9 +328,15 @@ if($errorDbConexion == false){
 					$count = $dblink -> exec($query);
 				// REGISTRO CON UNLINK().
 					if(!empty($nombreArchivo)){
-						unlink($path_root.$url_.$id_personal."/".$nombreArchivo);				// imagen original.
-						unlink($path_root.$url_.$id_personal."/".$small."/".$nombreArchivo);	// imagen small
-						unlink($path_root.$url_.$id_personal."/".$large."/".$nombreArchivo);	// imagen large	
+						if(file_exists($path_root.$url_.$codigo_institucion."/".$nombreArchivo)){
+							unlink($path_root.$url_.$codigo_institucion."/".$nombreArchivo);				// imagen original.
+						}
+						if(file_exists($path_root.$url_.$codigo_institucion."/".$small."/".$nombreArchivo)){
+							unlink($path_root.$url_.$codigo_institucion."/".$small."/".$nombreArchivo);	// imagen small
+						}
+						if(file_exists($path_root.$url_.$codigo_institucion."/".$large."/".$nombreArchivo)){
+							unlink($path_root.$url_.$codigo_institucion."/".$large."/".$nombreArchivo);	// imagen large	
+						}
 					}
 
 				// Validamos que se haya actualizado el registro

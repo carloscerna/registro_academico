@@ -20,11 +20,8 @@ $datos = array();
 $fila_array = 0;
 // ruta de los archivos con su carpeta
     $path_root=trim($_SERVER['DOCUMENT_ROOT']);
-
 // Incluimos el archivo de funciones y conexi�n a la base de datos
-
 include($path_root."/registro_academico/includes/mainFunctions_conexion.php");
-
 // Validar conexi�n con la base de datos
 if($errorDbConexion == false){
 	// Validamos qe existan las variables post
@@ -33,7 +30,8 @@ if($errorDbConexion == false){
 			$_POST['accion'] = $_POST['accionPortafolio'];
 		}
 		// Verificamos las variables de acci�n
-		switch ($_POST['accion']) {
+		switch ($_POST['accion'])
+		{
 			case 'BuscarIdPortafolio':
 				$id_alumno = $_SESSION["Id_A"];
 				$id_p_p = trim($_POST['id_p_p']);
@@ -345,11 +343,6 @@ if($errorDbConexion == false){
 						if(file_exists($path_root.$url_.$codigo_institucion."/".$large."/".$nombreArchivo)){
 							unlink($path_root.$url_.$codigo_institucion."/".$large."/".$nombreArchivo);	// imagen large	
 						}
-						/*
-						unlink($path_root.$url_.$codigo_institucion."/".$nombreArchivo);				// imagen original.
-						unlink($path_root.$url_.$codigo_institucion."/".$small."/".$nombreArchivo);	// imagen small
-						unlink($path_root.$url_.$codigo_institucion."/".$large."/".$nombreArchivo);	// imagen large	
-						*/
 					}
 				// Validamos que se haya actualizado el registro
 				if($count != 0){
