@@ -113,6 +113,36 @@ $(document).ready(function() {
     }
 });
 });
+// CARGAR DEL ARCHIVO A LA TABLA CORRESPONDIENTE.
+/*
+    $(".upload").on('click', function() {
+        var formData = new FormData();
+        var files = $('#fileup')[0].files[0];
+        formData.append('file',files);
+        $.ajax({
+            cache: false,
+            url: 'php_libs/soporte/Personal/UploadFotoFicha.php',
+            type: 'post',
+            data: formData,
+            contentType: false,
+            processData: false,
+            success: function(response) {
+                if (response != 0) {
+                    //$('.card-img-top').removeAttr('src');
+                    $(".card-img-top").attr("src", response);
+                    //let timestamp = Math.floor( Date.now() );
+                    //$("#Imagen").attr("src", response + '?ver=' + timestamp);
+
+                    $('#namefile').html("Sólo Imagen!");
+                    toastr["success"]('Imagen Cargada...', "Sistema");
+                } else {
+                  toastr["error"]('Formato de imagen incorrecto.', "Sistema");
+                }
+            }
+        });
+		return false;
+    });
+});*/
 </script>
 {% endblock %}
 

@@ -19,6 +19,11 @@ $(document).ready(function(){
 		{
 			$("#iframePDF").attr("style", "display:none");
 		}
+		var display_2 =  $("#CargarArchivoFoto").css("display");
+		if(display_2!="none")
+		{
+			$("#CargarArchivoFoto").attr("style", "display:none");
+		}
 });
 $(function(){ // INICIO DEL FUNCTION.
 	// Escribir la fecha actual.
@@ -55,6 +60,9 @@ $(function(){ // INICIO DEL FUNCTION.
 				miselect_o1.append('<option value="00" selected>...</option>');             
 				var miselect_g1=$("#lstgradoseccion");
 				miselect_g1.append('<option value="00" selected>...</option>');
+				//
+				$("#CargarArchivoFoto").css("display","block");
+				$("#fileup").attr("disabled",false);		// Botón Subir Imagen Portafolio
 				listar();
 				VerPortafolio();	
 			}
@@ -69,6 +77,10 @@ $(function(){ // INICIO DEL FUNCTION.
 				$("label[for='iEdicionNuevo']").text("Nuevo");
 				// DESACTIVAR BOTONES O ACTIV AR
 				$("#goImprimirPortada").prop("disabled","true");
+				//
+				$("#CargarArchivoFoto").css("display","none");
+				//
+				$("#fileup").attr("disabled",true);		// Botón Subir Imagen Portafolio
 			}				
 		});
 	//////////////////////////////////////////////////////////////////////////////////
@@ -81,6 +93,8 @@ $(function(){ // INICIO DEL FUNCTION.
 			$(".card-img-top").attr("src", "../registro_academico/img/avatar_masculino.png");		
 		// IMAGEN PARTIDA DE NACIMIENTO.		
 			$(".card-img-top-2").attr("src", "../registro_academico/img/NoDisponible.jpg");
+		//
+			$("#CargarArchivoFoto").css("display","none");
 	};
 	//////////////////////////////////////////////////////////////////////////////////
 	/* INICIO DE LA FUNCION PARA MOSTRAR LOS DATOS DEL ALUMNO */

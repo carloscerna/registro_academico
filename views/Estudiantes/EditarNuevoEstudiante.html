@@ -61,13 +61,38 @@ $(document).ready(function() {
       $("#telefonoo").mask("9999-9999");
   });   
 	});
-  /* SCRIPT PARA SUBIR LA FOTO DEL ALUMNO.*/
-  $(document).ready(function() {
-    $(".upload").on('click', function() {
+  /* SCRIPT PARA SUBIR LA FOTO.*/
+$(document).ready(function() {
+  $('#fileup').change(function(){
+//here we take the file extension and set an array of valid extensions
+    var res=$('#fileup').val();
+    var arr = res.split("\\");
+    var filename=arr.slice(-1)[0];
+    console.log(this.files);
+
+    filextension=filename.split(".");
+    filext="."+filextension.slice(-1)[0];
+    valid=[".jpg",".png",".jpeg",".bmp"];
+//if file is not valid we show the error icon, the red alert, and hide the submit button
+    if (valid.indexOf(filext.toLowerCase())==-1){
+        $( ".imgupload.ok" ).hide("slow");
+        $( ".imgupload.stop" ).show("slow");
+      
+        $('#namefile').css({"color":"red","font-weight":700});
+        $('#namefile').html("Archivo Invalido: " + filename);
+    }else{
+        //if file is valid we show the green alert and show the valid submit
+        $( ".imgupload.stop" ).hide("slow");
+        $( ".imgupload.ok" ).show("slow");
+      
+        $('#namefile').css({"color":"green","font-weight":700});
+        $('#namefile').html("Archivo: " + filename);
+        //
         var formData = new FormData();
-        var files = $('#imagenFoto')[0].files[0];
+        var files = $('#fileup')[0].files[0];
         formData.append('file',files);
         $.ajax({
+            cache: false,
             url: 'php_libs/soporte/Estudiante/UploadFotoEstudiante.php',
             type: 'post',
             data: formData,
@@ -75,19 +100,20 @@ $(document).ready(function() {
             processData: false,
             success: function(response) {
                 if (response != 0) {
-                    //$('.card-img-top').removeAttr('src');
                     $(".card-img-top").attr("src", response);
-                    $('#namefile').html("Sólo Imagen!");
+                    $('#namefile').html("Imagen Cargada!");
                     toastr["success"]('Imagen Cargada...', "Sistema");
                 } else {
-                  alert('Formato de imagen incorrecto.',"Sistema");
+                  toastr["error"]('Formato de imagen incorrecto.', "Sistema");
                 }
             }
         });
 		return false;
-    });
+    }
+});
 });
 /* SCRIPT PARA SUBIR LA IMAGEN DE LA PARTIDA DE NACIMIENTO.*/
+/*
 $(document).ready(function() {
     $(".upload-Pn").on('click', function() {
         var formData = new FormData();
@@ -111,7 +137,7 @@ $(document).ready(function() {
         });
 		return false;
     });
-});
+});*/
 </script>
 <script language="javascript">
 	// VALIDAR LOS ENTER EN EL FORMULARIO.
@@ -273,22 +299,26 @@ $(document).ready(function() {
                               </div>
                                   <form method="post" action="#" enctype="multipart/form-data">
                                     <div class="card">
-                                      <img class="card-img-top" src="#" alt="Foto Estudiante">
+                                      <div class="card-header bg-gradient-info text-black">
+                                        <div class="d-flex flex-row w-100 justify-content-between">
+                                          <div id="CargarArchivoFoto">
+                                            <label for="CargarArchivoFoto" class="text-white">Cargar: <i class="fad fa-upload fa-lg"></i>
+                                              <input type="file" value="" name="fileup" id="fileup" disabled aria-label="FileUpEstudiante">
+                                            </label>
+                                          </div>
+                                          <div>
+                                            <label class="text-center text-white" id="namefile"></label>
+                                            <span class="imgupload ok text-white" ><i class="fa fa-check"></i></span>
+                                            <span class="imgupload stop text-white"><i class="fa fa-times"></i></span>
+                                          </div>
+                                        </div>
+                                    </div>
                                       <div class="card-body">
-                                        <h4 class="card-title"><label for="NombreUser"></label></h4>
-                                        <p class="card-text"></p>
-                                        <div class="form-group">
-                                        <label for="exampleInputFile">Foto</label>
-                                        <div class="input-group">
-                                          <div class="custom-file">
-                                            <input type="file" class="custom-file-input" id="imagenFoto" name="imagenFoto" aria-label="ImagenFoto">
-                                            <label class="custom-file-label selected" for="imagenFoto"></label>
-                                          </div>
-                                          <div class="input-group-append">
-                                            <input type="button" class="btn btn-primary upload" value="Subir">
-                                          </div>
-                                        </div>
-                                        </div>
+                                        <form method="post" action="#" enctype="multipart/form-data">
+                                          <img class="card-img-top img-fluid" id="Imagen" src="#" aria-label="CardImg">
+                                        </form>
+                                      </div>
+                                      <div class="card-footer bg-gradient-info">
                                       </div>
                                     </div>
                                   </form>
