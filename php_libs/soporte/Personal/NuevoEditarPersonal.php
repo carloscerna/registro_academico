@@ -290,7 +290,7 @@ if($errorDbConexion == false){
 							codigo_municipio = '%s', codigo_departamento = '%s', direccion = '%s',
 							telefono_residencia = '%s', telefono_celular = '%s', correo_electronico = '%s',
 							codigo_cargo = '%s', fecha_ingreso = '%s', fecha_retiro = '%s', 
-							dui = '%s', nit = '%s', isss = '%s', afp = '%s', nip = '%s'
+							dui = '%s', nit = '%s', isss = '%s', afp = '%s', nip = '%s',
 							comentario = '%s', codigo_estatus = '%s'
 							WHERE id_personal = %d",
 							$nombre, $apellido, $fecha_nacimiento, $edad, $codigo_genero, $codigo_estado_civil, $tipo_sangre, $codigo_estudios, $codigo_tipo_vivienda, $codigo_afp, $nombre_conyuge,

@@ -31,6 +31,11 @@ $(document).ready(function(){
 		{
 			$("#goVerPortafolio").attr("style", "display:none");
 		}
+		var display_5 =  $("#CargarArchivoFoto").css("display");
+		if(display_5!="none")
+		{
+			$("#CargarArchivoFoto").attr("style", "display:none");
+		}
 });
 $(function(){ // INICIO DEL FUNCTION.
             // Escribir la fecha actual.
@@ -60,6 +65,8 @@ $(function(){ // INICIO DEL FUNCTION.
             //  Botones de la imagen o foto personal.
             $("#fileup").attr("disabled",false);		// Botón Subir Imagen Portafolio
             $("#SubirImagen").attr("disabled",false);		// Botón Subir Imagen Portafolio
+            //
+            $("#CargarArchivoFoto").css("display","block");
             // Llamar a la función listar.
                 listar();
             //  ver portafolio.
@@ -80,6 +87,8 @@ $(function(){ // INICIO DEL FUNCTION.
             // OCULTAR TAB HISTORIAL Y PORTAFOLIO.
             $("#historial-tab").hide();
             $("#digitalizacion-tab").hide();
+            //
+            $("#CargarArchivoFoto").css("display","none");
         }
         if($('#MenuTab').val() == '05'){
             //$("#").attr('readonly',true);

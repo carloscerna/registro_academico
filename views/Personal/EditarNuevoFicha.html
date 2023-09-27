@@ -80,18 +80,15 @@ $(document).ready(function() {
         $( ".imgupload.stop" ).show("slow");
       
         $('#namefile').css({"color":"red","font-weight":700});
-        $('#namefile').html("No es una Imagen!");
+        $('#namefile').html("Archivo Invalido: " + filename);
     }else{
         //if file is valid we show the green alert and show the valid submit
         $( ".imgupload.stop" ).hide("slow");
         $( ".imgupload.ok" ).show("slow");
       
         $('#namefile').css({"color":"green","font-weight":700});
-        $('#namefile').html("Imagen!");
-    }
-});
-// CARGAR DEL ARCHIVO A LA TABLA CORRESPONDIENTE.
-    $(".upload").on('click', function() {
+        $('#namefile').html("Archivo: " + filename);
+        //
         var formData = new FormData();
         var files = $('#fileup')[0].files[0];
         formData.append('file',files);
@@ -104,12 +101,8 @@ $(document).ready(function() {
             processData: false,
             success: function(response) {
                 if (response != 0) {
-                    //$('.card-img-top').removeAttr('src');
                     $(".card-img-top").attr("src", response);
-                    //let timestamp = Math.floor( Date.now() );
-                    //$("#Imagen").attr("src", response + '?ver=' + timestamp);
-
-                    $('#namefile').html("Sólo Imagen!");
+                    $('#namefile').html("Imagen Cargada!");
                     toastr["success"]('Imagen Cargada...', "Sistema");
                 } else {
                   toastr["error"]('Formato de imagen incorrecto.', "Sistema");
@@ -117,7 +110,8 @@ $(document).ready(function() {
             }
         });
 		return false;
-    });
+    }
+});
 });
 </script>
 {% endblock %}
@@ -292,22 +286,27 @@ $(document).ready(function() {
                                     <div class="col-md-4">
                                       <form name="formImagen" id="formImagen" class="text-center border border-light p-5" action="#!" enctype="multipart/form-data">
                                         <div class="card card-width">
-                                          <div class="card-head">
-                                                <div id="estilo_foto">             
-                                                  <p id="AgregarFoto">Agregar Foto</p>
-                                                    <input type="file" value="" name="fileup" id="fileup" disabled aria-label="FileUP">
+                                          <div class="card-header bg-gradient-info text-black">
+                                              <div class="d-flex flex-row w-100 justify-content-between">
+                                                <div id="CargarArchivoFoto">
+                                                  <label for="CargarArchivoFoto" class="text-white">Cargar: <i class="fad fa-upload fa-lg"></i>
+                                                    <input type="file" value="" name="fileup" id="fileup" disabled aria-label="FileUp">
+                                                  </label>
                                                 </div>
-                                                <label class="text-center" id="namefile"></label>
-                                                  <span class="imgupload ok"><i class="fa fa-check"></i></span>
-                                                  <span class="imgupload stop"><i class="fa fa-times"></i></span>
+                                                <div>
+                                                  <label class="text-center text-white" id="namefile"></label>
+                                                  <span class="imgupload ok text-white" ><i class="fa fa-check"></i></span>
+                                                  <span class="imgupload stop text-white"><i class="fa fa-times"></i></span>
+                                                </div>
+                                              </div>
                                           </div>
                                             <div class="card-body">
                                               <form method="post" action="#" enctype="multipart/form-data">
                                                 <img class="card-img-top img-fluid" id="Imagen" src="#" aria-label="CardImg">
                                               </form>
                                             </div>
-                                            <div class="card-footer text-center">
-                                              <input type="button" class="btn btn-primary btn-block upload" value="Subir" id="SubirImagen" disabled>
+                                            <div class="card-footer bg-gradient-info">
+
                                             </div>
                                         </div>                                  
                                         </form>
