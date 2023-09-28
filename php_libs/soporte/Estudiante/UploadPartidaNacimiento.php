@@ -5,6 +5,7 @@
     include($path_root."/registro_academico/includes/mainFunctions_conexion.php");
 // URL PARA GUARDAR LAS IMAGENES.
     $url_ = "/registro_academico/img/Pn/";
+    $SistemaSiscarad = "C:/wamp64/www/siscarad/public/img/Pn/";
     $url_respaldo_pn = "d:/registro_academico/img/Pn/";
     $random = rand();
 // Variables
@@ -53,12 +54,31 @@ if (is_array($_FILES) && count($_FILES) > 0) {
                         mkdir ($path_root.$url_.$codigo_institucion."/");
                         chmod($path_root.$url_.$codigo_institucion."/",07777);
                 }
+                //  VERIFICAR SI EXISTE EL DIRECTORIO POR EL ID PERSONAL. SISCARAD
+                if(!file_exists($SistemaSiscarad.$codigo_institucion)){
+                    // Crear el Directorio Principal Archvos...
+                        mkdir($SistemaSiscarad.$codigo_institucion."/");
+                        chmod($SistemaSiscarad.$codigo_institucion."/",07777);
+                }
+                //  VERIFICAR SI EXISTE EL DIRECTORIO POR EL ID PERSONAL. UNIDAD DE RESPALDO D:
+                if(!file_exists($url_respaldo_fotos.$codigo_institucion)){
+                    // Crear el Directorio Principal Archvos...
+                        mkdir($url_respaldo_fotos.$codigo_institucion."/");
+                        chmod($url_respaldo_fotos.$codigo_institucion."/",07777);
+                }
                 // carpeta local c
                     rename($path_root.$url_.$_FILES['file']['name'],$path_root.$url_.$codigo_institucion."/".$nombreArchivo);
+                // UTILIZACIÓN DE LAS HERRAMIENTAS GD CON IMAGE.
+                    //  Abrir foto original
+                    if($_FILES["file"]["type"] == "image/jpeg"){
+                        $original = imagecreatefromjpeg($path_root.$url_.$codigo_institucion."/".$nombreArchivo);
+                    }else if($_FILES["file"]["type"] == "image/png"){
+                        $original = imagecreatefrompng($path_root.$url_.$codigo_institucion."/".$nombreArchivo);
+                    }
                 // respaldo d
                     copy($path_root.$url_.$codigo_institucion."/".$nombreArchivo,$url_respaldo_pn.$codigo_institucion."/".$nombreArchivo);
-                // copar el archivo al C.
-                    //copy($url_respaldo_pn.$codigo_institucion."/".$nombreArchivo,$path_root.$url_.$codigo_institucion."/".$nombreArchivo);
+                // copar el archivo al SISCARAD.
+                    copy($path_root.$url_.$codigo_institucion."/".$nombreArchivo,$SistemaSiscarad.$codigo_institucion."/".$nombreArchivo);
             // Guardar el nombre de la imagen. en la tabla.            
             // Armar query. para actualizar el nombre del archivo de la ruta foto.
                 $query = "UPDATE alumno SET ruta_pn = '".$nombreArchivo."' WHERE id_alumno = ". $Id_;

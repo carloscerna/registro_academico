@@ -24,6 +24,11 @@ $(document).ready(function(){
 		{
 			$("#CargarArchivoFoto").attr("style", "display:none");
 		}
+		var display_3 =  $("#CargarArchivoFotoPN").css("display");
+		if(display_3!="none")
+		{
+			$("#CargarArchivoFotoPN").attr("style", "display:none");
+		}
 });
 $(function(){ // INICIO DEL FUNCTION.
 	// Escribir la fecha actual.
@@ -63,6 +68,9 @@ $(function(){ // INICIO DEL FUNCTION.
 				//
 				$("#CargarArchivoFoto").css("display","block");
 				$("#fileup").attr("disabled",false);		// Botón Subir Imagen Portafolio
+				//
+				$("#CargarArchivoFotoPN").css("display","block");
+				$("#fileupPN").attr("disabled",false);		// Botón Subir Imagen Portafolio
 				listar();
 				VerPortafolio();	
 			}
@@ -79,8 +87,10 @@ $(function(){ // INICIO DEL FUNCTION.
 				$("#goImprimirPortada").prop("disabled","true");
 				//
 				$("#CargarArchivoFoto").css("display","none");
-				//
 				$("#fileup").attr("disabled",true);		// Botón Subir Imagen Portafolio
+				//
+				$("#CargarArchivoFotoPN").css("display","none");
+				$("#fileupPN").attr("disabled",true);		// Botón Subir Imagen Portafolio
 			}				
 		});
 	//////////////////////////////////////////////////////////////////////////////////
@@ -92,9 +102,11 @@ $(function(){ // INICIO DEL FUNCTION.
 		// FOTO DEL ALUMNO.
 			$(".card-img-top").attr("src", "../registro_academico/img/avatar_masculino.png");		
 		// IMAGEN PARTIDA DE NACIMIENTO.		
-			$(".card-img-top-2").attr("src", "../registro_academico/img/NoDisponible.jpg");
+			$(".card-img-top-PN").attr("src", "../registro_academico/img/NoDisponible.jpg");
 		//
 			$("#CargarArchivoFoto").css("display","none");
+		//
+			$("#CargarArchivoFotoPN").css("display","none");
 	};
 	//////////////////////////////////////////////////////////////////////////////////
 	/* INICIO DE LA FUNCION PARA MOSTRAR LOS DATOS DEL ALUMNO */
@@ -120,9 +132,9 @@ $(function(){ // INICIO DEL FUNCTION.
 					// IMAGEN PARTIDA DE NACIMIENTO.
 						if(data[0].url_pn == "foto_no_disponible.jpg")
 						{
-							$(".card-img-top-2").attr("src", "../registro_academico/img/NoDisponible.jpg");	
+							$(".card-img-top-PN").attr("src", "../registro_academico/img/NoDisponible.jpg");	
 						}else{
-							$(".card-img-top-2").attr("src", "../registro_academico/img/Pn/" + data[0].url_pn);	
+							$(".card-img-top-PN").attr("src", "../registro_academico/img/Pn/" + data[0].url_pn);	
 						}				
 					// datos para el card TITLE - INFORMACIÓN GENERAL
 						$('#txtcodigo').val(id_);
@@ -721,13 +733,13 @@ $(function(){ // INICIO DEL FUNCTION.
 	////////////////////////////////////////////////////
 	////// Imprimir Partida de Nacimiento.
 	////////////////////////////////////////////////////
-		$("#Imprimir").click(function() {     
+		$("#goImprimirPN").click(function() {     
 		// construir la variable con el url.
-		var nombre_archivo = $("label[for='Pn']").text();
-		var id_alumno = $("#id_user").val();
-		varenviar = "/registro_academico/php_libs/reportes/imprimir_partida_nacimiento.php?nombre_archivo="+nombre_archivo+"&codigo_alumno="+id_alumno;
+			var nombre_archivo = $("label[for='Pn']").text();
+			var id_alumno = $("#id_user").val();
+			varenviar = "/registro_academico/php_libs/reportes/imprimir_partida_nacimiento.php?nombre_archivo="+nombre_archivo+"&codigo_alumno="+id_alumno;
 		// Ejecutar la función
-		AbrirVentana2(varenviar);
+			AbrirVentana2(varenviar);
 		});
 	////////////////////////////////////////////////////
 	////// SUBMIT para el botón buscar otro estudiante.

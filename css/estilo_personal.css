@@ -83,8 +83,26 @@ h4>strong{
     display:none;
     color:red;
 }
+.imguploadPN.ok{
+    display:none;
+    color:green;
+}
+.imguploadPN.stop{
+    display:none;
+    color:red;
+}
 /*this sets the actual file input to overlay our button*/ 
 #fileup{
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    top: 0;
+    height: 100%;
+    width: 100%;
+    opacity: 0;
+}
+#fileupPN{
     position: absolute;
     left: 0;
     right: 0;

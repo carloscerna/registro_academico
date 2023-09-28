@@ -316,7 +316,7 @@ function cuadro($data)
                     $pdf->Cell($w[2],$w2[0],number_format(trim($row['nota_final']),1),1,0,'C',$fill);
                     $pdf->SetFont('Arial','',7); // I : Italica; U: Normal;
                     
-                    if ($i >= 2 && $i<=5)
+                    if ($i >= 2 && $i<=6)
                     {
                         //acumular el total de puntos.
                         $total_puntos = $total_puntos + $row['total_puntos_media'];

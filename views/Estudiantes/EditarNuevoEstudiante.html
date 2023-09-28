@@ -111,33 +111,56 @@ $(document).ready(function() {
 		return false;
     }
 });
-});
 /* SCRIPT PARA SUBIR LA IMAGEN DE LA PARTIDA DE NACIMIENTO.*/
-/*
-$(document).ready(function() {
-    $(".upload-Pn").on('click', function() {
-        var formData = new FormData();
-        var files = $('#imagenPn')[0].files[0];
-        formData.append('file',files);
-        $.ajax({
-            //url: 'php_libs/soporte/upload.php',
-            url: 'php_libs/soporte/Estudiante/UploadPartidaNacimiento.php',
-            type: 'post',
-            data: formData,
-            contentType: false,
-            processData: false,
-            success: function(response) {
-                if (response != 0) {
-                    $('.card-img-top-2').removeAttr('src');
-                    $(".card-img-top-2").attr("src", response);
-                } else {
-                  alert('Formato de imagen incorrecto.');
-                }
-            }
-        });
-		return false;
-    });
-});*/
+$('#fileupPN').change(function(){
+  //here we take the file extension and set an array of valid extensions
+      var res=$('#fileupPN').val();
+      var arr = res.split("\\");
+      var filename=arr.slice(-1)[0];
+      console.log(this.files);
+  
+      filextension=filename.split(".");
+      filext="."+filextension.slice(-1)[0];
+      valid=[".jpg",".png",".jpeg",".bmp"];
+  //if file is not valid we show the error icon, the red alert, and hide the submit button
+      if (valid.indexOf(filext.toLowerCase())==-1){
+          $( ".imguploadPN.ok" ).hide("slow");
+          $( ".imguploadPN.stop" ).show("slow");
+        
+          $('#namefilePN').css({"color":"red","font-weight":700});
+          $('#namefilePN').html("Archivo Invalido: " + filename);
+      }else{
+          //if file is valid we show the green alert and show the valid submit
+          $( ".imguploadPN.stop" ).hide("slow");
+          $( ".imguploadPN.ok" ).show("slow");
+        
+          $('#namefilePN').css({"color":"green","font-weight":700});
+          $('#namefilePN').html("Archivo: " + filename);
+          //
+          var formData = new FormData();
+          var files = $('#fileupPN')[0].files[0];
+          formData.append('file',files);
+          $.ajax({
+              cache: false,
+              url: 'php_libs/soporte/Estudiante/UploadPartidaNacimiento.php',
+              type: 'post',
+              data: formData,
+              contentType: false,
+              processData: false,
+              success: function(response) {
+                  if (response != 0) {
+                      $(".card-img-top-PN").attr("src", response);
+                      $('#namefilePN').html("Imagen Cargada!");
+                      toastr["success"]('Imagen Cargada...', "Sistema");
+                  } else {
+                    toastr["error"]('Formato de imagen incorrecto.', "Sistema");
+                  }
+              }
+          });
+      return false;
+      }
+  });
+});
 </script>
 <script language="javascript">
 	// VALIDAR LOS ENTER EN EL FORMULARIO.
@@ -197,8 +220,11 @@ $(document).ready(function() {
                     <button type="button" id="goBuscar" aria-label="goBuscar" class="btn btn-secondary mb-0 mx-sm-1" tabindex="-1" data-toggle="tooltip" data-placement="bottom" title="Buscar">
                       <i class="fal fa-search"></i>
                     </button>
-                    <button type="button" id="goImprimirPortada" aria-label="goImprimirPortada" class="btn btn-info mb-0 mx-sm-1" tabindex="-1" data-toggle="tooltip" data-placement="bottom" title="Imprimir Portada">
-                      <i class="fal fa-file-alt"></i>
+                    <button type="button" id="goImprimirPortada" aria-label="goImprimirPortada" class="btn btn-light mb-0 mx-sm-1" tabindex="-1" data-toggle="tooltip" data-placement="bottom" title="Imprimir Portada">
+                      <i class="fad fa-print"></i>
+                    </button>
+                    <button type="button" id="goImprimirPN" aria-label="goImprimirPN" class="btn btn-light mb-0 mx-sm-1" tabindex="-1" data-toggle="tooltip" data-placement="bottom" title="Imprimir PN">
+                      <i class="fad fa-print" style="--fa-primary-color: #42809f; --fa-secondary-color: #42809f;"></i>
                     </button>
                   </div>
                 </div>
@@ -387,28 +413,31 @@ $(document).ready(function() {
                             </div>
                             <div class="col-md-5">
                               <!-- Your second column here  -->
-                                <form method="post" action="#" enctype="multipart/form-data">
-                                    <div class="card">
-                                    <button type="button" id="Imprimir" class="btn btn-success">Imprimir</button>
-                                      <img class="card-img-top-2 img-fluid" src="#" alt="Partida de Nacimiento">
-                                      <div class="card-body">
-                                        <h4 class="card-title"><label for="Pn"></label></h4>
-                                        <p class="card-text"></p>
-                                        <div class="form-group">
-                                        <label for="exampleInputFile">Imagen</label>
-                                        <div class="input-group">
-                                          <div class="custom-file">
-                                            <input type="file" class="custom-file-input" id="imagenPn" name="imagenPn">
-                                            <label class="custom-file-label" for="imagenPn">Seleccionar Archivo...</label>
-                                          </div>
-                                          <div class="input-group-append">
-                                            <input type="button" class="btn btn-primary upload-Pn" value="Subir">
-                                          </div>
-                                        </div>
-                                        </div>
+                              <form method="post" action="#" enctype="multipart/form-data">
+                                <div class="card">
+                                  <div class="card-header bg-gradient-info text-black">
+                                    <div class="d-flex flex-row w-100 justify-content-between">
+                                      <div id="CargarArchivoFotoPN">
+                                        <label for="CargarArchivoFotoPN" class="text-white">Cargar: <i class="fad fa-upload fa-lg"></i>
+                                          <input type="file" value="" name="fileupPN" id="fileupPN" disabled aria-label="FileUpPN">
+                                        </label>
+                                      </div>
+                                      <div>
+                                        <label class="text-center text-white" id="namefilePN"></label>
+                                        <span class="imguploadPN ok text-white" ><i class="fa fa-check"></i></span>
+                                        <span class="imguploadPN stop text-white"><i class="fa fa-times"></i></span>
                                       </div>
                                     </div>
-                                </form>
+                                </div>
+                                  <div class="card-body">
+                                    <form method="post" action="#" enctype="multipart/form-data">
+                                      <img class="card-img-top-PN img-fluid" id="ImagenPN" src="#" aria-label="CardImgPN">
+                                    </form>
+                                  </div>
+                                  <div class="card-footer bg-gradient-info">
+                                  </div>
+                                </div>
+                              </form>
                             </div>
                           </div><!-- FIN MODAL BODY PARTIDA DE NACIMIENTO -->                      
                         <!-- MODAL BODY ROW PARTIDA DE NACIMIENTO -->
