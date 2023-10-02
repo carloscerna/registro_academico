@@ -58,7 +58,7 @@ jQuery(function($){
       $("#telefono_movil").mask("9999-9999");
       $("#telefono_fax").mask("9999-9999");
 
-      $("#txtNip").mask("999999999");
+      //$("#txtNip").mask("999999999");
       $("#txtDui").mask("99999999-9");
       $("#txtNit").mask("9999-999999-999-9");
   }); 
@@ -165,26 +165,29 @@ $(document).ready(function() {
                   <div class="card-body">
                   <!-- Nav tabs -->
                   <div class="container py-2">
-                    <ul class="nav nav-tabs border-0" id="myTab" role="list">
-                      <li class="nav-item">
-                          <a class="nav-link active border border-primary border-bottom-0" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Empleado</a>
-                      </li>
-                      <li class="nav-time">
-                          <a class="nav-link border border-secondary border-bottom-0" id="empresa-tab" data-toggle="tab" href="#empresa" role="tab" aria-controls="empresa" aria-selected="true">En la Escuela</a>
-                      </li>                
-                      <li class="nav-time">
-                        <a class="nav-link border border-secondary border-bottom-0" id="docuemntos-tab" data-toggle="tab" href="#documentos" role="tab" aria-controls="dlcumentos" aria-selected="true">Documentos</a>
-                      </li>                
-                      <li class="nav-time">
-                        <a class="nav-link border border-secondary border-bottom-0" id="historial-tab" data-toggle="tab" href="#historial" role="tab" aria-controls="historial" aria-selected="true">Historial</a>
-                      </li>                
-                      <li class="nav-time">
-                        <a class="nav-link border border-secondary border-bottom-0" id="digitalizacion-tab" data-toggle="tab" href="#digitalizacion" role="tab" aria-controls="digitalizacion" aria-selected="true">Portafolio</a>
-                      </li>
-                      <li class="nav-time">
-                        <a class="nav-link border border-secondary border-bottom-0" id="contratacion-tab" data-toggle="tab" href="#contratacion" role="tab" aria-controls="Contratacion" aria-selected="true">Contratación</a>
-                      </li>                
-                    </ul>
+                    <nav id="NavContratacion">
+                      <ul class="nav nav-tabs border-0" id="myTab" role="list">
+                        <li class="nav-item">
+                            <a class="nav-link active border border-primary border-bottom-0" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Empleado</a>
+                        </li>
+                        <li class="nav-time">
+                            <a class="nav-link border border-secondary border-bottom-0" id="empresa-tab" data-toggle="tab" href="#empresa" role="tab" aria-controls="empresa" aria-selected="true">En la Escuela</a>
+                        </li>                
+                        <li class="nav-time">
+                          <a class="nav-link border border-secondary border-bottom-0" id="docuemntos-tab" data-toggle="tab" href="#documentos" role="tab" aria-controls="dlcumentos" aria-selected="true">Documentos</a>
+                        </li>                
+                        <li class="nav-time">
+                          <a class="nav-link border border-secondary border-bottom-0" id="historial-tab" data-toggle="tab" href="#historial" role="tab" aria-controls="historial" aria-selected="true">Historial</a>
+                        </li>                
+                        <li class="nav-time">
+                          <a class="nav-link border border-secondary border-bottom-0" id="digitalizacion-tab" data-toggle="tab" href="#digitalizacion" role="tab" aria-controls="digitalizacion" aria-selected="true">Portafolio</a>
+                        </li>
+                        <li class="nav-time">
+                          <a class="nav-link border border-secondary border-bottom-0" id="contratacion-tab" data-toggle="tab" href="#contratacion" role="tab" aria-controls="Contratacion" aria-selected="true">Contratación</a>
+                        </li>                
+                      </ul>
+                    </nav>
+                    
                     <!-- Tab panes -->
                     <div class="tab-content">
                       <!-- Tab INFORMACION DEL EMPLEADO -->
@@ -709,7 +712,7 @@ $(document).ready(function() {
                               <div class="form-group">
                                 {# TEXT SALARIO #}
                                 <label for="SalarioContratacion">Salario</label>
-                                <input class="form-control" type="number" name="SalarioContratacion" id="SalarioContratacion" aria-label="SalarioContratacion">
+                                <input class="form-control" type="number" name="SalarioContratacion" id="SalarioContratacion" aria-label="SalarioContratacion" value="0">
                               </div>
                             </div>
                           </div> <!-- ROW-->
@@ -730,6 +733,7 @@ $(document).ready(function() {
                                     <th>id</th>
                                     <th>Rubro</th>
                                     <th>Tipo</th>
+                                    <th>Turno</th>
                                     <th>Salario</th>
                                     <th></th>
                                   </tr>
@@ -753,6 +757,8 @@ $(document).ready(function() {
     </form> <!-- fin del form -->            
     </section>
 </div> <!-- /.content-Wrapper, Contains page content. -->
+<!-- plantilla que contiene el . -->
+{% include 'Personal/VentanaContratacion.html' %}  
 {% endblock %}
 
 {% block loginUser %}

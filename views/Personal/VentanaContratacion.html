@@ -1,0 +1,87 @@
+<!-- VENTANA MODAL - MODIFICAR LA FECHA DE LA FACTURA -->
+<div class="row mt-3">
+<div class="col">
+<div class="modal fade" data-backdrop="static" data-keyboard="false" id="VentanaContratacion" tabindex="-1" role="dialog" aria-labelledby="VentanaContratacion" aria-hidden="true">
+<div class="modal-dialog modal-md">
+	<div class="modal-content">
+		<div class="modal-header bg-gradient-cyan p-1">
+			<h6 class="modal-title" id="">
+        <span class="fad fa-layer-group"></span>
+          <label for="LblTituloContratacion">Contratacion | </label>
+      </h6>
+			<button class="close" type = "button" data-dismiss="modal" aria-label="Cerrar" id="VentanaContratacion1">
+				<span aria-hidden="true">&times;</span>
+			</button>
+		</div>
+		<!-- FORMULARIO PRINCIPAL. -->
+		<form action="" method="post" name="formVentanaContratacion" id="formVentanaContratacion" role="form" enctype="multipart/form-data">
+      <!-- SECCION DEL HIDDEN INPUT-->
+      <input type="hidden" id="accion_contratacion" name="accion_contratacion" value="GuardarContratacion">
+
+			<div class="modal-body">
+				<div class="container">
+					<div class="row">
+						<div class="col-12 col-md-12 col-lg-12 col-xl-12">
+                            <fieldset id="FieldsetContratacion">
+                                <legend> Contratación | Personal</legend>
+                                    <div class="row">
+                                        <div class="col col-md-12 col-lg-12 col-xl-12">
+                                            <div class="input-group">
+                                                <span class="input-group-text text-info" id="TextoNombreContratacion" name="TextoNombreContratacion">Nombre</span>
+                                            </div>
+                                            <div class="input-group">
+                                            <span class="input-group-text text-info" id="TextoCargoContratacion" name="TextoCargoContratacion">Cargo</span>
+                                        </div>
+                                        </div>
+                                    </div>
+                            </fieldset>
+                            <fieldset id="FieldsetContratacion1">
+                                <legend> Contratación | </legend>
+                                    <div class="row">
+                                        <div class="col">
+                                            <div class="input-group">
+                                                <span class="input-group-text">Fecha</span>
+                                                <input type = "date" class="form-control" name="FechaContratacion" id="FechaContratacion" aria-label="SalarioContratacion">
+                                            </div>
+                                            <div class="input-group">
+                                                <span class="input-group-text">Rubro</span>
+                                                <select class="custom-select" name="lstRubro" id="lstRubro"></select>
+                                            </div>
+                                            <div class="input-group">
+                                                <span class="input-group-text">Tipo Contratación</span>
+                                                <select class="custom-select" name="lstContratacion" id="lstContratacion"></select>
+                                            </div>
+                                            <div class="input-group">
+                                                <span class="input-group-text">Turno</span>
+                                                <select class="custom-select" name="lstTurno" id="lstTurno"></select>
+                                            </div>
+                                            <div class="input-group">
+                                                <span class="input-group-text">Horario</span>
+                                                <select class="custom-select" name="lstHorario" id="lstHorario"></select>
+                                            </div>
+                                            <div class="input-group">
+                                                <span class="input-group-text">Descuento</span>
+                                                <select class="custom-select" name="lstDescuento" id="lstDescuento"></select>
+                                            </div>
+                                            <div class="input-group">
+                                                <span class="input-group-text">Salario</span>
+                                                <input type="number" class="form-control" name="SalarioContratacion" id="SalarioContratacion" aria-label="SalarioContratacion">
+                                            </div>
+                                        </div>
+                                    </div>
+                            </fieldset>
+                        </div>
+                    </div> <!-- ROW -->
+                </div> <!-- CONTAINER -->
+            </div> <!-- MODAL BODY -->
+            <!-- footer modal -->
+            <div class="modal-footer bg-gradient-cyan p-0">
+                <button class="btn btn-default" data-dismiss="modal" type="button">Cerrar</button>
+                <input class="btn btn-primary" type="button" value="Guardar" name="goActualizarContratacion" id="goActualizarContratacion">
+            </div>
+        </form> <!-- from principal -->
+	</div>
+</div>
+</div>
+</div>			
+</div>

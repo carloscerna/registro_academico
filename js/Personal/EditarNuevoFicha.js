@@ -51,6 +51,7 @@ $(function(){ // INICIO DEL FUNCTION.
                 $('#txtfechanacimiento').val(today);
                 $('#txtFechaIngreso').val(today);
                 $('#txtFechaRetiro').val(today);
+                $('#FechaContratacion').val(today);
 ///////////////////////////////////////////////////////////////////////////////
 // FUNCION QUE CARGA LA TABLA COMPLETA CON LOS REGISTROS
 ///////////////////////////////////////////////////////////////////////////////
