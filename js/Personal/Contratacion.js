@@ -1,7 +1,6 @@
 // id de user global
 var idUser_ok = 0;
 var accion_contratacion = 'noAccion';
-var accion = "";
 var Id_Editar_Eliminar = 0;
 var Accion_Editar_Eliminar = "noAccion";
 var codigo_annlectivo = "";
@@ -174,13 +173,13 @@ $(function(){
                                 $("#TextoNombreContratacion").text("Nombre: " + data[0].nombre_personal);
                                 $("#TextoCargoContratacion").text("Cargo: " + data[0].nombre_cargo);
                                 //
-                                $("#FechaContratacion").val(data[0].fecha)
+                                $("#formVentanaContratacion input[name=FechaContratacion]").val(data[0].fecha)
                                 listar_Rubro(data[0].codigo_rubro);
                                 listar_Contratacion(data[0].codigo_tipo_contratacion);
                                 listar_Turno(data[0].codigo_turno);
                                 listar_Horario(data[0].codigo_horario);
                                 listar_Descuento(data[0].codigo_tipo_descuento);
-                                $("#SalarioContratacion").val(data[0].salario)
+                                $("#formVentanaContratacion input[name=SalarioContratacion]").val(data[0].salario)
                                 //
                                 // Abrir ventana modal.
                                 $('#VentanaContratacion').modal("show");
@@ -335,7 +334,7 @@ $(function(){
                         type: "POST",
                         dataType: "json",
                         url:"php_libs/soporte/Personal/Contratacion.php",
-                        data:str + "&accion=" + accion + "&id=" + Math.random() + "&id_=" + Id_Editar_Eliminar + "&codigo_personal=" + codigo_personal,
+                        data:str + "&accion=" + accion_contratacion + "&id=" + Math.random() + "&id_=" + Id_Editar_Eliminar + "&codigo_personal=" + codigo_personal,
                         success: function(response){
                             // Validar mensaje de error
                             if(response.respuesta == false){
@@ -483,7 +482,7 @@ function CondicionesSelect(){
 // FUNCION LISTAR TABLA catalogos...
 ////////////////////////////////////////////////////////////
 function listar_Contratacion(Codigo){
-    var miselect=$("#formVentanaContratacion select[name=lstContratacion]");
+    var miselect=$("#formVentanaContratacion select[name=lstTipoContratacion]");
     /* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
     miselect.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
     

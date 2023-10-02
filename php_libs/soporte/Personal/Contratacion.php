@@ -207,13 +207,14 @@ function BuscarPersonalSalario(){
 			$nombre_turno = trim($listadoPersonal['nombre_turno']);
 			$nombre_contratacion = trim($listadoPersonal['nombre_contratacion']);
 			$salario = trim($listadoPersonal['salario']);
-			$fecha = trim($listadoPersonal['fecha']);
+			$fecha = cambiaf_a_normal(trim($listadoPersonal['fecha']));
 			
 			// pasar a la matriz.
 			$contenidoOK .= "<tr>
 			<td><input type=checkbox class=case name=chk$id_ id=chk$id_>
 			<td>$num
 			<td>$id_
+			<td>$fecha
 			<td>$nombre_rubro
 			<td>$nombre_contratacion
 			<td>$nombre_turno
