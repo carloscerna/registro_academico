@@ -1,0 +1,281 @@
+{# Heredando la plantilla principal #}
+
+{% extends 'default_layout.html' %}
+
+{% block extraCSS %}
+  <link href="css/styles-loading.css" rel="stylesheet">
+  <link href="js/plugins/select2/css/select2.min.css" rel="stylesheet" /> 
+  <link rel="stylesheet" href="js/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
+  <link rel="stylesheet" href="js/plugins/timepicker/tpicker.css">
+  {% endblock %}
+
+{% block javascripts %}
+<script type="text/JavaScript" src="js/plugins/select2/js/select2.full.js"></script>
+<script type="text/JavaScript" src="js/Personal/LicenciasPermisos.js"></script>
+<script type="text/javascript" src="js/plugins/timepicker/tpicker.js"></script>
+<!-- DEFINIR PARA SERVICIO EDUCATIVO CARGAR DATOS-->
+<script type="text/JavaScript">
+	// Carga la INformación de Tabla Año Lectivo.
+	$(document).ready(function()
+	{
+    // SELECT 2
+    $("#lstPersonal").select2({
+        theme: "classic"
+      });
+    // DEFINIR O INICIAR DATA TOOGLE.
+        $('[data-toggle="tooltip"]').tooltip();
+    // DEFINIR O INICIAR LOADINGSCREEN
+        var screen = $('#loading-screen');
+            configureLoadingScreen(screen);
+    // SELECT PERSONAL
+        var miselect=$("#lstPersonal");
+			/* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
+			miselect.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
+            // AJAX
+			$.post("includes/cargar_nombre_personal.php",
+				function(data) {
+					miselect.empty();
+					miselect.append("<option value='00'>Seleccionar...</option>");
+					for (var i=0; i<data.length; i++) {
+						miselect.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');
+					}
+			}, "json");
+});
+</script>
+{% endblock %}
+
+{% block contenidos %}
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper fondoBody">
+  <!-- Main content -->
+  <section class="content">
+    <div class="container-fluid">
+      <div class="tab-content"> <!-- VALIDATE DE TODO EL DIV PARA LOS DIFERENTES INPUT'S -->
+        <div class="row">
+          <div class="col-12">
+            <!-- INICIO DEL CARD-->
+              <div class="card">
+                <div class="card-header bg-gradient-navy">
+                  <h3 class="card-title"><i class="fad fa-file-alt"></i>Licencias y Permisos</h3>
+                </div>
+                    <!-- /.card-header -->
+                    <div class="card-body m-1 p-1">
+                      <!-- Nav tabs ASIGNATURA, MODALIDAD, GRADO, SECCION Y AÑO LECTIVO-->
+                      <nav id="NavLicenciasPermisos">
+                        <ul class="nav nav-pills mb-1 mt-1" id="pills-tab" role="list">
+                          <li class="nav-item">
+                            <a class="nav-link active" id="pills-licencias-permisos-tab" data-toggle="pill" href="#pills-licencias-permisos" role="tab" aria-controls="pills-licencias-permisos" aria-selected="true">Licencias y Permisos</a>
+                          </li>
+                          <li class="nav-item">
+                            <a class="nav-link" id="pills-reportes-tab" data-toggle="pill" href="#pills-reportes" role="tab" aria-controls="pills-reportes" aria-selected="false">Reportes</a>
+                          </li>
+                        </ul>
+                      </nav>
+                      {# CONTENEDOR PRINCIPAL #}
+                      <div class="tab-content" id="pills-tabContent">
+                           <!-- NAV TAB LICENCIAS Y PERMISOS. *INICIO*-->
+                          <div class="tab-pane fade show active" id="pills-licencias-permisos" role="tabpanel" aria-labelledby="pills-licencias-permisos-tab">
+                                <!-- botoneeras y alertas-->
+                                <div class="bg-secondary text-white">
+                                    <button type="button" id="goBuscarHorarios" aria-label="goBuscarLicenciasPermisos" class="btn btn-info" tabindex="-1" data-toggle="tooltip" data-placement="top" title="Buscar">
+                                      <i class="fal fa-search"></i>
+                                    </button>
+                                    <button type="button" id="goNuevoHorarios" aria-label="goNuevoLicenciasPermisos" class="btn btn-primary" tabindex="-1" data-toggle="tooltip" data-placement="top" title="Nuevo">
+                                      <i class="far fa-layer-plus"></i>
+                                    </button>                                 
+                                    {# TEXTO DE MENSAJE CON ALERT. #}
+                                    <div class="alert alert-danger p-1 m-1" role="alert" id="AlertLicenciasPermisos">
+                                      <span id="TextoAlertLicenciasPermisos">...</span>
+                                    </div>
+                                </div>
+
+                              <!-- NAV TAB HOARIOS PARA CADA NIVEL *INICIO*-->
+                              <form class="form" id="FormLicenciasPermisos" name="FormLicenciasPermisos">
+                                <div class="row">
+                                        <div class="col-md-6 col-lg-6 col-12">
+                                            <div class="form-group">
+                                              <label for="lstPersonal">Personal</label>
+                                              <select class="form-control mx-sm-3" id="lstPersonal" name="lstPersonal"></select>
+                                            </div>
+                                          </div>
+                                        <div class="col-md-6 col-lg-6 col-12">
+
+                                        </div>
+                                </div>
+                                <div class="row">
+                                        <div class="col-md-4 col-lg-4 col">
+                                            <div class="form-group">
+                                                <label for="lstTipoContratacion">Tipo de Contratación</label>
+                                                <select multiple class="form-control mx-sm-3" id="lstTipoContratacion" name="lstTipoContratacion"></select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 col-lg-4 col">
+                                            <div class="form-group">
+                                                <label for="lstTipoLicencia">Tipo de Licencia</label>
+                                                <select multiple class="form-control mx-sm-3" id="lstTipoLicencia" name="lstTipoLicencia"></select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 col-lg-4 col">
+                                            
+                                                <div class="form-group">
+                                                    <label for="FechaTipoLicencia">Fecha</label>
+                                                    <input class="form-control" type="date" name="FechaTipoLicencia" id="FechaTipoLicencia">
+                                                </div>
+                                            <div class="form-inline">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" name="CheckDias" id="CheckDias" aria-label="CheckDias">
+                                                    <label class="form-check-label" for="CheckDias">Días Incapacidad</label>
+                                                </div>
+                                                <div class="form-group">
+                                                    <input class="form-control" type="number" name="DiasLicenciaPermiso" id="DiasLicenciaPermiso" aria-label="DiasLicenciaPermiso" disabled>
+                                                    <label for="DiasLicenciaPermiso"></label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-4 col-lg-4 col">
+                                        <div class="form-inline">
+                                            <label for="Timepkr">Text</label>
+                                            <input id="Timepkr" class="form-control" name="Timepkr" placeholder="hh:mm" style="width:100px;float:left;">
+                                            <button type="button" class="btn btn-primary" onclick="showpickers('timepkr',12)" title="Time" tyle="width:40px;float:left;"><i class="fad fa-clock"></i></button>
+                                        </div>
+                                        <div class="timepicker"></div>
+                                    </div>
+                                </div>
+                              </form>                                  
+                                <!-- TABLA CON LOS DATOS DEL SERVICIO EDUCATIVO. -->  
+                                    <div class="modal-body">
+                                      <div class="row bg-cyan">
+                                        <div class="col">
+                                          <label for="">Detalle - Tipo de Licencia</label>
+                                        </div>
+                                      </div>
+                                        <div class="col">
+                                          <table id="listadoContenidoLicenciasPermiso" class="table table-striped table-bordered table-hover table-condensed">
+                                            <thead>
+                                              <tr>
+                                                <th><input type="checkbox" name="checkBoxAllLicenciasPermiso" id="checkBoxAllLicenciasPermiso" data-toggle="tooltip" data-placement="top" title="Marcar/Desmarcar Todo">
+                                                  <button type="button" id="goEliminarLicenciasPermiso" aria-label="goEliminarLicenciasPermiso" class="btn btn-link" tabindex="-1" data-toggle="tooltip" data-placement="top" title="Eliminar Seleccionados...">
+                                                    <i class="fad fa-trash"></i>
+                                                  </button>
+                                                </th>
+                                                <th>#</th>
+                                                <th>id</th>
+                                                <th>Fecha</th>
+                                                <th>Hora Inicio</th>
+                                                <th>Hora Fin</th>
+                                                <th>Día</th>
+                                                <th>Horas</th>
+                                                <th>Minutos</th>
+                                                <th></th>
+                                              </tr>
+                                            </thead>
+                                              <tbody id="listaContenidoLicenciasPermiso">
+                                            
+                                              </tbody>                            
+                                            <tfoot>
+                                            </tfoot>
+                                        </table>
+                                      </div>
+                                    </div>
+                                <!-- TABLA CON LOS DATOS DEL organizacion LicenciasPermiso. --> 
+                          </div>
+                          <!-- NAV TAB LICENCIAS Y PERMISOS DE NIVELES SEGUN AÑO LECTIVO *INICIO*-->
+                          <div class="tab-pane fade" id="pills-reportes" role="tabpanel" aria-labelledby="pills-reportes-tab">
+                            <!-- botoneeras y alertas-->
+                            <div class="bg-secondary text-white">
+                              <div class="form-group">
+                                <button type="button" id="goBuscarModalidad" aria-label="goBuscarModalidad" class="btn btn-info" tabindex="-1" data-toggle="tooltip" data-placement="top" title="Buscar">
+                                  <i class="fal fa-search"></i>
+                                </button>
+                                <button type="button" id="goGuardarModalidad" aria-label="goGuardarModalidad" class="btn btn-primary" tabindex="-1" data-toggle="tooltip" data-placement="top" title="Guardar">
+                                  <i class="fal fa-save"></i>
+                                </button>                                 
+                              </div>
+                                <div class="alert alert-danger p-1 m-1" role="alert" id="AlertModalidad">
+                                  <span id="TextoAlertModalidad">...</span>
+                                </div>
+                            </div>
+                               <!-- NAV TAB FORM - ORGANIZACION. NIVELES *INICIO*-->
+                                <form class="form" id="FormModalidad" name="FormModalidad">
+                                  <div class="row">
+                                    <!-- PRIMER COL AÑO LECTIVO Y MODALIDAD-->
+                                      <div class="col-md-4 col-lg-4 col-12">
+                                        <div class="form-group">
+                                          {# SELECT DEL AÑO LECTIVO #}
+                                          <label for="lstAnnLectivoModalidad">Año Lectivo</label>
+                                          <select class="form-control" id="lstAnnLectivoModalidad" name="lstAnnLectivoModalidad"></select>
+                                        </div>
+                                      </div>
+                                      <!-- SEGUNDO COL SERVICIIO EDUCATIVO MODALIDAD-->
+                                      <div class="col-md-4 col-lg-4 col-12">
+                                        <div class="form-group">
+                                          {# SELECT DEL NIVEL (MODALIDAD) #}
+                                          <label for="lstModalidad">Nivel</label>
+                                          <select class="form-control" id="lstModalidad" name="lstModalidad"></select>
+                                        </div>
+                                      </div>
+                                      <!-- SEGUNDO COL SERVICIIO EDUCATIVO -->
+                                      <div class="col-md-4 col-lg-4 col-12">
+                                        <div class="form-group">
+                                          {#SELECT DEL SERVICIO EDUCATIVO (COMPONENTES DE ESTUDIO) #}
+                                          <label for="lstModalidadServicioEducativo">Servicio Educativo</label>
+                                          <select class="form-control" id="lstModalidadServicioEducativo" name="lstModalidadServicioEducativo"></select>
+                                        </div>
+                                      </div>
+                                      
+                                  </div>
+                                </form>
+                              <!-- TABLA CON LOS DATOS DEL SERVICIO EDUCATIVO. -->  
+                              <div class="bg-info text-white">_Asignación Modalidad (Niveles) según Año Lectivo_</div>
+                                  <div class="modal-body">
+                                        <table id="listadoContenidoModalidad" class="table table-striped table-bordered table-hover table-condensed">
+                                          <thead>
+                                            <tr>
+                                              <th><input type="checkbox" name="checkBoxAllModalidad" id="checkBoxAllModalidad" data-toggle="tooltip" data-placement="top" title="Marcar/Desmarcar Todo">
+                                                <button type="button" id="goEliminarModalidad" aria-label="goEliminarModalidad" class="btn btn-link" tabindex="-1" data-toggle="tooltip" data-placement="top" title="Eliminar Seleccionados...">
+                                                  <i class="fad fa-trash"></i>
+                                                </button>
+                                              </th>
+                                              <th>#</th>
+                                              <th>id</th>
+                                              <th>Código</th>
+                                              <th>Descripción</th>
+                                              <th>Servicio Educativo</th>
+                                              <th></th>
+                                            </tr>
+                                          </thead>
+                                            <tbody id="listaContenidoModalidad"></tbody>                            
+                                          <tfoot>
+                                          </tfoot>
+                                      </table>
+                                  </div> <!-- TABLA CON LOS DATOS DEL Organización niveles. --> 
+                          </div> <!-- ***NAV TAB REPORTES FIN***-->
+                      </div>
+                    </div> <!-- CARD BODY-->
+                <div class="card-footer bg-gradient-navy"></div>
+              </div> <!-- /.card -->
+            <!-- FIN DEL CARD-->
+          </div><!-- /.col -->
+        </div> <!-- /.ROW -->
+      </div> <!-- /. tab-content-->
+    </div> <!-- /. CONTAINER FLUID-->
+  </section>
+  </div> <!-- CONTENT WRAPPER-->
+<!-- Loading Screen -->
+  {% include 'loading-screen.html' %}
+<!-- plantilla que contiene el . -->
+  {% include 'Personal/VentanaLicenciasPermisos.html' %}  
+
+<!-- FINAL DEL BLOQUE DE CONTENIDO.-->
+{% endblock %}  
+
+{% block menu %}
+<!-- plantilla que contiene el menú principal. -->
+		{% include 'layout-menu.html' %}
+{% endblock %}
+
+{% block loginUser %}
+<!--	{% include 'layout-login-user.html' %} -->
+{% endblock %}
