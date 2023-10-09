@@ -23,6 +23,41 @@
         $('[data-toggle="tooltip"]').tooltip();
       })
     </script>
+    <script>   
+      (function(){
+          function removeAccents ( data ) {
+              if ( data.normalize ) {
+                /*Utilice la API I18n si está disponible para dividir caracteres y acentos, luego elimine
+                los acentos al por mayor. Tenga en cuenta que utilizamos los datos originales, así como
+                el nuevo para permitir la búsqueda de cualquiera de las dos formas.*/
+                  return data +' '+ data
+                      .normalize('NFD')
+                      .replace(/[\u0300-\u036f]/g, '');
+              }
+            
+              return data;
+          }
+            
+          var searchType = jQuery.fn.DataTable.ext.type.search;
+            
+          searchType.string = function ( data ) {
+              return ! data ?
+                  '' :
+                  typeof data === 'string' ?
+                      removeAccents( data ) :
+                      data;
+          };
+            
+          searchType.html = function ( data ) {
+              return ! data ?
+                  '' :
+                  typeof data === 'string' ?
+                      removeAccents( data.replace( /<.*?>/g, '' ) ) :
+                      data;
+          };
+            
+          }());
+  </script>
 {% endblock %}
 
 {% block contenidos %}
