@@ -6,13 +6,12 @@
   <link href="css/styles-loading.css" rel="stylesheet">
   <link href="js/plugins/select2/css/select2.min.css" rel="stylesheet" /> 
   <link rel="stylesheet" href="js/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
-  <link rel="stylesheet" href="js/plugins/timepicker/tpicker.css">
   {% endblock %}
 
 {% block javascripts %}
 <script type="text/JavaScript" src="js/plugins/select2/js/select2.full.js"></script>
 <script type="text/JavaScript" src="js/Personal/LicenciasPermisos.js"></script>
-<script type="text/javascript" src="js/plugins/timepicker/tpicker.js"></script>
+<script type="text/JavaScript" src="js/Personal/CalcularTiempo.js"></script>
 <!-- DEFINIR PARA SERVICIO EDUCATIVO CARGAR DATOS-->
 <script type="text/JavaScript">
 	// Carga la INformación de Tabla Año Lectivo.
@@ -40,6 +39,22 @@
 						miselect.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');
 					}
 			}, "json");
+    //
+    function changeTimeFormat() {
+      let date = new Date();
+      let n = date.toLocaleString([], {
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: false,
+      });
+      console.log(n);
+      $('#HoraDesde').val(n);
+      $('#HoraHasta').val(n);
+  }
+  // TIEMPO ACTUAL.
+  changeTimeFormat();
+//
+  //calcular_tiempo_12_24();
 });
 </script>
 {% endblock %}
@@ -136,11 +151,10 @@
                                 <div class="row">
                                     <div class="col-md-4 col-lg-4 col">
                                         <div class="form-inline">
-                                            <label for="Timepkr">Text</label>
-                                            <input id="Timepkr" class="form-control" name="Timepkr" placeholder="hh:mm" style="width:100px;float:left;">
-                                            <button type="button" class="btn btn-primary" onclick="showpickers('timepkr',12)" title="Time" tyle="width:40px;float:left;"><i class="fad fa-clock"></i></button>
+                                          <label class="control-label">Desde</label>
+                                          <input type="time" id="HoraDesde" name="HoraDesde" value="00:00" class="form-control" aria-label="HoraDesde">
+                                          <label for="LblHoraDesde" class="form-control">Time!!</label>
                                         </div>
-                                        <div class="timepicker"></div>
                                     </div>
                                 </div>
                               </form>                                  

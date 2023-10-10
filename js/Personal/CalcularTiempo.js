@@ -1,3 +1,4 @@
+$(document).ready(function () {
 /*----------Funcion para obtener el tiempo en dias y horas------------*/
 function calcular_tiempo_12_24() {
 // variables
@@ -8,10 +9,10 @@ function calcular_tiempo_12_24() {
   var meridian_1 = "";
   var minutes_1 = "";
 // fecha 1.
-  timeSplit = $('#hora_1_desde').val();
+  timeSplit = $('#HoraDesde').val();
   timeSplit = timeSplit.split(':');
 // fecha 2.
-  timeSplit_1 = $('#hora_1_hasta').val();
+  timeSplit_1 = $('#HoraHasta').val();
   timeSplit_1 = timeSplit_1.split(':');
 // matriz 0 fecha
   hours = timeSplit[0];
@@ -45,8 +46,8 @@ function calcular_tiempo_12_24() {
   }
   //alert(hours + ':' + minutes + ' ' + meridian);
   
-  $("label[for='end-time_1']").text(hours + ':' + minutes + ' ' + meridian);
-  $("label[for='end-time_2']").text(hours_1 + ':' + minutes_1 + ' ' + meridian_1);
+  $("label[for='LblHoraDesde']").text(hours + ':' + minutes + ' ' + meridian);
+  $("label[for='LblHoraHasta']").text(hours_1 + ':' + minutes_1 + ' ' + meridian_1);
 }
 /*----------Funcion para obtener el tiempo en dias y horas------------*/
 function calcular_tiempo() {
@@ -203,8 +204,11 @@ finHoras = parseInt(tiempo_1_hasta.substr(0,2));
     }
 
 // Pasar los valores.
-$("#tiempo_calculado_1_m").val(tiempo_calculado_1);
-$("#dia_m").val(dia);
-$("#hora_m").val(horas);
-$("#minutos_m").val(minutos);
-}
+  $("#tiempo_calculado_1_m").val(tiempo_calculado_1);
+  $("#dia_m").val(dia);
+  $("#hora_m").val(horas);
+  $("#minutos_m").val(minutos);
+  }
+      // REACULTAR A FORMATO 12 H LABEL.
+    calcular_tiempo_12_24();
+});
