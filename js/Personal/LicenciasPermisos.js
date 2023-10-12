@@ -43,14 +43,16 @@ $(function(){
                                 miselect2.empty();
                                 for (var i=0; i<data.length; i++) {
                                     if(i == 0){
-                                        miselect2.append('<option value="' + data[i].codigo_tipo_contratacion + '" selected>' + data[i].nombre_contratacion + '</option>');
+                                        miselect2.append('<option value="' + data[i].codigo_tipo_contratacion + data[i].codigo_turno + '" selected>' + data[i].nombre_contratacion + ' - ' + data[i].nombre_turno + '</option>');
                                     }else{
-                                        miselect2.append('<option value="' + data[i].codigo_tipo_contratacion + '">' + data[i].nombre_contratacion + '</option>');
+                                        miselect2.append('<option value="' + data[i].codigo_tipo_contratacion + data[i].codigo_turno + '">' + data[i].nombre_contratacion + ' - ' + data[i].nombre_turno + '</option>');
                                     }
                                     
                                 }
                     }, "json");		
                 });
+                // calcular tiempo a 12 horas
+                    calcular_tiempo_12_24();
             // REVISAR
                 var miselect3=$("#lstTipoLicencia");
 			/* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
@@ -75,6 +77,7 @@ $(function(){
                 miselect4.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
             //        
                 $("#lstTipoContratacion option:selected").each(function () {
+                    codigo_tipo_contratacion = this.val();
                         $.post("includes/Personal/Catalogos/TipoLicenciaPermiso.php",
                         function(data){
                                 miselect4.empty();
@@ -84,10 +87,23 @@ $(function(){
                                     }else{
                                         miselect4.append('<option value="' + data[i].codigo + '">' +   data[i].descripcion + '</option>');
                                     }
-                                    
                                 }
                     }, "json");		
                 });
+            // BUSCAR HORARIO INICIO Y FIN
+                var accion = "BuscarContratacion";
+                codigo_personal = $("#lstPersonal").val();
+                $.post("includes/Personal/Catalogos/TipoLicenciaPermiso.php", { codigo_personal: codigo_personal, accion: accion, codigo_contratacion: codigo_tipo_contratacion},
+                function(data){
+                        for (var i=0; i<data.length; i++) {
+                            if (data[i].codigo_tipo_contratacion+data[i].codigo_turno === codigo_tipo_contratacion) {
+                                    $('#hora_1_desde').val(data[i].horario_inicio);
+                                    $('#hora_1_hasta').val(data[i].horario_fin);
+                            }
+                        }
+                        // calcular tiempo a 12 horas
+                        calcular_tiempo_12_24();
+                }, "json");			
         });
         ////
         //  CUANDO EL CHECK SE ACTIVE O DESACTIVE.

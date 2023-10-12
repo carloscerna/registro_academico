@@ -52,79 +52,55 @@ function calcular_tiempo() {
 // valor de la fecha
 var tiempo_1_desde = $('#HoraDesde').val();
 var tiempo_1_hasta = $('#HoraHasta').val();
-var dia = 0;
+var dia = 0; var horas = 0; var minutos = 0; var tiempo_calculado_1 = "";
 var codigo_tipo_contratacion = $('#lstTipoContratacion option:selected').val();
-codigo_tipo_contratacion = codigo_tipo_contratacion.substr(0,2);
-// VALIDAR CON RESPECTO A LA CONDICIONAL DE LA CONTRATACIÓN.
-    if(codigo_tipo_contratacion == "05"){
-      inicioMinutos = parseInt(tiempo_1_desde.substr(3,2));
-      inicioHoras = parseInt(tiempo_1_desde.substr(0,2));
-        
-      finMinutos = parseInt(tiempo_1_hasta.substr(3,2));
-      finHoras = parseInt(tiempo_1_hasta.substr(0,2));
-      
-        transcurridoMinutos = finMinutos - inicioMinutos;
-        transcurridoHoras = finHoras - inicioHoras;
-        
-        if (transcurridoMinutos < 0) {
-          transcurridoHoras--;
-          transcurridoMinutos = 60 + transcurridoMinutos;
-        }
-        
-        horas = transcurridoHoras.toString();
-        minutos = transcurridoMinutos.toString();
-        
-        if (horas.length < 2) {
-          horas = ""+horas;
-        }
-      
-        if(horas >= 8){
-          dia = 1;
-          horas = 0;
-          minutos = 0;
-          tiempo_calculado_1 = dia + " Dia(s)";
+
+// CALCULAR EL TIEMPO
+  inicioMinutos = parseInt(tiempo_1_desde.substr(3,2));
+  inicioHoras = parseInt(tiempo_1_desde.substr(0,2));
+
+  finMinutos = parseInt(tiempo_1_hasta.substr(3,2));
+  finHoras = parseInt(tiempo_1_hasta.substr(0,2));
+
+  transcurridoMinutos = finMinutos - inicioMinutos;
+  transcurridoHoras = finHoras - inicioHoras;
+//  TIEMPO TRANSCURRIDO
+  if (transcurridoMinutos < 0) {
+    transcurridoHoras--;
+    transcurridoMinutos = 60 + transcurridoMinutos;
+  }
+  //
+  horas = transcurridoHoras.toString();
+  minutos = transcurridoMinutos.toString();
+  // MENOR A DOS DIGITOS 
+    if (horas.length < 2) {
+      horas = ""+horas;
+    }
+  // VALIDAR CON RESPECTO A LA CONDICIONAL DE LA CONTRATACIÓN.
+  codigo_tipo_contratacion = codigo_tipo_contratacion.substr(0,2);
+    if(codigo_tipo_contratacion == "05"){ // PAGADOS POR EL CDE.
+        if(horas >= 8){ // solo para administrativos.
+          dia = 1; horas = 0; minutos = 0;
+          tiempo_calculado_1 = dia + " Día(s) " + horas + " Horas " + minutos + " Minutos.";
         }
         // Menor a 8 horas        
         if(horas < 8){
-          tiempo_calculado_1 = horas + " Horas " + minutos + " Minutos";
+          tiempo_calculado_1 = dia + " Día(s) " +  horas + " Horas " + minutos + " Minutos.";
         }
-      // Pasar los valores.
-        $("#SpanDiasHoras").text(tiempo_calculado_1);  
-    }else{
-      inicioMinutos = parseInt(tiempo_1_desde.substr(3,2));
-      inicioHoras = parseInt(tiempo_1_desde.substr(0,2));
-        
-      finMinutos = parseInt(tiempo_1_hasta.substr(3,2));
-      finHoras = parseInt(tiempo_1_hasta.substr(0,2));
-      
-        transcurridoMinutos = finMinutos - inicioMinutos;
-        transcurridoHoras = finHoras - inicioHoras;
-        
-        if (transcurridoMinutos < 0) {
-          transcurridoHoras--;
-          transcurridoMinutos = 60 + transcurridoMinutos;
-        }
-        
-        horas = transcurridoHoras.toString();
-        minutos = transcurridoMinutos.toString();
-        //
-        if (horas.length < 2) {
-          horas = ""+horas;
-        }
-      //
-        if(horas == 5){
-          dia = 1;
-          horas = 0;
-          minutos = 0;
-          tiempo_calculado_1 = dia;
+    }else{       
+        if(horas >= 5){ // CALCULO PARA LOS DOCENTES.
+          dia = 1; horas = 0; minutos = 0;
+          tiempo_calculado_1 = dia + " Día(s) " + horas + " Horas " + minutos + " Minutos.";
         }
         ///        
         if(horas < 5){
-          tiempo_calculado_1 = horas+":"+minutos;
+          tiempo_calculado_1 = dia + " Día(s) " + horas + " Horas " + minutos + " Minutos.";
           }
-      // Pasar los valores.
-        $("#SpanDiasHoras").text(tiempo_calculado_1 + ":" + horas + ":" + minutos);
     }
+      // Pasar los valores.
+      console.log(tiempo_calculado_1);
+      console.log(horas)
+      $("#SpanDiasHoras").text(tiempo_calculado_1);
 }
 
 function calcular_tiempo_m() {
