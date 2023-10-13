@@ -13,6 +13,8 @@ function calcular_tiempo_12_24() {
 // fecha 2.
   timeSplit_1 = $('#HoraHasta').val();
   timeSplit_1 = timeSplit_1.split(':');
+  alert(timeSplit);
+  alert(timeSplit_1)
 // matriz 0 fecha
   hours = timeSplit[0];
   minutes = timeSplit[1];
@@ -77,7 +79,7 @@ var codigo_tipo_contratacion = $('#lstTipoContratacion option:selected').val();
       horas = ""+horas;
     }
   // VALIDAR CON RESPECTO A LA CONDICIONAL DE LA CONTRATACIÓN.
-  codigo_tipo_contratacion = codigo_tipo_contratacion.substr(0,2);
+    codigo_tipo_contratacion = codigo_tipo_contratacion.substr(0,2);
     if(codigo_tipo_contratacion == "05"){ // PAGADOS POR EL CDE.
         if(horas >= 8){ // solo para administrativos.
           dia = 1; horas = 0; minutos = 0;

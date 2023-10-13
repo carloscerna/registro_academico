@@ -6,6 +6,7 @@ var Id_Editar_Eliminar = 0;
 var Accion_Editar_Eliminar = "noAccion";
 var codigo_personal = "";
 var msjEtiqueta = "";
+var codigo_tipo_contratacion = "";
 
 // INICIO DE LA FUNCION PRINCIPAL.
 $(function(){
@@ -46,13 +47,24 @@ $(function(){
                                         miselect2.append('<option value="' + data[i].codigo_tipo_contratacion + data[i].codigo_turno + '" selected>' + data[i].nombre_contratacion + ' - ' + data[i].nombre_turno + '</option>');
                                     }else{
                                         miselect2.append('<option value="' + data[i].codigo_tipo_contratacion + data[i].codigo_turno + '">' + data[i].nombre_contratacion + ' - ' + data[i].nombre_turno + '</option>');
+                                    }                                    
+                                }
+                                //
+                                var codigo_tipo_contratacion = $('#lstTipoContratacion option:selected').val();
+                                for (var i=0; i<data.length; i++) {
+                                    if (data[i].codigo_tipo_contratacion+data[i].codigo_turno === codigo_tipo_contratacion) {
+                                        $('#HoraDesde').val(data[i].horario_inicio);
+                                        $('#HoraHasta').val(data[i].horario_fin);
+                                        console.log(data[i].codigo_tipo_contratacion+ " " + data[i].codigo_turno);
+                                        console.log(data[i].horario_inicio + " " + data[i].horario_fin);
                                     }
-                                    
                                 }
                     }, "json");		
                 });
                 // calcular tiempo a 12 horas
                     calcular_tiempo_12_24();
+                // Calcular tiempo.
+                    calcular_tiempo();
             // REVISAR
                 var miselect3=$("#lstTipoLicencia");
 			/* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
@@ -65,9 +77,9 @@ $(function(){
                             miselect3.append('<option value="' + data[i].codigo + '">' +   data[i].descripcion + '</option>');
                         }
                 }, "json");
-                });
+            }); // opcion del change...
         //
-        // CUANDO cambien
+        // CUANDO cambien...
         //
         $("#lstTipoContratacion").change(function ()
         {
@@ -77,7 +89,7 @@ $(function(){
                 miselect4.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
             //        
                 $("#lstTipoContratacion option:selected").each(function () {
-                    codigo_tipo_contratacion = this.val();
+                    codigo_tipo_contratacion = $("#lstTipoContratacion").val();
                         $.post("includes/Personal/Catalogos/TipoLicenciaPermiso.php",
                         function(data){
                                 miselect4.empty();
@@ -91,19 +103,11 @@ $(function(){
                     }, "json");		
                 });
             // BUSCAR HORARIO INICIO Y FIN
-                var accion = "BuscarContratacion";
-                codigo_personal = $("#lstPersonal").val();
-                $.post("includes/Personal/Catalogos/TipoLicenciaPermiso.php", { codigo_personal: codigo_personal, accion: accion, codigo_contratacion: codigo_tipo_contratacion},
-                function(data){
-                        for (var i=0; i<data.length; i++) {
-                            if (data[i].codigo_tipo_contratacion+data[i].codigo_turno === codigo_tipo_contratacion) {
-                                    $('#hora_1_desde').val(data[i].horario_inicio);
-                                    $('#hora_1_hasta').val(data[i].horario_fin);
-                            }
-                        }
-                        // calcular tiempo a 12 horas
-                        calcular_tiempo_12_24();
-                }, "json");			
+                FechaInicioFin();
+            // Calcular tiempo.
+                calcular_tiempo();
+            // calcular tiempo a 12 horas
+                calcular_tiempo_12_24();
         });
         ////
         //  CUANDO EL CHECK SE ACTIVE O DESACTIVE.
@@ -566,6 +570,26 @@ function configureLoadingScreen(screen){
             screen.fadeOut();
         });
     }
+ ///////////////////////////////////////////////////////////////////////
+// TODAS LAS TABLAS VAN HA ESTAR EN .*******************
+// FUNCION FECHA INICIO Y FIN.
+////////////////////////////////////////////////////////////
+function FechaInicioFin() {
+    accion = "BuscarContratacion";
+    codigo_personal = $("#lstPersonal").val();
+    codigo_tipo_contratacion = $('#lstTipoContratacion option:selected').val();
+    $.post("php_libs/soporte/Personal/LicenciasPermisos.php", { codigo_personal: codigo_personal, accion: accion, codigo_contratacion: codigo_tipo_contratacion},
+    function(data){
+            for (var i=0; i<data.length; i++) {
+                if (data[i].codigo_tipo_contratacion+data[i].codigo_turno === codigo_tipo_contratacion) {
+                        $('#HoraDesde').val(data[i].horario_inicio);
+                        $('#HoraHasta').val(data[i].horario_fin);
+                        console.log(data[i].codigo_tipo_contratacion+ " " + data[i].codigo_turno);
+                        console.log(data[i].horario_inicio + " " + data[i].horario_fin);
+                }
+            }
+    }, "json");			
+}
  ///////////////////////////////////////////////////////////////////////
 // TODAS LAS TABLAS VAN HA ESTAR EN organizaciones grado-seccion-turno.*******************
 // FUNCION LISTAR TABLA personal
