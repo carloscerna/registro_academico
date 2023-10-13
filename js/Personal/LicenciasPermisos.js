@@ -7,6 +7,8 @@ var Accion_Editar_Eliminar = "noAccion";
 var codigo_personal = "";
 var msjEtiqueta = "";
 var codigo_tipo_contratacion = "";
+var miselect2 = "";
+var miselect3 = "";
 
 // INICIO DE LA FUNCION PRINCIPAL.
 $(function(){
@@ -33,7 +35,7 @@ $(function(){
         {
             accion = "BuscarContratacion";
             // LISTADO DE LAS MODALIDES
-            var miselect2=$("#lstTipoContratacion");
+                miselect2=$("#lstTipoContratacion");
             /* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
                 miselect2.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
             //        
@@ -50,65 +52,27 @@ $(function(){
                                     }                                    
                                 }
                                 //
-                                var codigo_tipo_contratacion = $('#lstTipoContratacion option:selected').val();
-                                for (var i=0; i<data.length; i++) {
-                                    if (data[i].codigo_tipo_contratacion+data[i].codigo_turno === codigo_tipo_contratacion) {
-                                        $('#HoraDesde').val(data[i].horario_inicio);
-                                        $('#HoraHasta').val(data[i].horario_fin);
-                                        console.log(data[i].codigo_tipo_contratacion+ " " + data[i].codigo_turno);
-                                        console.log(data[i].horario_inicio + " " + data[i].horario_fin);
-                                    }
-                                }
+                                FechaInicioFin();
                     }, "json");		
                 });
-                // calcular tiempo a 12 horas
-                    calcular_tiempo_12_24();
-                // Calcular tiempo.
-                    calcular_tiempo();
-            // REVISAR
-                var miselect3=$("#lstTipoLicencia");
-			/* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
-			    miselect3.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
-			//
-			    $.post("includes/Personal/Catalogos/TipoLicenciaPermiso.php",
-				    function(data) {
-					    miselect3.empty();
-                        for (var i=0; i<data.length; i++) {
-                            miselect3.append('<option value="' + data[i].codigo + '">' +   data[i].descripcion + '</option>');
-                        }
-                }, "json");
+                // LLamada alcular tiempo a 12 horas, tiempo transcurrido
+                    callerFun();
+                // focus().
+                    $("#FechaTipoLicencia").focus();
             }); // opcion del change...
         //
         // CUANDO cambien...
         //
         $("#lstTipoContratacion").change(function ()
         {
-            // LISTADO DE LAS MODALIDES
-                var miselect4=$("#lstTipoLicencia");
-            /* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
-                miselect4.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
-            //        
-                $("#lstTipoContratacion option:selected").each(function () {
-                    codigo_tipo_contratacion = $("#lstTipoContratacion").val();
-                        $.post("includes/Personal/Catalogos/TipoLicenciaPermiso.php",
-                        function(data){
-                                miselect4.empty();
-                                for (var i=0; i<data.length; i++) {
-                                    if(i == 0){
-                                        miselect4.append('<option value="' + data[i].codigo + '">' +   data[i].descripcion + '</option>');
-                                    }else{
-                                        miselect4.append('<option value="' + data[i].codigo + '">' +   data[i].descripcion + '</option>');
-                                    }
-                                }
-                    }, "json");		
-                });
-            // BUSCAR HORARIO INICIO Y FIN
+            // Fecha Inicio Fin.
                 FechaInicioFin();
-            // Calcular tiempo.
-                calcular_tiempo();
-            // calcular tiempo a 12 horas
-                calcular_tiempo_12_24();
-        });
+            // LLamada alcular tiempo a 12 horas
+                callerFun();
+            // focus().
+                $("#FechaTipoLicencia").focus();
+        }); // opcion del change.
+        ////
         ////
         //  CUANDO EL CHECK SE ACTIVE O DESACTIVE.
         //
@@ -575,20 +539,23 @@ function configureLoadingScreen(screen){
 // FUNCION FECHA INICIO Y FIN.
 ////////////////////////////////////////////////////////////
 function FechaInicioFin() {
-    accion = "BuscarContratacion";
-    codigo_personal = $("#lstPersonal").val();
-    codigo_tipo_contratacion = $('#lstTipoContratacion option:selected').val();
-    $.post("php_libs/soporte/Personal/LicenciasPermisos.php", { codigo_personal: codigo_personal, accion: accion, codigo_contratacion: codigo_tipo_contratacion},
-    function(data){
-            for (var i=0; i<data.length; i++) {
-                if (data[i].codigo_tipo_contratacion+data[i].codigo_turno === codigo_tipo_contratacion) {
-                        $('#HoraDesde').val(data[i].horario_inicio);
-                        $('#HoraHasta').val(data[i].horario_fin);
-                        console.log(data[i].codigo_tipo_contratacion+ " " + data[i].codigo_turno);
-                        console.log(data[i].horario_inicio + " " + data[i].horario_fin);
+    return new Promise((resolve,reject)=>{
+        accion = "BuscarContratacion";
+        codigo_personal = $("#lstPersonal").val();
+        codigo_tipo_contratacion = $('#lstTipoContratacion option:selected').val();
+        $.post("php_libs/soporte/Personal/LicenciasPermisos.php", { codigo_personal: codigo_personal, accion: accion, codigo_contratacion: codigo_tipo_contratacion},
+            function(data){
+                for (var i=0; i<data.length; i++) {
+                    if (data[i].codigo_tipo_contratacion+data[i].codigo_turno == codigo_tipo_contratacion) {
+                            $('#HoraDesde').val(data[i].horario_inicio);
+                            $('#HoraHasta').val(data[i].horario_fin);
+                           // console.log(data[i].codigo_tipo_contratacion+ " " + data[i].codigo_turno);
+                           // console.log(data[i].horario_inicio + " " + data[i].horario_fin);
+                    }
                 }
-            }
-    }, "json");			
+                resolve();
+            }, "json");			
+    });
 }
  ///////////////////////////////////////////////////////////////////////
 // TODAS LAS TABLAS VAN HA ESTAR EN organizaciones grado-seccion-turno.*******************
@@ -631,4 +598,35 @@ function listar_CodigoTurnoAAG(CodigoTurnoAAG){
                 }
             }
     }, "json");    
+}
+async function callerFun(){
+    console.log("Llamada!!");
+    // esperar que termine la funcion FEchaInicio
+        await FechaInicioFin();
+        console.log("Después que termine Carga de LstTipoContratación");
+    // Llamar TipoLicencia Permiso.
+        TipoLicenciaPermiso();
+    // Llamada tiempo 12 y 14.
+        calcular_tiempo_12_24();
+    // Calcular tiempo.
+        calcular_tiempo();
+}
+function TipoLicenciaPermiso() {
+    // REVISAR
+        miselect3=$("#lstTipoLicencia");
+    /* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
+        miselect3.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
+    //
+        $.post("includes/Personal/Catalogos/TipoLicenciaPermiso.php",
+            function(data) {
+                miselect3.empty();
+                for (var i=0; i<data.length; i++) {
+                    if(i == 0){
+                        miselect3.append('<option value="' + data[i].codigo + '" selected>' +   data[i].descripcion + '</option>');
+                    }else{
+                        miselect3.append('<option value="' + data[i].codigo + '">' +   data[i].descripcion + '</option>');
+                    }
+                }
+        }, "json");
+    
 }

@@ -13,8 +13,6 @@ function calcular_tiempo_12_24() {
 // fecha 2.
   timeSplit_1 = $('#HoraHasta').val();
   timeSplit_1 = timeSplit_1.split(':');
-  alert(timeSplit);
-  alert(timeSplit_1)
 // matriz 0 fecha
   hours = timeSplit[0];
   minutes = timeSplit[1];
@@ -100,8 +98,8 @@ var codigo_tipo_contratacion = $('#lstTipoContratacion option:selected').val();
           }
     }
       // Pasar los valores.
-      console.log(tiempo_calculado_1);
-      console.log(horas)
+      //console.log(tiempo_calculado_1);
+      //console.log(horas)
       $("#SpanDiasHoras").text(tiempo_calculado_1);
 }
 
