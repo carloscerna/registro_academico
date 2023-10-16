@@ -93,6 +93,7 @@ $(function(){
                     } else {
                         $("#DiasLicenciaPermiso").prop("disabled",true);
                         $("#lstPersonal").focus();
+                        $("#DiasLicenciaPermiso").val("");
                     }
                 }); 
         ////////////////////////////////////////////////////////////////////////////
