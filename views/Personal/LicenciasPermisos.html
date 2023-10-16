@@ -178,13 +178,18 @@
                               </form>                                  
                                 <!-- TABLA CON LOS DATOS DEL SERVICIO EDUCATIVO. -->  
                                     <div class="modal-body">
-                                      <div class="row bg-cyan">
+                                      <div class="row bg-secondary">
                                         <div class="col">
-                                          <label for="">Detalle - Tipo de Licencia</label>
+                                          <div class="form-group">
+                                            <button type="button" class="btn btn-primary">
+                                              Disponible <span id="SpanDisponible" class="badge badge-light">:</span>
+                                            </button>
+                                          </div>
                                         </div>
                                       </div>
                                         <div class="col">
                                           <table id="listadoContenidoLicenciasPermiso" class="table table-striped table-bordered table-hover table-condensed">
+                                            <caption align="top"><div id="encabezado"></div></caption>
                                             <thead>
                                               <tr>
                                                 <th><input type="checkbox" name="checkBoxAllLicenciasPermiso" id="checkBoxAllLicenciasPermiso" data-toggle="tooltip" data-placement="top" title="Marcar/Desmarcar Todo">

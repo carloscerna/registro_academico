@@ -250,7 +250,7 @@ $(function(){
 	// ACTIVAR Y DESACTIVAR CHECKBOX DE LA TABLA.
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	$("#checkBoxAllLicenciasPermiso").on("change", function () {
-		$("#listadoContenidoAAG tbody input[type='checkbox'].case").prop("checked", this.checked);
+		$("#listadoContenidoLicenciasPermiso tbody input[type='checkbox'].case").prop("checked", this.checked);
 	});
 	
 	$("#checkBoxAllLicenciasPermiso tbody").on("change", "input[type='checkbox'].case", function () {
@@ -606,13 +606,18 @@ async function callerFun(){
         await FechaInicioFin();
         console.log("Después que termine Carga de LstTipoContratación");
     // Llamar TipoLicencia Permiso.
-        TipoLicenciaPermiso();
+        await TipoLicenciaPermiso();
+        console.log("Después que termine Carga de LstTipoLicenciaPermiso");
+    // BuscarLicenciasPermisos
+        BuscarLicenciasPermisos();
     // Llamada tiempo 12 y 14.
         calcular_tiempo_12_24();
     // Calcular tiempo.
         calcular_tiempo();
+
 }
 function TipoLicenciaPermiso() {
+    return new Promise((resolve,reject)=>{
     // REVISAR
         miselect3=$("#lstTipoLicencia");
     /* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
@@ -628,6 +633,37 @@ function TipoLicenciaPermiso() {
                         miselect3.append('<option value="' + data[i].codigo + '">' +   data[i].descripcion + '</option>');
                     }
                 }
+                resolve();
         }, "json");
+    });
     
+}
+
+function BuscarLicenciasPermisos() {
+    accion = "BuscarLicenciasPermisos";
+    codigo_personal = $("#lstPersonal").val();
+    codigo_tipo_contratacion = $('#lstTipoContratacion option:selected').val();
+    codigo_licencia_permiso = $('#lstTipoLicencia option:selected').val();
+    fecha = $("#FechaTipoLicencia").val();
+        ///////////////////////////////////////////////////////////////			
+        // Inicio del Ajax. guarda o Actualiza los datos del Formualrio.
+        ///////////////////////////////////////////////////////////////
+        $.ajax({
+            beforeSend: function(){
+                //if($('#TodasLasAsignaturas').is(":checked")) {TodasLasAsignaturas = 'yes';}else{TodasLasAsignaturas = "no"}
+                $('#listaContenidoLicenciasPermiso').empty();
+            },
+            cache: false,
+            type: "POST",
+            dataType: "json",
+            url:"php_libs/soporte/Personal/LicenciasPermisos.php",
+            data: {codigo_personal: codigo_personal, accion: accion, fecha: fecha, codigo_contratacion: codigo_tipo_contratacion, codigo_licencia: codigo_licencia_permiso},
+            success: function(data){
+                    // eliminar y obtener el utlimo elemento. de un array.
+                    tabla_1 = data[0].pop();
+                    Encabezado = data[1].pop();
+                    $('#listaContenidoLicenciasPermiso').append(tabla_1);
+                    $("#SpanDisponible").text(Encabezado);
+            },
+        });
 }
