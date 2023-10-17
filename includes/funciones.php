@@ -234,52 +234,62 @@ if($codigo_destino === 4){
 /////////////////////////////////////////////////////////////////////////////////////////
 //				**	conversor
 /////////////////////////////////////////////////////////////////////////////////////////
-function segundosToCadenaD($min)
+function segundosToCadenaD($min, $calculo_horas)
 {
-
-	$dias = floor($min/300);
-	$horas = $min%300;
-	$residuo_dias = $horas%300;
-	$horas = floor($residuo_dias/60);
-	$residuo_minutos = $residuo_dias%60;
-	$minutos = $residuo_minutos;
-	return $dias;
+	// Base 5 u 8 horas.
+		$min_x_dia = $calculo_horas * 60;
+	// calculos
+		$dias = floor($min/$min_x_dia);
+		$horas = $min % $min_x_dia;
+		$residuo_dias = $horas % $min_x_dia;
+		$horas = floor($residuo_dias / 60);
+		$residuo_minutos = $residuo_dias % 60;
+		$minutos = $residuo_minutos;
+			return $dias;
 }
 
-function segundosToCadenaH($min)
+function segundosToCadenaH($min, $calculo_horas)
 {
-	$dias = floor($min/300);
-	$horas = $min%300;
-	$residuo_dias = $horas%300;
-	$horas = floor($residuo_dias/60);
-	$residuo_minutos = $residuo_dias%60;
-	$minutos = $residuo_minutos;
-		return $horas;
+	// Base 5 u 8 horas.
+		$min_x_dia = $calculo_horas * 60;
+	// calculos
+		$dias = floor($min/$min_x_dia);
+		$horas = $min % $min_x_dia;
+		$residuo_dias = $horas % $min_x_dia;
+		$horas = floor($residuo_dias/60);
+		$residuo_minutos = $residuo_dias%60;
+		$minutos = $residuo_minutos;
+			return $horas;
 }
 
-function segundosToCadenaM($min)
+function segundosToCadenaM($min, $calculo_horas)
 {
-
-	$dias = floor($min/300);
-	$horas = $min%300;
-	$residuo_dias = $horas%300;
+	// Base 5 u 8 horas.
+	$min_x_dia = $calculo_horas * 60;
+	// calculos
+	$dias = floor($min/$min_x_dia);
+	$horas = $min%$min_x_dia;
+	$residuo_dias = $horas%$min_x_dia;
 	$horas = floor($residuo_dias/60);
 	$residuo_minutos = $residuo_dias%60;
 	$minutos = $residuo_minutos;
 		return $minutos;
 }
 
-function segundosToCadena($min)
+function segundosToCadena($min, $calculo_horas)
 {
-	$cadena = '';
-	$dias = floor($min/300);
-	$horas = $min%300;
-	$residuo_dias = $horas%300;
-	$horas = floor($residuo_dias/60);
-	$residuo_minutos = $residuo_dias%60;
-	$minutos = $residuo_minutos;
-	$cadena = $dias.'d'.$horas.'h'.$minutos.'m';
-		return $cadena;
+	// Base 5 u 8 horas.
+	$min_x_dia = $calculo_horas * 60;
+	// calculos
+		$cadena = '';
+		$dias = floor($min/$min_x_dia);
+		$horas = $min%$min_x_dia;
+		$residuo_dias = $horas%$min_x_dia;
+		$horas = floor($residuo_dias/60);
+		$residuo_minutos = $residuo_dias%60;
+		$minutos = $residuo_minutos;
+		$cadena = $dias.' días '.$horas.' horas '.$minutos.' minutos';
+			return $cadena;
 }
 
 function segundosToCadenaHorasMinustos($min)

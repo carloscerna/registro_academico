@@ -260,7 +260,13 @@ if($errorDbConexion == false)
 					$codigo_personal = $_POST['codigo_personal'];
 					$fecha_l_y_p = substr($_POST['fecha'],0,4);
 					$codigo_contratacion = $_POST['codigo_contratacion'];
+					$codigo_tipo_contratacion = substr($_POST['codigo_contratacion'],0,2);
 					$codigo_tipo_licencia = $_POST['codigo_licencia'];
+					// Calcular el Disponible segùn Tipo de Contratación.
+						$calculo_horas = 5;
+						if($codigo_tipo_contratacion == "05"){ // PAGADOS POR EL CDE.
+							$calculo_horas = 8;
+						}
 				   // armando el Query. PARA LA TABLA HISTORIAL.
 						// armando el Query. PARA LA TABLA HISTORIAL.
 							$query_licencia = "SELECT lp.id_licencia_permiso, lp.codigo_personal, lp.fecha, lp.codigo_contratacion, lp.observacion, lp.dia, lp.hora, lp.minutos, lp.codigo_licencia_permiso, lp.codigo_turno, lp.hora_inicio, lp.hora_fin,
@@ -282,81 +288,86 @@ if($errorDbConexion == false)
 									// repetir el proceso hasta que la tabla ya no tenga datos.
 										$codigo_licencia_o_permiso[] = $listadoPersonalLyP['codigo'];
 										$saldo_licencia_o_permiso[] = $listadoPersonalLyP['saldo'];
-										$minutos_licencia_o_permiso[] = $listadoPersonalLyP['minutos'];
+										//$minutos_licencia_o_permiso[] = $listadoPersonalLyP['minutos'];
+										$minutos_licencia_o_permiso[] = $listadoPersonalLyP['saldo'] * $calculo_horas * 60;
 								}
 							}
 						//
 						// DECLARAR VARIABLES PARA LAS MATRICES.
 						//
 							$tramite_dia = array(); $tramite_hora = array(); $tramite_minutos = array();
-						// Recorriendo la Tabla con PDO::
 							$num = 1; $j = 0;
 							$verdadero = ""; $num_registros = 0; $num_datos = 0; $num_datos_tabla = 0;
+						// Ejecutar query.
 							$consulta_codigo_licencia_permiso = $dblink -> query($query_licencia);
-								// revisar si hay registros.
-								$num_registros = $consulta_codigo_licencia_permiso -> rowCount();
-								if($num_registros !=0){
-									while($listadoPersonal = $consulta_codigo_licencia_permiso -> fetch(PDO::FETCH_BOTH))
-										{
-											// recopilar los valores de los campos.
-											$id_ = trim($listadoPersonal['id_licencia_permiso']);
-											$fecha = cambiaf_a_normal(trim($listadoPersonal['fecha']));
-											$horario_inicio = trim($listadoPersonal['hora_inicio']);
-											$hora_fin = trim($listadoPersonal['hora_fin']);
-											$dia = trim($listadoPersonal['dia']);
-											$hora = trim($listadoPersonal['hora']);
-											$minutos = trim($listadoPersonal['minutos']);
-											// pasar a la matriz.
-											$datos[$j][] = "<tr>
-											<td><input type=checkbox class=case name=chk$id_ id=chk$id_>
-											<td>$num
-											<td>$id_
-											<td>$fecha
-											<td>$horario_inicio
-											<td>$hora_fin
-											<td>$dia
-											<td>$hora
-											<td>$minutos
-											";
-												$total_minutos = ($dia*5*60) + ($hora*60) + ($minutos);
-												
-												$tramite_dia[] = segundosToCadenaD($total_minutos);
-												$tramite_hora[] = segundosToCadenaH($total_minutos);
-												$tramite_minutos[] = segundosToCadenaM($total_minutos);
-											// Aumentar el valor
-												$num++;
-										}	// salida del while.
-											// Calcular el Disponible segùn Tipo de Contratación.
-												$calculo_horas = 5;
-													if($codigo_contratacion == "05"){ // PAGADOS POR EL CDE.
-														$calculo_horas = 8;
-													}
-											// Calcular Tiempo, sumar dias, horas, minutos.
-												$sub_sin_dia = array_sum($tramite_dia);
-												$sub_sin_hora = array_sum($tramite_hora);
-												$sub_sin_minutos = array_sum($tramite_minutos);
-											// Caluclar Disponible en base a los minutos.
-												$minutos_x_dias = $minutos_licencia_o_permiso[$j];
-												$minutos_subtotal = ($sub_sin_dia*$calculo_horas*60) + ($sub_sin_hora*60) + ($sub_sin_minutos);
-												$minutos = $minutos_x_dias - $minutos_subtotal;
-												$saldo_x = segundosToCadena($minutos);
-											// Acumularlo en la Matriz.
-												$j++; // incorporar en el titulo de la talba
-												$datos[$j][] = "$saldo_x";
-												//	<td>$sub_sin_dia
-											//		<td>$sub_sin_hora
-											//		<td>$sub_sin_minutos
-												
+						// revisar si hay registros.
+							$num_registros = $consulta_codigo_licencia_permiso -> rowCount();
+							if($num_registros !=0){
+								while($listadoPersonal = $consulta_codigo_licencia_permiso -> fetch(PDO::FETCH_BOTH))
+									{
+										// recopilar los valores de los campos.
+										$id_ = trim($listadoPersonal['id_licencia_permiso']);
+										$fecha = cambiaf_a_normal(trim($listadoPersonal['fecha']));
+										$horario_inicio = trim($listadoPersonal['hora_inicio']);
+										$hora_fin = trim($listadoPersonal['hora_fin']);
+										$dia = trim($listadoPersonal['dia']);
+										$hora = trim($listadoPersonal['hora']);
+										$minutos = trim($listadoPersonal['minutos']);
+										// pasar a la matriz.
+										$datos[$j][] = "<tr>
+										<td><input type=checkbox class=case name=chk$id_ id=chk$id_>
+										<td>$num
+										<td>$id_
+										<td>$fecha
+										<td>$horario_inicio
+										<td>$hora_fin
+										<td>$dia
+										<td>$hora
+										<td>$minutos
+										";
+										// suma del total de minutos.
+											$total_minutos = ($dia*$calculo_horas*60) + ($hora*60) + ($minutos);
+										//	
+											$tramite_dia[] = segundosToCadenaD($total_minutos,$calculo_horas);
+											$tramite_hora[] = segundosToCadenaH($total_minutos, $calculo_horas);
+											$tramite_minutos[] = segundosToCadenaM($total_minutos, $calculo_horas);
+										// Aumentar el valor
+											$num++;
+									}	// salida del while.
+										// Calcular Tiempo, sumar dias, horas, minutos.
+											$sub_sin_dia = array_sum($tramite_dia);
+											$sub_sin_hora = array_sum($tramite_hora);
+											$sub_sin_minutos = array_sum($tramite_minutos);
+										// Caluclar Disponible en base a los minutos.
+											$minutos_x_dias = $minutos_licencia_o_permiso[$j];
+											$minutos_subtotal = ($sub_sin_dia*$calculo_horas*60) + ($sub_sin_hora*60) + ($sub_sin_minutos);
+											$minutos = $minutos_x_dias - $minutos_subtotal;
+											$utilizado = segundosToCadena($minutos_subtotal, $calculo_horas);
+											$saldo_disponible = segundosToCadena($minutos, $calculo_horas);
+											$DiasLicencia = segundosToCadena($minutos_x_dias, $calculo_horas);
+										// Acumularlo en la Matriz.
+											$j++; // incorporar en el titulo de la talba
+											// Utilizado y Dias Licencia, Disponible..
+											$datos[$j]["Disponible"] = $saldo_disponible;
+											$datos[$j]["Utilizado"] = $utilizado;
+											$datos[$j]["DiasLicencia"] = $DiasLicencia;
+							}
+							else{
+									$datos[$j][] = "<tr><td colspan = 10><span class='badge badge-dark'>No se encontraron Registros</span></td></tr>";
+									$minutos_x_dias = $minutos_licencia_o_permiso[$j];
+									$DiasLicencia = segundosToCadena($minutos_x_dias, $calculo_horas);
+									$saldo_disponible = segundosToCadena($minutos_x_dias, $calculo_horas);
+									$utilizado = segundosToCadena(0, $calculo_horas);
+									// Acumularlo en la Matriz.
+										$j++; // incorporar en el titulo de la talba
+									// Utilizado y Dias Licencia, Disponible..
+										$datos[$j]["Disponible"] = $saldo_disponible;
+										$datos[$j]["Utilizado"] = $utilizado;
+										$datos[$j]["DiasLicencia"] = $DiasLicencia;
+											$num = 1;
 								}
-								else{
-										$datos[$j][] = '<tr><td>No se encontraron Registros</td></tr>';
-										$num = 1;
-									}
-										// incrementar el valor de la matriz $datos
-											$num_datos++;
-											$datos[$j][] = $encabezado;
-										// Eliminar los elmentos de la array que acumula los dia, minutos y horas.
-											unset($tramite_dia, $tramite_hora, $tramite_minutos);
+								// Eliminar los elmentos de la array que acumula los dia, minutos y horas.
+									unset($tramite_dia, $tramite_hora, $tramite_minutos);
 				break;
 			case 'eliminarLyP':
 				// Armamos el query

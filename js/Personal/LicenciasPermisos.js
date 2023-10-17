@@ -72,6 +72,16 @@ $(function(){
             // focus().
                 $("#FechaTipoLicencia").focus();
         }); // opcion del change.
+        //
+        // CUANDO cambien...
+        //
+        $("#lstTipoLicencia").change(function ()
+        {
+            // BuscarLicenciasPermisos
+                BuscarLicenciasPermisos();
+            // focus().
+                $("#FechaTipoLicencia").focus();
+        }); // opcion del change.
         ////
         ////
         //  CUANDO EL CHECK SE ACTIVE O DESACTIVE.
@@ -660,10 +670,10 @@ function BuscarLicenciasPermisos() {
             data: {codigo_personal: codigo_personal, accion: accion, fecha: fecha, codigo_contratacion: codigo_tipo_contratacion, codigo_licencia: codigo_licencia_permiso},
             success: function(data){
                     // eliminar y obtener el utlimo elemento. de un array.
-                    tabla_1 = data[0].pop();
-                    Encabezado = data[1].pop();
-                    $('#listaContenidoLicenciasPermiso').append(tabla_1);
-                    $("#SpanDisponible").text(Encabezado);
+                    $('#listaContenidoLicenciasPermiso').append(data[0]);
+                    $("#SpanDisponible").text(data[1]["Disponible"]);
+                    $("#SpanUtilizado").text(data[1]["Utilizado"]);
+                    $("#SpanDiasLicencia").text(data[1]["DiasLicencia"]);
             },
         });
 }

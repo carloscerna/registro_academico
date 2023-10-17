@@ -92,11 +92,11 @@
                           <div class="tab-pane fade show active" id="pills-licencias-permisos" role="tabpanel" aria-labelledby="pills-licencias-permisos-tab">
                                 <!-- botoneeras y alertas-->
                                 <div class="bg-secondary text-white">
-                                    <button type="button" id="goBuscarHorarios" aria-label="goBuscarLicenciasPermisos" class="btn btn-info" tabindex="-1" data-toggle="tooltip" data-placement="top" title="Buscar">
-                                      <i class="fal fa-search"></i>
+                                    <button type="button" id="goGuardarLicenciaPermiso" aria-label="goGuardarLicenciaPermiso" class="btn btn-info" tabindex="-1" data-toggle="tooltip" data-placement="top" title="Guardar">
+                                      <i class="fal fa-save"></i>
                                     </button>
-                                    <button type="button" id="goNuevoHorarios" aria-label="goNuevoLicenciasPermisos" class="btn btn-primary" tabindex="-1" data-toggle="tooltip" data-placement="top" title="Nuevo">
-                                      <i class="far fa-layer-plus"></i>
+                                    <button type="button" id="goImprimirLicenciaPermiso" aria-label="goImprimirLicenciaPermiso" class="btn btn-primary" tabindex="-1" data-toggle="tooltip" data-placement="right" title="Imprimir">
+                                      <i class="far fa-print"></i>
                                     </button>                                 
                                     {# TEXTO DE MENSAJE CON ALERT. #}
                                     <div class="alert alert-danger p-1 m-1" role="alert" id="AlertLicenciasPermisos">
@@ -162,7 +162,7 @@
                                           {# <h6>:<span id="SpanDiasHorass" class="badge badge-info">!!!</span></h6> #}
                                         </div>
                                         <div class="form-group">
-                                          <button type="button" class="btn btn-primary">
+                                          <button type="button" class="btn btn-primary btn-sm btn-block">
                                             Tiempo <span id="SpanDiasHoras" class="badge badge-light">:</span>
                                           </button>
                                         </div>
@@ -178,16 +178,22 @@
                               </form>                                  
                                 <!-- TABLA CON LOS DATOS DEL SERVICIO EDUCATIVO. -->  
                                     <div class="modal-body">
-                                      <div class="row bg-secondary">
+                                      <div class="row bg-secondary m-0 p-0">
                                         <div class="col">
-                                          <div class="form-group">
-                                            <button type="button" class="btn btn-primary">
-                                              Disponible <span id="SpanDisponible" class="badge badge-light">:</span>
+                                          <div class="form-inline">
+                                            <button type="button" class="btn btn-success btn-sm ">
+                                              Días Licencia: <span id="SpanDiasLicencia" class="badge badge-light"></span>
+                                            </button>
+                                            <button type="button" class="btn btn-primary btn-sm">
+                                              Disponible: <span id="SpanDisponible" class="badge badge-light"></span>
+                                            </button>
+                                            <button type="button" class="btn btn-info btn-sm">
+                                              Utilizado: <span id="SpanUtilizado" class="badge badge-light"></span>
                                             </button>
                                           </div>
                                         </div>
                                       </div>
-                                        <div class="col">
+                                        <div class="col m-0 p-0">
                                           <table id="listadoContenidoLicenciasPermiso" class="table table-striped table-bordered table-hover table-condensed">
                                             <caption align="top"><div id="encabezado"></div></caption>
                                             <thead>
