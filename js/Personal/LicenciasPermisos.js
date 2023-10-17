@@ -533,6 +533,17 @@ $(function(){
                     });
                 },
         });
+	// Información dependiendo del nombres para Imprimir..
+        $("#goImprimirLicenciaPermiso").on('click',function () {
+            var fecha = $('#FechaTipoLicencia').val();
+            var codigo_personal = $('#lstPersonal').val();
+            var codigo_contratacion = $('#lstTipoContratacion').val();
+            
+            // construir la variable con el url.
+            varenviar = "/registro_academico/php_libs/reportes/Personal/LicenciasPermisosDetalle.php?&fecha=" + fecha + "&codigo_contratacion=" + codigo_contratacion + "&codigo_personal=" + codigo_personal;
+            // Ejecutar la función
+            AbrirVentana(varenviar);                                
+        });               
 }); // FIN DEL FUNCTION.
 //
 // Mensaje de Carga de Ajax.
@@ -676,4 +687,9 @@ function BuscarLicenciasPermisos() {
                     $("#SpanDiasLicencia").text(data[1]["DiasLicencia"]);
             },
         });
+}
+function AbrirVentana(url)
+{
+    window.open(url, '_blank');
+        return false;
 }
