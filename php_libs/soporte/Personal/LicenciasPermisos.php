@@ -112,19 +112,19 @@ if($errorDbConexion == false)
 					}
 				break;
 				case 'GuardarLicenciasPermisos':
-					$codigo_personal = $_POST['lstnombres'];
-					$fecha = $_POST['txtFechaLyP_inicio'];
-					$fecha_inicio = ($_POST['txtFechaLyP_inicio']);
-					$fecha_fin = ($_POST['txtFechaLyP_fin']);
+					$codigo_personal = $_POST['lstPersonal'];
+					$fecha = $_POST['FechaTipoLicencia'];
+					$fecha_inicio = ($_POST['FechaTipoLicencia']);
+					$fecha_fin = ($_POST['FechaTipoLicencia']);
 					$dia = $_POST['dia'];
 					$hora = $_POST['hora'];
 					$minutos = $_POST['minutos'];
-					$codigo_licencia = $_POST['lstTipoLicencia_1'];
-					$codigo_turno = substr($_POST['lstContratacion_1'],2,2);
-					$observacion = $_POST['observaciones'];
-					$hora_inicio = $_POST['hora_i'];
-					$hora_fin = $_POST['hora_f'];
-					$codigo_contratacion = substr($_POST['lstContratacion_1'],0,2);
+					$codigo_licencia = $_POST['lstTipoLicencia'];
+					$codigo_turno = substr($_POST['lstTipoContratacion'],2,2);
+					$observacion = $_POST['TXTObservacion'];
+					$hora_inicio = $_POST['HoraDesde'];
+					$hora_fin = $_POST['HoraHasta'];
+					$codigo_contratacion = substr($_POST['lstTipoContratacion'],0,2);
 					$codigo_contratacion_turno = $codigo_personal . $codigo_contratacion . $codigo_turno . $codigo_licencia;
 					
 					// Verificar si el Registro no Existe.
