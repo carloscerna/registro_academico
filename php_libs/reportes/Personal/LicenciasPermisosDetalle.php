@@ -13,6 +13,12 @@
 					$codigo_personal = $_REQUEST['codigo_personal'];
 					$fecha_l_y_p = substr($_REQUEST['fecha'],0,4);
 					$codigo_contratacion = $_REQUEST['codigo_contratacion'];
+					$codigo_tipo_contratacion = substr($_REQUEST['codigo_contratacion'],0,2);
+					// Calcular el Disponible segùn Tipo de Contratación.
+						$calculo_horas = 5;
+						if($codigo_tipo_contratacion == "05"){ // PAGADOS POR EL CDE.
+							$calculo_horas = 8;
+						}
 				   // armando el Query. PARA LA TABLA HISTORIAL.
 						// armando el Query. PARA LA TABLA HISTORIAL.
 							$query_personal = "SELECT lp.id_licencia_permiso, lp.codigo_personal, lp.fecha, lp.codigo_contratacion, lp.observacion, lp.dia, lp.hora, lp.minutos, lp.codigo_licencia_permiso, lp.codigo_turno, lp.hora_inicio, lp.hora_fin,
@@ -36,7 +42,7 @@
 									$nombre_docente = trim($listadoPersonalE['nombre_docente']);
 									$encabezado="Docente: "."<b>".$nombre_docente."</b>";
 									$nombre_turno = trim($listadoPersonalE['nombre_turno']);
-									$nombre_contratacion = utf8_encode(trim($listadoPersonalE['nombre_contratacion']));
+									$nombre_contratacion = mb_convert_encoding(trim($listadoPersonalE['nombre_contratacion']),'ISO-8859-1','UTF-8');
 									break;
 								  }
 
@@ -57,8 +63,8 @@ function Header(){
     $this->Cell(150,4,'CONTROL DE LICENCIAS Y PERMISOS DEL PERSONAL DOCENTE',0,1,'C');
     $this->SetFont('Arial','B',10);
     $this->SetX(30);
-    $this->Cell(150,4,utf8_decode($_SESSION['institucion']),0,1,'C');
-    $this->Cell(190,4,utf8_decode('Tipo de Contratación: '.$nombre_contratacion.' - '.'Turno: '.$nombre_turno),0,1,'C');
+    $this->Cell(150,4,mb_convert_encoding(trim(($_SESSION['institucion'])),'ISO-8859-1','UTF-8'));
+    $this->Cell(190,4,mb_convert_encoding('Tipo de Contratación: '.$nombre_contratacion.' - '.'Turno: '.$nombre_turno,'ISO-8859-1','UTF-8'),0,1,'C');
     $this->SetX(30);
     $this->SetXY(0,0);
 }
@@ -98,7 +104,7 @@ function FancyTable($header){
     $w=array(5,100,20,20,15,15,15); //determina el ancho de las columnas
     $w2=array(5,50,60,15,145,10,30,25); //determina el ancho de las columnas
  
-     $this->Cell(190,12,utf8_decode($nombre_docente)." - ".$fecha_l_y_p,1,1,'C');
+     $this->Cell(190,12,mb_convert_encoding(($nombre_docente)." - ".$fecha_l_y_p,'ISO-8859-1','UTF-8'),1,1,'C');
      $this->SetFont('','B',9);
     for($i=0;$i<count($header);$i++)
         $this->Cell($w[$i],7,utf8_decode($header[$i]),1,0,'C',1);
@@ -156,7 +162,8 @@ function FancyTable($header){
 					 // repetir el proceso hasta que la tabla ya no tenga datos.
 						$codigo_licencia_o_permiso[] = $listadoPersonalLyP['codigo'];
 						$saldo_licencia_o_permiso[] = $listadoPersonalLyP['saldo'];
-						$minutos_licencia_o_permiso[] = $listadoPersonalLyP['minutos'];
+						//$minutos_licencia_o_permiso[] = $listadoPersonalLyP['minutos'];
+						$minutos_licencia_o_permiso[] = $listadoPersonalLyP['saldo'] * $calculo_horas * 60;
 				}
 
  // contar para para la licencias o permisos.
@@ -202,11 +209,11 @@ function FancyTable($header){
 							// Calcular los dias minutos y segundos.
 								if($j >= 0 and $j <= 7)
 									{
-										$total_minutos = ($dia*5*60) + ($hora*60) + ($minutos);
-													
-										$tramite_dia[] = segundosToCadenaD($total_minutos);
-										$tramite_hora[] = segundosToCadenaH($total_minutos);
-										$tramite_minutos[] = segundosToCadenaM($total_minutos);
+										$total_minutos = ($dia*$calculo_horas*60) + ($hora*60) + ($minutos);
+										//
+										$tramite_dia[] = segundosToCadenaD($total_minutos,$calculo_horas);
+										$tramite_hora[] = segundosToCadenaH($total_minutos, $calculo_horas);
+										$tramite_minutos[] = segundosToCadenaM($total_minutos, $calculo_horas);
 									}
 							$numero++;
 							// Salto de página.
@@ -227,16 +234,16 @@ function FancyTable($header){
 											$sub_sin_minutos = array_sum($tramite_minutos);
 														
 											$minutos_x_dias = $minutos_licencia_o_permiso[$j];
-											$minutos_subtotal = ($sub_sin_dia*5*60) + ($sub_sin_hora*60) + ($sub_sin_minutos);
+											$minutos_subtotal = ($sub_sin_dia*$calculo_horas*60) + ($sub_sin_hora*60) + ($sub_sin_minutos);
 											$minutos = $minutos_x_dias - $minutos_subtotal;
-											$saldo_x = segundosToCadena($minutos);
+											$saldo_x = segundosToCadena($minutos, $calculo_horas);
 
 											$pdf->SetFont('Arial','B',11);														
 											$pdf->Cell($w[0],5.8,'',1,0,'L',$fill2);  // fecha
-											$pdf->Cell($w[1],5.8,utf8_decode('Saldo '.$saldo_licencia_o_permiso[$j] . ' Días. ' . $saldo_x),1,0,'R',$fill2);  // dia
+											$pdf->Cell($w[1],5.8,utf8_decode('Disponible '.$saldo_licencia_o_permiso[$j] . ' Días. ' . $saldo_x),1,0,'R',$fill2);  // dia
 											$pdf->Cell($w[2],5.8,'',1,0,'L',$fill2);  // fecha
 											$pdf->Cell($w[3],5.8,'TOTAL',1,0,'L',$fill2);  // fecha
-											$pdf->Cell($w2[1],5.8,segundosToCadena($minutos_subtotal),1,0,'C',$fill2);  // dia
+											$pdf->Cell($w2[1],5.8,segundosToCadena($minutos_subtotal, $calculo_horas),1,0,'C',$fill2);  // dia
 											$pdf->SetFont('Arial','',9);
 											$pdf->Ln(); $pdf->Ln();
 										}
