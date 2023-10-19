@@ -27,10 +27,11 @@ if($errorDbConexion == false)
 		{
 			// Variable
 				$Accion = $_POST['accion'];
-				$codigo_personal = $_POST['codigo_personal'];
 			// Verificamos las variables de acción
 			switch ($Accion) {
 				case 'BuscarContratacion':
+					//
+					$codigo_personal = $_POST['codigo_personal'];
 					// VALIDAR SI ES UN SUBDIRECTOR O DIRECTOR.
 						if($_SESSION['codigo_perfil'] == '03'){
 					// Obtener el valor del turno de la tabla Personal Responsable Licencia.
@@ -113,32 +114,41 @@ if($errorDbConexion == false)
 				break;
 				case 'GuardarLicenciasPermisos':
 					$codigo_personal = $_POST['lstPersonal'];
-					$fecha = $_POST['FechaTipoLicencia'];
-					$fecha_inicio = ($_POST['FechaTipoLicencia']);
-					$fecha_fin = ($_POST['FechaTipoLicencia']);
-					$dia = $_POST['dia'];
-					$hora = $_POST['hora'];
-					$minutos = $_POST['minutos'];
-					$codigo_licencia = $_POST['lstTipoLicencia'];
-					$codigo_turno = substr($_POST['lstTipoContratacion'],2,2);
-					$observacion = $_POST['TXTObservacion'];
-					$hora_inicio = $_POST['HoraDesde'];
-					$hora_fin = $_POST['HoraHasta'];
 					$codigo_contratacion = substr($_POST['lstTipoContratacion'],0,2);
+					$codigo_turno = substr($_POST['lstTipoContratacion'],2,2);
+					$codigo_licencia = $_POST['lstTipoLicencia'];
+					// CALCULO PARA LA FECHA, SI CAMBIA EL VALOR DE DiasLicencia.
+					$fecha = $_POST['FechaTipoLicencia'];
+					$DiasIncapacidad = $_POST['DiasIncapacidad'];
+					$fecha_inicio = ($_POST['FechaTipoLicencia']);
+						if($DiasIncapacidad == 1){
+							$fecha_fin = ($_POST['FechaTipoLicencia']);
+						}else{
+							$DiasIncapacidad--;
+							$Dias = "+" . $DiasIncapacidad . " day"; 
+							$fecha_fin = strtotime($Dias, strtotime($fecha_inicio));
+							$fecha_fin = date('Y-m-d', $fecha_fin);
+						}
+					//
+					$dia = $_POST['Dia'];
+					$hora = $_POST['Hora'];
+					$minutos = $_POST['Minutos'];
+					$hora_fin = $_POST['HoraHasta'];					
+					$hora_inicio = $_POST['HoraDesde'];
+					//
+					$observacion = $_POST['TxtObservacion'];
+					//					
 					$codigo_contratacion_turno = $codigo_personal . $codigo_contratacion . $codigo_turno . $codigo_licencia;
-					
 					// Verificar si el Registro no Existe.
 					$query_busqueda = "SELECT * from personal_licencias_permisos WHERE fecha = '$fecha' and btrim(codigo_personal || codigo_contratacion || codigo_turno || codigo_licencia_permiso) = '$codigo_contratacion_turno'";
 					// Eejcutamos query.
 					$consulta_busqueda = $dblink -> query($query_busqueda);
-
 					$num_registros = $consulta_busqueda -> rowCount();
-					
 					if($num_registros !=0){
 						// Si existen registros.
 							$respuestaOK = false;
-							$mensajeError = "Si Existe";
-							$contenidoOK = "El Registro Ya Existe";
+							$mensajeError = "El Registro ya Existe";
+							$contenidoOK = "";
 					}
 					else{
 						// Preparar query y condiciones para grabar una fecha o diferentes.
@@ -147,7 +157,6 @@ if($errorDbConexion == false)
 						$datetime2 = new DateTime($fecha_fin);
 						$interval = $datetime1->diff($datetime2);
 						$resultado = $interval->format('%a');
-						
 						    for($i=0;$i<=$resultado;$i++)
 						    {
 								if($i == 0){
@@ -161,20 +170,17 @@ if($errorDbConexion == false)
 									$fecha_nueva = new DateTime($fecha_inicio);
 									$fecha_nueva->add(new DateInterval('P'.$i.'D'));
 									$fecha_cambiada=$fecha_nueva->format('Y-m-d');
-									//print $fecha_cambiada;
 									//Query
 									$query = "INSERT INTO personal_licencias_permisos (fecha, dia, hora, minutos, codigo_personal, codigo_licencia_permiso, codigo_turno, observacion, hora_inicio, hora_fin, codigo_contratacion)
 									VALUES ('$fecha_cambiada','$dia','$hora','$minutos','$codigo_personal','$codigo_licencia','$codigo_turno','$observacion','$hora_inicio','$hora_fin','$codigo_contratacion')";
-									
 									// Ejecutamos el query
 									$resultadoQuery = $dblink -> query($query);
 								}
 							}
-		
 						// revisar que no hayan errores.
 						if($resultadoQuery == true){
 							$respuestaOK = true;
-							$mensajeError = "Si Registro";
+							$mensajeError = "Registro guardado.";
 						}
 						else{
 							$mensajeError = "No Registro";
@@ -182,7 +188,6 @@ if($errorDbConexion == false)
 						}
 					}
 				break;
-
 				case 'ActualizarLyP':
 					$id = $_POST['id_'];
 					$fecha = $_POST['fecha'];
@@ -207,11 +212,12 @@ if($errorDbConexion == false)
 							$mensajeError = "Si Registro";							
 						}
 				break;
-				case 'EditarLyP':
+				case 'EditarLicenciasPermisos':
+					$id_ = $_REQUEST['id_'];	// id_
 						// armando el Query. PARA LA TABLA HISTORIAL.
-							$query_LyP = "SELECT lp.id_licencia_permiso, lp.codigo_personal, lp.fecha, lp.codigo_contratacion, lp.observacion, lp.dia, lp.hora, lp.minutos, lp.codigo_licencia_permiso, lp.codigo_turno, lp.hora_inicio, lp.hora_fin
-												FROM personal_licencias_permisos lp
-												WHERE lp.id_licencia_permiso = ".$_POST['id_x'];
+						$query_LyP = "SELECT lp.id_licencia_permiso, lp.codigo_personal, lp.fecha, lp.codigo_contratacion, lp.observacion, lp.dia, lp.hora, lp.minutos, lp.codigo_licencia_permiso, lp.codigo_turno, lp.hora_inicio, lp.hora_fin
+											FROM personal_licencias_permisos lp
+												WHERE lp.id_licencia_permiso = '$id_'";
 				// Ejecutamos el Query. PARA LA TABLA EMPLEADOS.
 				   $consulta_LyP = $dblink -> query($query_LyP);
 				// Inicializando el array
@@ -324,6 +330,8 @@ if($errorDbConexion == false)
 										<td>$dia
 										<td>$hora
 										<td>$minutos
+										<td><a data-accion=EditarLicenciaPermiso class='btn btn-xs btn-info' data-toggle='tooltip' data-placement='top' title='Editar' href=$id_><i class='fas fa-edit'></i></a>
+										<a data-accion=EliminarLicenciaPermiso class='btn btn-xs btn-warning' data-toggle='tooltip' data-placement='top' title='Eliminar' href=$id_><i class='fas fa-trash'></i></a>
 										";
 										// suma del total de minutos.
 											$total_minutos = ($dia*$calculo_horas*60) + ($hora*60) + ($minutos);
@@ -369,26 +377,21 @@ if($errorDbConexion == false)
 								// Eliminar los elmentos de la array que acumula los dia, minutos y horas.
 									unset($tramite_dia, $tramite_hora, $tramite_minutos);
 				break;
-			case 'eliminarLyP':
+			case 'EliminarLicenciaPermiso':
+				$id_ = $_REQUEST['id_'];	// id_
 				// Armamos el query
-				$query = sprintf("DELETE FROM personal_licencias_permisos WHERE id_licencia_permiso = %s",
-					 $_POST['id_user']);
-
+					$query = "DELETE FROM personal_licencias_permisos WHERE id_licencia_permiso = '$id_'";
 				// Ejecutamos el query
 					$count = $dblink -> exec($query);
-				
 				// Validamos que se haya actualizado el registro
 				if($count != 0){
 					$respuestaOK = true;
-					$mensajeError = 'Se ha eliminado el registro correctamente'.$query;
-
+					$mensajeError = 'Se ha eliminado el registro correctamente';
 					$contenidoOK = 'Se ha Eliminado '.$count.' Registro(s).';
-
 				}else{
-					$mensajeError = 'No se ha eliminado el registro'.$query;
+					$mensajeError = 'No se ha eliminado el registro';
 				}
 				break;
-
 			default:
 				$mensajeError = 'Esta acción no se encuentra disponible';
 			break;
@@ -408,7 +411,7 @@ $salidaJson = array("respuesta" => $respuestaOK,
 		"contenido" => $contenidoOK,
 		"encabezado"=>$encabezado);
 
-if($Accion == 'EditarLyP' || $Accion == "BuscarLicenciasPermisos" || $Accion == 'BuscarContratacion'){
+if($Accion == 'EditarLicenciasPermisos' || $Accion == "BuscarLicenciasPermisos" || $Accion == 'BuscarContratacion'){
 	// Enviando la matriz con Json.
 		echo json_encode($datos);
 }else{

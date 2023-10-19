@@ -86,14 +86,6 @@ $(function(){
         ////
         //  CUANDO EL CHECK SE ACTIVE O DESACTIVE.
         //
-            if($('input[name="CheckDias"]:checked'))
-            {
-                // checked
-                    //$("#DiasLicenciaPermiso").attr("disabled","false");
-            }else{
-                // unchecked
-                    //$("#DiasLicenciaPermiso").attr("disabled","true");
-            }
             var check;
                 $("#CheckDias").on("click", function(){
                     check = $("#CheckDias").is(":checked");
@@ -103,7 +95,7 @@ $(function(){
                     } else {
                         $("#DiasLicenciaPermiso").prop("disabled",true);
                         $("#lstPersonal").focus();
-                        $("#DiasLicenciaPermiso").val("");
+                        $("#DiasLicenciaPermiso").val("1");
                     }
                 }); 
         ////////////////////////////////////////////////////////////////////////////
@@ -154,39 +146,37 @@ $(function(){
             Id_Editar_Eliminar = $(this).attr('href');
             accion_ok = $(this).attr('data-accion');
                 // EDITAR LA ASIGNATURA
-                if($(this).attr('data-accion') == 'EditarAAG'){
+                if($(this).attr('data-accion') == 'EditarLicenciaPermiso'){
                         // Valor de la acción
-                        $('#accion_aag').val('EditarAAG');
-                        accion = 'EditarAAG';
-                        
+                        accion = 'EditarLicenciasPermisos';
                         // obtener el valor del id.
                         var id_ = $(this).parent().parent().children('td:eq(2)').text();
-                        
                         // Llamar al archivo php para hacer la consulta y presentar los datos.
-                        $.post("php_libs/soporte/Mantenimiento/Organizacion Asignacion/phpAjaxOrganizacionAsignacion.php",  { id_: id_, accion: accion},
+                        $.post("php_libs/soporte/Personal/LicenciasPermisos.php",  { id_: id_, accion: accion},
                             function(data) {
                             // Llenar el formulario con los datos del registro seleccionado tabs-1
                             // Datos Generales
-                                texto_annlectivo_aag = $("#lstAnnLectivoAAG option:selected").html();
+                                /*texto_annlectivo_aag = $("#lstAnnLectivoAAG option:selected").html();
                                 codigo_annlectivo_aag = $("#lstAnnLectivoAAG option:selected").val();
                                 texto_modalidad_aag = $("#lstModalidadAAG option:selected").html();
                                 codigo_modalidad_aag = $("#lstModalidadAAG option:selected").val();
+                                */
                                 //
-                                $("#TextoAnnLectivoAAG").text(texto_annlectivo_aag);
-                                $("#TextoModalidadesAAG").text(texto_modalidad_aag);
+                                //$("#TextoAnnLectivoAAG").text(texto_annlectivo_aag);
+                                //$("#TextoModalidadesAAG").text(texto_modalidad_aag);
                                 //
-                                listar_CodigoAAG(data[0].codigo_docente);
-                                listar_CodigoTurnoAAG(data[0].codigo_turno);
+                                //listar_CodigoAAG(data[0].codigo_docente);
+                                //listar_CodigoTurnoAAG(data[0].codigo_turno);
                                 //
                                 // Abrir ventana modal.
-                                $('#VentanaAAG').modal("show");
-                                $("label[for=LblTituloAAG]").text("Docente/Nivel | Actualizar");
+                                $('#VentanaLicenciasPermisos').modal("show");
+                                $("label[for=LblTituloLicenciasPermisos]").text("Licencias | Actualizar");
                                 // reestablecer el accion a=ActulizarAsignatura.
-                                accion_aag = "ActualizarAAG";
+                                accion = "ActualizarLicenciasPermisos";
                             },"json");
                 }
                 // ELIMINAR REGISTRO ASIGNATURA.
-                if($(this).attr('data-accion') == 'EliminarAAG'){
+                if($(this).attr('data-accion') == 'EliminarLicenciaPermiso'){
                     //	ENVIAR MENSAJE CON SWEETALERT 2, PARA CONFIRMAR SI ELIMINA EL REGISTRO.
                     const swalWithBootstrapButtons = Swal.mixin({
                         customClass: {
@@ -217,28 +207,18 @@ $(function(){
                                 cache: false,                     
                                 type: "POST",                     
                                 dataType: "json",                     
-                                url:"php_libs/soporte/Mantenimiento/Organizacion Asignacion/phpAjaxOrganizacionAsignacion.php",                     
+                                url:"php_libs/soporte/Personal/LicenciasPermisos.php",
                                 data: {                     
-                                        accion_buscar: 'EliminarAAG', id_: Id_Editar_Eliminar,
+                                        accion: 'EliminarLicenciaPermiso', id_: Id_Editar_Eliminar,
                                         },                     
                                 success: function(response) {                     
                                         if (response.respuesta === true) {                     		
                                             toastr["info"]('Registros Eliminados', "Sistema");
-                                            // Asignamos valor a la variable acción
-                                                $('#accion_aag').val('BuscarAAG');
-                                                accion = 'BuscarAAG';
-                                                // Llamar al archivo php para hacer la consulta y presentar los datos.
-                                                $.post("php_libs/soporte/Mantenimiento/Organizacion Asignacion/phpAjaxOrganizacionAsignacion.php",  {accion: accion, codigo_annlectivo: codigo_annlectivo, codigo_modalidad: codigo_modalidad, codigo_grado_se: codigo_grado_se},
-                                                    function(response) {
-                                                        if (response.respuesta === true) {
-                                                            toastr["info"]('Registros Encontrados', "Sistema");
-                                                        }
-                                                        if (response.respuesta === false) {
-                                                            toastr["warning"]('Registros No Encontrados', "Sistema");
-                                                        }                                                                                    // si es exitosa la operación
-                                                            $('#listaContenidoAAG').empty();
-                                                            $('#listaContenidoAAG').append(response.contenido);
-                                                    },"json");
+                                        // BuscarLicenciasPermisos
+                                            BuscarLicenciasPermisos();
+                                        // focus().
+                                            $("#FechaTipoLicencia").focus();
+
                                         }
                                 }                     
                                 });
@@ -276,46 +256,6 @@ $(function(){
     //
     //  funcion click
     //
-        $('#goBuscarAAG').on('click',function(){
-            // Asignamos valor a la variable acción
-                codigo_annlectivo = $("#lstAnnLectivoAAG").val();
-                codigo_modalidad = $("#lstModalidadAAG").val();
-                codigo_grado_se = $("#lstGradoAAG").val();
-                accion = 'BuscarAAG';
-                // DESACTIVAR MENSAJE
-                    $("#AlertAAG").css("display", "none");
-                //
-                //  CONDICONAR EL SELECT ...
-                //
-                if(codigo_annlectivo == "00"){
-                    $("#AlertAAG").css("display", "block");
-                    $("#TextoAlertAAG").text("Debe Seleccionar Año Lectivo para Buscar.");
-                    return;
-                }
-                if(codigo_modalidad == "00"){
-                    $("#AlertAAG").css("display", "block");
-                    $("#TextoAlertAAG").text("Debe Seleccionar la Modalidad para Buscar.");
-                    return;
-                }
-                if(codigo_grado_se == "00"){
-                    $("#AlertAAG").css("display", "block");
-                    $("#TextoAlertAAG").text("Debe Seleccionar un Grado para Buscar.");
-                    return;
-                }
-                // Llamar al archivo php para hacer la consulta y presentar los datos.
-                $.post("php_libs/soporte/Mantenimiento/Organizacion Asignacion/phpAjaxOrganizacionAsignacion.php",
-                    {accion: accion, codigo_annlectivo: codigo_annlectivo, codigo_modalidad: codigo_modalidad, codigo_grado_se: codigo_grado_se},
-                    function(response) {
-                    if (response.respuesta === true) {
-                        toastr["info"]('Registros Encontrados', "Sistema");
-                    }
-                    if (response.respuesta === false) {
-                        toastr["error"]('Registros No Encontrados', "Sistema");
-                    }                                                                                    // si es exitosa la operación
-                        $('#listaContenidoAAG').empty();
-                        $('#listaContenidoAAG').append(response.contenido);
-                    },"json");
-        });
         //////////////////////////////////////////////////////////////////////////////////
         /* VER #CONTROLES CREADOS */
         //////////////////////////////////////////////////////////////////////////////////
@@ -334,20 +274,17 @@ $(function(){
                     return;
             }
             // enviar form
-                $('#FormLicenciasPermisos').submit();
+                $('#formVentanaLicenciasPermisos').submit();
         });
         //////////////////////////////////////////////////////////////////////////////////
         /* ACTUALIZAR DATOS DE LA ASIGNATURA #CONTROLES CREADOS */
         //////////////////////////////////////////////////////////////////////////////////
         $('#goActualizarLicenciasPermisos').on('click', function(){
-            codigo_annlectivo = $("#lstAnnLectivoAAG").val();
-            codigo_modalidad = $("#lstModalidadAAG").val();
-            codigo_docente = $("#formVentanaAAG select[name=lstDocenteNivel]").val();
-            codigo_turno = $("#formVentanaAAG select[name=lstTurnoAAG]").val();
-            accion = 'ActualizarAAG';
-                $('#accion_aag').val('ActualizarAAG');
-            // enviar form
-                $('#formVentanaAAG').submit();
+            // Asignamos valor a la variable acción
+            codigo_personal = $("#lstPersonal").val();
+            accion = 'GuardarLicenciasPermisos';
+            // DESACTIVAR MENSAJE
+            $("#AlertLicenciasPermisos").css("display", "none");
         });
         //	  
         // Validar Formulario para la buscque de registro segun el criterio.   
@@ -380,7 +317,7 @@ $(function(){
                         });            
                     },
                 submitHandler: function(){	
-                    var str = $('#formVentanaAAG').serialize();
+                    var str = $('#formVentanaLicenciasPermisos').serialize();
                     //alert(str);
                 ///////////////////////////////////////////////////////////////			
                 // Inicio del Ajax. guarda o Actualiza los datos del Formualrio.
@@ -472,19 +409,26 @@ $(function(){
                     },
                 submitHandler: function(){	
                     var str = $('#FormLicenciasPermisos').serialize();
+                    if($('input[name="CheckDias"]:checked'))
+                    {
+                        DiasIncapacidad = $("#DiasLicenciaPermiso").val();
+                    }else{
+                        alert();
+                        DiasIncapacidad = 1;
+                    }
                     //alert(str);
                 ///////////////////////////////////////////////////////////////			
                 // Inicio del Ajax. guarda o Actualiza los datos del Formualrio.
                 ///////////////////////////////////////////////////////////////
                     $.ajax({
                         beforeSend: function(){
-                            //if($('#TodasLasAsignaturas').is(":checked")) {TodasLasAsignaturas = 'yes';}else{TodasLasAsignaturas = "no"}
+                            //if($('#CheckDias').is(":checked")) {DiasIncapacidad = $("#DiasLicenciaPermiso").val();}else{DiasIncapacidad = 1;}
                         },
                         cache: false,
                         type: "POST",
                         dataType: "json",
                         url:"php_libs/soporte/Personal/LicenciasPermisos.php",
-                        data:str + "&accion=" + accion + "&id=" + Math.random(),
+                        data:str + "&accion=" + accion + "&id=" + Math.random() + "&DiasIncapacidad=" + DiasIncapacidad,
                         success: function(response){
                             // Validar mensaje de error
                             if(response.respuesta == false){
@@ -548,47 +492,9 @@ function FechaInicioFin() {
     });
 }
  ///////////////////////////////////////////////////////////////////////
-// TODAS LAS TABLAS VAN HA ESTAR EN organizaciones grado-seccion-turno.*******************
+// TODAS LAS TABLAS VAN HA ESTAR EN personal licencias.*******************
 // FUNCION LISTAR TABLA personal
 ////////////////////////////////////////////////////////////
-function listar_CodigoAAG(CodigoAAG){
-    var miselect=$("#formVentanaAAG select[name=lstDocenteNivel]");
-    /* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
-    miselect.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
-    
-    $.post("includes/cargar_nombre_personal.php",
-        function(data) {
-            miselect.empty();
-            for (var i=0; i<data.length; i++) {
-                if(CodigoAAG == data[i].codigo){
-                    miselect.append('<option value="' + data[i].codigo + '" selected>' + data[i].descripcion + '</option>');
-                }else{
-                    miselect.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');
-                }
-            }
-    }, "json");    
-}
- ///////////////////////////////////////////////////////////////////////
-// TODAS LAS TABLAS VAN HA ESTAR EN organizaciones grado-seccion-turno.*******************
-// FUNCION LISTAR TABLA turno
-////////////////////////////////////////////////////////////
-function listar_CodigoTurnoAAG(CodigoTurnoAAG){
-    var miselect=$("#formVentanaAAG select[name=lstTurnoAAG]");
-    /* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
-    miselect.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
-    
-    $.post("includes/cargar_turno.php",
-        function(data) {
-            miselect.empty();
-            for (var i=0; i<data.length; i++) {
-                if(CodigoTurnoAAG == data[i].codigo){
-                    miselect.append('<option value="' + data[i].codigo + '" selected>' + data[i].descripcion + '</option>');
-                }else{
-                    miselect.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');
-                }
-            }
-    }, "json");    
-}
 async function callerFun(){
     console.log("Llamada!!");
     // esperar que termine la funcion FEchaInicio
@@ -627,7 +533,6 @@ function TipoLicenciaPermiso() {
     });
     
 }
-
 function BuscarLicenciasPermisos() {
     accion = "BuscarLicenciasPermisos";
     codigo_personal = $("#lstPersonal").val();

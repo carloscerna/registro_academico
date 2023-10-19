@@ -98,9 +98,10 @@ var codigo_tipo_contratacion = $('#lstTipoContratacion option:selected').val();
           }
     }
       // Pasar los valores.
-      //console.log(tiempo_calculado_1);
-      //console.log(horas)
       $("#SpanDiasHoras").text(tiempo_calculado_1);
+      $("#Dia").val(dia); // dias
+      $("#Hora").val(horas); // horas
+      $("#Minutos").val(minutos); // minutos.
 }
 
 function calcular_tiempo_m() {
