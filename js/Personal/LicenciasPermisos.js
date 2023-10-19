@@ -14,16 +14,17 @@ var miselect3 = "";
 $(function(){
     // Escribir la fecha actual.
     var now = new Date();
-                
     var day = ("0" + now.getDate()).slice(-2);
     var month = ("0" + (now.getMonth() + 1)).slice(-2);
-    
     var today = now.getFullYear()+"-"+(month)+"-"+(day) ;
+    var today_now = now.getFullYear()+"-"+(month)+"-"+"01";
+    var today_inicio = now.getFullYear()+"-"+"01"+"-"+"01";
         $('#FechaTipoLicencia').val(today);
-//
-//  INVISILBLE TODOS LOS MENSAJES.
+    //
+    //  INVISILBLE TODOS LOS MENSAJES.
     //  
     $("#AlertLicenciasPermisos").css("display", "none");
+    $("#AlertReportes").css("display", "none");
     //
 //  OPCIONES PARA EL TAB NAV
 //
@@ -101,16 +102,54 @@ $(function(){
         ////////////////////////////////////////////////////////////////////////////
         // ÑO,ÒAR DATPS DEPÈNDIENTE DEL TAB DE NAV
         //////////////////////////////////////////////////////////////////////////
-    $("#NavNavLicenciasPermisos ul.nav > li > a").on("click", function () {
+    $("#NavLicenciasPermisos ul.nav > li > a").on("click", function () {
         TextoTab = $(this).text();
-        //alert(TextoTab);
         if(TextoTab == "Licencias y Permisos"){
             // Borrar información de la Tabla.
                 $('#listaContenidoLicenciasPermiso').empty();
                 $("#AlertLicenciasPermisos").css("display", "none");
-            // Select a 00...
-        }else{
-            //alert("Nav-Tab " + $TextoTab);
+        }
+        if(TextoTab == "Reportes"){
+            // Borrar información de la Tabla.
+                $("#AlertReportes").css("display", "none");
+            // Actualizar Fecha.
+                $('#FechaAñoLectivo').val(today_inicio);
+                $('#FechaLicenciaDesde').val(today_now);
+                $('#FechaLicenciaHasta').val(today);
+            //
+            var miselect=$("#lstTipoContratacionReporte");
+			/* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
+			miselect.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
+			//
+			$.post("includes/Personal/Catalogos/Contratacion.php",
+				function(data) {
+					miselect.empty();
+					for (var i=0; i<data.length; i++) {
+                        if(i == 0){
+                            miselect.append('<option value="' + data[i].codigo + '" selected>' + data[i].descripcion + '</option>');
+                        }else{
+                            miselect.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');
+                        }
+						
+					}
+			}, "json");
+            //
+            var miselect=$("#lstTurnoReporte");
+			/* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
+			miselect.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
+			//
+			$.post("includes/Personal/Catalogos/Turno.php",
+				function(data) {
+					miselect.empty();
+					for (var i=0; i<data.length; i++) {
+                        if(i == 0){
+                            miselect.append('<option value="' + data[i].codigo + '" selected>' + data[i].descripcion + '</option>');
+                        }else{
+                            miselect.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');
+                        }
+						
+					}
+			}, "json");
         }
     });
         //

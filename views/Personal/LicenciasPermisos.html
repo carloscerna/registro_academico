@@ -47,14 +47,7 @@
           minute: '2-digit',
           hour12: false,
       });
-      console.log(n);
-      //$('#HoraDesde').val(n);
-      //$('#HoraHasta').val(n);
   }
-  // TIEMPO ACTUAL.
-  //changeTimeFormat();
-//
-  //calcular_tiempo_12_24();
 });
 </script>
 {% endblock %}
@@ -231,71 +224,61 @@
                             <!-- botoneeras y alertas-->
                             <div class="bg-secondary text-white">
                               <div class="form-group">
-                                <button type="button" id="goBuscarModalidad" aria-label="goBuscarModalidad" class="btn btn-info" tabindex="-1" data-toggle="tooltip" data-placement="top" title="Buscar">
-                                  <i class="fal fa-search"></i>
+                                <button type="button" id="goImprimirLicenciasPermisos" aria-label="goImprimirLicenciasPermisos" class="btn btn-info" tabindex="-1" data-toggle="tooltip" data-placement="top" title="Licencias y Permisos">
+                                  <i class="fal fa-print"></i>
                                 </button>
-                                <button type="button" id="goGuardarModalidad" aria-label="goGuardarModalidad" class="btn btn-primary" tabindex="-1" data-toggle="tooltip" data-placement="top" title="Guardar">
-                                  <i class="fal fa-save"></i>
+                                <button type="button" id="goImprimirLL" aria-label="goImprimirLL" class="btn btn-primary" tabindex="-1" data-toggle="tooltip" data-placement="bottom" title="Llegadas Tardías o Injustificadas">
+                                  <i class="fal fa-print"></i>
                                 </button>                                 
                               </div>
-                                <div class="alert alert-danger p-1 m-1" role="alert" id="AlertModalidad">
-                                  <span id="TextoAlertModalidad">...</span>
+                                <div class="alert alert-danger p-1 m-1" role="alert" id="AlertReportes">
+                                  <span id="TextoAlertReportes">...</span>
                                 </div>
                             </div>
                                <!-- NAV TAB FORM - ORGANIZACION. NIVELES *INICIO*-->
-                                <form class="form" id="FormModalidad" name="FormModalidad">
+                                <form class="form" id="FormReportes" name="FormReportes">
                                   <div class="row">
-                                    <!-- PRIMER COL AÑO LECTIVO Y MODALIDAD-->
-                                      <div class="col-md-4 col-lg-4 col-12">
+                                    <div class="col-md-4 col-lg-4 col">
                                         <div class="form-group">
-                                          {# SELECT DEL AÑO LECTIVO #}
-                                          <label for="lstAnnLectivoModalidad">Año Lectivo</label>
-                                          <select class="form-control" id="lstAnnLectivoModalidad" name="lstAnnLectivoModalidad"></select>
+                                            <label for="lstTipoContratacionReporte">Tipo de Contratación</label>
+                                            <select class="form-control mx-sm-3" id="lstTipoContratacionReporte" name="lstTipoContratacion"></select>
                                         </div>
-                                      </div>
-                                      <!-- SEGUNDO COL SERVICIIO EDUCATIVO MODALIDAD-->
-                                      <div class="col-md-4 col-lg-4 col-12">
                                         <div class="form-group">
-                                          {# SELECT DEL NIVEL (MODALIDAD) #}
-                                          <label for="lstModalidad">Nivel</label>
-                                          <select class="form-control" id="lstModalidad" name="lstModalidad"></select>
-                                        </div>
+                                          <label for="lstTurnoReporte">Tipo de Contratación</label>
+                                          <select class="form-control mx-sm-3" id="lstTurnoReporte" name="lstTurnoReporte"></select>
                                       </div>
-                                      <!-- SEGUNDO COL SERVICIIO EDUCATIVO -->
-                                      <div class="col-md-4 col-lg-4 col-12">
-                                        <div class="form-group">
-                                          {#SELECT DEL SERVICIO EDUCATIVO (COMPONENTES DE ESTUDIO) #}
-                                          <label for="lstModalidadServicioEducativo">Servicio Educativo</label>
-                                          <select class="form-control" id="lstModalidadServicioEducativo" name="lstModalidadServicioEducativo"></select>
-                                        </div>
+                                    </div>
+                                    <div class="col-md-4 col-lg-4 col">
+                                      <div class="form-group m-0">
+                                        <dl class="row">
+                                          <dt></dt>
+                                          <dd>Esta fecha se toma encuenta para obtener el Saldo de Cada Licencia o Permiso.</dd>
+                                        </dl>
                                       </div>
-                                      
-                                  </div>
+                                      <div class="input-group mb-0">
+                                        <div class="input-group-prepend">
+                                          <span class="input-group-text bg-gradient-gray-dark" id="basic-addon6">Fecha: Inicio Año Lectivo</span>
+                                        </div>
+                                        <input type="date" min="1900-01-01" max="9999-12-31" class="form-control" id="FechaAñoLectivo" name="FechaAñoLectivo" placeholder="" aria-label="FechaInicio" aria-describedby="basic-addon6" autocomplete="false">
+                                      </div>
+                                      <div class="input-group mb-0">
+                                        <div class="input-group-prepend">
+                                          <span class="input-group-text bg-gradient-gray-dark" id="basic-addon7">Desde</span>
+                                        </div>
+                                        <input type="date" min="1900-01-01" max="9999-12-31" class="form-control" id="FechaLicenciaDesde" name="FechaLicenciaDesde" placeholder="" aria-label="FechaLicenciaDesde" aria-describedby="basic-addon7" autocomplete="false">
+                                      </div>
+                                      <div class="input-group mb-0">
+                                        <div class="input-group-prepend">
+                                          <span class="input-group-text bg-gradient-gray-dark" id="basic-addon8">Hasta</span>
+                                        </div>
+                                        <input type="date" min="1900-01-01" max="9999-12-31" class="form-control" id="FechaLicenciaHasta" name="FechaLicenciaHasta" placeholder="" aria-label="FechaLicenciaHasta" aria-describedby="basic-addon8" autocomplete="false">
+                                      </div>
+                                    </div>
+                                    <div class="col-md-4 col-lg-4 col">
+
+                                    </div>
+                            </div>
                                 </form>
-                              <!-- TABLA CON LOS DATOS DEL SERVICIO EDUCATIVO. -->  
-                              <div class="bg-info text-white">_Asignación Modalidad (Niveles) según Año Lectivo_</div>
-                                  <div class="modal-body">
-                                        <table id="listadoContenidoModalidad" class="table table-striped table-bordered table-hover table-condensed">
-                                          <thead>
-                                            <tr>
-                                              <th><input type="checkbox" name="checkBoxAllModalidad" id="checkBoxAllModalidad" data-toggle="tooltip" data-placement="top" title="Marcar/Desmarcar Todo">
-                                                <button type="button" id="goEliminarModalidad" aria-label="goEliminarModalidad" class="btn btn-link" tabindex="-1" data-toggle="tooltip" data-placement="top" title="Eliminar Seleccionados...">
-                                                  <i class="fad fa-trash"></i>
-                                                </button>
-                                              </th>
-                                              <th>#</th>
-                                              <th>id</th>
-                                              <th>Código</th>
-                                              <th>Descripción</th>
-                                              <th>Servicio Educativo</th>
-                                              <th></th>
-                                            </tr>
-                                          </thead>
-                                            <tbody id="listaContenidoModalidad"></tbody>                            
-                                          <tfoot>
-                                          </tfoot>
-                                      </table>
-                                  </div> <!-- TABLA CON LOS DATOS DEL Organización niveles. --> 
                           </div> <!-- ***NAV TAB REPORTES FIN***-->
                       </div>
                     </div> <!-- CARD BODY-->
