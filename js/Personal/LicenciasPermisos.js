@@ -134,18 +134,18 @@ $(function(){
 					}
 			}, "json");
             //
-            var miselect=$("#lstTurnoReporte");
+            var miselect1=$("#lstTurnoReporte");
 			/* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
-			miselect.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
+			miselect1.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
 			//
 			$.post("includes/Personal/Catalogos/Turno.php",
 				function(data) {
-					miselect.empty();
+					miselect1.empty();
 					for (var i=0; i<data.length; i++) {
                         if(i == 0){
-                            miselect.append('<option value="' + data[i].codigo + '" selected>' + data[i].descripcion + '</option>');
+                            miselect1.append('<option value="' + data[i].codigo + '" selected>' + data[i].descripcion + '</option>');
                         }else{
-                            miselect.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');
+                            miselect1.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');
                         }
 						
 					}
@@ -494,7 +494,22 @@ $(function(){
             varenviar = "/registro_academico/php_libs/reportes/Personal/LicenciasPermisosDetalle.php?&fecha=" + fecha + "&codigo_contratacion=" + codigo_contratacion + "&codigo_personal=" + codigo_personal;
             // Ejecutar la función
             AbrirVentana(varenviar);                                
-        });               
+        });
+        // Información dependiendo del nombres para Imprimir..
+        $("#goImprimirLicenciasPermisos").on('click',function () {
+            var fecha = $('#FechaAñoLectivo').val();
+            var fecha_desde = $('#FechaLicenciaDesde').val();
+            var fecha_hasta = $('#FechaLicenciaHasta').val();
+            var codigo_turno = $('#lstTurnoReporte').val();
+            var codigo_contratacion = $('#lstTipoContratacionReporte').val();
+            
+            // construir la variable con el url.
+            varenviar = "/registro_academico/php_libs/reportes/Personal/LicenciasPermisos.php?&fecha_inicio=" + fecha + 
+                        "&fecha_desde=" + fecha_desde + "&fecha_hasta=" + fecha_hasta + "&codigo_turno=" + codigo_turno +
+                        "&codigo_contratacion=" + codigo_contratacion;
+            // Ejecutar la función
+            AbrirVentana(varenviar);                                
+        });                    
 }); // FIN DEL FUNCTION.
 //
 // Mensaje de Carga de Ajax.
@@ -570,7 +585,6 @@ function TipoLicenciaPermiso() {
                 resolve();
         }, "json");
     });
-    
 }
 function BuscarLicenciasPermisos() {
     accion = "BuscarLicenciasPermisos";
