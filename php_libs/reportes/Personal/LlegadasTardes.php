@@ -13,80 +13,79 @@
 	$date = fechaYMD();
 //
 // variables y consulta a la tabla.
-		$fecha_desde = $_REQUEST['fecha_desde'];
-		$fecha_hasta = $_REQUEST['fecha_hasta'];
-		$fecha_inicio = $_REQUEST['fecha_inicio'];
-		$nombre_ann_lectivo = substr($_REQUEST['fecha_desde'],0,4);
-		$codigo_contratacion = $_REQUEST['codigo_contratacion'];
-		$codigo_turno = $_REQUEST['codigo_turno'];
-		$codigo_contratacion_turno = $codigo_contratacion . $codigo_turno;
-		$db_link = $dblink;
-		// Calcular el Disponible segùn Tipo de Contratación.
-		$calculo_horas = 5;
-		if($codigo_tipo_contratacion == "05"){ // PAGADOS POR EL CDE.
-			$calculo_horas = 8;
-		}
+	$fecha_desde = $_REQUEST['fecha_desde'];
+	$fecha_hasta = $_REQUEST['fecha_hasta'];
+	$fecha_inicio = $_REQUEST['fecha_inicio'];
+	$nombre_ann_lectivo = substr($_REQUEST['fecha_desde'],0,4);
+	$codigo_contratacion = $_REQUEST['codigo_contratacion'];
+	$codigo_turno = $_REQUEST['codigo_turno'];
+	$codigo_contratacion_turno = $codigo_contratacion . $codigo_turno;
+	$db_link = $dblink;
+	// Calcular el Disponible segùn Tipo de Contratación.
+	$calculo_horas = 5;
+	if($codigo_contratacion == "05"){ // PAGADOS POR EL CDE.
+		$calculo_horas = 8;
+	}
 		// armando el Query. PARA LA TABLA HISTORIAL.
-			$query_personal = "SELECT lp.id_licencia_permiso, lp.codigo_personal, lp.fecha, lp.codigo_contratacion, lp.observacion, lp.dia, lp.hora, lp.minutos, lp.codigo_licencia_permiso, lp.codigo_turno, lp.hora_inicio, lp.hora_fin,
-					btrim(p.nombres || CAST(' ' AS VARCHAR) || p.apellidos) as nombre_docente, p.codigo_estatus, tur.nombre as nombre_turno, tc.nombre as nombre_contratacion
-					FROM personal_licencias_permisos lp
-					INNER JOIN personal p ON p.id_personal = lp.codigo_personal
-					INNER JOIN tipo_contratacion tc ON tc.codigo = lp.codigo_contratacion
-					INNER JOIN tipo_licencia_o_permiso tlp ON tlp.codigo = lp.codigo_licencia_permiso
-					INNER JOIN turno tur ON tur.codigo = lp.codigo_turno
-					WHERE p.codigo_estatus = '01' and btrim(lp.codigo_contratacion || lp.codigo_turno) = '$codigo_contratacion_turno'";
-			// Query para revisar la tabla tipo de licencia.
-				$query_licencia_permiso = "SELECT codigo, nombre, saldo, minutos from tipo_licencia_o_permiso ORDER BY codigo";
-			// Query para revisar la tabla personal.
-				$query_nombres_personal = "SELECT p.id_personal as codigo_personal, p.nombres, p.apellidos, btrim(p.nombres || CAST(' ' AS VARCHAR) || p.apellidos) as nombre_c FROM personal p WHERE p.codigo_estatus = '01' ORDER BY nombre_c";
-			// Ejecutamos el Query. PARA LA TABLA EMPLEADOS.
-				$consulta_personal = $dblink -> query($query_personal);
-				$consulta_licencia_permiso = $dblink -> query($query_licencia_permiso);
-				$consulta_encabezado = $dblink -> query($query_personal);
-				$consulta_nombres = $dblink -> query($query_nombres_personal);
-			// Obtener el encabezado.
-					while($listadoPersonalE = $consulta_encabezado -> fetch(PDO::FETCH_BOTH))
-						{
-						$nombre_turno = trim($listadoPersonalE['nombre_turno']);
-						$nombre_contratacion = mb_convert_encoding(trim($listadoPersonalE['nombre_contratacion']),"ISO-8859-1","UTF-8");
-						break;
-						}
+		$query_personal = "SELECT lp.id_licencia_permiso, lp.codigo_personal, lp.fecha, lp.codigo_contratacion, lp.observacion, lp.dia, lp.hora, lp.minutos, lp.codigo_licencia_permiso, lp.codigo_turno, lp.hora_inicio, lp.hora_fin,
+				btrim(p.nombres || CAST(' ' AS VARCHAR) || p.apellidos) as nombre_docente, p.codigo_estatus, tur.nombre as nombre_turno, tc.nombre as nombre_contratacion
+				FROM personal_licencias_permisos lp
+				INNER JOIN personal p ON p.id_personal = lp.codigo_personal
+				INNER JOIN tipo_contratacion tc ON tc.codigo = lp.codigo_contratacion
+				INNER JOIN tipo_licencia_o_permiso tlp ON tlp.codigo = lp.codigo_licencia_permiso
+				INNER JOIN turno tur ON tur.codigo = lp.codigo_turno
+				WHERE p.codigo_estatus = '01' and btrim(lp.codigo_contratacion || lp.codigo_turno) = '$codigo_contratacion_turno'";
+		// Query para revisar la tabla tipo de licencia.
+			$query_licencia_permiso = "SELECT codigo, nombre, saldo, minutos from tipo_licencia_o_permiso ORDER BY codigo";
+		// Query para revisar la tabla personal.
+			$query_nombres_personal = "SELECT p.id_personal as codigo_personal, p.nombres, p.apellidos, btrim(p.nombres || CAST(' ' AS VARCHAR) || p.apellidos) as nombre_c FROM personal p WHERE p.codigo_estatus = '01' ORDER BY nombre_c";
+		// Ejecutamos el Query. PARA LA TABLA EMPLEADOS.
+			$consulta_personal = $dblink -> query($query_personal);
+			$consulta_licencia_permiso = $dblink -> query($query_licencia_permiso);
+			$consulta_encabezado = $dblink -> query($query_personal);
+			$consulta_nombres = $dblink -> query($query_nombres_personal);
+		// Obtener el encabezado.
+				while($listadoPersonalE = $consulta_encabezado -> fetch(PDO::FETCH_BOTH))
+					{
+					$nombre_turno = trim($listadoPersonalE['nombre_turno']);
+					$nombre_contratacion = mb_convert_encoding(trim($listadoPersonalE['nombre_contratacion']),"ISO-8859-1","UTF-8");
+					break;
+					}
 			$meses = array("Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre");
-					//Crear una línea. Fecha.
-					//$dia = strftime("%d");		// El Día.
-					$dato = explode("-",$fecha_desde);
-					$dato_entero = (int)$dato[1];
-					$nombre_mes = $meses[$dato_entero-1];     // El Mes.
-				
+				//Crear una línea. Fecha.
+				//$dia = strftime("%d");		// El Día.
+				$dato = explode("-",$fecha_desde);
+				$dato_entero = (int)$dato[1];
+				$nombre_mes = $meses[$dato_entero-1];     // El Mes.
 // leer tabla de docentes. codigo y nombre en matriz.
-   $codigo_docente_a = array(); $nombre_docente_a = array();
-     while($row = $consulta_nombres-> fetch(PDO::FETCH_BOTH))
-       {
-        // repetir el proceso hasta que la tabla ya no tenga datos.
+	$codigo_docente_a = array(); $nombre_docente_a = array();
+		while($row = $consulta_nombres-> fetch(PDO::FETCH_BOTH))
+		{
+		// repetir el proceso hasta que la tabla ya no tenga datos.
 			$codigo_docente_a[] = $row['codigo_personal'];
 			$nombre_docente_a[] = $row['nombre_c'];
-       }
+		}
 //
 // leer tabla tipo de licencia o permiso. codigo y nombre en matriz.
 //
 	// Query para revisar la tabla tipo de licencia.
-	 	 $query_licencia_permiso = "SELECT codigo, nombre, saldo, minutos from tipo_licencia_o_permiso ORDER BY codigo";
+		$query_licencia_permiso = "SELECT codigo, nombre, saldo, minutos from tipo_licencia_o_permiso ORDER BY codigo";
 	// Ejecutamos el Query. PARA LA TABLA EMPLEADOS.
-		 $consulta_licencia_permiso = $dblink -> query($query_licencia_permiso);
+		$consulta_licencia_permiso = $dblink -> query($query_licencia_permiso);
 	//	variables array.							
 		$codigo_licencia_o_permiso = array(); $saldo_licencia_o_permiso = array(); $imprimir = array(); $num=0; $pase = 0;
 			while($listadoPersonalLyP = $consulta_licencia_permiso -> fetch(PDO::FETCH_BOTH))
 				{
-					 // repetir el proceso hasta que la tabla ya no tenga datos.
-						$codigo_licencia_o_permiso[] = $listadoPersonalLyP['codigo'];
-						$saldo_licencia_o_permiso[] = $listadoPersonalLyP['saldo'];
-						//$minutos_licencia_o_permiso[] = $listadoPersonalLyP['minutos'];
-						$minutos_licencia_o_permiso[] = $listadoPersonalLyP['saldo'] * $calculo_horas * 60;
+				// repetir el proceso hasta que la tabla ya no tenga datos.
+					$codigo_licencia_o_permiso[] = $listadoPersonalLyP['codigo'];
+					$saldo_licencia_o_permiso[] = $listadoPersonalLyP['saldo'];
+				//$minutos_licencia_o_permiso[] = $listadoPersonalLyP['minutos'];
+					$minutos_licencia_o_permiso[] = $listadoPersonalLyP['saldo'] * $calculo_horas * 60;
 				}
        // coantar elmentos para recorrer DE LOS DOCENTES EN LA TABLA PERSONAL DOCENTE.
-       $count = count($codigo_docente_a);
-       for($i=0;$i<$count;$i++)
-       {         
+		$count = count($codigo_docente_a);
+		for($i=0;$i<$count;$i++)
+		{         
 		// contar para para la licencias o permisos.
 		$count_lic = count($codigo_licencia_o_permiso);
 		for($j=0;$j<$count_lic;$j++)
@@ -99,29 +98,28 @@
 				// while para los dias, horas y minutos per por mes.
 				while($row_print = $consulta_sum_ -> fetch(PDO::FETCH_BOTH))
 				{
-						$dia = $row_print['dia'];
-						$hora = $row_print['hora'];
-						$minutos = $row_print['minutos'];
-							// calcular subtotales y totales.
-							//////////////////////////////////////////////////
-						// Calcular los dias minutos y segundos.
-							if($j == 7)
-								{
-									$total_minutos = ($dia*$calculo_horas*60) + ($hora*60) + ($minutos);
-									if($dia > 0 || $hora > 0 || $minutos > 0){
-										$pase++;
-									}
-									$tramite_dia[$i][$j] = segundosToCadenaD($total_minutos, $calculo_horas);
-									$tramite_hora[$i][$j] = segundosToCadenaH($total_minutos, $calculo_horas);
-									$tramite_minutos[$i][$j] = segundosToCadenaM($total_minutos, $calculo_horas);
+					$dia = $row_print['dia'];
+					$hora = $row_print['hora'];
+					$minutos = $row_print['minutos'];
+						// calcular subtotales y totales.
+						//////////////////////////////////////////////////
+					// Calcular los dias minutos y segundos.
+						if($j == 7)
+							{
+								$total_minutos = ($dia*$calculo_horas*60) + ($hora*60) + ($minutos);
+								if($dia > 0 || $hora > 0 || $minutos > 0){
+									$pase++;
 								}
+								$tramite_dia[$i][$j] = segundosToCadenaD($total_minutos, $calculo_horas);
+								$tramite_hora[$i][$j] = segundosToCadenaH($total_minutos, $calculo_horas);
+								$tramite_minutos[$i][$j] = segundosToCadenaM($total_minutos, $calculo_horas);
+							}
 				}	// while que examina el bucle que cuenta los dias, horas y minutos.
 			} // Verificar la consulta
 			// PROCESO PARA OBTENER EL CONSUMO DEL MES EN VIGENCIA. DIA, HORAS, MINTUOS.
 			$query_saldo_ = "SELECT sum(dia) as dia, sum(hora) as hora, sum(minutos) as minutos FROM personal_licencias_permisos 
 							WHERE codigo_personal = '".$codigo_docente_a[$i]."' and fecha >= '".$fecha_inicio."' and fecha <= '".$fecha_hasta."' and codigo_contratacion = '".$codigo_contratacion."' and codigo_licencia_permiso = '".$codigo_licencia_o_permiso[$j]."' and codigo_turno = '".$codigo_turno."'";
 			$consulta_saldo_ = $dblink -> query($query_saldo_);
-			
 			if($consulta_saldo_ == true){
 				// while para los dias, horas y minutos per por mes.
 				while($row_print = $consulta_saldo_ -> fetch(PDO::FETCH_BOTH))
@@ -210,8 +208,7 @@ function FancyTable($header){
     $this->Cell($w2[5],5,'','LTR',0,'C',1);
     $this->Cell($w2[6],5,'HORA/TIEMPO',1,0,'C',1);
     $this->Cell($w2[7],5,'','LTR',0,'C',1);
-    $this->LN();
-       
+    $this->ln();
     for($i=0;$i<count($header);$i++)
         $this->Cell($w[$i],7,mb_convert_encoding($header[$i],"ISO-8859-1","UTF-8"),'LBR',0,'C',1);
     $this->Ln();
@@ -244,9 +241,9 @@ function FancyTable($header){
 //	
     $fill=false; $num=1; $minutos_sum = 0; $dia_sum = 0; $horas_sum = 0;$numero_linea = 1;
        // conteo de los docentes codigo.
-       $count = count($codigo_docente_a);
-       for($i=0;$i<$count;$i++)
-       {
+		$count = count($codigo_docente_a);
+		for($i=0;$i<$count;$i++)
+		{
 			$codigo_personal = $codigo_docente_a[$i];
 			$codigo_docente = $codigo_docente_a[$i];
 			$pase = 0;
@@ -267,13 +264,12 @@ function FancyTable($header){
 								INNER JOIN tipo_licencia_o_permiso tlp ON tlp.codigo = lp.codigo_licencia_permiso
 								INNER JOIN turno tur ON tur.codigo = lp.codigo_turno
 								WHERE lp.codigo_personal = '$codigo_personal' and btrim(ps.codigo_tipo_contratacion || lp.codigo_turno) = '$codigo_contratacion_turno' and lp.fecha >= '$fecha_desde' and lp.fecha <= '$fecha_hasta' and lp.codigo_licencia_permiso = '$codigo_licencia_o_permiso[$j]'
-								ORDER BY lp.fecha";
-												
+									ORDER BY lp.fecha";
 				$consulta_codigo_licencia_permiso = $dblink -> query($query_codigo_licencias);
 				// revisar si hay registros.
 				$num_registros = $consulta_codigo_licencia_permiso -> rowCount();
 				//								
-				 if($num_registros != 0){
+				if($num_registros != 0){
 					while($row_print = $consulta_codigo_licencia_permiso -> fetch(PDO::FETCH_BOTH))
 						{
 							// Variables.
@@ -324,7 +320,6 @@ function FancyTable($header){
 								$pdf->Cell($w[5],5.8,'',1,0,'L',$fill);
 								// horas clase mined
 								$pdf->Cell($w[6],5.8,'',1,0,'L',$fill);
-							}
 								// fecha
 								$pdf->Cell($w[7],5.8,cambiaf_a_normal($fecha),1,0,'C',$fill);
 								if($dia == 0){$pdf->Cell($w[8],5.8,'',1,0,'C',$fill);}else{{$pdf->Cell($w[8],5.8,$dia,1,0,'C',$fill);}}
@@ -348,8 +343,9 @@ function FancyTable($header){
 										$pdf->Ln();
 										$pdf->FancyTable($header);}
 									}
-							}	// while que examina el bucle que cuenta los dias, horas y minutos.
-				 }
+						}	// while que examina el bucle que cuenta los dias, horas y minutos.
+					}
+			}
 	   }	// for que recorre los tipos de licencias.
 		$fila = $num_registros;
 		if($fila > 0){
@@ -369,10 +365,10 @@ function FancyTable($header){
 		$pdf->Cell(200,5.8,'FECHA DE ENTREGA',0,0,'R',$fill);
 		$pdf->Cell(30,5.8,cambiaf_a_normal($date),1,0,'C',$fill); 	// minutos
 		$minutos_sum = 0;
-		     $pdf->AddPage();
-		     $pdf->SetY(30); $pdf->SetX(10);
-		     $pdf->Ln();
-		     $pdf->FancyTable($header);}
+		$pdf->AddPage();
+		$pdf->SetY(30); $pdf->SetX(10);
+		$pdf->Ln();
+		$pdf->FancyTable($header);}
 		// imprimir el subtotal de cada docentes (minutos de llegadas tardes
 		$pdf->Cell(200,5.8,'SUBTOTAL',0,0,'R',$fill);
 		//$pdf->Cell($w[8],5.8,'',1,0,'C',$fill);
