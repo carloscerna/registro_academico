@@ -55,7 +55,7 @@
 		}
 		$meses = array("Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre");
 			//Crear una línea. Fecha.
-			$dia = strftime("%d");		// El Día.
+			//$dia = strftime("%d");		// El Día.
 			$dato = explode("-",$fecha_desde);
 			$dato_entero = (int)$dato[1];
 			$nombre_mes = $meses[$dato_entero-1];     // El Mes.
@@ -320,7 +320,7 @@ function FancyTable($header){
 					$minutos_x_dias = $minutos_licencia_o_permiso[$j];
 					$minutos_subtotal = ($tramite_dia_saldo[$i][$j]*$calculo_horas*60) + ($tramite_hora_saldo[$i][$j]*60) + ($tramite_minutos_saldo[$i][$j]);
 					$minutos = $minutos_x_dias - $minutos_subtotal;
-					$saldo_x = segundosToCadena($minutos,$calculo_horas);
+					$saldo_x = segundosToCadena($minutos,$calculo_horas,$formato=1);
 					
 					if($j >= 0 && $j <= 4 || $j == 5)
 					{

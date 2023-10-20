@@ -510,6 +510,21 @@ $(function(){
             // Ejecutar la función
             AbrirVentana(varenviar);                                
         });                    
+        // Información dependiendo del nombres para Imprimir..
+        $("#goImprimirLL").on('click',function () {
+            var fecha = $('#FechaAñoLectivo').val();
+            var fecha_desde = $('#FechaLicenciaDesde').val();
+            var fecha_hasta = $('#FechaLicenciaHasta').val();
+            var codigo_turno = $('#lstTurnoReporte').val();
+            var codigo_contratacion = $('#lstTipoContratacionReporte').val();
+            
+            // construir la variable con el url.
+            varenviar = "/registro_academico/php_libs/reportes/Personal/LlegadasTardes.php?&fecha_inicio=" + fecha + 
+                        "&fecha_desde=" + fecha_desde + "&fecha_hasta=" + fecha_hasta + "&codigo_turno=" + codigo_turno +
+                        "&codigo_contratacion=" + codigo_contratacion;
+            // Ejecutar la función
+            AbrirVentana(varenviar);                                
+        });                    
 }); // FIN DEL FUNCTION.
 //
 // Mensaje de Carga de Ajax.

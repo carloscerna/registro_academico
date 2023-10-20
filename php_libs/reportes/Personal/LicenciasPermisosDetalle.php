@@ -159,7 +159,9 @@ function FancyTable($header){
  // contar para para la licencias o permisos.
 	 $count_lic = count($codigo_licencia_o_permiso);
           for($j=0;$j<$count_lic;$j++)
-           {	        
+           {	
+			// declarar matrices.
+				$tramite_dia = array(); $tramite_hora = array(); $tramite_minutos = array();        
 				// Armar query para especificar cada licencia o permiso.
 				$query_codigo_licencias = "SELECT lp.id_licencia_permiso, lp.codigo_personal, lp.fecha, lp.codigo_contratacion, lp.observacion, lp.dia, lp.hora, lp.minutos, lp.codigo_licencia_permiso, lp.codigo_turno, lp.hora_inicio, lp.hora_fin,
 					btrim(p.nombres || CAST(' ' AS VARCHAR) || p.apellidos) as nombre_docente, tlp.nombre as nombre_licencia_permiso, tur.nombre as nombre_turno
@@ -221,9 +223,9 @@ function FancyTable($header){
 										$minutos_x_dias = $minutos_licencia_o_permiso[$j];
 										$minutos_subtotal = ($sub_sin_dia*$calculo_horas*60) + ($sub_sin_hora*60) + ($sub_sin_minutos);
 										$minutos = $minutos_x_dias - $minutos_subtotal;
-										$utilizado = mb_convert_encoding(segundosToCadena($minutos_subtotal, $calculo_horas),'ISO-8859-1','UTF-8');
-										$saldo_disponible = mb_convert_encoding(segundosToCadena($minutos, $calculo_horas),'ISO-8859-1','UTF-8');
-										$DiasLicencia = mb_convert_encoding(segundosToCadena($minutos_x_dias, $calculo_horas),'ISO-8859-1','UTF-8');
+										$utilizado = mb_convert_encoding(segundosToCadena($minutos_subtotal, $calculo_horas,$formato=2),'ISO-8859-1','UTF-8');
+										$saldo_disponible = mb_convert_encoding(segundosToCadena($minutos, $calculo_horas, $formato=2),'ISO-8859-1','UTF-8');
+										$DiasLicencia = mb_convert_encoding(segundosToCadena($minutos_x_dias, $calculo_horas, $formato=2),'ISO-8859-1','UTF-8');
 
 										$pdf->SetFont('Arial','B',8);														
 										$pdf->Cell($w[0],5.8,'',1,0,'L',$fill2);  // numero

@@ -276,7 +276,7 @@ function segundosToCadenaM($min, $calculo_horas)
 		return $minutos;
 }
 
-function segundosToCadena($min, $calculo_horas)
+function segundosToCadena($min, $calculo_horas, $formato)
 {
 	// Base 5 u 8 horas.
 	$min_x_dia = $calculo_horas * 60;
@@ -288,7 +288,11 @@ function segundosToCadena($min, $calculo_horas)
 		$horas = floor($residuo_dias/60);
 		$residuo_minutos = $residuo_dias%60;
 		$minutos = $residuo_minutos;
-		$cadena = $dias.' días '.$horas.' horas '.$minutos.' minutos';
+		if($formato == 1){
+			$cadena = $dias.'d'.$horas.'h'.$minutos.'m';
+		}else{
+			$cadena = $dias.' días '.$horas.' horas '.$minutos.' minutos';
+		}
 			return $cadena;
 }
 
@@ -306,10 +310,10 @@ function segundosToCadenaHorasMinustos($min)
 }
 
 function conversor_segundos($seg_ini) {
-
-$horas = floor($seg_ini/3600);
-$minutos = floor(($seg_ini-($horas*3600))/60);
-$segundos = $seg_ini-($horas*3600)-($minutos*60);
+	// Convertir a segundos.
+		$horas = floor($seg_ini/3600);
+		$minutos = floor(($seg_ini-($horas*3600))/60);
+		$segundos = $seg_ini-($horas*3600)-($minutos*60);
 //echo $horas.?h:?.$minutos.?m:?.$segundos.?s';
 }
 /////////////////////////////////////////////////////////////////////////////////////////
