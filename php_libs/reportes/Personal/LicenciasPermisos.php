@@ -109,7 +109,7 @@
 						// Calcular los dias minutos y segundos.
 							if($j >= 0 && $j <= 7)
 								{
-									$total_minutos = ($dia*5*60) + ($hora*60) + ($minutos);
+									$total_minutos = ($dia*$calculo_horas*60) + ($hora*60) + ($minutos);
 									
 									if($dia > 0 || $hora > 0 || $minutos > 0){
 										$pase++;
@@ -137,7 +137,7 @@
 						// Calcular los dias minutos y segundos.
 							if($j >= 0 && $j <= 7)
 								{
-									$total_minutos = ($dia*5*60) + ($hora*60) + ($minutos);
+									$total_minutos = ($dia*$calculo_horas*60) + ($hora*60) + ($minutos);
 									
 									$tramite_dia_saldo[$i][$j] = segundosToCadenaD($total_minutos,$calculo_horas);
 									$tramite_hora_saldo[$i][$j] = segundosToCadenaH($total_minutos,$calculo_horas);
@@ -318,7 +318,7 @@ function FancyTable($header){
 					}
 					// Calculo del saldo
 					$minutos_x_dias = $minutos_licencia_o_permiso[$j];
-					$minutos_subtotal = ($tramite_dia_saldo[$i][$j]*5*60) + ($tramite_hora_saldo[$i][$j]*60) + ($tramite_minutos_saldo[$i][$j]);
+					$minutos_subtotal = ($tramite_dia_saldo[$i][$j]*$calculo_horas*60) + ($tramite_hora_saldo[$i][$j]*60) + ($tramite_minutos_saldo[$i][$j]);
 					$minutos = $minutos_x_dias - $minutos_subtotal;
 					$saldo_x = segundosToCadena($minutos,$calculo_horas);
 					
