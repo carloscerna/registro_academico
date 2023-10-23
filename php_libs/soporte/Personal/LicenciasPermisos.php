@@ -350,9 +350,9 @@ if($errorDbConexion == false)
 											$minutos_x_dias = $minutos_licencia_o_permiso[$j];
 											$minutos_subtotal = ($sub_sin_dia*$calculo_horas*60) + ($sub_sin_hora*60) + ($sub_sin_minutos);
 											$minutos = $minutos_x_dias - $minutos_subtotal;
-											$utilizado = segundosToCadena($minutos_subtotal, $calculo_horas);
-											$saldo_disponible = segundosToCadena($minutos, $calculo_horas);
-											$DiasLicencia = segundosToCadena($minutos_x_dias, $calculo_horas);
+											$utilizado = segundosToCadena($minutos_subtotal, $calculo_horas, $formato = 1);
+											$saldo_disponible = segundosToCadena($minutos, $calculo_horas, $formato = 1);
+											$DiasLicencia = segundosToCadena($minutos_x_dias, $calculo_horas, $formato = 1);
 										// Acumularlo en la Matriz.
 											$j++; // incorporar en el titulo de la talba
 											// Utilizado y Dias Licencia, Disponible..
@@ -363,9 +363,9 @@ if($errorDbConexion == false)
 							else{
 									$datos[$j][] = "<tr><td colspan = 10><span class='badge badge-dark'>No se encontraron Registros</span></td></tr>";
 									$minutos_x_dias = $minutos_licencia_o_permiso[$j];
-									$DiasLicencia = segundosToCadena($minutos_x_dias, $calculo_horas);
-									$saldo_disponible = segundosToCadena($minutos_x_dias, $calculo_horas);
-									$utilizado = segundosToCadena(0, $calculo_horas);
+									$DiasLicencia = segundosToCadena($minutos_x_dias, $calculo_horas, $formato = 1);
+									$saldo_disponible = segundosToCadena($minutos_x_dias, $calculo_horas, $formato = 1);
+									$utilizado = segundosToCadena(0, $calculo_horas, $formato = 1);
 									// Acumularlo en la Matriz.
 										$j++; // incorporar en el titulo de la talba
 									// Utilizado y Dias Licencia, Disponible..

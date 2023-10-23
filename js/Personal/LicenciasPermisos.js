@@ -313,7 +313,7 @@ $(function(){
                     return;
             }
             // enviar form
-                $('#formVentanaLicenciasPermisos').submit();
+                $('#FormLicenciasPermisos').submit();
         });
         //////////////////////////////////////////////////////////////////////////////////
         /* ACTUALIZAR DATOS DE LA ASIGNATURA #CONTROLES CREADOS */
