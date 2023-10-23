@@ -155,7 +155,7 @@ function cuadro($data)
     $this->SetFont('Arial','',12); // I : Italica; U: Normal;
     $this->SetXY(18,40);
     $this->SetFillColor(255,255,255);
-    $this->MultiCell(60,8,'Nombre de los Alumnos(as)',0,2,'C',true);
+    $this->MultiCell(60,8,'Nombre de los Alumnos(as)',0,2,'C');
 // cuarta PARTE DEL RECTANGULO. asignatura
     $this->SetFont('Arial','',10); // I : Italica; U: Normal;
     $this->Rect(91,35,180,20);
@@ -310,7 +310,7 @@ function cuadro($data)
                 }
 
             // validar $i = 11
-                if($i == 12)
+                if($i == $total_asignaturas)
                 {
                     // imprimir el total de puntos.
                     $pdf->SetFont('Arial','B',8); // I : Italica; U: Normal;

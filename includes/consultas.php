@@ -164,7 +164,7 @@ function consultas($ejecutar,$cerrar,$codigo_bachillerato,$codigo_grado,$codigo_
 		a.nombre_completo, btrim(a.apellido_paterno || CAST(' ' AS VARCHAR) || a.apellido_materno) as apellidos_alumno, a.genero, a.foto,
 		am.codigo_bach_o_ciclo, am.pn, bach.nombre as nombre_bachillerato, am.codigo_ann_lectivo, ann.nombre as nombre_ann_lectivo, am.codigo_grado, am.codigo_turno, am.fecha_ingreso,
 		gan.nombre as nombre_grado, am.codigo_seccion, am.retirado, bach.codigo as codigo_bachillerato,
-		sec.nombre as nombre_seccion, ae.codigo_alumno, id_alumno, n.codigo_alumno, n.codigo_asignatura, asig.nombre AS n_asignatura, n.nota_p_p_1, n.nota_p_p_2, n.nota_p_p_3, n.nota_p_p_4, n.nota_final, n.recuperacion, n.nota_paes,
+		sec.nombre as nombre_seccion, ae.codigo_alumno, id_alumno, n.codigo_alumno, n.codigo_asignatura, asig.nombre AS n_asignatura, n.nota_p_p_1, n.nota_p_p_2, n.nota_p_p_3, n.nota_p_p_4, n.nota_final, n.recuperacion, n.nota_paes, n.orden,
 		id_alumno as cod_alumno, am.id_alumno_matricula as cod_matricula, tur.nombre as nombre_turno,
 		round((n.nota_p_p_1+n.nota_p_p_2+n.nota_p_p_3),1) as total_puntos_basica, 
         round((n.nota_p_p_1+n.nota_p_p_2+n.nota_p_p_3+n.nota_p_p_4),1) as total_puntos_media, aaa.orden, aaa.codigo_ann_lectivo
@@ -180,7 +180,7 @@ function consultas($ejecutar,$cerrar,$codigo_bachillerato,$codigo_grado,$codigo_
         INNER JOIN turno tur ON tur.codigo = am.codigo_turno
 		INNER JOIN a_a_a_bach_o_ciclo aaa ON aaa.codigo_asignatura = asig.codigo and aaa.orden <> 0 ".
 		"WHERE btrim(am.codigo_bach_o_ciclo || am.codigo_grado || am.codigo_seccion || am.codigo_ann_lectivo || am.codigo_turno) = '".$codigo_bachillerato. 
-		"' and aaa.codigo_ann_lectivo = '".substr($codigo_bachillerato,6,2)."' ORDER BY apellido_alumno, aaa.orden ASC";
+		"' and aaa.codigo_ann_lectivo = '".substr($codigo_bachillerato,6,2)."' ORDER BY apellido_alumno, n.orden ASC";
     
     // ejecutar la consulta.
 	    $result = $db_link -> query($query);
