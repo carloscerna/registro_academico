@@ -272,10 +272,11 @@ function NombreArchivoExcel(){
     $codigo_modalidad = $codigo_bachillerato; // Verificar si Existe el directorio archivos.
     $nombre_ann_lectivo = $nombre_annlectivo;
     $codigo_destino = 3; // Tipo de Carpeta a Grabar.
-    $longitudNombreArchivo = 210;
+    $longitudNombreArchivo = 160;
       CrearDirectorios($path_root,$nombre_ann_lectivo,$codigo_modalidad,$codigo_destino,$periodo); // Crear Carpeta.                  
   // Unir Modalidad - Grado y Sección.
-    $nombre_directorio_mgs = replace_3(trim($nombre_modalidad."-" . $nombre_grado));
+    //$nombre_directorio_mgs = replace_3(trim($nombre_modalidad."-" . $nombre_grado));
+    $nombre_directorio_mgs = replace_3(trim($nombre_grado));
   // Con el nombre de la modalidad - grado - sección.
     if(!file_exists($DestinoArchivo . $nombre_directorio_mgs)){
           mkdir ($DestinoArchivo . $nombre_directorio_mgs); // Para Nóminas. Escolanadamente. PERIODO

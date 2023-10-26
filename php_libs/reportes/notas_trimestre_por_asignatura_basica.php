@@ -189,7 +189,7 @@ function FancyTable($header)
         while($row = $result -> fetch(PDO::FETCH_BOTH))
             {
 			   // >Impresión de los promedios para las asignaturas.
-                if($codigo_bachillerato == '05' || $codigo_bachillerato == '04'){
+                if($codigo_bachillerato == '05' || $codigo_bachillerato == '04' || $codigo_bachillerato == '03'){
 	                    $pdf->SetX(5);
 						$pdf->SetFont('Arial','',9);
 						$pdf->Cell($w[0],$h[0],$numero_linea,0,0,'C',$fill);

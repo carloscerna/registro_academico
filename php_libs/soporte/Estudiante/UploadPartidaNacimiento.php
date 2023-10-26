@@ -61,10 +61,10 @@ if (is_array($_FILES) && count($_FILES) > 0) {
                         chmod($SistemaSiscarad.$codigo_institucion."/",07777);
                 }
                 //  VERIFICAR SI EXISTE EL DIRECTORIO POR EL ID PERSONAL. UNIDAD DE RESPALDO D:
-                if(!file_exists($url_respaldo_fotos.$codigo_institucion)){
+                if(!file_exists($url_respaldo_pn.$codigo_institucion)){
                     // Crear el Directorio Principal Archvos...
-                        mkdir($url_respaldo_fotos.$codigo_institucion."/");
-                        chmod($url_respaldo_fotos.$codigo_institucion."/",07777);
+                        mkdir($url_respaldo_pn.$codigo_institucion."/");
+                        chmod($url_respaldo_pn.$codigo_institucion."/",07777);
                 }
                 // carpeta local c
                     rename($path_root.$url_.$_FILES['file']['name'],$path_root.$url_.$codigo_institucion."/".$nombreArchivo);
