@@ -24,7 +24,7 @@ $codigo_se = $codigo_se_post[1];
 		INNER JOIN catalogo_area_dimension cat_area_di ON cat_area_di.codigo = asig.codigo_area_dimension
 		INNER JOIN catalogo_area_subdimension cat_area_subdi ON cat_area_subdi.codigo =  asig.codigo_area_subdimension
 			WHERE asig.codigo_servicio_educativo = '$codigo_se' and asig.codigo_estatus = '01'
-				ORDER BY asig.codigo_area, asig.codigo_area_dimension, asig.codigo_area_subdimension";
+				ORDER BY asig.codigo_area, asig.codigo_area_dimension, asig.codigo_area_subdimension, asig.ordenar";
 // Ejecutamos el Query.
 	$consulta = $dblink -> query($query);
 // consultar si existen registros

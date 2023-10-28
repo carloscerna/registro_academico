@@ -81,6 +81,8 @@ $(function(){
                                     $('#IdModalidad').val(data[0].id_Modalidad);
                                     $('#CodigoModalidad').val(data[0].codigo);
                                     $('#DescripcionModalidad').val(data[0].nombre);
+                                    //
+                                    listar_CodigoEstatusModalidad(data[0].codigo_estatus);
                                     // Abrir ventana modal.
                                     $('#VentanaModalidad').modal("show");
                                     $("label[for=LblTituloModalidad]").text("Modalidad | Actualizar");
@@ -214,6 +216,8 @@ $(function(){
                 // Abrir ventana modal.
                     $('#VentanaModalidad').modal("show");
                     $("label[for=LblTituloModalidad]").text("Modalidad | Nuevo");
+                //
+                    listar_CodigoEstatusModalidad();
                 // BUSCAR Y GENERAR NUEVO CODIGO PARA LA ASIGNATURA.
                 //
                 // BUSCAR EL ÚLTINMO DE LA ASIGNATURA PARA ASIGNARLE A UN NUEVO REGISTRO.
@@ -326,3 +330,25 @@ function configureLoadingScreen(screen){
             screen.fadeOut();
         });
     }
+    ///////////////////////////////////////////////////////////////////////
+// TODAS LAS TABLAS VAN HA ESTAR EN ASIGNATURA.*******************
+// FUNCION LISTAR TABLA catalogo_estatus
+////////////////////////////////////////////////////////////
+function listar_CodigoEstatusModalidad(CodigoEstatus){
+    var miselect2=$("#lstModalidadEstatus");
+    /* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
+    miselect2.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
+    
+    $.post("includes/cargar_estatus.php",
+        function(data) {
+            miselect2.empty();
+            miselect2.append("<option value='00'>Seleccionar...</option>");
+            for (var i=0; i<data.length; i++) {
+                if(CodigoEstatus == data[i].codigo){
+                    miselect2.append('<option value="' + data[i].codigo + '" selected>' + data[i].descripcion + '</option>');
+                }else{
+                    miselect2.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');
+                }
+            }
+    }, "json");    
+}

@@ -76,7 +76,7 @@
 //
   if($todasLasAsignaturas == "yes"){
     // agregar CONSULTA PARA EDUCACIÒN PARVULARIA Y BASICA DE ESTANDAR DESARROLLO.
-        $query_todas  = "SELECT DISTINCT ON (aaa.codigo_asignatura) aaa.codigo_asignacion, aaa.codigo_bach_o_ciclo, aaa.codigo_asignatura, aaa.codigo_ann_lectivo, aaa.codigo_sirai, 
+       $query_todas  = "SELECT DISTINCT ON (aaa.codigo_asignatura) aaa.codigo_asignacion, aaa.codigo_bach_o_ciclo, aaa.codigo_asignatura, aaa.codigo_ann_lectivo, aaa.codigo_sirai, 
             aaa.codigo_grado, aaa.id_asignacion, aaa.orden,
             ann.nombre as nombre_ann_lectivo, bach.nombre as nombre_modalidad, gr.nombre as nombre_grado, asig.codigo as codigo_asignatura, asig.nombre as nombre_asignatura,
             asig.codigo_area as codigo_area_asignatura, asig.codigo_area_dimension, asig.codigo_area_subdimension, cat_area_di.descripcion as descripcion_area_dimension,

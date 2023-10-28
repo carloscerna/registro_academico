@@ -5,7 +5,7 @@
 // Incluimos el archivo de funciones y conexión a la base de datos
 	include($path_root."/registro_academico/includes/mainFunctions_conexion.php");
 // armando el Query.
-	$query = "SELECT codigo, descripcion FROM catalogo_servicio_educativo ORDER BY codigo ASC ";
+	$query = "SELECT codigo, descripcion FROM catalogo_servicio_educativo WHERE codigo_estatus = '01' ORDER BY codigo ASC ";
 // Ejecutamos el Query.
 	$consulta = $dblink -> query($query);
 // Inicializando el array

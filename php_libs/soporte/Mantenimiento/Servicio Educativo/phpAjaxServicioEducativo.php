@@ -276,12 +276,12 @@ if($errorDbConexion == false){
 					$fila = $fila - 1;
 				// recorrer la array para extraer los datos.
 				for($i=0;$i<=$fila;$i++){
-					$id_asignatura_ = $id_asignatura[0][$i];
+					$id_asignatura_ = trim($id_asignatura[0][$i]);
 					$codigo_asignatura_ = trim($codigo_asignatura[0][$i]);
-					$estatus_ = $estatus[0][$i];
+					$estatus_ = trim($estatus[0][$i]);
 					$orden_ = $orden[0][$i];
 					// cambiar estatus
-						if($estatus == "Activo"){
+						if($estatus_ == "Activo"){
 							$codigo_estatus = "01";
 						}else{
 							$codigo_estatus = "02";
@@ -324,7 +324,7 @@ if($errorDbConexion == false){
 				// Armar Colores
 				$statusTipo = array ("01" => "btn-success", "02" => "btn-warning", "03" => "btn-danger");
 				// Armamos el query.
-					$query = "SELECT id_bachillerato_ciclo, nombre, codigo FROM bachillerato_ciclo ORDER BY codigo";
+					$query = "SELECT * FROM bachillerato_ciclo ORDER BY codigo";
 				// Ejecutamos el Query.
 				$consulta = $dblink -> query($query);
 
@@ -338,6 +338,13 @@ if($errorDbConexion == false){
 					$codigo = trim($listado['codigo']);
 					$nombre = trim($listado['nombre']);
 					$id_ = trim($listado['id_bachillerato_ciclo']);
+					$estatus = trim($listado['codigo_estatus']);
+					// VARIABLES ESTATUS.
+					if($estatus == '01'){
+						$estatus = "<td><span class='badge badge-pill badge-info'>Activo</span></td>";
+					}else{
+						$estatus = "<td><span class='badge badge-pill badge-danger'>Inactivo</span></td>";
+					}
 					$num++;
 						    
 						$contenidoOK .= "<tr>
@@ -346,6 +353,7 @@ if($errorDbConexion == false){
 							<td>$id_
 							<td>$codigo
 							<td>$nombre
+							$estatus
 							<td><a data-accion=EditarModalidad class='btn btn-xs btn-info' href=$id_>Editar</a>"
 							;
 					}
@@ -355,8 +363,7 @@ if($errorDbConexion == false){
 			case 'EditarModalidad':
 					$id_ = $_REQUEST['id_'];
 				// Armamos el query y iniciamos variables.
-					$query = "SELECT id_bachillerato_ciclo, nombre, codigo 
-								FROM bachillerato_ciclo WHERE id_bachillerato_ciclo = '$id_' ORDER BY codigo ";
+					$query = "SELECT * FROM bachillerato_ciclo WHERE id_bachillerato_ciclo = '$id_' ORDER BY codigo ";
 				// Ejecutamos el Query.
 					$consulta = $dblink -> query($query);
 					if($consulta -> rowCount() != 0){
@@ -369,10 +376,12 @@ if($errorDbConexion == false){
 					$id_ = trim($listado['id_bachillerato_ciclo']);
 					$nombre = trim($listado['nombre']);
 					$codigo = trim($listado['codigo']);
+					$estatus = trim($listado['codigo_estatus']);
 					
 					$datos[$fila_array]["id_Modalidad"] = $id_;
 					$datos[$fila_array]["codigo"] = $codigo;
 					$datos[$fila_array]["nombre"] = $nombre;
+					$datos[$fila_array]["codigo_estatus"] = $estatus;
 					$fila_array++;
 					}
 					$mensajeError = "Se ha consultado el registro correctamente ";
@@ -381,8 +390,10 @@ if($errorDbConexion == false){
 			case 'ActualizarModalidad':
 				$id_ = $_POST['IdModalidad'];
 				$nombre = htmlspecialchars(trim($_POST['DescripcionModalidad']));
+				$codigo_estatus = $_POST["lstModalidadEstatus"];
 				// Armamos el query y iniciamos variables.
-					$query = "UPDATE bachillerato_ciclo SET nombre = '$nombre' WHERE id_bachillerato_ciclo = '$id_'";
+					$query = "UPDATE bachillerato_ciclo SET nombre = '$nombre', codigo_estatus = '$codigo_estatus'
+								WHERE id_bachillerato_ciclo = '$id_'";
 				// Ejecutamos el Query.
 					$consulta = $dblink -> query($query);
 						$respuestaOK = true;
@@ -394,6 +405,7 @@ if($errorDbConexion == false){
 				// Armamos el query y iniciamos variables.
 				 $nombre = strtoupper($_POST['nombre_modalidad']);
 				 $codigo_modalidad = ($_POST['codigo_modalidad']);
+				 $codigo_estatus = $_POST["lstModalidadEstatus"];
 				 $query = "SELECT id_bachillerato_ciclo, nombre, codigo FROM bachillerato_ciclo WHERE codigo = '".$codigo_modalidad. "' ORDER BY codigo ";
 				// Ejecutamos el Query.
 				$consulta = $dblink -> query($query);
@@ -404,7 +416,7 @@ if($errorDbConexion == false){
 					$mensajeError = "Este registro ya Existe.";
 				}else{
 				// proceso para grabar el registro
-					$query = "INSERT INTO bachillerato_ciclo (nombre, codigo) VALUES ('$nombre','$codigo_modalidad')";
+					$query = "INSERT INTO bachillerato_ciclo (nombre, codigo, codigo_estatus) VALUES ('$nombre','$codigo_modalidad','$codigo_estatus')";
 				// Ejecutamos el Query.
 				$consulta = $dblink -> query($query);
 					$respuestaOK = true;
@@ -852,6 +864,13 @@ if($errorDbConexion == false){
 					$codigo = trim($listado['codigo']);
 					$nombre = trim($listado['descripcion']);
 					$id_ = trim($listado['id_servicio_educativo']);
+					$estatus = trim($listado['codigo_estatus']);
+					// VARIABLES ESTATUS.
+					if($estatus == '01'){
+						$estatus = "<td><span class='badge badge-pill badge-info'>Activo</span></td>";
+					}else{
+						$estatus = "<td><span class='badge badge-pill badge-danger'>Inactivo</span></td>";
+					}
 					$num++;
 						    
 						$contenidoOK .= "<tr>
@@ -860,6 +879,7 @@ if($errorDbConexion == false){
 							<td>$id_
 							<td>$codigo
 							<td>$nombre
+							$estatus
 							<td><a data-accion=EditarSe class='btn btn-xs btn-info' href=$id_>Editar</a>"
 							;
 					}
@@ -883,10 +903,12 @@ if($errorDbConexion == false){
 					$id_ = trim($listado['id_servicio_educativo']);
 					$nombre = trim($listado['descripcion']);
 					$codigo = trim($listado['codigo']);
-					
+					$estatus = trim($listado['codigo_estatus']);
+
 					$datos[$fila_array]["id_servicio_educativo"] = $id_;
 					$datos[$fila_array]["codigo"] = $codigo;
 					$datos[$fila_array]["nombre"] = $nombre;
+					$datos[$fila_array]["codigo_estatus"] = $estatus;
 					$fila_array++;
 					}
 					$mensajeError = "Se ha consultado el registro correctamente ";
@@ -895,8 +917,10 @@ if($errorDbConexion == false){
 			case 'ActualizarSe':
 				$id_ = $_POST['IdServiciosEducativos'];
 				$nombre = trim(htmlspecialchars($_POST['DescripcionServiciosEducativos']));
+				$codigo_estatus = $_POST['lstSEEstatus'];
 				// Armamos el query y iniciamos variables.
-					$query = "UPDATE catalogo_servicio_educativo SET descripcion = '$nombre' WHERE id_servicio_educativo = '$id_'";
+					$query = "UPDATE catalogo_servicio_educativo SET descripcion = '$nombre', codigo_estatus = '$codigo_estatus' 
+								WHERE id_servicio_educativo = '$id_'";
 				// Ejecutamos el Query.
 				$consulta = $dblink -> query($query);
 					$respuestaOK = true;
@@ -908,6 +932,7 @@ if($errorDbConexion == false){
 				// Armamos el query y iniciamos variables.
 				 $nombre = trim(htmlspecialchars($_POST['DescripcionServiciosEducativos']));
 				 $codigo = ($_POST['CodigoServiciosEducativos']);
+				 $codigo_estatus = $_POST['lstSEEstatus'];
 				 $query = "SELECT * FROM catalogo_servicio_educativo WHERE codigo = '$codigo' or descripcion = '$nombre' ORDER BY codigo";
 				// Ejecutamos el Query.
 				$consulta = $dblink -> query($query);
@@ -918,7 +943,7 @@ if($errorDbConexion == false){
 					$mensajeError = "Este registro ya Existe.";
 				}else{
 				// proceso para grabar el registro
-					$query = "INSERT INTO catalogo_servicio_educativo (descripcion, codigo) VALUES ('$nombre','$codigo')";
+					$query = "INSERT INTO catalogo_servicio_educativo (descripcion, codigo, codigo_estatus) VALUES ('$nombre','$codigo','$codigo_estatus')";
 				// Ejecutamos el Query.
 				$consulta = $dblink -> query($query);
 					$respuestaOK = true;
@@ -947,6 +972,7 @@ if($_POST['accion'] == "eliminar_annlectivo" || $_POST['accion'] == "BuscarSecci
 	|| $_POST['accion'] == "BuscarAsignatura"
 	|| $_POST['accion'] == "GuardarAsignatura"
 	|| $_POST['accion'] == "ActualizarAsignatura"
+	|| $_POST['accion'] == "ActualizarOrden"
 	|| $_POST['accion'] == "eliminar_asignatura"
 	|| $_POST['accion'] == "BuscarSe" || $_POST['accion'] == "GuardarSe"
 	|| $_POST['accion'] == "ActualizarSe"
