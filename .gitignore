@@ -9,10 +9,10 @@
 # CUADROS QUE UTILIZA EL SISTEMA (HOJAS DE CALCULO)
 #/formatos_hoja_de_calculo/
 # FRAMEWORK Y OTROS
-/js/bootstrap-select/
-/js/Chart.js-2.7.0/
-/js/jquery-validation-1.10.0/
-/js/jquery-validation-1.19.1/
+#/js/bootstrap-select/
+#/js/Chart.js-2.7.0/
+#/js/jquery-validation-1.10.0/
+#/js/jquery-validation-1.19.1/
 /js/plugins/
 #/js/popper/
 #/js/file-input/
