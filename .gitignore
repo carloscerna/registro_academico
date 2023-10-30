@@ -29,8 +29,8 @@
 /php_libs/Twig
 /php_libs/PHPMailer/
 # COMPOSER
-/vendor/
-/vendore/
+#/vendor/
+#/vendore/
 # OTROS
 /webfonts/
 /css/alt/
