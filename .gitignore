@@ -25,14 +25,14 @@
 /js/fontawesome-pro-5.14.0-web/
 #PHP LIBS
 /php_libs/fpdf182/
-/php_libs/fpdf/
-/php_libs/Twig
-/php_libs/PHPMailer/
+#/php_libs/fpdf/
+#/php_libs/Twig
+#/php_libs/PHPMailer/
 # COMPOSER
 #/vendor/
 #/vendore/
 # OTROS
-/webfonts/
-/css/alt/
-/files/
+#/webfonts/
+#/css/alt/
+#/files/
 /.vscode/
