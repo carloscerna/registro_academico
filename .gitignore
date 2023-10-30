@@ -3,9 +3,12 @@
 # CARPTA QUE CONTIENE ADMINLTE 3.1 Y BOOTSTRAP
 /docs/
 # CONTINEN IMAGENES DEL SISTEMA Y PARTIDAS DE NACIMIENTO
-/img/
-/images/
-/assets/
+/img/fotos/10391/
+/img/fotos/10428/
+/img/png/pn/
+/img/portafolio/10391/
+#/images/
+#/assets/
 # CUADROS QUE UTILIZA EL SISTEMA (HOJAS DE CALCULO)
 #/formatos_hoja_de_calculo/
 # FRAMEWORK Y OTROS
