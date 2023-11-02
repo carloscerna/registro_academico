@@ -25,7 +25,7 @@
 #/js/Chart.js-2.7.0/
 #/js/jquery-validation-1.10.0/
 #/js/jquery-validation-1.19.1/
-/js/plugins/
+#/js/plugins/
 #/js/popper/
 #/js/file-input/
 #/js/sweetalert2/
@@ -34,7 +34,7 @@
 #/js/jqueryNumeric/
 #/js/jquery-mask/
 #/js/pace-1.2.4/
-/js/fontawesome-pro-5.14.0-web/
+#/js/plugins/fontawesome-pro-5.14.0-web/
 #PHP LIBS
 /php_libs/fpdf182/
 #/php_libs/fpdf/
