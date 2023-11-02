@@ -18,13 +18,12 @@
 {% block javascripts %}
     <!-- JS para esta página. -->
     <script type="text/JavaScript" src="js/Estudiantes/Estudiantes.js"></script>
-    <script>
-      // Activar los Toottip de los botones y input.
+    <script type="text/JavaScript">         // Activar los Toottip de los botones y input. "Title"
       $(document).ready(function () { 
         $('[data-toggle="tooltip"]').tooltip();
       })
     </script>
-    <script>   
+    <script type="text/JavaScript">   // Permite la búsqueda sin tildes.
       (function(){
           function removeAccents ( data ) {
               if ( data.normalize ) {

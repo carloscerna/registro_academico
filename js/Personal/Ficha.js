@@ -51,6 +51,15 @@ var listar = function(){
 						orderable: false
 					},
 					{"data":"id_personal"},
+					{"data":"codigo_estatus",
+						render: function(data, type, row){
+							if(data == '01'){
+								return "<span class='badge badge-pill badge-info'>Activo</span>";
+							}else{
+								return "<span class='badge badge-pill badge-danger'>Inactivo</span>";
+							}
+						}
+					},
                     {"data":"descripcion"},
                     {"data":"nombre_empleado"},
 					{"data":"telefono_celular"},
@@ -58,15 +67,6 @@ var listar = function(){
                     {"data":"dui"},
 					{"data":"nit"},
 					{"data":"nip"},
-					{"data":"codigo_estatus",
-						render: function(data, type, row){
-							if(data == '01'){
-								return "<span class='font-weight-bold text-success'>Activo</span>";
-							}else{
-								return "<span class='font-weight-bold text-danger'>Inactivo</span>";
-							}
-						}
-					},
 				],
 				// LLama a los diferentes mensajes que están en español.
 				"language": idioma_espanol

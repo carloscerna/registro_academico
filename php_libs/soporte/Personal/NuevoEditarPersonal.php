@@ -361,10 +361,6 @@ if($errorDbConexion == false){
 								}
 							}
 			break;
-
-            
-            
-			
             default:
 				$mensajeError = 'Esta acción no se encuentra disponible';
 			break;

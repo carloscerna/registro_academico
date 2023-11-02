@@ -17,13 +17,12 @@
 {% block javascripts %}
   <!-- JS para esta página. -->
     <script type="text/JavaScript" src="js/Personal/Ficha.js"></script>
-    <script>
-      // Activar los Toottip de los botones y input.
+    <script type="text/JavaScript">       // Activar los Toottip de los botones y input. "title"
       $(document).ready(function () { 
         $('[data-toggle="tooltip"]').tooltip();
       })
     </script>
-    <script>   
+    <script type="text/JavaScript">   // Permite la busqueda con o sin tildes.
       (function(){
           function removeAccents ( data ) {
               if ( data.normalize ) {
@@ -34,12 +33,9 @@
                       .normalize('NFD')
                       .replace(/[\u0300-\u036f]/g, '');
               }
-            
               return data;
           }
-            
           var searchType = jQuery.fn.DataTable.ext.type.search;
-            
           searchType.string = function ( data ) {
               return ! data ?
                   '' :
@@ -47,7 +43,6 @@
                       removeAccents( data ) :
                       data;
           };
-            
           searchType.html = function ( data ) {
               return ! data ?
                   '' :
@@ -55,7 +50,6 @@
                       removeAccents( data.replace( /<.*?>/g, '' ) ) :
                       data;
           };
-            
           }());
   </script>
 {% endblock %}
@@ -93,11 +87,12 @@
       </div>
       <!-- /.card-header -->
       <div class="card-body">
-          <table id="listado" class="table display responsive nowrap">
+          <table id="listado" class="table table-bordered table-hover table-responsive nowrap">
             <thead>
                 <tr class="ColorFila">
                   <th>Acción</th>
                   <th>Id</th>
+                  <th>Estatus</th>
                   <th>Cargo</th>
                   <th>Nombre</th>
                   <th>Móvil</th>
@@ -105,7 +100,6 @@
                   <th>DUI</th>
                   <th>NIT</th>
                   <th>NIP</th>
-                  <th>Estatus</th>
                 </tr>                
             </thead>
               <tbody id="listadoOk">
