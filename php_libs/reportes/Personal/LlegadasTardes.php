@@ -286,65 +286,64 @@ function FancyTable($header){
 							$codigo_tipo_contratacion = $row_print['codigo_tipo_contratacion'];
 							// acumular los datos llegadas tardes.
 							if($j == 7){				
-							$pdf->SetFont('Arial','',9); // I : Italica; U: Normal;
-								if($codigo_docente == ($row_print['codigo_personal']) && $pase == 0){$pase = 1;}
-							if($pase == 1){
+								$pdf->SetFont('Arial','',9); // I : Italica; U: Normal;
+									if($codigo_docente == ($row_print['codigo_personal']) && $pase == 0){$pase = 1;}
+								if($pase == 1){
+									//$num++;
+									$pdf->Cell($w[0],5.8,$numero_linea.$num,1,0,'C',$fill);        // núermo correlativo
+									$pdf->Cell($w[1],5.8,$nip,1,0,'L',$fill);  // NIP
+									$pdf->Cell($w[2],5.8,$nit,1,0,'L',$fill);  // NIT
+									$pdf->Cell($w[3],5.8,cambiar_de_del($nombre_docente),1,0,'L',$fill);  // Nombre del docente
+									if($codigo_tipo_contratacion == '01'){
+									// sueldo base
+									$pdf->Cell($w[4],5.8,'$ '.$row_print['salario'],1,0,'C',$fill);}
+									else{$pdf->Cell($w[4],5.8,'',1,0,'C',$fill);}
+									if($codigo_tipo_contratacion == '02'){
+									// sobre sueldo
+									$pdf->Cell($w[5],5.8,'$ '.$row_print['salario'],1,0,'L',$fill);}
+									else{$pdf->Cell($w[5],5.8,'',1,0,'C',$fill);}
+									if($codigo_tipo_contratacion == '03'){
+									// horas clase mined
+									$pdf->Cell($w[6],5.8,'$ '.$row_print['salario'],1,0,'L',$fill);}
+									else{$pdf->Cell($w[5],5.8,'',1,0,'C',$fill);}
+									$pase = 2;
+								}else{
 								//$num++;
-								$pdf->Cell($w[0],5.8,$numero_linea.$num,1,0,'C',$fill);        // núermo correlativo
-								$pdf->Cell($w[1],5.8,$nip,1,0,'L',$fill);  // NIP
-								$pdf->Cell($w[2],5.8,$nit,1,0,'L',$fill);  // NIT
-								$pdf->Cell($w[3],5.8,cambiar_de_del($nombre_docente),1,0,'L',$fill);  // Nombre del docente
-								if($codigo_tipo_contratacion == '01'){
-								// sueldo base
-								$pdf->Cell($w[4],5.8,'$ '.$row_print['salario'],1,0,'C',$fill);}
-								else{$pdf->Cell($w[4],5.8,'',1,0,'C',$fill);}
-								if($codigo_tipo_contratacion == '02'){
-								// sobre sueldo
-								$pdf->Cell($w[5],5.8,'$ '.$row_print['salario'],1,0,'L',$fill);}
-								else{$pdf->Cell($w[5],5.8,'',1,0,'C',$fill);}
-								if($codigo_tipo_contratacion == '03'){
-								// horas clase mined
-								$pdf->Cell($w[6],5.8,'$ '.$row_print['salario'],1,0,'L',$fill);}
-								else{$pdf->Cell($w[5],5.8,'',1,0,'C',$fill);}
-								$pase = 2;
-							}
-							else{
-							//$num++;
-								$pdf->Cell($w[0],5.8,$num.'',1,0,'C',$fill);        // núermo correlativo
-								$pdf->Cell($w[1],5.8,'',1,0,'L',$fill);  // NIP
-								$pdf->Cell($w[2],5.8,'',1,0,'L',$fill);  // NIT
-								$pdf->Cell($w[3],5.8,'',1,0,'L',$fill);  // Nombre del docente
-								// sueldo base
-								$pdf->Cell($w[4],5.8,'',1,0,'L',$fill);
-								// sobre sueldo
-								$pdf->Cell($w[5],5.8,'',1,0,'L',$fill);
-								// horas clase mined
-								$pdf->Cell($w[6],5.8,'',1,0,'L',$fill);
+									$pdf->Cell($w[0],5.8,$num.'',1,0,'C',$fill);        // núermo correlativo
+									$pdf->Cell($w[1],5.8,'',1,0,'L',$fill);  // NIP
+									$pdf->Cell($w[2],5.8,'',1,0,'L',$fill);  // NIT
+									$pdf->Cell($w[3],5.8,'',1,0,'L',$fill);  // Nombre del docente
+									// sueldo base
+									$pdf->Cell($w[4],5.8,'',1,0,'L',$fill);
+									// sobre sueldo
+									$pdf->Cell($w[5],5.8,'',1,0,'L',$fill);
+									// horas clase mined
+									$pdf->Cell($w[6],5.8,'',1,0,'L',$fill);
+								}
 								// fecha
-								$pdf->Cell($w[7],5.8,cambiaf_a_normal($fecha),1,0,'C',$fill);
-								if($dia == 0){$pdf->Cell($w[8],5.8,'',1,0,'C',$fill);}else{{$pdf->Cell($w[8],5.8,$dia,1,0,'C',$fill);}}
-								if($hora == 0){$pdf->Cell($w[9],5.8,'',1,0,'C',$fill);}else{{$pdf->Cell($w[9],5.8,$hora,1,0,'C',$fill);}}
-								if($minutos == 0){$pdf->Cell($w[10],5.8,'',1,0,'C',$fill);}else{$pdf->Cell($w[10],5.8,$minutos,1,0,'C',$fill);} 	// minutos
-								$minutos_sum = $minutos_sum + $minutos;       
-								$minutos_sub = $minutos_sub + $minutos;
-								$horas_sum = $horas_sum + $hora;       
-								$horas_sub = $horas_sub + $hora;
-								$dia_sum = $dia_sum + $dia;       
-								$dia_sub = $dia_sub + $dia;
-								// concepto
-								$pdf->Cell($w[11],5.8,$observacion,1,0,'L',$fill); 
-								$pdf->Ln();
-								$fill=!$fill;
-								$num++;
-								 // Salto de página.
-									if($num == 20 || $num == 36){	
-										$pdf->AddPage();
-										$pdf->SetY(30); $pdf->SetX(10);
+									$pdf->Cell($w[7],5.8,cambiaf_a_normal($fecha),1,0,'C',$fill);
+									if($dia == 0){$pdf->Cell($w[8],5.8,'',1,0,'C',$fill);}else{{$pdf->Cell($w[8],5.8,$dia,1,0,'C',$fill);}}
+									if($hora == 0){$pdf->Cell($w[9],5.8,'',1,0,'C',$fill);}else{{$pdf->Cell($w[9],5.8,$hora,1,0,'C',$fill);}}
+									if($minutos == 0){$pdf->Cell($w[10],5.8,'',1,0,'C',$fill);}else{$pdf->Cell($w[10],5.8,$minutos,1,0,'C',$fill);} 	// minutos
+										$minutos_sum = $minutos_sum + $minutos;       
+										$minutos_sub = $minutos_sub + $minutos;
+										$horas_sum = $horas_sum + $hora;       
+										$horas_sub = $horas_sub + $hora;
+										$dia_sum = $dia_sum + $dia;       
+										$dia_sub = $dia_sub + $dia;
+									// concepto
+										$pdf->Cell($w[11],5.8,$observacion,1,0,'L',$fill); 
 										$pdf->Ln();
-										$pdf->FancyTable($header);}
-									}
+										$fill=!$fill;
+										$num++;
+									// Salto de página.
+										if($num == 20 || $num == 36){	
+											$pdf->AddPage();
+											$pdf->SetY(30); $pdf->SetX(10);
+											$pdf->Ln();
+											$pdf->FancyTable($header);}
+										}
 						}	// while que examina el bucle que cuenta los dias, horas y minutos.
-					}
 			}
 	   }	// for que recorre los tipos de licencias.
 		$fila = $num_registros;
@@ -355,30 +354,30 @@ function FancyTable($header){
 		// Salto de página.
 		    if($num == 18 || $num == 36){
 		     // imprimir los resultados.
-		$pdf->Cell(200,5.8,'TOTAL',0,0,'R',$fill);
-		//$pdf->Cell($w[8],5.8,'',1,0,'C',$fill);
-		if($dia_sum == 0){$pdf->Cell($w[8],5.8,'',1,0,'C',$fill);}else{$pdf->Cell($w[8],5.8,$dia_sum,1,0,'C',$fill);} 	// minutos
-		if($horas_sum == 0){$pdf->Cell($w[8],5.8,'',1,0,'C',$fill);}else{$pdf->Cell($w[8],5.8,$horas_sum,1,0,'C',$fill);} 	// minutos
-		if($minutos_sum == 0){$pdf->Cell($w[10],5.8,'',1,0,'C',$fill);}else{$pdf->Cell($w[10],5.8,$minutos_sum,1,0,'C',$fill);} 	// minutos
-		$pdf->Ln(); $pdf->Ln();
-	       // imprimir la fecha.
-		$pdf->Cell(200,5.8,'FECHA DE ENTREGA',0,0,'R',$fill);
-		$pdf->Cell(30,5.8,cambiaf_a_normal($date),1,0,'C',$fill); 	// minutos
-		$minutos_sum = 0;
-		$pdf->AddPage();
-		$pdf->SetY(30); $pdf->SetX(10);
-		$pdf->Ln();
-		$pdf->FancyTable($header);}
-		// imprimir el subtotal de cada docentes (minutos de llegadas tardes
-		$pdf->Cell(200,5.8,'SUBTOTAL',0,0,'R',$fill);
-		//$pdf->Cell($w[8],5.8,'',1,0,'C',$fill);
-		if($dia_sub == 0){$pdf->Cell($w[8],5.8,'',1,0,'C',$fill);}else{$pdf->Cell($w[8],5.8,$dia_sub,1,0,'C',$fill);} 	// minutos
-		if($horas_sub == 0){$pdf->Cell($w[8],5.8,'',1,0,'C',$fill);}else{$pdf->Cell($w[8],5.8,$horas_sub,1,0,'C',$fill);} 	// minutos
-		if($minutos_sub == 0){$pdf->Cell($w[10],5.8,'',1,0,'C',$fill);}else{$pdf->Cell($w[10],5.8,$minutos_sub,1,0,'C',$fill);} 	// minutos
-		$pdf->Ln(); $pdf->Ln();}
+			$pdf->Cell(200,5.8,'TOTAL',0,0,'R',$fill);
+			//$pdf->Cell($w[8],5.8,'',1,0,'C',$fill);
+			if($dia_sum == 0){$pdf->Cell($w[8],5.8,'',1,0,'C',$fill);}else{$pdf->Cell($w[8],5.8,$dia_sum,1,0,'C',$fill);} 	// minutos
+			if($horas_sum == 0){$pdf->Cell($w[8],5.8,'',1,0,'C',$fill);}else{$pdf->Cell($w[8],5.8,$horas_sum,1,0,'C',$fill);} 	// minutos
+			if($minutos_sum == 0){$pdf->Cell($w[10],5.8,'',1,0,'C',$fill);}else{$pdf->Cell($w[10],5.8,$minutos_sum,1,0,'C',$fill);} 	// minutos
+			$pdf->Ln(); $pdf->Ln();
+			// imprimir la fecha.
+			$pdf->Cell(200,5.8,'FECHA DE ENTREGA',0,0,'R',$fill);
+			$pdf->Cell(30,5.8,cambiaf_a_normal($date),1,0,'C',$fill); 	// minutos
+			$minutos_sum = 0;
+			$pdf->AddPage();
+			$pdf->SetY(30); $pdf->SetX(10);
+			$pdf->Ln();
+			$pdf->FancyTable($header);}
+			// imprimir el subtotal de cada docentes (minutos de llegadas tardes
+			$pdf->Cell(200,5.8,'SUBTOTAL',0,0,'R',$fill);
+			//$pdf->Cell($w[8],5.8,'',1,0,'C',$fill);
+			if($dia_sub == 0){$pdf->Cell($w[8],5.8,'',1,0,'C',$fill);}else{$pdf->Cell($w[8],5.8,$dia_sub,1,0,'C',$fill);} 	// minutos
+			if($horas_sub == 0){$pdf->Cell($w[8],5.8,'',1,0,'C',$fill);}else{$pdf->Cell($w[8],5.8,$horas_sub,1,0,'C',$fill);} 	// minutos
+			if($minutos_sub == 0){$pdf->Cell($w[10],5.8,'',1,0,'C',$fill);}else{$pdf->Cell($w[10],5.8,$minutos_sub,1,0,'C',$fill);} 	// minutos
+			$pdf->Ln(); $pdf->Ln();}
        }	// for que recorre el personal docente.
 // imprimir los resultados.
-		$total_minutos = ($dia_sum*5*60) + ($horas_sum*60) + ($minutos_sum);
+		$total_minutos = ($dia_sum*$calculo_horas*60) + ($horas_sum*60) + ($minutos_sum);
 		$tramite_dia = segundosToCadenaD($total_minutos, $calculo_horas);
 		$tramite_hora = segundosToCadenaH($total_minutos, $calculo_horas);
 		$tramite_minutos = segundosToCadenaM($total_minutos, $calculo_horas);
