@@ -6,7 +6,16 @@
 /img/fotos/10391/
 /img/fotos/10428/
 /img/png/pn/
+/img/Pn/10391/
+/img/Pn/10428/
+/img/Pn/
 /img/portafolio/10391/
+/files/10391/
+/files/10428/
+/files/10521/
+/img/portafolio/
+/css/alt/
+/img/
 #/images/
 #/assets/
 # CUADROS QUE UTILIZA EL SISTEMA (HOJAS DE CALCULO)
@@ -16,7 +25,7 @@
 #/js/Chart.js-2.7.0/
 #/js/jquery-validation-1.10.0/
 #/js/jquery-validation-1.19.1/
-/js/plugins/
+#/js/plugins/
 #/js/popper/
 #/js/file-input/
 #/js/sweetalert2/
@@ -25,7 +34,7 @@
 #/js/jqueryNumeric/
 #/js/jquery-mask/
 #/js/pace-1.2.4/
-#/js/fontawesome-pro-5.14.0-web/
+#/js/plugins/fontawesome-pro-5.14.0-web/
 #PHP LIBS
 /php_libs/fpdf182/
 #/php_libs/fpdf/
