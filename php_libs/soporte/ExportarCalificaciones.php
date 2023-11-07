@@ -272,7 +272,7 @@ function NombreArchivoExcel(){
     $codigo_modalidad = $codigo_bachillerato; // Verificar si Existe el directorio archivos.
     $nombre_ann_lectivo = $nombre_annlectivo;
     $codigo_destino = 3; // Tipo de Carpeta a Grabar.
-    $longitudNombreArchivo = 160;
+    $longitudNombreArchivo = 240;
       CrearDirectorios($path_root,$nombre_ann_lectivo,$codigo_modalidad,$codigo_destino,$periodo); // Crear Carpeta.                  
   // Unir Modalidad - Grado y Sección.
     //$nombre_directorio_mgs = replace_3(trim($nombre_modalidad."-" . $nombre_grado));
@@ -283,7 +283,7 @@ function NombreArchivoExcel(){
           chmod ($DestinoArchivo . $nombre_directorio_mgs,07777);
       }
     if($nota_p_p_ == "Alertas" && $codigo_area == '09'){             // Destino Archivo.
-      $nombre_archivo = htmlspecialchars($NombreAsignatura . ".xlsx");                 // Nombre del Archivo.
+      $nombre_archivo = htmlspecialchars($NombreAsignatura);                 // Nombre del Archivo.
       $URLNombreArchivo = $DestinoArchivo.$nombre_directorio_mgs."/".$nombre_archivo;
         if(strlen($URLNombreArchivo) >= 220){ // VALIDAMOS PARA QUE NO EXCEDA DE 250 CARACTERES.
           $URLNombreArchivo = substr($URLNombreArchivo,0,$longitudNombreArchivo) . ".xlsx";
@@ -297,9 +297,9 @@ function NombreArchivoExcel(){
         <td>$nombre_archivo
       ";
     }else{
-      $nombre_archivo = htmlspecialchars($NombreAsignatura . ".xlsx");                 // Nombre del Archivo.
+      $nombre_archivo = htmlspecialchars($NombreAsignatura);                 // Nombre del Archivo.
       $URLNombreArchivo = $DestinoArchivo.$nombre_directorio_mgs."/".$nombre_archivo;
-        if(strlen($URLNombreArchivo) >= 240){ // VALIDAMOS PARA QUE NO EXCEDA DE 250 CARACTERES.
+        if(strlen($URLNombreArchivo) >= 220){ // VALIDAMOS PARA QUE NO EXCEDA DE 250 CARACTERES.
           $URLNombreArchivo = substr($URLNombreArchivo,0,$longitudNombreArchivo) . ".xlsx";
         }else{
           $URLNombreArchivo = substr($URLNombreArchivo,0,$longitudNombreArchivo) . ".xlsx";
