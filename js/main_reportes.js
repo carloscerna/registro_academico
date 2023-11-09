@@ -391,7 +391,7 @@ if (lstlist_nominas == 'hoja-de-calculo' && $(this).attr('data-accion') == 'list
                 type: "POST",
                 dataType: "json",
                 //url:"php_libs/soporte/CrearNominas.php",
-                url:"php_libs/soporte/CrearNominaSobreEdad.php",
+                url:"php_libs/soporte/CrearNominas.php",
                 data: "todos="+ reporte_ok + "&id=" + Math.random(),
                 success: function(response){
                         // Validar mensaje de error
