@@ -96,7 +96,7 @@ function Header()
 if($valor_x_encabezado == true)
 {    
 // PRIEMRA PARTE DEL RECTANGULO.
-    $this->Rect(10,5,237,50);
+    $this->Rect(10,5,227,50);
 // segunda PARTE DEL RECTANGULO. numero de orden
     $this->Rect(10,5,7,50);
     $this->RotatedText(15,30,utf8_decode('N° de Orden'),90);
@@ -119,14 +119,15 @@ if($valor_x_encabezado == true)
     $this->SetXY(132,5);
     $this->Cell(60,8,'ASIGNATURA',0,2,'C');
 // cuarta PARTE DEL RECTANGULO. educacion moral y civica
-    $this->Rect(197,5,50,7);
+    $this->Rect(197,5,40,7);
     $this->SetXY(192,5);
+    $this->SetFont('Arial','',7); // I : Italica; U: Normal;
+    $this->Cell(50,8,utf8_decode('COMPETENCIAS CIUDADANAS'),0,2,'C');
     $this->SetFont('Arial','',9); // I : Italica; U: Normal;
-    $this->Cell(60,8,utf8_decode('COMPETENCIAS CIUDADANAS'),0,2,'C');
     //$this->Cell(60,3,utf8_decode('Aspectos de la Conducta'),0,2,'C');
 // cuarta PARTE DEL RECTANGULO. asignaturas nombres
     $espacio = 0;
-    for($i=0;$i<=11;$i++){
+    for($i=0;$i<=10;$i++){
       if($i >= 0 && $i <= 6){
         $this->Rect(127+$espacio,12,10,36);
         $this->RotatedTextMultiCell(128+$espacio,45,$nombre_asignatura[$i],90);}
@@ -141,7 +142,7 @@ if($valor_x_encabezado == true)
       $this->RotatedText(145,52,utf8_decode('CALIFICACIÓN'),0);
 // cuarta PARTE DEL RECTANGULO. aspectos de la conducta
     $espacio = 0;
-    for($i=1;$i<=5;$i++){
+    for($i=1;$i<=4;$i++){
       $this->Rect(197+$espacio,12,10,43);
       $espacio = $espacio + 10;}
 }
@@ -184,10 +185,8 @@ function FancyTable($header)
           INNER JOIN seccion sec ON sec.codigo = am.codigo_seccion
           INNER JOIN ann_lectivo ann ON ann.codigo = am.codigo_ann_lectivo
             WHERE btrim(am.codigo_bach_o_ciclo || am.codigo_grado || am.codigo_seccion || am.codigo_ann_lectivo || am.codigo_turno) = '".$codigo_all."'";
-
 		$result_verificar = $db_link -> query($query_verificar);
 		$verificar = $result_verificar -> rowCount();
-
 if($verificar != 0)	// IF PRINCIPAL QUE VERIFICA SI HAY REGISTROS.
 {
 //************************************************************************************************************************						
@@ -215,7 +214,7 @@ if($verificar != 0)	// IF PRINCIPAL QUE VERIFICA SI HAY REGISTROS.
 	$query = "SELECT DISTINCT a.codigo_nie, btrim(a.apellido_paterno || CAST(' ' AS VARCHAR) || a.apellido_materno || CAST(', ' AS VARCHAR) || a.nombre_completo) as apellido_alumno,
                 a.nombre_completo, btrim(a.apellido_paterno || CAST(' ' AS VARCHAR) || a.apellido_materno) as apellidos_alumno, 
                 am.codigo_bach_o_ciclo, am.pn, bach.nombre as nombre_bachillerato, am.codigo_ann_lectivo, ann.nombre as nombre_ann_lectivo, am.codigo_grado, am.id_alumno_matricula as codigo_matricula,
-                gan.nombre as nombre_grado, am.codigo_seccion, am.retirado, a.genero,
+                gan.nombre as nombre_grado, am.codigo_seccion, am.retirado, a.genero, asig.ordenar,
                 sec.nombre as nombre_seccion, ae.codigo_alumno, id_alumno, n.codigo_alumno, n.codigo_asignatura, asig.nombre AS n_asignatura, n.nota_final, n.recuperacion, asig.nombre as nombre_asignatura, aaa.orden, n.nota_recuperacion_2
                   FROM alumno a
                     INNER JOIN alumno_encargado ae ON a.id_alumno = ae.codigo_alumno and ae.encargado = 't'
@@ -228,8 +227,7 @@ if($verificar != 0)	// IF PRINCIPAL QUE VERIFICA SI HAY REGISTROS.
                     INNER JOIN asignatura asig ON asig.codigo = n.codigo_asignatura
                     INNER JOIN a_a_a_bach_o_ciclo aaa ON aaa.codigo_asignatura = asig.codigo and aaa.orden <> 0 
                       WHERE btrim(am.codigo_bach_o_ciclo || am.codigo_grado || am.codigo_seccion || am.codigo_ann_lectivo || am.codigo_turno) = '".$codigo_all."'
-                        and aaa.codigo_ann_lectivo = '".substr($codigo_all,6,2)."' ORDER BY apellido_alumno, aaa.orden ASC";
-                        
+                        and aaa.codigo_ann_lectivo = '".substr($codigo_all,6,2)."' ORDER BY apellido_alumno, asig.ordenar ASC";
      //consulta para obtener el total de alumnos.
      $query_total_alumnos = "SELECT count(*) as total_alumnos
       FROM alumno a
@@ -367,14 +365,11 @@ INNER JOIN ann_lectivo ann ON ann.codigo = am.codigo_ann_lectivo
           	  case 6:
         	    	contar_promovidos($generos, $notas, $contar_evaluar);
         		  break;
-            	case 7:
-          	  	contar_promovidos($generos, $notas, $contar_evaluar);
-        		  break;
             }
      		
      		//contar el total de promovidos segun genero y si contar_p_m es mayor igual que cinco.
             $promocion = "No";
-      		if($ji == 12)
+      		if($ji == 11)
        			{
       				if($contar_r_m > 0)
       					{$total_retenidos_m++;
@@ -408,7 +403,7 @@ INNER JOIN ann_lectivo ann ON ann.codigo = am.codigo_ann_lectivo
         		}		
         		
        // Incremento del Número.
-          if($ji == 12){
+          if($ji == 11){
             $ji = 1;
             
             // actualizar estatus PROMOCIONEN ALUMNO MATRICULA.
@@ -493,7 +488,7 @@ while($rows_total_alumnos_m = $result_total_alumnos_retirados_masculino -> fetch
         if ($salir == 14){
             break;}
         else{
-            $nombre_asignatura[] = utf8_decode(trim($rows['nombre_asignatura']));
+            $nombre_asignatura[] = mb_convert_encoding(trim($rows['nombre_asignatura']),"ISO-8859-1","UTF-8");
             $nombre_bachillerato = trim($rows['nombre_bachillerato']);
             $nombre_seccion = trim($rows['nombre_seccion']);
             $salir++;}
@@ -579,7 +574,7 @@ $codigo_all_ = substr($codigo_all,0,8);
     $pdf->Cell(60,4,utf8_decode('Ministerio de Educación'),0,2,'C');
     $pdf->Cell(60,4,utf8_decode('Dirección Nacional de Educación Básica'),0,2,'C');
 // PRIEMRA PARTE DEL RECTANGULO.
-    $pdf->Rect(10,45,237,50);
+    $pdf->Rect(10,45,227,50);
 // segunda PARTE DEL RECTANGULO. numero de orden
     $pdf->Rect(10,45,7,50);
     $pdf->RotatedText(15,80,utf8_decode('N° de Orden'),90);
@@ -591,7 +586,7 @@ $codigo_all_ = substr($codigo_all,0,8);
     $pdf->SetFont('Arial','',11); // I : Italica; U: Normal;
     $pdf->SetXY(38,65);
     $pdf->SetFillColor(255,255,255);
-    $pdf->MultiCell(90,8,utf8_decode('Nombre de los Alumnos(as) en orden alfabético de apellidos'),0,2,'C',true);
+    $pdf->MultiCell(90,8,utf8_decode('Nombre de los Alumnos(as) en orden alfabético de apellidos'),0,2,'C');
 // cuarta PARTE DEL RECTANGULO. nie
     //$pdf->Rect(107,45,20,50);
     //$pdf->SetXY(110,65);
@@ -602,14 +597,15 @@ $codigo_all_ = substr($codigo_all,0,8);
     $pdf->SetXY(132,45);
     $pdf->Cell(60,8,'ASIGNATURA',0,2,'C');
 // cuarta PARTE DEL RECTANGULO. educacion moral y civica
-    $pdf->Rect(197,45,50,7);
+    $pdf->Rect(197,45,40,7);
     $pdf->SetXY(192,45);
+    $pdf->SetFont('Arial','',7); // I : Italica; U: Normal;
+    $pdf->Cell(50,8,utf8_decode('COMPETENCIAS CIUDADANAS'),0,2,'C');
     $pdf->SetFont('Arial','',9); // I : Italica; U: Normal;
-    $pdf->Cell(60,8,utf8_decode('COMPETENCIAS CIUDADANAS'),0,2,'C');
     //$pdf->Cell(60,3,utf8_decode('Aspectos de la Conducta'),0,2,'C');
 // cuarta PARTE DEL RECTANGULO. asignaturas nombres
     $espacio = 0;
-    for($i=0;$i<=11;$i++){
+    for($i=0;$i<=10;$i++){
       if($i >= 0 && $i <= 6){
         $pdf->Rect(127+$espacio,52,10,33);
         $pdf->RotatedTextMultiCell(128+$espacio,85,$nombre_asignatura[$i],90);}
@@ -631,7 +627,7 @@ $codigo_all_ = substr($codigo_all,0,8);
 
 // cuarta PARTE DEL RECTANGULO. aspectos de la conducta
     $espacio = 0;
-    for($i=1;$i<=5;$i++){
+    for($i=1;$i<=4;$i++){
       $pdf->Rect(197+$espacio,52,10,43);
       $espacio = $espacio + 10;}      
 
@@ -675,7 +671,7 @@ $codigo_all_ = substr($codigo_all,0,8);
       $pdf->Rect(310,80,15,30);
     
     $pdf->SetXY(250,80);
-    $pdf->Cell(90,5,utf8_decode('ESTADÝSTICA'),1,2,'C', true);
+    $pdf->Cell(90,5,utf8_decode('ESTADÍSTICA'),1,2,'C', true);
     $pdf->SetXY(248,88);
     $pdf->Cell(20,5,'SEXO',0,0,'C');
     $pdf->SetFont('Arial','',7);
@@ -815,7 +811,7 @@ $codigo_all_ = substr($codigo_all,0,8);
 									$fill=!$fill;
                 $pdf->SetX(10);
                   $pdf->Cell(7,$h[0],$numero,1,0,'C',$fill);  // N| de Orden.
-                  $pdf->Cell(20,$h[0],$row['codigo_nie'],1,0,'R',$fill);  // N| de Orden.
+                  $pdf->Cell(20,$h[0],$row['codigo_nie'],1,0,'L',$fill);  // N| de Orden.
                   $pdf->Cell(90,$h[0],cambiar_de_del(trim($row['apellido_alumno'])),1,0,'l');  // nombre del alumno.
                   //$pdf->Cell(20,6,trim($row['codigo_nie']),1,0,'C');  // NIE
                   //$pdf->Cell(10,$h[0],verificar_nota($row['nota_final'],$row['recuperacion']),1,0,'C'); 
@@ -918,11 +914,11 @@ $codigo_all_ = substr($codigo_all,0,8);
               case 11:
                 $nota_concepto = verificar_nota($row['nota_final'],$row['recuperacion']);
                 $concepto_asignatura = cambiar_concepto($nota_concepto);
-                $pdf->Cell(10,$h[0],$concepto_asignatura,1,0,'C'); break;
-              case 12:
-                $nota_concepto = verificar_nota($row['nota_final'],$row['recuperacion']);
-                $concepto_asignatura = cambiar_concepto($nota_concepto);
                 $pdf->Cell(10,$h[0],$concepto_asignatura,1,1,'C'); break;
+              case 12:
+                //$nota_concepto = verificar_nota($row['nota_final'],$row['recuperacion']);
+                //$concepto_asignatura = cambiar_concepto($nota_concepto);
+                //$pdf->Cell(10,$h[0],$concepto_asignatura,1,1,'C'); break;
             }
                
             //
@@ -940,7 +936,7 @@ $codigo_all_ = substr($codigo_all,0,8);
 								$año = strftime("%Y");		// El Año.
 
               // Salto de página.
-              if($numero == 23 && $i == 12){
+              if($numero == 23 && $i == 11){
                 $valor_x_encabezado = true;
                 $pdf->Addpage();
                 // cuarta PARTE DEL RECTANGULO. cuadro de la firma.
@@ -969,7 +965,7 @@ $codigo_all_ = substr($codigo_all,0,8);
                     $pdf->RotatedText(290-((strlen('Director'))/2),137,'Director',0);
               }              
               // Incremento del Número.
-                if($i == 12){$numero++;$i = 1;}else{$i++;}
+                if($i == 11){$numero++;$i = 1;}else{$i++;}
           }	// final del while.
 		
 	// Línea diagonal para los cuadros. en la primera página.
@@ -980,8 +976,8 @@ $codigo_all_ = substr($codigo_all,0,8);
 		    $linea_faltante =  23 - $numero;
         $numero_p = $numero - 1;
 		
-		   $valor_y1 = $pdf->gety(10);
-		   $pdf->Line(17,$valor_y1,247,210);
+		   $valor_y1 = $pdf->GetY();
+		   $pdf->Line(17,$valor_y1,237,210);
 
 	      	for($i=0;$i<=$linea_faltante;$i++)
                   {
@@ -993,7 +989,7 @@ $codigo_all_ = substr($codigo_all,0,8);
                       //$pdf->Cell(20,6,'',1,0,'C');  // NIE
                       $pdf->Cell(10,$h[0],'',1,0,'C');  // nota final
                       
-                      for($j=0;$j<=10;$j++){$pdf->Cell(10,$h[0],'',1,0,'C');}
+                      for($j=0;$j<=9;$j++){$pdf->Cell(10,$h[0],'',1,0,'C');}
                       $pdf->Ln();
 
                   }
@@ -1001,7 +997,7 @@ $codigo_all_ = substr($codigo_all,0,8);
              // Salto de página.
                 $valor_x_encabezado = true;
                 $pdf->Addpage();
-				$pdf->SetY(75);
+				        $pdf->SetY(75);
                 // cuarta PARTE DEL RECTANGULO. cuadro de la firma.
                     $pdf->Rect(270,150,50,40);
                     $pdf->RotatedText(290,187,'SELLO',0);
@@ -1032,8 +1028,8 @@ $codigo_all_ = substr($codigo_all,0,8);
 				$linea_faltante =  50 - $numero;
                 $numero_p = $numero - 1;
 			//colocar la linea diagonal cuando es mayor de 23.
-		  $valor_y1 = $pdf->gety(10);
-		  $pdf->Line(17,$valor_y1,247,190);
+		  $valor_y1 = $pdf->gety();
+		  $pdf->Line(17,$valor_y1,237,190);
 		}
 		// Escribir líneas faltantes.  
 		for($i=0;$i<=$linea_faltante;$i++)
@@ -1046,7 +1042,7 @@ $codigo_all_ = substr($codigo_all,0,8);
 						//$pdf->Cell(20,6,'',1,0,'C');  // NIE
 						$pdf->Cell(10,$h[0],'',1,0,'C');  // nota final
                       
-						for($j=0;$j<=10;$j++){$pdf->Cell(10,$h[0],'',1,0,'C');}
+						for($j=0;$j<=9;$j++){$pdf->Cell(10,$h[0],'',1,0,'C');}
 						$pdf->Ln();
 
         }
@@ -1059,7 +1055,7 @@ $codigo_all_ = substr($codigo_all,0,8);
                   $pdf->Cell(10,$h[0],array_sum($total_puntos_04_array),1,0,'C');
                   $pdf->Cell(10,$h[0],array_sum($total_puntos_05_array),1,0,'C');
                   $pdf->Cell(10,$h[0],array_sum($total_puntos_06_array),1,0,'C');
-									$pdf->Cell(10,$h[0],array_sum($total_puntos_07_array),1,0,'C');
+									//$pdf->Cell(10,$h[0],array_sum($total_puntos_07_array),1,0,'C');
                   
                   for($j=0;$j<=4;$j++){$pdf->Cell(10,$h[0],'',1,0,'C');}
                     $pdf->Ln();
@@ -1073,7 +1069,7 @@ $codigo_all_ = substr($codigo_all,0,8);
 										$pdf->Cell(10,$h[0],number_format(array_sum($total_puntos_04_array)/$conteo_alumnos,0),1,0,'C');
 										$pdf->Cell(10,$h[0],number_format(array_sum($total_puntos_05_array)/$conteo_alumnos,0),1,0,'C');
 										$pdf->Cell(10,$h[0],number_format(array_sum($total_puntos_06_array)/$conteo_alumnos,0),1,0,'C');
-										$pdf->Cell(10,$h[0],number_format(array_sum($total_puntos_07_array)/$conteo_alumnos,0),1,0,'C');
+										//$pdf->Cell(10,$h[0],number_format(array_sum($total_puntos_07_array)/$conteo_alumnos,0),1,0,'C');
 										$pdf->SetTextColor(0);
 										$pdf->SetFont('');
                   
