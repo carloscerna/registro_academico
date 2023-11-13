@@ -8,9 +8,11 @@ include($path_root."/registro_web/includes/mainFunctions_conexion.php");
     ini_set("memory_limit","2000M");
 // variables. del post.
 	$codigo_institucion = $_SESSION['codigo_institucion'];
-	$ruta = '../files/' . $codigo_institucion . "/" . trim($_REQUEST["nombre_archivo_"]);
+	$ruta = $path_root.'/registro_academico/files/' . $codigo_institucion . "/" . trim($_REQUEST["nombre_archivo_"]);
+	$nombre_archivo_ = trim($_REQUEST["nombre_archivo_"]);
   	$trimestre = trim($_REQUEST["periodo_"]);
 	$codigo_grado = trim($_REQUEST["grado"]);
+	$indicador_final = "";
 // variable de la conexi�n dbf.
     $db_link = $dblink;
 // Inicializando el array
@@ -71,6 +73,7 @@ include($path_root."/registro_web/includes/mainFunctions_conexion.php");
 							break;
 						case "Trimestre 3":
 							$nota_p_p = 'indicador_p_p_3';  
+							$indicador_final = "indicador_final";
 							break;   
 						default:
 							echo "";
@@ -93,12 +96,14 @@ include($path_root."/registro_web/includes/mainFunctions_conexion.php");
 								$valor_indicador = trim(strtoupper($objPHPExcel->getActiveSheet()->getCell($NombreEstudiante[$columna_codigo_alumno].$fila_indicador_codigo_asignatura)->getValue()));
 								// SQL QUERY
 								if($valor_indicador <> ""){
-									//print "<br>";
 									$query_indicador = "UPDATE nota SET $nota_p_p = '$valor_indicador' WHERE codigo_alumno = $codigo_alumno and codigo_matricula = $codigo_matricula and codigo_asignatura = '$codigo_indicador'";
 									$result = $db_link -> query($query_indicador);
 								}
-									// IMPRIMIR VALORES
-									//print "<br>" . $codigo_alumno . " " . $codigo_matricula . " " . $nombre_del_alumno . " Indicador: " . $valor_indicador  ." $codigo_indicador<br>";
+								// SQL QUERY - GUARDAR INDICADOR FINAL.
+								if($trimestre == "Trimestre 3"){
+									$query_indicador = "UPDATE nota SET $indicador_final = '$valor_indicador' WHERE codigo_alumno = $codigo_alumno and codigo_matricula = $codigo_matricula and codigo_asignatura = '$codigo_indicador'";
+									$result = $db_link -> query($query_indicador);
+								}
 								// INCREMENTAR VALOR DE LA FILA.
 									$fila_indicador_codigo_asignatura++;
 							}
@@ -109,6 +114,7 @@ include($path_root."/registro_web/includes/mainFunctions_conexion.php");
 				}		   
 // FINAL DEL PROCESO
 	$datos[$fila_array]["registro"] = 'Si_registro';
+	$datos[$fila_array]["nombre_archivo"] = $nombre_archivo_;
 	$fila_array++;
 // Enviando la matriz con Json.
 	echo json_encode($datos);

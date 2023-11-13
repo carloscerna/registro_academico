@@ -8,7 +8,6 @@ $(function(){
 				function(data) {
 					$('#listaArchivosOK').empty();                                  
 					var filas = data.length;                                  
-													  
 					if (filas != 0 ) {                                  
 							for (fila=0;fila<filas;fila++) {                                  
 									$('#listaArchivosOK').append(data[fila].archivo);                                  
@@ -61,7 +60,7 @@ $('body').on('click','#listaArchivosOK a',function (e)
 			url_archivo = "includes/importar_notas_hoja_calculo.php";
 		}
 		if(valor_check == "Promedios" && modalidad == "01"){
-			url_archivo = "includes/importar_hoja_calculo_parvularia.php";
+			url_archivo = "includes/Calificaciones/ImportarParvularia.php";
 		}
 		if(valor_check == "Promedios" && modalidad == "02"){
 			url_archivo = "includes/importar_notas_hoja_calculo_basica_tercer_ciclo.php";
@@ -69,7 +68,6 @@ $('body').on('click','#listaArchivosOK a',function (e)
 		if(valor_check == "Promedios" && modalidad == "03"){
 			url_archivo = "includes/importar_notas_hoja_calculo_educacion_media.php";
 		}
-
 		/*
 		 *VERIFICAR ARCHIVOS ANTES DE INICAR LA ACTUALIZACIÓN.
 		 */
@@ -87,13 +85,11 @@ $('body').on('click','#listaArchivosOK a',function (e)
 						url_archivo_data = false;
 						return;
 					}
-					
 					if (data[0].registro == "Si_registro") {		
 						$("label[for='VerificarActualizar']").text("Actualizando...");
 						$("#imagenGif").attr("src","img/ajax-loader.gif");
 						url_archivo_data = true;
 						console.log(url_archivo_data);
-						
 						// Comenzar el proceso del AJAX PARA EL NUEVO ARCHIVO.
 						// alert(url_archivo);
 							$.ajax({
@@ -115,7 +111,6 @@ $('body').on('click','#listaArchivosOK a',function (e)
 								}		
 							}); // Cierre de Ajax. QUE TIENE EL NOMBRE DEL ARCHIVO A ACTUALIZAR.
 					}
-					
 				},		
 				error:function(){		
 					toastr.error(":(");		
