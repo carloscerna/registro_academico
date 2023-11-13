@@ -126,7 +126,7 @@ $datos=array(); $fila_array = 0;
        }
     // fin del proceso.
     // sON LOS ARCHIVOS QUE TIENE VARIAS ASIGNATURAS Y CALCULA EL PROMEDIO. 4 AÑOS
-       if($valor_check == "Promedios" and $modalidad == "01" and $grado == "6P"){
+       if($valor_check == "Promedios" && $modalidad == "01" && $grado == "6P"){
           if($celda_a1 != "GUÍA DE OBSERVACIÓN. INSTRUMENTO 2"){
             $datos[$fila_array]["registro"] = 'No_registro';
             $fila_array++;
