@@ -100,7 +100,7 @@ while($row = $result_catalogo_area -> fetch(PDO::FETCH_BOTH))
 				$total_asignaturas = (trim($row['total_asignaturas']));
             }
 // COLOCAR ENCABEZANDO A LA BOLETA DE CALIFICACIÓN.		
-      	if($print_codigo_bachillerato >= '01' and $print_codigo_bachillerato <= '02')
+      	if($print_codigo_bachillerato == "13")
 	    	{
             $nivel_educacion = "Educación Parvularia";
             }
@@ -199,7 +199,7 @@ function FancyTable($header)
 	// LINES O RECTÁNGULOS.
 		$this->RoundedRect(5, 40, 203, 10, 0.5, '');	// primer cuadro.
 		$this->RoundedRect(5, 40, 140, 10, 0.5, '');		// para el nombre de la asignatura
-    if($print_codigo_bachillerato >= '01' and  $print_codigo_bachillerato <= '05')
+    if($print_codigo_bachillerato == '13')
     {
 		$n_label = 6; $n_etiqueta = 4;}
 	// medidas para NOCTURNA POR EL N-º DE MODULOS.
@@ -490,7 +490,7 @@ while($row = $result -> fetch(PDO::FETCH_BOTH)) // bucle para la recorrer las as
 				$pdf->SetFont('','',10);
 				$pdf->Ln();
 				// evaluar etiqueta leyenda.
-				if($print_codigo_bachillerato >= '01' and  $print_codigo_bachillerato <= '02')
+				if($print_codigo_bachillerato == '13')
 				{
 					$leyenda = "INDICADORES.";
                 }
