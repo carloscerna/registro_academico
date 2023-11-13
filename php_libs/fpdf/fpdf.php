@@ -581,6 +581,19 @@ function RotatedTextMultiCellAspectos($x,$y,$txt,$angle)
         $this->MultiCell(43,3,$txt,0,'L');
 	$this->Rotate(0);
 }
+/*******************************************************************************
+*                                                                              *
+*                               Rotated text Multicell   Dirección              *
+*                                                                              *
+*******************************************************************************/
+function RotatedTextMultiCellDireccion($x,$y,$txt,$angle)
+{
+	//Text rotated around its origin
+	$this->Rotate($angle,$x,$y);
+	$this->SetXY($x,$y);
+        $this->MultiCell(90,4,utf8_decode($txt),0,'J');
+	$this->Rotate(0);
+}
 
 function __construct($orientation='P', $unit='mm', $size='A4')
 {

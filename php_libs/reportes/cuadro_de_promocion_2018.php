@@ -46,53 +46,14 @@
 
 class PDF extends FPDF
 {
-// rotar texto funcion TEXT()
-function RotatedText($x,$y,$txt,$angle)
-{
-	//Text rotated around its origin
-	$this->Rotate($angle,$x,$y);
-        $this->Text($x,$y,$txt);
-	$this->Rotate(0);
-}
-
-// rotar texto funcion MultiCell()
-function RotatedTextMultiCell($x,$y,$txt,$angle)
-{
-	//Text rotated around its origin
-	$this->Rotate($angle,$x,$y);
-	$this->SetXY($x,$y);
-        $this->MultiCell(30,4,$txt,0,'L');
-	$this->Rotate(0);
-}
-
-function RotatedTextMultiCellAspectos($x,$y,$txt,$angle)
-{
-	//Text rotated around its origin
-	$this->Rotate($angle,$x,$y);
-	$this->SetXY($x,$y);
-        $this->MultiCell(43,3,$txt,0,'L');
-	$this->Rotate(0);
-}
-
-function RotatedTextMultiCellDireccion($x,$y,$txt,$angle)
-{
-	//Text rotated around its origin
-	$this->Rotate($angle,$x,$y);
-	$this->SetXY($x,$y);
-        $this->MultiCell(90,4,utf8_decode($txt),0,'J');
-	$this->Rotate(0);
-}
-
-
-
-//Cabecera de página
+ //Cabecera de página
 function Header()
 {
   global $nombre_asignatura, $valor_x_encabezado, $total_asignaturas, $print_bachillerato;
   // dParte superior izquierda.
     $this->SetFont('Arial','',8); // I : Italica; U: Normal;
-    $this->Cell(343,8,utf8_decode($print_bachillerato),0,0,'R');
-    
+    $this->Cell(343,8,mb_convert_encoding($print_bachillerato,"ISO-8859-1","UTF-8"),0,0,'R');
+  /*  
 if($valor_x_encabezado == true)
 {    
 // PRIEMRA PARTE DEL RECTANGULO.
@@ -146,6 +107,7 @@ if($valor_x_encabezado == true)
       $this->Rect(197+$espacio,12,10,43);
       $espacio = $espacio + 10;}
 }
+*/
 }
 //Pie de página
 function Footer()
