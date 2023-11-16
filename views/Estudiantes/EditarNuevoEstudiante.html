@@ -404,9 +404,32 @@ $(document).ready(function() {
                                             <div class="input-group-prepend">
                                               <span class="input-group-text text-bold bg-gray">El Estudiante ha sido referido a</span>
                                             </div>
-                                            <select id="LstServicioApoyoEducativo" name="LstServicioApoyoEducativo" class="custom-select" aria-label="LstServicioApoyoEducativo"></select>							
+                                            <select id="lstServicioApoyoEducativo" name="lstServicioApoyoEducativo" class="custom-select" aria-label="lstServicioApoyoEducativo"></select>							
                                           </div>
                                         </div>
+                                        <!-- Correo electronico, telefonod econtacto, Tiene WhatsApp -->
+                                        <div class="form-group row">
+                                          <div class="input-group">
+                                            <div class="input-group-prepend">
+                                              <span class="input-group-text text-bold bg-gray">Correo Electrónico</span>
+                                            </div>
+                                              <input type="text" name="email_alumno" id="email_alumno" placeholder="123@host.com" class="form-control">				
+                                            <div class="input-group-prepend">
+                                              <span class="input-group-text text-bold bg-gray">N.º Teléfono de Contacto</span>
+                                            </div>
+                                              <input class="form-control" type="text" name="telcelular" id="telcelular" aria-label="TelCeluar">
+                                            <div class="input-group-prepend">
+                                              <span class="input-group-text text-bold bg-gray">¿Tiene WhatsApp?</span>
+                                            </div>
+                                              <select id="lstWhatsApp" name="lstWhatsApp" class="custom-select" aria-label="lstWhatsApp">
+                                                <option value="Si" selected>Sí</option>
+                                                <option value="No">No</option>
+                                              </select>		
+                                          </div>
+                                        </div>
+
+
+
                                         <div class="form-group row">
                                           <label class="col-lg-3 col-form-label form-control-label">Dirección</label>
                                           <div class="col-lg-9">
@@ -423,18 +446,6 @@ $(document).ready(function() {
                                           <label class="col-lg-3 col-form-label form-control-label">N.º Residencia</label>
                                           <div class="col-lg-9">
                                             <input class="form-control" type="text" name="telresidencia" id="telresidencia" aria-label="TelResidencia">
-                                          </div>
-                                        </div>
-                                        <div class="form-group row">
-                                          <label class="col-lg-3 col-form-label form-control-label">N.º Celular</label>
-                                          <div class="col-lg-9">
-                                            <input class="form-control" type="text" name="telcelular" id="telcelular" aria-label="TelCeluar">
-                                          </div>
-                                        </div>
-                                        <div class="form-group row">
-                                          <label class="col-lg-3 col-form-label form-control-label">E@mail</label>
-                                          <div class="col-lg-9">
-                                            <input type="text" name="email_alumno" id="email_alumno" placeholder="123@host.com" class="form-control">
                                           </div>
                                         </div>
                                 </fieldset>
