@@ -76,15 +76,25 @@ if($errorDbConexion == false){
 				$tomo = trim($_POST['tomo_pn']);
 				$libro = trim($_POST['libro_pn']);
 				$edad = trim($_POST['edad_enviar']);
+				$dui = trim($_POST['dui']);
+				$pasaporte = trim($_POST['pasaporte_otro']);
+				$codigo_nacionalidad = trim($_POST['lstnacionalidadE']);
+				$retornado = trim($_POST['lstRetornado']);
+				$presenta_pn = trim($_POST['lstPnPresenta']);
+				$posee_pn = trim($_POST['lstPnPosee']);
 				//crear una variable diferente ppara el genero, guardar en campo genero y .
 				$codigo_genero = trim($_POST['lstgenero']);
+				$codigo_etnia = trim($_POST['lstEtnia']);
+				$codigo_diagnostico = trim($_POST['codigo_diagnostico']);
+				$codigo_servicio_apoyo_educativo = trim($_POST['lstservicioapoyoeducativo']);
+
 				$codigo_estado_civil = trim($_POST['lstEstadoCivil']);
 				$codigo_departamento = trim($_POST['lstdepartamento']);
 				$codigo_municipio = trim($_POST['lstmunicipio']);
 				$codigo_estado_familiar = trim($_POST['lstestadofamiliar']);
 				$codigo_actividad_economica = trim($_POST['lstactividadeconomica']);
 				$codigo_tipo_discapacidad = trim($_POST['lsttipodiscapacidad']);
-				$codigo_servicio_apoyo_educativo = trim($_POST['lstservicioapoyoeducativo']);
+				
 				$codigo_zona_residencia = trim($_POST['lstzonaresidencia']);
 				// Tabs-3
 				$codigo_estatus = trim($_POST['lstEstatus']);
@@ -128,11 +138,13 @@ if($errorDbConexion == false){
 					$query = "INSERT INTO alumno (apellido_materno, apellido_paterno, nombre_completo, codigo_nie, direccion_alumno, telefono_alumno, codigo_departamento,
 						codigo_municipio, fecha_nacimiento, pn_numero, pn_folio, pn_tomo, pn_libro, medicamento, direccion_email,
 						edad, genero, codigo_estado_civil, codigo_estado_familiar, codigo_actividad_economica,
-						codigo_apoyo_educativo, codigo_discapacidad, codigo_zona_residencia, telefono_celular, codigo_genero, codigo_estatus)
+						codigo_apoyo_educativo, codigo_discapacidad, codigo_zona_residencia, telefono_celular, codigo_genero, codigo_estatus, dui, pasaporte, codigo_nacionalidad, retornado,
+						presenta_pn, posee_pn, codigo_etnia, codigo_diagnostico)
 						VALUES ('$apellido_materno','$apellido_paterno','$nombre_completo','$nie','$direccion_alumno','$telresidencia','$codigo_departamento',
 						'$codigo_municipio','$fecha_nacimiento','$numero','$folio','$tomo','$libro','$medicamento_alumno','$email_alumno',
 						'$edad','$genero','$codigo_estado_civil','$codigo_estado_familiar','$codigo_actividad_economica',
-						'$codigo_servicio_apoyo_educativo','$codigo_tipo_discapacidad','$codigo_zona_residencia','$telcelular','$codigo_genero','$codigo_estatus')";
+						'$codigo_servicio_apoyo_educativo','$codigo_tipo_discapacidad','$codigo_zona_residencia','$telcelular','$codigo_genero','$codigo_estatus','$dui','$pasaporte','$codigo_nacionalidad','$retornado',
+						'$presenta_pn','$posee_pn','$codigo_etnia','$codigo_diagnostico')";
 					// Ejecutamos el query
 					$resultadoQuery = $dblink -> query($query);
 					// Obtenemos el id de user para edici�n
@@ -227,6 +239,10 @@ if($errorDbConexion == false){
 				
 				//TABS-2
 				$fecha_nacimiento = trim($_POST['fechanacimiento']);
+				$dui = trim($_POST['dui']);
+				$pasaporte = trim($_POST['pasaporte_otro']);
+				$codigo_nacionalidad = trim($_POST['lstNacionalidadE']);
+				$retornado = trim($_POST['lstRetornado']);
                 // Actualizar el PN si existe el documento.
                 //$pn_documento = trim($_POST['pn_boolean']);
                 //if($pn_documento == "si"){$pn_doc = "t";}else{$pn_doc = "f";}
@@ -235,15 +251,21 @@ if($errorDbConexion == false){
 				$tomo = trim($_POST['tomo_pn']);
 				$libro = trim($_POST['libro_pn']);
 				$edad = trim($_POST['edad_enviar']);
+				$presenta_pn = trim($_POST['lstPnPresenta']);
+				$posee_pn = trim($_POST['lstPnPosee']);
 				//crear una variable diferente ppara el genero, guardar en campo genero y .
 				$codigo_genero = trim($_POST['lstgenero']);
+				$codigo_etnia = trim($_POST['lstEtnia']);
+				$codigo_diagnostico = trim($_POST['lstDiagnostico']);
+				$codigo_servicio_apoyo_educativo = trim($_POST['lstservicioapoyoeducativo']);
+
 				$codigo_estado_civil = trim($_POST['lstEstadoCivil']);
 				$codigo_departamento = trim($_POST['lstdepartamento']);
 				$codigo_municipio = trim($_POST['lstmunicipio']);
 				$codigo_estado_familiar = trim($_POST['lstestadofamiliar']);
 				$codigo_actividad_economica = trim($_POST['lstactividadeconomica']);
 				$codigo_tipo_discapacidad = trim($_POST['lsttipodiscapacidad']);
-				$codigo_servicio_apoyo_educativo = trim($_POST['lstservicioapoyoeducativo']);
+
 				$codigo_zona_residencia = trim($_POST['lstzonaresidencia']);
 				
 				// Tabs-3
@@ -290,14 +312,16 @@ if($errorDbConexion == false){
 						  fecha_nacimiento = '%s', pn_numero = '%s', pn_folio = '%s', pn_tomo = '%s', pn_libro = '%s', edad = '%s', codigo_genero = '%s',
 						  codigo_estado_civil = '%s', codigo_departamento = '%s', codigo_municipio = '%s', codigo_estado_familiar = '%s', codigo_actividad_economica = '%s',
 						  codigo_discapacidad = '%s', codigo_apoyo_educativo = '%s', codigo_zona_residencia = '%s',
-						  codigo_estatus = '%s', genero = '%s'
+						  codigo_estatus = '%s', genero = '%s', dui = '%s', pasaporte = '%s', codigo_nacionalidad = '%s', retornado = '%s', presenta_pn = '%s', posee_pn = '%s',
+						  codigo_etnia = '%s', codigo_diagnostico = '%s'
 							WHERE id_alumno=%d",
 							$apellido_materno,$apellido_paterno,$nombre_completo,
 							$direccion_alumno,$nie,$telresidencia,$telcelular,$email_alumno,$medicamento_alumno,
 							$fecha_nacimiento,$numero,$folio,$tomo,$libro,$edad,$codigo_genero,
 							$codigo_estado_civil,$codigo_departamento,$codigo_municipio,$codigo_estado_familiar,$codigo_actividad_economica,
 							$codigo_tipo_discapacidad,$codigo_servicio_apoyo_educativo,$codigo_zona_residencia,
-							$codigo_estatus, $genero
+							$codigo_estatus, $genero, $dui, $pasaporte, $codigo_nacionalidad, $retornado, $presenta_pn, $posee_pn,
+							$codigo_etnia, $codigo_diagnostico
 							,$_POST['id_user']);
                     //, $pn_doc , partida_nacimiento = '%s'
 							

@@ -91,6 +91,7 @@ $(function(){ // INICIO DEL FUNCTION.
 				//
 				$("#CargarArchivoFotoPN").css("display","none");
 				$("#fileupPN").attr("disabled",true);		// Botón Subir Imagen Portafolio
+
 			}				
 		});
 	//////////////////////////////////////////////////////////////////////////////////
@@ -148,6 +149,10 @@ $(function(){ // INICIO DEL FUNCTION.
 						$('#email_alumno').val(data[0].email);
 						$('#medicamento').val(data[0].medicamento);                                    
 						$('#txtfechanacimiento').val(data[0].fecha_nacimiento);
+						$('#dui').val(data[0].dui);
+						$('#pasaporte_otro').val(data[0].pasaporte);
+						$('#lstNacionalidadE').val(data[0].codigo_nacionalidad);
+						$('#lstRetornado').val(data[0].retornado);
 					// Modificar el Card del Title
 					var nombres = data[0].nombre_completo + " " + data[0].apellido_paterno + " " + data[0].apellido_materno + " - " + " NIE: " + data[0].codigo_nie + " - Id: " + id_;
 					$("label[for='LblNombre']").text(nombres);
@@ -162,6 +167,8 @@ $(function(){ // INICIO DEL FUNCTION.
 						$("label[for='Pn']").text(data[0].url_pn);
 						$('#txtedad').val(data[0].edad);
 						$('#edad_enviar').val(data[0].edad);
+						$('#lstPnPosee').val(data[0].posee_pn);
+						$('#lstPnPresenta').val(data[0].presenta_pn);
 						$('#numero_pn').val(data[0].pn_numero);
 						$('#folio_pn').val(data[0].pn_folio);
 						$('#tomo_pn').val(data[0].pn_tomo);
@@ -169,14 +176,16 @@ $(function(){ // INICIO DEL FUNCTION.
 						/// Seleccionar genero de la base de datos guardado.
 						//$('#').val(data[0].);
 						$('#lstgenero').val(data[0].codigo_genero);
+						$('#lstEtnia').val(data[0].codigo_etnia);
 						$('#lstEstadoCivil').val(data[0].codigo_estado_civil);
 						$('#lstEstatus').val(data[0].codigo_estatus);
 						$('#lstEstadoFamiliar').val(data[0].codigo_estado_familiar);
 						$('#lstActividadEconomica').val(data[0].codigo_actividad_economica);
 						$('#lstTipoDiscapacidad').val(data[0].codigo_tipo_discapacidad);
+						$('#lstServicioApoyoEducativo').val(data[0].codigo_servicio_apoyo_educativo);
+						$('#lstDiagnostico').val(data[0].codigo_diagnostico);
 						// I SELECT ACTIVIDAD ECONOMICA..
 						$('#lstZonaResidencia').val(data[0].codigo_zona_residencia);
-						$('#lstServicioApoyoEducativo').val(data[0].codigo_servicio_apoyo_educativo);
 
 								/// Seleccionar genero de la base de datos guardado.
 								var miselect_departamento=$("#lstDepartamento");

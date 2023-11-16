@@ -341,6 +341,8 @@ $(document).ready(function()
 	$(document).ready(function()
 	{
 			var miselect=$("#lstNacionalidadP");
+			//
+			var theValue = '54';
 			/* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
 			miselect.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
 			
@@ -348,7 +350,11 @@ $(document).ready(function()
 				function(data) {
 					miselect.empty();
 					for (var i=0; i<data.length; i++) {
-						miselect.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');
+						if (data[i].codigo == theValue){
+							miselect.append('<option value="' + data[i].codigo + '" selected>' + data[i].descripcion + '</option>');
+						}else{
+							miselect.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');
+						}
 					}
 			}, "json");
 	});
@@ -455,7 +461,9 @@ $(document).ready(function()
 	////////////////////////////////////////////////////////////////////////////////////////////////
 	$(document).ready(function()
 	{
-			var miselect=$("#lstNacionalidadM");
+			var miselect=$("#lstNacionalidadE");
+			//
+			var theValue = '54';
 			/* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
 			miselect.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
 			
@@ -463,7 +471,32 @@ $(document).ready(function()
 				function(data) {
 					miselect.empty();
 					for (var i=0; i<data.length; i++) {
-						miselect.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');
+						if (data[i].codigo == theValue){
+							miselect.append('<option value="' + data[i].codigo + '" selected>' + data[i].descripcion + '</option>');
+						}else{
+							miselect.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');
+						}
+					}
+			}, "json");
+
+	});
+	$(document).ready(function()
+	{
+			var miselect=$("#lstNacionalidadM");
+			//
+			var theValue = '54';
+			/* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
+			miselect.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
+			
+			$.post("includes/cargar-nacionalidad.php",
+				function(data) {
+					miselect.empty();
+					for (var i=0; i<data.length; i++) {
+						if (data[i].codigo == theValue){
+							miselect.append('<option value="' + data[i].codigo + '" selected>' + data[i].descripcion + '</option>');
+						}else{
+							miselect.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');
+						}
 					}
 			}, "json");
 	});
@@ -503,6 +536,22 @@ $(document).ready(function()
 					}
 			}, "json");
 	});
+
+	        	// Carga la INformación de Tabla Diagnostico Clinico
+				$(document).ready(function()
+				{
+						var miselect=$("#lstDiagnostico");
+						/* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
+						miselect.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
+						
+						$.post("includes/cargar_diagnostico.php",
+							function(data) {
+								miselect.empty();
+								for (var i=0; i<data.length; i++) {
+									miselect.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');
+								}
+						}, "json");
+				});
 
 // Carga la INformación de Tabla Departamento
 	$(document).ready(function()
@@ -574,6 +623,8 @@ $(document).ready(function()
 	$(document).ready(function()
 	{
 			var miselect=$("#lstNacionalidadO");
+			//
+			var theValue = '54';
 			/* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
 			miselect.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
 			
@@ -581,7 +632,11 @@ $(document).ready(function()
 				function(data) {
 					miselect.empty();
 					for (var i=0; i<data.length; i++) {
-						miselect.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');
+						if (data[i].codigo == theValue){
+							miselect.append('<option value="' + data[i].codigo + '" selected>' + data[i].descripcion + '</option>');
+						}else{
+							miselect.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');
+						}
 					}
 			}, "json");
 	});
@@ -621,6 +676,22 @@ $(document).ready(function()
 					}
 			}, "json");
 	});
+
+	    	// Carga la INformación de Tabla Zona Residencia
+			$(document).ready(function()
+			{
+					var miselect=$("#lstEtnia");
+					/* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
+					miselect.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
+					
+					$.post("includes/cargar_etnia.php",
+						function(data) {
+							miselect.empty();
+							for (var i=0; i<data.length; i++) {
+								miselect.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');
+							}
+					}, "json");
+			});
 
 // Carga la INformación de Tabla Departamento
 	$(document).ready(function()

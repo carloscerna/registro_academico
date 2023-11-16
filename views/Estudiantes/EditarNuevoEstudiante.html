@@ -48,15 +48,17 @@ $(document).ready(function() {
 // Jquery-mask - entrado de datos.
   jQuery(function($){
      // Form Users Agregar.
+     $("#dui").mask("99999999-9");
+     //
       $("#telresidencia").mask("9999-9999");
       $("#telcelular").mask("9999-9999");
-      
+      //
       $("#duip").mask("99999999-9");
       $("#telefonop").mask("9999-9999");
-      
+      //
       $("#duim").mask("99999999-9");
       $("#telefonom").mask("9999-9999");
-      
+      //
       $("#duio").mask("99999999-9");
       $("#telefonoo").mask("9999-9999");
   });   
@@ -260,26 +262,149 @@ $(document).ready(function() {
                     <div class="tab-pane h-100 p-2 active border border-primary" id="home" role="tabpanel" aria-labelledby="home-tab">
                           <!-- MODAL BODY ROW -->
                           <div class="modal-body row">
-                            <div class="col-md-8">
+                            <div class="col-md-9">
                                 <!-- INICIO DEL FORMULARIO -->
                                 <fieldset>
-                                    <legend>Información General</legend>
-                                        <div class="form-group row">
-                                          <label class="col-lg-3 col-form-label form-control-label">Nombres</label>
-                                            <div class="col-lg-9">
-                                              <input class="form-control" type="text" id="txtnombres" name="txtnombres" maxlength="60" required="required" onchange="conMayusculas(this);" aria-label="Nombres del Estudiante">
-                                            </div>
+                                    <legend>Identificación del Estudiante</legend>                                    
+                                    <!-- NIE, DUI Y PASAPORTE U OTRO. -->
+                                        <div class="input-group">
+                                          <div class="input-group-prepend">
+                                            <span class="input-group-text text-bold bg-gray">NIE:</span>
+                                          </div>
+                                          <input type="number" class="form-control" id="nie" name="nie" aria-label="nie" autocomplete="off">
+                                          <div class="input-group-prepend">
+                                            <span class="input-group-text text-bold bg-gray">DUI</span>
+                                          </div>
+                                              <input type="text" name= "dui" id="dui" value = "" class="form-control" aria-label="dui" autocomplete="off">
+                                          <div class="input-group-prepend">
+                                            <span class="input-group-text text-bold bg-gray">Pasaporte/Otro</span>
+                                          </div>
+                                          <input type="text" name= "pasaporte_otro" id="pasaporte_otro" value = "" class="form-control" aria-label="pasaporte_otro" maxlength="25" autocomplete="off">
                                         </div>
+                                        <!-- NOMBRES FECHA DE NACIMIENTO NACIONALIDAD-->
                                         <div class="form-group row">
-                                          <label class="col-lg-3 col-form-label form-control-label">Apellido Paterno</label>
-                                          <div class="col-lg-9">
-                                            <input class="form-control" type="text" id="apellido_paterno" name="apellido_paterno" maxlength="30" onchange="conMayusculas(this);" aria-label="ApellidoPaterno">
+                                          <div class="input-group">
+                                            <div class="input-group-prepend">
+                                              <span class="input-group-text text-bold bg-gray">Nombres</span>
+                                            </div>
+                                              <input class="form-control" type="text" id="txtnombres" name="txtnombres" maxlength="60" required="required" onchange="conMayusculas(this);" aria-label="Nombres del Estudiante">
                                           </div>
                                         </div>
+                                        <!-- APELLIDOS PATERNO Y MATERNO-->
                                         <div class="form-group row">
-                                          <label class="col-lg-3 col-form-label form-control-label">Apellido Materno</label>
-                                          <div class="col-lg-9">
-                                            <input class="form-control" type="text" id="apellido_materno" name="apellido_materno" maxlength="30" onchange="conMayusculas(this);" aria-label="ApellidoMaterno">
+                                          <div class="input-group">
+                                            <div class="input-group-prepend">
+                                              <span class="input-group-text text-bold bg-gray">Apellido Paterno</span>
+                                            </div>
+                                              <input class="form-control" type="text" id="apellido_paterno" name="apellido_paterno" maxlength="30" onchange="conMayusculas(this);" aria-label="ApellidoPaterno" autocomplete="off">
+                                              <div class="input-group-prepend">
+                                                <span class="input-group-text text-bold bg-gray">Apellido Materno</span>
+                                              </div>
+                                              <input class="form-control" type="text" id="apellido_materno" name="apellido_materno" maxlength="30" onchange="conMayusculas(this);" aria-label="ApellidoMaterno" autocomplete="off">  
+                                          </div>
+                                        </div>
+                                        <!-- FECHA DE NACIMIENTO Y EDAD-->
+                                        <div class="form-group row">
+                                          <div class="input-group">
+                                            <div class="input-group-prepend">
+                                              <span class="input-group-text text-bold bg-gray">Fecha de Nacimiento</span>
+                                            </div>
+                                            <input class="form-control" type="date" id="txtfechanacimiento" name="fechanacimiento" onblur="calcular_edad(this.value);" aria-label="FechaNacimiento">
+                                            <p><label for="lbl_edad_y_mes" class="control-label"></label></p>
+                                            <div class="input-group-prepend">
+                                              <span class="input-group-text text-bold bg-gray">Edad</span>
+                                            </div>
+                                                <input class="form-control" type="text" id="txtedad" name="txtedad" value = "0" readonly="readonly" aria-label="TxtEdad">
+                                                <input type="hidden" name= "edad_enviar" id="edad_enviar" value = "00" class="form-control">
+                                          </div>
+                                        </div>
+                                        <!-- NACIONALIDAD Y RETORNADO -->
+                                        <div class="form-group row">
+                                          <div class="input-group">
+                                            <div class="input-group-prepend">
+                                              <span class="input-group-text text-bold bg-gray">Nacionalidad</span>
+                                            </div>
+                                            <select id="lstNacionalidadE" name="lstNacionalidadE" class="custom-select" aria-label="lstNacionalidadE"></select>							
+                                            <div class="input-group-prepend">
+                                              <span class="input-group-text text-bold bg-gray">Retornado</span>
+                                            </div>
+                                            <select id="lstRetornado" name="lstRetornado" class="custom-select" aria-label="lstRetornado">
+                                              <option value="Si">Sí</option>
+                                              <option value="No" selected>No</option>
+                                            </select>							
+                                          </div>
+                                        </div>
+                                        <!-- Partida de Nacimiento, Posse presenta, Sexo. -->
+                                        <div class="form-group row">
+                                          <div class="text-bold text-lg">
+                                            <label for="">Partida de Nacimiento</label>
+                                          </div>
+                                          <div class="input-group">
+                                            <div class="input-group-prepend">
+                                              <span class="input-group-text text-bold bg-gray">Posee</span>
+                                            </div>
+                                            <select id="lstPnPosee" name="lstPnPosee" class="custom-select" aria-label="lstPnPosee">
+                                              <option value="Si" selected>Sí</option>
+                                              <option value="No">No</option>
+                                            </select>							
+                                            <div class="input-group-prepend">
+                                              <span class="input-group-text text-bold bg-gray">Presenta</span>
+                                            </div>
+                                            <select id="lstPnPresenta" name="lstPnPresenta" class="custom-select" aria-label="lstPnPresenta">
+                                              <option value="Si" selected>Sí</option>
+                                              <option value="No">No</option>
+                                            </select>		
+                                            <div class="input-group-prepend">
+                                              <span class="input-group-text text-bold bg-gray">Sexo</span>
+                                            </div>
+                                                <select class="custom-select" id="lstgenero" name="lstgenero" aria-label="LstGenero"></select>
+                                          </div>
+                                        </div>
+                                          <!-- Partida de Nacimiento, numero, folio, tomo y libro-->
+                                          <div class="form-group row">
+                                            <div class="input-group">
+                                              <div class="input-group-prepend">
+                                                <span class="input-group-text text-bold bg-gray">Número</span>
+                                              </div>
+                                                <input type="text" name= "numero_pn" id="numero_pn" value = "0" class="form-control" aria-label="NumeroPn">
+                                              <div class="input-group-prepend">
+                                                <span class="input-group-text text-bold bg-gray">Folio</span>
+                                              </div>
+                                                <input type="text" name= "folio_pn" id="folio_pn" value = "0" class="form-control" aria-label="FolioPn">
+                                              <div class="input-group-prepend">
+                                              <span class="input-group-text text-bold bg-gray">Tomo</span>
+                                                <input type="text" name= "tomo_pn" id="tomo_pn" value = "0" class="form-control" aria-label="TomoPn">
+                                              </div>
+                                              <div class="input-group-prepend">
+                                                <span class="input-group-text text-bold bg-gray">Libro</span>
+                                              </div>
+                                                <input type="text" name= "libro_pn" id="libro_pn" value = "0" class="form-control" aria-label="LibroPN">
+                                            </div>
+                                          </div>
+                                        <!-- NACIONALIDAD Y RETORNADO -->
+                                        <div class="form-group row">
+                                          <div class="input-group">
+                                            <div class="input-group-prepend">
+                                              <span class="input-group-text text-bold bg-gray">Etnia</span>
+                                            </div>
+                                            <select id="lstEtnia" name="lstEtnia" class="custom-select" aria-label="lstEtnia"></select>							
+                                            <div class="input-group-prepend">
+                                              <span class="input-group-text text-bold bg-gray">Condición de Discapacidad</span>
+                                            </div>
+                                            <select id="lstTipoDiscapacidad" name="lstTipoDiscapacidad" class="custom-select" aria-label="lstTipoDiscapacidad"></select>							
+                                          </div>
+                                        </div>
+                                        <!-- POSEE DIAGNOSTICO CLINICO Y EL ESTUDIANTE HA SIDO REFERIDO A -->
+                                        <div class="form-group row">
+                                          <div class="input-group">
+                                            <div class="input-group-prepend">
+                                              <span class="input-group-text text-bold bg-gray">¿Posee Diagnóstico Clinico?</span>
+                                            </div>
+                                            <select id="lstDiagnostico" name="lstDiagnostico" class="custom-select" aria-label="lstDiagnostico"></select>							
+                                            <div class="input-group-prepend">
+                                              <span class="input-group-text text-bold bg-gray">El Estudiante ha sido referido a</span>
+                                            </div>
+                                            <select id="LstServicioApoyoEducativo" name="LstServicioApoyoEducativo" class="custom-select" aria-label="LstServicioApoyoEducativo"></select>							
                                           </div>
                                         </div>
                                         <div class="form-group row">
@@ -315,14 +440,9 @@ $(document).ready(function() {
                                 </fieldset>
                                 <!-- INICIO DEL FORMULARIO -->
                             </div>
-                            <div class="col-md-4">
-                              <!-- Your second column here -->
-                              <div class="input-group mb-3">
-                                <div class="input-group-prepend">
-                                  <span class="input-group-text">NIE:</span>
-                                </div>
-                                <input type="number" class="form-control" id="nie" name="nie" aria-label="Nie">
-                              </div>
+
+                            <div class="col-md-3">  <!-- CARGA LA FOTOGRAFIA Y LA PARTIDA DE NACIMIENTO.-->
+                              <!-- Your second column here - CARGAR LA FOTOGRAFIA.-->
                                   <form method="post" action="#" enctype="multipart/form-data">
                                     <div class="card">
                                       <div class="card-header bg-gradient-info text-black">
@@ -348,6 +468,32 @@ $(document).ready(function() {
                                       </div>
                                     </div>
                                   </form>
+                                  <!-- Your second column here  DATOS DE LA PARTIDA DE NACIMIENTO-->
+                                  <form method="post" action="#" enctype="multipart/form-data">
+                                    <div class="card">
+                                      <div class="card-header bg-gradient-info text-black">
+                                        <div class="d-flex flex-row w-100 justify-content-between">
+                                          <div id="CargarArchivoFotoPN">
+                                            <label for="CargarArchivoFotoPN" class="text-white">Cargar: <i class="fad fa-upload fa-lg"></i>
+                                              <input type="file" value="" name="fileupPN" id="fileupPN" disabled aria-label="FileUpPN">
+                                            </label>
+                                          </div>
+                                          <div>
+                                            <label class="text-center text-white" id="namefilePN"></label>
+                                            <span class="imguploadPN ok text-white" ><i class="fa fa-check"></i></span>
+                                            <span class="imguploadPN stop text-white"><i class="fa fa-times"></i></span>
+                                          </div>
+                                        </div>
+                                    </div>
+                                      <div class="card-body">
+                                        <form method="post" action="#" enctype="multipart/form-data">
+                                          <img class="card-img-top-PN img-fluid" id="ImagenPN" src="#" aria-label="CardImgPN">
+                                        </form>
+                                      </div>
+                                      <div class="card-footer bg-gradient-info">
+                                      </div>
+                                    </div>
+                                  </form>
                             </div>
                           </div><!-- FIN MODAL BODY INFORMACIÓN GENERAL-->
                         <!-- MODAL BODY ROW PARTIDA DE NACIMIENTO -->
@@ -355,28 +501,11 @@ $(document).ready(function() {
                             <div class="col-md-7">
                                 <!-- INICIO DEL FORMULARIO -->
                                 <fieldset>
-                                    <legend>Información Partida de Nacimiento</legend>
+                                    <legend>Identificación - Partida de Nacimiento</legend>
                                     <!-- PESTAÑA DATOS PERSONALES - INPUT  Fecha nacimiento, edad, genero y estado civil-->
-                                        <div class="form-group row">
-                                          <label class="col-lg-3 col-form-label form-control-label">Fecha Nacimiento</label>
-                                          <div class="col-lg-9">
-                                            <input class="form-control" type="date" id="txtfechanacimiento" name="fechanacimiento" onblur="calcular_edad(this.value);" aria-label="FechaNacimiento">
-                                            <p><label for="lbl_edad_y_mes" class="control-label"></label></p>
-                                          </div>
-                                        </div>
-                                        <div class="form-group row">
-                                          <label class="col-lg-3 col-form-label form-control-label">Edad</label>
-                                          <div class="col-lg-9">
-                                            <input class="form-control" type="text" id="txtedad" name="txtedad" value = "0" readonly="readonly" aria-label="TxtEdad">
-                                            <input type="hidden" name= "edad_enviar" id="edad_enviar" value = "00" class="form-control">
-                                          </div>
-                                        </div>
-                                        <div class="form-group row">
-                                          <label class="col-lg-3 col-form-label form-control-label">Género</label>
-                                          <div class="col-lg-9">
-                                            <select class="custom-select" id="lstgenero" name="lstgenero" aria-label="LstGenero"></select>
-                                          </div>
-                                        </div>
+                                        
+
+
                                         <div class="form-group row">
                                           <label class="col-lg-3 col-form-label form-control-label">Estado Civil</label>
                                           <div class="col-lg-9">
@@ -384,60 +513,12 @@ $(document).ready(function() {
                                           </div>
                                         </div>
                                         <!-- PESTAÑA DATOS PERSONALES - INPUT Número, folio, tomo, libro.-->
-                                        <div class="form-group row">
-                                          <label class="col-lg-3 col-form-label form-control-label">Número</label>
-                                          <div class="col-lg-9">
-                                            <input type="text" name= "numero_pn" id="numero_pn" value = "0" class="form-control" aria-label="NumeroPn">
-                                          </div>
-                                        </div>
-                                        <div class="form-group row">
-                                          <label class="col-lg-3 col-form-label form-control-label">Folio</label>
-                                          <div class="col-lg-9">
-                                            <input type="text" name= "folio_pn" id="folio_pn" value = "0" class="form-control" aria-label="FolioPn">
-                                          </div>
-                                        </div>
-                                        <div class="form-group row">
-                                          <label class="col-lg-3 col-form-label form-control-label">Tomo</label>
-                                          <div class="col-lg-9">
-                                            <input type="text" name= "tomo_pn" id="tomo_pn" value = "0" class="form-control" aria-label="TomoPn">
-                                          </div>
-                                        </div>
-                                        <div class="form-group row">
-                                          <label class="col-lg-3 col-form-label form-control-label">Libro</label>
-                                          <div class="col-lg-9">
-                                            <input type="text" name= "libro_pn" id="libro_pn" value = "0" class="form-control" aria-label="LibroPN">
-                                          </div>
-                                        </div>
+
                                 </fieldset>
                                 <!-- INICIO DEL FORMULARIO -->
                             </div>
                             <div class="col-md-5">
-                              <!-- Your second column here  -->
-                              <form method="post" action="#" enctype="multipart/form-data">
-                                <div class="card">
-                                  <div class="card-header bg-gradient-info text-black">
-                                    <div class="d-flex flex-row w-100 justify-content-between">
-                                      <div id="CargarArchivoFotoPN">
-                                        <label for="CargarArchivoFotoPN" class="text-white">Cargar: <i class="fad fa-upload fa-lg"></i>
-                                          <input type="file" value="" name="fileupPN" id="fileupPN" disabled aria-label="FileUpPN">
-                                        </label>
-                                      </div>
-                                      <div>
-                                        <label class="text-center text-white" id="namefilePN"></label>
-                                        <span class="imguploadPN ok text-white" ><i class="fa fa-check"></i></span>
-                                        <span class="imguploadPN stop text-white"><i class="fa fa-times"></i></span>
-                                      </div>
-                                    </div>
-                                </div>
-                                  <div class="card-body">
-                                    <form method="post" action="#" enctype="multipart/form-data">
-                                      <img class="card-img-top-PN img-fluid" id="ImagenPN" src="#" aria-label="CardImgPN">
-                                    </form>
-                                  </div>
-                                  <div class="card-footer bg-gradient-info">
-                                  </div>
-                                </div>
-                              </form>
+                             
                             </div>
                           </div><!-- FIN MODAL BODY PARTIDA DE NACIMIENTO -->                      
                         <!-- MODAL BODY ROW PARTIDA DE NACIMIENTO -->
@@ -498,18 +579,6 @@ $(document).ready(function() {
                                           <label class="col-lg-3 col-form-label form-control-label">Actividad Económica</label>
                                           <div class="col-lg-9">
                                             <select id="lstActividadEconomica" name="lstactividadeconomica" class="custom-select" aria-label="LstActividadEconomica"></select>							
-                                          </div>
-                                        </div>
-                                        <div class="form-group row">
-                                          <label class="col-lg-3 col-form-label form-control-label">Tipo Discapacidad</label>
-                                          <div class="col-lg-9">
-                                            <select id="lstTipoDiscapacidad" name="lsttipodiscapacidad" class="custom-select" aria-label="LstTipoDiscapacidad"></select>						
-                                          </div>
-                                        </div>
-                                        <div class="form-group row">
-                                          <label class="col-lg-3 col-form-label form-control-label">Servicio de Apoyo Educativo</label>
-                                          <div class="col-lg-9">
-                                            <select id="lstServicioApoyoEducativo" name= "lstservicioapoyoeducativo" class="custom-select" aria-label="LstServicioApoyoEducativo"></select>
                                           </div>
                                         </div>
                             </div>
