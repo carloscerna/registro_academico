@@ -652,7 +652,7 @@ if($errorDbConexion == false){
 					$numero = 1;
 					$query_todas = "SELECT codigo as codigo_asignatura, nombre as nombre_asignatura, ordenar
 								FROM asignatura
-								WHERE imprimir = 'true' and estatus = 'true' and codigo_servicio_educativo = '$codigo_se'
+								WHERE imprimir = 'true' and estatus = 'true' and codigo_servicio_educativo = '$codigo_servicio_educativo'
 									ORDER BY codigo_servicio_educativo, codigo_area, id_asignatura";
 					$consulta_todas = $dblink -> query($query_todas);
 					// recorrer las asignaturas
@@ -662,7 +662,7 @@ if($errorDbConexion == false){
 								$codigo_asignatura = trim($listado['codigo_asignatura']);
 								$ordenar = trim($listado['ordenar']);
 														// VERFICAR SI NO EXISTE ASIGNATURA.
-									$query_buscar = "SELECT * FROM a_a_a_bach_o_ciclo WHERE codigo_ann_lectivo = '$codigo_ann_lectivo' and codigo_bach_o_ciclo = '$codigo_modalidad' and codigo_grado = '$codigo_grado' and codigo_asignatura = '$codigo_asignatura'";
+									$query_buscar = "SELECT * FROM a_a_a_bach_o_ciclo WHERE codigo_ann_lectivo = '$codigo_annlectivo' and codigo_bach_o_ciclo = '$codigo_modalidad' and codigo_grado = '$codigo_grado' and codigo_asignatura = '$codigo_asignatura'";
 								// Ejecutamos el Query.
 								$consulta_buscar = $dblink -> query($query_buscar);
 				
@@ -672,7 +672,7 @@ if($errorDbConexion == false){
 									$mensajeError = "Si Existe";
 								}else{
 								// proceso para grabar el registro
-									$query = "INSERT INTO a_a_a_bach_o_ciclo (codigo_ann_lectivo, codigo_bach_o_ciclo, codigo_asignacion, codigo_grado, codigo_asignatura, orden) VALUES ('$codigo_ann_lectivo','$codigo_modalidad','$codigo_modalidad','$codigo_grado','$codigo_asignatura','$ordenar')";
+									$query = "INSERT INTO a_a_a_bach_o_ciclo (codigo_ann_lectivo, codigo_bach_o_ciclo, codigo_asignacion, codigo_grado, codigo_asignatura, orden) VALUES ('$codigo_annlectivo','$codigo_modalidad','$codigo_modalidad','$codigo_grado','$codigo_asignatura','$ordenar')";
 								// Ejecutamos el Query.
 										$consulta = $dblink -> query($query);
 									// variables de retorno.

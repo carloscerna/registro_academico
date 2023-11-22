@@ -377,11 +377,16 @@ $(function(){
                 $("#TextoAlertAAG").text("Debe Seleccionar un Grado.");
                 return;
             }
-            if(codigo_asignatura == "00"){
-                $("#AlertAAG").css("display", "block");
-                $("#TextoAlertAAG").text("Debe Seleccionar una Asignatura.");
-                return;
+            if($('#TodasLasAsignaturas').is(":checked")) {
+
+            }else{
+                if(codigo_asignatura == "00"){
+                    $("#AlertAAG").css("display", "block");
+                    $("#TextoAlertAAG").text("Debe Seleccionar una Asignatura.");
+                    return;
+                }
             }
+
             // enviar form
                 $('#FormAAG').submit();
         });
