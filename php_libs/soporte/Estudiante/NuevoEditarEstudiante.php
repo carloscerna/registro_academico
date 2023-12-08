@@ -94,7 +94,9 @@ if($errorDbConexion == false){
 				$codigo_estado_familiar = trim($_POST['lstestadofamiliar']);
 				$codigo_actividad_economica = trim($_POST['lstactividadeconomica']);
 				$codigo_tipo_discapacidad = trim($_POST['lsttipodiscapacidad']);
-				
+				//
+				$embarazada = trim($_POST['lstEmbarazada']);
+				//
 				$codigo_zona_residencia = trim($_POST['lstzonaresidencia']);
 				// Tabs-3
 				$codigo_estatus = trim($_POST['lstEstatus']);
@@ -139,12 +141,12 @@ if($errorDbConexion == false){
 						codigo_municipio, fecha_nacimiento, pn_numero, pn_folio, pn_tomo, pn_libro, medicamento, direccion_email,
 						edad, genero, codigo_estado_civil, codigo_estado_familiar, codigo_actividad_economica,
 						codigo_apoyo_educativo, codigo_discapacidad, codigo_zona_residencia, telefono_celular, codigo_genero, codigo_estatus, dui, pasaporte, codigo_nacionalidad, retornado,
-						presenta_pn, posee_pn, codigo_etnia, codigo_diagnostico)
+						presenta_pn, posee_pn, codigo_etnia, codigo_diagnostico, embarazada)
 						VALUES ('$apellido_materno','$apellido_paterno','$nombre_completo','$nie','$direccion_alumno','$telresidencia','$codigo_departamento',
 						'$codigo_municipio','$fecha_nacimiento','$numero','$folio','$tomo','$libro','$medicamento_alumno','$email_alumno',
 						'$edad','$genero','$codigo_estado_civil','$codigo_estado_familiar','$codigo_actividad_economica',
 						'$codigo_servicio_apoyo_educativo','$codigo_tipo_discapacidad','$codigo_zona_residencia','$telcelular','$codigo_genero','$codigo_estatus','$dui','$pasaporte','$codigo_nacionalidad','$retornado',
-						'$presenta_pn','$posee_pn','$codigo_etnia','$codigo_diagnostico')";
+						'$presenta_pn','$posee_pn','$codigo_etnia','$codigo_diagnostico','$embarazada')";
 					// Ejecutamos el query
 					$resultadoQuery = $dblink -> query($query);
 					// Obtenemos el id de user para edici�n
@@ -265,7 +267,9 @@ if($errorDbConexion == false){
 				$codigo_estado_familiar = trim($_POST['lstestadofamiliar']);
 				$codigo_actividad_economica = trim($_POST['lstactividadeconomica']);
 				$codigo_tipo_discapacidad = trim($_POST['lsttipodiscapacidad']);
-
+				//
+				$embarazada = trim($_POST['lstEmbarazada']);
+				//
 				$codigo_zona_residencia = trim($_POST['lstzonaresidencia']);
 				
 				// Tabs-3
@@ -313,7 +317,7 @@ if($errorDbConexion == false){
 						  codigo_estado_civil = '%s', codigo_departamento = '%s', codigo_municipio = '%s', codigo_estado_familiar = '%s', codigo_actividad_economica = '%s',
 						  codigo_discapacidad = '%s', codigo_apoyo_educativo = '%s', codigo_zona_residencia = '%s',
 						  codigo_estatus = '%s', genero = '%s', dui = '%s', pasaporte = '%s', codigo_nacionalidad = '%s', retornado = '%s', presenta_pn = '%s', posee_pn = '%s',
-						  codigo_etnia = '%s', codigo_diagnostico = '%s'
+						  codigo_etnia = '%s', codigo_diagnostico = '%s', embarazada = '%s'
 							WHERE id_alumno=%d",
 							$apellido_materno,$apellido_paterno,$nombre_completo,
 							$direccion_alumno,$nie,$telresidencia,$telcelular,$email_alumno,$medicamento_alumno,
@@ -321,7 +325,7 @@ if($errorDbConexion == false){
 							$codigo_estado_civil,$codigo_departamento,$codigo_municipio,$codigo_estado_familiar,$codigo_actividad_economica,
 							$codigo_tipo_discapacidad,$codigo_servicio_apoyo_educativo,$codigo_zona_residencia,
 							$codigo_estatus, $genero, $dui, $pasaporte, $codigo_nacionalidad, $retornado, $presenta_pn, $posee_pn,
-							$codigo_etnia, $codigo_diagnostico
+							$codigo_etnia, $codigo_diagnostico, $embarazada
 							,$_POST['id_user']);
                     //, $pn_doc , partida_nacimiento = '%s'
 							

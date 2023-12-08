@@ -184,6 +184,8 @@ $(function(){ // INICIO DEL FUNCTION.
 						$('#lstTipoDiscapacidad').val(data[0].codigo_tipo_discapacidad);
 						$('#lstServicioApoyoEducativo').val(data[0].codigo_servicio_apoyo_educativo);
 						$('#lstDiagnostico').val(data[0].codigo_diagnostico);
+						//
+						$('#lstEmbarazada').val(data[0].embarazada);
 						// I SELECT ACTIVIDAD ECONOMICA..
 						$('#lstZonaResidencia').val(data[0].codigo_zona_residencia);
 
