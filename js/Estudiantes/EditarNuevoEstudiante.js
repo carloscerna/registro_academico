@@ -179,15 +179,25 @@ $(function(){ // INICIO DEL FUNCTION.
 						$('#lstEtnia').val(data[0].codigo_etnia);
 						$('#lstEstadoCivil').val(data[0].codigo_estado_civil);
 						$('#lstEstatus').val(data[0].codigo_estatus);
-						$('#lstEstadoFamiliar').val(data[0].codigo_estado_familiar);
-						$('#lstActividadEconomica').val(data[0].codigo_actividad_economica);
+						$('#LstEstadoFamiliar').val(data[0].codigo_estado_familiar);
+						$('#LstActividadEconomica').val(data[0].codigo_actividad_economica);
 						$('#lstTipoDiscapacidad').val(data[0].codigo_tipo_discapacidad);
 						$('#lstServicioApoyoEducativo').val(data[0].codigo_servicio_apoyo_educativo);
 						$('#lstDiagnostico').val(data[0].codigo_diagnostico);
 						//
 						$('#lstEmbarazada').val(data[0].embarazada);
-						// I SELECT ACTIVIDAD ECONOMICA..
+						// residencia
 						$('#lstZonaResidencia').val(data[0].codigo_zona_residencia);
+						$('#email_alumno').val(data[0].direccion_email);
+						$('#CantidadHijos').val(data[0].cantidad_hijos);
+						//
+						$('#LstTipoVivienda').val(data[0].codigo_tipo_vivienda);
+						$('#lstCanton').val(data[0].codigo_canton);
+						$('#lstCaserio').val(data[0].codigo_caserio);
+						$('#lstServicioEnergia').val(data[0].servicio_energia);
+						$('#lstRecoleccionBasura').val(data[0].recoleccion_basura);
+						$('#lstAbastecimientoAgua').val(data[0].codigo_abastecimiento);
+						// I SELECT ACTIVIDAD ECONOMICA..
 
 								/// Seleccionar genero de la base de datos guardado.
 								var miselect_departamento=$("#lstDepartamento");

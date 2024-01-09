@@ -176,6 +176,7 @@ function Header(){
 }
 //Pie de página
 function Footer(){
+	global $nombre_mes, $nombre_contratacion, $nombre_ann_lectivo, $nombre_turno;
   // Establecer formato para la fecha.
     date_default_timezone_set('America/El_Salvador');
     setlocale(LC_TIME, 'spanish');						
@@ -194,9 +195,15 @@ function Footer(){
         //Nombre Subdirector(a)
     $this->SetXY(40,200);
     $this->Cell(20,6,'Subdirector(a)',0,1,'C');
+	    //Firma Director.
+		if ($nombre_turno == 'Matutino') {
+			$img = $_SERVER['DOCUMENT_ROOT'].'/registro_academico/img/subdirectora.png';
+			$this->Image($img,30,180,45,20);		}
+
+			
         //Nombre Director
     $this->SetXY(200,200);
-    $this->Cell(20,6,'Director',0,1,'C');
+    $this->Cell(20,6,'Director(a)',0,1,'C');
     }
 //Tabla coloreada
 function FancyTable($header){

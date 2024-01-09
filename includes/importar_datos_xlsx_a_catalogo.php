@@ -10,7 +10,7 @@ include($path_root."/registro_academico/includes/funciones.php");
 // variables. del post.
 //  $ruta = $path_root.'/sgp_web/formatos_hoja_de_calculo/fianzas.xls';
 // $ruta = $path_root.'/sgp_web/formatos_hoja_de_calculo/prestamos.xls';
-	$ruta = $path_root.'/registro_academico/formatos_hoja_de_calculo/Export.xlsx';
+	$ruta = $path_root.'/registro_academico/formatos_hoja_de_calculo/catalogo_abastecimiento.xlsx';
   //$trimestre = trim($_REQUEST["periodo_"]);
 // variable de la conexi�n dbf.
     $db_link = $dblink;
@@ -51,61 +51,24 @@ $datos=array(); $fila_array = 0;
 	$fecha_actual = date("d-m-Y h:i:s");
 	$timestamp = strtotime($fecha_actual);
 // N�mero de hoja.
-   $numero_de_hoja = 3;
+   $numero_de_hoja = 0;
 	$numero = 2;	
 // 	Recorre el numero de hojas que contenga el libro
        $objPHPExcel->setActiveSheetIndex($numero_de_hoja);
-	   while($objPHPExcel->getActiveSheet()->getCell("J".$fila)->getValue() != "")
-		  {
-			 //  DATOS GENERALES.
-			 	$nip = trim($objPHPExcel->getActiveSheet()->getCell("J".$fila)->getValue());
-				//$nip1 = substr($nip,1);
-			// // ir a la hoja 2
-			 	$objPHPExcel->setActiveSheetIndex(4);
-			// 		// buscar NIP
-			 		while($objPHPExcel->getActiveSheet()->getCell("A".$fila2)->getValue() != "")
-			 		{
-			 			$nip2 = trim($objPHPExcel->getActiveSheet()->getCell("C".$fila2)->getCalculatedValue());
-			// 			// recorrer y buscar
- 			 			if ($nip2 === $nip) {
-			// 				# code...
-			 				$fila2++;
-			 				$discapacidad = trim($objPHPExcel->getActiveSheet()->getCell("B".$fila2)->getValue());
-			 				$fila2++;
-			 				$old = trim($objPHPExcel->getActiveSheet()->getCell("B".$fila2)->getValue());
-//			 				exit;
-			 			}else{
-							$fila2++;
-						} 
-			 		}
-					 print $nip . ' - ' . $discapacidad  . ' - ' . $old . ' - ' . $nip2 . "<br>";
-				// ir a la hoja 2
-					$objPHPExcel->setActiveSheetIndex(3);
-					// Set cell A1 with a string value
-					$objPHPExcel->getActiveSheet()->setCellValue('O'.$fila, $discapacidad);
-					$objPHPExcel->getActiveSheet()->setCellValue('P'.$fila, $old);
-				$fila++;
-				$fila2 = 2;
-				//exit;
-		}	// FIN DEL WHILE PRINCIPAL DE L AHOJA DE CALCULO.
-// Guardar la ubicacion y el nombre del archivo.
-// Verificar el formato a grabar el archivo.
-$objWriter = new Xlsx($objPHPExcel);
- // Guardar la ubicacion y el nombre del archivo.
-	$objWriter->save('/registro_academico/formatos_hoja_de_calculo/Export2.xlsx');		/*
 		//	BUCLE QUE RECORRE TODA LA CUADRICULA DE LA HOJA DE CALCULO.
 		while($objPHPExcel->getActiveSheet()->getCell("A".$fila)->getValue() != "")
 		  {
 			 //  DATOS GENERALES.
 			 	$codigo = $objPHPExcel->getActiveSheet()->getCell("A".$fila)->getValue();
-				$pais = trim($objPHPExcel->getActiveSheet()->getCell("B".$fila)->getValue());
-				$gentilicio = trim(htmlspecialchars($objPHPExcel->getActiveSheet()->getCell("C".$fila)->getValue()));
-
-				print $query = "INSERT INTO catalogo_nacionalidad (codigo, descripcion, gentilicio) values ('$codigo','$pais','$gentilicio')";
+				$descripcion = trim($objPHPExcel->getActiveSheet()->getCell("B".$fila)->getValue());
+                //$codigo_departamento = trim(htmlspecialchars($objPHPExcel->getActiveSheet()->getCell("C".$fila)->getValue()));
+				//$codigo_municipio = trim(htmlspecialchars($objPHPExcel->getActiveSheet()->getCell("D".$fila)->getValue()));
+				print $query = "INSERT INTO catalogo_abastecimiento (codigo, descripcion) values ('$codigo','$descripcion')";
+				//print $query = "INSERT INTO catalogo_canton (codigo, descripcion, codigo_departamento, codigo_municipio) values ('$codigo','$descripcion','$codigo_departamento','$codigo_municipio')";
 				print "<br>";
-				//$consulta = $dblink -> query($query);
+				$consulta = $dblink -> query($query);
 
-				print $codigo . ' - ' . $pais  . ' - ' . $gentilicio . "<br>";
+				print $codigo . ' - ' . $descripcion  . ' - ' . "<br>";
 				$fila++;
 				//$codigo_area = $objPHPExcel->getActiveSheet()->getCell("A".$fila)->getValue();
 				//$codigo_dimension = $objPHPExcel->getActiveSheet()->getCell("C".$fila)->getValue();

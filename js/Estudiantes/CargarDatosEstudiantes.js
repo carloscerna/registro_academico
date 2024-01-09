@@ -201,7 +201,7 @@ $(document).ready(function()
 	// Carga la INformación de Tabla Nivel Escolaridad.
 	$(document).ready(function()
 	{
-			var miselect=$("#lstEstadoFamiliar");
+			var miselect=$("#LstEstadoFamiliar");
 			/* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
 			miselect.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
 			
@@ -216,7 +216,7 @@ $(document).ready(function()
 	// Carga la INformación de Tabla AFP
 	$(document).ready(function()
 	{
-			var miselect=$("#lstActividadEconomica");
+			var miselect=$("#LstActividadEconomica");
 			/* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
 			miselect.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
 			
@@ -643,11 +643,29 @@ $(document).ready(function()
         	// Carga la INformación de Tabla Zona Residencia
 	$(document).ready(function()
 	{
-			var miselect=$("#lstEstadoFamiliarO");
+			var miselect4=$("#lstEstadoFamiliarO");
+			/* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
+			miselect4.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
+			
+			$.post("includes/cargar-familiar.php",
+				function(data) {
+					miselect4.empty();
+					for (var i=0; i<data.length; i++) {
+					if(i== 9){
+						miselect4.append('<option value="' + data[i].codigo + '" selected>' + data[i].descripcion + '</option>');
+						}
+						else{
+						miselect4.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');	
+						}
+					}
+			}, "json");
+
+			// CARGAR TIPO DE VIVIENDA
+			var miselect=$("#LstTipoVivienda");
 			/* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
 			miselect.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
 			
-			$.post("includes/cargar-familiar.php",
+			$.post("includes/cargar_tipo_de_vivienda.php",
 				function(data) {
 					miselect.empty();
 					for (var i=0; i<data.length; i++) {
@@ -656,6 +674,59 @@ $(document).ready(function()
 						}
 						else{
 						miselect.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');	
+						}
+					}
+			}, "json");
+
+			// CARGAR CANTÓN
+			var miselect1=$("#lstCanton");
+			/* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
+			miselect1.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
+			
+			$.post("includes/cargar_canton.php",
+				function(data) {
+					miselect1.empty();
+					for (var i=0; i<data.length; i++) {
+					if(i== 6){
+						miselect1.append('<option value="' + data[i].codigo + '" selected>' + data[i].descripcion + '</option>');
+						}
+						else{
+						miselect1.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');	
+						}
+					}
+			}, "json");
+
+			// CARGAR CASERIO
+			var miselect2=$("#lstCaserio");
+			/* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
+			miselect2.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
+			
+			$.post("includes/cargar_caserio.php",
+				function(data) {
+					miselect2.empty();
+					for (var i=0; i<data.length; i++) {
+					if(i== 9){
+						miselect2.append('<option value="' + data[i].codigo + '" selected>' + data[i].descripcion + '</option>');
+						}
+						else{
+						miselect2.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');	
+						}
+					}
+			}, "json");
+			// CARGAR ABASTYECIMIENTO
+			var miselect3=$("#lstAbastecimientoAgua");
+			/* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
+			miselect3.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
+			
+			$.post("includes/cargar_abastecimiento.php",
+				function(data) {
+					miselect3.empty();
+					for (var i=0; i<data.length; i++) {
+					if(i== 1){
+						miselect3.append('<option value="' + data[i].codigo + '" selected>' + data[i].descripcion + '</option>');
+						}
+						else{
+						miselect3.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');	
 						}
 					}
 			}, "json");

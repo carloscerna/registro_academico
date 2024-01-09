@@ -390,15 +390,18 @@ if($errorDbConexion == false){
 					$contenidoOK = "Registro Actualizado.";
 					$mensajeError = "Se ha consultado el registro correctamente ";
 			break;
-			case 'GuardarGradoSeccion':
+			case 'GuardarSeGST':
 				// consultar el registro antes de agregarlo.
 				// Armamos el query y iniciamos variables.
-				 $codigo_ann_lectivo = ($_POST['lstannlectivoGradoSeccion']);
-				 $codigo_modalidad = ($_POST['lstmodalidadGradoSeccion']);
-				 $codigo_grado = $_POST["lstgradoseccion"];
-				 $codigo_seccion = $_POST["lstseccion"];
-				 $codigo_turno = $_POST["lstturno"];
-				 $query = "SELECT * FROM organizacion_grados_secciones WHERE codigo_ann_lectivo = '$codigo_ann_lectivo' and codigo_bachillerato = '$codigo_modalidad' and codigo_grado = '$codigo_grado' and codigo_seccion = '$codigo_seccion' and codigo_turno = '$codigo_turno'";
+				 $codigo_ann_lectivo = ($_POST['lstAnnLectivoSeGST']);
+				 $codigo_modalidad = ($_POST['lstModalidadSeGST']);
+				 $codigo_grado = $_POST["lstGradoSeGST"];
+				 $codigo_seccion = $_POST["lstSeccionSeGST"];
+				 $codigo_turno = $_POST["lstTurnoSeGST"];
+				 $codigo_servicio_educativo = $_POST["lstSeGST"];
+				 $query = "SELECT * FROM organizacion_grados_secciones 
+				 			WHERE codigo_ann_lectivo = '$codigo_ann_lectivo' and codigo_bachillerato = '$codigo_modalidad' 
+								and codigo_grado = '$codigo_grado' and codigo_seccion = '$codigo_seccion' and codigo_turno = '$codigo_turno' and codigo_servicio_educativo = '$codigo_servicio_educativo'";
 				// Ejecutamos el Query.
 				$consulta = $dblink -> query($query);
 
@@ -408,7 +411,9 @@ if($errorDbConexion == false){
 					$mensajeError = "Si Existe";
 				}else{
 				// proceso para grabar el registro
-					$query = "INSERT INTO organizacion_grados_secciones (codigo_ann_lectivo, codigo_bachillerato, codigo_grado, codigo_seccion, codigo_turno) VALUES ('$codigo_ann_lectivo','$codigo_modalidad','$codigo_grado','$codigo_seccion','$codigo_turno')";
+					$query = "INSERT INTO organizacion_grados_secciones 
+								(codigo_ann_lectivo, codigo_bachillerato, codigo_grado, codigo_seccion, codigo_turno, codigo_servicio_educativo) 
+									VALUES ('$codigo_ann_lectivo','$codigo_modalidad','$codigo_grado','$codigo_seccion','$codigo_turno','$codigo_servicio_educativo')";
 				// Ejecutamos el Query.
 				$consulta = $dblink -> query($query);
 					$respuestaOK = true;
@@ -662,7 +667,9 @@ if($errorDbConexion == false){
 								$codigo_asignatura = trim($listado['codigo_asignatura']);
 								$ordenar = trim($listado['ordenar']);
 														// VERFICAR SI NO EXISTE ASIGNATURA.
-									$query_buscar = "SELECT * FROM a_a_a_bach_o_ciclo WHERE codigo_ann_lectivo = '$codigo_annlectivo' and codigo_bach_o_ciclo = '$codigo_modalidad' and codigo_grado = '$codigo_grado' and codigo_asignatura = '$codigo_asignatura'";
+									$query_buscar = "SELECT * FROM a_a_a_bach_o_ciclo 
+												WHERE codigo_ann_lectivo = '$codigo_annlectivo' and codigo_bach_o_ciclo = '$codigo_modalidad' and codigo_grado = '$codigo_grado' 
+												and codigo_asignatura = '$codigo_asignatura'";
 								// Ejecutamos el Query.
 								$consulta_buscar = $dblink -> query($query_buscar);
 				
@@ -672,7 +679,8 @@ if($errorDbConexion == false){
 									$mensajeError = "Si Existe";
 								}else{
 								// proceso para grabar el registro
-									$query = "INSERT INTO a_a_a_bach_o_ciclo (codigo_ann_lectivo, codigo_bach_o_ciclo, codigo_asignacion, codigo_grado, codigo_asignatura, orden) VALUES ('$codigo_annlectivo','$codigo_modalidad','$codigo_modalidad','$codigo_grado','$codigo_asignatura','$ordenar')";
+									$query = "INSERT INTO a_a_a_bach_o_ciclo (codigo_ann_lectivo, codigo_bach_o_ciclo, codigo_asignacion, codigo_grado, codigo_asignatura, orden) 
+									VALUES ('$codigo_annlectivo','$codigo_modalidad','$codigo_modalidad','$codigo_grado','$codigo_asignatura','$ordenar')";
 								// Ejecutamos el Query.
 										$consulta = $dblink -> query($query);
 									// variables de retorno.
@@ -699,7 +707,8 @@ if($errorDbConexion == false){
 							$mensajeError = "El Registro del Componente ya Existe.";
 						}else{
 						// proceso para grabar el registro
-							$query = "INSERT INTO a_a_a_bach_o_ciclo (codigo_ann_lectivo, codigo_bach_o_ciclo, codigo_asignacion, codigo_grado, codigo_asignatura) VALUES ('$codigo_annlectivo','$codigo_modalidad','$codigo_modalidad','$codigo_grado','$codigo_asignatura')";
+							$query = "INSERT INTO a_a_a_bach_o_ciclo (codigo_ann_lectivo, codigo_bach_o_ciclo, codigo_asignacion, codigo_grado, codigo_asignatura) 
+									VALUES ('$codigo_annlectivo','$codigo_modalidad','$codigo_modalidad','$codigo_grado','$codigo_asignatura')";
 						// Ejecutamos el Query.
 						$consulta = $dblink -> query($query);
 							$respuestaOK = true;

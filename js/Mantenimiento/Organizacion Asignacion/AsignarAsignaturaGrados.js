@@ -379,6 +379,7 @@ $(function(){
             }
             if($('#TodasLasAsignaturas').is(":checked")) {
 
+
             }else{
                 if(codigo_asignatura == "00"){
                     $("#AlertAAG").css("display", "block");
