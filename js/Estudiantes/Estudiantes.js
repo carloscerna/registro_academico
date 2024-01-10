@@ -12,6 +12,8 @@ var menu_group = '<div class="dropdown">'+
 							'</a>'+
 							'<a class="imprimir-portada dropdown-item fas fa-address-card" href="#"> Portada'+
 							'</a>'+
+							'<a class="imprimir-portada-promocion dropdown-item fas fa-address-card" href="#"> Portada Promoción'+
+							'</a>'+
 							'<a class="eliminar dropdown-item fas fa-user-slash" href="#"> Eliminar'+
 							'</a>'+
 						'</div>'+
@@ -133,6 +135,20 @@ var obtener_data_editar = function(tbody, tabla){
 		// Ejecutar la función
 			AbrirVentana(varenviar);
 	});
+///////////////////////////////////////////////////////////////////////////////
+//	FUNCION que al dar clic buscar el registro para posterior mente abri una
+// ventana modal. IMPRIMIR PORTADA PROMOCIÓN
+///////////////////////////////////////////////////////////////////////////////	  
+$(tbody).on("click","a.imprimir-portada-promocion",function(){
+	var data = tabla.row($(this).parents("tr")).data();
+	console.log(data); console.log(data[0]);
+	
+	id_ = data[0];
+	// construir la variable con el url.
+		varenviar = "/registro_academico/php_libs/reportes/Estudiante/PortadaPromocion.php?txtidalumno="+id_;
+	// Ejecutar la función
+		AbrirVentana(varenviar);
+});
 	///////////////////////////////////////////////////////////////////////////////
 //	FUNCION que al dar clic buscar el registro para posterior mente abri una
 // ventana modal. ELIMINAR REGISTRO

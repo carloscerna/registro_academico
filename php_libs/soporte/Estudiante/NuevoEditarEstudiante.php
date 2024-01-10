@@ -63,12 +63,12 @@ if($errorDbConexion == false){
 				$apellido_materno = trim($_POST['apellido_materno']);
 				$apellido_paterno = trim($_POST['apellido_paterno']);
 				$nombre_completo = trim($_POST['txtnombres']);
-				$direccion_alumno = trim($_POST['direccion_alumno']);
+				
 				$nie = trim($_POST['nie']);
-				$telresidencia = trim($_POST['telresidencia']);
+				//$telresidencia = trim($_POST['telresidencia']);
 				$telcelular = trim($_POST['telcelular']);
 				$email_alumno = trim($_POST['email_alumno']);
-				$medicamento_alumno = trim($_POST['medicamento_alumno']);
+				//$medicamento_alumno = trim($_POST['medicamento_alumno']);
 				//TABS-2
 				$fecha_nacimiento = trim($_POST['fechanacimiento']);
 				$numero = trim($_POST['numero_pn']);
@@ -76,16 +76,39 @@ if($errorDbConexion == false){
 				$tomo = trim($_POST['tomo_pn']);
 				$libro = trim($_POST['libro_pn']);
 				$edad = trim($_POST['edad_enviar']);
+				$dui = trim($_POST['dui']);
+				$pasaporte = trim($_POST['pasaporte_otro']);
+				$codigo_nacionalidad = trim($_POST['lstNacionalidadE']);
+				$retornado = trim($_POST['lstRetornado']);
+				$presenta_pn = trim($_POST['lstPnPresenta']);
+				$posee_pn = trim($_POST['lstPnPosee']);
 				//crear una variable diferente ppara el genero, guardar en campo genero y .
 				$codigo_genero = trim($_POST['lstgenero']);
+				$codigo_etnia = trim($_POST['lstEtnia']);
+				$codigo_diagnostico = trim($_POST['lstDiagnostico']);
+				$codigo_servicio_apoyo_educativo = trim($_POST['lstServicioApoyoEducativo']);
+
 				$codigo_estado_civil = trim($_POST['lstEstadoCivil']);
-				$codigo_departamento = trim($_POST['lstdepartamento']);
-				$codigo_municipio = trim($_POST['lstmunicipio']);
-				$codigo_estado_familiar = trim($_POST['lstestadofamiliar']);
-				$codigo_actividad_economica = trim($_POST['lstactividadeconomica']);
-				$codigo_tipo_discapacidad = trim($_POST['lsttipodiscapacidad']);
-				$codigo_servicio_apoyo_educativo = trim($_POST['lstservicioapoyoeducativo']);
+
+				$codigo_estado_familiar = trim($_POST['LstEstadoFamiliar']);
+				$codigo_actividad_economica = trim($_POST['LstActividadEconomica']);
+				$codigo_tipo_discapacidad = trim($_POST['lstTipoDiscapacidad']);
+				//
+				$embarazada = trim($_POST['lstEmbarazada']);
+				// RESIDENCIA
+				$CantidadHijos = trim($_POST['CantidadHijos']);
+				
 				$codigo_zona_residencia = trim($_POST['lstzonaresidencia']);
+				$codigo_tipo_de_vivienda = trim($_POST['LstTipoVivienda']);
+				$codigo_departamento = trim($_POST['lstdepartamento']);
+				$codigo_canton = trim($_POST['lstCanton']);
+				$codigo_caserio = trim($_POST['lstCaserio']);
+				$codigo_municipio = trim($_POST['lstmunicipio']);
+				$direccion_alumno = trim($_POST['direccion_alumno']);
+				// SERVICIOS BASICOS
+				$servicio_energia = trim($_POST['lstServicioEnergia']);
+				$recoleccion_basura = trim($_POST['lstRecoleccionBasura']);
+				$codigo_abastecimiento = trim($_POST['lstAbastecimientoAgua']);
 				// Tabs-3
 				$codigo_estatus = trim($_POST['lstEstatus']);
 				// Tabs-4
@@ -125,14 +148,16 @@ if($errorDbConexion == false){
 					// VAR
 					$encargado = array($en,$en1,$en2);
 					// QIERU
-					$query = "INSERT INTO alumno (apellido_materno, apellido_paterno, nombre_completo, codigo_nie, direccion_alumno, telefono_alumno, codigo_departamento,
-						codigo_municipio, fecha_nacimiento, pn_numero, pn_folio, pn_tomo, pn_libro, medicamento, direccion_email,
+					$query = "INSERT INTO alumno (apellido_materno, apellido_paterno, nombre_completo, codigo_nie, direccion_alumno, codigo_departamento,
+						codigo_municipio, fecha_nacimiento, pn_numero, pn_folio, pn_tomo, pn_libro, direccion_email,
 						edad, genero, codigo_estado_civil, codigo_estado_familiar, codigo_actividad_economica,
-						codigo_apoyo_educativo, codigo_discapacidad, codigo_zona_residencia, telefono_celular, codigo_genero, codigo_estatus)
-						VALUES ('$apellido_materno','$apellido_paterno','$nombre_completo','$nie','$direccion_alumno','$telresidencia','$codigo_departamento',
-						'$codigo_municipio','$fecha_nacimiento','$numero','$folio','$tomo','$libro','$medicamento_alumno','$email_alumno',
+						codigo_apoyo_educativo, codigo_discapacidad, codigo_zona_residencia, telefono_celular, codigo_genero, codigo_estatus, dui, pasaporte, codigo_nacionalidad, retornado,
+						presenta_pn, posee_pn, codigo_etnia, codigo_diagnostico, embarazada, codigo_tipo_vivienda, codigo_canton, codigo_caserio, servicio_energia, recoleccion_basura, codigo_abastecimiento, cantidad_hijos)
+						VALUES ('$apellido_materno','$apellido_paterno','$nombre_completo','$nie','$direccion_alumno','$codigo_departamento',
+						'$codigo_municipio','$fecha_nacimiento','$numero','$folio','$tomo','$libro','$email_alumno',
 						'$edad','$genero','$codigo_estado_civil','$codigo_estado_familiar','$codigo_actividad_economica',
-						'$codigo_servicio_apoyo_educativo','$codigo_tipo_discapacidad','$codigo_zona_residencia','$telcelular','$codigo_genero','$codigo_estatus')";
+						'$codigo_servicio_apoyo_educativo','$codigo_tipo_discapacidad','$codigo_zona_residencia','$telcelular','$codigo_genero','$codigo_estatus','$dui','$pasaporte','$codigo_nacionalidad','$retornado',
+						'$presenta_pn','$posee_pn','$codigo_etnia','$codigo_diagnostico','$embarazada','$codigo_tipo_de_vivienda','$codigo_canton','$codigo_caserio','$servicio_energia','$recoleccion_basura','$codigo_abastecimiento', '$CantidadHijos')";
 					// Ejecutamos el query
 					$resultadoQuery = $dblink -> query($query);
 					// Obtenemos el id de user para edici�n
@@ -170,7 +195,10 @@ if($errorDbConexion == false){
                         // Ejecutamos el Query.
                             $result_consulta = $dblink -> query($query_consulta_matricula);
                                 while($row = $result_consulta -> fetch(PDO::FETCH_BOTH))
-                                    {$fila_alumno = $row{0}; $fila_matricula = $row{1};}
+                                    {
+										$fila_alumno = $row["codigo_alumno"]; 
+										$fila_matricula = $row["id_alumno_matricula"];
+									}
                             
                         // Actualizar la tabla alumno_matricula con codigos de bachillerato, grado, seccion, a�o lectivo y a�o lectivo.
                          $query_update_matricula = "UPDATE alumno_matricula SET codigo_bach_o_ciclo = '$codigo_modalidad',
@@ -189,14 +217,14 @@ if($errorDbConexion == false){
                             $query_consulta = "SELECT codigo_bach_o_ciclo from alumno_matricula where codigo_alumno = ".$codigo_alumno." ORDER BY id_alumno_matricula DESC LIMIT 1 OFFSET 0";
                             $result_consulta = $dblink -> query($query_consulta);
                                 while($row = $result_consulta -> fetch(PDO::FETCH_BOTH))
-                                    {$fila_codigo_bachillerato = $row{0};}
+                                    {$fila_codigo_bachillerato = $row["codigo_bach_o_ciclo"];}
             
                         // Consultar a la tabla codigo asignatura, para generar el codigo individual de cada una de ellas segun el ciclo o bachillerato.
                             $query_consulta_asignatura = "SELECT codigo_asignatura FROM a_a_a_bach_o_ciclo WHERE codigo_bach_o_ciclo = '".$fila_codigo_bachillerato."' and codigo_ann_lectivo = '".$codigo_ann_lectivo."' and codigo_grado = '".$codigo_grado."' ORDER BY codigo_asignatura ASC";
                                 $result_consulta = $dblink -> query($query_consulta_asignatura);
                                     while($row = $result_consulta -> fetch(PDO::FETCH_BOTH))
                                     {
-                                        $fila_codigo_asignatura = $row{0};      
+                                        $fila_codigo_asignatura = $row["codigo_asignatura"];      
                                         $query_insert = "INSERT INTO nota (codigo_asignatura, codigo_alumno, codigo_matricula) VALUES ('$fila_codigo_asignatura',$fila_alumno,$fila_matricula)";
                                         $result_consulta_insert_notas = $dblink -> query($query_insert);
                                     }                            
@@ -218,15 +246,18 @@ if($errorDbConexion == false){
 				$apellido_materno = trim($_POST['apellido_materno']);
 				$apellido_paterno = trim($_POST['apellido_paterno']);
 				$nombre_completo = trim($_POST['txtnombres']);
-				$direccion_alumno = trim($_POST['direccion_alumno']);
 				$nie = trim($_POST['nie']);
-				$telresidencia = trim($_POST['telresidencia']);
+				//$telresidencia = trim($_POST['telresidencia']);
 				$telcelular = trim($_POST['telcelular']);
 				$email_alumno = trim($_POST['email_alumno']);
-				$medicamento_alumno = trim($_POST['medicamento_alumno']);
+				//$medicamento_alumno = trim($_POST['medicamento_alumno']);
 				
 				//TABS-2
 				$fecha_nacimiento = trim($_POST['fechanacimiento']);
+				$dui = trim($_POST['dui']);
+				$pasaporte = trim($_POST['pasaporte_otro']);
+				$codigo_nacionalidad = trim($_POST['lstNacionalidadE']);
+				$retornado = trim($_POST['lstRetornado']);
                 // Actualizar el PN si existe el documento.
                 //$pn_documento = trim($_POST['pn_boolean']);
                 //if($pn_documento == "si"){$pn_doc = "t";}else{$pn_doc = "f";}
@@ -235,17 +266,34 @@ if($errorDbConexion == false){
 				$tomo = trim($_POST['tomo_pn']);
 				$libro = trim($_POST['libro_pn']);
 				$edad = trim($_POST['edad_enviar']);
+				$presenta_pn = trim($_POST['lstPnPresenta']);
+				$posee_pn = trim($_POST['lstPnPosee']);
 				//crear una variable diferente ppara el genero, guardar en campo genero y .
 				$codigo_genero = trim($_POST['lstgenero']);
+				$codigo_etnia = trim($_POST['lstEtnia']);
+				$codigo_diagnostico = trim($_POST['lstDiagnostico']);
+				$codigo_servicio_apoyo_educativo = trim($_POST['lstServicioApoyoEducativo']);
+
 				$codigo_estado_civil = trim($_POST['lstEstadoCivil']);
-				$codigo_departamento = trim($_POST['lstdepartamento']);
-				$codigo_municipio = trim($_POST['lstmunicipio']);
-				$codigo_estado_familiar = trim($_POST['lstestadofamiliar']);
-				$codigo_actividad_economica = trim($_POST['lstactividadeconomica']);
-				$codigo_tipo_discapacidad = trim($_POST['lsttipodiscapacidad']);
-				$codigo_servicio_apoyo_educativo = trim($_POST['lstservicioapoyoeducativo']);
+				$codigo_estado_familiar = trim($_POST['LstEstadoFamiliar']);
+				$codigo_actividad_economica = trim($_POST['LstActividadEconomica']);
+				$codigo_tipo_discapacidad = trim($_POST['lstTipoDiscapacidad']);
+				//
+				$embarazada = trim($_POST['lstEmbarazada']);
+				$CantidadHijos = trim($_POST['CantidadHijos']);
+
+				// RESIDENCIA
 				$codigo_zona_residencia = trim($_POST['lstzonaresidencia']);
-				
+				$codigo_tipo_de_vivienda = trim($_POST['LstTipoVivienda']);
+				$codigo_departamento = trim($_POST['lstdepartamento']);
+				$codigo_canton = trim($_POST['lstCanton']);
+				$codigo_caserio = trim($_POST['lstCaserio']);
+				$codigo_municipio = trim($_POST['lstmunicipio']);
+				$direccion_alumno = trim($_POST['direccion_alumno']);
+				// SERVICIOS BASICOS
+				$servicio_energia = trim($_POST['lstServicioEnergia']);
+				$recoleccion_basura = trim($_POST['lstRecoleccionBasura']);
+				$codigo_abastecimiento = trim($_POST['lstAbastecimientoAgua']);
 				// Tabs-3
 				$codigo_estatus = trim($_POST['lstEstatus']);
                 // TAB-5 - MATRICULAR
@@ -286,18 +334,22 @@ if($errorDbConexion == false){
 				//$ = trim($_POST['']);
 				// armar consulta para guardar datos del alumno.
 				$query = sprintf("UPDATE alumno SET apellido_materno='%s', apellido_paterno = '%s', nombre_completo = '%s',
-						 direccion_alumno = '%s', codigo_nie = '%s', telefono_alumno = '%s', telefono_celular = '%s', direccion_email = '%s', medicamento = '%s',
+						 direccion_alumno = '%s', codigo_nie = '%s', telefono_celular = '%s', direccion_email = '%s', 
 						  fecha_nacimiento = '%s', pn_numero = '%s', pn_folio = '%s', pn_tomo = '%s', pn_libro = '%s', edad = '%s', codigo_genero = '%s',
 						  codigo_estado_civil = '%s', codigo_departamento = '%s', codigo_municipio = '%s', codigo_estado_familiar = '%s', codigo_actividad_economica = '%s',
 						  codigo_discapacidad = '%s', codigo_apoyo_educativo = '%s', codigo_zona_residencia = '%s',
-						  codigo_estatus = '%s', genero = '%s'
+						  codigo_estatus = '%s', genero = '%s', dui = '%s', pasaporte = '%s', codigo_nacionalidad = '%s', retornado = '%s', presenta_pn = '%s', posee_pn = '%s',
+						  codigo_etnia = '%s', codigo_diagnostico = '%s', embarazada = '%s', codigo_tipo_vivienda = '%s', codigo_canton = '%s', codigo_caserio = '%s',
+						  servicio_energia = '%s', recoleccion_basura = '%s', codigo_abastecimiento = '%s', cantidad_hijos = '%s'
 							WHERE id_alumno=%d",
 							$apellido_materno,$apellido_paterno,$nombre_completo,
-							$direccion_alumno,$nie,$telresidencia,$telcelular,$email_alumno,$medicamento_alumno,
+							$direccion_alumno,$nie,$telcelular,$email_alumno,
 							$fecha_nacimiento,$numero,$folio,$tomo,$libro,$edad,$codigo_genero,
 							$codigo_estado_civil,$codigo_departamento,$codigo_municipio,$codigo_estado_familiar,$codigo_actividad_economica,
 							$codigo_tipo_discapacidad,$codigo_servicio_apoyo_educativo,$codigo_zona_residencia,
-							$codigo_estatus, $genero
+							$codigo_estatus, $genero, $dui, $pasaporte, $codigo_nacionalidad, $retornado, $presenta_pn, $posee_pn,
+							$codigo_etnia, $codigo_diagnostico, $embarazada, $codigo_tipo_de_vivienda, $codigo_canton, $codigo_caserio,
+							$servicio_energia, $recoleccion_basura, $codigo_abastecimiento, $CantidadHijos
 							,$_POST['id_user']);
                     //, $pn_doc , partida_nacimiento = '%s'
 							
@@ -346,7 +398,7 @@ if($errorDbConexion == false){
 					// Ejecutamos el Query.
 						$result_consulta = $dblink -> query($query_consulta_matricula);
 							while($row = $result_consulta -> fetch(PDO::FETCH_BOTH))
-								{$fila_alumno = $row{0}; $fila_matricula = $row{1};}
+								{$fila_alumno = $row["codigo_alumno"]; $fila_matricula = $row["id_alumno_matricula"];}
 						
 					// Actualizar la tabla alumno_matricula con codigos de bachillerato, grado, seccion, a�o lectivo y a�o lectivo.
 					 $query_update_matricula = "UPDATE alumno_matricula SET codigo_bach_o_ciclo = '$codigo_modalidad',
@@ -365,14 +417,14 @@ if($errorDbConexion == false){
 						$query_consulta = "SELECT codigo_bach_o_ciclo from alumno_matricula where codigo_alumno = ".$codigo_alumno." ORDER BY id_alumno_matricula DESC LIMIT 1 OFFSET 0";
 						$result_consulta = $dblink -> query($query_consulta);
 							while($row = $result_consulta -> fetch(PDO::FETCH_BOTH))
-								{$fila_codigo_bachillerato = $row{0};}
+								{$fila_codigo_bachillerato = $row["codigo_bach_o_ciclo"];}
 		
 					// Consultar a la tabla codigo asignatura, para generar el codigo individual de cada una de ellas segun el ciclo o bachillerato.
 						$query_consulta_asignatura = "SELECT codigo_asignatura FROM a_a_a_bach_o_ciclo WHERE codigo_bach_o_ciclo = '".$fila_codigo_bachillerato."' and codigo_ann_lectivo = '".$codigo_ann_lectivo."' and codigo_grado = '".$codigo_grado."' ORDER BY codigo_asignatura ASC";
 							$result_consulta = $dblink -> query($query_consulta_asignatura);
 								while($row = $result_consulta -> fetch(PDO::FETCH_BOTH))
 								{
-									$fila_codigo_asignatura = $row{0};      
+									$fila_codigo_asignatura = $row["codigo_asignatura"];      
 									$query_insert = "INSERT INTO nota (codigo_asignatura, codigo_alumno, codigo_matricula) VALUES ('$fila_codigo_asignatura',$fila_alumno,$fila_matricula)";
 									$result_consulta_insert_notas = $dblink -> query($query_insert);
 								}                            

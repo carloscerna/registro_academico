@@ -170,7 +170,8 @@ function FancyTable($header){
 							INNER JOIN tipo_contratacion tc ON tc.codigo = lp.codigo_contratacion
 							INNER JOIN tipo_licencia_o_permiso tlp ON tlp.codigo = lp.codigo_licencia_permiso
 							INNER JOIN turno tur ON tur.codigo = lp.codigo_turno
-							WHERE lp.codigo_personal = '$codigo_personal' and btrim(lp.codigo_contratacion || lp.codigo_turno) = '$codigo_contratacion' and TO_CHAR(lp.fecha,'YYYY') = '$fecha_l_y_p' and lp.codigo_licencia_permiso = '$codigo_licencia_o_permiso[$j]'
+							WHERE lp.codigo_personal = '$codigo_personal' and btrim(lp.codigo_contratacion || lp.codigo_turno) = '$codigo_contratacion' and 
+							TO_CHAR(lp.fecha,'YYYY') = '$fecha_l_y_p' and lp.codigo_licencia_permiso = '$codigo_licencia_o_permiso[$j]'
 							ORDER BY lp.fecha";
 												
 				$consulta_codigo_licencia_permiso = $dblink -> query($query_codigo_licencias);
@@ -238,9 +239,9 @@ function FancyTable($header){
 									// regresar el valor de num a 0.
 									$valor_y = $pdf->GetY();
 									$num = 0;
-				}	// Condición para revisar si hay registros a través del count
-					// Eliminar los elmentos de la array que acumula los dia, minutos y horas.
+													// Eliminar los elmentos de la array que acumula los dia, minutos y horas.
 						unset($tramite_dia, $tramite_hora, $tramite_minutos);
+				}	// Condición para revisar si hay registros a través del count
 	   }	// for para repeir los x tipo de licencia o permiso que existan,
 // Salida del pdf.
     $pdf->Output();
