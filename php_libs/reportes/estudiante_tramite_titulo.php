@@ -119,7 +119,7 @@ function Footer()
     $nombre_municipio = cambiar_de_del($_SESSION['nombre_municipio']);
     $porciones = explode(" ", $print_bachillerato);
     $nombre_modalidad = cambiar_de_del(trim($porciones[1]));
-    $año_anterior = $año -1;
+    $año_anterior = $año;
 /**********************************************************************************************************************************************************/
 // Consultar y Ejecutar el Query.
     consultas_alumno(3,0,$codigo_all,$codigo_alumno,$codigo_matricula,'',$db_link,'');      
@@ -133,7 +133,7 @@ function Footer()
                 $tercer_parrafo = utf8_decode('Por tanto, su título que le acredita como Bachiller de la República, se encuentra en trámite de legalización. Ante ello, el Ministerio de Educación, Ciencia y Tecnología está haciendo las gestiones pertinentes con base a la solicitud enviada por nuestra institución'
                 .', para la emisión del respectivo título en la mayor brevedad posible, el cual tendrá validez a partir del 12 de diciembre del año '. $año_anterior .'.');
                 $cuarto_parrafo = utf8_decode('Y para los usos que el/la interesado(a) estime conveniente, se le extiende la presente constancia, en el municipio de '. $nombre_municipio . '  departamento de '. $nombre_departamento.', '
-                . 'a los '. strtolower(num2letras($dia)).' días de '.$mes.' de '.strtolower(num2letras($año)));
+                . 'a los '. strtolower(num2letras($dia)).' días de '.$mes.' de '.strtolower(num2letras($año))).'.';
                 // Imprimir párrafos en pantallas
                 $pdf->MultiCell(0,8,$primer_parrafo,0,"J");
                 $pdf->ln();
