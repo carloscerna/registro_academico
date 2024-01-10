@@ -403,8 +403,8 @@ if($errorDbConexion == false){
 			case 'GuardarModalidad':
 				// consultar el registro antes de agregarlo.
 				// Armamos el query y iniciamos variables.
-				 $nombre = strtoupper($_POST['nombre_modalidad']);
-				 $codigo_modalidad = ($_POST['codigo_modalidad']);
+				 $nombre = ($_POST['DescripcionModalidad']);
+				 $codigo_modalidad = ($_POST['CodigoModalidad']);
 				 $codigo_estatus = $_POST["lstModalidadEstatus"];
 				 $query = "SELECT id_bachillerato_ciclo, nombre, codigo FROM bachillerato_ciclo WHERE codigo = '".$codigo_modalidad. "' ORDER BY codigo ";
 				// Ejecutamos el Query.
