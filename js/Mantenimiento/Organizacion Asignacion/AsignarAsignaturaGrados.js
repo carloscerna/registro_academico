@@ -381,11 +381,11 @@ $(function(){
 
 
             }else{
-                if(codigo_asignatura == "00"){
+/*                if(codigo_asignatura == "00"){
                     $("#AlertAAG").css("display", "block");
                     $("#TextoAlertAAG").text("Debe Seleccionar una Asignatura.");
                     return;
-                }
+                }*/
             }
 
             // enviar form
