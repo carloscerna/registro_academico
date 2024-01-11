@@ -10,7 +10,7 @@ include($path_root."/registro_academico/includes/funciones.php");
 // variables. del post.
 //  $ruta = $path_root.'/sgp_web/formatos_hoja_de_calculo/fianzas.xls';
 // $ruta = $path_root.'/sgp_web/formatos_hoja_de_calculo/prestamos.xls';
-	$ruta = $path_root.'/registro_academico/formatos_hoja_de_calculo/catalogo_canton.xlsx';
+	$ruta = $path_root.'/registro_academico/formatos_hoja_de_calculo/catalogo_canton1.xlsx';
   //$trimestre = trim($_REQUEST["periodo_"]);
 // variable de la conexi�n dbf.
     $db_link = $dblink;
@@ -36,7 +36,7 @@ $datos=array(); $fila_array = 0;
 // Leemos un archivo Excel 2007
    $objReader = \PhpOffice\PhpSpreadsheet\IOFactory::createReader("Xlsx");
     $origen = $ruta;
-	 $fila = 146;
+	 $fila = 200;
 	 $fila2 = 2;
 	 $discapacidad = "nada";
 	 $nip2 = "nada";
