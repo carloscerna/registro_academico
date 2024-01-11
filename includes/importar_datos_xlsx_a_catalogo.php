@@ -10,7 +10,7 @@ include($path_root."/registro_academico/includes/funciones.php");
 // variables. del post.
 //  $ruta = $path_root.'/sgp_web/formatos_hoja_de_calculo/fianzas.xls';
 // $ruta = $path_root.'/sgp_web/formatos_hoja_de_calculo/prestamos.xls';
-	$ruta = $path_root.'/registro_academico/formatos_hoja_de_calculo/catalogo_abastecimiento.xlsx';
+	$ruta = $path_root.'/registro_academico/formatos_hoja_de_calculo/catalogo_canton.xlsx';
   //$trimestre = trim($_REQUEST["periodo_"]);
 // variable de la conexi�n dbf.
     $db_link = $dblink;
@@ -36,7 +36,7 @@ $datos=array(); $fila_array = 0;
 // Leemos un archivo Excel 2007
    $objReader = \PhpOffice\PhpSpreadsheet\IOFactory::createReader("Xlsx");
     $origen = $ruta;
-	 $fila = 2;
+	 $fila = 146;
 	 $fila2 = 2;
 	 $discapacidad = "nada";
 	 $nip2 = "nada";
@@ -61,14 +61,14 @@ $datos=array(); $fila_array = 0;
 			 //  DATOS GENERALES.
 			 	$codigo = $objPHPExcel->getActiveSheet()->getCell("A".$fila)->getValue();
 				$descripcion = trim($objPHPExcel->getActiveSheet()->getCell("B".$fila)->getValue());
-                //$codigo_departamento = trim(htmlspecialchars($objPHPExcel->getActiveSheet()->getCell("C".$fila)->getValue()));
-				//$codigo_municipio = trim(htmlspecialchars($objPHPExcel->getActiveSheet()->getCell("D".$fila)->getValue()));
-				print $query = "INSERT INTO catalogo_abastecimiento (codigo, descripcion) values ('$codigo','$descripcion')";
-				//print $query = "INSERT INTO catalogo_canton (codigo, descripcion, codigo_departamento, codigo_municipio) values ('$codigo','$descripcion','$codigo_departamento','$codigo_municipio')";
-				print "<br>";
+                $codigo_departamento = trim(htmlspecialchars($objPHPExcel->getActiveSheet()->getCell("C".$fila)->getValue()));
+				$codigo_municipio = trim(htmlspecialchars($objPHPExcel->getActiveSheet()->getCell("D".$fila)->getValue()));
+				//print $query = "INSERT INTO catalogo_abastecimiento (codigo, descripcion) values ('$codigo','$descripcion')";
+				$query = "INSERT INTO catalogo_canton (codigo, descripcion, codigo_departamento, codigo_municipio) values ('$codigo','$descripcion','$codigo_departamento','$codigo_municipio')";
+				//print "<br>";
 				$consulta = $dblink -> query($query);
 
-				print $codigo . ' - ' . $descripcion  . ' - ' . "<br>";
+				print $codigo . ' - ' . $descripcion  . ' - ' . $codigo_departamento . ' - ' .  $codigo_municipio . ' - ' .  "<br>";
 				$fila++;
 				//$codigo_area = $objPHPExcel->getActiveSheet()->getCell("A".$fila)->getValue();
 				//$codigo_dimension = $objPHPExcel->getActiveSheet()->getCell("C".$fila)->getValue();

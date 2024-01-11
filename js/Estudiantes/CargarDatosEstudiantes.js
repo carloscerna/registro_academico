@@ -311,6 +311,25 @@ $(document).ready(function()
 						miselectM.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');	
 						}
 				}
+			}, "json");		
+		// REllenar el select Municipio con un Código específico 02 - Santa Ana. Seleccionar Cantón
+		var miselectC=$("#lstCanton");
+	    /* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
+		miselectC.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
+			
+  		    departamento="02";
+			municipio = "10"
+			$.post("includes/cargar_canton.php", { departamento: departamento, municipio: municipio},
+			    function(data){
+			    miselectC.empty();
+				for (var i=0; i<data.length; i++) {
+							if(i== 9){
+						miselectC.append('<option value="' + data[i].codigo + '" selected>' + data[i].descripcion + '</option>');
+						}
+						else{
+						miselectC.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');	
+						}
+				}
 			}, "json");			
 	});
 	
@@ -318,19 +337,37 @@ $(document).ready(function()
 	$(document).ready(function()
 	{
 		// Parametros para el lstmuncipio.
-	$("#lstDepartamento").change(function () {
-	    	    var miselect=$("#lstMunicipio");
+		$("#lstDepartamento").change(function () {
+					var miselect=$("#lstMunicipio");
+				/* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
+				miselect.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
+				
+			$("#lstDepartamento option:selected").each(function () {
+					elegido=$(this).val();
+					departamento=$("#lstDepartamento").val();
+					$.post("includes/cargar_municipio.php", { departamento: departamento },
+						function(data){
+						miselect.empty();
+						for (var i=0; i<data.length; i++) {
+							miselect.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');
+						}
+				}, "json");			
+			});
+		});
+			// Parametros para el lstmuncipio.
+			$("#lstMunicipio").change(function () {
+	    	    var miselectC=$("#lstCanton");
 		    /* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
-			miselect.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
+				miselectC.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
 			
-   		$("#lstDepartamento option:selected").each(function () {
-				elegido=$(this).val();
+   		$("#lstMunicipio option:selected").each(function () {
+				municipio=$(this).val();
 				departamento=$("#lstDepartamento").val();
-				$.post("includes/cargar_municipio.php", { departamento: departamento },
+				$.post("includes/cargar_canton.php", { departamento: departamento, municipio: municipio },
 				       function(data){
-					miselect.empty();
-					for (var i=0; i<data.length; i++) {
-						miselect.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');
+							miselectC.empty();
+							for (var i=0; i<data.length; i++) {
+								miselectC.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');
 					}
 			}, "json");			
 	    });
