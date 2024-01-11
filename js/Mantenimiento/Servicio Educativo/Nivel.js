@@ -232,9 +232,9 @@ $(function(){
                         msjEtiqueta = $("label[for=LblTituloModalidad]").text();
                             if(msjEtiqueta == "Modalidad | Actualizar")
                             {
-                                accion = "ActualizarModalidad";
+                                accion_modalidad = "ActualizarModalidad";
                             }else{
-                                accion = "GuardarModalidad";
+                                accion_modalidad = "GuardarModalidad";
                             }
             });
             //

@@ -11,7 +11,9 @@ $query = "SELECT id_alumno, apellido_materno, apellido_paterno, nombre_completo,
 	    pn_numero, pn_folio, pn_tomo, pn_libro, codigo_transporte, medicamento, direccion_email, edad, certificado,
 	    partida_nacimiento, tarjeta_vacunacion, genero, foto, estudio_parvularia, codigo_estado_civil,
 	    codigo_estado_familiar, codigo_actividad_economica, codigo_apoyo_educativo, codigo_discapacidad, ruta_pn,
-	    ruta_pn_vuelto, codigo_zona_residencia, tiene_hijos, cantidad_hijos, codigo_genero, codigo_estatus
+	    ruta_pn_vuelto, codigo_zona_residencia, tiene_hijos, cantidad_hijos, codigo_genero, codigo_estatus, dui, pasaporte, codigo_nacionalidad, retornado,
+      posee_pn, presenta_pn, codigo_etnia, codigo_diagnostico, embarazada, codigo_tipo_vivienda, codigo_canton, codigo_caserio, servicio_energia, recoleccion_basura,
+      codigo_abastecimiento
 	  FROM alumno
 	  WHERE id_alumno = ".
 	  $_POST['id_x'];
@@ -61,27 +63,43 @@ $codigo_institucion = $_SESSION['codigo_institucion'];
 	 $telefono_celular = trim($listado['telefono_celular']);
 	 $direccion_email = trim($listado['direccion_email']);
 	 $medicamento = trim($listado['medicamento']);
-	 
+	 $cantidad_hijos = trim($listado['cantidad_hijos']);
+
 	 // Nombres de los campos de la tabla. segundo tabs.
 	 $fecha_nacimiento = trim($listado['fecha_nacimiento']);
     $partida_nacimiento = trim($listado['partida_nacimiento']);
 	 $edad = trim($listado['edad']);
+   $dui = trim($listado['dui']);
+   $pasaporte = trim($listado['pasaporte']);
+   $codigo_nacionalidad = trim($listado['codigo_nacionalidad']);
+   $retornado = trim($listado['retornado']);
+   $posee_pn = trim($listado['posee_pn']);
+   $presenta_pn = trim($listado['presenta_pn']);
 	 $pn_numero = trim($listado['pn_numero']);
 	 $pn_folio = trim($listado['pn_folio']);
 	 $pn_tomo = trim($listado['pn_tomo']);
 	 $pn_libro = trim($listado['pn_libro']);
 	 $codigo_genero = trim($listado['codigo_genero']);
-	 
+   $codigo_etnia = trim($listado['codigo_etnia']);
+	 $codigo_tipo_discapacidad = trim($listado['codigo_discapacidad']);
+
+   $codigo_diagnostico = trim($listado['codigo_diagnostico']);
+   $codigo_servicio_apoyo_educativo = trim($listado['codigo_apoyo_educativo']);
 	 $codigo_estado_civil = trim($listado['codigo_estado_civil']);
 	 $codigo_departamento = trim($listado['codigo_departamento']);
 	 $codigo_municipio = trim($listado['codigo_municipio']);
 	 $codigo_estado_familiar = trim($listado['codigo_estado_familiar']);
 	 
 	 $codigo_actividad_economica = trim($listado['codigo_actividad_economica']);
-	 $codigo_tipo_discapacidad = trim($listado['codigo_discapacidad']);
-	 $codigo_servicio_apoyo_educativo = trim($listado['codigo_apoyo_educativo']);
 	 $codigo_zona_residencia = trim($listado['codigo_zona_residencia']);
-         
+//           
+  $embarazada = trim($listado['embarazada']);
+  $codigo_tipo_vivienda = trim($listado['codigo_tipo_vivienda']);
+  $codigo_canton = trim($listado['codigo_canton']);
+  $codigo_caserio = trim($listado['codigo_caserio']);
+  $servicio_energia = trim($listado['servicio_energia']);
+  $recoleccion_basura = trim($listado['recoleccion_basura']);
+  $codigo_abastecimiento = trim($listado['codigo_abastecimiento']);
          // Nombres de los campos de la tabla. tercer tab.
             $codigo_estatus = trim($listado['codigo_estatus']);
          
@@ -100,22 +118,45 @@ $codigo_institucion = $_SESSION['codigo_institucion'];
 
 	 // Rellenando la array. segundo tabs-2
 	 $datos[$fila_array]["fecha_nacimiento"] = $fecha_nacimiento;
-    $datos[$fila_array]["partida_nacimiento"] = $partida_nacimiento;
+   $datos[$fila_array]["partida_nacimiento"] = $partida_nacimiento;
 	 $datos[$fila_array]["edad"] = $edad;
+   $datos[$fila_array]["dui"] = $dui;
+   $datos[$fila_array]["pasaporte"] = $pasaporte;
+   $datos[$fila_array]["codigo_nacionalidad"] = $codigo_nacionalidad;
+   $datos[$fila_array]["retornado"] = $retornado;
+   $datos[$fila_array]["posee_pn"] = $posee_pn;
+   $datos[$fila_array]["presenta_pn"] = $presenta_pn;
+
 	 $datos[$fila_array]["pn_numero"] = $pn_numero;
 	 $datos[$fila_array]["pn_folio"] = $pn_folio;
 	 $datos[$fila_array]["pn_tomo"] = $pn_tomo;
 	 $datos[$fila_array]["pn_libro"] = $pn_libro;
-         $datos[$fila_array]["codigo_genero"] = $codigo_genero;
+
+  $datos[$fila_array]["codigo_genero"] = $codigo_genero;
+  $datos[$fila_array]["codigo_etnia"] = $codigo_etnia;
+
+  $datos[$fila_array]["codigo_diagnostico"] = $codigo_diagnostico;
+  $datos[$fila_array]["codigo_servicio_apoyo_educativo"] = $codigo_servicio_apoyo_educativo;
+
 	 $datos[$fila_array]["codigo_estado_civil"] = $codigo_estado_civil;
 	 $datos[$fila_array]["codigo_departamento"] = $codigo_departamento;
 	 $datos[$fila_array]["codigo_municipio"] = $codigo_municipio;
 	 $datos[$fila_array]["codigo_estado_familiar"] = $codigo_estado_familiar;
 	 $datos[$fila_array]["codigo_actividad_economica"] = $codigo_actividad_economica;
 	 $datos[$fila_array]["codigo_tipo_discapacidad"] = $codigo_tipo_discapacidad;
-	 $datos[$fila_array]["codigo_servicio_apoyo_educativo"] = $codigo_servicio_apoyo_educativo;
-	 $datos[$fila_array]["codigo_zona_residencia"] = $codigo_zona_residencia;
+
+   $datos[$fila_array]["direccion_email"] = $direccion_email;
+   $datos[$fila_array]["cantidad_hijos"] = $cantidad_hijos;
 	 
+	 $datos[$fila_array]["codigo_zona_residencia"] = $codigo_zona_residencia;
+   //
+   $datos[$fila_array]["embarazada"] = $embarazada;
+   $datos[$fila_array]["codigo_tipo_vivienda"] = $codigo_tipo_vivienda;
+   $datos[$fila_array]["codigo_canton"] = $codigo_canton;
+   $datos[$fila_array]["codigo_caserio"] = $codigo_caserio;
+   $datos[$fila_array]["servicio_energia"] = $servicio_energia;
+   $datos[$fila_array]["recoleccion_basura"] = $recoleccion_basura;
+   $datos[$fila_array]["codigo_abastecimiento"] = $codigo_abastecimiento;
          // Rellenado la array, tercer tabs-3. Documentos presentados.
          $datos[$fila_array]["codigo_estatus"] = $codigo_estatus;         
          // Rellenando la array, cuarto tabs-
@@ -126,11 +167,9 @@ $codigo_institucion = $_SESSION['codigo_institucion'];
          $datos[$fila_array]["url_foto"] = $url_foto;
          $datos[$fila_array]["url_pn"] = $url_pn;
          $datos[$fila_array]["archivo_origen"] = $archivo_origen;
-
 	 // Incrementar el valor del array.
 	   $fila_array++;
         }
-
 // Recorriendo la Tabla con PDO::        
          // Rellenando la array. cuarto tabs-4. Padre/Madre/Encargado.
 	 // Debera crerase en las tablas correspondientes los campos para poder rellenar dicha informaci�n.
@@ -152,7 +191,6 @@ $codigo_institucion = $_SESSION['codigo_institucion'];
                     $codigo_zona = trim($listadoEncargado['codigo_zona']);
                     $codigo_departamento = trim($listadoEncargado['codigo_departamento']);
                     $codigo_municipio = trim($listadoEncargado['codigo_municipio']);
-
                     // pasar a la matriz.
                         $datos[$fila_array]["id_alumno_encargado"] = $id_alumno_encargado;
                         $datos[$fila_array]["nombres"] = $nombres;
@@ -169,12 +207,10 @@ $codigo_institucion = $_SESSION['codigo_institucion'];
                         $datos[$fila_array]["codigo_zona"] = $codigo_zona;
                         $datos[$fila_array]["codigo_departamento"] = $codigo_departamento;
                         $datos[$fila_array]["codigo_municipio"] = $codigo_municipio;
-                              
                     // Incrementar el valor del array.
                     $fila_array++;
                   }
             }
-        
 // Recorriendo la Tabla con PDO::
     $num = 1;
 	if($consulta_historial -> rowCount() != 0){		

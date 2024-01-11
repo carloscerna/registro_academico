@@ -48,15 +48,17 @@ $(document).ready(function() {
 // Jquery-mask - entrado de datos.
   jQuery(function($){
      // Form Users Agregar.
+     $("#dui").mask("99999999-9");
+     //
       $("#telresidencia").mask("9999-9999");
       $("#telcelular").mask("9999-9999");
-      
+      //
       $("#duip").mask("99999999-9");
       $("#telefonop").mask("9999-9999");
-      
+      //
       $("#duim").mask("99999999-9");
       $("#telefonom").mask("9999-9999");
-      
+      //
       $("#duio").mask("99999999-9");
       $("#telefonoo").mask("9999-9999");
   });   
@@ -191,7 +193,7 @@ $(document).ready(function() {
   <!-- Main content -->
     <section class="content">
       <!-- FORM PRINCIPAL -->
-      <form action="" method="post" id="formUsers" name="formUsers" role="form" enctype="multipart/form-data">
+      <form action="" method="post" id="formUsers" name="formUsers" role="form" enctype="multipart/form-data" autocomplete="off">
       <div class="tab-content tab-validate"> <!-- VALIDATE DE TODO EL DIV PARA LOS DIFERENTES INPUT'S -->
         <!-- INPUT HIDE CONTROLA EL GUARDO DEL REGISTRO..            
         <input type="hidden" id="accion_buscar" name="accion_buscar" value = "GenerarCodigoNuevo" class="{required:true}">-->            
@@ -258,71 +260,183 @@ $(document).ready(function() {
                   <!-- Tab panes -->
                   <div class="tab-content h-75">
                     <div class="tab-pane h-100 p-2 active border border-primary" id="home" role="tabpanel" aria-labelledby="home-tab">
-                          <!-- MODAL BODY ROW -->
                           <div class="modal-body row">
-                            <div class="col-md-8">
+                            <div class="col-md-9">
                                 <!-- INICIO DEL FORMULARIO -->
-                                <fieldset>
-                                    <legend>Información General</legend>
-                                        <div class="form-group row">
-                                          <label class="col-lg-3 col-form-label form-control-label">Nombres</label>
-                                            <div class="col-lg-9">
-                                              <input class="form-control" type="text" id="txtnombres" name="txtnombres" maxlength="60" required="required" onchange="conMayusculas(this);" aria-label="Nombres del Estudiante">
-                                            </div>
+                                <!-- IDENTIFICACION --> 
+                                <fieldset>                                     <!-- NIE, DUI Y PASAPORTE U OTRO. -->
+                                    <legend>Identificación</legend>
+                                    <div class="form-group row">
+                                      <label class="col-sm-4 col-form-label form-control-label">NIE</label>
+                                      <div class="input-group col-sm-8">
+                                        <div class="input-group-prepend">
+                                          <span class="input-group-text text-bold bg-gradient-gray"><i class="fal fa-hashtag"></i></span>
                                         </div>
-                                        <div class="form-group row">
-                                          <label class="col-lg-3 col-form-label form-control-label">Apellido Paterno</label>
-                                          <div class="col-lg-9">
-                                            <input class="form-control" type="text" id="apellido_paterno" name="apellido_paterno" maxlength="30" onchange="conMayusculas(this);" aria-label="ApellidoPaterno">
-                                          </div>
+                                        <input type="number" class="form-control" id="nie" name="nie" aria-label="nie" autocomplete="off">
+                                      </div>
+                                      <label class="col-sm-4 col-form-label form-control-label">DUI</label>
+                                      <div class="input-group col-sm-8">
+                                        <div class="input-group-prepend">
+                                          <span class="input-group-text text-bold bg-gradient-gray"><i class="fal fa-hashtag"></i></span>
                                         </div>
-                                        <div class="form-group row">
-                                          <label class="col-lg-3 col-form-label form-control-label">Apellido Materno</label>
-                                          <div class="col-lg-9">
-                                            <input class="form-control" type="text" id="apellido_materno" name="apellido_materno" maxlength="30" onchange="conMayusculas(this);" aria-label="ApellidoMaterno">
-                                          </div>
+                                        <input type="text" name= "dui" id="dui" value = "" class="form-control" aria-label="dui" autocomplete="off">
+                                      </div>
+                                      <label class="col-sm-4 col-form-label form-control-label">Pasaporte/Otro</label>
+                                      <div class="input-group col-sm-8">
+                                        <div class="input-group-prepend">
+                                          <span class="input-group-text text-bold bg-gradient-gray"><i class="fal fa-hashtag"></i></span>
                                         </div>
-                                        <div class="form-group row">
-                                          <label class="col-lg-3 col-form-label form-control-label">Dirección</label>
-                                          <div class="col-lg-9">
-                                            <textarea id="direccion_alumno" name="direccion_alumno" class="form-control" aria-label="DireccionAlumno"></textarea>
-                                          </div>
-                                        </div>
-                                        <div class="form-group row">
-                                          <label class="col-lg-3 col-form-label form-control-label">Tipo de Medicamento</label>
-                                          <div class="col-lg-9">
-                                            <textarea id="medicamento" name="medicamento_alumno" class="form-control" aria-label="MedicamenteAlumno"></textarea>
-                                          </div>
-                                        </div>
-                                        <div class="form-group row">
-                                          <label class="col-lg-3 col-form-label form-control-label">N.º Residencia</label>
-                                          <div class="col-lg-9">
-                                            <input class="form-control" type="text" name="telresidencia" id="telresidencia" aria-label="TelResidencia">
-                                          </div>
-                                        </div>
-                                        <div class="form-group row">
-                                          <label class="col-lg-3 col-form-label form-control-label">N.º Celular</label>
-                                          <div class="col-lg-9">
-                                            <input class="form-control" type="text" name="telcelular" id="telcelular" aria-label="TelCeluar">
-                                          </div>
-                                        </div>
-                                        <div class="form-group row">
-                                          <label class="col-lg-3 col-form-label form-control-label">E@mail</label>
-                                          <div class="col-lg-9">
-                                            <input type="text" name="email_alumno" id="email_alumno" placeholder="123@host.com" class="form-control">
-                                          </div>
-                                        </div>
+                                        <input type="text" name= "pasaporte_otro" id="pasaporte_otro" value = "" class="form-control" aria-label="pasaporte_otro" maxlength="25" autocomplete="off">
+                                      </div>
+                                    </div>
                                 </fieldset>
                                 <!-- INICIO DEL FORMULARIO -->
                             </div>
-                            <div class="col-md-4">
-                              <!-- Your second column here -->
-                              <div class="input-group mb-3">
-                                <div class="input-group-prepend">
-                                  <span class="input-group-text">NIE:</span>
-                                </div>
-                                <input type="number" class="form-control" id="nie" name="nie" aria-label="Nie">
-                              </div>
+                            <div class="col-md-3">
+                              
+                            </div>
+                          </div><!-- FIN MODAL BODY PARTIDA DE NACIMIENTO -->  
+                          <!-- MODAL BODY ROW -->
+                          <div class="modal-body row">
+                            <div class="col-md-9">
+                                <!-- INICIO DEL FORMULARIO -->
+                                <fieldset>
+                                    <legend>Datos Personales</legend>                                    
+                                        <!-- NOMBRES FECHA DE NACIMIENTO NACIONALIDAD-->
+                                        <div class="form-group row">
+                                          <label class="col-sm-4 col-form-label form-control-label">Nombres</label>
+                                          <div class="input-group col-sm-8">
+                                            <div class="input-group-prepend">
+                                              <span class="input-group-text text-bold bg-gradient-gray"><i class="fad fa-user"></i></span>
+                                            </div>
+                                            <input class="form-control" type="text" id="txtnombres" name="txtnombres" maxlength="60" required="required" onchange="conMayusculas(this);" aria-label="Nombres del Estudiante" autocomplete="off">
+                                          </div>
+                                          <label class="col-sm-4 col-form-label form-control-label">Apellido Paterno</label>
+                                          <div class="input-group col-sm-8">
+                                            <div class="input-group-prepend">
+                                              <span class="input-group-text text-bold bg-gradient-gray"><i class="fad fa-user"></i></span>
+                                            </div>
+                                            <input class="form-control" type="text" id="apellido_paterno" name="apellido_paterno" maxlength="30" onchange="conMayusculas(this);" aria-label="ApellidoPaterno" autocomplete="off">
+                                          </div>
+                                          <label class="col-sm-4 col-form-label form-control-label">Apellido Materno</label>
+                                          <div class="input-group col-sm-8">
+                                            <div class="input-group-prepend">
+                                              <span class="input-group-text text-bold bg-gradient-gray"><i class="fad fa-user"></i></span>
+                                            </div>
+                                            <input class="form-control" type="text" id="apellido_materno" name="apellido_materno" maxlength="30" onchange="conMayusculas(this);" aria-label="ApellidoMaterno" autocomplete="off">  
+                                          </div>
+                                        </div>
+                                        <!-- FECHA DE NACIMIENTO Y EDAD-->
+                                        <div class="form-group row">
+                                          <label class="col-sm-4 col-form-label form-control-label">Fecha de Nacimiento</label>
+                                          <div class="input-group col-sm-8">
+                                            <div class="input-group-prepend">
+                                              <span class="input-group-text text-bold bg-gradient-gray"><i class="far fa-calendar-day"></i></span>
+                                            </div>
+                                            <input class="form-control" type="date" id="txtfechanacimiento" name="fechanacimiento" onblur="calcular_edad(this.value);" aria-label="FechaNacimiento">
+                                            <div><label for="lbl_edad_y_mes" class="control-label"></label></div>
+                                          </div>
+                                          <label class="col-sm-4 col-form-label form-control-label">Edad</label>
+                                          <div class="input-group col-sm-8">
+                                            <div class="input-group-prepend">
+                                              <span class="input-group-text text-bold bg-gradient-gray"><i class="fad fa-hashtag"></i></span>
+                                            </div>
+                                            <input class="form-control" type="text" id="txtedad" name="txtedad" value = "0" readonly="readonly" aria-label="TxtEdad">
+                                            <input type="hidden" name= "edad_enviar" id="edad_enviar" value = "00" class="form-control">
+                                          </div>
+                                        </div>
+                                        <!-- NACIONALIDAD Y RETORNADO -->
+                                        <div class="form-group row">
+                                          <label class="col-sm-4 col-form-label form-control-label">Nacionalidad</label>
+                                          <div class="input-group col-sm-8">
+                                            <div class="input-group-prepend">
+                                              <span class="input-group-text text-bold bg-gradient-gray"><i class="fab fa-font-awesome-flag"></i></span>
+                                            </div>
+                                            <select id="lstNacionalidadE" name="lstNacionalidadE" class="custom-select" aria-label="lstNacionalidadE"></select>							
+                                          </div>
+                                          <label class="col-sm-4 col-form-label form-control-label">Retornado</label>
+                                          <div class="input-group col-sm-8">
+                                            <div class="input-group-prepend">
+                                              <span class="input-group-text text-bold bg-gradient-gray"><i class="fas fa-undo"></i></span>
+                                            </div>
+                                            <select id="lstRetornado" name="lstRetornado" class="custom-select" aria-label="lstRetornado">
+                                              <option value="Si">Sí</option>
+                                              <option value="No" selected>No</option>
+                                            </select>							
+                                          </div>
+                                        </div>
+                                        <!-- Partida de Nacimiento, Posse presenta, Sexo. -->
+                                        <div class="form-group row">
+                                          <div class="text-bold text-lg">
+                                            <label for="">Partida de Nacimiento</label>
+                                          </div>
+                                          <div class="input-group">
+                                            <label class="col-sm-4 col-form-label form-control-label">Posee</label>
+                                            <div class="input-group col-sm-8">
+                                              <div class="input-group-prepend">
+                                                <span class="input-group-text text-bold bg-gradient-gray"><i class="fal fa-archive"></i></span>
+                                              </div>
+                                              <select id="lstPnPosee" name="lstPnPosee" class="custom-select" aria-label="lstPnPosee">
+                                                <option value="Si" selected>Sí</option>
+                                                <option value="No">No</option>
+                                              </select>	                                            
+                                            </div>
+                                            <label class="col-sm-4 col-form-label form-control-label">Presenta</label>
+                                            <div class="input-group col-sm-8">
+                                              <div class="input-group-prepend">
+                                                <span class="input-group-text text-bold bg-gradient-gray"><i class="fal fa-archive"></i></span>
+                                              </div>
+                                              <select id="lstPnPresenta" name="lstPnPresenta" class="custom-select" aria-label="lstPnPresenta">
+                                                <option value="Si" selected>Sí</option>
+                                                <option value="No">No</option>
+                                              </select>	
+                                            </div>
+                                            <label class="col-sm-4 col-form-label form-control-label">Sexo</label>
+                                            <div class="input-group col-sm-8">
+                                              <div class="input-group-prepend">
+                                                <span class="input-group-text text-bold bg-gradient-gray"><i class="fad fa-user-friends"></i></span>
+                                              </div>
+                                              <select class="custom-select" id="lstgenero" name="lstgenero" aria-label="LstGenero"></select>
+                                            </div>
+                                          </div>
+                                        </div>
+                                          <!-- Partida de Nacimiento, numero, folio, tomo y libro-->
+                                          <div class="form-group row">
+                                            <label class="col-sm-4 col-form-label form-control-label">Número</label>
+                                            <div class="input-group col-sm-8">
+                                              <div class="input-group-prepend">
+                                                <span class="input-group-text text-bold bg-gradient-gray"><i class="fal fa-hashtag"></i></span>
+                                              </div>
+                                              <input type="text" name= "numero_pn" id="numero_pn" value = "0" class="form-control" aria-label="NumeroPn">
+                                            </div>
+                                            <label class="col-sm-4 col-form-label form-control-label">Folio</label>
+                                            <div class="input-group col-sm-8">
+                                              <div class="input-group-prepend">
+                                                <span class="input-group-text text-bold bg-gradient-gray"><i class="fal fa-hashtag"></i></span>
+                                              </div>
+                                              <input type="text" name= "folio_pn" id="folio_pn" value = "0" class="form-control" aria-label="FolioPn">
+                                            </div>
+                                            <label class="col-sm-4 col-form-label form-control-label">Tomo</label>
+                                            <div class="input-group col-sm-8">
+                                              <div class="input-group-prepend">
+                                                <span class="input-group-text text-bold bg-gradient-gray"><i class="fal fa-hashtag"></i></span>
+                                              </div>
+                                              <input type="text" name= "tomo_pn" id="tomo_pn" value = "0" class="form-control" aria-label="TomoPn">
+                                            </div>
+                                            <label class="col-sm-4 col-form-label form-control-label">Libro</label>
+                                            <div class="input-group col-sm-8">
+                                              <div class="input-group-prepend">
+                                                <span class="input-group-text text-bold bg-gradient-gray"><i class="fal fa-hashtag"></i></span>
+                                              </div>
+                                              <input type="text" name= "libro_pn" id="libro_pn" value = "0" class="form-control" aria-label="LibroPN">
+                                            </div>
+                                          </div>
+                                </fieldset>
+                                <!-- INICIO DEL FORMULARIO -->
+                            </div>
+
+                            <div class="col-md-3">  <!-- CARGA LA FOTOGRAFIA Y LA PARTIDA DE NACIMIENTO.-->
+                              <!-- Your second column here - CARGAR LA FOTOGRAFIA.-->
                                   <form method="post" action="#" enctype="multipart/form-data">
                                     <div class="card">
                                       <div class="card-header bg-gradient-info text-black">
@@ -348,170 +462,258 @@ $(document).ready(function() {
                                       </div>
                                     </div>
                                   </form>
-                            </div>
-                          </div><!-- FIN MODAL BODY INFORMACIÓN GENERAL-->
-                        <!-- MODAL BODY ROW PARTIDA DE NACIMIENTO -->
-                          <div class="modal-body row">
-                            <div class="col-md-7">
-                                <!-- INICIO DEL FORMULARIO -->
-                                <fieldset>
-                                    <legend>Información Partida de Nacimiento</legend>
-                                    <!-- PESTAÑA DATOS PERSONALES - INPUT  Fecha nacimiento, edad, genero y estado civil-->
-                                        <div class="form-group row">
-                                          <label class="col-lg-3 col-form-label form-control-label">Fecha Nacimiento</label>
-                                          <div class="col-lg-9">
-                                            <input class="form-control" type="date" id="txtfechanacimiento" name="fechanacimiento" onblur="calcular_edad(this.value);" aria-label="FechaNacimiento">
-                                            <p><label for="lbl_edad_y_mes" class="control-label"></label></p>
+                                  <!-- Your second column here  DATOS DE LA PARTIDA DE NACIMIENTO-->
+                                  <form method="post" action="#" enctype="multipart/form-data">
+                                    <div class="card">
+                                      <div class="card-header bg-gradient-info text-black">
+                                        <div class="d-flex flex-row w-100 justify-content-between">
+                                          <div id="CargarArchivoFotoPN">
+                                            <label for="CargarArchivoFotoPN" class="text-white">Cargar: <i class="fad fa-upload fa-lg"></i>
+                                              <input type="file" value="" name="fileupPN" id="fileupPN" disabled aria-label="FileUpPN">
+                                            </label>
+                                          </div>
+                                          <div>
+                                            <label class="text-center text-white" id="namefilePN"></label>
+                                            <span class="imguploadPN ok text-white" ><i class="fa fa-check"></i></span>
+                                            <span class="imguploadPN stop text-white"><i class="fa fa-times"></i></span>
                                           </div>
                                         </div>
-                                        <div class="form-group row">
-                                          <label class="col-lg-3 col-form-label form-control-label">Edad</label>
-                                          <div class="col-lg-9">
-                                            <input class="form-control" type="text" id="txtedad" name="txtedad" value = "0" readonly="readonly" aria-label="TxtEdad">
-                                            <input type="hidden" name= "edad_enviar" id="edad_enviar" value = "00" class="form-control">
-                                          </div>
-                                        </div>
-                                        <div class="form-group row">
-                                          <label class="col-lg-3 col-form-label form-control-label">Género</label>
-                                          <div class="col-lg-9">
-                                            <select class="custom-select" id="lstgenero" name="lstgenero" aria-label="LstGenero"></select>
-                                          </div>
-                                        </div>
-                                        <div class="form-group row">
-                                          <label class="col-lg-3 col-form-label form-control-label">Estado Civil</label>
-                                          <div class="col-lg-9">
-                                            <select class="custom-select" id="lstEstadoCivil" name="lstEstadoCivil" aria-label="LstEstadoCivil"></select>
-                                          </div>
-                                        </div>
-                                        <!-- PESTAÑA DATOS PERSONALES - INPUT Número, folio, tomo, libro.-->
-                                        <div class="form-group row">
-                                          <label class="col-lg-3 col-form-label form-control-label">Número</label>
-                                          <div class="col-lg-9">
-                                            <input type="text" name= "numero_pn" id="numero_pn" value = "0" class="form-control" aria-label="NumeroPn">
-                                          </div>
-                                        </div>
-                                        <div class="form-group row">
-                                          <label class="col-lg-3 col-form-label form-control-label">Folio</label>
-                                          <div class="col-lg-9">
-                                            <input type="text" name= "folio_pn" id="folio_pn" value = "0" class="form-control" aria-label="FolioPn">
-                                          </div>
-                                        </div>
-                                        <div class="form-group row">
-                                          <label class="col-lg-3 col-form-label form-control-label">Tomo</label>
-                                          <div class="col-lg-9">
-                                            <input type="text" name= "tomo_pn" id="tomo_pn" value = "0" class="form-control" aria-label="TomoPn">
-                                          </div>
-                                        </div>
-                                        <div class="form-group row">
-                                          <label class="col-lg-3 col-form-label form-control-label">Libro</label>
-                                          <div class="col-lg-9">
-                                            <input type="text" name= "libro_pn" id="libro_pn" value = "0" class="form-control" aria-label="LibroPN">
-                                          </div>
-                                        </div>
-                                </fieldset>
-                                <!-- INICIO DEL FORMULARIO -->
-                            </div>
-                            <div class="col-md-5">
-                              <!-- Your second column here  -->
-                              <form method="post" action="#" enctype="multipart/form-data">
-                                <div class="card">
-                                  <div class="card-header bg-gradient-info text-black">
-                                    <div class="d-flex flex-row w-100 justify-content-between">
-                                      <div id="CargarArchivoFotoPN">
-                                        <label for="CargarArchivoFotoPN" class="text-white">Cargar: <i class="fad fa-upload fa-lg"></i>
-                                          <input type="file" value="" name="fileupPN" id="fileupPN" disabled aria-label="FileUpPN">
-                                        </label>
+                                    </div>
+                                      <div class="card-body">
+                                        <form method="post" action="#" enctype="multipart/form-data">
+                                          <img class="card-img-top-PN img-fluid" id="ImagenPN" src="#" aria-label="CardImgPN">
+                                        </form>
                                       </div>
-                                      <div>
-                                        <label class="text-center text-white" id="namefilePN"></label>
-                                        <span class="imguploadPN ok text-white" ><i class="fa fa-check"></i></span>
-                                        <span class="imguploadPN stop text-white"><i class="fa fa-times"></i></span>
+                                      <div class="card-footer bg-gradient-info">
                                       </div>
                                     </div>
-                                </div>
-                                  <div class="card-body">
-                                    <form method="post" action="#" enctype="multipart/form-data">
-                                      <img class="card-img-top-PN img-fluid" id="ImagenPN" src="#" aria-label="CardImgPN">
-                                    </form>
-                                  </div>
-                                  <div class="card-footer bg-gradient-info">
-                                  </div>
-                                </div>
-                              </form>
+                                  </form>
                             </div>
-                          </div><!-- FIN MODAL BODY PARTIDA DE NACIMIENTO -->                      
-                        <!-- MODAL BODY ROW PARTIDA DE NACIMIENTO -->
+                          </div><!-- FIN MODAL BODY INFORMACIÓN GENERAL-->
+                          <div class="modal-body row"> <!-- MODAL BODY ROW DATOS PERSONALES -->
+                            <div class="col-md-6">
+                                <fieldset>
+                                    <legend>Datos Personales</legend>
+                                        <!-- ETNIA Y CONDICION DE DISCAPCIDAD -->
+                                        <div class="form-group row">
+                                          <label class="col-sm-4 col-form-label form-control-label">Etnia</label>
+                                          <div class="input-group col-sm-8">
+                                            <div class="input-group-prepend">
+                                              <span class="input-group-text text-bold bg-gradient-gray"><i class="fas fa-users"></i></span>
+                                            </div>
+                                            <select id="lstEtnia" name="lstEtnia" class="custom-select" aria-label="lstEtnia"></select>							
+                                          </div>
+                                          <label class="col-sm-6 col-form-label form-control-label">Condición de Discapacidad</label>
+                                          <div class="input-group col-sm-6">
+                                            <div class="input-group-prepend">
+                                              <span class="input-group-text text-bold bg-gradient-gray"><i class="far fa-wheelchair"></i></span>
+                                            </div>
+                                            <select id="lstTipoDiscapacidad" name="lstTipoDiscapacidad" class="custom-select" aria-label="lstTipoDiscapacidad"></select>							
+                                          </div>
+                                          <!-- POSEE DIAGNOSTICO CLINICO Y EL ESTUDIANTE HA SIDO REFERIDO A -->
+                                          <label class="col-sm-6 col-form-label form-control-label">¿Posee Diagnóstico Clinico?</label>
+                                          <div class="input-group col-sm-6">
+                                            <div class="input-group-prepend">
+                                              <span class="input-group-text text-bold bg-gradient-gray"><i class="fal fa-user-nurse"></i></span>
+                                            </div>
+                                            <select id="lstDiagnostico" name="lstDiagnostico" class="custom-select" aria-label="lstDiagnostico"></select>										
+                                          </div>
+                                          <label class="col-sm-6 col-form-label form-control-label">El Estudiante ha sido referido a</label>
+                                          <div class="input-group col-sm-6">
+                                            <div class="input-group-prepend">
+                                              <span class="input-group-text text-bold bg-gradient-gray"><i class="fad fa-sticky-note"></i></span>
+                                            </div>
+                                            <select id="lstServicioApoyoEducativo" name="lstServicioApoyoEducativo" class="custom-select" aria-label="lstServicioApoyoEducativo"></select>							
+                                          </div>
+                                        <!-- Correo electronico, telefonod econtacto, Tiene WhatsApp -->
+                                        <label class="col-sm-6 col-form-label form-control-label">Correo Electrónico</label>
+                                          <div class="input-group col-sm-6">
+                                            <div class="input-group-prepend">
+                                              <span class="input-group-text text-bold bg-gradient-gray"><i class="far fa-at"></i></span>
+                                            </div>
+                                            <input type="text" name="email_alumno" id="email_alumno" placeholder="123@host.com" class="form-control">				
+                                          </div>
+                                          <label class="col-sm-6 col-form-label form-control-label">N.º Teléfono de Contacto</label>
+                                          <div class="input-group col-sm-6">
+                                            <div class="input-group-prepend">
+                                              <span class="input-group-text text-bold bg-gradient-gray"><i class="far fa-phone"></i></span>
+                                            </div>
+                                            <input class="form-control" type="text" name="telcelular" id="telcelular" aria-label="TelCeluar">
+                                          </div>
+                                          <label class="col-sm-4 col-form-label form-control-label">¿Tiene WhatsApp?</label>
+                                          <div class="input-group col-sm-8">
+                                            <div class="input-group-prepend">
+                                              <span class="input-group-text text-bold bg-gradient-gray"><i class="fab fa-whatsapp"></i></span>
+                                            </div>
+                                            <select id="lstWhatsApp" name="lstWhatsApp" class="custom-select" aria-label="lstWhatsApp">
+                                              <option value="Si" selected>Sí</option>
+                                              <option value="No">No</option>
+                                            </select>		
+                                          </div>
+                                      </div>
+                                </fieldset>
+                            </div>
+                            <div class="col-md-6">
+                              <fieldset>
+                                <legend>Datos Personales</legend>
+                                  <div class="form-group row">
+                                    <!-- TIPO DE TRABAJO Y ESTADO FAMILIAR-->
+                                    <label class="col-sm-4 col-form-label form-control-label">¿Tipo de Trabajo? </label>
+                                    <div class="input-group col-sm-8">
+                                      <div class="input-group-prepend">
+                                        <span class="input-group-text text-bold bg-gradient-gray"><i class="fad fa-users"></i></span>
+                                      </div>
+                                      <select id="LstActividadEconomica" name="LstActividadEconomica" class="custom-select" aria-label="LstActividadEconomica"></select>							
+                                    </div>
+                                    <label class="col-sm-4 col-form-label form-control-label">Estado Familiar </label>
+                                    <div class="input-group col-sm-8">
+                                      <div class="input-group-prepend">
+                                        <span class="input-group-text text-bold bg-gradient-gray"><i class="fad fa-restroom"></i></span>
+                                      </div>
+                                      <select class="custom-select" id="lstEstadoCivil" name="lstEstadoCivil" aria-label="LstEstadoCivil"></select>
+                                    </div>
+                                    <label class="col-sm-5 col-form-label form-control-label">Convivencia familiar </label>
+                                    <div class="input-group col-sm-7">
+                                      <div class="input-group-prepend">
+                                        <span class="input-group-text text-bold bg-gradient-gray"><i class="fad fa-user-friends"></i></span>
+                                      </div>
+                                      <select id="LstEstadoFamiliar" name="LstEstadoFamiliar" class="custom-select" aria-label="LstEstadoFamiliar"></select>
+                                    </div>
+                                    <!-- CONVIVENCIA FAMILIAR Y ESTA EMBARZADA LA ESTUDIANTE -->
+                                    <label class="col-sm-7 col-form-label form-control-label">¿Esta embarazada la estudiante? </label>
+                                    <div class="input-group col-sm-5">
+                                      <div class="input-group-prepend">
+                                        <span class="input-group-text text-bold bg-gradient-gray"><i class="fad fa-female"></i></span>
+                                      </div>
+                                      <select id="lstEmbarazada" name="lstEmbarazada" class="custom-select" aria-label="lstEmbarazada">
+                                        <option value="Si">Sí</option>
+                                        <option value="No" selected>No</option>
+                                        <option value="No Aplica">No Aplica</option>
+                                      </select>		
+                                    </div>
+                                    <label class="col-sm-7 col-form-label form-control-label">¿El estudiante tiene hijos o hijas? </label>
+                                    <div class="input-group col-sm-5">
+                                      <div class="input-group-prepend">
+                                        <span class="input-group-text text-bold bg-gradient-gray"><i class="fad fa-baby"></i></span>
+                                      </div>
+                                      <select id="lstTieneHijos" name="lstTieneHijos" class="custom-select" aria-label="lstTieneHijos">
+                                        <option value="Si">Sí</option>
+                                        <option value="No" selected>No</option>
+                                      </select>
+                                    </div>
+                                    <label class="col-sm-9 col-form-label form-control-label">¿Cantidad de hijos o del o de la estudiante? </label>
+                                    <div class="input-group col-sm-3">
+                                      <div class="input-group-prepend">
+                                        <span class="input-group-text text-bold bg-gradient-gray"><i class="fal fa-hashtag"></i></span>
+                                      </div>
+                                      <input class="form-control" type="number" name="CantidadHijos" id="CantidadHijos" aria-label="CantidadHijos" value = "0">
+                                    </div>
+                                  </div>
+                                </fieldset> 
+                            </div>
+                          </div><!-- FIN MODAL BODY DATOS PERSONALES -->                      
                           <div class="modal-body row">
                             <div class="col-md-6">
                                 <!-- INICIO DEL FORMULARIO RESIDENCIA -->
                                 <fieldset>
-                                    <legend>Residencia y Otros</legend>
-                                    <!-- PESTAÑA DATOS PERSONALES - INPUT Departamento, Municipio.-->
-                                        <div class="form-group row">
-                                          <label class="col-lg-3 col-form-label form-control-label">Zona Residencia</label>
-                                          <div class="col-lg-9">
-                                            <select id="lstZonaResidencia" name="lstzonaresidencia" class="custom-select" aria-label="LstZonaResidencia"></select>
+                                    <legend>Residencia</legend>
+                                      <!-- PESTAÑA DATOS PERSONALES - INPUT Zona Residencia.-->
+                                      <div class="form-group row">
+                                        <label class="col-sm-4 col-form-label form-control-label">Zona Residencia</label>
+                                        <div class="input-group col-sm-8">
+                                          <div class="input-group-prepend">
+                                            <span class="input-group-text text-bold bg-gradient-gray"><i class="fad fa-home"></i></span>
                                           </div>
+                                          <select id="lstZonaResidencia" name="lstzonaresidencia" class="custom-select" aria-label="LstZonaResidencia"></select>
                                         </div>
-                                        <div class="form-group row">
-                                          <label class="col-lg-3 col-form-label form-control-label">Departamento</label>
-                                          <div class="col-lg-9">
-                                            <select id="lstDepartamento" name="lstdepartamento" class="custom-select" aria-label="LstDepartamento"></select>
+                                      <!-- PESTAÑA DATOS PERSONALES - Tipo de vivienda del Estudiante.-->
+                                      <label class="col-sm-8 col-form-label form-control-label">¿Tipo de Vivienda del Estudiante?</label>
+                                      <div class="input-group col-sm-4">
+                                        <div class="input-group-prepend">
+                                          <span class="input-group-text text-bold bg-gradient-gray"><i class="fad fa-home"></i></span>
+                                        </div>
+                                        <select id="LstTipoVivienda" name="LstTipoVivienda" class="custom-select" aria-label="LstTipoVivienda"></select>
+                                      </div>
+                                      <!-- PESTAÑA DATOS PERSONALES - INPUT Departamento, Municipio.-->
+                                      <label class="col-sm-4 col-form-label form-control-label">Departamento</label>
+                                      <div class="input-group col-sm-8">
+                                        <div class="input-group-prepend">
+                                          <span class="input-group-text text-bold bg-gradient-gray"><i class="fad fa-home"></i></span>
+                                        </div>
+                                        <select id="lstDepartamento" name="lstdepartamento" class="custom-select" aria-label="LstDepartamento"></select>
+                                      </div>
+                                        <label class="col-sm-4 col-form-label form-control-label">Municipio</label>
+                                        <div class="input-group col-sm-8">
+                                          <div class="input-group-prepend">
+                                            <span class="input-group-text text-bold bg-gradient-gray"><i class="fad fa-home"></i></span>
                                           </div>
+                                          <select id="lstMunicipio" name="lstmunicipio" class="custom-select" aria-label="LstMunicipio"></select>
                                         </div>
-                                        <div class="form-group row">
-                                          <label class="col-lg-3 col-form-label form-control-label">Municipio</label>
-                                          <div class="col-lg-9">
-                                            <select id="lstMunicipio" name="lstmunicipio" class="custom-select" aria-label="LstMunicipio"></select>
-                                          </div>
+
+                                      <!-- PESTAÑA DATOS PERSONALES - Cantón y Caserio-->
+                                      <label class="col-sm-4 col-form-label form-control-label">Cantón</label>
+                                      <div class="input-group col-sm-8">
+                                        <div class="input-group-prepend">
+                                          <span class="input-group-text text-bold bg-gradient-gray"><i class="fad fa-home"></i></span>
                                         </div>
-                                        <div class="form-group row">
-                                          <label class="col-lg-3 col-form-label form-control-label">Cantón</label>
-                                          <div class="col-lg-9">
-                                            <select id="lstcanton" name="lstcanton" class="custom-select" aria-label="LstCanton"></select>
-                                          </div>
+                                        <select id="lstCanton" name="lstCanton" class="custom-select" aria-label="lstCanton"></select>
+                                      </div>
+                                      <label class="col-sm-4 col-form-label form-control-label">Caserio</label>
+                                      <div class="input-group col-sm-8">
+                                        <div class="input-group-prepend">
+                                          <span class="input-group-text text-bold bg-gradient-gray"><i class="fad fa-home"></i></span>
                                         </div>
-                                        <!-- PESTAÑA DATOS PERSONALES - INPUT Número, folio, tomo, libro.-->
-                                        <div class="form-group row">
-                                          <label class="col-lg-3 col-form-label form-control-label">Caserío</label>
-                                          <div class="col-lg-9">
-                                            <select id="lstcaserio" name="lstcaserio" class="custom-select" aria-label="LstCaserio"></select>
-                                          </div>
+                                        <input class="form-control" type="text" name="lstCaserio" id="lstCaserio" aria-label="lstCaserio" maxlength="50">
+                                      </div>
+                                      <!-- PESTAÑA DATOS PERSONALES - Dirección.-->
+                                      <label class="col-sm-4 col-form-label form-control-label">Dirección</label>
+                                      <div class="input-group col-sm-8">
+                                        <div class="input-group-prepend">
+                                          <span class="input-group-text text-bold bg-gradient-gray"><i class="fad fa-home"></i></span>
                                         </div>
-                                        <div class="form-group row">
-                                          <label class="col-lg-3 col-form-label form-control-label">Dirección</label>
-                                          <div class="col-lg-9">
-                                          </div>
-                                        </div>
+                                        <textarea id="direccion_alumno" name="direccion_alumno" class="form-control" aria-label="DireccionAlumno"></textarea>
+                                      </div>
+                                    </div>
                                 </fieldset>
                                 <!-- INICIO DEL FORMULARIO -->
                             </div>
                             <div class="col-md-6">
-                              <!-- Your second column here -->
-                                        <div class="form-group row">
-                                          <label class="col-lg-3 col-form-label form-control-label">Estado Familiar</label>
-                                          <div class="col-lg-9">
-                                            <select id="lstEstadoFamiliar" name="lstestadofamiliar" class="custom-select" aria-label="LstEstadoFamiliar"></select>
+                                <!-- INICIO DEL FORMULARIO RESIDENCIA -->
+                                <fieldset>
+                                  <legend>Servicios Básicos</legend>
+                                      <!-- PESTAÑA DATOS PERSONALES - SERVICIO ENERGIA.-->
+                                      <div class="form-group row">
+                                        <label class="col-sm-9 col-form-label form-control-label">¿Cuenta con servicio de energía eléctrica en su casa?</label>
+                                        <div class="input-group col-sm-3">
+                                          <div class="input-group-prepend">
+                                            <span class="input-group-text text-bold bg-gradient-gray"><i class="fad fa-home"></i></span>
                                           </div>
+                                          <select id="lstServicioEnergia" name="lstServicioEnergia" class="custom-select" aria-label="lstServicioEnergia">
+                                            <option value="Si" selected>Sí</option>
+                                            <option value="No">No</option>
+                                          </select>
                                         </div>
-                                        <div class="form-group row">
-                                          <label class="col-lg-3 col-form-label form-control-label">Actividad Económica</label>
-                                          <div class="col-lg-9">
-                                            <select id="lstActividadEconomica" name="lstactividadeconomica" class="custom-select" aria-label="LstActividadEconomica"></select>							
+                                        <!-- PESTAÑA DATOS PERSONALES - RECOLECCION DE BASURA.-->
+                                        <label class="col-sm-9 col-form-label form-control-label">¿Cuenta con servicio de recolección de basura?</label>
+                                        <div class="input-group col-sm-3">
+                                          <div class="input-group-prepend">
+                                            <span class="input-group-text text-bold bg-gradient-gray"><i class="fad fa-home"></i></span>
                                           </div>
+                                          <select id="lstRecoleccionBasura" name="lstRecoleccionBasura" class="custom-select" aria-label="lstRecoleccionBasura">
+                                            <option value="Si" selected>Sí</option>
+                                            <option value="No">No</option>
+                                          </select>
                                         </div>
-                                        <div class="form-group row">
-                                          <label class="col-lg-3 col-form-label form-control-label">Tipo Discapacidad</label>
-                                          <div class="col-lg-9">
-                                            <select id="lstTipoDiscapacidad" name="lsttipodiscapacidad" class="custom-select" aria-label="LstTipoDiscapacidad"></select>						
+                                        <!-- PESTAÑA DATOS PERSONALES - ABASTECIMIENTO DE AGUA EN CASA.-->
+                                        <label class="col-sm-12 col-form-label form-control-label">¿Cuál es la fuente principal de abastecimiento de agua de su casa?</label>
+                                        <div class="input-group col-sm-12">
+                                          <div class="input-group-prepend">
+                                            <span class="input-group-text text-bold bg-gradient-gray"><i class="fad fa-home"></i></span>
                                           </div>
+                                          <select id="lstAbastecimientoAgua" name="lstAbastecimientoAgua" class="custom-select" aria-label="lstAbastecimientoAgua"></select>
                                         </div>
-                                        <div class="form-group row">
-                                          <label class="col-lg-3 col-form-label form-control-label">Servicio de Apoyo Educativo</label>
-                                          <div class="col-lg-9">
-                                            <select id="lstServicioApoyoEducativo" name= "lstservicioapoyoeducativo" class="custom-select" aria-label="LstServicioApoyoEducativo"></select>
-                                          </div>
-                                        </div>
+                                      </div>
+                                </fieldset>
                             </div>
                           </div><!-- FIN MODAL BODY RESIDENCIA -->
                     </div>

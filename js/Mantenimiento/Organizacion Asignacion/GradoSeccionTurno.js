@@ -204,10 +204,19 @@ $(function(){
                                 $("#TextoModalidadesSeGST").text(texto_modalidad_gst);
                                 //
                                 listar_CodigoSeGST(data[0].codigo_se);
+                                listar_CodigoTurnoGST(data[0].codigo_turno);
                                 //
                                 // Abrir ventana modal.
                                 $('#VentanaSeGST').modal("show");
                                 $("label[for=LblTituloSeGST]").text("Grado/Sección/Turno | Actualizar");
+                                // RETORNAR EL VALOR DEL ACCION SEGUN ETIQUETA LABEL.
+                                msjEtiqueta = $("label[for=LblTituloSeGST]").text();
+                                if(msjEtiqueta == "Modalidad | Actualizar")
+                                {
+                                    accion = "ActualizarSeGST";
+                                }else{
+                                    accion = "GuardarSeGST";
+                                }
                                 // reestablecer el accion a=ActulizarAsignatura.
                                 accion_gst = "ActualizarGST";
                             },"json");
@@ -246,7 +255,7 @@ $(function(){
                                 dataType: "json",                     
                                 url:"php_libs/soporte/Mantenimiento/Organizacion Asignacion/phpAjaxOrganizacionAsignacion.php",                     
                                 data: {                     
-                                        accion_buscar: 'EliminarSeGST', id_: Id_Editar_Eliminar,
+                                        accion: 'EliminarSeGST', id_: Id_Editar_Eliminar,
                                         },                     
                                 success: function(response) {                     
                                         if (response.respuesta === true) {                     		
@@ -563,4 +572,21 @@ function listar_CodigoSeGST(CodigoSeGST){
                 }
             }
     }, "json");    
+}
+function listar_CodigoTurnoGST(CodigoTurnoGST){
+        var miselect=$("#formVentanaSeGST select[name=lstTurnoSeGST]");
+        /* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
+        miselect.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
+        
+        $.post("includes/cargar-turno.php",
+            function(data) {
+                miselect.empty();
+                for (var i=0; i<data.length; i++) {
+                    if(CodigoTurnoGST == data[i].codigo){
+                        miselect.append('<option value="' + data[i].codigo + '" selected>' + data[i].descripcion + '</option>');
+                    }else{
+                        miselect.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');
+                    }
+                }
+        }, "json");    
 }

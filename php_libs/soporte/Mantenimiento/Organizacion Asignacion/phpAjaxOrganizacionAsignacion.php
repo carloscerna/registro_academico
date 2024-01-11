@@ -355,7 +355,7 @@ if($errorDbConexion == false){
 			case 'EditarGST':
 				$id_ = trim($_REQUEST['id_']);
 				// Armamos el query y iniciamos variables.
-					$query = "SELECT id_grados_secciones, codigo_servicio_educativo
+					$query = "SELECT id_grados_secciones, codigo_servicio_educativo, codigo_turno
 								FROM organizacion_grados_secciones
 									WHERE id_grados_secciones = '$id_'";
 				// Ejecutamos el Query.
@@ -370,9 +370,11 @@ if($errorDbConexion == false){
 					// variables
 					$id_ = trim($listado['id_grados_secciones']);
 					$codigo_se = trim($listado['codigo_servicio_educativo']);
+					$codigo_turno = trim($listado['codigo_turno']);
 					
 					$datos[$fila_array]["id_"] = $id_;
 					$datos[$fila_array]["codigo_se"] = $codigo_se;
+					$datos[$fila_array]["codigo_turno"] = $codigo_turno;
 					$fila_array++;
 					}
 					$mensajeError = "Se ha consultado el registro correctamente ";
@@ -381,24 +383,29 @@ if($errorDbConexion == false){
 			case 'ActualizarSeGST':
 				$id_ = $_POST['id_'];
 				$codigo_se = trim($_POST['lstSeGST']);
+				$codigo_turno = $_POST["lstTurnoSeGST"];
 				// Armamos el query y iniciamos variables.
 					$query = "UPDATE organizacion_grados_secciones 
-								SET codigo_servicio_educativo = '$codigo_se' WHERE id_grados_secciones = $id_";
+								SET codigo_servicio_educativo = '$codigo_se', codigo_turno = '$codigo_turno'
+								WHERE id_grados_secciones = $id_";
 				// Ejecutamos el Query.
 				$consulta = $dblink -> query($query);
 					$respuestaOK = true;
 					$contenidoOK = "Registro Actualizado.";
 					$mensajeError = "Se ha consultado el registro correctamente ";
 			break;
-			case 'GuardarGradoSeccion':
+			case 'GuardarSeGST':
 				// consultar el registro antes de agregarlo.
 				// Armamos el query y iniciamos variables.
-				 $codigo_ann_lectivo = ($_POST['lstannlectivoGradoSeccion']);
-				 $codigo_modalidad = ($_POST['lstmodalidadGradoSeccion']);
-				 $codigo_grado = $_POST["lstgradoseccion"];
-				 $codigo_seccion = $_POST["lstseccion"];
-				 $codigo_turno = $_POST["lstturno"];
-				 $query = "SELECT * FROM organizacion_grados_secciones WHERE codigo_ann_lectivo = '$codigo_ann_lectivo' and codigo_bachillerato = '$codigo_modalidad' and codigo_grado = '$codigo_grado' and codigo_seccion = '$codigo_seccion' and codigo_turno = '$codigo_turno'";
+				 $codigo_ann_lectivo = ($_POST['lstAnnLectivoSeGST']);
+				 $codigo_modalidad = ($_POST['lstModalidadSeGST']);
+				 $codigo_grado = $_POST["lstGradoSeGST"];
+				 $codigo_seccion = $_POST["lstSeccionSeGST"];
+				 $codigo_turno = $_POST["lstTurnoSeGST"];
+				 $codigo_servicio_educativo = $_POST["lstSeGST"];
+				 $query = "SELECT * FROM organizacion_grados_secciones 
+				 			WHERE codigo_ann_lectivo = '$codigo_ann_lectivo' and codigo_bachillerato = '$codigo_modalidad' 
+								and codigo_grado = '$codigo_grado' and codigo_seccion = '$codigo_seccion' and codigo_turno = '$codigo_turno' and codigo_servicio_educativo = '$codigo_servicio_educativo'";
 				// Ejecutamos el Query.
 				$consulta = $dblink -> query($query);
 
@@ -408,12 +415,31 @@ if($errorDbConexion == false){
 					$mensajeError = "Si Existe";
 				}else{
 				// proceso para grabar el registro
-					$query = "INSERT INTO organizacion_grados_secciones (codigo_ann_lectivo, codigo_bachillerato, codigo_grado, codigo_seccion, codigo_turno) VALUES ('$codigo_ann_lectivo','$codigo_modalidad','$codigo_grado','$codigo_seccion','$codigo_turno')";
+					$query = "INSERT INTO organizacion_grados_secciones 
+								(codigo_ann_lectivo, codigo_bachillerato, codigo_grado, codigo_seccion, codigo_turno, codigo_servicio_educativo) 
+									VALUES ('$codigo_ann_lectivo','$codigo_modalidad','$codigo_grado','$codigo_seccion','$codigo_turno','$codigo_servicio_educativo')";
 				// Ejecutamos el Query.
-				$consulta = $dblink -> query($query);
+					$consulta = $dblink -> query($query);
 					$respuestaOK = true;
 					$contenidoOK = "";
 					$mensajeError = "Si Registro";
+				}
+			break;
+			case 'EliminarSeGST':
+				// Armamos el query
+				$id_ = $_POST['id_'];
+					$query = "DELETE FROM organizacion_grados_secciones WHERE id_grados_secciones = '$id_'";
+				// Ejecutamos el query
+					$count = $dblink -> exec($query);
+				// Validamos que se haya actualizado el registro
+				if($count != 0){
+					$respuestaOK = true;
+					$mensajeError = 'Se ha eliminado el registro correctamente';
+
+					$contenidoOK = 'Se ha Eliminado '.$count.' Registro(s).';
+
+				}else{
+					$mensajeError = 'No se ha eliminado el registro';
 				}
 			break;
 			///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -652,7 +678,7 @@ if($errorDbConexion == false){
 					$numero = 1;
 					$query_todas = "SELECT codigo as codigo_asignatura, nombre as nombre_asignatura, ordenar
 								FROM asignatura
-								WHERE imprimir = 'true' and estatus = 'true' and codigo_servicio_educativo = '$codigo_se'
+								WHERE imprimir = 'true' and estatus = 'true' and codigo_servicio_educativo = '$codigo_servicio_educativo'
 									ORDER BY codigo_servicio_educativo, codigo_area, id_asignatura";
 					$consulta_todas = $dblink -> query($query_todas);
 					// recorrer las asignaturas
@@ -662,7 +688,9 @@ if($errorDbConexion == false){
 								$codigo_asignatura = trim($listado['codigo_asignatura']);
 								$ordenar = trim($listado['ordenar']);
 														// VERFICAR SI NO EXISTE ASIGNATURA.
-									$query_buscar = "SELECT * FROM a_a_a_bach_o_ciclo WHERE codigo_ann_lectivo = '$codigo_ann_lectivo' and codigo_bach_o_ciclo = '$codigo_modalidad' and codigo_grado = '$codigo_grado' and codigo_asignatura = '$codigo_asignatura'";
+									$query_buscar = "SELECT * FROM a_a_a_bach_o_ciclo 
+												WHERE codigo_ann_lectivo = '$codigo_annlectivo' and codigo_bach_o_ciclo = '$codigo_modalidad' and codigo_grado = '$codigo_grado' 
+												and codigo_asignatura = '$codigo_asignatura'";
 								// Ejecutamos el Query.
 								$consulta_buscar = $dblink -> query($query_buscar);
 				
@@ -672,7 +700,8 @@ if($errorDbConexion == false){
 									$mensajeError = "Si Existe";
 								}else{
 								// proceso para grabar el registro
-									$query = "INSERT INTO a_a_a_bach_o_ciclo (codigo_ann_lectivo, codigo_bach_o_ciclo, codigo_asignacion, codigo_grado, codigo_asignatura, orden) VALUES ('$codigo_ann_lectivo','$codigo_modalidad','$codigo_modalidad','$codigo_grado','$codigo_asignatura','$ordenar')";
+									$query = "INSERT INTO a_a_a_bach_o_ciclo (codigo_ann_lectivo, codigo_bach_o_ciclo, codigo_asignacion, codigo_grado, codigo_asignatura, orden) 
+									VALUES ('$codigo_annlectivo','$codigo_modalidad','$codigo_modalidad','$codigo_grado','$codigo_asignatura','$ordenar')";
 								// Ejecutamos el Query.
 										$consulta = $dblink -> query($query);
 									// variables de retorno.
@@ -699,7 +728,8 @@ if($errorDbConexion == false){
 							$mensajeError = "El Registro del Componente ya Existe.";
 						}else{
 						// proceso para grabar el registro
-							$query = "INSERT INTO a_a_a_bach_o_ciclo (codigo_ann_lectivo, codigo_bach_o_ciclo, codigo_asignacion, codigo_grado, codigo_asignatura) VALUES ('$codigo_annlectivo','$codigo_modalidad','$codigo_modalidad','$codigo_grado','$codigo_asignatura')";
+							$query = "INSERT INTO a_a_a_bach_o_ciclo (codigo_ann_lectivo, codigo_bach_o_ciclo, codigo_asignacion, codigo_grado, codigo_asignatura) 
+									VALUES ('$codigo_annlectivo','$codigo_modalidad','$codigo_modalidad','$codigo_grado','$codigo_asignatura')";
 						// Ejecutamos el Query.
 						$consulta = $dblink -> query($query);
 							$respuestaOK = true;
@@ -776,7 +806,8 @@ else{
 }	// FIN DE LA CONDICON PRINCRIPAL
 // CONDICIONES RESULTADO DEL JSON Y DATA[]
 if($_POST['accion'] == "BuscarHorarios" || $_POST['accion'] == "GuardarHorarios" || $_POST['accion'] == "ActualizarHorarios"  || $_POST['accion'] == "EliminarHorarios"  
-	|| $_POST['accion'] == "BuscarModalidad" || $_POST['accion'] == "GuardarModalidad" || $_POST['accion'] == "EliminarModalidad" || $_POST['accion'] == "BuscarSeGST" || $_POST['accion'] == "ActualizarSeGST"
+	|| $_POST['accion'] == "BuscarModalidad" || $_POST['accion'] == "GuardarModalidad" || $_POST['accion'] == "EliminarModalidad" || $_POST['accion'] == "BuscarSeGST"
+	|| $_POST['accion'] == "ActualizarSeGST" || $_POST['accion'] == "GuardarSeGST" || $_POST['accion'] == "EliminarSeGST"  
 	|| $_POST['accion'] == "BuscarDN" || $_POST['accion'] == "GuardarDN" || $_POST['accion'] == "ActualizarDN"
 	|| $_POST["accion"] == "BuscarAAG" || $_POST['accion'] == "GuardarAAG" || $_POST['accion'] == "EliminarAAG")
 {

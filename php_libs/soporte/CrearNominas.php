@@ -110,14 +110,14 @@ $contenidoOK = "";
   $pn_libro = trim(($row['pn_libro']));
   $pn_folio = trim(($row['pn_folio']));
   $fecha_nacimiento_encargado = trim(cambiaf_a_normal(($row['encargado_fecha_nacimiento'])));
-
+        $nombre_completo = $nombres . " " . $apellidos_materno_paterno;
   //$ = trim(($row['']));
         //  IMPRIMIR EL CONTENIDO DE  INFORMACION EN EXCEL.
 	    $objPHPExcel->getActiveSheet()->SetCellValue("A".$fila_excel, $num);
         $objPHPExcel->getActiveSheet()->SetCellValue("B".$fila_excel,($codigo_alumno));
         $objPHPExcel->getActiveSheet()->SetCellValue("C".$fila_excel,($codigo_matricula));
         $objPHPExcel->getActiveSheet()->SetCellValue("D".$fila_excel, TRIM($row['codigo_nie']));
-        $objPHPExcel->getActiveSheet()->SetCellValue("E".$fila_excel,($apellidos_nombres));
+        $objPHPExcel->getActiveSheet()->SetCellValue("E".$fila_excel,($nombre_completo));
         $objPHPExcel->getActiveSheet()->SetCellValue("F".$fila_excel,($genero_estudiante));
         $objPHPExcel->getActiveSheet()->SetCellValue("G".$fila_excel,($fecha_nacimiento));
         $objPHPExcel->getActiveSheet()->SetCellValue("H".$fila_excel,($edad));
