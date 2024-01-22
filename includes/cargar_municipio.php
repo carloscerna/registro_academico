@@ -4,8 +4,8 @@
 // Incluimos el archivo de funciones y conexión a la base de datos
 include($path_root."/registro_academico/includes/mainFunctions_conexion.php");
 // armando el Query.
-$query = "SELECT codigo, nombre from municipio
-	   where codigo_departamento = '".$_POST["departamento"]."' ORDER BY codigo";
+$codigo_departamento = $_POST["departamento"];
+$query = "SELECT codigo, nombre FROM municipio WHERE codigo_departamento = '$codigo_departamento' ORDER BY codigo";
 // Ejecutamos el Query.
    $consulta = $dblink -> query($query);
 // Inicializando el array
