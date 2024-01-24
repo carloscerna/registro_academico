@@ -261,7 +261,7 @@ $(function(){
                                         if (response.respuesta === true) {                     		
                                             // Asignamos valor a la variable acción
                                                 $('#accion_modalidad').val('BuscarSeGST');
-                                                accion_modalidad = 'BuscarSeGST';
+                                                accion = 'BuscarSeGST';
                                                 // Llamar al archivo php para hacer la consulta y presentar los datos.
                                                 $.post("php_libs/soporte/Mantenimiento/Organizacion Asignacion/phpAjaxOrganizacionAsignacion.php",  {accion: accion, codigo_annlectivo: codigo_annlectivo, codigo_modalidad: codigo_modalidad},
                                                     function(response) {

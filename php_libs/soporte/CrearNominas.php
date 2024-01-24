@@ -85,6 +85,10 @@ $contenidoOK = "";
 	// Apellidos (paterno y materno) - nombres.
 	$apellidos_nombres = trim(cambiar_de_del_2($row['apellido_alumno']));
 	// Apellidos (paterno y materno)
+        $apellido_paterno = trim($row['apellido_paterno']);
+        $apellido_materno = trim($row['apellido_materno']);
+        $nombre_completo_2 = mb_strtoupper(trim($row['nombre_completo']),"UTF-8");
+
 	$apellidos_materno_paterno = trim(cambiar_de_del_2($row['apellidos_alumno']));
 	// Nombres
     // genero estudiante
@@ -109,6 +113,7 @@ $contenidoOK = "";
   $pn_tomo = trim(($row['pn_tomo']));
   $pn_libro = trim(($row['pn_libro']));
   $pn_folio = trim(($row['pn_folio']));
+  $genero = mb_strtoupper(trim(($row['genero']),"UTF-8"));
   $fecha_nacimiento_encargado = trim(cambiaf_a_normal(($row['encargado_fecha_nacimiento'])));
         $nombre_completo = $nombres . " " . $apellidos_materno_paterno;
   //$ = trim(($row['']));
@@ -135,13 +140,19 @@ $contenidoOK = "";
         $objPHPExcel->getActiveSheet()->SetCellValue("R".$fila_excel,($dui_encargado));
         $objPHPExcel->getActiveSheet()->SetCellValue("S".$fila_excel,($nombre_parentesco));
         $objPHPExcel->getActiveSheet()->SetCellValue("T".$fila_excel,($numero_telefono_encargado));
+        // INFORMACION PARA EL CUANDRO DE PROMOCION
+        $objPHPExcel->getActiveSheet()->SetCellValue("W".$fila_excel,($apellido_paterno));
+        $objPHPExcel->getActiveSheet()->SetCellValue("X".$fila_excel,($apellido_materno));
+        $objPHPExcel->getActiveSheet()->SetCellValue("Y".$fila_excel,($nombre_completo_2));
+        $objPHPExcel->getActiveSheet()->SetCellValue("Z".$fila_excel, TRIM($row['codigo_nie']));
+        $objPHPExcel->getActiveSheet()->SetCellValue("AA".$fila_excel, $genero);
         //
         // GENERO ESTUDIANTAE
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////        
    }    //  FIN DEL WHILE.
 // Verificar si Existe el directorio archivos.
 		$codigo_modalidad = $codigo_bachillerato;
-		$nombre_ann_lectivo = $nombre_ann_lectivo;
+		//$nombre_ann_lectivo = $nombre_ann_lectivo;
 	// Tipo de Carpeta a Grabar Cuadro de Calificaciones.
 		$codigo_destino = 1;
 		CrearDirectorios($path_root,$nombre_ann_lectivo,$codigo_modalidad,$codigo_destino,"");
