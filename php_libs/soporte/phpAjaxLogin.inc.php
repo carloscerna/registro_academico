@@ -96,10 +96,11 @@ if($errorDbConexion == false){
                             ///////////////////////////////////////////////////////////////////////////////////////////
 							// Obtener datos de la institución.
                             ///////////////////////////////////////////////////////////////////////////////////////////
-								$consulta = "SELECT inf.id_institucion, inf.codigo_departamento, inf.codigo_municipio, inf.codigo_institucion, inf.nombre_institucion, inf.direccion_institucion, inf.telefono_uno, depa.codigo, depa.nombre as nombre_departamento, mu.codigo, mu.codigo_departamento, mu.nombre as nombre_municipio, pd.nombre_completo, inf.numero_acuerdo,
+								$consulta = "SELECT inf.id_institucion, inf.codigo_departamento, inf.codigo_municipio, inf.codigo_institucion, inf.nombre_institucion, inf.direccion_institucion, inf.telefono_uno, depa.codigo, depa.nombre as nombre_departamento, mu.codigo, mu.codigo_departamento, mu.nombre as nombre_municipio, inf.numero_acuerdo,
+											btrim(p.nombres || CAST(' ' AS VARCHAR) || p.apellidos) as nombre_completo,
 											inf.se_extiende_la_presente, inf.dia_entrega, inf.logo_uno, inf.logo_dos, inf.imagen_firma, inf.imagen_sello
 											from informacion_institucion inf
-												INNER JOIN planta_docente pd ON pd.codigo = inf.nombre_director
+												INNER JOIN personal p ON p.id_personal = CAST(inf.nombre_director AS INTEGER)
 												INNER JOIN departamento depa ON depa.codigo = inf.codigo_departamento
 												INNER JOIN municipio mu ON mu.codigo = inf.codigo_municipio and mu.codigo = inf.codigo_municipio and mu.codigo_departamento = inf.codigo_departamento
 													WHERE inf.codigo_departamento = depa.codigo and codigo_institucion = '$_SESSION[codigo_escuela]' LIMIT 1";

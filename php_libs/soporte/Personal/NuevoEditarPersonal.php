@@ -302,7 +302,14 @@ if($errorDbConexion == false){
                             $codigo_personal);	
 
 						// Ejecutamos el query guardar los datos en la tabla alumno..
-						$resultadoQuery = $dblink -> query($query_usuario);				
+						$resultadoQuery = $dblink -> query($query_usuario);
+						// ACTUALIZAR SI EL DOCENTE ES DIRECTOR.
+							$codigo_institucion = $_SESSION['codigo_institucion'];
+							$codigo_personal = strval($codigo_personal);
+							if($codigo_cargo == "01"){
+								$query_actualizar_institucion = "UPDATE informacion_institucion set nombre_director = '$codigo_personal' WHERE codigo_institucion = '$codigo_institucion'";
+								$resultadoQuery = $dblink -> query($query_actualizar_institucion);
+							}
 						
 					if($resultadoQuery == true){
 						$respuestaOK = true;
