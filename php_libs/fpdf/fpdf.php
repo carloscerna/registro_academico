@@ -90,7 +90,7 @@ function SetAligns($a)
 function fill($f)
 {
 	//juego de arreglos de relleno
-	$this->fill=$f;
+	$this->$fill=$f;
 }
 
 function Row($data) 
