@@ -11,7 +11,7 @@ ini_set("display_error", true);
 // variables/conexion.
     $host = 'localhost';
     $port = 5432;
-    $database = 'registro_academico_10391';
+    $database = 'registro_academico';
     $username = 'postgres';
     $password = 'Orellana';
 //Construimos el DSN//
@@ -93,7 +93,7 @@ while($row_ = $result_ -> fetch(PDO::FETCH_BOTH))
 		 }else {
 			 	   $query_insert = "INSERT INTO nota (codigo_asignatura, codigo_alumno, codigo_matricula) VALUES ('$codigo_asignatura_array[$i]',$codigo_alumno,$codigo_alumno_matricula)";
 		//			   $result_consulta_insert_notas = $dblink -> query($query_insert);
-		//			   print $num . "-" . $codigo_asignatura_array[$i] . " - " . $codigo_alumno . " " . $codigo_alumno_matricula . " " .$nombres . " " ."<br>";							
+					   print $num . "-" . $codigo_asignatura_array[$i] . " - " . $codigo_alumno . " " . $codigo_alumno_matricula . " " .$nombres . " " ."<br>";							
 					   $num++;
 		 } 
    }

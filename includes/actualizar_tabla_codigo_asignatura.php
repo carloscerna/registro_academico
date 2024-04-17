@@ -2,7 +2,7 @@
 // variables/conexion.
     $host = 'localhost';
     $port = 5432;
-    $database = 'registro_academico_10420';
+    $database = 'registro_academico';
     $username = 'postgres';
     $password = 'Orellana';
 //Construimos el DSN//
@@ -24,7 +24,7 @@ try{
 $codigo_asignatura = array('70','71','72','73','74');
 $nuevo_codigo_asignatura = array('241','242','243','244','245');
 //$nuevo_codigo_asignatura = array('243','244','245','246','247');
-$codigo_ann_lectivo = '20'; $codigo_bach_o_ciclo = '05';
+$codigo_ann_lectivo = '24'; $codigo_bach_o_ciclo = '05';
 
 $query_alumno_matricula = "SELECT codigo_bach_o_ciclo, codigo_ann_lectivo, codigo_grado, codigo_seccion, codigo_alumno, id_alumno_matricula
                             FROM alumno_matricula WHERE codigo_bach_o_ciclo = '$codigo_bach_o_ciclo' and codigo_ann_lectivo = '$codigo_ann_lectivo'";
@@ -32,8 +32,8 @@ $query_alumno_matricula = "SELECT codigo_bach_o_ciclo, codigo_ann_lectivo, codig
 	$result_consulta = $dblink -> query($query_alumno_matricula);
 		while($row = $result_consulta -> fetch(PDO::FETCH_BOTH))
 				{
-                    $codigo_alumno = $row{4};
-                    $codigo_matricula = $row{5};
+                    $codigo_alumno = $row["codigo_alumno"];
+                    $codigo_matricula = $row["id_alumno_matricula"];
                     
                     print "codigo alumno: " . $codigo_alumno;
                     print "codigo matricula: " . $codigo_matricula;
