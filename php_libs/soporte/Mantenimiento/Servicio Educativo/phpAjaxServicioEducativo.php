@@ -981,7 +981,7 @@ if($_POST['accion'] == "eliminar_annlectivo" || $_POST['accion'] == "BuscarSecci
 $salidaJson = array("respuesta" => $respuestaOK,
 		"mensaje" => $mensajeError,
 		"contenido" => $contenidoOK);
-	json_encode($salidaJson);
+	echo json_encode($salidaJson);
 }
 
 if($_POST['accion'] == "EditarModalidad" || $_POST['accion'] == "EditarAnnLectivo"
@@ -992,7 +992,7 @@ if($_POST['accion'] == "EditarModalidad" || $_POST['accion'] == "EditarAnnLectiv
 || $_POST['accion'] == "BuscarCodigoSe"  || $_POST['accion'] == "EditarSe") {
 	// Armamos array para convertir a JSON
 	echo "Datos procesados...";
-	json_encode($datos);
+	echo json_encode($datos);
 }
 
 ?>
