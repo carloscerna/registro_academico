@@ -991,7 +991,7 @@ if($_POST['accion'] == "EditarModalidad" || $_POST['accion'] == "EditarAnnLectiv
 || $_POST['accion'] == "BuscarCodigoAsignatura" || $_POST['accion'] == "EditarAsignatura"
 || $_POST['accion'] == "BuscarCodigoSe"  || $_POST['accion'] == "EditarSe") {
 	// Armamos array para convertir a JSON
-	echo "Datos procesados...";
+	//echo "Datos procesados...";
 	echo json_encode($datos);
 }
 

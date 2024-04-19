@@ -76,11 +76,11 @@ $contenidoOK = "";
 // Armamos el query.
   // CONSULTA ASIGNACION DE POR MODALIDAD Y GRADO.
   if($codigo_grado =="I3" || $codigo_grado =="4P" || $codigo_grado =="5P" || $codigo_grado =="6P"  || $codigo_grado == "01"){
-     $query_asig = "SELECT aaa.codigo_asignacion, aaa.codigo_bach_o_ciclo, aaa.codigo_asignatura, aaa.codigo_ann_lectivo, aaa.codigo_sirai, aaa.codigo_grado, aaa.id_asignacion, aaa.orden,
+    $query_asig = "SELECT DISTINCT aaa.codigo_asignacion, aaa.codigo_bach_o_ciclo, aaa.codigo_asignatura, aaa.codigo_ann_lectivo, aaa.codigo_sirai, aaa.codigo_grado, aaa.id_asignacion, aaa.orden,
               ann.nombre as nombre_ann_lectivo, bach.nombre as nombre_modalidad, gr.nombre as nombre_grado, asig.codigo as codigo_asignatura, asig.nombre as nombre_asignatura,
               asig.codigo_area as codigo_area_asignatura, asig.codigo_area_dimension, cat_area_di.descripcion as descripcion_area_dimension,
               cat_area_subdi.codigo, cat_area_subdi.descripcion as descripcion_area_subdimension,
-              cat_area.codigo, cat_area.descripcion as descripcion_area
+              cat_area.codigo, cat_area.descripcion as descripcion_area, asig.ordenar
                 FROM a_a_a_bach_o_ciclo aaa
 								INNER JOIN ann_lectivo ann ON ann.codigo = aaa.codigo_ann_lectivo
 								INNER JOIN bachillerato_ciclo bach ON bach.codigo = aaa.codigo_bach_o_ciclo
