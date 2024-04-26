@@ -64,7 +64,7 @@ $datos=array(); $fila_array = 0;
 	$timestamp = strtotime($fecha_actual);
 // N�mero de hoja.
    $numero_de_hoja = 1;
-	$numero = 3;	
+	$numero = 1;	
 // 	Recorre el numero de hojas que contenga el libro
        $objPHPExcel->setActiveSheetIndex($numero_de_hoja);
 		//	BUCLE QUE RECORRE TODA LA CUADRICULA DE LA HOJA DE CALCULO.
@@ -73,13 +73,23 @@ $datos=array(); $fila_array = 0;
 			 //  DATOS GENERALES.
 			 	$codigo = trim($objPHPExcel->getActiveSheet()->getCell("A".$fila)->getValue());
 				$descripcion = trim($objPHPExcel->getActiveSheet()->getCell("B".$fila)->getValue());
+                //$codigo_alto = trim($objPHPExcel->getActiveSheet()->getCell("C".$fila)->getValue());
+                //$codigo_medio = trim($objPHPExcel->getActiveSheet()->getCell("D".$fila)->getValue());
+                /*
+                if(empty($codigo_alto)){
+                    $codigo_riesgo = $codigo_medio;
+                }else{
+                    $codigo_riesgo = $codigo_alto;
+                }*/
             //
 
-				print $codigo . ' - ' . $descripcion  . " -- " .  "<br>";
+				//print $codigo . ' - ' . $descripcion  . " -- " .$codigo_riesgo.  "<br>";
+                print $codigo . ' - ' . $descripcion  . " -- " .  "<br>";
 				$fila++;
 				// Armar query para guardar en la tabla CATALOGO_PRODUCTOS.
-				 	$query = "INSERT INTO $nombre_tabla (codigo, descripcion) VALUES ('$codigo','$descripcion')";
+				 	//$query = "INSERT INTO $nombre_tabla (codigo, descripcion,codigo_clasificacion_riesgo) VALUES ('$codigo','$descripcion','$codigo_riesgo')";
+                     $query = "INSERT INTO $nombre_tabla (codigo, descripcion) VALUES ('$codigo','$descripcion')";
                     
-					$consulta = $dblink -> query($query);
+					8//$consulta = $dblink -> query($query);
 		}	// FIN DEL WHILE PRINCIPAL DE L AHOJA DE CALCULO.			
 ?>
