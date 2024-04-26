@@ -8,6 +8,10 @@
     $SistemaSiscarad = "C:/wamp64/www/siscarad/public/img/Pn/";
     $url_respaldo_pn = "d:/registro_academico/img/Pn/";
     $random = rand();
+    $respuestaOK = true;
+    $url_archivo = "";
+    $mensajeError = "No hay archivo.";
+    $contenidoOK = "";
 // Variables
     $Id_ = $_SESSION["Id_A"];
     $codigo_institucion = $_SESSION["codigo_institucion"];
@@ -15,7 +19,9 @@ if (is_array($_FILES) && count($_FILES) > 0) {
     if (($_FILES["file"]["type"] == "image/pjpeg")
         || ($_FILES["file"]["type"] == "image/jpeg")
         || ($_FILES["file"]["type"] == "image/png")
-        || ($_FILES["file"]["type"] == "image/gif")) {
+        || ($_FILES["file"]["type"] == "image/gif")
+        || ($_FILES["file"]["type"] == "image/jpg")
+        || ($_FILES['file']['type']) == 'application/pdf') {
         if (move_uploaded_file($_FILES["file"]["tmp_name"], $path_root . $url_ .$_FILES['file']['name'])) {
             //  Eliminar archivo anterior.
             // Armamos el query PARA ELIMINAR LA IMAGEN O SEA EL ARCHIVO.
@@ -74,6 +80,12 @@ if (is_array($_FILES) && count($_FILES) > 0) {
                         $original = imagecreatefromjpeg($path_root.$url_.$codigo_institucion."/".$nombreArchivo);
                     }else if($_FILES["file"]["type"] == "image/png"){
                         $original = imagecreatefrompng($path_root.$url_.$codigo_institucion."/".$nombreArchivo);
+                    }else if(($_FILES['file']['type']) == 'application/pdf'){
+                        $mensajeError = "Cargado Archivo PDF...";
+                        $contenidoOK = "pdf";
+                        $archivo_validar_pdf = true;
+                            //copy($path_root.$url_."/".$codigo_institucion."/".$nombreArchivo,$path_root.$url_.$codigo_institucion."/".$large."/".$nombreArchivo);
+                            //copy($path_root.$url_."/".$codigo_institucion."/".$nombreArchivo,$path_root.$url_.$codigo_institucion."/".$small."/".$nombreArchivo);
                     }
                 // respaldo d
                     copy($path_root.$url_.$codigo_institucion."/".$nombreArchivo,$url_respaldo_pn.$codigo_institucion."/".$nombreArchivo);
@@ -86,6 +98,14 @@ if (is_array($_FILES) && count($_FILES) > 0) {
                 $consulta = $dblink -> query($query);
                 //echo "../registro_academico/img/Pn/".$codigo_institucion."/".$nombreArchivo;
                 echo $url_.$codigo_institucion."/".$nombreArchivo;
+                $url_archivo = $url_.$codigo_institucion."/".$nombreArchivo;
+
+                // Armamos array para convertir a JSON
+                $salidaJson = array("respuesta" => $respuestaOK,
+                "mensaje" => $mensajeError,
+                "url" => $url_archivo,
+                "contenido" => $contenidoOK);
+            echo json_encode($salidaJson);
         } else {
             echo 0;
         }

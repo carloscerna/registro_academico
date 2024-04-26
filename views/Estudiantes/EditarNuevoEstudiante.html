@@ -123,7 +123,7 @@ $('#fileupPN').change(function(){
   
       filextension=filename.split(".");
       filext="."+filextension.slice(-1)[0];
-      valid=[".jpg",".png",".jpeg",".bmp"];
+      valid=[".jpg",".png",".jpeg",".bmp",".pdf"];
   //if file is not valid we show the error icon, the red alert, and hide the submit button
       if (valid.indexOf(filext.toLowerCase())==-1){
           $( ".imguploadPN.ok" ).hide("slow");
@@ -146,10 +146,26 @@ $('#fileupPN').change(function(){
               cache: false,
               url: 'php_libs/soporte/Estudiante/UploadPartidaNacimiento.php',
               type: 'post',
+              dataType: "json",
               data: formData,
               contentType: false,
               processData: false,
               success: function(response) {
+                if(response.contenido == "img"){
+                  $("#iframePDFPn").css("display","none");
+                  $(".card-img-top-PN").css("display","block");
+                  $(".card-img-top-PN").attr("src", response.url);
+                  $('#namefilePN').html("Imagen Cargada!");
+                    toastr["success"](response.mensaje, "Sistema");	
+                }
+
+                if (response.contenido == 'pdf') {
+                  $("#iframePDFPn").css("display","block");
+                  $(".card-img-top-PN").css("display","none");
+                  $("#iframePDFPn").attr("src", response.url);
+                    toastr["success"](response.mensaje, "Sistema");	
+                }
+                /*
                   if (response != 0) {
                       $(".card-img-top-PN").attr("src", response);
                       $('#namefilePN').html("Imagen Cargada!");
@@ -157,6 +173,7 @@ $('#fileupPN').change(function(){
                   } else {
                     toastr["error"]('Formato de imagen incorrecto.', "Sistema");
                   }
+                  */
               }
           });
       return false;
@@ -482,6 +499,7 @@ $(document).ready(function() {
                                       <div class="card-body">
                                         <form method="post" action="#" enctype="multipart/form-data">
                                           <img class="card-img-top-PN img-fluid" id="ImagenPN" src="#" aria-label="CardImgPN">
+                                          <iframe id="iframePDFPn" frameborder="0" scrolling="no" width="100%" height="250px" src="#" title="Mi Pdf"></iframe>
                                         </form>
                                       </div>
                                       <div class="card-footer bg-gradient-info">

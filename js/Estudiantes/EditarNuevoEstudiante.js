@@ -29,6 +29,11 @@ $(document).ready(function(){
 		{
 			$("#CargarArchivoFotoPN").attr("style", "display:none");
 		}
+		var display_4 =  $("#iframePDFPn").css("display");
+		if(display_4!="none")
+		{
+			$("#iframePDFPn").attr("style", "display:none");
+		}
 });
 $(function(){ // INICIO DEL FUNCTION.
 	// Escribir la fecha actual.
@@ -131,11 +136,24 @@ $(function(){ // INICIO DEL FUNCTION.
 							$(".card-img-top").attr("src", "../registro_academico/img/fotos/" + data[0].codigo_institucion + "/" + data[0].url_foto);	
 						}
 					// IMAGEN PARTIDA DE NACIMIENTO.
+					let text = data[0].url_pn;
+					const myExtension = text.split(".");
+					ruta_imagen = "../registro_academico/img/Pn/" + data[0].url_pn;
 						if(data[0].url_pn == "foto_no_disponible.jpg")
 						{
 							$(".card-img-top-PN").attr("src", "../registro_academico/img/NoDisponible.jpg");	
 						}else{
-							$(".card-img-top-PN").attr("src", "../registro_academico/img/Pn/" + data[0].url_pn);	
+							//alert(myExtension[1]);
+							if(myExtension[1] == "pdf"){
+								$('#iframePDFPn').attr('src',ruta_imagen)
+								$("#iframePDFPn").css("display","block");		// Botón Ver
+								$(".card-img-top-PN").css("display","none");
+							}else{
+								$(".card-img-top-PN").attr("src", ruta_imagen);	
+								$(".card-img-top-PN").css("display","block");		// Botón Ver
+								$("#iframePDFPn").css("display","none");
+							}
+							
 						}				
 					// datos para el card TITLE - INFORMACIÓN GENERAL
 						$('#txtcodigo').val(id_);

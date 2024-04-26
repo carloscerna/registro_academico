@@ -94,11 +94,11 @@ if($errorDbConexion == false){
                           }
 						// armar variables para estudio parvularia..
 						if($genero == '01'){
-                            $color_fila = '<tr style=background:#2874A6><td>';
+                            $color_fila = '<tr style=background:#E4F8FF><td>';
                             $genero = "checked data-toggle=tooltip data-placement=top title='Check Igual Masculino'";
                           }else{
                             $genero = "data-toggle=tooltip data-placement=top title='Check Igual Masculino'";;
-                            $color_fila = '<tr style=background:#8E44AD><td>';
+                            $color_fila = '<tr style=background:#FFE9E4><td>';
                           }
 
 						// Armar Cadena con resultado de las respectivas variables.
