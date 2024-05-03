@@ -616,7 +616,7 @@ if (lstlist_notas == 'aprobados_reprobados' && $(this).attr('data-accion') == 'l
                 varenviar = "/registro_academico/php_libs/reportes/notas_trimestre_por_asignatura_basica.php?todos="+reporte_ok+"&lstasignatura="+lstasignatura;
                 }
 
-        if(varbach >= '06' && varbach <= '09' || varbach == '15')
+        if(varbach >= '06' && varbach <= '09' || varbach == '15' || varbach == '10')
         {
                 varenviar = "/registro_academico/php_libs/reportes/notas_trimestre_por_asignatura_media.php?todos="+reporte_ok+"&lstasignatura="+lstasignatura;
         }
