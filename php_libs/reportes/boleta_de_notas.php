@@ -142,7 +142,9 @@ while($rows_encargado = $result_encargado -> fetch(PDO::FETCH_BOTH))
 			if($print_codigo_bachillerato == '15'){
 				$nivel_educacion = "Educación Media - Técnico Administrativo Contable";
 			}
-
+			if($print_codigo_bachillerato == '16'){
+				$nivel_educacion = "Educación Básica - Primer y Segundo Grado Focalizado";
+			}
 			if($print_codigo_bachillerato == '08' or $print_codigo_bachillerato == '09'){
 				$nivel_educacion = "Educación Media - Contaduría";
 			}

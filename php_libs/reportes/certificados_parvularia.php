@@ -20,7 +20,7 @@
         while($row = $result_encabezado -> fetch(PDO::FETCH_BOTH))
             {
             $print_bachillerato = trim($row['nombre_bachillerato']);
-            $print_grado = utf8_decode(trim($row['nombre_grado']));
+            $print_grado = convertirtexto(trim($row['nombre_grado']));
             $print_seccion = trim($row['nombre_seccion']);
             $print_ann_lectivo = trim($row['nombre_ann_lectivo']);
 	    
@@ -241,7 +241,7 @@ function FancyTable($header)
 					 {
 					// Se extiende la presente
 						$pdf->SetFont($nombre_fuente[13],$nombre_estilo[13],$tamaño_fuente[13]);
-						$pdf->RotatedText($xf[13],$yc[13],utf8_decode(trim($_SESSION['se_extiende'])),0);
+						$pdf->RotatedText($xf[13],$yc[13],convertirtexto(trim($_SESSION['se_extiende'])),0);
 					// Municipio.
 						$pdf->SetFont($nombre_fuente[14],$nombre_estilo[14],$tamaño_fuente[14]);
 						$pdf->RotatedText($xf[14],$yc[14],$_SESSION['nombre_municipio'],0);
@@ -256,7 +256,7 @@ function FancyTable($header)
 						$pdf->RotatedText($xf[17],$yc[17],$mes,0);
 					// Fecha en letras. año.
 						$pdf->SetFont($nombre_fuente[18],$nombre_estilo[18],$tamaño_fuente[18]);
-						$pdf->RotatedText($xf[18],$yc[18],utf8_decode(strtolower(num2letras($año))),0);
+						$pdf->RotatedText($xf[18],$yc[18],convertirtexto(strtolower(num2letras($año))),0);
 					// Crear una línea. F. Docente.
 						$pdf->SetFont($nombre_fuente[19],$nombre_estilo[19],$tamaño_fuente[19]);
 						$pdf->RotatedText($xf[19]-((strlen(trim($nombre_encargado)))/2),$yc[19],trim($nombre_encargado),0);

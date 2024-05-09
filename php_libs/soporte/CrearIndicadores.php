@@ -35,7 +35,12 @@ $contenidoOK = "";
               $print_ann_lectivo = 'Año Lectivo: '.trim($row['nombre_ann_lectivo']);
                 break;
             }
-    $n_hoja = 3;	// variable para el activesheet.
+              if($codigo_grado == "17"){
+                $n_hoja = 0;	// variable para el activesheet.
+              }else{
+                $n_hoja = 3;	// variable para el activesheet.
+              }
+    
     consultas(4,0,$codigo_all,'','','',$db_link,'');
 // call the autoload
     require $path_root."/registro_academico/vendor/autoload.php";
@@ -66,6 +71,12 @@ $contenidoOK = "";
     $NombreEstudiante = array("D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z",
     "AA","AB","AC","AD","AE","AF","AG","AH","AI","AJ","AK","AL","AM","AN","AO","AP","AQ");
   }
+  if($codigo_grado == "17")
+  {
+    $objPHPExcel = $objReader->load($origen."EDUCACION BASICA - SEGUNDO Y TERCER GRADO FOCALIZADO.xlsx");
+    $NombreEstudiante = array("D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z",
+    "AA","AB","AC","AD","AE","AF","AG","AH","AI","AJ","AK","AL","AM","AN","AO","AP","AQ");
+  }
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // consulta a la tabla para optener los nombres de las asignturas.
     // AREA DE CONSULTAS
@@ -75,7 +86,7 @@ $contenidoOK = "";
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Armamos el query.
   // CONSULTA ASIGNACION DE POR MODALIDAD Y GRADO.
-  if($codigo_grado =="I3" || $codigo_grado =="4P" || $codigo_grado =="5P" || $codigo_grado =="6P"  || $codigo_grado == "01"){
+  if($codigo_grado =="I3" || $codigo_grado =="4P" || $codigo_grado =="5P" || $codigo_grado =="6P"  || $codigo_grado == "01" || $codigo_grado == "17" || $codigo_grado == "18"){
     $query_asig = "SELECT DISTINCT aaa.codigo_asignacion, aaa.codigo_bach_o_ciclo, aaa.codigo_asignatura, aaa.codigo_ann_lectivo, aaa.codigo_sirai, aaa.codigo_grado, aaa.id_asignacion, aaa.orden,
               ann.nombre as nombre_ann_lectivo, bach.nombre as nombre_modalidad, gr.nombre as nombre_grado, asig.codigo as codigo_asignatura, asig.nombre as nombre_asignatura,
               asig.codigo_area as codigo_area_asignatura, asig.codigo_area_dimension, cat_area_di.descripcion as descripcion_area_dimension,
@@ -101,7 +112,7 @@ $contenidoOK = "";
   $nombre_area = array(); $nombre_area_di = array(); $nombre_area_di_subdi = array();
 //  CAPTURA DE DATOS A ARRAY PARA PARVULARIA, BASICA Y MEDIA.
     // PRIMERA INFANCIA - INICIAL 3, 4, 5, 6 Y 7 AÑOS.
-      if($codigo_grado =="I3" || $codigo_grado =="4P" || $codigo_grado =="5P" || $codigo_grado =="6P"  || $codigo_grado == "01")
+      if($codigo_grado =="I3" || $codigo_grado =="4P" || $codigo_grado =="5P" || $codigo_grado =="6P"  || $codigo_grado == "01" || $codigo_grado == "17" || $codigo_grado == "18")
       {
         while($row = $result_consulta -> fetch(PDO::FETCH_BOTH))
           {
@@ -131,11 +142,11 @@ $contenidoOK = "";
       $nombre_bachillerato_en_excel = "";
       $informacion_del_grado = $nombre_modalidad . " " . $nombre_grado . " " . $nombre_seccion . " " . $nombre_ann_lectivo;
 // UBICACION DE LA HOJA SEGUN CODIGO DE GRADO.
-  $objPHPExcel->setActiveSheetIndex(1);  // APLICA PARA 4,5,6 Y 7 AÑOS.
+  $objPHPExcel->setActiveSheetIndex($n_hoja);  // APLICA PARA 4,5,6 Y 7 AÑOS.
 //
 //  ROTULACION PARA I3, 4,5,6 7 AÑOS.
 //
-  if($codigo_grado == "I3" || $codigo_grado =="4P" || $codigo_grado =="5P" || $codigo_grado =="6P"  || $codigo_grado == "01")
+  if($codigo_grado == "I3" || $codigo_grado =="4P" || $codigo_grado =="5P" || $codigo_grado =="6P"  || $codigo_grado == "01" || $codigo_grado == "17" || $codigo_grado == "18")
   {      
       $objPHPExcel->getActiveSheet()->SetCellValue('D2', $_SESSION["institucion"]); // NOMBRE DE LA INSTITUCIÒN
       $objPHPExcel->getActiveSheet()->SetCellValue('D3', $print_nombre_docente); // NOMBRE DEL DOCENTE RESPONSABLE DE LA SECCION
@@ -146,7 +157,7 @@ $contenidoOK = "";
   }
 
 // UBICACION DE LA HOJA SEGUN CODIGO DE GRADO.
-  $objPHPExcel->setActiveSheetIndex(2);  // ALERTAS.
+  $objPHPExcel->setActiveSheetIndex(0);  // ALERTAS.
 //
 //  ROTULACIÓN PARA LA HOJA DE ALERTA TEMPRANA PARVULARIA
 //
@@ -168,7 +179,7 @@ $contenidoOK = "";
     if(isset($codigo_asignatura))
     {
           for($ca=0;$ca<count($codigo_asignatura);$ca++){
-            if($codigo_grado == "I3" || $codigo_grado =="4P" || $codigo_grado == "5P" || $codigo_grado == "6P"  || $codigo_grado == "01")
+            if($codigo_grado == "I3" || $codigo_grado =="4P" || $codigo_grado == "5P" || $codigo_grado == "6P"  || $codigo_grado == "01" || $codigo_grado == "17" || $codigo_grado == "18")
                 {
                   // ARMAR VARIABLES PARA LA DESCRIPCION DEL AREA, DIMENSION Y SUBDIMENSION.
                     $nombres_area_di_subdi = $nombre_area[$ca] ."/". $nombre_area_di[$ca] . "/" . $nombre_area_di_subdi[$ca];
@@ -181,12 +192,12 @@ $contenidoOK = "";
                         $fila_alerta++;
                   }else{
                     // movilizarme entre hoja
-                        $objPHPExcel->setActiveSheetIndex(0); // HOJA DE INDICADORES INSTRUMENTO 1
+                        $objPHPExcel->setActiveSheetIndex($n_hoja); // HOJA DE INDICADORES INSTRUMENTO 1
                           $objPHPExcel->getActiveSheet()->SetCellValue("A".$fila, $nombres_area_di_subdi);
                           //$objPHPExcel->getActiveSheet()->SetCellValue("B".$fila, $codigo_asignatura[$ca]);
                           $objPHPExcel->getActiveSheet()->SetCellValue("B".$fila, $nombre_asignatura[$ca]);
                     // movilizarme entre hoja
-                        $objPHPExcel->setActiveSheetIndex(1); // HOJA DE INDICADORES INSTRUMENTO 2
+                        $objPHPExcel->setActiveSheetIndex($n_hoja); // HOJA DE INDICADORES INSTRUMENTO 2
                           $objPHPExcel->getActiveSheet()->SetCellValue("A".$fila, $nombres_area_di_subdi);
                           $objPHPExcel->getActiveSheet()->SetCellValue("B".$fila, $codigo_asignatura[$ca]);
                           $objPHPExcel->getActiveSheet()->SetCellValue("C".$fila, $nombre_asignatura[$ca]);
@@ -220,7 +231,7 @@ $contenidoOK = "";
         //
         // movilizarme entre hoja
         //
-            $objPHPExcel->setActiveSheetIndex(1); // HOJA DE INDICADORES
+            $objPHPExcel->setActiveSheetIndex($n_hoja); // HOJA DE INDICADORES
          
         //  IMPRIMIR EL CONTENIDO DE  INFORMACION EN EXCEL. indicadores
             $objPHPExcel->getActiveSheet()->SetCellValue($NombreEstudiante[$num]."7",$NumeroEnColumna);  
@@ -246,14 +257,14 @@ $contenidoOK = "";
    }    //  FIN DEL WHILE.
    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////        
     // movilizarme entre hoja
-      $objPHPExcel->setActiveSheetIndex(1); // HOJA DE instrumento 2.
+      $objPHPExcel->setActiveSheetIndex($n_hoja); // HOJA DE instrumento 2.
     // Proteger hoja.
 			$objPHPExcel->getActiveSheet()->getProtection()->setPassword('1');
       //$objPHPExcel->getActiveSheet()->getProtection()->setSelectUnlockedCells(true);
 			$objPHPExcel->getActiveSheet()->getProtection()->setSheet(true);
 // Verificar si Existe el directorio archivos.
 		$codigo_modalidad = $codigo_bachillerato;
-		$nombre_ann_lectivo = $nombre_ann_lectivo;
+		//$nombre_ann_lectivo = $nombre_ann_lectivo;
 	// Tipo de Carpeta a Grabar en cuadro de Calificaciones.
 		$codigo_destino = 2;
 		CrearDirectorios($path_root,$nombre_ann_lectivo,$codigo_modalidad,$codigo_destino,"");
@@ -261,8 +272,10 @@ $contenidoOK = "";
     if($codigo_grado == "I3" || $codigo_grado =="4P" || $codigo_grado == "5P" || $codigo_grado == "6P")
     {
       $nombre_archivo = replace_3("Parvularia Estándar de Desarrollo  " . "-". $nombre_grado ."-".$nombre_seccion.".xlsx");
-    }else{
+    }else if($codigo_grado == "01"){
       $nombre_archivo = replace_3("Educación Básica Estándar de Desarrollo  " . "-". $nombre_grado ."-".$nombre_seccion.".xlsx");
+    }else{
+      $nombre_archivo = replace_3("Educación Básica - Segundo y Tercer Grado Focalizado  " . "-". $nombre_grado ."-".$nombre_seccion.".xlsx");
     }
 		
 // En caso de error.
