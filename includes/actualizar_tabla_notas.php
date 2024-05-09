@@ -11,7 +11,7 @@ ini_set("display_error", true);
 // variables/conexion.
     $host = 'localhost';
     $port = 5432;
-    $database = 'registro_academico';
+    $database = 'registro_academico_10391';
     $username = 'postgres';
     $password = 'Orellana';
 //Construimos el DSN//
@@ -32,10 +32,10 @@ $codigo_asignatura_inicio = 01;
 $codigo_asignatura_fin = 255;
 //$codigo_asignatura_array = array("01","02","03","04","05","08","234","236","237","238","239","240"); // Educación Básica de 1.º a 6.º.
 $codigo_asignatura_array = array(); // Educación Básica de 1.º a 6.º.
-$todos='05090223';
+$todos='151024';
 $codigo_bachillerato = substr($todos,0,2);
 $codigo_grado = substr($todos,2,2);
-$codigo_annlectivo = substr($todos,6,2);
+$codigo_annlectivo = substr($todos,4,2);
 $num = 0;
 
 // buscar asignaturas dependiendo del Ciclo y Grado.
@@ -59,7 +59,7 @@ $num = 0;
 			INNER JOIN grado_ano gan ON gan.codigo = am.codigo_grado
 			INNER JOIN seccion sec ON sec.codigo = am.codigo_seccion
 			INNER JOIN ann_lectivo ann ON ann.codigo = am.codigo_ann_lectivo
-			WHERE btrim(am.codigo_bach_o_ciclo || am.codigo_grado || am.codigo_seccion || am.codigo_ann_lectivo) = '".$todos.
+			WHERE btrim(am.codigo_bach_o_ciclo || am.codigo_grado || am.codigo_ann_lectivo) = '".$todos.
 			"' ORDER BY apellido_alumno ASC";
             
       $result_ = $dblink -> query($query);
@@ -68,9 +68,10 @@ $num = 0;
 // recorre la nómina
 while($row_ = $result_ -> fetch(PDO::FETCH_BOTH))
 {
+	$num = 1;
    $codigo_alumno = $row_['id_alumno'];
    $codigo_alumno_matricula = $row_['id_alumno_matricula'];
-   $nombres = trim($row_['apellidos_alumno']);
+   $nombres = trim($row_['apellido_alumno']);
    $total_asignaturas = count($codigo_asignatura_array);
    //print $total_asignaturas;
    for ($i=0;$i<=$total_asignaturas-1; $i++)
@@ -84,7 +85,7 @@ while($row_ = $result_ -> fetch(PDO::FETCH_BOTH))
 		 if($consulta_v -> rowCount() != 0){      
 			if($codigo_asignatura_array[$i] == '235'){
 				$query_update = "UPDATE nota SET nota_p_p_1 = nota_a3_1, nota_a1_1 = nota_a3_1, nota_a2_1 = nota_a3_1  WHERE codigo_alumno = $codigo_alumno and codigo_matricula = $codigo_alumno_matricula and codigo_asignatura = '$codigo_asignatura_array[$i]'";
-					$result_consulta_update_notas = $dblink -> query($query_update);
+					//$result_consulta_update_notas = $dblink -> query($query_update);
 					$contenidoOK = "Codigo de asignatura ya Existe...";
 					print $num . "-" . $codigo_asignatura_array[$i] . " - " . $codigo_alumno . " " . $codigo_alumno_matricula . " " .$nombres . " " ."<br>";							
 					$respuestaOK = false;
@@ -92,8 +93,8 @@ while($row_ = $result_ -> fetch(PDO::FETCH_BOTH))
 		 	}
 		 }else {
 			 	   $query_insert = "INSERT INTO nota (codigo_asignatura, codigo_alumno, codigo_matricula) VALUES ('$codigo_asignatura_array[$i]',$codigo_alumno,$codigo_alumno_matricula)";
-		//			   $result_consulta_insert_notas = $dblink -> query($query_insert);
-					   print $num . "-" . $codigo_asignatura_array[$i] . " - " . $codigo_alumno . " " . $codigo_alumno_matricula . " " .$nombres . " " ."<br>";							
+					   $result_consulta_insert_notas = $dblink -> query($query_insert);
+					   print $num . " INSERT -" . $codigo_asignatura_array[$i] . " - " . $codigo_alumno . " " . $codigo_alumno_matricula . " " .$nombres . " " ."<br>";							
 					   $num++;
 		 } 
    }

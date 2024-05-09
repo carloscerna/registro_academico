@@ -10,6 +10,21 @@ $codigo_modalidad = trim($_POST["codigo_modalidad"]);
 $codigo_annlectivo = trim($_POST["codigo_annlectivo"]);
 $codigo_se_post = explode("-",$_POST["codigo_grado_se"]);
 $codigo_se = $codigo_se_post[1];
+$codigo_asignatura_array = array(); // Educación Básica de 1.º a 6.º.
+$todos='134P012401';
+$codigo_bachillerato = substr($todos,0,2);
+$codigo_grado = substr($todos,2,2);
+$codigo_annlectivo = substr($todos,6,2);
+$num = 0;
+
+// buscar asignaturas dependiendo del Ciclo y Grado.
+// Consultar a la tabla codigo asignatura, para generar el codigo individual de cada una de ellas segun el ciclo o bachillerato.
+	$query_consulta_asignatura = "SELECT codigo_asignatura FROM a_a_a_bach_o_ciclo WHERE codigo_bach_o_ciclo = '".$codigo_bachillerato."' and codigo_ann_lectivo = '".$codigo_annlectivo."' and codigo_grado = '".$codigo_grado."' ORDER BY codigo_asignatura ASC";
+		$result_consulta = $dblink -> query($query_consulta_asignatura);
+		while($row = $result_consulta -> fetch(PDO::FETCH_BOTH))
+		{
+			$codigo_asignatura_array[] = $row['codigo_asignatura'];
+		}
 // Armamos el query.
 	$query = "SELECT DISTINCT asig.id_asignatura, asig.nombre, asig.codigo as codigo_asignatura, asig.codigo_servicio_educativo, asig.codigo_cc, 
 	asig.codigo_servicio_educativo, asig.codigo_area, asig.estatus, asig.ordenar, asig.codigo_estatus, asig.codigo_area_dimension, asig.codigo_area_subdimension,

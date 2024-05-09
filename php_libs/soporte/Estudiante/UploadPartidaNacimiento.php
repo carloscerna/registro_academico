@@ -91,14 +91,18 @@ if (is_array($_FILES) && count($_FILES) > 0) {
                     copy($path_root.$url_.$codigo_institucion."/".$nombreArchivo,$url_respaldo_pn.$codigo_institucion."/".$nombreArchivo);
                 // copar el archivo al SISCARAD.
                     copy($path_root.$url_.$codigo_institucion."/".$nombreArchivo,$SistemaSiscarad.$codigo_institucion."/".$nombreArchivo);
+                // validar si el archivo es PDF O IMAGEN
+                    if($archivo_validar_pdf == false){
+                        $mensajeError = "Cargado Archivo IMAGEN...";
+                        $contenidoOK = "img";}
             // Guardar el nombre de la imagen. en la tabla.            
             // Armar query. para actualizar el nombre del archivo de la ruta foto.
                 $query = "UPDATE alumno SET ruta_pn = '".$nombreArchivo."' WHERE id_alumno = ". $Id_;
             // Ejecutamos el Query.
                 $consulta = $dblink -> query($query);
                 //echo "../registro_academico/img/Pn/".$codigo_institucion."/".$nombreArchivo;
-                echo $url_.$codigo_institucion."/".$nombreArchivo;
-                $url_archivo = $url_.$codigo_institucion."/".$nombreArchivo;
+                //echo $url_.$codigo_institucion."/".$nombreArchivo;
+                $url_archivo = ".." . $url_.$codigo_institucion."/".$nombreArchivo;
 
                 // Armamos array para convertir a JSON
                 $salidaJson = array("respuesta" => $respuestaOK,

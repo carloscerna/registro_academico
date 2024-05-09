@@ -29,9 +29,24 @@ try{
         $errorDbConexion = true;   
     };
 // 024P0119 , 025P0119 , 025P0219 , 026P0119 . 026P0219
-$todos='0422'; // MODALIDAD - GRADO - SECCION - ANN LECTIVO
+$todos='135P24'; // MODALIDAD - GRADO - SECCION - ANN LECTIVO
 $codigo_asignatura = array('10','11','12','13');
 $num = 0;
+$codigo_asignatura_array = array(); // Educación Básica de 1.º a 6.º.
+$todos='136P24';
+$codigo_bachillerato = substr($todos,0,2);
+$codigo_grado = substr($todos,2,2);
+$codigo_annlectivo = substr($todos,6,2);
+$num = 0;
+
+// buscar asignaturas dependiendo del Ciclo y Grado.
+// Consultar a la tabla codigo asignatura, para generar el codigo individual de cada una de ellas segun el ciclo o bachillerato.
+	$query_consulta_asignatura = "SELECT codigo_asignatura FROM a_a_a_bach_o_ciclo WHERE codigo_bach_o_ciclo = '".$codigo_bachillerato."' and codigo_ann_lectivo = '".$codigo_annlectivo."' and codigo_grado = '".$codigo_grado."' ORDER BY codigo_asignatura ASC";
+		$result_consulta = $dblink -> query($query_consulta_asignatura);
+		while($row = $result_consulta -> fetch(PDO::FETCH_BOTH))
+		{
+			$codigo_asignatura_array[] = $row['codigo_asignatura'];
+		}
 // datos de la tabla de facturas_compras.
         $query = "SELECT a.codigo_nie, btrim(a.apellido_paterno || CAST(' ' AS VARCHAR) || a.apellido_materno || CAST(', ' AS VARCHAR) || a.nombre_completo) as apellido_alumno,
 		    a.nombre_completo, btrim(a.apellido_paterno || CAST(' ' AS VARCHAR) || a.apellido_materno) as apellidos_alumno, 
@@ -45,7 +60,7 @@ $num = 0;
 			INNER JOIN grado_ano gan ON gan.codigo = am.codigo_grado
 			INNER JOIN seccion sec ON sec.codigo = am.codigo_seccion
 			INNER JOIN ann_lectivo ann ON ann.codigo = am.codigo_ann_lectivo
-			WHERE btrim(am.codigo_bach_o_ciclo || am.codigo_ann_lectivo) = '".$todos.
+			WHERE btrim(am.codigo_bach_o_ciclo || am.codigo_grado || am.codigo_ann_lectivo) = '".$todos.
 			"' ORDER BY apellido_alumno, am.codigo_grado, am.codigo_seccion ASC";
             
             //WHERE btrim(am.codigo_bach_o_ciclo || am.codigo_grado || am.codigo_seccion || am.codigo_ann_lectivo) = '".$todos.
@@ -54,19 +69,26 @@ $num = 0;
 				 while($row_ = $result_ -> fetch(PDO::FETCH_BOTH))
 				 {
                     $num++;
+                    $codigo_nie = $row_['codigo_nie'];
                     $codigo_alumno = $row_['id_alumno'];
                     $codigo_alumno_matricula = $row_['id_alumno_matricula'];
-                    $nombres = trim($row_['apellidos_alumno']);
+                    $nombres = trim($row_['apellido_alumno']);
 
+                    print $num . "-" . $codigo_nie . "-" .  $codigo_alumno . " " . $codigo_alumno_matricula . " " .$nombres . "<br>";
+
+                    $query_eliminar = "DELETE FROM nota WHERE codigo_alumno = '$codigo_alumno' and codigo_matricula = '$codigo_alumno_matricula'";
+                    $result_eliminar = $dblink -> query($query_eliminar);
+                    /*
                     for ($i=0; $i < count($codigo_asignatura); $i++) { 
-                        $query_eliminar = "DELETE FROM nota WHERE codigo_alumno = '$codigo_alumno' and codigo_matricula = '$codigo_alumno_matricula' and codigo_asignatura = '$codigo_asignatura[$i]'";
+                        //$query_eliminar = "DELETE FROM nota WHERE codigo_alumno = '$codigo_alumno' and codigo_matricula = '$codigo_alumno_matricula' and codigo_asignatura = '$codigo_asignatura[$i]'";
+
                         $result_consulta_eliminar_notas = $dblink -> query($query_eliminar);
                             if($result_consulta_eliminar_notas)
                             {
-                                print $num . "-" .  $codigo_alumno . " " . $codigo_alumno_matricula . " " .$nombres . " " . $codigo_asignatura[$i] . "<br>";
+                                print $num . "-" . $codigo_nie . "-" .  $codigo_alumno . " " . $codigo_alumno_matricula . " " .$nombres . " " . $codigo_asignatura[$i] . "<br>";
                             }
                         
-                    }
+                    }*/
                  }
                  
                  

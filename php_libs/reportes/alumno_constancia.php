@@ -27,10 +27,10 @@
 //  imprimir datos del bachillerato.
      while($row = $result_encabezado -> fetch(PDO::FETCH_BOTH))
             {
-            $print_bachillerato = utf8_decode(trim($row['nombre_bachillerato']));
-            $print_grado = utf8_decode(trim($row['nombre_grado']));
-            $print_seccion = utf8_decode(trim($row['nombre_seccion']));
-            $print_ann_lectivo = utf8_decode(trim($row['nombre_ann_lectivo']));
+            $print_bachillerato = convertirtexto(trim($row['nombre_bachillerato']));
+            $print_grado = convertirtexto(trim($row['nombre_grado']));
+            $print_seccion = convertirtexto(trim($row['nombre_seccion']));
+            $print_ann_lectivo = convertirtexto(trim($row['nombre_ann_lectivo']));
 	    break;
             }
             //
@@ -58,17 +58,17 @@ class PDF extends FPDF
     //Arial bold 14
         $this->SetFont('Arial','B',14);
     //Título
-	//$0titulo1 = utf8_decode("Educación Parvularia - Básica - Tercer Ciclo y Bachillerato.");
-        $this->RotatedText(30,10,utf8_decode($_SESSION['institucion'] . ' - ' . $_SESSION['codigo']),0);
+	//$0titulo1 = convertirtexto("Educación Parvularia - Básica - Tercer Ciclo y Bachillerato.");
+        $this->RotatedText(30,10,convertirtexto($_SESSION['institucion'] . ' - ' . $_SESSION['codigo']),0);
     //Arial bold 13
         $this->SetFont('Arial','B',12);
-	$this->RotatedText(30,17,utf8_decode($_SESSION['direccion'] . ', Santa Ana '),0);
+	$this->RotatedText(30,17,convertirtexto($_SESSION['direccion'] . ', Santa Ana '),0);
 	
     // Teléfono.
 	if(empty($_SESSION['telefono'])){
 	    $this->RotatedText(30,24,'',0,1,'C');    
 	}else{
-	    $this->RotatedText(30,24,utf8_decode('Teléfono: ').$_SESSION['telefono'],0,1,'C');
+	    $this->RotatedText(30,24,convertirtexto('Teléfono: ').$_SESSION['telefono'],0,1,'C');
 	}
     // ARMAR ENCABEZADO.
 	$style6 = array('width' => 0.3, 'cap' => 'butt', 'join' => 'miter', 'dash' => '0', 'color' => array(0,0,0));
@@ -146,54 +146,54 @@ function Footer()
             // Definimos el tipo de fuente, estilo y tamaño.
             $pdf->SetFont('Arial','',12); // I : Italica; U: Normal;
              $pdf->SetXY(15,45);
-             $pdf->MultiCell(180,8,utf8_decode("El/la suscrito(a) Director(a) CERTIFICA que él/la: "));
+             $pdf->MultiCell(180,8,convertirtexto("El/la suscrito(a) Director(a) CERTIFICA que él/la: "));
              
 
              $pdf->RotatedText(20,60,'Alumno(a): ',0);
              $pdf->SetFont('Arial','IB',13);
-             $pdf->RotatedText(50,60,utf8_decode(trim($row['apellido_alumno'])),0);   // Nombre + apellido_materno + apellido_paterno
+             $pdf->RotatedText(50,60,convertirtexto(trim($row['apellido_alumno'])),0);   // Nombre + apellido_materno + apellido_paterno
              $pdf->SetFont('Arial','',12);
         
-	     $pdf->RotatedText(20,70,utf8_decode('Número de Identificación Estudiantil (NIE): '),0);
+	     $pdf->RotatedText(20,70,convertirtexto('Número de Identificación Estudiantil (NIE): '),0);
              $pdf->SetFont('Arial','B',13);
-             $pdf->RotatedText(110,70,utf8_decode(trim($row['codigo_nie'])),0);   // Nombre + apellido_materno + apellido_paterno
+             $pdf->RotatedText(110,70,convertirtexto(trim($row['codigo_nie'])),0);   // Nombre + apellido_materno + apellido_paterno
              $pdf->SetFont('Arial','',12);
 
-       /*  $pdf->RotatedText(150,70,utf8_decode('N.° DUI: '),0);
+       /*  $pdf->RotatedText(150,70,convertirtexto('N.° DUI: '),0);
              $pdf->SetFont('Arial','B',13);
-             $pdf->RotatedText(170,70,utf8_decode(trim($row['encargado_dui'])),0);   // Nombre + apellido_materno + apellido_paterno
+             $pdf->RotatedText(170,70,convertirtexto(trim($row['encargado_dui'])),0);   // Nombre + apellido_materno + apellido_paterno
              $pdf->SetFont('Arial','',12);
 */
-	     $pdf->RotatedText(30,80,utf8_decode('Modalidad: '),0);
+	     $pdf->RotatedText(30,80,convertirtexto('Modalidad: '),0);
              $pdf->SetFont('Arial','B',12);
              $pdf->RotatedText(55,80,$print_bachillerato,0);   // Nombre + apellido_materno + apellido_paterno
              $pdf->SetFont('Arial','',12);
 
-	     $pdf->RotatedText(30,90,utf8_decode('Grado: '),0);
+	     $pdf->RotatedText(30,90,convertirtexto('Grado: '),0);
              $pdf->SetFont('Arial','B',12);
              $pdf->RotatedText(57,90,$print_grado,0);   // Nombre + apellido_materno + apellido_paterno
              $pdf->SetFont('Arial','',12);
 	     
-	     $pdf->RotatedText(30,100,utf8_decode('Sección: '),0);
+	     $pdf->RotatedText(30,100,convertirtexto('Sección: '),0);
              $pdf->SetFont('Arial','B',12);
              $pdf->RotatedText(57,100,$print_seccion,0);   // Nombre + apellido_materno + apellido_paterno
              $pdf->SetFont('Arial','',12);
 	     
-	     $pdf->RotatedText(30,110,utf8_decode('Año Lectivo: '),0);
+	     $pdf->RotatedText(30,110,convertirtexto('Año Lectivo: '),0);
              $pdf->SetFont('Arial','B',12);
              $pdf->RotatedText(57,110,$print_ann_lectivo,0);   // Nombre + apellido_materno + apellido_paterno
              $pdf->SetFont('Arial','',12);
 
              
             $pdf->SetXY(20,120);
-	    $pdf->MultiCell(180,10,utf8_decode($estudias).utf8_decode(" en esta institución y demostrando ".$conducta." conducta hacia sus compañeros y maestros."));
+	    $pdf->MultiCell(180,10,convertirtexto($estudias).convertirtexto(" en esta institución y demostrando ".$conducta." conducta hacia sus compañeros y maestros."));
             
 	    if($mostrar_traslado == "yes"){
 	    $pdf->ln();
-	    $pdf->MultiCell(180,10,utf8_decode($traslado));}
+	    $pdf->MultiCell(180,10,convertirtexto($traslado));}
 	    
             $pdf->ln();
-            $pdf->MultiCell(180,10,utf8_decode("Y para los usos que el(la) interesado(a) estime conveniente se extiende la presente constancia en ".$_SESSION['se_extiende']." de Santa Ana a los ". strtolower(num2letras($dia))." días de ".$mes." de ".strtolower(num2letras($año))));
+            $pdf->MultiCell(180,10,convertirtexto("Y para los usos que el(la) interesado(a) estime conveniente se extiende la presente constancia en ".$_SESSION['se_extiende']." de Santa Ana a los ". strtolower(num2letras($dia))." días de ".$mes." de ".strtolower(num2letras($año))));
 						
               	$fill=!$fill;	
               		$i++;
