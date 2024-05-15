@@ -737,7 +737,7 @@ while($row = $result -> fetch(PDO::FETCH_BOTH)) // bucle para la recorrer las as
 						$pdf->Cell(40,$alto[0],$leyenda_2,0,1,'L');
 					}
 				}
-				else if($print_codigo_bachillerato >= '06' and  $print_codigo_bachillerato <= '09')
+				else if($print_codigo_bachillerato >= '06' and  $print_codigo_bachillerato <= '09' || $print_codigo_bachillerato == "15")
 				{
 					$AR = cambiar_aprobado_reprobado_m($calificacion_);}
 				else if($print_codigo_bachillerato == '10'){
@@ -790,8 +790,6 @@ while($row = $result -> fetch(PDO::FETCH_BOTH)) // bucle para la recorrer las as
 }	// TERMINA EL FOR QUE RECORRER LA NOMINA DE ESTUDIANES.
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
 if($crear_archivos == "no"){
 // Construir el nombre del archivo.
 	$nombre_archivo = $print_bachillerato.' '.$print_grado.' '.$print_seccion.'-'.$print_ann_lectivo . '.pdf';
