@@ -623,12 +623,16 @@ function genera_bach()
 /////////////////////////////////////////////////////////////////////////////////////////
 //				**	cambiar el Del por del ó De por de.
 /////////////////////////////////////////////////////////////////////////////////////////
+function convertirTexto($texto){
+	$texto = mb_convert_encoding($texto,"ISO-8859-1","UTF-8");
+		return $texto;
+}
 	function cambiar_de_del($de_por_de)
 	{
 		$ver = ""; $vere = ""; $nombre = ""; $nuevonombre = ""; $cambiar = 0;	$nuevo_de_del = "";
-		$nombre_m = utf8_decode(trim($de_por_de));
-		//$nombre = ucwords(mb_strtolower($nombre_m,'ISO-8859-1'));
-		$nombre = mb_convert_case($nombre_m, MB_CASE_TITLE, "ISO-8859-1"); 
+		$nombre_m = mb_convert_encoding(trim($de_por_de),"ISO-8859-1","UTF-8");
+		$nombre = ucwords(mb_strtolower($nombre_m,'ISO-8859-1'));
+		//$nombre = mb_convert_case($nombre_m, MB_CASE_TITLE); 
 		//$str = mb_convert_case($str, MB_CASE_UPPER, "UTF-8"); echo $str; // Muestra MARY HAD A LITTLE LAMB AND SHE LOVED IT SO
 				
 		for($i=0;$i<=strlen($nombre);$i++)

@@ -227,7 +227,7 @@ if($errorDbConexion == false){
 					$nota_a3_ = $nota_a3[0][$k];
 					$nota_re_ = $nota_re[0][$k];
 					// 
-						CalculoCalificacionPromedio();	// En base a la calificación de cada una de las actividades para el Promedio.
+						CalculoCalificacionPromedio($codigo_modalidad);	// En base a la calificación de cada una de las actividades para el Promedio.
 						CalculoCalificacionRecuperacion(); // En base si existe una calificación en Recuperación.
 						CalculoCalificacionFinal($codigo_modalidad); // En base a cada Calificación de período recalcular el Promedio Final.
 				}
@@ -302,13 +302,27 @@ function NombreCampos($periodo){
 	return true;
 }
 // Calculo del Promedio.
-function CalculoCalificacionPromedio(){
+function CalculoCalificacionPromedio($codigo_modalidad){
 	global $calificacion_A1, $calificacion_A2, $calificacion_PO, $calificacion_RE,
 		$id_notas_, $nota_p_p, $dblink;
 		// Actualizar nota por promedio.
-			$query_calificacion_periodo = "UPDATE nota SET
+		// Verificar el valor delNivel para el array a utilizar para el cualculo del promedio final.
+			if ($codigo_modalidad >= '03' && $codigo_modalidad <= '05'){
+				$query_calificacion_periodo = "UPDATE nota SET
+					$nota_p_p = (select round(($calificacion_A1 * 0.35) + ($calificacion_A2 * 0.35) + ($calificacion_PO * 0.30),0) as promedio_periodo 
+						FROM nota WHERE id_notas = '$id_notas_') WHERE id_notas = '$id_notas_'";
+			}
+			if ($codigo_modalidad >= '06' && $codigo_modalidad <= '09' || $codigo_modalidad == "15"){
+				$query_calificacion_periodo = "UPDATE nota SET
+					$nota_p_p = (select round(($calificacion_A1 * 0.35) + ($calificacion_A2 * 0.35) + ($calificacion_PO * 0.30),1) as promedio_periodo 
+						FROM nota WHERE id_notas = '$id_notas_') WHERE id_notas = '$id_notas_'";
+			}
+			if ($codigo_modalidad >= '10' && $codigo_modalidad <= '12'){
+				$query_calificacion_periodo = "UPDATE nota SET
 				$nota_p_p = (select round(($calificacion_A1 * 0.35) + ($calificacion_A2 * 0.35) + ($calificacion_PO * 0.30),0) as promedio_periodo 
 					FROM nota WHERE id_notas = '$id_notas_') WHERE id_notas = '$id_notas_'";
+			}
+
 		// Ejectuamos query.
 			$consulta_nota_periodo = $dblink -> query($query_calificacion_periodo);											
 }
@@ -337,7 +351,7 @@ function CalculoCalificacionFinal($codigo_modalidad){
 	if ($codigo_modalidad >= '03' && $codigo_modalidad <= '05'){
 		$Nivel = 0;	//EDUCACION BASICA Y TERCER CICLO
 	}
-	if ($codigo_modalidad >= '06' && $codigo_modalidad <= '09'){
+	if ($codigo_modalidad >= '06' && $codigo_modalidad <= '09' || $codigo_modalidad == "15"){
 		$Nivel = 1;// EDUCACION MEDIA GENERAL Y TVC
 	}
 	if ($codigo_modalidad >= '10' && $codigo_modalidad <= '12'){

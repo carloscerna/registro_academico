@@ -76,10 +76,10 @@ while($row = $result_catalogo_area -> fetch(PDO::FETCH_BOTH))
 	consultas(18,0,$codigo_all,'','','',$db_link,'');
 	while($row = $result_encabezado -> fetch(PDO::FETCH_BOTH))
 		{
-			$print_bachillerato = utf8_decode(trim($row['nombre_bachillerato']));
+			$print_bachillerato = convertirTexto(trim($row['nombre_bachillerato']));
 			$print_grado = (trim($row['nombre_grado']));
-			$print_seccion = utf8_decode(trim($row['nombre_seccion']));
-			$print_ann_lectivo = utf8_decode(trim($row['nombre_ann_lectivo']));
+			$print_seccion = convertirtexto(trim($row['nombre_seccion']));
+			$print_ann_lectivo = convertirtexto(trim($row['nombre_ann_lectivo']));
 			$print_codigo_grado = (trim($row['codigo_grado']));
 			$print_codigo_bachillerato = (trim($row['codigo_bachillerato']));
 			$print_codigo_alumno = $row['codigo_alumno'];
@@ -106,7 +106,7 @@ $result_encargado = $db_link -> query($query_encargado);
 $nombre_encargado = '';
 while($rows_encargado = $result_encargado -> fetch(PDO::FETCH_BOTH))
 {
-		 $nombre_encargado = utf8_decode(trim($rows_encargado['nombre_docente']));
+		 $nombre_encargado = convertirtexto(trim($rows_encargado['nombre_docente']));
 		 $codigo_docente = trim($rows_encargado['codigo_docente']);
 		 
 }
@@ -139,7 +139,12 @@ while($rows_encargado = $result_encargado -> fetch(PDO::FETCH_BOTH))
 			if($print_codigo_bachillerato == '07'){
 				$nivel_educacion = "Educación Media - Técnico";
 			}
-			
+			if($print_codigo_bachillerato == '15'){
+				$nivel_educacion = "Educación Media - Técnico Administrativo Contable";
+			}
+			if($print_codigo_bachillerato == '16'){
+				$nivel_educacion = "Educación Básica - Primer y Segundo Grado Focalizado";
+			}
 			if($print_codigo_bachillerato == '08' or $print_codigo_bachillerato == '09'){
 				$nivel_educacion = "Educación Media - Contaduría";
 			}
@@ -168,20 +173,20 @@ function Header()
 {
 	// variables globales.
 	global $nivel_educacion, $print_codigo_grado, $print_seccion, $print_grado_media, $print_ann_lectivo, $print_codigo_bachillerato, $print_grado;
-	$nombre_institucion = utf8_decode($_SESSION['institucion']);
+	$nombre_institucion = convertirtexto($_SESSION['institucion']);
     // Ancho de la linea y color.
     $this->SetLineWidth(.7);				// GROSOR.
 	$this->SetDrawColor(10,29,247);			// COLOR DE LA LÍNEA.
 	$this->SetFont('Times','B',13);			// TAMAÑO DE FUENTE 14. NEGRITA.
 	$img = $_SERVER['DOCUMENT_ROOT'].'/registro_academico/img/'.$_SESSION['logo_uno'];		//Logo
-	$boleta_etiqueta = utf8_decode('Boleta de Calificación - ' . ' Año Lectivo ' . $print_ann_lectivo);		// etiqueta Boleta de Calificación
+	$boleta_etiqueta = convertirtexto('Boleta de Calificación - ' . ' Año Lectivo ' . $print_ann_lectivo);		// etiqueta Boleta de Calificación
 	// Título principal.
 	if($nivel_educacion == 'Educación Básica' or $nivel_educacion == 'Educación Básica - TERCER CICLO - NOCTURNA')
 		{
-			$titulo_principal = utf8_decode($nivel_educacion).' - '. utf8_decode($print_grado) .' - '."'".$print_seccion."'";
+			$titulo_principal = convertirtexto($nivel_educacion).' - '. convertirtexto($print_grado) .' - '."'".$print_seccion."'";
 	}else
 		{
-			$titulo_principal = utf8_decode($nivel_educacion).' - '. utf8_decode($print_grado) .' - '."'".$print_seccion."'";
+			$titulo_principal = convertirtexto($nivel_educacion).' - '. convertirtexto($print_grado) .' - '."'".$print_seccion."'";
 		}
 	/////////////////////////////////////////////////////////////////////////////////////////////
 	// IMPRIMIR VALORES. para el encabezado principal.
@@ -223,20 +228,20 @@ function Footer()
 		$this->Line(120,245,190,245);	//Crear una l�nea de la segunda firma.
 		$this->Line(5,265,203,265);		//Crear una l�nea FINAL.
 		if($nombre_encargado != ""){
-			$this->RotatedText(10,250,$nombre_encargado,0,1,'C');		// NOMBRE DEL DOCENTE, Sub-director o Encargado de Registro Académico.
-			$this->RotatedText(10,255,utf8_decode('Docente encargado de la sección'),0,1,'C');			// ETIQUETA DIRECTOR.
+			$this->RotatedText(10,250,$nombre_encargado,0);		// NOMBRE DEL DOCENTE, Sub-director o Encargado de Registro Académico.
+			$this->RotatedText(10,255,convertirtexto('Docente encargado de la sección'),0);			// ETIQUETA DIRECTOR.
 			
 		}else{
 
-			$this->RotatedText(10,250,$registro_docente,0,1,'C');		// NOMBRE DEL DOCENTE, Sub-director o Encargado de Registro Académico.
-			$this->RotatedText(10,255,utf8_decode('Encargado Registro Académico'),0,1,'C');			// ETIQUETA DIRECTOR.
+			$this->RotatedText(10,250,$registro_docente,0);		// NOMBRE DEL DOCENTE, Sub-director o Encargado de Registro Académico.
+			$this->RotatedText(10,255,convertirtexto('Encargado Registro Académico'),0);			// ETIQUETA DIRECTOR.
 		}
 
 		if(isset($img_firma)){$this->Image($img_firma,120,225,70,15);}						// IMAGEN FIRMA
 		if(isset($img_firma)){$this->Image($img_sello,165,225,30,30);}						// IMAGEN SELLO
 		//if(isset($img_firma)){$this->Image($img_sello_registro,85,225,32,32);}						// IMAGEN SELLO
-    	$this->RotatedText(130,250,$nombre_director,0,1,'C');	    // Nombre Director
-		$this->RotatedText(140,255,'Director(a)',0,1,'C');			// ETIQUETA DIRECTOR.
+    	$this->RotatedText(130,250,$nombre_director,0);	    // Nombre Director
+		$this->RotatedText(140,255,'Director(a)',0);			// ETIQUETA DIRECTOR.
 
     //N�mero de p�gina y fecha
     $this->SetY(-15);
@@ -310,10 +315,10 @@ function FancyTable($header)
 	// LABEL. resultado final.
 		$this->RoundedRect(85, 40, 75, 10, 0.5, '');	// para los periodos, trimestres o modulos.
 		$this->SetFont('Times','B',14);
-		$this->RotatedText(12,47,utf8_decode($etiquetas_boleta_de_notas[0]),0);		  
+		$this->RotatedText(12,47,convertirtexto($etiquetas_boleta_de_notas[0]),0);		  
 		$this->SetFont('Times','B',12);
-		$this->RotatedText(110,44,utf8_decode($etiquetas_boleta_de_notas[$n_etiqueta]),0);		  
-		$this->RotatedText(165,44,utf8_decode($etiquetas_boleta_de_notas[2]),0);		  
+		$this->RotatedText(110,44,convertirtexto($etiquetas_boleta_de_notas[$n_etiqueta]),0);		  
+		$this->RotatedText(165,44,convertirtexto($etiquetas_boleta_de_notas[2]),0);		  
 		$this->SetFont('Times','B',10);
 	///////////////////////////////////////////////////////////////////////////////////////
     //Restauraci�n de colores y fuentes
@@ -406,15 +411,15 @@ while($row = $result -> fetch(PDO::FETCH_BOTH)) // bucle para la recorrer las as
 {
 	// variables a utilizar.
 		$conteo_aprobadas = 0;
-		$nombre_completo_alumno = utf8_decode(trim($row['apellido_alumno']));
+		$nombre_completo_alumno = convertirtexto(trim($row['apellido_alumno']));
 		$numero_identificacion_estudiantil = trim($row['codigo_nie']);
 		$print_codigo_alumno = $row['codigo_alumno'];
 		$print_codigo_matricula = $row['cod_matricula'];
-		$nombre_asignatura = utf8_decode(trim($row['n_asignatura']));
+		$nombre_asignatura = convertirtexto(trim($row['n_asignatura']));
 		$codigo_genero = trim($row['codigo_genero']);
 		$fotos = trim($row['foto']);
 		$codigo_institucion = $_SESSION['codigo_institucion'];
-		$codigo_area = utf8_decode(trim($row['codigo_area']));
+		$codigo_area = convertirtexto(trim($row['codigo_area']));
 		$descripcion_area = (trim($row['nombre_area']));
 
 	// imprimir la foto en la boleta
@@ -471,28 +476,28 @@ while($row = $result -> fetch(PDO::FETCH_BOTH)) // bucle para la recorrer las as
 		// LINEA DE DIVISIÓN - PARA EL ÁREA BÁSICA.
 		if($catalogo_area_asignatura_codigo[0] == $codigo_area){
 			if($catalogo_area_basica == true){
-				$pdf->Cell(203,6,strtoupper(utf8_decode($catalogo_area_asignatura_area[0])),1,1,'L',true);
+				$pdf->Cell(203,6,strtoupper(convertirtexto($catalogo_area_asignatura_area[0])),1,1,'L',true);
 				$catalogo_area_basica = false;
 			}
 		}
 		// LINEA DE DIVISIÓN - PARA EL ÁREA FORMATIVA.
 		if($catalogo_area_asignatura_codigo[1] == $codigo_area){
 			if($catalogo_area_formativa == true){
-				$pdf->Cell(203,6,strtoupper(utf8_decode($catalogo_area_asignatura_area[1])),1,1,'L',true);
+				$pdf->Cell(203,6,strtoupper(convertirtexto($catalogo_area_asignatura_area[1])),1,1,'L',true);
 				$catalogo_area_formativa = false;
 			}
 		}
 		// LINEA DE DIVISIÓN - PARA EL ÁREA TÉCNICA.
 		if($catalogo_area_asignatura_codigo[2] == $codigo_area){
 			if($catalogo_area_tecnica == true){
-				$pdf->Cell(203,6,strtoupper(utf8_decode($catalogo_area_asignatura_area[2])),1,1,'L',true);
+				$pdf->Cell(203,6,strtoupper(convertirtexto($catalogo_area_asignatura_area[2])),1,1,'L',true);
 				$catalogo_area_tecnica = false;
 			}
 		}
 		// LINEA DE DIVISIÓN - PARA EL ÁREA COMPETENCIAS CIUDADANAS.
 		if($catalogo_area_asignatura_codigo[6] == $codigo_area){
 			if($catalogo_area_cc == true){
-				$pdf->Cell(203,6,strtoupper(utf8_decode($catalogo_area_asignatura_area[6])),1,1,'L',true);
+				$pdf->Cell(203,6,strtoupper(convertirtexto($catalogo_area_asignatura_area[6])),1,1,'L',true);
 				$catalogo_area_cc = false;
 			}
 		}
@@ -500,7 +505,7 @@ while($row = $result -> fetch(PDO::FETCH_BOTH)) // bucle para la recorrer las as
 		// LINEA DE DIVISIÓN - PARA EL ÁREA COMPLEMENTARIA.
 		if($catalogo_area_asignatura_codigo[7] == $codigo_area){
 			if($catalogo_area_complementaria == true){
-				$pdf->Cell(203,6,strtoupper(utf8_decode($catalogo_area_asignatura_area[7])),1,1,'L',true);
+				$pdf->Cell(203,6,strtoupper(convertirtexto($catalogo_area_asignatura_area[7])),1,1,'L',true);
 				$catalogo_area_complementaria = false;
 			}
 		}
@@ -634,7 +639,7 @@ while($row = $result -> fetch(PDO::FETCH_BOTH)) // bucle para la recorrer las as
 								$conteo_aprobadas++;
 							}
 						}	// CONDICION PARA BASICA DE 1.º A 9.º
-						if($print_codigo_bachillerato >= '06' and  $print_codigo_bachillerato <= '09')
+						if($print_codigo_bachillerato >= '06' and  $print_codigo_bachillerato <= '09' || $print_codigo_bachillerato == '15')
 						{
 							if(verificar_nota_media($row['nota_final'],$row['recuperacion']) < 6){
 								$pdf->SetLineWidth(.3);				// GROSOR.
@@ -711,7 +716,7 @@ while($row = $result -> fetch(PDO::FETCH_BOTH)) // bucle para la recorrer las as
 				if($print_codigo_bachillerato >= '01' and  $print_codigo_bachillerato <= '05')
 				{
 					$leyenda = " Trimestre >= 5.";}
-				else if($print_codigo_bachillerato >= '06' and  $print_codigo_bachillerato <= '09')
+				else if($print_codigo_bachillerato >= '06' and  $print_codigo_bachillerato <= '09' || $print_codigo_bachillerato == '15')
 				{
 					$leyenda = " Período >= 6.";
 				}
@@ -722,7 +727,7 @@ while($row = $result -> fetch(PDO::FETCH_BOTH)) // bucle para la recorrer las as
 				}else{
 					$leyenda = " Modulo >= 6.";
 				}
-				$pdf->Cell(120,$alto[0],'Nota. Para Aprobar cada asignatura por '.utf8_decode($leyenda),0,1,'L');
+				$pdf->Cell(120,$alto[0],'Nota. Para Aprobar cada asignatura por '.convertirtexto($leyenda),0,1,'L');
 				$pdf->Cell(160,$alto[0],'Si alguna ASIGNATURA aparece en BLANCO consulte con el DOCENTE que la imparte.',0,1,'L');
 				$pdf->Cell(40,$alto[0],'A = Aprobado; R = Reprobado ',0,1,'L');
 				// LEYENDA GRADO INMEDIATO SUPERIOR
@@ -732,7 +737,7 @@ while($row = $result -> fetch(PDO::FETCH_BOTH)) // bucle para la recorrer las as
 						$pdf->Cell(40,$alto[0],$leyenda_2,0,1,'L');
 					}
 				}
-				else if($print_codigo_bachillerato >= '06' and  $print_codigo_bachillerato <= '09')
+				else if($print_codigo_bachillerato >= '06' and  $print_codigo_bachillerato <= '09' || $print_codigo_bachillerato == "15")
 				{
 					$AR = cambiar_aprobado_reprobado_m($calificacion_);}
 				else if($print_codigo_bachillerato == '10'){
@@ -785,8 +790,6 @@ while($row = $result -> fetch(PDO::FETCH_BOTH)) // bucle para la recorrer las as
 }	// TERMINA EL FOR QUE RECORRER LA NOMINA DE ESTUDIANES.
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
 if($crear_archivos == "no"){
 // Construir el nombre del archivo.
 	$nombre_archivo = $print_bachillerato.' '.$print_grado.' '.$print_seccion.'-'.$print_ann_lectivo . '.pdf';

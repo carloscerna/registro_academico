@@ -100,11 +100,18 @@ while($row = $result_catalogo_area -> fetch(PDO::FETCH_BOTH))
 				$total_asignaturas = (trim($row['total_asignaturas']));
             }
 // COLOCAR ENCABEZANDO A LA BOLETA DE CALIFICACIÓN.		
-      	if($print_codigo_bachillerato == "13" || $print_codigo_bachillerato == "14")
+      	if($print_codigo_bachillerato == "13" || $print_codigo_bachillerato == "14" || $print_codigo_bachillerato == "16")
 	    	{
             $nivel_educacion = "Educación Parvularia";
             }
-	
+			if($print_codigo_bachillerato == "14")
+	    	{
+            $nivel_educacion = "Educación Básica - Estándar de Desarrollo";
+            }
+			if($print_codigo_bachillerato == "16")
+	    	{
+            $nivel_educacion = "Educación Básica - Segundo y Tercero";
+            }
 class PDF extends FPDF
 {
 //Cabecera de p�gina
@@ -199,7 +206,7 @@ function FancyTable($header)
 	// LINES O RECTÁNGULOS.
 		$this->RoundedRect(5, 40, 203, 10, 0.5, '');	// primer cuadro.
 		$this->RoundedRect(5, 40, 140, 10, 0.5, '');		// para el nombre de la asignatura
-    if($print_codigo_bachillerato == '13' || $print_codigo_bachillerato == '14')
+    if($print_codigo_bachillerato == '13' || $print_codigo_bachillerato == '14' || $print_codigo_bachillerato == "16")
     {
 		$n_label = 6; $n_etiqueta = 4;}
 	// medidas para NOCTURNA POR EL N-º DE MODULOS.
@@ -493,7 +500,7 @@ while($row = $result -> fetch(PDO::FETCH_BOTH)) // bucle para la recorrer las as
 				$pdf->SetFont('','',10);
 				$pdf->Ln();
 				// evaluar etiqueta leyenda.
-				if($print_codigo_bachillerato == '13' || $print_codigo_bachillerato == '14')
+				if($print_codigo_bachillerato == '13' || $print_codigo_bachillerato == '14' || $print_codigo_bachillerato == "16")
 				{
 					$leyenda = "INDICADORES.";
                 }

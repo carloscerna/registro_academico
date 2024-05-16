@@ -39,17 +39,17 @@ class PDF extends FPDF
     //Arial bold 14
         $this->SetFont('Arial','B',14);
     //Título
-	//$0titulo1 = utf8_decode("Educación Parvularia - Básica - Tercer Ciclo y Bachillerato.");
-        $this->RotatedText(30,10,utf8_decode($_SESSION['institucion']),0);
+	//$0titulo1 = convertirtexto("Educación Parvularia - Básica - Tercer Ciclo y Bachillerato.");
+        $this->RotatedText(30,10,convertirtexto($_SESSION['institucion']),0);
     //Arial bold 13
         $this->SetFont('Arial','B',12);
-	$this->RotatedText(30,17,utf8_decode($_SESSION['direccion']),0);
+	$this->RotatedText(30,17,convertirtexto($_SESSION['direccion']),0);
 	
     // Teléfono.
 	if(empty($_SESSION['telefono'])){
 	    $this->RotatedText(30,24,'',0,1,'C');    
 	}else{
-	    $this->RotatedText(30,24,utf8_decode('Teléfono: ').$_SESSION['telefono'],0,1,'C');
+	    $this->RotatedText(30,24,convertirtexto('Teléfono: ').$_SESSION['telefono'],0,1,'C');
 	}
     // ARMAR ENCABEZADO.
 	$style6 = array('width' => 0.3, 'cap' => 'butt', 'join' => 'miter', 'dash' => '0', 'color' => array(0,0,0));
@@ -131,8 +131,8 @@ function Footer()
                     $apellido_paterno = trim($row['apellido_paterno']);
                     $apellido_materno = trim($row['apellido_materno']);
                     $nombre_completo = trim($row['nombre_completo']);
-                    $nombre_departamento = utf8_decode(trim($row['nombre_departamento']));
-                    $nombre_municipio = utf8_decode(trim($row['nombre_municipio']));
+                    $nombre_departamento = convertirtexto(trim($row['nombre_departamento']));
+                    $nombre_municipio = convertirtexto(trim($row['nombre_municipio']));
                     $fecha_nacimiento = cambiaf_a_normal(trim($row['fecha_nacimiento']));
                     
                     // Datos de partida de nacimiento
@@ -150,53 +150,53 @@ function Footer()
 
              $pdf->RotatedText(20,60,'Alumno(a): ',0);
              $pdf->SetFont('Arial','IB',13);
-             $pdf->RotatedText(50,60,utf8_decode(trim($apellido_alumno)),0);   // Nombre + apellido_materno + apellido_paterno
+             $pdf->RotatedText(50,60,convertirtexto(trim($apellido_alumno)),0);   // Nombre + apellido_materno + apellido_paterno
              $pdf->SetFont('Arial','',12);
         
-             $pdf->RotatedText(20,70,utf8_decode('Número de Identificación Estudiantil (NIE): '),0);
+             $pdf->RotatedText(20,70,convertirtexto('Número de Identificación Estudiantil (NIE): '),0);
              $pdf->SetFont('Arial','B',13);
-             $pdf->RotatedText(112,70,utf8_decode(trim($row['codigo_nie'])),0);   // NIE
+             $pdf->RotatedText(112,70,convertirtexto(trim($row['codigo_nie'])),0);   // NIE
              $pdf->SetFont('Arial','',12);
 			// Fecha de nacimiento
-            $pdf->RotatedText(20,80,utf8_decode('Fecha de Nacimiento: '),0);
+            $pdf->RotatedText(20,80,convertirtexto('Fecha de Nacimiento: '),0);
              $pdf->SetFont('Arial','B',13);
              $pdf->RotatedText(95,80,$fecha_nacimiento,0);   // NIE
              $pdf->SetFont('Arial','',12);
 
 			// Departamento de nacimiento
-            $pdf->RotatedText(20,90,utf8_decode('Departamento de Nacimiento: '),0);
+            $pdf->RotatedText(20,90,convertirtexto('Departamento de Nacimiento: '),0);
              $pdf->SetFont('Arial','B',13);
              $pdf->RotatedText(95,90,$nombre_departamento,0);   // NIE
              $pdf->SetFont('Arial','',12);
             
 			// Municipio  de nacimiento
-            $pdf->RotatedText(20,100,utf8_decode('Municipio de Nacimiento: '),0);
+            $pdf->RotatedText(20,100,convertirtexto('Municipio de Nacimiento: '),0);
              $pdf->SetFont('Arial','B',13);
              $pdf->RotatedText(95,100,$nombre_municipio,0);   // NIE
              $pdf->SetFont('Arial','',12);
              // Número de Partida de Nacimiento
-                $pdf->RotatedText(20,110,utf8_decode('Nº P.N.'),0);
+                $pdf->RotatedText(20,110,convertirtexto('Nº P.N.'),0);
                 $pdf->SetFont('Arial','B',13);
                 $pdf->RotatedText(39,110,$pn_numero,0);   // p.n.
                 $pdf->SetFont('Arial','',12);
              // Folio
-                $pdf->RotatedText(60,110,utf8_decode('Nº Folio'),0);
+                $pdf->RotatedText(60,110,convertirtexto('Nº Folio'),0);
                 $pdf->SetFont('Arial','B',13);
                 $pdf->RotatedText(80,110,$pn_folio,0);   // folio
                 $pdf->SetFont('Arial','',12);
              // Tomo
-                $pdf->RotatedText(105,110,utf8_decode('Nº Tomo'),0);
+                $pdf->RotatedText(105,110,convertirtexto('Nº Tomo'),0);
                 $pdf->SetFont('Arial','B',13);
                 $pdf->RotatedText(132,110,$pn_tomo,0);   // tomo
                 $pdf->SetFont('Arial','',12);
              // Libro
-                $pdf->RotatedText(152,110,utf8_decode('Nº Libro'),0);
+                $pdf->RotatedText(152,110,convertirtexto('Nº Libro'),0);
                 $pdf->SetFont('Arial','B',13);
                 $pdf->RotatedText(178,110,$pn_libro,0);   // tomo
                 $pdf->SetFont('Arial','',12);
                 
             $pdf->SetFont('Comic','',56);
-            $pdf->RotatedText(180,180,utf8_decode(trim($row['id_alumno'])),270);   // NIE
+            $pdf->RotatedText(180,180,convertirtexto(trim($row['id_alumno'])),270);   // NIE
             
             			
               	$fill=!$fill;	

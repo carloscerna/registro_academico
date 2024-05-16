@@ -17,7 +17,7 @@ $('#goNotasImprimir').on('click',function(){
     if($('#chkfoto').is(":checked")) {chkfoto = "yes";}
     if($('#chkCrearArchivoPdf').is(":checked")) {chkCrearArchivoPdf = "si";}
     // EDUCACIÓN BASICA - BOLETA DE NOTAS
-    if(codigo_modalidad >= '03' && codigo_modalidad <='12'){
+    if(codigo_modalidad >= '03' && codigo_modalidad <='12' || codigo_modalidad == "15"){
         if(chkCrearArchivoPdf == "si")
         {
                 $.ajax({
@@ -262,7 +262,7 @@ submitHandler: function(){
                             miLstPeriodo.append('<option value="R2">Recuperación 2</option>');
                         }
                         // Condiciones para Educación Media.
-                        if(response.codigo_modalidad >= '06' && response.codigo_modalidad <= '09'){
+                        if(response.codigo_modalidad >= '06' && response.codigo_modalidad <= '09' || response.codigo_modalidad == "15"){
                             miLstPeriodo.append('<option value="" selected>Seleccionar...</option>');
                             miLstPeriodo.append('<option value="Periodo 1">Período 1</option>');
                             miLstPeriodo.append('<option value="Periodo 2">Período 2</option>');
