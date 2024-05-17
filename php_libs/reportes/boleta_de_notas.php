@@ -174,7 +174,7 @@ while($rows_encargado = $result_encargado -> fetch(PDO::FETCH_BOTH))
 				}
 	    }
 	// PARA LA COMPROBACION DE TECNICO ADMINISTRATIVO CONTABLE.
-		if($codigo_servicio_educativo == '20'){
+		if($codigo_servicio_educativo == '20' || $codigo_servicio_educativo == '13'){
 			$nivel_educacion = "Educación Media .-. Técnico Administrativo Contable";
 		}
 class PDF extends FPDF
@@ -608,7 +608,7 @@ while($row = $result -> fetch(PDO::FETCH_BOTH)) // bucle para la recorrer las as
 						}else{
 							$AR = cambiar_aprobado_reprobado_m($calificacion_);
 						}
-						if($codigo_servicio_educativo == "20"){
+						if($codigo_servicio_educativo == '20' || $codigo_servicio_educativo == '13'){
 							$AR = cambiar_aprobado_reprobado_media_contable($calificacion_);
 						}
 					// cambiar COLOR.
@@ -759,7 +759,7 @@ while($row = $result -> fetch(PDO::FETCH_BOTH)) // bucle para la recorrer las as
 				}else{
 					$AR = cambiar_aprobado_reprobado_m($calificacion_);
 				}
-				if($codigo_servicio_educativo == "20"){
+				if($codigo_servicio_educativo == "20" || $codigo_servicio_educativo == "13"){
 					$AR = cambiar_aprobado_reprobado_media_contable($calificacion_);
 				}
 			}
