@@ -1,4 +1,4 @@
-<?php
+ <?php
 // ruta de los archivos con su carpeta
     $path_root=trim($_SERVER['DOCUMENT_ROOT']);
 // archivos que se incluyen.
@@ -19,6 +19,7 @@
 	$tiempo_inicio = microtime(true); //true es para que sea calculado en segundos
 // variables y consulta a la tabla.
   $codigo_all = $_REQUEST["todos"];		// codigro - 
+  $codigoBachGradoAnnLectivo = $_REQUEST["todos"];		// codigro - 
   $codigo_alumno = $_REQUEST["txtidalumno"];
   $codigo_matricula = $_REQUEST["txtcodmatricula"];
   if(isset($_REQUEST["codigo_ann_lectivo"])){
@@ -86,7 +87,14 @@ while($row = $result_catalogo_area -> fetch(PDO::FETCH_BOTH))
 			$print_codigo_matricula = $row['codigo_matricula'];
 				break;
 		}
-
+// buscar la consulta y la ejecuta. en consultas.php numeral 18.
+$codigo_bach_grado_ann = substr($codigoBachGradoAnnLectivo,0,2) . substr($codigoBachGradoAnnLectivo,2,2) . substr($codigoBachGradoAnnLectivo,6,2);
+consultas(19,0,$codigo_bach_grado_ann,'','','',$db_link,'');
+while($row = $result_nombre_asignatura -> fetch(PDO::FETCH_BOTH))
+	{
+		$codigo_servicio_educativo = $row['codigo_servicio_educativo'];
+			break;
+	}
 // ENCARGADO DE GRADO, NOMBRE DEL DOCENTE.
 	$query_encargado = "SELECT eg.id_encargado_grado, eg.encargado, btrim(p.nombres || CAST(' ' AS VARCHAR) || p.apellidos) as nombre_docente, 
 		eg.codigo_docente, bach.nombre, gann.nombre, sec.nombre, ann.nombre, tur.nombre
@@ -139,9 +147,9 @@ while($rows_encargado = $result_encargado -> fetch(PDO::FETCH_BOTH))
 			if($print_codigo_bachillerato == '07'){
 				$nivel_educacion = "Educación Media - Técnico";
 			}
-			if($print_codigo_bachillerato == '15'){
-				$nivel_educacion = "Educación Media - Técnico Administrativo Contable";
-			}
+			//if($print_codigo_bachillerato == '15'){
+		//		$nivel_educacion = "Educación Media - Técnico Administrativo Contable";
+		//	}
 			if($print_codigo_bachillerato == '16'){
 				$nivel_educacion = "Educación Básica - Primer y Segundo Grado Focalizado";
 			}
@@ -165,7 +173,10 @@ while($rows_encargado = $result_encargado -> fetch(PDO::FETCH_BOTH))
 					$print_grado_media = "Tercer año";
 				}
 	    }
-		
+	// PARA LA COMPROBACION DE TECNICO ADMINISTRATIVO CONTABLE.
+		if($codigo_servicio_educativo == '20'){
+			$nivel_educacion = "Educación Media .-. Técnico Administrativo Contable";
+		}
 class PDF extends FPDF
 {
 //Cabecera de p�gina
@@ -597,6 +608,9 @@ while($row = $result -> fetch(PDO::FETCH_BOTH)) // bucle para la recorrer las as
 						}else{
 							$AR = cambiar_aprobado_reprobado_m($calificacion_);
 						}
+						if($codigo_servicio_educativo == "20"){
+							$AR = cambiar_aprobado_reprobado_media_contable($calificacion_);
+						}
 					// cambiar COLOR.
 						if($AR == "A"){
 							$pdf->Cell($ancho[2],($line * $alto[0]),$AR,'R',0,'C',$fill);
@@ -744,6 +758,9 @@ while($row = $result -> fetch(PDO::FETCH_BOTH)) // bucle para la recorrer las as
 					$AR = cambiar_aprobado_reprobado_b($calificacion_);
 				}else{
 					$AR = cambiar_aprobado_reprobado_m($calificacion_);
+				}
+				if($codigo_servicio_educativo == "20"){
+					$AR = cambiar_aprobado_reprobado_media_contable($calificacion_);
 				}
 			}
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

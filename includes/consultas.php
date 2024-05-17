@@ -464,7 +464,8 @@ function consultas($ejecutar,$cerrar,$codigo_bachillerato,$codigo_grado,$codigo_
 		    am.codigo_bach_o_ciclo, am.pn, bach.nombre as nombre_bachillerato, am.codigo_ann_lectivo, ann.nombre as nombre_ann_lectivo, am.codigo_grado, 
 		    gan.nombre as nombre_grado, am.codigo_seccion, am.retirado, 
 		    sec.nombre as nombre_seccion, ae.codigo_alumno, id_alumno, n.codigo_alumno, n.codigo_asignatura, asig.nombre AS n_asignatura, n.nota_p_p_1, n.nota_p_p_2, n.nota_p_p_3, n.nota_p_p_4, n.nota_final, n.recuperacion,
-		    round((n.nota_p_p_1+n.nota_p_p_2+n.nota_p_p_3),1) as total_puntos_basica, round((n.nota_p_p_1+n.nota_p_p_2+n.nota_p_p_3+n.nota_p_p_4),1) as total_puntos_media
+		    round((n.nota_p_p_1+n.nota_p_p_2+n.nota_p_p_3),1) as total_puntos_basica, round((n.nota_p_p_1+n.nota_p_p_2+n.nota_p_p_3+n.nota_p_p_4),1) as total_puntos_media,
+            asig.codigo_servicio_educativo
 		    FROM alumno a
 			INNER JOIN alumno_encargado ae ON a.id_alumno = ae.codigo_alumno and ae.encargado = 't'
 			INNER JOIN alumno_matricula am ON a.id_alumno = am.codigo_alumno and am.retirado = 'f'
@@ -511,7 +512,7 @@ if($ejecutar == 18)
 
 if($ejecutar == 19)
 {
-   $query = "SELECT aaa.codigo_asignatura, aaa.orden, asig.nombre as nombre_asignatura
+   $query = "SELECT aaa.codigo_asignatura, aaa.orden, asig.nombre as nombre_asignatura, asig.codigo_servicio_educativo
     FROM a_a_a_bach_o_ciclo aaa 
         INNER JOIN asignatura asig ON asig.codigo = aaa.codigo_asignatura 
         WHERE btrim(aaa.codigo_bach_o_ciclo || aaa.codigo_grado || codigo_ann_lectivo) = '$codigo_bachillerato' 

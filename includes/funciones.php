@@ -892,6 +892,14 @@ function cambiar_aprobado_reprobado_m($ap_re){
 			$ap_res = ' ';}
     return $ap_res;
 }
+function cambiar_aprobado_reprobado_media_contable($ap_re){
+    $ap_res = '';
+		if($ap_re !=0){
+			if($ap_re >= 4){$ap_res = "A";}else{$ap_res = "R";}}
+		else{
+			$ap_res = ' ';}
+    return $ap_res;
+}
 ////////////////////////////////////////////////////
 //Aprobados o Reprobados
 ////////////////////////////////////////////////////
