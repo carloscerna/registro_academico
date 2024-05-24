@@ -743,9 +743,10 @@ while($row = $result -> fetch(PDO::FETCH_BOTH)) // bucle para la recorrer las as
 				}
 				if($codigo_servicio_educativo == "20" || $codigo_servicio_educativo == "13"){
 					$pdf->SetFont('Arial','',6);
-					$pdf->Cell(120,4,'Nota. Para Aprobar cada asignatura por '.convertirtexto($leyenda),0,1,'L');
-					$pdf->Cell(160,4,'Si alguna ASIGNATURA aparece en BLANCO consulte con el DOCENTE que la imparte.',0,1,'L');
-					$pdf->Cell(40,4,'A = Aprobado; R = Reprobado ',0,1,'L');
+					$leyenda = " Modulo >= .6.";
+					$pdf->Cell(120,3,'Nota. Para Aprobar cada asignatura por '.convertirtexto($leyenda),0,1,'L');
+					$pdf->Cell(160,3,'Si alguna ASIGNATURA aparece en BLANCO consulte con el DOCENTE que la imparte.',0,1,'L');
+					$pdf->Cell(40,3,'A = Aprobado; R = Reprobado ',0,1,'L');
 				}else{
 					$pdf->SetFont('Arial','',9);
 					$pdf->Cell(120,$alto[0],'Nota. Para Aprobar cada asignatura por '.convertirtexto($leyenda),0,1,'L');
