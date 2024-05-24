@@ -894,7 +894,7 @@ function cambiar_aprobado_reprobado_m($ap_re){
 }
 function cambiar_aprobado_reprobado_media_contable($ap_re,$nombre_area){
     $ap_res = '';
-	if($nombre_area = "TéCNICA"){
+	if($nombre_area == "TéCNICA" || $nombre_area == "Técnica"){
 		$calificacion_maxima = 4;
 	}else{
 		$calificacion_maxima = 6;
