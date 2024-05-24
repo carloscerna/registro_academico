@@ -609,7 +609,7 @@ while($row = $result -> fetch(PDO::FETCH_BOTH)) // bucle para la recorrer las as
 							$AR = cambiar_aprobado_reprobado_m($calificacion_);
 						}
 						if($codigo_servicio_educativo == '20' || $codigo_servicio_educativo == '13'){
-							$AR = cambiar_aprobado_reprobado_media_contable($calificacion_);
+							$AR = cambiar_aprobado_reprobado_media_contable($calificacion_, $descripcion_area);
 						}
 					// cambiar COLOR.
 						if($AR == "A"){
@@ -768,7 +768,7 @@ while($row = $result -> fetch(PDO::FETCH_BOTH)) // bucle para la recorrer las as
 					$AR = cambiar_aprobado_reprobado_m($calificacion_);
 				}
 				if($codigo_servicio_educativo == "20" || $codigo_servicio_educativo == "13"){
-					$AR = cambiar_aprobado_reprobado_media_contable($calificacion_);
+					$AR = cambiar_aprobado_reprobado_media_contable($calificacion_, $descripcion_area);
 				}
 				
 			}

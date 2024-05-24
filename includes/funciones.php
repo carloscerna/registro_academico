@@ -892,10 +892,15 @@ function cambiar_aprobado_reprobado_m($ap_re){
 			$ap_res = ' ';}
     return $ap_res;
 }
-function cambiar_aprobado_reprobado_media_contable($ap_re){
+function cambiar_aprobado_reprobado_media_contable($ap_re,$nombre_area){
     $ap_res = '';
+	if($nombre_area = "TéCNICA"){
+		$calificacion_maxima = 4;
+	}else{
+		$calificacion_maxima = 6;
+	}
 		if($ap_re !=0){
-			if($ap_re >= 4){$ap_res = "A";}else{$ap_res = "R";}}
+			if($ap_re >= $calificacion_maxima){$ap_res = "A";}else{$ap_res = "R";}}
 		else{
 			$ap_res = ' ';}
     return $ap_res;
