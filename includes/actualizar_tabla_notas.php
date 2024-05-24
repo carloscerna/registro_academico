@@ -3,6 +3,8 @@
 //session_name('demoUI');
 //session_start();
 // omitir errores.
+set_time_limit(0);
+ini_set("memory_limit","2000M");
 ini_set("display_error", true);
 
 //
@@ -32,7 +34,7 @@ $codigo_asignatura_inicio = 01;
 $codigo_asignatura_fin = 255;
 //$codigo_asignatura_array = array("01","02","03","04","05","08","234","236","237","238","239","240"); // Educación Básica de 1.º a 6.º.
 $codigo_asignatura_array = array(); // Educación Básica de 1.º a 6.º.
-$todos='151024';
+$todos='161724';
 $codigo_bachillerato = substr($todos,0,2);
 $codigo_grado = substr($todos,2,2);
 $codigo_annlectivo = substr($todos,4,2);
@@ -93,7 +95,7 @@ while($row_ = $result_ -> fetch(PDO::FETCH_BOTH))
 		 	}
 		 }else {
 			 	   $query_insert = "INSERT INTO nota (codigo_asignatura, codigo_alumno, codigo_matricula) VALUES ('$codigo_asignatura_array[$i]',$codigo_alumno,$codigo_alumno_matricula)";
-					   $result_consulta_insert_notas = $dblink -> query($query_insert);
+					  // $result_consulta_insert_notas = $dblink -> query($query_insert);
 					   print $num . " INSERT -" . $codigo_asignatura_array[$i] . " - " . $codigo_alumno . " " . $codigo_alumno_matricula . " " .$nombres . " " ."<br>";							
 					   $num++;
 		 } 

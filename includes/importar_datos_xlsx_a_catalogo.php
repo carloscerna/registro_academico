@@ -36,7 +36,7 @@ $datos=array(); $fila_array = 0;
 // Leemos un archivo Excel 2007
    $objReader = \PhpOffice\PhpSpreadsheet\IOFactory::createReader("Xlsx");
     $origen = $ruta;
-	 $fila = 45;
+	 $fila = 5;
 	 $fila2 = 2;
 	 $discapacidad = "nada";
 	 $nip2 = "nada";
@@ -51,7 +51,7 @@ $datos=array(); $fila_array = 0;
 	$fecha_actual = date("d-m-Y h:i:s");
 	$timestamp = strtotime($fecha_actual);
 // N�mero de hoja.
-   $numero_de_hoja = 13;
+   $numero_de_hoja = 14;
 	$numero = 2;	
 // 	Recorre el numero de hojas que contenga el libro
        $objPHPExcel->setActiveSheetIndex($numero_de_hoja);
