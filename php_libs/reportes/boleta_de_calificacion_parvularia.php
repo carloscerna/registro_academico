@@ -108,7 +108,7 @@ while($row = $result_catalogo_area -> fetch(PDO::FETCH_BOTH))
 	    	{
             $nivel_educacion = "Educación Básica - Estándar de Desarrollo";
             }
-			if($print_codigo_bachillerato == "16")
+			if($print_codigo_bachillerato == "16" || $print_codigo_bachillerato == "17")
 	    	{
             $nivel_educacion = "Educación Básica - Segundo y Tercero";
             }

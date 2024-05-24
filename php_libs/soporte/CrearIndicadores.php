@@ -35,7 +35,7 @@ $contenidoOK = "";
               $print_ann_lectivo = 'Año Lectivo: '.trim($row['nombre_ann_lectivo']);
                 break;
             }
-              if($codigo_grado == "17"){
+              if($codigo_grado == "17" || $codigo_grado == "18"){
                 $n_hoja = 0;	// variable para el activesheet.
               }else{
                 $n_hoja = 3;	// variable para el activesheet.
@@ -71,7 +71,7 @@ $contenidoOK = "";
     $NombreEstudiante = array("D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z",
     "AA","AB","AC","AD","AE","AF","AG","AH","AI","AJ","AK","AL","AM","AN","AO","AP","AQ");
   }
-  if($codigo_grado == "17")
+  if($codigo_grado == "17" || $codigo_grado == "18")
   {
     $objPHPExcel = $objReader->load($origen."EDUCACION BASICA - SEGUNDO Y TERCER GRADO FOCALIZADO.xlsx");
     $NombreEstudiante = array("D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z",

@@ -3,6 +3,8 @@
 //session_name('demoUI');
 //session_start();
 // omitir errores.
+set_time_limit(0);
+ini_set("memory_limit","2000M");
 ini_set("display_error", true);
 
 //
@@ -30,10 +32,10 @@ try{
     };
 // 024P0119 , 025P0119 , 025P0219 , 026P0119 . 026P0219
 $todos='0302012401'; // MODALIDAD - GRADO - SECCION - ANN LECTIVO
-$codigo_asignatura = array('10','11','12','13');
+$codigo_asignatura = array('1110');
 $num = 0;
 $codigo_asignatura_array = array(); // Educación Básica de 1.º a 6.º.
-$todos='030224';
+$todos='030324';
 $codigo_bachillerato = substr($todos,0,2);
 $codigo_grado = substr($todos,2,2);
 $codigo_annlectivo = substr($todos,4,2);
@@ -73,18 +75,19 @@ $num = 0;
                     $codigo_alumno = $row_['id_alumno'];
                     $codigo_alumno_matricula = $row_['id_alumno_matricula'];
                     $nombres = trim($row_['apellido_alumno']);
-/*
+
                     for ($i=0; $i < count($codigo_asignatura_array); $i++) { 
-                        $query_eliminar = "DELETE FROM nota WHERE codigo_alumno = '$codigo_alumno' and codigo_matricula = '$codigo_alumno_matricula' and codigo_asignatura = '$codigo_asignatura_array[$i]'";
+                      $query_eliminar = "DELETE FROM nota WHERE codigo_alumno = '$codigo_alumno' and codigo_matricula = '$codigo_alumno_matricula' and codigo_asignatura = '$codigo_asignatura_array[$i]'";
                         
                         $result_consulta_eliminar_notas = $dblink -> query($query_eliminar);
+                        print $num . "Eliminar-" . $codigo_nie . "-" .  $codigo_alumno . " " . $codigo_alumno_matricula . " " .$nombres . " " . $codigo_asignatura_array[$i] . "<br>";
                             if($result_consulta_eliminar_notas)
                             {
                                 //
-                                print $num . "-" . $codigo_nie . "-" .  $codigo_alumno . " " . $codigo_alumno_matricula . " " .$nombres . " " . $codigo_asignatura_array[$i] . "<br>";
+                                
                             }
                         
-                    }*/
+                    }
                     // eliminar matricula
                     print $query_eliminar_matricula = "DELETE FROM alumno_matricula where codigo_alumno = '$codigo_alumno' and id_alumno_matricula = '$codigo_alumno_matricula'";
                     $result_consulta_eliminar_matricula = $dblink -> query($query_eliminar_matricula);
