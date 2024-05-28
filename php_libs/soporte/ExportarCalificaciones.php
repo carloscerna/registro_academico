@@ -26,6 +26,10 @@
       $nombre_modalidad = $Exportar->NombreNivel;
       $NombreGrado = explode("-", $NombreGrado);
       $nombre_grado = trim($NombreGrado[0]);
+      // Focalizado.
+        if($nombre_grado == "Segundo grado" || $nombre_grado == "Tercer grado"){
+          $nombre_grado = trim($NombreGrado[0]) . " " . trim($NombreGrado[1]);
+        }
     $codigo_all = $_REQUEST["lstmodalidad"] . substr($_REQUEST["lstgradoseccion"],0,4) . $_REQUEST["lstannlectivo"];
     $periodo = $_REQUEST["lstperiodo"];
     $codigo_asignatura = substr($_REQUEST["lstasignatura"],0,3);
@@ -129,7 +133,11 @@
             // AREA DIMENSION ES IGUAL A NINGUNO
             if(trim($nombre_area_subdimension_t[$i]) == 'Ninguno' && trim($nombre_area_dimension_t[$i]) != 'Ninguno'){
               $NombreAsignatura = $nombre_area_dimension_t[$i] . '-' . trim($nombre_asignatura_t[$i]); 
-            }        
+            }  
+            // PARA SEGUNDOS Y TECEROS FOCALIZADOS.
+            if($codigo_grado == "17" || $codigo_grado == "18"){
+              $NombreAsignatura = trim($nombre_asignatura_t[$i]); 
+            }      
 
         // lo asigna para poder realizar la busqueda.
           $codigo_asignatura = $codigo_asignatura_t[$i];
@@ -181,7 +189,7 @@ else
 //  FUNCIONES
 //
 function ConceptoCalificacion($codigo_cc){
-  global $nota_p_p_, $objPHPExcel, $fila_excel, $valor_uno, $nota_concepto;
+  global $nota_p_p_, $objPHPExcel, $fila_excel, $valor_uno, $nota_concepto, $codigo_grado;
     switch ($codigo_cc)
     {
       case "01":  // calificación
@@ -204,7 +212,11 @@ function ConceptoCalificacion($codigo_cc){
           break;
       case "03":  // Indicador
         if(empty($nota_p_p_)){
-          $objPHPExcel->getActiveSheet()->SetCellValue("B".$fila_excel, "NE"); 
+          if($codigo_grado == "17" || $codigo_grado == "18"){
+            $objPHPExcel->getActiveSheet()->SetCellValue("B".$fila_excel, "No lo hace"); 
+          }else{
+            $objPHPExcel->getActiveSheet()->SetCellValue("B".$fila_excel, "NE"); 
+          }
         }else{
           $objPHPExcel->getActiveSheet()->SetCellValue("B".$fila_excel, $nota_p_p_);                       
         }

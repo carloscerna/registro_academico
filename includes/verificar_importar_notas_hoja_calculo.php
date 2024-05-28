@@ -45,7 +45,13 @@ $datos=array(); $fila_array = 0;
 // VERIUICAR EL NUMERO DE HOJA A CONSULTAR SEGUN LA MODALIDAD.
     if($modalidad == "13" || $modalidad == "14" || $modalidad == "01"){
       $numero_de_hoja = 1;
-    }else{
+        if($grado == "17"){
+          $numero_de_hoja = 0;    
+        }
+    }else if ($grado == "17"){
+      $numero_de_hoja = 0;
+      }
+    else{
       $numero_de_hoja = 0;
     }
    $objPHPExcel->setActiveSheetIndex($numero_de_hoja);
@@ -136,6 +142,18 @@ $datos=array(); $fila_array = 0;
               return;
          } 
        }
+           // fin del proceso.
+      // sON LOS ARCHIVOS QUE TIENE VARIAS ASIGNATURAS Y CALCULA EL PROMEDIO. 4 AÑOS
+      if($valor_check == "Promedios" && $modalidad == "01" && $grado == "17"){
+        if($celda_a1 != "GUÍA DE OBSERVACIÓN. INSTRUMENTO 2"){
+          $datos[$fila_array]["registro"] = 'No_registro';
+          $fila_array++;
+          $datos[$fila_array]["registro"] = $grado . " " .$celda_a1;
+          // Enviando la matriz con Json.
+            echo json_encode($datos);
+            return;
+      } 
+    }
     // fin del proceso.    
 	// condicion para determinar si es de primer ciclo.
     $datos[$fila_array]["registro"] = 'Si_registro';

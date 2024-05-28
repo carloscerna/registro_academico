@@ -44,7 +44,12 @@ include($path_root."/registro_web/includes/mainFunctions_conexion.php");
 // Seleccionar el archivo con el se trabajar�
 	$objPHPExcel = $objReader->load($origen);
 // N�mero de hoja.
-   $numero_de_hoja = 1;
+	if($codigo_grado == "17"){
+		$numero_de_hoja = 0;	
+	}else{
+		$numero_de_hoja = 1;
+	}
+   
    $total_de_hojas = $objPHPExcel->getSheetCount();
 // Movilizarme la hoja del instrumento 2 PARA 4, 5, 6 Y 7 AÑOS.
        $objPHPExcel->setActiveSheetIndex($numero_de_hoja);
@@ -56,7 +61,7 @@ include($path_root."/registro_web/includes/mainFunctions_conexion.php");
 	    //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	    //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		// EVALUAR LA VARIABLE TRIMESTRE PARA EL INDICADOR CORRECTO.
-				if($codigo_grado == "I3" || $codigo_grado == "4P" || $codigo_grado =="5P" || $codigo_grado =="6P" || $codigo_grado == "01")
+				if($codigo_grado == "I3" || $codigo_grado == "4P" || $codigo_grado =="5P" || $codigo_grado =="6P" || $codigo_grado == "01" || $codigo_grado == "17" || $codigo_grado == "18")
 				{
 				  	$NombreEstudiante = array("D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z",
 				  	"AA","AB","AC","AD","AE","AF","AG","AH","AI","AJ","AK","AL","AM","AN","AO","AP","AQ");
@@ -93,7 +98,13 @@ include($path_root."/registro_web/includes/mainFunctions_conexion.php");
 								// CAPTURAR CODIGO INDICADOR.
 								$codigo_indicador = $objPHPExcel->getActiveSheet()->getCell("B".$fila_indicador_codigo_asignatura)->getValue();	
 								// CAPTURAR VALOR DEL INDICADOR
-								$valor_indicador = trim(strtoupper($objPHPExcel->getActiveSheet()->getCell($NombreEstudiante[$columna_codigo_alumno].$fila_indicador_codigo_asignatura)->getValue()));
+									// validar si es focalizado o parvularia o primeros.
+									if($codigo_grado == "17" || $codigo_grado == "18"){
+										$valor_indicador = trim(($objPHPExcel->getActiveSheet()->getCell($NombreEstudiante[$columna_codigo_alumno].$fila_indicador_codigo_asignatura)->getValue()));
+									}else{
+										$valor_indicador = trim(strtoupper($objPHPExcel->getActiveSheet()->getCell($NombreEstudiante[$columna_codigo_alumno].$fila_indicador_codigo_asignatura)->getValue()));
+									}
+								
 								// SQL QUERY
 								if($valor_indicador <> ""){
 									$query_indicador = "UPDATE nota SET $nota_p_p = '$valor_indicador' WHERE codigo_alumno = $codigo_alumno and codigo_matricula = $codigo_matricula and codigo_asignatura = '$codigo_indicador'";
