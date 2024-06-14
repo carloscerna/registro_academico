@@ -45,7 +45,7 @@ $datos=array(); $fila_array = 0;
     //echo date('H:i:s') . " Set Time Zone"."<br />";
     //date_default_timezone_set('America/El_Salvador');
 // set codings.
-    $objPHPExcel->_defaultEncoding = 'ISO-8859-1';
+    //$objPHPExcel->_defaultEncoding = 'ISO-8859-1';
 // Set default font
     //echo date('H:i:s') . " Set default font"."<br />";
     $objPHPExcel->getDefaultStyle()->getFont()->setName('Arial');
@@ -90,6 +90,6 @@ $datos=array(); $fila_array = 0;
 				 	//$query = "INSERT INTO $nombre_tabla (codigo, descripcion,codigo_clasificacion_riesgo) VALUES ('$codigo','$descripcion','$codigo_riesgo')";
                      $query = "INSERT INTO $nombre_tabla (codigo, descripcion) VALUES ('$codigo','$descripcion')";
                     
-					8//$consulta = $dblink -> query($query);
+					//$consulta = $dblink -> query($query);
 		}	// FIN DEL WHILE PRINCIPAL DE L AHOJA DE CALCULO.			
 ?>

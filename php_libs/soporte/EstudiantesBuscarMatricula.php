@@ -69,15 +69,15 @@ if($errorDbConexion == false){
 			break;
         
 			default:
-				$mensajeError = 'Esta acci�n no se encuentra disponible';
+				$mensajeError = 'Esta acción no se encuentra disponible';
 			break;
 		}
 	}
 	else{
-		$mensajeError = 'No se puede ejecutar la aplicaci�n';}
+		$mensajeError = 'No se puede ejecutar la aplicación';}
 }
 else{
-	$mensajeError = 'No se puede establecer conexi�n con la base de datos';}
+	$mensajeError = 'No se puede establecer conexión con la base de datos';}
 // Salida de la Array con JSON.
 	if($_POST["accion"] === "BuscarTodos"){
 		echo json_encode($arreglo);	
@@ -91,4 +91,3 @@ else{
 			"contenido" => $contenidoOK);
 		echo json_encode($salidaJson);
 	}
-?>

@@ -454,6 +454,15 @@ $(function(){ // INICIO DEL FUNCTION.
 						{"data":"id_alumno_matricula"}, // ID MATRICULA.
 						{"data":"todos"},
 						{"data":"fecha_ingreso"},
+						{"data":"retirado",
+							render: function(data, type, row){
+								if(data == 'false'){
+									return "<span class='badge badge-pill badge-danger'>Si</span>";
+								}else{
+									return "<span class='badge badge-pill badge-info'>No</span>";
+								}
+							}
+						},
 						{"data":"nombre_todos"},
 					],
 					// LLama a los diferentes mensajes que están en español.
