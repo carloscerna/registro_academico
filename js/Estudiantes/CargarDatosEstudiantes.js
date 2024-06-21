@@ -32,8 +32,6 @@ $(document).ready(function()
 			}, "json");
 	}
 });
-
-
 $(document).ready(function()
 {
 	if($("#accion").val() == "AgregarNuevoEstudiante"){
@@ -91,7 +89,6 @@ $(document).ready(function()
 			}, "json");			
 	}
 });
-
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // EN EL CASO QUE SOLO SE HA EDITAR.
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////        				
@@ -258,18 +255,30 @@ $(document).ready(function()
 					}
 			}, "json");
 	});        
- 	// Carga la INformación de Tabla Zona Residencia
+ 	// Carga la INformación de Tabla Zona Residencia para el Estudiante, Padre, Madre u Otro.
 	$(document).ready(function()
 	{
 			var miselect=$("#lstZonaResidencia");
+			var miselectP=$("#lstZonaResidenciaP");
+			var miselectM=$("#lstZonaResidenciaM");
+			var miselectOtro=$("#lstZonaResidenciaO");
 			/* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
 			miselect.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
+			miselectP.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
+			miselectM.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
+			miselectOtro.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
 			
 			$.post("includes/cargar_zona_residencia.php",
 				function(data) {
 					miselect.empty();
+					miselectP.empty();
+					miselectM.empty();
+					miselectOtro.empty();
 					for (var i=0; i<data.length; i++) {
 						miselect.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');
+						miselectP.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');
+						miselectM.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');
+						miselectOtro.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');
 					}
 			}, "json");
 	});
@@ -278,37 +287,67 @@ $(document).ready(function()
 	{
 	    // REllenar el select Departamento.
 		var miselect=$("#lstDepartamento");
+		var miselectPadre=$("#lstDepartamentoP");
+		var miselectMadre=$("#lstDepartamentoM");
+		var miselectOtro=$("#lstDepartamentoO");
 	    /* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
 		miselect.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
+		miselectPadre.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
+		miselectMadre.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
+		miselectOtro.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
 			
 		$.post("includes/cargar_departamento.php",
 		    function(data) {
 			miselect.empty();
+			miselectPadre.empty();
+			miselectMadre.empty();
+			miselectOtro.empty();
 			    for (var i=0; i<data.length; i++) {
 					if(i== 1){
 						miselect.append('<option value="' + data[i].codigo + '" selected>' + data[i].descripcion + '</option>');
+						miselectPadre.append('<option value="' + data[i].codigo + '" selected>' + data[i].descripcion + '</option>');
+						miselectMadre.append('<option value="' + data[i].codigo + '" selected>' + data[i].descripcion + '</option>');
+						miselectOtro.append('<option value="' + data[i].codigo + '" selected>' + data[i].descripcion + '</option>');
 						}
 						else{
 						miselect.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');	
+						miselectPadre.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');	
+						miselectMadre.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');	
+						miselectOtro.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');	
 						}
 						
 				}
 			}, "json");
 	    // REllenar el select Municipio con un Código específico 02 - Santa Ana.
-		var miselectM=$("#lstMunicipio");
+		var miselectMEstudiante=$("#lstMunicipio");
+		var miselectMPadre=$("#lstMunicipioP");
+		var miselectMMadre=$("#lstMunicipioM");
+		var miselectMOtro=$("#lstMunicipioO");
 	    /* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
-		miselectM.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
+		miselectMEstudiante.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
+		miselectMPadre.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
+		miselectMMadre.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
+		miselectMOtro.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
 			
   		    departamento="02";
 			$.post("includes/cargar_municipio.php", { departamento: departamento },
 			    function(data){
-			    miselectM.empty();
+			    miselectMEstudiante.empty();
+				miselectMPadre.empty();
+				miselectMMadre.empty();
+				miselectMOtro.empty();
 				for (var i=0; i<data.length; i++) {
 							if(i== 9){
-						miselectM.append('<option value="' + data[i].codigo + '" selected>' + data[i].descripcion + '</option>');
+						miselectMEstudiante.append('<option value="' + data[i].codigo + '" selected>' + data[i].descripcion + '</option>');
+						miselectMPadre.append('<option value="' + data[i].codigo + '" selected>' + data[i].descripcion + '</option>');
+						miselectMMadre.append('<option value="' + data[i].codigo + '" selected>' + data[i].descripcion + '</option>');
+						miselectMOtro.append('<option value="' + data[i].codigo + '" selected>' + data[i].descripcion + '</option>');
 						}
 						else{
-						miselectM.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');	
+						miselectMEstudiante.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');	
+						miselectMPadre.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');	
+						miselectMMadre.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');	
+						miselectMOtro.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');	
 						}
 				}
 			}, "json");		
@@ -373,104 +412,36 @@ $(document).ready(function()
 	    });
 	});
 	});
-// INFORMACION CARGAR EN DATOS DE LOS RESPONSABLES, PADRE, MADRE O ENCARGADO.
-// Carga la INformación de Tabla Zona Residencia
-	$(document).ready(function()
-	{
-			var miselect=$("#lstNacionalidadP");
-			//
-			var theValue = '54';
-			/* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
-			miselect.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
-			
-			$.post("includes/cargar-nacionalidad.php",
-				function(data) {
-					miselect.empty();
-					for (var i=0; i<data.length; i++) {
-						if (data[i].codigo == theValue){
-							miselect.append('<option value="' + data[i].codigo + '" selected>' + data[i].descripcion + '</option>');
-						}else{
-							miselect.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');
-						}
-					}
-			}, "json");
-	});
   	// Carga la INformación de Tabla Zona Residencia
 	$(document).ready(function()
 	{
 			var miselect=$("#lstEstadoFamiliarP");
+			var miselectMadre=$("#lstEstadoFamiliarM");
+			var miselectOtro=$("#lstEstadoFamiliarO");
 			/* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
 			miselect.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
+			miselectMadre.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
+			miselectOtro.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
 			
 			$.post("includes/cargar-familiar.php",
 				function(data) {
 					miselect.empty();
+					miselectMadre.empty();
+					miselectOtro.empty();
 					for (var i=0; i<data.length; i++) {
 					if(i== 7){
 						miselect.append('<option value="' + data[i].codigo + '" selected>' + data[i].descripcion + '</option>');
+						miselectMadre.append('<option value="' + data[i].codigo + '" selected>' + data[i].descripcion + '</option>');
+						miselectOtro.append('<option value="' + data[i].codigo + '" selected>' + data[i].descripcion + '</option>');
 						}
 						else{
 						miselect.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');	
+						miselectMadre.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');	
+						miselectOtro.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');	
 						}
 					}
 			}, "json");
 	});
- 	// Carga la INformación de Tabla Zona Residencia
-	$(document).ready(function()
-	{
-			var miselect=$("#lstZonaResidenciaP");
-			/* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
-			miselect.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
-			
-			$.post("includes/cargar_zona_residencia.php",
-				function(data) {
-					miselect.empty();
-					for (var i=0; i<data.length; i++) {
-						miselect.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');
-					}
-			}, "json");
-	});
-
-// Carga la INformación de Tabla Departamento
-	$(document).ready(function()
-	{
-	    // REllenar el select Departamento.
-		var miselect=$("#lstDepartamentoP");
-	    /* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
-		miselect.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
-			
-		$.post("includes/cargar_departamento.php",
-		    function(data) {
-			miselect.empty();
-			    for (var i=0; i<data.length; i++) {
-					if(i== 1){
-						miselect.append('<option value="' + data[i].codigo + '" selected>' + data[i].descripcion + '</option>');
-						}
-						else{
-						miselect.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');	
-						}
-				}
-			}, "json");
-	    // REllenar el select Municipio con un Código específico 02 - Santa Ana.
-		var miselectP=$("#lstMunicipioP");
-	    /* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
-		miselectP.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
-			
-  		    departamento="02";
-			$.post("includes/cargar_municipio.php", { departamento: departamento },
-			    function(data){
-			    miselectP.empty();
-				for (var i=0; i<data.length; i++) {
-				    							if(i== 9){
-						miselectP.append('<option value="' + data[i].codigo + '" selected>' + data[i].descripcion + '</option>');
-						}
-						else{
-						miselectP.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');	
-						}
-				}
-			}, "json");			
-	});
-	
 		// Carga la INformación de Tabla Departamento
 	$(document).ready(function()
 	{
@@ -499,73 +470,47 @@ $(document).ready(function()
 	$(document).ready(function()
 	{
 			var miselect=$("#lstNacionalidadE");
+			var miselectMadre=$("#lstNacionalidadM");
+			var miselectPadre=$("#lstNacionalidadP");
+			var miselectOtro=$("#lstNacionalidadO");
 			//
 			var theValue = '54';
 			/* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
 			miselect.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
+			miselectMadre.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
+			miselectPadre.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
+			miselectOtro.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
 			
 			$.post("includes/cargar-nacionalidad.php",
 				function(data) {
 					miselect.empty();
+					miselectMadre.empty();
+					miselectPadre.empty();
+					miselectOtro.empty();
 					for (var i=0; i<data.length; i++) {
 						if (data[i].codigo == theValue){
 							miselect.append('<option value="' + data[i].codigo + '" selected>' + data[i].descripcion + '</option>');
+							miselectMadre.append('<option value="' + data[i].codigo + '" selected>' + data[i].descripcion + '</option>');
+							miselectPadre.append('<option value="' + data[i].codigo + '" selected>' + data[i].descripcion + '</option>');
+							miselectOtro.append('<option value="' + data[i].codigo + '" selected>' + data[i].descripcion + '</option>');
 						}else{
 							miselect.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');
+							miselectMadre.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');
+							miselectPadre.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');
+							miselectOtro.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');
 						}
 					}
 			}, "json");
 
 	});
+	// Carga la INformación de Tabla Diagnostico Clinico
 	$(document).ready(function()
 	{
-			var miselect=$("#lstNacionalidadM");
-			//
-			var theValue = '54';
+			var miselect=$("#lstDiagnostico");
 			/* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
 			miselect.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
 			
-			$.post("includes/cargar-nacionalidad.php",
-				function(data) {
-					miselect.empty();
-					for (var i=0; i<data.length; i++) {
-						if (data[i].codigo == theValue){
-							miselect.append('<option value="' + data[i].codigo + '" selected>' + data[i].descripcion + '</option>');
-						}else{
-							miselect.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');
-						}
-					}
-			}, "json");
-	});
-        	// Carga la INformación de Tabla Zona Residencia
-	$(document).ready(function()
-	{
-			var miselect=$("#lstEstadoFamiliarM");
-			/* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
-			miselect.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
-			
-			$.post("includes/cargar-familiar.php",
-				function(data) {
-					miselect.empty();
-					for (var i=0; i<data.length; i++) {
-						if(i== 2){
-						miselect.append('<option value="' + data[i].codigo + '" selected>' + data[i].descripcion + '</option>');
-						}
-						else{
-						miselect.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');	
-						}
-					}
-			}, "json");
-	});
-
-        	// Carga la INformación de Tabla Zona Residencia
-	$(document).ready(function()
-	{
-			var miselect=$("#lstZonaResidenciaM");
-			/* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
-			miselect.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
-			
-			$.post("includes/cargar_zona_residencia.php",
+			$.post("includes/cargar_diagnostico.php",
 				function(data) {
 					miselect.empty();
 					for (var i=0; i<data.length; i++) {
@@ -573,23 +518,6 @@ $(document).ready(function()
 					}
 			}, "json");
 	});
-
-	        	// Carga la INformación de Tabla Diagnostico Clinico
-				$(document).ready(function()
-				{
-						var miselect=$("#lstDiagnostico");
-						/* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
-						miselect.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
-						
-						$.post("includes/cargar_diagnostico.php",
-							function(data) {
-								miselect.empty();
-								for (var i=0; i<data.length; i++) {
-									miselect.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');
-								}
-						}, "json");
-				});
-
 // Carga la INformación de Tabla Departamento
 	$(document).ready(function()
 	{
@@ -629,8 +557,7 @@ $(document).ready(function()
 				}
 			}, "json");			
 	});
-	
-		// Carga la INformación de Tabla Departamento
+// Carga la INformación de Tabla Departamento
 	$(document).ready(function()
 	{
 		// Parametros para el lstmuncipio.
@@ -652,51 +579,9 @@ $(document).ready(function()
 	    });
 	});
 	});
-	
-	//
-	//
-	//
-		// Carga la INformación encargado Otro.
+// Carga la INformación de Tabla Zona Residencia
 	$(document).ready(function()
 	{
-			var miselect=$("#lstNacionalidadO");
-			//
-			var theValue = '54';
-			/* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
-			miselect.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
-			
-			$.post("includes/cargar-nacionalidad.php",
-				function(data) {
-					miselect.empty();
-					for (var i=0; i<data.length; i++) {
-						if (data[i].codigo == theValue){
-							miselect.append('<option value="' + data[i].codigo + '" selected>' + data[i].descripcion + '</option>');
-						}else{
-							miselect.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');
-						}
-					}
-			}, "json");
-	});
-        	// Carga la INformación de Tabla Zona Residencia
-	$(document).ready(function()
-	{
-			var miselect4=$("#lstEstadoFamiliarO");
-			/* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
-			miselect4.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
-			
-			$.post("includes/cargar-familiar.php",
-				function(data) {
-					miselect4.empty();
-					for (var i=0; i<data.length; i++) {
-					if(i== 9){
-						miselect4.append('<option value="' + data[i].codigo + '" selected>' + data[i].descripcion + '</option>');
-						}
-						else{
-						miselect4.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');	
-						}
-					}
-			}, "json");
-
 			// CARGAR TIPO DE VIVIENDA
 			var miselect=$("#LstTipoVivienda");
 			/* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
@@ -768,98 +653,18 @@ $(document).ready(function()
 					}
 			}, "json");
 	});
-
-        	// Carga la INformación de Tabla Zona Residencia
+	// Carga la INformación de Tabla Zona Residencia
 	$(document).ready(function()
 	{
-			var miselect=$("#lstZonaResidenciaO");
+			var miselect=$("#lstEtnia");
 			/* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
 			miselect.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
 			
-			$.post("includes/cargar_zona_residencia.php",
+			$.post("includes/cargar_etnia.php",
 				function(data) {
 					miselect.empty();
 					for (var i=0; i<data.length; i++) {
 						miselect.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');
 					}
 			}, "json");
-	});
-
-	    	// Carga la INformación de Tabla Zona Residencia
-			$(document).ready(function()
-			{
-					var miselect=$("#lstEtnia");
-					/* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
-					miselect.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
-					
-					$.post("includes/cargar_etnia.php",
-						function(data) {
-							miselect.empty();
-							for (var i=0; i<data.length; i++) {
-								miselect.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');
-							}
-					}, "json");
-			});
-
-// Carga la INformación de Tabla Departamento
-	$(document).ready(function()
-	{
-	    // REllenar el select Departamento.
-		var miselect=$("#lstDepartamentoO");
-	    /* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
-		miselect.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
-			
-		$.post("includes/cargar_departamento.php",
-		    function(data) {
-			miselect.empty();
-			    for (var i=0; i<data.length; i++) {
-						if(i== 1){
-						miselect.append('<option value="' + data[i].codigo + '" selected>' + data[i].descripcion + '</option>');
-						}
-						else{
-						miselect.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');	
-						}
-				}
-			}, "json");
-	    // REllenar el select Municipio con un Código específico 02 - Santa Ana.
-		var miselectM=$("#lstMunicipioO");
-	    /* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
-		miselectM.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
-			
-  		    departamento="02";
-			$.post("includes/cargar_municipio.php", { departamento: departamento },
-			    function(data){
-			    miselectM.empty();
-				for (var i=0; i<data.length; i++) {
-					if(i== 9){
-						miselectM.append('<option value="' + data[i].codigo + '" selected>' + data[i].descripcion + '</option>');
-						}
-						else{
-						miselectM.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');	
-						}
-				}
-			}, "json");			
-	});
-	
-		// Carga la INformación de Tabla Departamento
-	$(document).ready(function()
-	{
-		// Parametros para el lstmuncipio.
-	$("#lstDepartamentoO").change(function () {
-	    	    var miselect=$("#lstMunicipioO");
-		    /* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
-			miselect.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
-			
-   		$("#lstDepartamentoO option:selected").each(function () {
-				elegido=$(this).val();
-				departamento=$("#lstDepartamentoO").val();
-				$.post("includes/cargar_municipio.php", { departamento: departamento },
-				       function(data){
-					miselect.empty();
-					for (var i=0; i<data.length; i++) {
-						miselect.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');
-					}
-			}, "json");			
-	    });
-	});
 	});
