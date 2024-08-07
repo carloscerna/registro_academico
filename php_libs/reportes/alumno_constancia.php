@@ -129,9 +129,9 @@ function Footer()
     $pdf->RoundedRect(105, 65, 35, 8, 2, '1234', '');
     //$pdf->RoundedRect(168, 65, 32, 8, 2, '1234', '');
     $pdf->RoundedRect(53, 75, 147, 8, 2, '1234', '');
-    $pdf->RoundedRect(55, 85, 30, 8, 2, '1234', '');
-    $pdf->RoundedRect(55, 95, 30, 8, 2, '1234', '');
-    $pdf->RoundedRect(55, 105, 30, 8, 2, '1234', '');
+    $pdf->RoundedRect(55, 85, 110, 8, 2, '1234', '');
+    $pdf->RoundedRect(55, 95, 20, 8, 2, '1234', '');
+    $pdf->RoundedRect(55, 105, 20, 8, 2, '1234', '');
 // Definimos el tipo de fuente, estilo y tamaño.
     $pdf->SetFont('Arial','',12); // I : Italica; U: Normal;
 //  mostrar los valores de la consulta

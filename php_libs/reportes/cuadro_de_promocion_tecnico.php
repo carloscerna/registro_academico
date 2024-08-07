@@ -227,7 +227,7 @@ while($rows_promovidos_retenidos = $result_promovidos_retenidos -> fetch(PDO::FE
     $result_asignaturas = $db_link -> query($query_nombres_asignaturas);
     while($rows = $result_asignaturas -> fetch(PDO::FETCH_BOTH))
       {
-              $nombre_asignatura[] = utf8_decode(trim($rows['nombre_asignatura']));
+              $nombre_asignatura[] = convertirtexto(trim($rows['nombre_asignatura']));
               $nombre_bachillerato = trim($rows['nombre_bachillerato']);
               $nombre_grado = trim($rows['nombre_grado']);
       }
@@ -316,7 +316,7 @@ class PDF extends FPDF
         //Text rotated around its origin
         $this->Rotate($angle,$x,$y);
         $this->SetXY($x,$y);
-            $this->MultiCell(90,4,utf8_decode($txt),0,'J');
+            $this->MultiCell(90,4,convertirtexto($txt),0,'J');
         $this->Rotate(0);
     }
 
@@ -328,7 +328,7 @@ class PDF extends FPDF
         global $nombre_asignatura, $valor_x_encabezado, $total_asignaturas, $print_bachillerato;
         // dParte superior izquierda.
           $this->SetFont('Arial','',8); // I : Italica; U: Normal;
-          $this->Cell(343,8,utf8_decode($print_bachillerato),0,0,'R');
+          $this->Cell(343,8,convertirtexto($print_bachillerato),0,0,'R');
         // Encabezado.
         if($valor_x_encabezado == true)
         {    
@@ -336,16 +336,16 @@ class PDF extends FPDF
           $this->Rect(10,5,242,50);
           // segunda PARTE DEL RECTANGULO. numero de orden
               $this->Rect(10,5,7,50);
-              $this->RotatedText(15,38,utf8_decode('N° de Orden'),90);
+              $this->RotatedText(15,38,convertirtexto('N° de Orden'),90);
           // segunda PARTE DEL RECTANGULO. numero de orden
               $this->Rect(17,5,20,50);
-              $this->RotatedText(30,38,utf8_decode('N° de NIE'),90);
+              $this->RotatedText(30,38,convertirtexto('N° de NIE'),90);
           // tercera PARTE DEL RECTANGULO.   nombre del alumno
               //$this->Rect(17,45,85,50);
               $this->SetFont('Arial','',11); // I : Italica; U: Normal;
               $this->SetXY(38,25);
               $this->SetFillColor(255,255,255);
-              $this->MultiCell(65,8,utf8_decode('Nombre de los Alumnos(as) en orden alfabético de apellidos'),0,2,'C',true);
+              $this->MultiCell(65,8,convertirtexto('Nombre de los Alumnos(as) en orden alfabético de apellidos'),0,2,'C',true);
           // cuarta PARTE DEL RECTANGULO. asignatura
               $this->SetFont('Arial','',13); // I : Italica; U: Normal;
               //$this->Rect(127,45,70,7);
@@ -364,7 +364,7 @@ class PDF extends FPDF
               $this->SetXY(202,5);
               $this->SetFont('Arial','',9); // I : Italica; U: Normal;
               $this->Cell(50,8,'COMPETENCIAS CIUDADANAS',1,2,'C',true);
-              //$this->Cell(60,3,utf8_decode('Aspectos de la Conducta'),0,2,'C');
+              //$this->Cell(60,3,convertirtexto('Aspectos de la Conducta'),0,2,'C');
           // cuarta PARTE DEL RECTANGULO. asignaturas nombres
               $espacio = 0;
               for($ix=0;$ix<=$total_asignaturas-1;$ix++){
@@ -559,13 +559,13 @@ $codigo_all_ = substr($codigo_all,0,8);
 // Imprimir el primer encabezado REGISTRO DE EVALUACION....
     $pdf->SetXY(70,10);
     $pdf->SetFont('Arial','',18); // I : Italica; U: Normal;
-    $pdf->Cell(235,14,utf8_decode('REGISTRO DE EVALUACIÓN DEL RENDIMIENTO ESCOLAR DE EDUCACIÓN MEDIA'),0,0,'L');
+    $pdf->Cell(235,14,convertirtexto('REGISTRO DE EVALUACIÓN DEL RENDIMIENTO ESCOLAR DE EDUCACIÓN MEDIA'),0,0,'L');
     
     $pdf->SetXY(80,25);
     $pdf->SetFont('Arial','',11); // I : Italica; U: Normal;
-    $pdf->Cell(235,5,utf8_decode('CUADRO FINAL DE EVALUACIÓN DE'),0,2,'L');
-    $pdf->Cell(235,5,utf8_decode('NOMBRE DEL CENTRO EDUCATIVO:'),0,2,'L');
-    $pdf->Cell(235,5,utf8_decode('DIRECCIÓN:'),0,2,'L');
+    $pdf->Cell(235,5,convertirtexto('CUADRO FINAL DE EVALUACIÓN DE'),0,2,'L');
+    $pdf->Cell(235,5,convertirtexto('NOMBRE DEL CENTRO EDUCATIVO:'),0,2,'L');
+    $pdf->Cell(235,5,convertirtexto('DIRECCIÓN:'),0,2,'L');
     $pdf->Cell(235,5,'DEPARTAMENTO:',0,2,'L');
     
 // Imprimir el primer encabezado EL ESCUDO DE EL SALVADOR... Y TEXTO. 3 LINEAS
@@ -573,23 +573,23 @@ $codigo_all_ = substr($codigo_all,0,8);
     $pdf->Image($img,35,10,20,20);
     $pdf->SetFont('Arial','',10); // I : Italica; U: Normal;
     $pdf->SetXY(15,30);
-    $pdf->Cell(60,4,utf8_decode('República de El Salvador'),0,2,'C');
-    $pdf->Cell(60,4,utf8_decode('Ministerio de Educación'),0,2,'C');
-    $pdf->Cell(60,4,utf8_decode('Dirección Nacional de Educación Media'),0,2,'C');
+    $pdf->Cell(60,4,convertirtexto('República de El Salvador'),0,2,'C');
+    $pdf->Cell(60,4,convertirtexto('Ministerio de Educación'),0,2,'C');
+    $pdf->Cell(60,4,convertirtexto('Dirección Nacional de Educación Media'),0,2,'C');
 // PRIEMRA PARTE DEL RECTANGULO.
     $pdf->Rect(10,45,242,50);
 // segunda PARTE DEL RECTANGULO. numero de orden
     $pdf->Rect(10,45,7,50);
-    $pdf->RotatedText(15,80,utf8_decode('N° de Orden'),90);
+    $pdf->RotatedText(15,80,convertirtexto('N° de Orden'),90);
 // segunda PARTE DEL RECTANGULO. numero de orden
     $pdf->Rect(17,45,20,50);
-    $pdf->RotatedText(30,80,utf8_decode('N° de NIE'),90);
+    $pdf->RotatedText(30,80,convertirtexto('N° de NIE'),90);
 // tercera PARTE DEL RECTANGULO.   nombre del alumno
     //$pdf->Rect(17,45,85,50);
     $pdf->SetFont('Arial','',11); // I : Italica; U: Normal;
     $pdf->SetXY(38,65);
     $pdf->SetFillColor(255,255,255);
-    $pdf->MultiCell(65,8,utf8_decode('Nombre de los Alumnos(as) en orden alfabético de apellidos'),0,2,'C',true);
+    $pdf->MultiCell(65,8,convertirtexto('Nombre de los Alumnos(as) en orden alfabético de apellidos'),0,2,'C',true);
 // cuarta PARTE DEL RECTANGULO. asignatura
     $pdf->SetFont('Arial','',13); // I : Italica; U: Normal;
     //$pdf->Rect(127,45,70,7);
@@ -608,7 +608,7 @@ $codigo_all_ = substr($codigo_all,0,8);
     $pdf->SetXY(202,45);
     $pdf->SetFont('Arial','',9); // I : Italica; U: Normal;
     $pdf->Cell(50,8,'COMPETENCIAS CIUDADANAS',1,2,'C',true);
-    //$pdf->Cell(60,3,utf8_decode('Aspectos de la Conducta'),0,2,'C');
+    //$pdf->Cell(60,3,convertirtexto('Aspectos de la Conducta'),0,2,'C');
 // cuarta PARTE DEL RECTANGULO. asignaturas nombres
     $espacio = 0;
     for($ix=0;$ix<=$total_asignaturas-1;$ix++){
@@ -635,8 +635,8 @@ $codigo_all_ = substr($codigo_all,0,8);
     $pdf->SetFont('Arial','',9); // I : Italica; U: Normal;
     
     $pdf->SetXY(260,45);
-    $pdf->Cell(90,4.5,utf8_decode('ESCALA DE VALORACIÓN PARA LAS'),'LRT',2,'C');
-    $pdf->Cell(90,4.5,utf8_decode('COMPETENCIAS CIUDADANAS'),'LRB',2,'C');
+    $pdf->Cell(90,4.5,convertirtexto('ESCALA DE VALORACIÓN PARA LAS'),'LRT',2,'C');
+    $pdf->Cell(90,4.5,convertirtexto('COMPETENCIAS CIUDADANAS'),'LRB',2,'C');
 		
 		$pdf->Cell(30,8,'E: Excelente',1,0,'L');
 		$pdf->Cell(30,8,'MB: Muy Bueno',1,0,'L');
@@ -668,7 +668,7 @@ $codigo_all_ = substr($codigo_all,0,8);
       $pdf->Rect(320,80,15,30);
     
     $pdf->SetXY(260,80);
-    $pdf->Cell(90,5,utf8_decode('ESTADÍSTICA'),1,2,'C', true);
+    $pdf->Cell(90,5,convertirtexto('ESTADÍSTICA'),1,2,'C', true);
     $pdf->SetXY(258,88);
     $pdf->Cell(20,5,'SEXO',0,0,'C');
     $pdf->SetFont('Arial','',7);
@@ -759,7 +759,12 @@ $codigo_all_ = substr($codigo_all,0,8);
     $pdf->SetXY(260,150);
 		$pdf->Cell(11,5,'PROMOVIDOS:',0,0,'L');
 		$pdf->SetXY(280,150);
-		$pdf->Cell(65,5,strtolower(utf8_decode(num2letras($total_promovidos_f+$total_promovidos_m))),0,0,'C');
+    if(($total_promovidos_f + $total_promovidos_m) == 0){
+      $pdf->Cell(65,5,strtolower("cero"),0,0,'C');
+    }else{
+      $pdf->Cell(65,5,strtolower(convertirtexto(num2letras($total_promovidos_f+$total_promovidos_m))),0,0,'C');
+    }
+		
 		
     $pdf->Rect(290,170,50,0);
 		
@@ -770,7 +775,7 @@ $codigo_all_ = substr($codigo_all,0,8);
     if($total_retenidos_m_f == 0){
       $pdf->Cell(65,5,"ninguno",0,0,'C');  
     }else{
-      $pdf->Cell(65,5,strtolower(utf8_decode(num2letras($total_retenidos_f+$total_retenidos_m))),0,0,'C');  
+      $pdf->Cell(65,5,strtolower(convertirtexto(num2letras($total_retenidos_f+$total_retenidos_m))),0,0,'C');  
     }
     
     
@@ -782,12 +787,12 @@ $codigo_all_ = substr($codigo_all,0,8);
             
             $pdf->SetXY(152,24.3);
             $pdf->SetFont('Arial','b',11); // I : Italica; U: Normal;
-            $pdf->Cell(85,5.5,utf8_decode($nombre_grado .' SECCIÓN: '.$print_seccion. ' CÓDIGO DE INFRAESTRUCTURA: '.$_SESSION['codigo']),0,2,'L');
+            $pdf->Cell(85,5.5,convertirtexto($nombre_grado .' SECCIÓN: '.$print_seccion. ' CÓDIGO DE INFRAESTRUCTURA: '.$_SESSION['codigo']),0,2,'L');
             $pdf->Cell(140,6,cambiar_de_del($_SESSION['institucion']),0,2,'C');
             $pdf->SetXY(105,34.5);
-            $pdf->Cell(85,6,utf8_decode($_SESSION['direccion']).'                       MUNICIPIO: '.$_SESSION['nombre_municipio'],0,2,'L');
+            $pdf->Cell(85,6,convertirtexto($_SESSION['direccion']).'                       MUNICIPIO: '.$_SESSION['nombre_municipio'],0,2,'L');
             $pdf->SetXY(115,39.3);
-            $pdf->Cell(85,6,utf8_decode($_SESSION['nombre_departamento'].'                   Nº de acuerdo de creación: ').$_SESSION['numero_acuerdo'],0,2,'L');    
+            $pdf->Cell(85,6,convertirtexto($_SESSION['nombre_departamento'].'                   Nº de acuerdo de creación: ').$_SESSION['numero_acuerdo'],0,2,'L');    
 //Datos para nombres, asignaturas.
     $pdf->SetXY(10,95);
     $pdf->SetFont('Arial','',10);
@@ -844,14 +849,15 @@ $codigo_all_ = substr($codigo_all,0,8);
                   $pdf->Cell($w[0],$h[0],$nota_final_,1,0,'C',$fill); 
                 }
               break;
-              case ($i>=11 && $i<=16):  // muci
+              case ($i>=11 && $i<=15):  // muci
               	$nota_concepto = verificar_nota_media($row['nota_final'],$row['recuperacion']);
                 $concepto_asignatura = cambiar_concepto($nota_concepto);
                 $pdf->Cell(10,$h[0],$concepto_asignatura,1,0,'C',$fill); break;
-              case 17:
+              case $i = 16:
                   $nota_concepto = verificar_nota_media($row['nota_final'],$row['recuperacion']);
                   $concepto_asignatura = cambiar_concepto($nota_concepto);
                   $pdf->Cell(10,$h[0],$concepto_asignatura,1,1,'C',$fill); break;
+                  
                 }
                
             
@@ -871,7 +877,7 @@ $codigo_all_ = substr($codigo_all,0,8);
                 //Crear una línea. Fecha.
                     $pdf->RotatedText(258,60,'Fecha:',0);
                     //$pdf->RotatedText(265,67,strtolower(num2letras($dia))." de ".$mes." de ".strtolower(num2letras($año)),0);
-                    $pdf->RotatedText(265,67,trim($_SESSION['dia_entrega'])." de ".$mes." de ".utf8_decode(strtolower(num2letras($año))),0);
+                    $pdf->RotatedText(265,67,trim($_SESSION['dia_entrega'])." de ".$mes." de ".convertirtexto(strtolower(num2letras($año))),0);
                     $pdf->Line(255,70,350,70);
                 //Crear una línea. F. Docente.
                     $pdf->RotatedText(258,92,'F:',0);
@@ -896,7 +902,7 @@ $codigo_all_ = substr($codigo_all,0,8);
 		    $linea_faltante =  23 - $numero;
         $numero_p = $numero - 1;
 		
-		   $valor_y1 = $pdf->gety(10);
+		   $valor_y1 = $pdf->GetY();
 		   $pdf->Line(17,$valor_y1,247,210);
 
 	      	for($i=0;$i<=$linea_faltante;$i++)
@@ -929,7 +935,7 @@ $codigo_all_ = substr($codigo_all,0,8);
                     $pdf->SetY(55);
                 //Crear una línea. Fecha.
                     $pdf->RotatedText(255,60,'Fecha:',0);
-                    $pdf->RotatedText(265,67,trim($_SESSION['dia_entrega'])." de ".$mes." de ".utf8_decode(strtolower(num2letras($año))),0);
+                    $pdf->RotatedText(265,67,trim($_SESSION['dia_entrega'])." de ".$mes." de ".convertirtexto(strtolower(num2letras($año))),0);
                     $pdf->Line(255,70,350,70);
                 //Crear una línea. F. Docente.
                     $pdf->RotatedText(255,92,'F:',0);
@@ -949,7 +955,7 @@ $codigo_all_ = substr($codigo_all,0,8);
 				$linea_faltante =  50 - $numero;
                 $numero_p = $numero - 1;
 			//colocar la linea diagonal cuando es mayor de 23.
-		  $valor_y1 = $pdf->gety(10);
+		  $valor_y1 = $pdf->GetY();
 		  $pdf->Line(17,$valor_y1,252,190);
 		}
 		// Escribir líneas faltantes.  
@@ -1008,4 +1014,3 @@ $codigo_all_ = substr($codigo_all,0,8);
 // Salida del pdf.
     $pdf->Output($nombre_archivo,'I');
 }	// IF PRINCIPAL QUE VERIFICA SI HAY REGISTROS.
-?>
