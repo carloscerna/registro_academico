@@ -639,15 +639,15 @@ if (lstlist_notas == 'cuadro_promocion' && $(this).attr('data-accion') == 'lista
                 }else if(varbach == '09'){
                         varenviar = "/registro_academico/php_libs/reportes/cuadro_de_promocion_tecnico_tercero.php?todos="+reporte_ok;
                 }                
-        }else if(ann_lectivo >= "21"){
-                if(varbach >= '03' && varbach <= '05'){
-                        varenviar = "/registro_academico/php_libs/reportes/cuadro_de_promocion_2022.php?todos="+reporte_ok;
-                }else if(varbach == '06'){
-                        varenviar = "/registro_academico/php_libs/reportes/cuadro_de_promocion_general.php?todos="+reporte_ok;
-                }else if(varbach == '07'){
-                        varenviar = "/registro_academico/php_libs/reportes/cuadro_de_promocion_tecnico.php?todos="+reporte_ok;
-                }else if(varbach == '09'){
-                        varenviar = "/registro_academico/php_libs/reportes/cuadro_de_promocion_tecnico_tercero.php?todos="+reporte_ok;
+        }else if(ann_lectivo >= "21"){  // LOS CUADROS DE REGISTRO DE EVALUACION. 
+                if(varbach >= '03' && varbach <= '05'){ // EDUCACIÓN BÁSICA.
+                        varenviar = "/registro_academico/php_libs/reportes/Cuadros de Registro/Basica II y III Ciclo.php?todos="+reporte_ok;
+                }else if(varbach == '06'){ // EDUCACIÓN MEDIA - BACHILLERATO GENERAL.
+                        varenviar = "/registro_academico/php_libs/reportes/Cuadros de Registro/General I y II año.php?todos="+reporte_ok;
+                }else if(varbach == '07'){ // EDUCACIÓN MEDIA - BACHILLERATO TECNICO.
+                        varenviar = "/registro_academico/php_libs/reportes/Cuadros de Registro/Tecnico II año.php?todos="+reporte_ok;
+                }else if(varbach == '09'){ // EDUCACIÓN MEDIA - BACHILLERATO TECNICO VOCACIONAL COMERCIAL.
+                        varenviar = "/registro_academico/php_libs/reportes/Cuadros de Registro/Tecnico III año.php?todos="+reporte_ok;
                 }   
         }else{
                 varenviar = "/registro_academico/php_libs/reportes/cuadro_de_promocion_2015.php?todos="+reporte_ok;

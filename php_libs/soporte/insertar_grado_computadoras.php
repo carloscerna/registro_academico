@@ -32,8 +32,8 @@ require $path_root."/registro_academico/vendor/autoload.php";
 // Leemos un archivo Excel 2007
     $objReader = \PhpOffice\PhpSpreadsheet\IOFactory::createReader("Xlsx");
     $origen = strval($path_root) ."/registro_academico/formatos_hoja_de_calculo/";
-    $nombre_archivo = "CE-TABLET-10391-2024.xlsx";
-    $objPHPExcel = $objReader->load(strval($origen) ."CE-TABLET-10391-2024.xlsx");
+    $nombre_archivo = "CE-TABLET-10391-2024-12082024.xlsx";
+    $objPHPExcel = $objReader->load(strval($origen) ."CE-TABLET-10391-2024-12082024.xlsx");
     //$nombre_archivo = "CE-COMPUTADORA.xlsx";
     //$objPHPExcel = $objReader->load($origen."CE-COMPUTADORA.xlsx");
 // Leemos un archivo Excel 2007
@@ -47,10 +47,10 @@ require $path_root."/registro_academico/vendor/autoload.php";
        $objPHPExcel->setActiveSheetIndex($numero_de_hoja);
 	
 		//	BUCLE QUE RECORRE TODA LA CUADRICULA DE LA HOJA DE CALCULO.
-		while($objPHPExcel->getActiveSheet()->getCell("N". strval($fila))->getValue() != "")
+		while($objPHPExcel->getActiveSheet()->getCell("Q". strval($fila))->getValue() != "")
 		  {
 			 //  DATOS GENERALES.
-			 $nie = $objPHPExcel->getActiveSheet()->getCell("N". strval($fila))->getValue();
+			 $nie = $objPHPExcel->getActiveSheet()->getCell("Q". strval($fila))->getValue();
 			 //$descripcion = $objPHPExcel->getActiveSheet()->getCell("B".$fila)->getValue();
 			// $codigo_departamento = $objPHPExcel->getActiveSheet()->getCell("C".$fila)->getValue();
 
@@ -83,10 +83,10 @@ require $path_root."/registro_academico/vendor/autoload.php";
                     }else{
                         $retirado = "No";
                     }
-                    $objPHPExcel->getActiveSheet()->SetCellValue("AA".$fila_excel, TRIM($listado['nombre_grado']));
-                    $objPHPExcel->getActiveSheet()->SetCellValue("AB".$fila_excel, TRIM($listado['nombre_seccion']));
-                    $objPHPExcel->getActiveSheet()->SetCellValue("AC".$fila_excel, $retirado);
-                    $objPHPExcel->getActiveSheet()->SetCellValue("AD".$fila_excel, $nombre_turno);
+                    $objPHPExcel->getActiveSheet()->SetCellValue("AF".$fila_excel, TRIM($listado['nombre_grado']));
+                    $objPHPExcel->getActiveSheet()->SetCellValue("AG".$fila_excel, TRIM($listado['nombre_seccion']));
+                    $objPHPExcel->getActiveSheet()->SetCellValue("AH".$fila_excel, $retirado);
+                    $objPHPExcel->getActiveSheet()->SetCellValue("AI".$fila_excel, $nombre_turno);
                     //$objPHPExcel->getActiveSheet()->SetCellValue("AF".$fila_excel, '2023');
                     //$objPHPExcel->getActiveSheet()->SetCellValue("V".$fila_excel, TRIM($listado['nombre_grado']));
                     //$objPHPExcel->getActiveSheet()->SetCellValue("W".$fila_excel, TRIM($listado['nombre_seccion']));

@@ -2,19 +2,19 @@
 // ruta de los archivos con su carpeta
     $path_root=trim($_SERVER['DOCUMENT_ROOT']);
 // archivos que se incluyen.
-    include($path_root."/registro_academico/includes/funciones.php");
-    include($path_root."/registro_academico/includes/consultas.php");
-	include($path_root."/registro_academico/includes/DeNumero_a_Letras.php");
-    include($path_root."/registro_academico/includes/mainFunctions_conexion.php");
+  include($path_root."/registro_academico/includes/funciones.php");
+  include($path_root."./registro_academico/includes/consultas.php");
+  include($path_root."/registro_academico/includes/DeNumero_a_Letras.php");
+  include($path_root."/registro_academico/includes/mainFunctions_conexion.php");
 // Llamar a la libreria fpdf
     include($path_root."/registro_academico/php_libs/fpdf/fpdf.php");
 // cambiar a utf-8.
-    header("Content-Type: text/html; charset=UTF-8");    
+  header("Content-Type: text/html; charset=UTF-8");    
 // variables y consulta a la tabla.
-    $codigo_all = $_REQUEST["todos"];
-    $db_link = $dblink;
-	$valor_x_encabezado = false;
-	$contar_evaluar = 5;
+  $codigo_all = $_REQUEST["todos"];
+  $db_link = $dblink;
+  $valor_x_encabezado = false;
+  $contar_evaluar = 5;
 // variables para retenidos y promovidos.
     $total_matricula_inicial_masculino = 0;
     $total_matricula_final_femenino = 0;
@@ -25,6 +25,19 @@
     $total_retenidos_f=0;
     $total_retenidos_m=0;
     $retirados_m_f=0;
+// Establecer formato para la fecha.
+  date_default_timezone_set('America/El_Salvador');
+  setlocale(LC_TIME,'es_SV');
+// CREAR MATRIZ DE MESES Y FECH.
+  $meses = array("enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre");
+//Crear una línea. Fecha con getdate();
+  $hoy = getdate();
+  $NombreDia = $hoy["wday"];  // dia de la semana Nombre.
+  $dia = $hoy["mday"];    // dia de la semana
+  $mes = $hoy["mon"];     // mes
+  $año = $hoy["year"];    // año
+  $total_de_dias = cal_days_in_month(CAL_GREGORIAN, (int)$mes, $año);
+  $NombreMes = $meses[(int)$mes - 1];
 // buscar la consulta y la ejecuta.
   consultas(9,0,$codigo_all,'','','',$db_link,'');
 //  almacenar variables de datos del bachillerato.
@@ -41,7 +54,7 @@
           $codigo_seccion = trim($row['codigo_seccion']);
           $codigo_ann_lectivo = trim($row['codigo_ann_lectivo']);
           $codigo_turno = trim($row['codigo_turno']);
-          break;
+            break;
         }
 class PDF extends FPDF
 {
@@ -306,7 +319,6 @@ INNER JOIN ann_lectivo ann ON ann.codigo = am.codigo_ann_lectivo
               $nueva_nota_final = number_format(($rows_promovidos_retenidos['nota_final']+$rows_promovidos_retenidos['recuperacion'])/2,0);
               $notas = $nueva_nota_final;
             }*/
-					    			
             switch($ji){
             	case 1:
             		contar_promovidos($generos, $notas, $contar_evaluar);
@@ -327,7 +339,6 @@ INNER JOIN ann_lectivo ann ON ann.codigo = am.codigo_ann_lectivo
         	    	contar_promovidos($generos, $notas, $contar_evaluar);
         		  break;
             }
-     		
      		//contar el total de promovidos segun genero y si contar_p_m es mayor igual que cinco.
             $promocion = "No";
       		if($ji == 11)
@@ -886,21 +897,6 @@ $codigo_all_ = substr($codigo_all,0,8);
                 //$concepto_asignatura = cambiar_concepto($nota_concepto);
                 //$pdf->Cell(10,$h[0],$concepto_asignatura,1,1,'C'); break;
             }
-               
-            //
-						// Establecer formato para la fecha.
-						// 
-								date_default_timezone_set('America/El_Salvador');
-								setlocale(LC_TIME,'es_SV');
-									//
-								//$dias = array("Domingo","Lunes","Martes","Miercoles","Jueves","Viernes","Sábado");
-														$meses = array("enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre");
-														//Salida: Viernes 24 de Febrero del 2012		
-								//Crear una línea. Fecha.
-								$dia = strftime("%d");		// El Día.
-														$mes = $meses[date('n')-1];     // El Mes.
-								$año = strftime("%Y");		// El Año.
-
               // Salto de página.
               if($numero == 23 && $i == 11){
                 $valor_x_encabezado = true;
@@ -917,7 +913,7 @@ $codigo_all_ = substr($codigo_all,0,8);
                 //Crear una línea. Fecha.
                     $pdf->RotatedText(250,60,'Fecha:',0);
                     //$pdf->RotatedText(265,67,strtolower(num2letras($dia))." de ".$mes." de ".strtolower(num2letras($año)),0);
-                    $pdf->RotatedText(265,67,trim($_SESSION['dia_entrega'])." de ".$mes." de ".convertirtexto(strtolower(num2letras($nombre_ann_lectivo))),0);
+                    $pdf->RotatedText(265,67,trim($_SESSION['dia_entrega'])." de ".$NombreMes." de ".convertirtexto(strtolower(num2letras($nombre_ann_lectivo))),0);
                     $pdf->Line(250,70,350,70);
                 //Crear una línea. F. Docente.
                     $pdf->RotatedText(250,92,'F:',0);
@@ -974,7 +970,7 @@ $codigo_all_ = substr($codigo_all,0,8);
                     $pdf->SetY(55);
                 //Crear una línea. Fecha.
                     $pdf->RotatedText(250,60,'Fecha:',0);
-                    $pdf->RotatedText(265,67,trim($_SESSION['dia_entrega'])." de ".$mes." de ".convertirtexto(strtolower(num2letras($nombre_ann_lectivo))),0);
+                    $pdf->RotatedText(265,67,trim($_SESSION['dia_entrega'])." de ".$NombreMes." de ".convertirtexto(strtolower(num2letras($nombre_ann_lectivo))),0);
                     $pdf->Line(250,70,350,70);
                 //Crear una línea. F. Docente.
                     $pdf->RotatedText(250,92,'F:',0);
