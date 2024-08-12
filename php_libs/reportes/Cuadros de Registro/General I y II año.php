@@ -41,6 +41,7 @@
 // buscar la consulta y la ejecuta.
   consultas(9,0,$codigo_all,'','','',$db_link,'');
 //  almacenar variables de datos del bachillerato.
+  global $result_encabezado;
   while($row = $result_encabezado -> fetch(PDO::FETCH_BOTH))
       {
           $print_bachillerato = trim($row['nombre_bachillerato']);
@@ -70,7 +71,8 @@ $query_encargado = "SELECT eg.id_encargado_grado, eg.encargado, btrim(p.nombres 
             a.nombre_completo, btrim(a.apellido_paterno || CAST(' ' AS VARCHAR) || a.apellido_materno) as apellidos_alumno, 
             am.codigo_bach_o_ciclo, am.pn, bach.nombre as nombre_bachillerato, am.codigo_ann_lectivo, ann.nombre as nombre_ann_lectivo, am.codigo_grado, am.id_alumno_matricula as codigo_matricula,
             gan.nombre as nombre_grado, am.codigo_seccion, am.retirado, a.genero,
-            sec.nombre as nombre_seccion, ae.codigo_alumno, id_alumno, n.codigo_alumno, n.codigo_asignatura, asig.nombre AS n_asignatura, n.nota_final, n.recuperacion, asig.nombre as nombre_asignatura, aaa.orden, n.nota_recuperacion_2
+            sec.nombre as nombre_seccion, ae.codigo_alumno, id_alumno, n.codigo_alumno, n.codigo_asignatura, asig.nombre AS n_asignatura, n.nota_final, n.recuperacion, asig.nombre as nombre_asignatura, aaa.orden, n.nota_recuperacion_2,
+            asig.codigo_area
               FROM alumno a
                 INNER JOIN alumno_encargado ae ON a.id_alumno = ae.codigo_alumno and ae.encargado = 't'
                 INNER JOIN alumno_matricula am ON a.id_alumno = am.codigo_alumno and am.retirado = 'f'
@@ -185,6 +187,7 @@ while($rows_promovidos_retenidos = $result_promovidos_retenidos -> fetch(PDO::FE
     $nota_r_1 = $rows_promovidos_retenidos['recuperacion'];
     $nota_r_2 = $rows_promovidos_retenidos['nota_recuperacion_2'];
     $nota_final = $rows_promovidos_retenidos['nota_final'];
+    $CodigoArea = $rows_promovidos_retenidos['codigo_area'];
 // CALCULO DE LA NOTA FINAL EN RELACIÓN A LA RECUPERACIÓN UNO Y DOS.    
   if($nota_r_1 != 0){
         $nueva_nota_final = round(($nota_final + $nota_r_1)/2,0);
@@ -199,8 +202,8 @@ while($rows_promovidos_retenidos = $result_promovidos_retenidos -> fetch(PDO::FE
             $notas = number_format($rows_promovidos_retenidos['nota_final'],0);
       } //
 /////////////////////////////////////////////////////////////////////////////////////////////
-            switch($ji){
-              case ($ji >=1 && $ji<=7): 
+            switch($CodigoArea){
+              case ($CodigoArea == "01" || $CodigoArea == "03"): 
                 contar_promovidos_media($generos, $notas, $contar_evaluar);
               break;
             }
@@ -295,7 +298,6 @@ class PDF extends FPDF
             $this->Text($x,$y,$txt);
         $this->Rotate(0);
     }
-
     // rotar texto funcion MultiCell()
     function RotatedTextMultiCell($x,$y,$txt,$angle)
     {
@@ -305,7 +307,6 @@ class PDF extends FPDF
             $this->MultiCell(43,4,$txt,0,'C');
         $this->Rotate(0);
     }
-
     function RotatedTextMultiCellAspectos($x,$y,$txt,$angle)
     {
         //Text rotated around its origin
@@ -314,7 +315,6 @@ class PDF extends FPDF
             $this->MultiCell(42,3,$txt,0,'C');
         $this->Rotate(0);
     }
-
     function RotatedTextMultiCellDireccion($x,$y,$txt,$angle)
     {
         //Text rotated around its origin
@@ -323,9 +323,6 @@ class PDF extends FPDF
             $this->MultiCell(90,4,convertirtexto($txt),0,'J');
         $this->Rotate(0);
     }
-
-
-
     //Cabecera de página
     function Header()
     {
@@ -452,7 +449,6 @@ class PDF extends FPDF
         {
             $total_alumnos_matricula_inicial_masculino = trim($rows_total_alumnos_m['total_alumnos_matricula_inicial_masculino']);
         }
-
 //  cuenta el total de alumnos para colocar en la estadistica MATRICULA INICIAL..
         $total_alumnos_matricula_inicial_femenino = 0;
         while($rows_total_alumnos_f = $result_total_alumnos_matricula_inicial_femenino -> fetch(PDO::FETCH_BOTH))
@@ -465,7 +461,6 @@ class PDF extends FPDF
         {
             $total_alumnos_retirados_masculino = trim($rows_total_alumnos_m['total_alumnos_retirados_masculino']);
         }
-
 //  cuenta el total de alumnos para colocar en la estadistica RETIRADOS..
     $total_alumnos_retirados_femenino = 0;
     while($rows_total_alumnos_f = $result_total_alumnos_retirados_femenino -> fetch(PDO::FETCH_BOTH))
@@ -478,14 +473,12 @@ class PDF extends FPDF
     {
      		$total_alumnos_femenino = trim($rows_total_alumnos_f['total_alumnos_femenino']);
     }
-    
 //  cuenta el total de alumnos para colocar en la estadistica.
     $total_alumnos = 0;
 	while($rows_total_alumnos = $result_total_alumnos -> fetch(PDO::FETCH_BOTH))
     {
      		$total_alumnos = trim($rows_total_alumnos['total_alumnos']);
     }
-
 //  Nombre del Encargado.
     $nombre_encargado = '';
 	while($rows_encargado = $result_encargado -> fetch(PDO::FETCH_BOTH))
@@ -493,9 +486,7 @@ class PDF extends FPDF
      		$nombre_encargado = trim($rows_encargado['nombre_docente']);
      		$codigo_docente = trim($rows_encargado['codigo_docente']);
     }
-
 //  cuenta el numero de asignaturas y asigna el valor a una matriz.    
-
 /////////////////////////////////////////////////////////////////////////////////////////
 // Consulta para grabar o actualizar en la tabla estadistica_grados
 $codigo_all_ = substr($codigo_all,0,8);

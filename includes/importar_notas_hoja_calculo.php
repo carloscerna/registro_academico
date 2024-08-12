@@ -428,4 +428,3 @@ while($objPHPExcel->getActiveSheet()->getCell("E".$fila)->getValue() != "")
 }	// condicion para determinar si es de primer ciclo.
 // Enviando la matriz con Json.
 echo json_encode($datos);
-?>
