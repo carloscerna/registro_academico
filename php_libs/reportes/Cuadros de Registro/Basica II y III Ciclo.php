@@ -57,22 +57,22 @@
           $codigo_turno = trim($row['codigo_turno']);
             break;
         }
- ////////////////////////////////////////////////////////////////////
-            //////// CONTAR CUANTAS ASIGNATURAS TIENE CADA MODALIDAD.
-            //////////////////////////////////////////////////////////////////
-            // buscar la consulta y la ejecuta.
-            //consulta_contar(1,0,$codigo_all,'','','',$db_link,'');
-            $query_asig = "SELECT count(*) as total_asignaturas FROM a_a_a_bach_o_ciclo
-                  WHERE btrim(codigo_bach_o_ciclo || codigo_grado || codigo_ann_lectivo) = '".substr($codigo_all,0,4) . substr($codigo_all,6,2) ."'";
-              // ejecutar la consulta.
-              $result = $db_link -> query($query_asig);
-              // EJECUTAR CONDICIONES PARA EL NOMBRE DEL NIVEL Y EL N�MERO DE ASIGNATURAS.
-              $total_asignaturas = 0;	
-            while($row = $result -> fetch(PDO::FETCH_BOTH))	// RECORRER PARA EL CONTEO DE Nº DE ASIGNATURAS.
-                {
-                    $total_asignaturas = trim($row['total_asignaturas']);
-                }
-          $nombre_asignatura = []; $nombre_bachillerato = ""; $nombre_seccion = "";
+////////////////////////////////////////////////////////////////////
+//////// CONTAR CUANTAS ASIGNATURAS TIENE CADA MODALIDAD.
+//////////////////////////////////////////////////////////////////
+// buscar la consulta y la ejecuta.
+//consulta_contar(1,0,$codigo_all,'','','',$db_link,'');
+  $query_asig = "SELECT count(*) as total_asignaturas FROM a_a_a_bach_o_ciclo
+        WHERE btrim(codigo_bach_o_ciclo || codigo_grado || codigo_ann_lectivo) = '".substr($codigo_all,0,4) . substr($codigo_all,6,2) ."'";
+    // ejecutar la consulta.
+    $result = $db_link -> query($query_asig);
+    // EJECUTAR CONDICIONES PARA EL NOMBRE DEL NIVEL Y EL N�MERO DE ASIGNATURAS.
+    $total_asignaturas = 0;	
+  while($row = $result -> fetch(PDO::FETCH_BOTH))	// RECORRER PARA EL CONTEO DE Nº DE ASIGNATURAS.
+      {
+          $total_asignaturas = trim($row['total_asignaturas']);
+      }
+  $nombre_asignatura = []; $nombre_bachillerato = ""; $nombre_seccion = "";
 // QUERY PARA BUSCAR LOS NOMBRES DE LAS ASIGNATURAS
   $query_nombres_asignaturas = "SELECT aaa.codigo_asignatura, asig.nombre as nombre_asignatura, bach.nombre as nombre_bachillerato, gr.nombre as nombre_grado 
   FROM a_a_a_bach_o_ciclo aaa 
@@ -185,14 +185,14 @@ function FancyTable($header)
 //	verificar si existe el grado.
 //************************************************************************************************************************
 //consulta para obtener el total de alumnos masculino.
-     $query_verificar = "SELECT a.id_alumno as total_alumnos_masculino
+  $query_verificar = "SELECT a.id_alumno as total_alumnos_masculino
         FROM alumno a
           INNER JOIN alumno_matricula am ON a.id_alumno = am.codigo_alumno and am.retirado = 'f' and a.genero = 'm'
           INNER JOIN bachillerato_ciclo bach ON bach.codigo = am.codigo_bach_o_ciclo
           INNER JOIN grado_ano gan ON gan.codigo = am.codigo_grado
           INNER JOIN seccion sec ON sec.codigo = am.codigo_seccion
-          INNER JOIN ann_lectivo ann ON ann.codigo = am.codigo_ann_lectivo
-            WHERE btrim(am.codigo_bach_o_ciclo || am.codigo_grado || am.codigo_seccion || am.codigo_ann_lectivo || am.codigo_turno) = '".$codigo_all."'";
+          INNER JOIN ann_lectivo ann ON ann.codigo = am.codigo_ann_lectivo 
+            WHERE btrim(am.codigo_bach_o_ciclo || am.codigo_grado || am.codigo_seccion || am.codigo_ann_lectivo || am.codigo_turno) = '$codigo_all'";
 		$result_verificar = $db_link -> query($query_verificar);
 		$verificar = $result_verificar -> rowCount();
 if($verificar != 0)	// IF PRINCIPAL QUE VERIFICA SI HAY REGISTROS.

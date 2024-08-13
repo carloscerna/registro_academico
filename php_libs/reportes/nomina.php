@@ -2,16 +2,17 @@
 // ruta de los archivos con su carpeta
     $path_root=trim($_SERVER['DOCUMENT_ROOT']);
 // Archivos que se incluyen.
-     include($path_root."/registro_academico/includes/funciones.php");
-     include($path_root."/registro_academico/includes/consultas.php");
-     include($path_root."/registro_academico/includes/mainFunctions_conexion.php");
+    include($path_root."/registro_academico/includes/funciones.php");
+    include($path_root."/registro_academico/includes/consultas.php");
+    include($path_root."/registro_academico/includes/mainFunctions_conexion.php");
 // Llamar a la libreria fpdf
-     include($path_root."/registro_academico/php_libs/fpdf/fpdf.php");
+    include($path_root."/registro_academico/php_libs/fpdf/fpdf.php");
 // cambiar a utf-8.
-     header("Content-Type: text/html; charset=UTF-8");    
+    header("Content-Type: text/html; charset=UTF-8");    
 // variables y consulta a la tabla.
-     $codigo_all = $_REQUEST["todos"];
-     $db_link = $dblink;
+    $codigo_all = $_REQUEST["todos"];
+    $db_link = $dblink;
+    $print_nombre_docente = "";  
 // buscar la consulta y la ejecuta.
   consultas(9,0,$codigo_all,'','','',$db_link,'');
 //  imprimir datos del bachillerato.
@@ -34,11 +35,7 @@
     // CAPTURAR EL NOMBRE DEL RESPONSABLES DE LA SECCIÓN.
        // buscar la consulta y la ejecuta.
 	consultas_docentes(1,0,$codigo_all,'','','',$db_link,'');
-        global $result_docente; $print_nombre_docente = "";
-        while($row = $result_docente -> fetch(PDO::FETCH_BOTH))
-            {
-                $print_nombre_docente = cambiar_de_del(trim($row['nombre_docente']));
-            }        
+        global $result_docente, $print_nombre_docente; 
 class PDF extends FPDF
 {
 //Cabecera de página
@@ -49,18 +46,20 @@ function Header()
     $img = $_SERVER['DOCUMENT_ROOT'].'/registro_academico/img/'.$_SESSION['logo_uno'];
     $this->Image($img,10,5,12,15);
     //Arial bold 15
-    $this->SetFont('Arial','',13);
+    $this->SetFont('Arial','B',14);
     //Movernos a la derecha
-    $this->Cell(20);
+    //$this->Cell(20);
     //Título
-    $this->Cell(150,6,convertirtexto($_SESSION['institucion']),0,1,'C');
-    $this->SetFont('Arial','',11);
-    $this->Cell(15);
-    $this->Cell(50,4,convertirtexto('Nómina de Alumnos/as'),0,0,'L');
-    $this->Cell(100,4,'Docente Responsable: '.$print_nombre_docente,0,1,'L');
-    $this->Line(10,20,200,20);
+    $this->Cell(200,6,convertirtexto($_SESSION['institucion']),0,1,'C');
+    $this->Cell(200,4,convertirtexto('Nómina de Estudiantes'),0,1,'C');
+    $this->SetFont('Arial','B',11);
+    $this->Cell(20,6,"Docente Encargado: ",0,0,'L');
+    $Xfila = $this->GetX(); $this->SetX($Xfila+20);
+    $this->SetFont('Courier','',11);
+    $this->Cell(80,6,$print_nombre_docente,0,1,'L');
+    $this->Line(10,25,200,25);
     //Salto de línea
-   // $this->Ln(20);
+    $this->Ln();
 }
 
 //Pie de página
@@ -111,7 +110,7 @@ function FancyTable($header)
     $pdf=new PDF('P','mm','Letter');
     $data = [];
 //Títulos de las columnas
-    $header=array('Nº','N I E','Nombre de Alumnos/as','F.Nac.','Edad','G.','So.','Rep.','Ret.','N.I.','P.N.');
+    $header=['Nº','N I E','Nombre de Alumnos/as','F.Nac.','Edad','G.','So.','Rep.','Ret.','N.I.','P.N.'];
     $pdf->AliasNbPages();
     $pdf->SetFont('Arial','',12);
     $pdf->AddPage();
@@ -124,35 +123,37 @@ function FancyTable($header)
     $pdf->SetFont('Arial','',10); // I : Italica; U: Normal;
 // buscar la consulta y la ejecuta.
 	consultas(4,0,$codigo_all,'','','',$db_link,'');
+// Definir ancho(s) de las columna(as) y alto de las filas.
+        $w=[10,15,85,20,10,10,10,10,10,10,10]; //determina el ancho de las columnas
+        $wEncabezado = [200,100,20];
+        $ancho_libro = [5.05];
 // Contar el número de registros.
     global $result;
 	$fila = $result -> rowCount();
 // Evaluar si existen registros.
     if($result -> rowCount() != 0){
-// Definimos el tipo de fuente, estilo y tamaño.
-    $pdf->SetFont('Arial','',10); // I : Italica; U: Normal;
-    //  imprimir datos del bachillerato.
-    $pdf->Cell(100,10,$print_bachillerato,0,0,'L');
-    $pdf->Cell(40,10,$print_grado,0,0,'L');
-    $pdf->Cell(20,10,$print_seccion,0,0,'L');
-    $pdf->Cell(20,10,$print_ann_lectivo,0,0,'L');
-    //
-    $pdf->ln();
-    $pdf->SetFont('Arial','',9); // I : Italica; U: Normal;
-    //
-    $pdf->FancyTable($header); // Solo carge el encabezado de la tabla porque medaba error el cargas los datos desde la consulta.
-    //
-    $w=[](10,15,85,20,10,10,10,10,10,10,10); //determina el ancho de las columnas
-    $ancho_libro = array(5.05);
-    //
-    $fill=false; $i=1; $m = 0; $f = 0; $suma = 0; $repitentem = 0; $repitentef = 0; $totalrepitente = 0; $sobreedadm = 0; $sobreedadf = 0; $totalsobreedad = 0;
-    $nuevoingresom = 0; $nuevoingresof = 0;
+        // Definimos el tipo de fuente, estilo y tamaño.
+        $pdf->ln();
+        $pdf->SetFont('Arial','',10); // I : Italica; U: Normal;
+        //  imprimir datos del bachillerato.
+        $pdf->Cell($wEncabezado[0],$ancho_libro[0],$print_bachillerato,0,1,'L');    // Modalidad.
+        $pdf->Cell($wEncabezado[1],$ancho_libro[0],$print_grado,0,0,'L');           // Grado.
+        $pdf->Cell($wEncabezado[2],$ancho_libro[0],$print_seccion,0,0,'L');         // Sección.
+        $pdf->Cell($wEncabezado[2],$ancho_libro[0],$print_ann_lectivo,0,0,'L');     // Año lectivo.
+        //
+        $pdf->ln();
+        $pdf->SetFont('Arial','',9); // I : Italica; U: Normal;
+        //
+        $pdf->FancyTable($header); // Solo carge el encabezado de la tabla porque medaba error el cargas los datos desde la consulta.
+        //
+        $fill=false; $i=1; $m = 0; $f = 0; $suma = 0; $repitentem = 0; $repitentef = 0; $totalrepitente = 0; $sobreedadm = 0; $sobreedadf = 0; $totalsobreedad = 0;
+        $nuevoingresom = 0; $nuevoingresof = 0;
         while($row = $result -> fetch(PDO::FETCH_BOTH))
             {
                 $pdf->Cell($w[0],$ancho_libro[0],$i,'LR',0,'C',$fill);        // núermo correlativo
                 $pdf->Cell($w[1],$ancho_libro[0],trim($row['codigo_nie']),'LR',0,'C',$fill);  // NIE
                 $pdf->Cell($w[2],$ancho_libro[0],convertirtexto(trim($row['apellido_alumno'])),'LR',0,'L',$fill); // Nombre + apellido_materno + apellido_paterno
-                $pdf->Cell($w[3],$ancho_libro[0],cambiaf_a_normal($row['fecha_nacimiento'],'LR',0,'C',$fill));  // edad
+                $pdf->Cell($w[3],$ancho_libro[0],cambiaf_a_normal($row['fecha_nacimiento']),'LR',0,'C',$fill);  // edad
                 $pdf->Cell($w[4],$ancho_libro[0],$row['edad'],'LR',0,'C',$fill);  // edad
                 $pdf->Cell($w[5],$ancho_libro[0],strtoupper($row['genero']),'LR',0,'C',$fill);    // genero
                 //
@@ -214,9 +215,9 @@ function FancyTable($header)
                       $fill=!$fill;
                       // Salto de Línea.
 		      if($numero == 39 || $numero == 76){
-		         $pdf->Cell(array_sum($w),0,'','B');
-			 $pdf->AddPage();
-			 //  imprimir datos del bachillerato.
+                $pdf->Cell(array_sum($w),0,'','B');
+                $pdf->AddPage();
+    			 //  imprimir datos del bachillerato.
 		            $pdf->Cell(100,10,$print_bachillerato,0,0,'L');
 		            $pdf->Cell(40,10,$print_grado,0,0,'L');
 		            $pdf->Cell(20,10,$print_seccion,0,0,'L');

@@ -760,14 +760,11 @@ $codigo_all_ = substr($codigo_all,0,8);
     }else{
       $pdf->Cell(65,5,strtolower(convertirtexto(num2letras($total_retenidos_f+$total_retenidos_m))),0,0,'C');  
     }
-    
-    
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 //  INICIO PARA MOSTRAR LOS DATOS DE LA TABLA.
     //Datos de la institucion.
             $nombre_director =  $_SESSION['nombre_director'];
-            
             $pdf->SetXY(152,24.3);
             $pdf->SetFont('Arial','b',11); // I : Italica; U: Normal;
             $pdf->Cell(85,5.5,convertirtexto($nombre_grado .' SECCIÓN: '.$print_seccion.'    CÓDIGO DE INFRAESTRUCTURA: '.$_SESSION['codigo']),0,2,'L');

@@ -1,19 +1,22 @@
 <?php
 function consultas_docentes($ejecutar,$cerrar,$codigo_bachillerato,$codigo_grado,$codigo_seccion,$codigo_annlectivo,$db_link,$result)
 {
-    global $result_docente, $result_encabezado, $codigo_encargado;
+    global $result_docente, $result_encabezado, $codigo_encargado, $print_nombre_docente;
     if($ejecutar == 1)
     {
-	// CAPTURAR EL NOMBRE DEL RESPONSABLES DE LA SECCIÓN.
-     $query_docente = "SELECT eg.encargado, eg.codigo_ann_lectivo, eg.codigo_grado, eg.codigo_seccion, eg.codigo_bachillerato, eg.codigo_docente, eg.imparte_asignatura, eg.codigo_turno,
-                        btrim(p.nombres || cast(' ' as VARCHAR) || p.apellidos) as nombre_docente
-	                        FROM encargado_grado eg
-                                INNER JOIN personal p ON p.id_personal = eg.codigo_docente
-	                                WHERE btrim(eg.codigo_bachillerato || eg.codigo_grado || eg.codigo_seccion || eg.codigo_ann_lectivo || eg.codigo_turno) = '".$codigo_bachillerato."' and eg.encargado = '"."t'";
-	
-	// ejecutar la consulta.
-            // Ejecutamos el Query. Tabla Bitacora.
+    	// CAPTURAR EL NOMBRE DEL RESPONSABLES DE LA SECCIÓN.
+        $query_docente = "SELECT eg.encargado, eg.codigo_ann_lectivo, eg.codigo_grado, eg.codigo_seccion, eg.codigo_bachillerato, eg.codigo_docente, eg.imparte_asignatura, eg.codigo_turno,
+            btrim(p.nombres || cast(' ' as VARCHAR) || p.apellidos) as nombre_docente
+                FROM encargado_grado eg
+                    INNER JOIN personal p ON p.id_personal = eg.codigo_docente
+                        WHERE btrim(eg.codigo_bachillerato || eg.codigo_grado || eg.codigo_seccion || eg.codigo_ann_lectivo || eg.codigo_turno) = '$codigo_bachillerato' and eg.encargado = 't'";
+        // Ejecutamos el Query. Docente Encargado de la sección.
 	    $result_docente = $db_link -> query($query_docente);
+        // revisar si existe el docente.
+        while($row = $result_docente -> fetch(PDO::FETCH_BOTH))
+        {
+            $print_nombre_docente = cambiar_de_del(trim($row['nombre_docente']));
+        }      
     }
     // EXTRAER CON RESPECTO AL AÑO LECTIVO
     if($ejecutar == 2)
@@ -1294,4 +1297,3 @@ function consulta_indicadores($ejecutar,$cerrar,$codigo_all,$codigo_grado,$codig
     }
     
 }
-?>
