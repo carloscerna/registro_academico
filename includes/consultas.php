@@ -271,8 +271,8 @@ function consultas($ejecutar,$cerrar,$codigo_bachillerato,$codigo_grado,$codigo_
 				INNER JOIN seccion sec ON sec.codigo = am.codigo_seccion
 				INNER JOIN ann_lectivo ann ON ann.codigo = am.codigo_ann_lectivo
                 INNER JOIN turno tur ON tur.codigo = am.codigo_turno
-                WHERE btrim(am.codigo_bach_o_ciclo || am.codigo_grado || am.codigo_seccion || am.codigo_ann_lectivo || am.codigo_turno) = '".$codigo_bachillerato.
-					"' ORDER BY apellido_alumno ASC";
+                WHERE btrim(am.codigo_bach_o_ciclo || am.codigo_grado || am.codigo_seccion || am.codigo_ann_lectivo || am.codigo_turno) = '$codigo_bachillerato'
+					ORDER BY apellido_alumno ASC";
 		
             // Ejecutamos el Query. Tabla Bitacora.
 	    $result = $db_link -> query($query);
