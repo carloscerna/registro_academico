@@ -6,15 +6,33 @@
     include($path_root."/registro_academico/includes/consultas.php");
     include($path_root."/registro_academico/includes/mainFunctions_conexion.php");
 // Llamar a la libreria fpdf
-    include($path_root."/registro_academico/php_libs/fpdf/fpdf.php");
+    include $path_root."/registro_academico/php_libs/fpdf/fpdf.php";
 // cambiar a utf-8.
     header("Content-Type: text/html; charset=UTF-8");    
 // variables y consulta a la tabla.
     $codigo_all = $_REQUEST["todos"];
     $db_link = $dblink;
     $print_nombre_docente = "";  
+// Establecer formato para la fecha.
+    date_default_timezone_set('America/El_Salvador');
+    setlocale(LC_TIME,'es_SV');
+// CREAR MATRIZ DE MESES Y FECH.
+    $meses = ["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
+//Crear una línea. Fecha con getdate();
+    $hoy = getdate();
+    $NombreDia = $hoy["wday"];  // dia de la semana Nombre.
+    $dia = $hoy["mday"];    // dia de la semana
+    $mes = $hoy["mon"];     // mes
+    $año = $hoy["year"];    // año
+    $total_de_dias = cal_days_in_month(CAL_GREGORIAN, (int)$mes, $año);
+    $NombreMes = $meses[(int)$mes - 1];
+// definimos 2 array uno para los nombre de los dias y otro para los nombres de los meses
+    $nombresDias = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
+    $nombresMeses = [1=>"Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
+    $fecha = convertirTexto("Santa Ana, $nombresDias[$NombreDia] $dia de $nombresMeses[$mes] de $año");
+    setlocale(LC_MONETARY,"es_ES");
 // buscar la consulta y la ejecuta.
-  consultas(9,0,$codigo_all,'','','',$db_link,'');
+    consultas(9,0,$codigo_all,'','','',$db_link,'');
 //  imprimir datos del bachillerato.
     global $result_encabezado;
      while($row = $result_encabezado -> fetch(PDO::FETCH_BOTH))
@@ -51,24 +69,36 @@ function Header()
         $this->Write(6,"Docente Encargado: ");
     $this->SetFont('Comic','',12);
         $this->Write(6,$print_nombre_docente);   
-    //
+    // 
     $this->SetXY(10,25);
     $this->SetFont('Arial','B',11);
         $this->Write(6,"Nivel: ");
     $this->SetFont('Comic','U',11);
         $this->Write(6,$nombreNivel);
-    //
+    // Año Lectivo.
     $this->SetXY(170,25);
     $this->SetFont('Arial','B',11);
         $this->Write(6,convertirTexto("Año Lectivo: "));
     $this->SetFont('Comic','U',11);
         $this->Write(6,$nombreAñolectivo);
-    //
-    $this->SetXY(10,25);
+    // Nombre Nivel.
+    $this->SetXY(10,30);
     $this->SetFont('Arial','B',11);
-        $this->Write(6,"Nivel: ");
+        $this->Write(6,"Grado: ");
     $this->SetFont('Comic','U',11);
-        $this->Write(6,$nombreNivel);
+        $this->Write(6,$nombreGrado);
+    // Nombre Sección.
+    $this->SetXY(120,30);
+    $this->SetFont('Arial','B',11);
+        $this->Write(6,convertirTexto("Sección: "));
+    $this->SetFont('Comic','U',11);
+        $this->Write(6,"'$nombreSeccion'");
+    // Nombre turno.
+    $this->SetXY(160,30);
+    $this->SetFont('Arial','B',11);
+        $this->Write(6,convertirTexto("Turno: "));
+    $this->SetFont('Comic','U',11);
+        $this->Write(6,$nombreTurno);
     //
     $this->Line(5,25,210,25);
     //Salto de línea
@@ -77,22 +107,15 @@ function Header()
 //Pie de página
 function Footer()
 {
-  //
-  // Establecer formato para la fecha.
-  // 
-   date_default_timezone_set('America/El_Salvador');
-   setlocale(LC_TIME, 'spanish');
-	//
-							
+    global $fecha;
     //Posición: a 1,5 cm del final
     $this->SetY(-10);
     //Arial italic 8
     $this->SetFont('Arial','I',8);
     //Crear ubna línea
-    $this->Line(10,285,200,285);
-    //Número de página
-    $fecha = date("l, F jS Y ");
-    $this->Cell(0,10,'Page '.$this->PageNo().'/{nb}       '.$fecha,0,0,'C');
+    $this->Line(5,270,210,270);
+    //Número de página y fecha.
+    $this->Cell(0,10,convertirTexto('Página ').$this->PageNo().'/{nb}       '.$fecha,0,0,'C');
 }
 
 //Tabla coloreada
@@ -105,9 +128,12 @@ function FancyTable($header)
     $this->SetLineWidth(.3);
     $this->SetFont('','B');
     //Cabecera
-    $w=array(10,15,85,20,10,10,10,10,10,10,10); //determina el ancho de las columnas
-    for($i=0;$i<count($header);$i++)
-    $this->Cell($w[$i],7,convertirtexto($header[$i]),1,0,'C',1);
+    $this->Ln();
+    $w=[10,15,85,20,10,10,10,10,10,10,10]; //determina el ancho de las columnas
+    for($i=0;$i<count($header);$i++){
+        $this->Cell($w[$i],7,convertirtexto($header[$i]),1,0,'C',1);
+    }
+    //
     $this->Ln();
     //Restauración de colores y fuentes
     $this->SetFillColor(224,235,255);
@@ -133,29 +159,22 @@ function FancyTable($header)
 //Títulos de las columnas
     $header=['Nº','N I E','Nombre de Alumnos/as','F.Nac.','Edad','G.','So.','Rep.','Ret.','N.I.','P.N.'];
     $pdf->AliasNbPages();
-    $pdf->SetFont('Arial','',12);
     $pdf->AddPage();
 // Aqui mandamos texto a imprimir o al documento.
+    $pdf->SetXY(10,30);
 // Definimos el tipo de fuente, estilo y tamaño.
-    $pdf->SetFont('Arial','B',14); // I : Italica; U: Normal;
-    $pdf->SetY(30);
-    $pdf->SetX(10);
-// Definimos el tipo de fuente, estilo y tamaño.
-    $pdf->SetFont('Arial','',10); // I : Italica; U: Normal;
+    $pdf->SetFont('Arial','',9); // I : Italica; U: Normal;
 // buscar la consulta y la ejecuta.
 	consultas(4,0,$codigo_all,'','','',$db_link,'');
 // Definir ancho(s) de las columna(as) y alto de las filas.
-        $w=[10,15,85,20,10,10,10,10,10,10,10]; //determina el ancho de las columnas
-        $wEncabezado = [200,100,20];
-        $ancho_libro = [5.05];
+    $w=[10,15,85,20,10,10,10,10,10,10,10]; //determina el ancho de las columnas
+    $wEncabezado = [200,100,20];
+    $ancho_libro = [5.05];
 // Contar el número de registros.
     global $result;
 	$fila = $result -> rowCount();
 // Evaluar si existen registros.
     if($result -> rowCount() != 0){
-        //
-        $pdf->ln();
-        $pdf->SetFont('Arial','',9); // I : Italica; U: Normal;
         //
         $pdf->FancyTable($header); // Solo carge el encabezado de la tabla porque medaba error el cargas los datos desde la consulta.
         //
@@ -195,24 +214,19 @@ function FancyTable($header)
                     if ($row['sobreedad'] == 't'){$sobreedadf++;}
                     if ($row['nuevo_ingreso'] == 't'){$nuevoingresof++;}}
                 // Salto de Línea.
-        		if($i == 39 || $i == 76){
-				$pdf->Cell(array_sum($w),0,'','B');
-				$pdf->AddPage();
-				//  imprimir datos del bachillerato.
-				$pdf->Cell(100,10,$print_bachillerato,0,0,'L');
-				$pdf->Cell(40,10,$print_grado,0,0,'L');
-				$pdf->Cell(20,10,$print_seccion,0,0,'L');
-				$pdf->Cell(35,10,$print_ann_lectivo,0,0,'L');
-				$pdf->ln();
-				$pdf->FancyTable($header);}
+        		if($i == 39 || $i == 76)
+                {
+                    $pdf->Cell(array_sum($w),0,'','B');
+                    $pdf->AddPage();
+                    $pdf->FancyTable($header);
+                }
         } //cierre del do while.          
           // rellenar con las lineas que faltan y colocar total de puntos y promedio.
           	$numero = $i;
                 $linea_faltante =  50 - $numero;
                 $numero_p = $numero - 1;               
                 for($i=0;$i<=$linea_faltante;$i++)
-                  {
-                    //$pdf->SetX(10);
+                    {
                       $pdf->Cell($w[0],$ancho_libro[0],$numero++,'LR',0,'C',$fill);  // N| de Orden.
                       $pdf->Cell($w[1],$ancho_libro[0],'','LR',0,'l',$fill);  // nombre del alumno.
                       $pdf->Cell($w[2],$ancho_libro[0],'','LR',0,'C',$fill);  // NIE
@@ -227,11 +241,13 @@ function FancyTable($header)
                       $pdf->Ln();   
                       $fill=!$fill;
                       // Salto de Línea.
-		      if($numero == 39 || $numero == 76){
-                $pdf->Cell(array_sum($w),0,'','B');
-                $pdf->AddPage();
-			    $pdf->FancyTable($header);}
-                  }
+                        if($numero == 39 || $numero == 76)
+                            {
+                                $pdf->Cell(array_sum($w),0,'','B');
+                                $pdf->AddPage();
+                                $pdf->FancyTable($header);
+                            }
+                    }
 		// Cerrando Línea Final.
 			$pdf->Cell(array_sum($w),0,'','T');
         // Imprimir datos de suma de masculino y femenino.
@@ -288,7 +304,7 @@ function FancyTable($header)
                 $pdf->SetFont('Arial','',9); // I : Italica; U: Normal;
 // Salida del pdf.
     $modo = 'I'; // Envia al navegador (I), Descarga el archivo (D), Guardar el fichero en un local(F).
-    $print_nombre = trim($nombreNivel) . ' - ' . trim($nombreGrado) . ' ' . trim($nombreSeccion) . ' - ' . trim($nombreAñolectivo) . trim($nombreTurno) . '-Nomina.pdf';
+    $print_nombre = trim($nombreNivel) . ' - ' . trim($nombreGrado) . ' ' . trim($nombreSeccion) . ' - ' . trim($nombreAñolectivo) . ' - ' . trim($nombreTurno) . '-Nomina.pdf';
     $pdf->Output($print_nombre,$modo);
     }   // condicion si existen registros.
 else{
