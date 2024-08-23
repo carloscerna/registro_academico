@@ -511,8 +511,16 @@ if (lstlist_nominas == 'cuadro-de-notas-hoja-de-calculo' && $(this).attr('data-a
 if (lstlist_notas == 'boleta_notas' && $(this).attr('data-accion') == 'listados_02') {
         parvularia_seccion = reporte_ok.substring(2,2);
         // Verificar si el Parvularia... primeros grados y segundo y tercero focalizado.
-        if(varbach >= '13' && varbach <= '14' || varbach == '17' || varbach == '16'){
-                $url_ruta = "php_libs/reportes/boleta_de_calificacion_parvularia.php";
+        if(varbach >= '13' && varbach <= '14' || varbach == '17' || varbach == '16' || varbach == '18'){
+                switch (varbach) {
+                        case '16':
+                                $url_ruta = "php_libs/reportes/Boletas Calificaciones/Segundo y Tercer grado Focalizado.php";
+                                break;
+                
+                        default:
+                                $url_ruta = "php_libs/reportes/boleta_de_calificacion_parvularia.php";
+                }
+                
         }
         // EDUCACIÓN BASICA - BOLETA DE CALIFICACIÓN EDUCACIÓN BÁSICA Y MEDIA.
         if(varbach >= '03' && varbach <='12' || varbach == '15'){
