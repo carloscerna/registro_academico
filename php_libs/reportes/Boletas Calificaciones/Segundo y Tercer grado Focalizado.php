@@ -261,7 +261,7 @@ function FancyTable($header)
 					}
 		}
 	// condicionar el ancho y ALTO de cada columna.
-		$ancho=array(140,10,5,12); //determina el ancho de las columnas
+		$ancho=array(110,10,5,12); //determina el ancho de las columnas
 		$alto=array(5,12); //determina el alto de las columnas
 //************************************************************************************************************************
 //************************************************************************************************************************
@@ -299,7 +299,7 @@ for($listado=0;$listado<count($codigo_alumno_listado);$listado++)
 			$pdf->SetY(40);
 			$pdf->SetX(5);
 		// variales para la boleta.
-			$fill = false; $i=1;  $suma = 0; $aprobado_reprobado = array(); $contar_linea = 0;
+			$fill = false; $i=1;  $suma = 0; $aprobado_reprobado = array(); $contar_linea = 0; $ContaLineaY = 0;
 // *************************************************************************************************************************
 // ejecutar consulta. que proviene de la nomina. SE CREA LA ARRAY() CODIGO_ALUMNO_LISTADO Y CODIGO_MATRICULA_LISTADO.
 // *************************************************************************************************************************
@@ -423,7 +423,7 @@ while($row = $result -> fetch(PDO::FETCH_BOTH)) // bucle para la recorrer las as
 			///////////////////////////////////////////////////////////////////////////////////////////////////
 			/////NOMBRE DE LA ASIGNATURA Y CAMBIO DE CONCEPTOS.///////////////////////////////////////////////////////////////////////////////////////////
 			///////////////////////////////////////////////////////////////////////////////////////////////////
-					$cellWidth=140;//wrapped cell width
+					$cellWidth=110;//wrapped cell width
 					$cellHeight=5;//normal one-line cell height
 					
 					//check whether the text is overflowing
@@ -472,8 +472,8 @@ while($row = $result -> fetch(PDO::FETCH_BOTH)) // bucle para la recorrer las as
 				// IMPRIMIR NOTA TRIMESTRE 1, 2, 3 Y CALCULAR CONCEPTO.
 				for($ii=0;$ii<count($nombre_campos);$ii++){
 					// Extraer el valor.
-                    $indicador_ = $row[$nombre_campos[$ii]];
-                    $pdf->Cell($ancho[1],($line * $alto[0]),$indicador_,'R',0,'C',$fill);
+                    $indicador_ = convertirTexto($row[$nombre_campos[$ii]]);
+                    $pdf->Cell($ancho[1],($line * $alto[0]),$indicador_ .$yPos, 'R',0,'C',$fill);
 					// cambiar COLOR.
 						/*if($indicador_ == "S" || $indicador_ == "P"){
 							$pdf->Cell($ancho[1],($line * $alto[0]),$indicador_,'R',0,'C',$fill);
@@ -484,7 +484,16 @@ while($row = $result -> fetch(PDO::FETCH_BOTH)) // bucle para la recorrer las as
 							$pdf->SetFont('');
 							$pdf->SetTextColor(0,0,0);
 						}*/
+
 				}	// FOR
+										// salto de pagina.
+										if($yPos > 180){
+											$pdf->AddPage();
+											$pdf->SetFont('Times','',10); // I : Italica; U: Normal;
+											// dibujar encabezado de la tabla.
+											$pdf->SetY(50);
+											$pdf->FancyTable($header);
+										}
 				// VALORES RESTANTES. total de puntos, nota_final, recuperacion.
 					if($row['indicador_final'] != 0){
 						$pdf->Cell($ancho[1],($line * $alto[0]),trim($row['indicador_final']),0,0,'C',$fill);
@@ -494,7 +503,7 @@ while($row = $result -> fetch(PDO::FETCH_BOTH)) // bucle para la recorrer las as
 					$pdf->Ln();
 						$fill=!$fill;
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-			 if ($i == $total_asignaturas)
+			/*  if ($i == $total_asignaturas)
 			 {
 				$pdf->Cell(203,0,'','T');
 				$pdf->SetFont('','',10);
@@ -524,7 +533,7 @@ while($row = $result -> fetch(PDO::FETCH_BOTH)) // bucle para la recorrer las as
                 if(isset($img_firma)){$pdf->Image($img_sello,80,225,30,30);}						// IMAGEN SELLO
                 $pdf->RotatedText(130,250,$nombre_director,0);	    // Nombre Director
                 $pdf->RotatedText(140,255,'Director(a)',0);			// ETIQUETA DIRECTOR.
-            }
+            } */
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
               $i++;			// acumulador para el numero de asignaturas
