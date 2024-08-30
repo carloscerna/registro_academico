@@ -32,8 +32,8 @@ require $path_root."/registro_academico/vendor/autoload.php";
 // Leemos un archivo Excel 2007
     $objReader = \PhpOffice\PhpSpreadsheet\IOFactory::createReader("Xlsx");
     $origen = strval($path_root) ."/registro_academico/formatos_hoja_de_calculo/";
-    $nombre_archivo = "CE-TABLET-PARVULARIA-10391-29-08-2024-SEDE-1-INSA.xlsx";
-    $objPHPExcel = $objReader->load(strval($origen) ."CE-TABLET-PARVULARIA-10391-29-08-2024-SEDE-1-INSA.xlsx");
+    $nombre_archivo = "COMPUTADORAS-CE10391-06092024.xlsx";
+    $objPHPExcel = $objReader->load(strval($origen) ."COMPUTADORAS-CE10391-06092024.xlsx");
     //$nombre_archivo = "CE-COMPUTADORA.xlsx";
     //$objPHPExcel = $objReader->load($origen."CE-COMPUTADORA.xlsx");
 // Leemos un archivo Excel 2007

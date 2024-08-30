@@ -31,22 +31,12 @@
     $nombresMeses = [1=>"Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
     $fecha = convertirTexto("Santa Ana, $nombresDias[$NombreDia] $dia de $nombresMeses[$mes] de $año");
     setlocale(LC_MONETARY,"es_ES");
-// buscar la consulta y la ejecuta.
-    consultas(9,0,$codigo_all,'','','',$db_link,'');
-//  imprimir datos del bachillerato.
-    global $result_encabezado;
-     while($row = $result_encabezado -> fetch(PDO::FETCH_BOTH))
-        {
-            $nombreNivel = convertirTexto(trim($row['nombre_bachillerato']));            
-            $nombreGrado = convertirtexto(trim($row['nombre_grado']));
-            $nombreSeccion = convertirtexto(trim($row['nombre_seccion']));
-            $nombreAñolectivo = convertirtexto(trim($row['nombre_ann_lectivo']));
-            $nombreTurno = convertirtexto(trim($row['nombre_turno']));
-            $print_periodo = convertirtexto('Período: _____');
-                break;
-        }
-    // CAPTURAR EL NOMBRE DEL RESPONSABLES DE LA SECCIÓN.
-       // buscar la consulta y la ejecuta.
+// buscar los datos de la sección y extraer el codigo del nivel.
+    $codigo_nivel = substr($codigo_all,0,2);
+        consultas(13,0,$codigo_all,'','','',$db_link,''); // valor 13 en consultas.
+//  imprimir datos del grado en general. extrar la información de la cosulta del archivo consultas.php
+    global $nombreNivel, $nombreGrado, $nombreSeccion, $nombreTurno, $nombreAñolectivo, $print_periodo;
+// CAPTURAR EL NOMBRE DEL RESPONSABLES DE LA SECCIÓN.
 	consultas_docentes(1,0,$codigo_all,'','','',$db_link,'');
         global $result_docente, $print_nombre_docente; 
 class PDF extends FPDF

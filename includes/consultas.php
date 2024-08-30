@@ -44,6 +44,8 @@ function consultas_docentes($ejecutar,$cerrar,$codigo_bachillerato,$codigo_grado
 function consultas($ejecutar,$cerrar,$codigo_bachillerato,$codigo_grado,$codigo_seccion,$codigo_annlectivo,$db_link,$result)
 {
     global $result, $result_encabezado, $codigo_encargado, $por_genero, $result_indicadores, $result_nombre_asignatura;
+    global $nombreNivel, $nombreGrado, $nombreSeccion, $nombreTurno, $nombreAñoLectivo, $print_periodo;
+    $CodigoTodos = $codigo_bachillerato;
 
     if($ejecutar == 1)
     {
@@ -356,22 +358,34 @@ function consultas($ejecutar,$cerrar,$codigo_bachillerato,$codigo_grado,$codigo_
 	    $result = $db_link -> query($query);
 	    $result_encabezado = $db_link -> query($query);
     }
-         // para los diferntes listados Indicadores Educativos.
+    // para los diferntes listados Indicadores Educativos.
     if($ejecutar == 13)
     {
         $query = "SELECT org.codigo_bachillerato as codigo_modalidad, org.codigo_grado, org.codigo_seccion, org.codigo_ann_lectivo, org.codigo_turno,
-                sec.nombre as nombre_seccion, ann.nombre as nombre_ann_lectivo, gan.nombre as nombre_grado, bach.nombre as nombre_bachillerato, tur.nombre as nombre_turno
+                        sec.nombre as nombre_seccion, 
+                        ann.nombre as nombre_ann_lectivo, 
+                        gan.nombre as nombre_grado, 
+                        bach.nombre as nombre_bachillerato, 
+                        tur.nombre as nombre_turno
                     FROM organizacion_grados_secciones org
                         INNER JOIN bachillerato_ciclo bach ON bach.codigo = org.codigo_bachillerato
                         INNER JOIN grado_ano gan ON gan.codigo = org.codigo_grado
                         INNER JOIN seccion sec ON sec.codigo = org.codigo_seccion
                         INNER JOIN ann_lectivo ann ON ann.codigo = org.codigo_ann_lectivo
                         INNER JOIN turno tur ON tur.codigo = org.codigo_turno
-                            WHERE org.codigo_ann_lectivo = '$codigo_bachillerato'
-                                ORDER BY codigo_grado, codigo_bachillerato, codigo_seccion, codigo_turno";
+                            WHERE btrim(org.codigo_bachillerato || org.codigo_grado || org.codigo_seccion || org.codigo_ann_lectivo || org.codigo_turno)= '$CodigoTodos'";
     // ejecutar la consulta.
 	    $result = $db_link -> query($query);
 	    $result_encabezado = $db_link -> query($query);
+        while($row = $result_encabezado -> fetch(PDO::FETCH_BOTH))
+        {
+            $nombreNivel = convertirTexto(trim($row['nombre_bachillerato']));            
+            $nombreGrado = convertirtexto(trim($row['nombre_grado']));
+            $nombreSeccion = convertirtexto(trim($row['nombre_seccion']));
+            $nombreTurno = convertirtexto(trim($row['nombre_turno']));
+            $nombreAñoLectivo = convertirtexto(trim($row['nombre_ann_lectivo']));
+            $print_periodo = convertirtexto('Período: _____');
+        }
     } 
 
  
@@ -696,7 +710,7 @@ function consultas_alumno($ejecutar,$cerrar,$buscar_nombre,$codigo_alumno,$codig
                     INNER JOIN catalogo_area_asignatura cat_area ON cat_area.codigo = asig.codigo_area
                     INNER JOIN a_a_a_bach_o_ciclo aaa ON aaa.codigo_asignatura = asig.codigo and aaa.orden <> 0 ".
                         "WHERE a.id_alumno = '".$codigo_alumno."' and codigo_matricula = '".$codigo_matricula.
-                        "' and aaa.codigo_ann_lectivo = '".substr($codigo_ann_lectivo,2,2)."' ORDER BY aaa.orden ASC";
+                        "' and aaa.codigo_ann_lectivo = '".substr($codigo_ann_lectivo,2,2)."' ORDER BY asig.codigo_area ASC";
     // ejecutar la consulta.
         $result = $db_link -> query($query);
     }
