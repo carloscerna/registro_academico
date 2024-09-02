@@ -493,4 +493,3 @@ else{
      $modo = 'I'; // Envia al navegador (I), Descarga el archivo (D).
      $print_nombre = $print_grado . ' ' . $print_seccion;
      $pdf->Output($print_nombre,$modo);
-?>

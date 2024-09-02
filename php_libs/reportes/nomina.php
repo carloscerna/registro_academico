@@ -44,7 +44,7 @@ class PDF extends FPDF
 //Cabecera de página
 function Header()
 {
-    global $print_nombre_docente, $nombreNivel, $nombreGrado, $nombreSeccion, $nombreAñolectivo, $nombreTurno;
+    global $print_nombre_docente, $nombreNivel, $nombreGrado, $nombreSeccion, $nombreAñoLectivo, $nombreTurno;
     //Logo
     $img = $_SERVER['DOCUMENT_ROOT'].'/registro_academico/img/'.$_SESSION['logo_uno'];
     $this->Image($img,10,5,15,20);
@@ -70,7 +70,7 @@ function Header()
     $this->SetFont('Arial','B',11);
         $this->Write(6,convertirTexto("Año Lectivo: "));
     $this->SetFont('Comic','U',11);
-        $this->Write(6,$nombreAñolectivo);
+        $this->Write(6,$nombreAñoLectivo);
     // Nombre Nivel.
     $this->SetXY(10,30);
     $this->SetFont('Arial','B',11);

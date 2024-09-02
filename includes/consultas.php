@@ -45,6 +45,7 @@ function consultas($ejecutar,$cerrar,$codigo_bachillerato,$codigo_grado,$codigo_
 {
     global $result, $result_encabezado, $codigo_encargado, $por_genero, $result_indicadores, $result_nombre_asignatura;
     global $nombreNivel, $nombreGrado, $nombreSeccion, $nombreTurno, $nombreAñoLectivo, $print_periodo;
+    global $codigoNivel, $codigoGrado, $codigoSeccion, $codigoTurno, $codigoAñoLectivo;
     $CodigoTodos = $codigo_bachillerato;
 
     if($ejecutar == 1)
@@ -361,7 +362,11 @@ function consultas($ejecutar,$cerrar,$codigo_bachillerato,$codigo_grado,$codigo_
     // para los diferntes listados Indicadores Educativos.
     if($ejecutar == 13)
     {
-        $query = "SELECT org.codigo_bachillerato as codigo_modalidad, org.codigo_grado, org.codigo_seccion, org.codigo_ann_lectivo, org.codigo_turno,
+        $query = "SELECT org.codigo_bachillerato as codigo_modalidad, 
+                        org.codigo_grado, 
+                        org.codigo_seccion, 
+                        org.codigo_ann_lectivo, 
+                        org.codigo_turno,
                         sec.nombre as nombre_seccion, 
                         ann.nombre as nombre_ann_lectivo, 
                         gan.nombre as nombre_grado, 
@@ -384,6 +389,13 @@ function consultas($ejecutar,$cerrar,$codigo_bachillerato,$codigo_grado,$codigo_
             $nombreSeccion = convertirtexto(trim($row['nombre_seccion']));
             $nombreTurno = convertirtexto(trim($row['nombre_turno']));
             $nombreAñoLectivo = convertirtexto(trim($row['nombre_ann_lectivo']));
+
+            $codigoNivel = trim($row["codigo_modalidad"]);
+            $codigoGrado = trim($row["codigo_grado"]);
+            $codigoSeccion = trim($row["codigo_seccion"]);
+            $codigoTurno = trim($row["codigo_turno"]);
+            $codigoAñoLectivo = trim($row["codigo_ann_lectivo"]);
+
             $print_periodo = convertirtexto('Período: _____');
         }
     } 

@@ -518,7 +518,7 @@ if (lstlist_notas == 'boleta_notas' && $(this).attr('data-accion') == 'listados_
                                 break;
                 
                         default:
-                                $url_ruta = "php_libs/reportes/boleta_de_calificacion_parvularia.php";
+                                $url_ruta = "php_libs/reportes/Boletas Calificaciones/Parvularia y Primeros grados.php";
                 }
                 
         }

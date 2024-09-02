@@ -147,30 +147,25 @@ function Header()
 	$this->SetLineWidth(.3);				// GROSOR.
 	$this->SetDrawColor(0,0,0);			// COLOR DE LA LÍNEA. rgb(0,0,0);
     $this->SetFont('Arial','B',$TamañoTexto[0]);	// sobresaliente
-        $this->Write(5,convertirTexto("Detalle de colores Indicadores: Sobresaliente:  "));
+        $this->Write(5,convertirTexto("Detalle de colores Indicadores: Si lo hace:  "));
 	$this->SetFillColor(167,245,174); // color rellen rgb(167,245,174);
     $this->SetFont('Comic','',$TamañoTexto[0]);
-        $this->Cell(5,5,'',1,0,"L",true);
-	$this->SetFont('Arial','B',$TamañoTexto[0]);
-        $this->Write(5,convertirTexto("Satisfactorio:  "));
-	$this->SetFillColor(249,202,242); // color rellen rgb(249,202,242);
-    $this->SetFont('Comic','',$TamañoTexto[0]);
-        $this->Cell(5,5,'',1,0,"L",true);
+        $this->Cell(5,5,'S',1,0,"L",true);
 	$this->SetFont('Arial','B',$TamañoTexto[0]);
         $this->Write(5,convertirTexto("En proceso:  "));
-	$this->SetFillColor(235,242,162); // color rellen rgb(235,242,162);
+	$this->SetFillColor(255,236,161); // color rellen rgb(255, 236, 161);
     $this->SetFont('Comic','',$TamañoTexto[0]);
-        $this->Cell(5,5,'',1,0,"L",true);
+        $this->Cell(5,5,'P',1,0,"L",true);
 	$this->SetFont('Arial','B',$TamañoTexto[0]);
-        $this->Write(5,convertirTexto("No lo hace:  "));
-	$this->SetFillColor(204,209,211); // color rellen rgb(204,209,211);
+        $this->Write(5,convertirTexto("Todavia no lo hace:  "));
+	$this->SetFillColor(248,161,174); // color rellen rgb(248,161,174);
     $this->SetFont('Comic','',$TamañoTexto[0]);
-        $this->Cell(5,5,'',1,0,"L",true);
+        $this->Cell(5,5,'T',1,0,"L",true);
 	$this->SetFont('Arial','B',$TamañoTexto[0]);
         $this->Write(5,convertirTexto("No Evaluado:  "));
 	$this->SetFillColor(255,255,255); // color rellen rgb(255,255,255);
     $this->SetFont('Comic','',$TamañoTexto[0]);
-        $this->Cell(5,5,'',1,0,"L",true);
+        $this->Cell(10,5,'NE',1,0,"C",true);
 }
 //Pie de p�gina
 function Footer()
@@ -199,12 +194,12 @@ function FancyTable($header)
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// ARRAY PARA LAS DIFERENTES ETIQUETAS.
 		$etiquetaComponente = ['COMPONENTE DEL PLAN DE ESTUDIO'];
-		$etiquetaAreaTrimestre = ["Area","TRIMESTRE"];
+		$etiquetaAreaTrimestre = ["Area","TRIMESTRE","PERIODO"];
 		$etiquetaNumeroTrimestre = ["1","2","3"];
-		$etiquetaNombreArea = ["Lenguaje","Matemática","Ciencia y Tecnología","Estudios Sociales","Educación Física","Educación Artística","Inglés"];
+		$etiquetaNombreArea = ["Período","Trimestre"];
 	// LINES O RECTÁNGULOS.
 		$this->RoundedRect(5, 30, 270, 10, 0.5, '');	// primer cuadro.
-		$this->RoundedRect(5, 30, 165, 10, 0.5, '');	// para el nombre de la asignatura
+		$this->RoundedRect(5, 30, 240, 10, 0.5, '');	// para el nombre de la asignatura
 	// Etiquete Componente del plan de estudio.
 		$this->SetXY(10,33); $valorEtiquetaX = 0;
 		$this->SetFont('Alte','',14);
@@ -212,52 +207,38 @@ function FancyTable($header)
 	// Etiquete Componente del plan de estudio.
 		$this->SetXY(150,30); $valorEtiquetaX = 0;
 		$this->SetFont('Alte','',8);
-			$this->Write(5,$etiquetaAreaTrimestre[0]);
+		//	$this->Write(5,$etiquetaAreaTrimestre[0]);
 	// Etiquete Componente del plan de estudio.
 		$this->SetXY(150,35); $valorEtiquetaX = 0;
 		$this->SetFont('Alte','',8);
-			$this->Write(5,$etiquetaAreaTrimestre[1]);
+		//	$this->Write(5,$etiquetaAreaTrimestre[1]);
 	// Imprimir Etiquete NOmbre Area.
-		$this->SetXY(170,30); $valorEtiquetaX = 0;
+		$this->SetXY(245,30); $valorEtiquetaX = 0;
 		$this->SetFont('Times','',7);
 		for($j=0;$j<=count($etiquetaNombreArea) -1;$j++){
 			// CAMBIAR EL COLOR DE LAS AREAS DE CADA COMPONENTE DE ESTUDIO.
 			switch ($j) {
 				case 0:	// Lenguaje
-					$this->SetFillColor(231,221,255);
-					break;
-				case 1:	// Matemática.
-					$this->SetFillColor(191,214,65);
-					break;
-				case 2:	// Ciencia y Tecnología.
-					$this->SetFillColor(125,218,88);
-					break;
-				case 3:	// Estudios Sociales
-					$this->SetFillColor(226,234,244);
-					break;
-				case 4:
-					$this->SetFillColor(152,245,249);
-					break;
-				case 5:
-					$this->SetFillColor(255,236,161);
-					break;
-				case 6:
-					$this->SetFillColor(254,153,0);
-					break;
-				default:
 					$this->SetFillColor(255,255,255);
 					break;
+				
 			}
-        	    $this->Cell(15,5,convertirTexto($etiquetaNombreArea[$j]),0,0,"C",true);
+        	$this->Cell(15,5,convertirTexto($etiquetaNombreArea[$j]),1,0,"C",true);
 			$valorEtiquetaX = $this->GetX();
 			$this->SetXY($valorEtiquetaX,30);
 		}
 	// segunda fila de lineas por el numero de componentes del area.
-		$this->SetXY(170,35);
+		$this->SetXY(245,35);
 		for($j=0;$j<=count($etiquetaNombreArea) -1;$j++){
-			$this->Cell(5,5,'1',1,0,"C",false);
-			$this->Cell(5,5,'2',1,0,"C",false);
-			$this->Cell(5,5,'3',1,0,"C",false);
+            if($j == 0){
+                $this->Cell(15,5,'1',1,0,"C",false);
+            }
+            else{
+                $this->Cell(5,5,'1',1,0,"C",false);
+                $this->Cell(5,5,'2',1,0,"C",false);
+                $this->Cell(5,5,'3',1,0,"C",false);
+                }
+
 		}
 	///////////////////////////////////////////////////////////////////////////////////////
     //Restauraci�n de colores y fuentes
@@ -292,7 +273,7 @@ function FancyTable($header)
 					}
 		}
 	// condicionar el ancho y ALTO de cada columna.
-		$ancho=[165,10,5,12]; //determina el ancho de las columnas
+		$ancho=[240,10,5,12,15]; //determina el ancho de las columnas
 		$alto=[3.5,12]; //determina el alto de las columnas
 //************************************************************************************************************************
 //************************************************************************************************************************
@@ -351,7 +332,7 @@ for($listado=0;$listado<count($codigo_alumno_listado);$listado++)
 //	INICIA EL WHILE CON RESPECTO AL VALOR DE LA NOMINA ( CODIGO ALUMNO, CODIGO MATRICULA.)
 // *************************************************************************************************************************
 // MATRIZ NOMBRE DE LOS CAMPOS. unset( $animales[0] ); BORRAR MATRIZ
-	$nombre_campos = ['indicador_p_p_1','indicador_p_p_2','indicador_p_p_3'];//,'total_puntos_basica','nota_final','recuperacion');
+	$nombre_campos = ["alertas",'indicador_p_p_1','indicador_p_p_2','indicador_p_p_3'];//,'total_puntos_basica','nota_final','recuperacion');
 	$codigoAreaComponente = ['15','16','17','18','19','20'];
 	while($row = $result -> fetch(PDO::FETCH_BOTH)) // bucle para la recorrer las asignaturas.
 	{
@@ -363,29 +344,15 @@ for($listado=0;$listado<count($codigo_alumno_listado);$listado++)
 			$codigo_matricula = $row['cod_matricula'];
 			$codigo_alumno = $row['codigo_alumno'];
 			$codigoArea = trim($row['codigo_area']);
-			$nombre_asignatura = mb_convert_encoding(trim($row['n_asignatura']),"ISO-8859-1","UTF-8");
-			$NombreAsignatura = explode("-",$nombre_asignatura);
-			$NombreAsignaturas = trim($NombreAsignatura[1]);
-			$NombreAsignaturasT = trim($NombreAsignatura[0]);
+            $nombreArea = trim($row["nombre_area"]);
+			$nombre_asignatura = convertirTexto(trim($row['n_asignatura']));
+			$NombreAsignatura = $nombreArea . " - " . $nombre_asignatura;
 			$foto = trim($row['foto']);
 		// imprimir la foto en la boleta
 			if ($chkfoto == 'yes'){
 				if(!file_exists($_SERVER['DOCUMENT_ROOT'].'/registro_academico/img/png'.'/'.$foto)){$fotos = 'foto_no_disponible.png';}else{$fotos = $foto;}
 					$img = $_SERVER['DOCUMENT_ROOT'].'/registro_academico/img/png'.'/'.$fotos;
 					$pdf->image($img,197,6,21,27);
-			}
-		// CONVERTIR EL NOMBRE DEL TRIMESTRE A 1T, 2T Y 3T.
-			$nombreTrimestre = "";
-			switch ($NombreAsignaturasT) {
-				case 'PRIMER TRIMESTRE':
-					$nombreTrimestre = "1T- ";
-					break;
-				case 'SEGUNDO TRIMESTRE':
-					$nombreTrimestre = "2T- ";
-					break;
-				case 'TERCER TRIMESTRE':
-					$nombreTrimestre = "3T- ";
-					break;
 			}
 		///////////////////////////////////////////////////////////////////////////////////////////////////
 		///////////////////////////////////////////////////////////////////////////////////////////////////		
@@ -422,17 +389,17 @@ for($listado=0;$listado<count($codigo_alumno_listado);$listado++)
 				///////////////////////////////////////////////////////////////////////////////////////////////////
 				/////NOMBRE DE LA ASIGNATURA Y CAMBIO DE CONCEPTOS.///////////////////////////////////////////////////////////////////////////////////////////
 				///////////////////////////////////////////////////////////////////////////////////////////////////
-					$cellWidth=165;//wrapped cell width
+					$cellWidth=240;//wrapped cell width
 					$cellHeight=4;//normal one-line cell height
 					//check whether the text is overflowing
-					if($pdf->GetStringWidth($NombreAsignaturas) < $cellWidth){
+					if($pdf->GetStringWidth($NombreAsignatura) < $cellWidth){
 						//if not, then do nothing
 						$line=1;
 					}else{
 						//if it is, then calculate the height needed for wrapped cell
 						//by splitting the text to fit the cell width
 						//then count how many lines are needed for the text to fit the cell
-						$textLength=strlen($NombreAsignaturas);	//total text length
+						$textLength=strlen($NombreAsignatura);	//total text length
 						$errMargin=10;		//cell width error margin, just in case
 						$startChar=0;		//character start position for each line
 						$maxChar=0;			//maximum character in a line, to be incremented later
@@ -445,7 +412,7 @@ for($listado=0;$listado<count($codigo_alumno_listado);$listado++)
 							$pdf->GetStringWidth( $tmpString ) < ($cellWidth-$errMargin) &&
 							($startChar+$maxChar) < $textLength ) {
 								$maxChar++;
-								$tmpString=substr($NombreAsignaturas,$startChar,$maxChar);
+								$tmpString=substr($NombreAsignatura,$startChar,$maxChar);
 							}
 							//move startChar to next line
 							$startChar=$startChar+$maxChar;
@@ -462,34 +429,18 @@ for($listado=0;$listado<count($codigo_alumno_listado);$listado++)
 					$pdf->SetFont('Times','',8.5); // I : Italica; U: Normal;
 					$xPos = $pdf->GetX();	// valor actual de X.
 					$yPos = $pdf->GetY();	// Valor actual de Y.
-					$pdf->MultiCell($ancho[0],$alto[0],$nombreTrimestre .$NombreAsignaturas,1,'L',$fill);	//Nombre de la Asignatura.
-						// MOVER EL VALOR DE X PARA COLOCAR EN DIFERENTE POSICIÓN DEPENDIENTE DEL AREA,
+					$pdf->MultiCell($ancho[0],$alto[0],$NombreAsignatura,1,'L',$fill);	//Nombre de la Asignatura.
+                    // MOVER EL VALOR DE X PARA COLOCAR EN DIFERENTE POSICIÓN DEPENDIENTE DEL AREA,
 						// LENGUAJE, MATEMATICA, CIENCIA Y TECNOLOGIA, ESTUDIOS SOCIALES, EDUCACIÓN FISICA, EDUCACIÓN ARTÍSTICA, INGLES.
 						$AreaComponenteX = 0;
 						switch ($codigoArea) {
-							case "15":
+							case "09":
 								$pdf->SetXY($xPos + $ancho[0], $yPos);	// Posición del Indicador.
 								break;
-							case "16":
+                            default:
 								$pdf->SetXY($xPos + $ancho[0] + 15,$yPos);
 								break;
-							case "17":
-								$pdf->SetXY($xPos + $ancho[0] + 30,$yPos);
-								break;
-							case "18":
-								$pdf->SetXY($xPos + $ancho[0] + 45,$yPos);
-								break;
-							case "19":
-								$pdf->SetXY($xPos + $ancho[0] + 60,$yPos);
-								break;
-							case "20":
-								$pdf->SetXY($xPos + $ancho[0] + 75,$yPos);
-								break;
-							case "21":
-								$pdf->SetXY($xPos + $ancho[0] + 90,$yPos);
-								break;
 						}
-
 				///////////////////////////////////////////////////////////////////////////////////////////////////
 					// INDICADOR
 				///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -498,17 +449,17 @@ for($listado=0;$listado<count($codigo_alumno_listado);$listado++)
 						$indicador_ = convertirTexto($row[$nombre_campos[$ii]]);	// en el caso puede ser una letra o palabra.
 						// cambiar COLOR.
 						switch ($indicador_) {
-							case 'Sobresaliente':
+							case 'S':
 							$pdf->SetFillColor(167,245,174); // color rellen rgb(167,245,174);
 								break;
-							case "Satisfactorio":
-								$pdf->SetFillColor(249,202,242); // color rellen rgb(249,202,242);
+							case "P":
+								$pdf->SetFillColor(255,236,161); // color rellen rgb(255,236,161);
 								break;
-							case "En proceso":
-								$pdf->SetFillColor(235,242,162); // color rellen rgb(235,242,162);
+							case "T":
+								$pdf->SetFillColor(248,161,174); // color rellen rgb(248,161,174);
 								break;
-							case "No lo hace":
-								$pdf->SetFillColor(204,209,211); // color rellen rgb(204,209,211);
+							case "NE":
+								$pdf->SetFillColor(255,255,255); // color rellen rgb(204,209,211);
 								break;
 							default:
 								$pdf->SetFillColor(255,255,255); // color rellen rgb(255,255,255);
@@ -517,7 +468,18 @@ for($listado=0;$listado<count($codigo_alumno_listado);$listado++)
 						//	imprimri el color correspondiente dependiendo de la evaluación.
 							//$pdf->Cell($ancho[1],($line * $alto[0]),$indicador_ .$yPos,'LBR',0,'L',$fill);
 							// Imprimir color del Indicador.
-								$pdf->Cell($ancho[2],$line * $alto[0],'',1,0,'L',true);
+                            switch ($codigoArea) {
+                                case "09":
+                                    if($ii == 0){
+                                        $pdf->Cell($ancho[4],$line * $alto[0],'',1,0,'L',true);
+                                    }
+                                    break;
+                                default:
+                                    if($ii == 1 || $ii == 2 || $ii == 3){
+                                        $pdf->Cell($ancho[2],$line * $alto[0],'',1,0,'L',true);
+                                    }
+                                    break;
+                            }
 						// reset color de relleno.
 					}	// FOR
 						// salto de pagina.
