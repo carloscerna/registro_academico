@@ -708,7 +708,8 @@ function consultas_alumno($ejecutar,$cerrar,$buscar_nombre,$codigo_alumno,$codig
             round((n.nota_p_p_1+n.nota_p_p_2+n.nota_p_p_3),1) as total_puntos_basica, 
             round((n.nota_p_p_1+n.nota_p_p_2+n.nota_p_p_3+n.nota_p_p_4),1) as total_puntos_media, 
             round((n.nota_p_p_1+n.nota_p_p_2+n.nota_p_p_3+n.nota_p_p_4+n.nota_p_p_5),1) as total_puntos_nocturna,
-            aaa.orden, asig.codigo_cc, asig.codigo_area, cat_area.descripcion as nombre_area 
+            aaa.orden, asig.codigo_cc, asig.codigo_area, cat_area.descripcion as nombre_area,
+            cat_area_di.descripcion as descripcion_area_dimension 
                     FROM alumno a
                     INNER JOIN alumno_encargado ae ON a.id_alumno = ae.codigo_alumno and ae.encargado = 't'
                     INNER JOIN alumno_matricula am ON a.id_alumno = am.codigo_alumno and am.retirado = 'f' and am.id_alumno_matricula = '$codigo_matricula'
@@ -720,6 +721,7 @@ function consultas_alumno($ejecutar,$cerrar,$buscar_nombre,$codigo_alumno,$codig
                     INNER JOIN asignatura asig ON asig.codigo = n.codigo_asignatura
                     INNER JOIN catalogo_cc_asignatura cat_cc ON cat_cc.codigo = asig.codigo_cc
                     INNER JOIN catalogo_area_asignatura cat_area ON cat_area.codigo = asig.codigo_area
+                    INNER JOIN catalogo_area_dimension cat_area_di ON cat_area_di.codigo = asig.codigo_area_dimension
                     INNER JOIN a_a_a_bach_o_ciclo aaa ON aaa.codigo_asignatura = asig.codigo and aaa.orden <> 0 ".
                         "WHERE a.id_alumno = '".$codigo_alumno."' and codigo_matricula = '".$codigo_matricula.
                         "' and aaa.codigo_ann_lectivo = '".substr($codigo_ann_lectivo,2,2)."' ORDER BY asig.codigo_area ASC";

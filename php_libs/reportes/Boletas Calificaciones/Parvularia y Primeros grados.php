@@ -345,8 +345,9 @@ for($listado=0;$listado<count($codigo_alumno_listado);$listado++)
 			$codigo_alumno = $row['codigo_alumno'];
 			$codigoArea = trim($row['codigo_area']);
             $nombreArea = trim($row["nombre_area"]);
+            $nombreAreaDimension = convertirTexto(trim($row["descripcion_area_dimension"]));
 			$nombre_asignatura = convertirTexto(trim($row['n_asignatura']));
-			$NombreAsignatura = $nombreArea . " - " . $nombre_asignatura;
+			$NombreAsignatura = $nombreArea . " - " . $nombreAreaDimension . " - " . $nombre_asignatura;
 			$foto = trim($row['foto']);
 		// imprimir la foto en la boleta
 			if ($chkfoto == 'yes'){
