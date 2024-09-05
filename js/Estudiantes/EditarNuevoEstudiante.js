@@ -7,6 +7,7 @@ var chksello = "no";
 var chkfirma = "no";
 var chkfoto = "no";
 var tableA = "";
+var chkCrearArchivoPdf = "no";
 // IDENTIFICAR QUE TAG INICIAN CON DISPLAY NONE.
 $(document).ready(function(){
 	var display =  $("#ImagenPortafolio").css("display");
@@ -216,24 +217,23 @@ $(function(){ // INICIO DEL FUNCTION.
 						$('#lstRecoleccionBasura').val(data[0].recoleccion_basura);
 						$('#lstAbastecimientoAgua').val(data[0].codigo_abastecimiento);
 						// I SELECT ACTIVIDAD ECONOMICA..
-
-								/// Seleccionar genero de la base de datos guardado.
-								var miselect_departamento=$("#lstDepartamento");
-								var codigo_departamento = data[0].codigo_departamento;
-								$("#lstDepartamento").val(codigo_departamento);
-								/* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
-								miselect_departamento.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
-									$.post("includes/cargar_departamento.php",
-										function(data){
-											miselect_departamento.empty();
-												for (var i=0; i<data.length; i++) {
-													if(codigo_departamento == data[i].codigo){
-														miselect_departamento.append('<option value="' + data[i].codigo + '" selected>' + data[i].descripcion + '</option>');             
-													}else{
-														miselect_departamento.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');
-													}
-													}
-												}, "json");   
+						/// Seleccionar genero de la base de datos guardado.
+						var miselect_departamento=$("#lstDepartamento");
+						var codigo_departamento = data[0].codigo_departamento;
+						$("#lstDepartamento").val(codigo_departamento);
+						/* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
+						miselect_departamento.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
+							$.post("includes/cargar_departamento.php",
+								function(data){
+									miselect_departamento.empty();
+										for (var i=0; i<data.length; i++) {
+											if(codigo_departamento == data[i].codigo){
+												miselect_departamento.append('<option value="' + data[i].codigo + '" selected>' + data[i].descripcion + '</option>');             
+											}else{
+												miselect_departamento.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');
+											}
+											}
+										}, "json");   
 								/// Seleccionar municipio en base al departamento guardado.
 								var miselect=$("#lstMunicipio");
 								var codigo_municipio = data[0].codigo_municipio;
@@ -266,40 +266,39 @@ $(function(){ // INICIO DEL FUNCTION.
 								$('#lstNacionalidadP').val(data[1].codigo_nacionalidad);
 								$('#lstEstadoFamiliarP').val(data[1].codigo_familiar);
 								$('#lstZonaResidenciaP').val(data[1].codigo_zona); 					
-
-										/// Seleccionar genero de la base de datos guardado.
-										var miselect_departamento_p=$("#lstDepartamentoP");
-										var codigo_departamento_p = data[1].codigo_departamento;
-										$("#lstDepartamentoP").val(codigo_departamento_p);
-										/* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
-										miselect_departamento_p.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
-											$.post("includes/cargar_departamento.php",
-												function(data){
-													miselect_departamento_p.empty();
-														for (var i=0; i<data.length; i++) {
-															if(codigo_departamento_p == data[i].codigo){
-																miselect_departamento_p.append('<option value="' + data[i].codigo + '" selected>' + data[i].descripcion + '</option>');             
-															}else{
-																miselect_departamento_p.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');
-															}
-															}
-														}, "json");   
+								/// Seleccionar genero de la base de datos guardado.
+								var miselect_departamento_p=$("#lstDepartamentoP");
+								var codigo_departamento_p = data[1].codigo_departamento;
+								$("#lstDepartamentoP").val(codigo_departamento_p);
+								/* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
+								miselect_departamento_p.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
+									$.post("includes/cargar_departamento.php",
+										function(data){
+											miselect_departamento_p.empty();
+												for (var i=0; i<data.length; i++) {
+													if(codigo_departamento_p == data[i].codigo){
+														miselect_departamento_p.append('<option value="' + data[i].codigo + '" selected>' + data[i].descripcion + '</option>');             
+													}else{
+														miselect_departamento_p.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');
+													}
+													}
+												}, "json");   
 										/// Seleccionar municipio en base al departamento guardado.
 										var miselect_p=$("#lstMunicipioP");
 										var codigo_municipio_p = data[1].codigo_municipio;
 										/* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
 										miselect_p.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
-												//departamento=$("#lstDepartamento").val();
-													$.post("includes/cargar_municipio.php", { departamento: codigo_departamento_p },
-																function(data){
-																	miselect_p.empty();
-																	for (var i=0; i<data.length; i++) {
-																				if(codigo_municipio_p == data[i].codigo){
-																					miselect_p.append('<option value="' + data[i].codigo + '" selected>' + data[i].descripcion + '</option>');             
-																				}else{
-																					miselect_p.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');
-																				}
+										//departamento=$("#lstDepartamento").val();
+											$.post("includes/cargar_municipio.php", { departamento: codigo_departamento_p },
+														function(data){
+															miselect_p.empty();
+															for (var i=0; i<data.length; i++) {
+																		if(codigo_municipio_p == data[i].codigo){
+																			miselect_p.append('<option value="' + data[i].codigo + '" selected>' + data[i].descripcion + '</option>');             
+																		}else{
+																			miselect_p.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');
 																		}
+																}
 												}, "json");		 							  
 										// chekear responsable.
 											if (data[1].encargado_bollean == "1") {
@@ -318,66 +317,62 @@ $(function(){ // INICIO DEL FUNCTION.
 							$('#lstNacionalidadM').val(data[2].codigo_nacionalidad);
 							$('#lstEstadoFamiliarM').val(data[2].codigo_familiar);
 							$('#lstZonaResidenciaM').val(data[2].codigo_zona); 	
-
-										/// Seleccionar genero de la base de datos guardado.
-										var miselect_departamento_m=$("#lstDepartamentoM");
-										var codigo_departamento_m = data[2].codigo_departamento;
-										$("#lstDepartamento").val(codigo_departamento_m);
-										/* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
-										miselect_departamento_m.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
-											$.post("includes/cargar_departamento.php",
-												function(data){
-													miselect_departamento_m.empty();
-														for (var i=0; i<data.length; i++) {
-															if(codigo_departamento_m == data[i].codigo){
-																miselect_departamento_m.append('<option value="' + data[i].codigo + '" selected>' + data[i].descripcion + '</option>');             
-															}else{
-																miselect_departamento_m.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');
-															}
-														}
-													}, "json");   
-										/// Seleccionar municipio en base al departamento guardado.
-										var miselect_m=$("#lstMunicipioM");
-										var codigo_municipio_m = data[2].codigo_municipio;
-										/* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
-										miselect_m.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
-											//departamento=$("#lstDepartamento").val();
-												$.post("includes/cargar_municipio.php", { departamento: codigo_departamento_m },
-															function(data){
-																miselect_m.empty();
-																for (var i=0; i<data.length; i++) {
-																			if(codigo_municipio_m == data[i].codigo){
-																				miselect_m.append('<option value="' + data[i].codigo + '" selected>' + data[i].descripcion + '</option>');             
-																			}else{
-																				miselect_m.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');
-																			}
-																	}
-											}, "json");                                                                 
-									//**************chekear responsable.*************************************************************
-											if (data[2].encargado_bollean == "1") {
-													$("#encargadom").prop("checked", true);
-											}		
-										// blorque para data[3].
-											$('#txtideo').val(data[3].id_alumno_encargado);
-											$('#nombreo').val(data[3].nombres);
-											$('#lugaro').val(data[3].lugar_trabajo);
-											$('#poo').val(data[3].profesion);
-											$('#duio').val(data[3].dui);
-											$('#telefonoo').val(data[3].telefono);
-											$('#direcciono').val(data[3].direccion);
-										// chekear responsable.
-											if (data[3].encargado_bollean == "1") {
-													$("#encargadoo").prop("checked", true);
+							/// Seleccionar genero de la base de datos guardado.
+							var miselect_departamento_m=$("#lstDepartamentoM");
+							var codigo_departamento_m = data[2].codigo_departamento;
+							$("#lstDepartamento").val(codigo_departamento_m);
+							/* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
+							miselect_departamento_m.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
+								$.post("includes/cargar_departamento.php",
+									function(data){
+										miselect_departamento_m.empty();
+											for (var i=0; i<data.length; i++) {
+												if(codigo_departamento_m == data[i].codigo){
+													miselect_departamento_m.append('<option value="' + data[i].codigo + '" selected>' + data[i].descripcion + '</option>');             
+												}else{
+													miselect_departamento_m.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');
+												}
 											}
-											
-											
-											$('#txtfechanacimientoo').val(data[3].fecha_nacimiento);
-										///
-										//// SELECT
-											$('#lstNacionalidadO').val(data[3].codigo_nacionalidad);
-											$('#lstEstadoFamiliarO').val(data[3].codigo_familiar);
-											$('#lstZonaResidenciaO').val(data[3].codigo_zona); 	
-										
+										}, "json");   
+							/// Seleccionar municipio en base al departamento guardado.
+							var miselect_m=$("#lstMunicipioM");
+							var codigo_municipio_m = data[2].codigo_municipio;
+							/* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
+							miselect_m.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
+								//departamento=$("#lstDepartamento").val();
+									$.post("includes/cargar_municipio.php", { departamento: codigo_departamento_m },
+												function(data){
+													miselect_m.empty();
+													for (var i=0; i<data.length; i++) {
+																if(codigo_municipio_m == data[i].codigo){
+																	miselect_m.append('<option value="' + data[i].codigo + '" selected>' + data[i].descripcion + '</option>');             
+																}else{
+																	miselect_m.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');
+																}
+														}
+								}, "json");                                                                 
+							//**************chekear responsable.*************************************************************
+									if (data[2].encargado_bollean == "1") {
+											$("#encargadom").prop("checked", true);
+									}		
+								// blorque para data[3].
+									$('#txtideo').val(data[3].id_alumno_encargado);
+									$('#nombreo').val(data[3].nombres);
+									$('#lugaro').val(data[3].lugar_trabajo);
+									$('#poo').val(data[3].profesion);
+									$('#duio').val(data[3].dui);
+									$('#telefonoo').val(data[3].telefono);
+									$('#direcciono').val(data[3].direccion);
+								// chekear responsable.
+									if (data[3].encargado_bollean == "1") {
+											$("#encargadoo").prop("checked", true);
+									}
+									$('#txtfechanacimientoo').val(data[3].fecha_nacimiento);
+								///
+								//// SELECT
+									$('#lstNacionalidadO').val(data[3].codigo_nacionalidad);
+									$('#lstEstadoFamiliarO').val(data[3].codigo_familiar);
+									$('#lstZonaResidenciaO').val(data[3].codigo_zona); 	
 										/// Seleccionar genero de la base de datos guardado.
 										var miselect_departamento_o=$("#lstDepartamentoO");
 										var codigo_departamento_o = data[3].codigo_departamento;
@@ -400,18 +395,18 @@ $(function(){ // INICIO DEL FUNCTION.
 										var codigo_municipio_o = data[3].codigo_municipio;
 										/* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
 										miselect_o.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
-																	//departamento=$("#lstDepartamento").val();
-																	$.post("includes/cargar_municipio.php", { departamento: codigo_departamento_o },
-																					function(data){
-																					miselect_o.empty();
-																					for (var i=0; i<data.length; i++) {
-																									if(codigo_municipio_o == data[i].codigo){
-																									miselect_o.append('<option value="' + data[i].codigo + '" selected>' + data[i].descripcion + '</option>');             
-																									}else{
-																									miselect_o.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');
-																									}
-																						}
-																	}, "json");						
+											//departamento=$("#lstDepartamento").val();
+											$.post("includes/cargar_municipio.php", { departamento: codigo_departamento_o },
+												function(data){
+												miselect_o.empty();
+												for (var i=0; i<data.length; i++) {
+																if(codigo_municipio_o == data[i].codigo){
+																miselect_o.append('<option value="' + data[i].codigo + '" selected>' + data[i].descripcion + '</option>');             
+																}else{
+																miselect_o.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');
+																}
+													}
+											}, "json");						
 					/* LLENAR LA TABLA MATRICULA*/		
 						listarMatriculaAlumno();
 					/* FINAL DEL DATA QUE BUSCAR EL REGISTRO*/		
@@ -543,10 +538,39 @@ $(function(){ // INICIO DEL FUNCTION.
 			if($('#chkfirma').is(":checked")) {chkfirma = 'yes';}else {chkfirma = 'no';}
 			if($('#chksello').is(":checked")) {chksello = 'yes';}else {chksello = 'no';}
 			if($('#chkfoto').is(":checked")) {chkfoto = 'yes';}else {chkfoto = 'no';}                                                       
+			if($('#chkCrearArchivoPdf').is(":checked")) {chkCrearArchivoPdf = "si";}    
 			// construir la variable con el url.
-			varenviar = "/registro_academico/php_libs/reportes/alumno_constancia.php?todos="+idtodos_ok+"&lstconducta="+lstconducta+"&lstestudia="+lstestudio+"&chktraslado="+chktraslado+"&txttraslado="+txttraslado+"&chksello="+chksello+"&chkfirma="+chkfirma+"&txtcodmatricula="+txtcodigomatricula+"&txtidalumno="+id_alumno;
-			// Ejecutar la función
-			AbrirVentana(varenviar);
+				$url_ruta = "/registro_academico/php_libs/reportes/Estudiante/EstudioConducta.php?todos="+idtodos_ok+"&lstconducta="+lstconducta+"&lstestudia="+lstestudio+"&chktraslado="+chktraslado+"&txttraslado="+txttraslado+"&chksello="+chksello+"&chkfirma="+chkfirma+"&txtcodmatricula="+txtcodigomatricula+"&txtidalumno="+id_alumno+"&chkCrearArchivoPdf="+chkCrearArchivoPdf;
+			if(chkCrearArchivoPdf == "si")
+                {
+                $.ajax({
+                        beforeSend: function(){
+                                $('#myModal').modal('show');
+                        },
+                        cache: false,
+                        type: "POST",
+                        dataType: "json",
+                        url: $url_ruta,
+                        data: "todos="+ idtodos_ok + "&id=" + Math.random()+"&chksello="+chksello+"&chkfirma="+chkfirma+"&txtcodmatricula="+txtcodigomatricula+"&txtidalumno="+id_alumno+"&chkfoto="+chkfoto+"&chkCrearArchivoPdf="+chkCrearArchivoPdf,
+                        success: function(response){
+                                // Validar mensaje de error
+                                if(response.respuesta === false){
+                                toastr["error"](response.mensaje, "Sistema");
+                                }
+                                else{
+                                toastr["info"](response.mensaje, "Sistema");
+                                }
+                        },
+                        error:function(){
+                                toastr["error"](response.mensaje, "Sistema");
+                        }
+                        });
+                }else if(chkCrearArchivoPdf == "no"){
+					// construir la variable con el url.
+						varenviar = "/registro_academico/php_libs/reportes/Estudiante/EstudioConducta.php?todos="+idtodos_ok+"&lstconducta="+lstconducta+"&lstestudia="+lstestudio+"&chktraslado="+chktraslado+"&txttraslado="+txttraslado+"&chksello="+chksello+"&chkfirma="+chkfirma+"&txtcodmatricula="+txtcodigomatricula+"&txtidalumno="+id_alumno+"&chkCrearArchivoPdf="+chkCrearArchivoPdf;
+					// Ejecutar la función
+							AbrirVentana(varenviar);
+                }                                                   
 		});
 	///////////////////////////////////////////////////////////////////////////////
 	//	FUNCION que al dar clic buscar el registro para posterior mente abri una

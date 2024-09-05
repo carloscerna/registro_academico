@@ -529,28 +529,28 @@ if (lstlist_notas == 'boleta_notas' && $(this).attr('data-accion') == 'listados_
         }
                 if(chkCrearArchivoPdf == "si")
                 {
-                        $.ajax({
-                                beforeSend: function(){
-                                        $('#myModal').modal('show');
-                                },
-                                cache: false,
-                                type: "POST",
-                                dataType: "json",
-                                url: $url_ruta,
-                                data: "todos="+ reporte_ok + "&id=" + Math.random()+"&chksello="+chksello+"&chkfirma="+chkfirma+"&txtcodmatricula="+txtcodigomatricula+"&txtidalumno="+id_alumno+"&chkfoto="+chkfoto+"&chkCrearArchivoPdf="+chkCrearArchivoPdf+"&print_uno="+print_uno,
-                                success: function(response){
-                                        // Validar mensaje de error
-                                        if(response.respuesta === false){
-                                        toastr["error"](response.mensaje, "Sistema");
-                                        }
-                                        else{
-                                        toastr["info"](response.mensaje, "Sistema");
-                                        }
-                                },
-                                error:function(){
-                                        toastr["error"](response.mensaje, "Sistema");
+                $.ajax({
+                        beforeSend: function(){
+                                $('#myModal').modal('show');
+                        },
+                        cache: false,
+                        type: "POST",
+                        dataType: "json",
+                        url: $url_ruta,
+                        data: "todos="+ reporte_ok + "&id=" + Math.random()+"&chksello="+chksello+"&chkfirma="+chkfirma+"&txtcodmatricula="+txtcodigomatricula+"&txtidalumno="+id_alumno+"&chkfoto="+chkfoto+"&chkCrearArchivoPdf="+chkCrearArchivoPdf+"&print_uno="+print_uno,
+                        success: function(response){
+                                // Validar mensaje de error
+                                if(response.respuesta === false){
+                                toastr["error"](response.mensaje, "Sistema");
                                 }
-                                });
+                                else{
+                                toastr["info"](response.mensaje, "Sistema");
+                                }
+                        },
+                        error:function(){
+                                toastr["error"](response.mensaje, "Sistema");
+                        }
+                        });
                 }else if(chkCrearArchivoPdf == "no"){
                         // construir la variable con el url.
                                 varenviar = "/registro_academico/"+$url_ruta+"?todos="+reporte_ok+"&chksello="+chksello+"&chkfirma="+chkfirma+"&txtcodmatricula="+txtcodigomatricula+"&txtidalumno="+id_alumno+"&chkfoto="+chkfoto+"&chkCrearArchivoPdf="+chkCrearArchivoPdf+"&print_uno="+print_uno;
