@@ -5,18 +5,18 @@ function consultas_docentes($ejecutar,$cerrar,$codigo_bachillerato,$codigo_grado
     if($ejecutar == 1)
     {
     	// CAPTURAR EL NOMBRE DEL RESPONSABLES DE LA SECCIÓN.
-        $query_docente = "SELECT eg.encargado, eg.codigo_ann_lectivo, eg.codigo_grado, eg.codigo_seccion, eg.codigo_bachillerato, eg.codigo_docente, eg.imparte_asignatura, eg.codigo_turno,
+       $query_docente = "SELECT eg.encargado, eg.codigo_ann_lectivo, eg.codigo_grado, eg.codigo_seccion, eg.codigo_bachillerato, eg.codigo_docente, eg.imparte_asignatura, eg.codigo_turno,
             btrim(p.nombres || cast(' ' as VARCHAR) || p.apellidos) as nombre_docente
                 FROM encargado_grado eg
                     INNER JOIN personal p ON p.id_personal = eg.codigo_docente
                         WHERE btrim(eg.codigo_bachillerato || eg.codigo_grado || eg.codigo_seccion || eg.codigo_ann_lectivo || eg.codigo_turno) = '$codigo_bachillerato' and eg.encargado = 't'";
         // Ejecutamos el Query. Docente Encargado de la sección.
-	    $result_docente = $db_link -> query($query_docente);
+    	    $result_docente = $db_link -> query($query_docente);
         // revisar si existe el docente.
-        while($row = $result_docente -> fetch(PDO::FETCH_BOTH))
-        {
-            $print_nombre_docente = cambiar_de_del(trim($row['nombre_docente']));
-        }      
+            while($row = $result_docente -> fetch(PDO::FETCH_BOTH))
+            {
+                $print_nombre_docente = cambiar_de_del(trim($row['nombre_docente']));
+            }      
     }
     // EXTRAER CON RESPECTO AL AÑO LECTIVO
     if($ejecutar == 2)
@@ -66,10 +66,8 @@ function consultas($ejecutar,$cerrar,$codigo_bachillerato,$codigo_grado,$codigo_
                     "' and eg.codigo_seccion = '".$codigo_seccion.
                     "' and eg.codigo_ann_lectivo = '".$codigo_annlectivo.
                     "' ORDER BY pd.nombre_completo";
-
     // ejecutar la consulta.
         $result = $db_link -> query($query);
-
     // variable del encargado.
 	while($row = $result -> fetch(PDO::FETCH_BOTH))
             {
@@ -399,20 +397,21 @@ function consultas($ejecutar,$cerrar,$codigo_bachillerato,$codigo_grado,$codigo_
             $print_periodo = convertirtexto('Período: _____');
         }
     } 
-
- 
-          // para los diferntes listados Indicadores Educativos.
+    // para los diferntes listados Indicadores Educativos.
     if($ejecutar == 14)
     {
-         $query = "SELECT DISTINCT ROW(org.codigo_grado), org.codigo_bachillerato, org.codigo_grado, org.codigo_ann_lectivo, org.codigo_turno,
+         $query = "SELECT DISTINCT ROW(org.codigo_grado), 
+                    org.codigo_bachillerato, org.codigo_grado, org.codigo_ann_lectivo, org.codigo_turno, org.codigo_seccion,
+                    sec.nombre as nombre_seccion, 
                     gan.nombre as nombre_grado, ann.nombre as nombre_ann_lectivo, tur.nombre as nombre_turno, bach.nombre as nombre_modalidad
 			            FROM organizacion_grados_secciones org
                             INNER JOIN grado_ano gan ON gan.codigo = org.codigo_grado
+                            INNER JOIN seccion sec ON sec.codigo = org.codigo_seccion
                             INNER JOIN ann_lectivo ann ON ann.codigo = org.codigo_ann_lectivo
                             INNER JOIN bachillerato_ciclo bach ON bach.codigo = org.codigo_bachillerato
                             INNER JOIN turno tur ON tur.codigo = org.codigo_turno
-                                WHERE codigo_ann_lectivo = '".$codigo_bachillerato.
-	                			 "' ORDER BY org.codigo_bachillerato, org.codigo_grado, org.codigo_ann_lectivo";
+                                WHERE codigo_ann_lectivo = '$codigo_bachillerato'
+	                			 ORDER BY org.codigo_grado, org.codigo_seccion, org.codigo_bachillerato, org.codigo_ann_lectivo";
             /*
             CONSULTA PARA LE MEMORIA ESTADISTICA
             SELECT DISTINCT ROW(org.codigo_bachillerato), org.codigo_bachillerato, org.codigo_grado, org.codigo_ann_lectivo,
@@ -803,14 +802,14 @@ function consulta_docente($ejecutar,$cerrar,$codigo_annlectivo,$codigo_docentes,
 	 $query = "SELECT lp.id_licencia_permiso, lp.codigo_año_lectivo, lp.fecha, lp.codigo_docente, lp.codigo_contratacion, lp.codigo_licencia_o_permiso, lp.dia, lp.hora, lp.minutos, lp.observacion,
 			ann.nombre as nombre_ann_lectivo, btrim(p.nombres || cast(' ' as VARCHAR) || p.apellidos) as nombre_docente, tlp.nombre as nombre_licencia_permiso,
 			tur.nombre as nombre_turno
-		FROM licencias_permisos lp
-		INNER JOIN ann_lectivo ann ON ann.codigo = lp.codigo_año_lectivo
-		INNER JOIN personal pd ON pd.id_personal = lp.codigo_docente
-		INNER JOIN tipo_contratacion tc ON tc.codigo = lp.codigo_contratacion
-		INNER JOIN tipo_licencia_o_permiso tlp ON tlp.codigo = lp.codigo_licencia_o_permiso
-		INNER JOIN turno tur ON tur.codigo = lp.codigo_turno
-		WHERE lp.codigo_año_lectivo = '".$codigo_annlectivo."' and lp.codigo_docente = '".$codigo_docentes."' and lp.codigo_contratacion = '".$codigo_contratacion."'".
-		" ORDER BY lp.codigo_licencia_o_permiso, lp.fecha ASC";
+            FROM licencias_permisos lp
+                INNER JOIN ann_lectivo ann ON ann.codigo = lp.codigo_año_lectivo
+                INNER JOIN personal pd ON pd.id_personal = lp.codigo_docente
+                INNER JOIN tipo_contratacion tc ON tc.codigo = lp.codigo_contratacion
+                INNER JOIN tipo_licencia_o_permiso tlp ON tlp.codigo = lp.codigo_licencia_o_permiso
+                INNER JOIN turno tur ON tur.codigo = lp.codigo_turno
+                WHERE lp.codigo_año_lectivo = '$codigo_annlectivo' and lp.codigo_docente = '$codigo_docentes' and lp.codigo_contratacion = '$codigo_contratacion'
+        		    ORDER BY lp.codigo_licencia_o_permiso, lp.fecha ASC";
     // ejecutar la consulta.
         $result = $db_link -> query($query);;
     }    

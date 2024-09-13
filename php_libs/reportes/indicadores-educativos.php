@@ -12,50 +12,32 @@
 // variables y consulta a la tabla.
      $codigo_ann_lectivo = $_REQUEST["lstannlectivo"];
      $db_link = $dblink;
-     $codigo_all_indicadores = array(); $nombre_grado = array(); $nombre_seccion = array(); $nombre_modalidad = array(); $nombre_ann_lectivo = array();
-     $codigo_grado_tabla = array(); $codigo_grado_comparar = array(); $nombre_modalidad_consolidad = array(); $nombre_turno = array(); $nombre_turno_consolidado = array();
+     $codigo_all_indicadores = []; $nombre_grado = []; $nombre_seccion = []; $nombre_modalidad = []; $nombre_ann_lectivo = [];
+     $codigo_grado_tabla = []; $codigo_grado_comparar = []; $nombre_modalidad_consolidad = []; $nombre_turno = []; $nombre_turno_consolidado = [];
      
-// buscar la consulta y la ejecuta.
-  consultas(13,0,$codigo_ann_lectivo,'','','',$db_link,'');
-//  captura de datos para información individual de grado y sección.
-     while($row = $result -> fetch(PDO::FETCH_BOTH))
-        {
-            $print_bachillerato = utf8_decode(''.trim($row['nombre_bachillerato']));
-            $print_grado = utf8_decode(''.trim($row['nombre_grado']));
-            $print_seccion = utf8_decode(''.trim($row['nombre_seccion']));
-            $print_ann_lectivo = utf8_decode('Año Lectivo: '.trim($row['nombre_ann_lectivo']));
-			// Variables
-			$codigo_modalidad = trim($row[0]);
-			$codigo_grado = trim($row['codigo_grado']);
-    	    $codigo_seccion = trim($row['codigo_seccion']);
-			$codigo_ann_lectivo = trim($row['codigo_ann_lectivo']);
-			$codigo_turno = trim($row['codigo_turno']);
-			// Array
-			$nombre_grado[] = utf8_decode($row['nombre_grado']);
-			$nombre_seccion[] = $row['nombre_seccion'];
-			$nombre_modalidad[] = $row['nombre_bachillerato'];
-			$nombre_ann_lectivo[] = $row['nombre_ann_lectivo'];
-			$nombre_turno[] = $row['nombre_turno'];
-	    	// modalidad, grado, sección, año lectivo.
-	    	$codigo_all_indicadores[] = $codigo_modalidad . $codigo_grado . $codigo_seccion . $codigo_ann_lectivo . $codigo_turno;
-        }
-		//print_r($codigo_all_indicadores);
-		
-	    // buscar la consulta y la ejecuta.
-  consultas(14,0,$codigo_ann_lectivo,'','','',$db_link,'');
+	//print_r($codigo_all_indicadores);
+	// buscar la consulta y la ejecuta.
+	consultas(14,0,$codigo_ann_lectivo,'','','',$db_link,'');
 //  captura de datos para información individual de grado y sección.
      while($row = $result_encabezado -> fetch(PDO::FETCH_BOTH))
         {
 	    	$codigo_grado = trim($row['codigo_grado']);
+			$codigo_seccion = trim($row['codigo_seccion']);
+			$codigo_turno = trim($row['codigo_turno']);
 	    	$codigo_modalidad_consolidado = trim($row[1]);
+			//
+			$nombre_grado[] = convertirTexto($row['nombre_grado']);
+			$nombre_seccion[] = convertirTexto($row['nombre_seccion']);
 			// arrays
 			$nombre_modalidad_consolidado[] = trim($row['nombre_modalidad']);
-	    	$nombre_grado_consolidado[] = utf8_decode($row['nombre_grado']);
+	    	$nombre_grado_consolidado[] = convertirTexto($row['nombre_grado']);
 			$nombre_ann_lectivo[] = $row['nombre_ann_lectivo'];
 			$nombre_turno_consolidado[] = $row['nombre_turno'];
 	    	// modalidad, grado y año lectivo.
 	    	$codigo_indicadores[] = $codigo_modalidad_consolidado . $codigo_grado . $codigo_ann_lectivo;
+			$codigo_all_indicadores[] = $codigo_modalidad_consolidado . $codigo_grado . $codigo_seccion . $codigo_ann_lectivo . $codigo_turno;
         }
+//		var_dump($codigo_all_indicadores);
 //  captura de datos para información individual de grado y sección.
 		$query_turno = "SELECT * FROM turno ORDER BY codigo";
 		// ejecutar la consulta.
@@ -79,10 +61,10 @@ function Header()
     //Movernos a la derecha
     $this->Cell(20);
     //Título
-    $this->Cell(250,6,utf8_decode($_SESSION['institucion']),0,1,'C');
+    $this->Cell(250,6,convertirtexto($_SESSION['institucion']),0,1,'C');
     $this->SetFont('Arial','',11);
     $this->Cell(15);
-    $this->Cell(250,4,utf8_decode('Indicadores Educativos (SobreEdad y Repitencia)') . ' ' . $print_ann_lectivo . ' Turno: ' . $print_turno,0,0,'C');
+    $this->Cell(250,4,convertirtexto('Indicadores Educativos (SobreEdad y Repitencia)') . ' ' . $print_ann_lectivo . ' Turno: ' . $print_turno,0,0,'C');
     $this->Line(0,20,300,20);
     //Salto de línea
    // $this->Ln(20);
@@ -128,7 +110,7 @@ function encabezado()
         	$this->RoundedRect(15, $altoY, 10, 15, 1.5, '1234', '');
 			// Número de Línea.
 			$this->RoundedRect(15, $altoY, 10, 15, 1.5, '1234', '');
-			$this->RotatedText(18,$altoY+4,utf8_decode('Nº'),0);
+			$this->RotatedText(18,$altoY+4,convertirtexto('Nº'),0);
 			// Nombre del Docente o Encargado.
 			$this->RoundedRect(25, $altoY, 60, 15, 1.5, '1234', '');
 			$this->RotatedText(45,$altoY+4,'Nombre del Docente',0);
@@ -139,50 +121,50 @@ function encabezado()
 			$this->SetFont('Arial','',10);
 			// Sección
 			$this->RoundedRect(105, $altoY, 15, 15, 1.5, '1234', '');
-			$this->RotatedText(106.5,$altoY+4,utf8_decode('Sección'),0);
+			$this->RotatedText(106.5,$altoY+4,convertirtexto('Sección'),0);
 		   // cuadro para la sobreedad, repitencia y deserción.
 		   // matricula Máxima.
 	       $this->RoundedRect(120, $altoY, 30, 7.5, 1.5, '1234', '');
-	       $this->RotatedText(122,$altoYTitulos,utf8_decode('Matricula Máxima'),0);
-	       $this->RotatedText(124,$altoYTitulosMyF,utf8_decode('M'),0);
-	       $this->RotatedText(134,$altoYTitulosMyF,utf8_decode('F'),0);
-	       $this->RotatedText(144,$altoYTitulosMyF,utf8_decode('T'),0);
+	       $this->RotatedText(122,$altoYTitulos,convertirtexto('Matricula Máxima'),0);
+	       $this->RotatedText(124,$altoYTitulosMyF,convertirtexto('M'),0);
+	       $this->RotatedText(134,$altoYTitulosMyF,convertirtexto('F'),0);
+	       $this->RotatedText(144,$altoYTitulosMyF,convertirtexto('T'),0);
 	       $this->RoundedRect(120, $altoYTitulos2MyF, 10, 7.5, 1.5, '1234', ''); //m
 	       $this->RoundedRect(130, $altoYTitulos2MyF, 10, 7.5, 1.5, '1234', ''); // f
 	       $this->RoundedRect(140, $altoYTitulos2MyF, 10, 7.5, 1.5, '1234', ''); // t
 	       // Deserción.
 	       $this->RoundedRect(150, $altoY, 30, 7.5, 1.5, '1234', '');
-	       $this->RotatedText(155,$altoYTitulos,utf8_decode('Deserción'),0);
-	       $this->RotatedText(153,$altoYTitulosMyF,utf8_decode('M'),0);
-	       $this->RotatedText(164,$altoYTitulosMyF,utf8_decode('F'),0);
-	       $this->RotatedText(173,$altoYTitulosMyF,utf8_decode('T'),0);
+	       $this->RotatedText(155,$altoYTitulos,convertirtexto('Deserción'),0);
+	       $this->RotatedText(153,$altoYTitulosMyF,convertirtexto('M'),0);
+	       $this->RotatedText(164,$altoYTitulosMyF,convertirtexto('F'),0);
+	       $this->RotatedText(173,$altoYTitulosMyF,convertirtexto('T'),0);
 	       $this->RoundedRect(150, $altoYTitulos2MyF, 10, 7.5, 1.5, '1234', ''); //m
 	       $this->RoundedRect(160, $altoYTitulos2MyF, 10, 7.5, 1.5, '1234', ''); // f
 	       $this->RoundedRect(170, $altoYTitulos2MyF, 10, 7.5, 1.5, '1234', ''); // t
 			// Repitencia.
 	       $this->RoundedRect(180, $altoY, 30, 7.5, 1.5, '1234', '');
-	       $this->RotatedText(185,$altoYTitulos,utf8_decode('Repitencia'),0);
-	       $this->RotatedText(184,$altoYTitulosMyF,utf8_decode('M'),0);
-	       $this->RotatedText(194,$altoYTitulosMyF,utf8_decode('F'),0);
-	       $this->RotatedText(204,$altoYTitulosMyF,utf8_decode('T'),0);
+	       $this->RotatedText(185,$altoYTitulos,convertirtexto('Repitencia'),0);
+	       $this->RotatedText(184,$altoYTitulosMyF,convertirtexto('M'),0);
+	       $this->RotatedText(194,$altoYTitulosMyF,convertirtexto('F'),0);
+	       $this->RotatedText(204,$altoYTitulosMyF,convertirtexto('T'),0);
 	       $this->RoundedRect(180, $altoYTitulos2MyF, 10, 7.5, 1.5, '1234', ''); //m
 	       $this->RoundedRect(190, $altoYTitulos2MyF, 10, 7.5, 1.5, '1234', ''); // f
 	       $this->RoundedRect(200, $altoYTitulos2MyF, 10, 7.5, 1.5, '1234', ''); // t
 			// Sobreedad
 	       $this->RoundedRect(210, $altoY, 30, 7.5, 1.5, '1234', '');
-	       $this->RotatedText(215,$altoYTitulos,utf8_decode('Sobreedad'),0);
-	       $this->RotatedText(214,$altoYTitulosMyF,utf8_decode('M'),0);
-	       $this->RotatedText(224,$altoYTitulosMyF,utf8_decode('F'),0);
-	       $this->RotatedText(234,$altoYTitulosMyF,utf8_decode('T'),0);
+	       $this->RotatedText(215,$altoYTitulos,convertirtexto('Sobreedad'),0);
+	       $this->RotatedText(214,$altoYTitulosMyF,convertirtexto('M'),0);
+	       $this->RotatedText(224,$altoYTitulosMyF,convertirtexto('F'),0);
+	       $this->RotatedText(234,$altoYTitulosMyF,convertirtexto('T'),0);
 	       $this->RoundedRect(210, $altoYTitulos2MyF, 10, 7.5, 1.5, '1234', ''); //m
 	       $this->RoundedRect(220, $altoYTitulos2MyF, 10, 7.5, 1.5, '1234', ''); // f
 	       $this->RoundedRect(230, $altoYTitulos2MyF, 10, 7.5, 1.5, '1234', ''); // t
 			// Matricula Final.
 	       $this->RoundedRect(240, $altoY, 30, 7.5, 1.5, '1234', '');
-	       $this->RotatedText(243,$altoYTitulos,utf8_decode('Matricula Final'),0);
-	       $this->RotatedText(243,$altoYTitulosMyF,utf8_decode('M'),0);
-	       $this->RotatedText(254,$altoYTitulosMyF,utf8_decode('F'),0);
-	       $this->RotatedText(264,$altoYTitulosMyF,utf8_decode('T'),0);
+	       $this->RotatedText(243,$altoYTitulos,convertirtexto('Matricula Final'),0);
+	       $this->RotatedText(243,$altoYTitulosMyF,convertirtexto('M'),0);
+	       $this->RotatedText(254,$altoYTitulosMyF,convertirtexto('F'),0);
+	       $this->RotatedText(264,$altoYTitulosMyF,convertirtexto('T'),0);
 	       $this->RoundedRect(240, $altoYTitulos2MyF, 10, 7.5, 1.5, '1234', ''); //m
 	       $this->RoundedRect(250, $altoYTitulos2MyF, 10, 7.5, 1.5, '1234', ''); // f
 	       $this->RoundedRect(260, $altoYTitulos2MyF, 10, 7.5, 1.5, '1234', ''); // t
@@ -192,7 +174,7 @@ function encabezado()
 //************************************************************************************************************************
 // Creando el Informe.
     $pdf=new PDF('L','mm','Letter');
-    $data = array();
+    $data = [];
     #Establecemos los márgenes izquierda, arriba y derecha: 
     $pdf->SetMargins(5, 5, 5);
     #Establecemos el margen inferior: 
@@ -217,7 +199,7 @@ function encabezado()
 			// llamar al encabezado.
 				$pdf->encabezado();
 			// Ancho de las diferentes columnas	
-				$w=array(10,60,20,15,10,15,15,15); //determina el ancho de las columnas
+				$w=[10,60,20,15,10,15,15,15]; //determina el ancho de las columnas
 			// Variables para los diferentes cálculos.
 				$fill=false; $i=0; $m = 0; $f = 0; $suma = 0; $n_a = 0;
 				$contador_tabla_grado = 0;
@@ -237,19 +219,10 @@ function encabezado()
 					 // CAPTURAR EL NOMBRE DEL RESPONSABLES DE LA SECCIÓN.
 						// buscar la consulta y la ejecuta.
 						consultas_docentes(1,0,$codigo_all_indicadores[$j],'','','',$db_link,'');
-						$print_nombre_docente = "";
-						while($row = $result_docente -> fetch(PDO::FETCH_BOTH))
-							{
-						$print_nombre_docente = cambiar_de_del(trim($row['nombre_docente']));
-						
-						if (!mb_check_encoding($print_nombre_docente, 'LATIN1')){
-							$print_nombre_docente = mb_convert_encoding($print_nombre_docente,'LATIN1');
-						}
-						
-							}
+						global $print_nombre_docente;
 					$pdf->Cell($w[0],$alto_fila,$i,'LR',0,'C',$fill);        // núermo correlativo
 					$pdf->Cell($w[1],$alto_fila,$print_nombre_docente,'LR',0,'J',$fill);
-					//$pdf->Cell($w[1],$alto_fila,substr(utf8_decode($nombre_modalidad[$j]),0,22),'LR',0,'J',$fill);
+					//$pdf->Cell($w[1],$alto_fila,substr(convertirtexto($nombre_modalidad[$j]),0,22),'LR',0,'J',$fill);
 					$pdf->Cell($w[2],$alto_fila,$nombre_grado[$j],'LR',0,'J',$fill);
 					$pdf->Cell($w[3],$alto_fila,$nombre_seccion[$j],'LR',0,'C',$fill);
 					//$pdf->Cell($w[3],$alto_fila,$nombre_turno[$j],'LR',0,'C',$fill);
@@ -391,7 +364,7 @@ else{
 		{
 		$pdf->SetX(15);
 		$pdf->Cell($w[0],$alto_fila,$i,'LR',0,'C',$fill);        // núermo correlativo
-		$pdf->Cell($w[1],$alto_fila,utf8_decode(substr($nombre_modalidad_consolidado[$j],0,23)),'LR',0,'J',$fill);
+		$pdf->Cell($w[1],$alto_fila,convertirtexto(substr($nombre_modalidad_consolidado[$j],0,23)),'LR',0,'J',$fill);
 		$pdf->Cell($w[2],$alto_fila,$nombre_grado_consolidado[$j],'LR',0,'J',$fill);
 		$pdf->Cell($w[3],$alto_fila,'','LR',0,'C',$fill);
 		
@@ -491,5 +464,5 @@ else{
 }   
 // Salida del pdf.
      $modo = 'I'; // Envia al navegador (I), Descarga el archivo (D).
-     $print_nombre = $print_grado . ' ' . $print_seccion;
+     $print_nombre = convertirTexto("Estadística: $nombreAñoLectivo");
      $pdf->Output($print_nombre,$modo);
