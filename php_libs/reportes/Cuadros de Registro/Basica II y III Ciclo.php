@@ -587,18 +587,13 @@ $codigo_all_ = substr($codigo_all,0,8);
     for($ix=0;$ix<=$total_asignaturas-1;$ix++){
         if($ix >= 0 && $ix <= 6){
           $pdf->Rect(127+$espacio,52,10,33);
-          //print $nombre_asignatura[$ix];
-          //print "<br>";
           $pdf->RotatedTextMultiCell(128+$espacio,85,$nombre_asignatura[$ix],90);
         }
         else{
           $pdf->RotatedTextMultiCellAspectos(128+$espacio,95,$nombre_asignatura[$ix],90);
-          //print $nombre_asignatura[$ix];
-          //print "<br>";
         }
           $espacio = $espacio + 10;
       }
-
 // cuarta PARTE DEL RECTANGULO. calificacion
     $espacio = 0;
     $pdf->SetFont('Arial','',7); // I : Italica; U: Normal;
@@ -1056,4 +1051,3 @@ $codigo_all_ = substr($codigo_all,0,8);
 // Salida del pdf.
     $pdf->Output($nombre_archivo,'I');
 }	// IF PRINCIPAL QUE VERIFICA SI HAY REGISTROS.
-?>

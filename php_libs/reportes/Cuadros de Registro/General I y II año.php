@@ -187,7 +187,7 @@ while($rows_promovidos_retenidos = $result_promovidos_retenidos -> fetch(PDO::FE
     $nota_r_1 = $rows_promovidos_retenidos['recuperacion'];
     $nota_r_2 = $rows_promovidos_retenidos['nota_recuperacion_2'];
     $nota_final = $rows_promovidos_retenidos['nota_final'];
-    $CodigoArea = $rows_promovidos_retenidos['codigo_area'];
+    $CodigoArea = trim($rows_promovidos_retenidos['codigo_area']);
 // CALCULO DE LA NOTA FINAL EN RELACIÓN A LA RECUPERACIÓN UNO Y DOS.    
   if($nota_r_1 != 0){
         $nueva_nota_final = round(($nota_final + $nota_r_1)/2,0);
@@ -334,7 +334,7 @@ class PDF extends FPDF
         if($valor_x_encabezado == true)
         {    
           // PRIEMRA PARTE DEL RECTANGULO.
-          $this->Rect(10,5,242,50);
+          $this->Rect(10,5,232,50);
           // segunda PARTE DEL RECTANGULO. numero de orden
               $this->Rect(10,5,7,50);
               $this->RotatedText(15,38,convertirtexto('N° de Orden'),90);
@@ -361,8 +361,9 @@ class PDF extends FPDF
           // sexta PARTE DEL RECTANGULO. educacion moral y civica
               //$this->Rect(205,45,50,7);
               $this->SetXY(202,5);
-              $this->SetFont('Arial','',9); // I : Italica; U: Normal;
-              $this->Cell(50,8,'COMPETENCIAS CIUDADANAS',1,2,'C',true);
+              $this->SetFont('Arial','',7); // I : Italica; U: Normal;
+              $this->Cell(40,8,'COMPETENCIAS CIUDADANAS',1,2,'C',true);
+              $this->SetFont('Arial','',8); // I : Italica; U: Normal;
               //$this->Cell(60,3,convertirtexto('Aspectos de la Conducta'),0,2,'C');
           // cuarta PARTE DEL RECTANGULO. asignaturas nombres
               $espacio = 0;
@@ -567,7 +568,7 @@ $codigo_all_ = substr($codigo_all,0,8);
     $pdf->Cell(60,4,convertirtexto('Ministerio de Educación'),0,2,'C');
     $pdf->Cell(60,4,convertirtexto('Dirección Nacional de Educación Media'),0,2,'C');
 // PRIEMRA PARTE DEL RECTANGULO.
-    $pdf->Rect(10,45,242,50);
+    $pdf->Rect(10,45,232,50);
 // segunda PARTE DEL RECTANGULO. numero de orden
     $pdf->Rect(10,45,7,50);
     $pdf->RotatedText(15,80,convertirtexto('N° de Orden'),90);
@@ -594,9 +595,9 @@ $codigo_all_ = substr($codigo_all,0,8);
 // sexta PARTE DEL RECTANGULO. educacion moral y civica
     //$pdf->Rect(205,45,50,7);
     $pdf->SetXY(202,45);
-    $pdf->SetFont('Arial','',9); // I : Italica; U: Normal;
-    $pdf->Cell(50,8,'COMPETENCIAS CIUDADANAS',1,2,'C',true);
-    //$pdf->Cell(60,3,convertirtexto('Aspectos de la Conducta'),0,2,'C');
+    $pdf->SetFont('Arial','',7); // I : Italica; U: Normal;
+    $pdf->Cell(40,8,'COMPETENCIAS CIUDADANAS',1,2,'C',true);
+    $pdf->SetFont('Arial','',8); // I : Italica; U: Normal;
 // cuarta PARTE DEL RECTANGULO. asignaturas nombres
     $espacio = 0;
     for($ix=0;$ix<=$total_asignaturas-1;$ix++){
@@ -955,7 +956,7 @@ $codigo_all_ = substr($codigo_all,0,8);
 		    $linea_faltante =  23 - $numero;
         $numero_p = $numero - 1;
 		
-		   $valor_y1 = $pdf->gety(10);
+		   $valor_y1 = $pdf->GetY();
 		   $pdf->Line(17,$valor_y1,247,210);
 
 	      	for($i=0;$i<=$linea_faltante;$i++)
@@ -1007,8 +1008,9 @@ $codigo_all_ = substr($codigo_all,0,8);
 				$linea_faltante =  50 - $numero;
                 $numero_p = $numero - 1;
 			//colocar la linea diagonal cuando es mayor de 23.
-		  $valor_y1 = $pdf->gety(10);
-		  $pdf->Line(17,$valor_y1,252,190);
+		  $valor_y1 = $pdf->GetY();
+      $valor_x1 = $pdf->GetX();
+		  $pdf->Line(17,$valor_y1,242,190);
 		}
 		// Escribir líneas faltantes.  
 		for($i=0;$i<=$linea_faltante;$i++)
@@ -1022,7 +1024,7 @@ $codigo_all_ = substr($codigo_all,0,8);
 
 						//$pdf->Cell(10,$h[0],'',1,0,'C');  // nota final
                       
-						for($j=0;$j<=14;$j++){$pdf->Cell(10,$h[0],'',1,0,'C');}
+						for($j=0;$j<=13;$j++){$pdf->Cell(10,$h[0],'',1,0,'C');}
 						$pdf->Ln();
 
                   }
@@ -1037,7 +1039,7 @@ $codigo_all_ = substr($codigo_all,0,8);
                   $pdf->Cell(10,$h[0],array_sum($total_puntos_06_array),1,0,'C');
 									$pdf->Cell(10,$h[0],array_sum($total_puntos_07_array),1,0,'C');
                   
-                  for($j=0;$j<=7;$j++){$pdf->Cell(10,$h[0],'',1,0,'C');}
+                  for($j=0;$j<=6;$j++){$pdf->Cell(10,$h[0],'',1,0,'C');}
                     $pdf->Ln();
 										$pdf->SetX(10);
 										$pdf->Cell(92,$h[0],'PROMEDIO',1,0,'R');  // PROMEDIO
@@ -1053,11 +1055,10 @@ $codigo_all_ = substr($codigo_all,0,8);
 										$pdf->SetTextColor(0);
 										$pdf->SetFont('');
                   
-                  for($j=0;$j<=7;$j++){$pdf->Cell(10,$h[0],'',1,0,'C');}
+                  for($j=0;$j<=6;$j++){$pdf->Cell(10,$h[0],'',1,0,'C');}
                     $pdf->Ln();   
 // Construir el nombre del archivo.
 	$nombre_archivo = $print_bachillerato.' '.$print_grado.' '.$print_seccion.'-'.$print_ann_lectivo . '.pdf';
 // Salida del pdf.
     $pdf->Output($nombre_archivo,'I');
 }	// IF PRINCIPAL QUE VERIFICA SI HAY REGISTROS.
-?>
