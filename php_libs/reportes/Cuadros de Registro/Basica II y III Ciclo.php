@@ -333,12 +333,12 @@ INNER JOIN ann_lectivo ann ON ann.codigo = am.codigo_ann_lectivo
         $codigo_matricula = $rows_promovidos_retenidos['codigo_matricula'];
         $codigo_alumno = $rows_promovidos_retenidos['codigo_alumno'];
         $apellido_alumno = $rows_promovidos_retenidos['apellido_alumno'];
-        $generos = $rows_promovidos_retenidos['genero'];
+        $generos = trim($rows_promovidos_retenidos['genero']);
 
         $nota_r_1 = $rows_promovidos_retenidos['recuperacion'];
         $nota_r_2 = $rows_promovidos_retenidos['nota_recuperacion_2'];
         $nota_final = $rows_promovidos_retenidos['nota_final'];
-        $CodigoArea = $rows_promovidos_retenidos['codigo_area'];
+        $CodigoArea = trim($rows_promovidos_retenidos['codigo_area']);
         // CALCULO DE LA NOTA FINAL EN RELACIÓN A LA RECUPERACIÓN UNO Y DOS.    
         if($nota_r_1 != 0){
           $nueva_nota_final = round(($nota_final + $nota_r_1)/2,0);

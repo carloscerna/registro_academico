@@ -63,7 +63,7 @@
       $codigo_seccion = substr($codigo_all,4,2);
       $codigo_annlectivo = substr($codigo_all,6,2);
 // Evaluador nota para basica y parvularia, Extraer el nombre del grado
-      if($codigo_modalidad >= '03' and $codigo_modalidad <="12"){
+      if($codigo_modalidad >= '03' and $codigo_modalidad <="12" or $codigo_modalidad = "15"){
           if($periodo == "Periodo 1"){$nota_p_p = "nota_p_p_1";}
           if($periodo == "Periodo 2"){$nota_p_p = "nota_p_p_2";}
           if($periodo == "Periodo 3"){$nota_p_p = "nota_p_p_3";}
@@ -362,4 +362,3 @@ function BuscarPorCodigoTabla($codigo_asignatura){
   // ejecutar la consulta. PARA MOSTRAR LOS RESULTADOS EN PANTALLA.
       $result = $db_link -> query($query);
 }
-?>
