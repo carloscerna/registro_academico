@@ -70,7 +70,8 @@ $query = "SELECT DISTINCT a.codigo_nie, btrim(a.apellido_paterno || CAST(' ' AS 
             a.nombre_completo, btrim(a.apellido_paterno || CAST(' ' AS VARCHAR) || a.apellido_materno) as apellidos_alumno, 
             am.codigo_bach_o_ciclo, am.pn, bach.nombre as nombre_bachillerato, am.codigo_ann_lectivo, ann.nombre as nombre_ann_lectivo, am.codigo_grado, am.id_alumno_matricula as codigo_matricula,
             gan.nombre as nombre_grado, am.codigo_seccion, am.retirado, a.genero,
-            sec.nombre as nombre_seccion, ae.codigo_alumno, id_alumno, n.codigo_alumno, n.codigo_asignatura, asig.nombre AS n_asignatura, n.nota_final, n.recuperacion, asig.nombre as nombre_asignatura, aaa.orden, n.nota_recuperacion_2
+            sec.nombre as nombre_seccion, ae.codigo_alumno, id_alumno, n.codigo_alumno, n.codigo_asignatura, asig.nombre AS n_asignatura, n.nota_final, n.recuperacion, asig.nombre as nombre_asignatura, aaa.orden, n.nota_recuperacion_2,
+            asig.codigo_area
               FROM alumno a
                 INNER JOIN alumno_encargado ae ON a.id_alumno = ae.codigo_alumno and ae.encargado = 't'
                 INNER JOIN alumno_matricula am ON a.id_alumno = am.codigo_alumno and am.retirado = 'f'
@@ -180,26 +181,31 @@ while($rows_promovidos_retenidos = $result_promovidos_retenidos -> fetch(PDO::FE
     $codigo_matricula = $rows_promovidos_retenidos['codigo_matricula'];
     $codigo_alumno = $rows_promovidos_retenidos['codigo_alumno'];
     $apellido_alumno = $rows_promovidos_retenidos['apellido_alumno'];
-
     $generos = $rows_promovidos_retenidos['genero'];
-        if($rows_promovidos_retenidos['recuperacion'] != 0){
-            $nueva_nota_final = (number_format($rows_promovidos_retenidos['nota_final'],0) + number_format($rows_promovidos_retenidos['recuperacion'],0))/2;
-            if($nueva_nota_final < 6)
-            {
-                if($rows_promovidos_retenidos['nota_recuperacion_2'] != 0){
-                  $nueva_nota_final = (number_format($rows_promovidos_retenidos['nota_final'],0) + number_format($rows_promovidos_retenidos['nota_recuperacion_2'],0))/2;
-                }
+
+    $nota_r_1 = $rows_promovidos_retenidos['recuperacion'];
+    $nota_r_2 = $rows_promovidos_retenidos['nota_recuperacion_2'];
+    $nota_final = $rows_promovidos_retenidos['nota_final'];
+    $CodigoArea = trim($rows_promovidos_retenidos['codigo_area']);
+// CALCULO DE LA NOTA FINAL EN RELACIÓN A LA RECUPERACIÓN UNO Y DOS.    
+    if($nota_r_1 != 0){
+      $nueva_nota_final = round(($nota_final + $nota_r_1)/2,0);
+        if($nueva_nota_final < 6){
+            if($nota_r_2 != 0){
+                $nueva_nota_final = round(($nota_final + $nota_r_2)/2,0);
             }
-                $notas = number_format($nueva_nota_final,0);}
-        else{
-            $notas = number_format($rows_promovidos_retenidos['nota_final'],0);}
-    // VERIFICAR SI ASIGNATURA ESTA APROBADA SI ES BASICA O DE CALIFICACION
-        switch($ji){
-            //
-            case ($ji >=1 && $ji<=9): 
-                contar_promovidos($generos, $notas, $contar_evaluar);
-              break;
         }
+      $notas = $nueva_nota_final;
+    }
+    else{
+          $notas = number_format($rows_promovidos_retenidos['nota_final'],0);
+    } //
+/////////////////////////////////////////////////////////////////////////////////////////////
+    switch($CodigoArea){
+      case ($CodigoArea == "01" || $CodigoArea == "03"): 
+        contar_promovidos_media($generos, $notas, $contar_evaluar);
+      break;
+    }
 ////////////////////////////////////////////////////////////////////
 //////// CONTAR CUANTAS ASIGNATURAS TIENE CADA MODALIDAD.
 //////////////////////////////////////////////////////////////////
@@ -319,9 +325,6 @@ class PDF extends FPDF
             $this->MultiCell(90,4,convertirtexto($txt),0,'J');
         $this->Rotate(0);
     }
-
-
-
     //Cabecera de página
     function Header()
     {
@@ -333,7 +336,7 @@ class PDF extends FPDF
         if($valor_x_encabezado == true)
         {    
           // PRIEMRA PARTE DEL RECTANGULO.
-          $this->Rect(10,5,242,50);
+          $this->Rect(10,5,232,50);
           // segunda PARTE DEL RECTANGULO. numero de orden
               $this->Rect(10,5,7,50);
               $this->RotatedText(15,38,convertirtexto('N° de Orden'),90);
@@ -362,9 +365,9 @@ class PDF extends FPDF
           // sexta PARTE DEL RECTANGULO. educacion moral y civica
               //$this->Rect(205,45,50,7);
               $this->SetXY(202,5);
-              $this->SetFont('Arial','',9); // I : Italica; U: Normal;
-              $this->Cell(50,8,'COMPETENCIAS CIUDADANAS',1,2,'C',true);
-              //$this->Cell(60,3,convertirtexto('Aspectos de la Conducta'),0,2,'C');
+              $this->SetFont('Arial','',7); // I : Italica; U: Normal;
+              $this->Cell(40,8,'COMPETENCIAS CIUDADANAS',1,2,'C',true);
+              $this->SetFont('Arial','',8); // I : Italica; U: Normal;
           // cuarta PARTE DEL RECTANGULO. asignaturas nombres
               $espacio = 0;
               for($ix=0;$ix<=$total_asignaturas-1;$ix++){
@@ -577,7 +580,7 @@ $codigo_all_ = substr($codigo_all,0,8);
     $pdf->Cell(60,4,convertirtexto('Ministerio de Educación'),0,2,'C');
     $pdf->Cell(60,4,convertirtexto('Dirección Nacional de Educación Media'),0,2,'C');
 // PRIEMRA PARTE DEL RECTANGULO.
-    $pdf->Rect(10,45,242,50);
+    $pdf->Rect(10,45,232,50);
 // segunda PARTE DEL RECTANGULO. numero de orden
     $pdf->Rect(10,45,7,50);
     $pdf->RotatedText(15,80,convertirtexto('N° de Orden'),90);
@@ -606,9 +609,9 @@ $codigo_all_ = substr($codigo_all,0,8);
 // sexta PARTE DEL RECTANGULO. educacion moral y civica
     //$pdf->Rect(205,45,50,7);
     $pdf->SetXY(202,45);
-    $pdf->SetFont('Arial','',9); // I : Italica; U: Normal;
-    $pdf->Cell(50,8,'COMPETENCIAS CIUDADANAS',1,2,'C',true);
-    //$pdf->Cell(60,3,convertirtexto('Aspectos de la Conducta'),0,2,'C');
+    $pdf->SetFont('Arial','',7); // I : Italica; U: Normal;
+    $pdf->Cell(40,8,'COMPETENCIAS CIUDADANAS',1,2,'C',true);
+    $pdf->SetFont('Arial','',8); // I : Italica; U: Normal;
 // cuarta PARTE DEL RECTANGULO. asignaturas nombres
     $espacio = 0;
     for($ix=0;$ix<=$total_asignaturas-1;$ix++){
@@ -901,9 +904,9 @@ $codigo_all_ = substr($codigo_all,0,8);
 		    $valor_y1 = 0;
 		    $linea_faltante =  23 - $numero;
         $numero_p = $numero - 1;
-		
+		//
 		   $valor_y1 = $pdf->GetY();
-		   $pdf->Line(17,$valor_y1,247,210);
+		   $pdf->Line(17,$valor_y1,242,210);
 
 	      	for($i=0;$i<=$linea_faltante;$i++)
                   {
@@ -916,15 +919,14 @@ $codigo_all_ = substr($codigo_all,0,8);
                       // primr bloque del ancho.
                       for($j=0;$j<=9;$j++){$pdf->Cell($w[0],$h[0],'',1,0,'C');}
                       // segundo bloque del ancho.
-                      for($j=0;$j<=6;$j++){$pdf->Cell($w[1],$h[0],'',1,0,'C');}
+                      for($j=0;$j<=5;$j++){$pdf->Cell($w[1],$h[0],'',1,0,'C');}
                       $pdf->Ln();
 
                   }
-		   
              // Salto de página.
                 $valor_x_encabezado = true;
                 $pdf->Addpage();
-				$pdf->SetY(75);
+        				$pdf->SetY(75);
                 // cuarta PARTE DEL RECTANGULO. cuadro de la firma.
                     $pdf->Rect(270,150,50,40);
                     $pdf->RotatedText(290,187,'SELLO',0);
@@ -956,7 +958,7 @@ $codigo_all_ = substr($codigo_all,0,8);
                 $numero_p = $numero - 1;
 			//colocar la linea diagonal cuando es mayor de 23.
 		  $valor_y1 = $pdf->GetY();
-		  $pdf->Line(17,$valor_y1,252,190);
+		  $pdf->Line(17,$valor_y1,242,190);
 		}
 		// Escribir líneas faltantes.  
 		for($i=0;$i<=$linea_faltante;$i++)
@@ -970,7 +972,7 @@ $codigo_all_ = substr($codigo_all,0,8);
               // primr bloque del ancho.
               for($j=0;$j<=9;$j++){$pdf->Cell($w[0],$h[0],'',1,0,'C');}
               // segundo bloque del ancho.
-              for($j=0;$j<=6;$j++){$pdf->Cell($w[1],$h[0],'',1,0,'C');}
+              for($j=0;$j<=5;$j++){$pdf->Cell($w[1],$h[0],'',1,0,'C');}
               $pdf->Ln();
 
                   }
@@ -988,7 +990,7 @@ $codigo_all_ = substr($codigo_all,0,8);
                   $pdf->Cell($w[0],$h[0],array_sum($total_puntos_09_array),1,0,'C');
                   $pdf->Cell($w[0],$h[0],array_sum($total_puntos_10_array),1,0,'C');
                   
-                  for($j=0;$j<=6;$j++){$pdf->Cell(10,$h[0],'',1,0,'C');}
+                  for($j=0;$j<=5;$j++){$pdf->Cell(10,$h[0],'',1,0,'C');}
                     $pdf->Ln();
 										$pdf->SetX(10);
 										$pdf->Cell(92,$h[0],'PROMEDIO',1,0,'R');  // PROMEDIO
@@ -1007,7 +1009,7 @@ $codigo_all_ = substr($codigo_all,0,8);
 										$pdf->SetTextColor(0);
 										$pdf->SetFont('');
                   
-                  for($j=0;$j<=6;$j++){$pdf->Cell(10,$h[0],'',1,0,'C');}
+                  for($j=0;$j<=5;$j++){$pdf->Cell(10,$h[0],'',1,0,'C');}
                     $pdf->Ln();   
 // Construir el nombre del archivo.
 	$nombre_archivo = $print_bachillerato.' '.$print_grado.' '.$print_seccion.'-'.$print_ann_lectivo . '.pdf';

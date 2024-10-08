@@ -973,7 +973,6 @@ $codigo_all_ = substr($codigo_all,0,8);
                       $pdf->Ln();
 
                   }
-		   
              // Salto de página.
                 $valor_x_encabezado = true;
                 $pdf->Addpage();
