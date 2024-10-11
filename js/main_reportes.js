@@ -656,6 +656,10 @@ if (lstlist_notas == 'cuadro_promocion' && $(this).attr('data-accion') == 'lista
                         varenviar = "/registro_academico/php_libs/reportes/Cuadros de Registro/Tecnico II año.php?todos="+reporte_ok;
                 }else if(varbach == '09'){ // EDUCACIÓN MEDIA - BACHILLERATO TECNICO VOCACIONAL COMERCIAL.
                         varenviar = "/registro_academico/php_libs/reportes/Cuadros de Registro/Tecnico III año.php?todos="+reporte_ok;
+                }else if(varbach == '10'){ // EDUCACIÓN BASICA - III CICLO.
+                        varenviar = "/registro_academico/php_libs/reportes/Cuadros de Registro/Basica II y III Ciclo Nocturna.php?todos="+reporte_ok;
+                }else if(varbach == '11'){ // EDUCACIÓN MEDIA - BACHILLERATO GENERAL NOCTURNA.
+                        varenviar = "/registro_academico/php_libs/reportes/Cuadros de Registro/General I y II año Nocturna.php?todos="+reporte_ok;
                 }   
         }else{
                 varenviar = "/registro_academico/php_libs/reportes/cuadro_de_promocion_2015.php?todos="+reporte_ok;

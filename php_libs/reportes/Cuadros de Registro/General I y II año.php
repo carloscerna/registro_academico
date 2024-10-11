@@ -913,8 +913,6 @@ $codigo_all_ = substr($codigo_all,0,8);
                     $concepto_asignatura = cambiar_concepto($nota_concepto);
                     $pdf->Cell(10,$h[0],$concepto_asignatura,1,0,'C',$fill); break;*/
                 }
-               
-            
               // Salto de página.
               if($numero == 23 && $i == $total_asignaturas){
                 $valor_x_encabezado = true;
@@ -1013,49 +1011,45 @@ $codigo_all_ = substr($codigo_all,0,8);
 		}
 		// Escribir líneas faltantes.  
 		for($i=0;$i<=$linea_faltante;$i++)
-                  {
-						// Para el fondo de la fila.
-						$fill=!$fill;
-						$pdf->SetX(10);
-						$pdf->Cell(7,$h[0],$numero++,1,0,'C',$fill);  // N| de Orden.
-            $pdf->Cell(20,$h[0],'',1,0,'C');  // NIE
-						$pdf->Cell(65,$h[0],'',1,0,'l');  // nombre del alumno.
-
-						//$pdf->Cell(10,$h[0],'',1,0,'C');  // nota final
-                      
-						for($j=0;$j<=13;$j++){$pdf->Cell(10,$h[0],'',1,0,'C');}
-						$pdf->Ln();
-
-                  }
-           // Ultimas lineas....
-              $pdf->SetX(10);
-                $pdf->Cell(92,$h[0],'TOTAL DE PUNTOS',1,0,'R');  // TOTAL DE PUNTOS
-                  $pdf->Cell(10,$h[0],array_sum($total_puntos_01_array),1,0,'C');
-                  $pdf->Cell(10,$h[0],array_sum($total_puntos_02_array),1,0,'C');
-                  $pdf->Cell(10,$h[0],array_sum($total_puntos_03_array),1,0,'C');
-                  $pdf->Cell(10,$h[0],array_sum($total_puntos_04_array),1,0,'C');
-                  $pdf->Cell(10,$h[0],array_sum($total_puntos_05_array),1,0,'C');
-                  $pdf->Cell(10,$h[0],array_sum($total_puntos_06_array),1,0,'C');
-									$pdf->Cell(10,$h[0],array_sum($total_puntos_07_array),1,0,'C');
-                  
-                  for($j=0;$j<=6;$j++){$pdf->Cell(10,$h[0],'',1,0,'C');}
-                    $pdf->Ln();
-										$pdf->SetX(10);
-										$pdf->Cell(92,$h[0],'PROMEDIO',1,0,'R');  // PROMEDIO
-										$pdf->SetTextColor(255,0,0);
-										$pdf->SetFont('Arial','B',10);
-										$pdf->Cell(10,$h[0],number_format(array_sum($total_puntos_01_array)/$conteo_alumnos,0),1,0,'C');
-										$pdf->Cell(10,$h[0],number_format(array_sum($total_puntos_02_array)/$conteo_alumnos,0),1,0,'C');
-										$pdf->Cell(10,$h[0],number_format(array_sum($total_puntos_03_array)/$conteo_alumnos,0),1,0,'C');
-										$pdf->Cell(10,$h[0],number_format(array_sum($total_puntos_04_array)/$conteo_alumnos,0),1,0,'C');
-										$pdf->Cell(10,$h[0],number_format(array_sum($total_puntos_05_array)/$conteo_alumnos,0),1,0,'C');
-										$pdf->Cell(10,$h[0],number_format(array_sum($total_puntos_06_array)/$conteo_alumnos,0),1,0,'C');
-										$pdf->Cell(10,$h[0],number_format(array_sum($total_puntos_07_array)/$conteo_alumnos,0),1,0,'C');
-										$pdf->SetTextColor(0);
-										$pdf->SetFont('');
-                  
-                  for($j=0;$j<=6;$j++){$pdf->Cell(10,$h[0],'',1,0,'C');}
-                    $pdf->Ln();   
+      {
+        // Para el fondo de la fila.
+        $fill=!$fill;
+        $pdf->SetX(10);
+        $pdf->Cell(7,$h[0],$numero++,1,0,'C',$fill);  // N| de Orden.
+        $pdf->Cell(20,$h[0],'',1,0,'C');  // NIE
+        $pdf->Cell(65,$h[0],'',1,0,'l');  // nombre del alumno.
+        for($j=0;$j<=13;$j++){$pdf->Cell(10,$h[0],'',1,0,'C');}
+        $pdf->Ln();
+      }
+  // Ultimas lineas....
+    $pdf->SetX(10);
+      $pdf->Cell(92,$h[0],'TOTAL DE PUNTOS',1,0,'R');  // TOTAL DE PUNTOS
+        $pdf->Cell(10,$h[0],array_sum($total_puntos_01_array),1,0,'C');
+        $pdf->Cell(10,$h[0],array_sum($total_puntos_02_array),1,0,'C');
+        $pdf->Cell(10,$h[0],array_sum($total_puntos_03_array),1,0,'C');
+        $pdf->Cell(10,$h[0],array_sum($total_puntos_04_array),1,0,'C');
+        $pdf->Cell(10,$h[0],array_sum($total_puntos_05_array),1,0,'C');
+        $pdf->Cell(10,$h[0],array_sum($total_puntos_06_array),1,0,'C');
+        $pdf->Cell(10,$h[0],array_sum($total_puntos_07_array),1,0,'C');
+        
+        for($j=0;$j<=6;$j++){$pdf->Cell(10,$h[0],'',1,0,'C');}
+          $pdf->Ln();
+          $pdf->SetX(10);
+          $pdf->Cell(92,$h[0],'PROMEDIO',1,0,'R');  // PROMEDIO
+          $pdf->SetTextColor(255,0,0);
+          $pdf->SetFont('Arial','B',10);
+          $pdf->Cell(10,$h[0],number_format(array_sum($total_puntos_01_array)/$conteo_alumnos,0),1,0,'C');
+          $pdf->Cell(10,$h[0],number_format(array_sum($total_puntos_02_array)/$conteo_alumnos,0),1,0,'C');
+          $pdf->Cell(10,$h[0],number_format(array_sum($total_puntos_03_array)/$conteo_alumnos,0),1,0,'C');
+          $pdf->Cell(10,$h[0],number_format(array_sum($total_puntos_04_array)/$conteo_alumnos,0),1,0,'C');
+          $pdf->Cell(10,$h[0],number_format(array_sum($total_puntos_05_array)/$conteo_alumnos,0),1,0,'C');
+          $pdf->Cell(10,$h[0],number_format(array_sum($total_puntos_06_array)/$conteo_alumnos,0),1,0,'C');
+          $pdf->Cell(10,$h[0],number_format(array_sum($total_puntos_07_array)/$conteo_alumnos,0),1,0,'C');
+          $pdf->SetTextColor(0);
+          $pdf->SetFont('');
+        
+        for($j=0;$j<=6;$j++){$pdf->Cell(10,$h[0],'',1,0,'C');}
+          $pdf->Ln();   
 // Construir el nombre del archivo.
 	$nombre_archivo = $print_bachillerato.' '.$print_grado.' '.$print_seccion.'-'.$print_ann_lectivo . '.pdf';
 // Salida del pdf.
