@@ -23,14 +23,15 @@ function CrearDirectorios($ruta_url,$nombre_ann_lectivo,$codigo_modalidad,$codig
 		2 - Cuadro Calificaciones.
 		3 - Exportar Calificaciones - Siges
 		4 - Boleta de Calificaciones.
-		5 - 
+		5 - Cuadros de Registro de Evaluación.
 	*/
 	$DestinoArchivo = "";
 	$nombre_directorios = array("$TempSistema/$CarpetaArchivo/$codigo_institucion/",
 						"$TempSistema/$CarpetaArchivo/$codigo_institucion/Nominas/",
 						"$TempSistema/$CarpetaArchivo/$codigo_institucion/Cuadros_Calificaciones/",
 						"$TempSistema/$CarpetaArchivo/$codigo_institucion/Exportar_Calificaciones_SIGES/",
-						"$TempSistema/$CarpetaArchivo/$codigo_institucion/Boleta Calificaciones/");
+						"$TempSistema/$CarpetaArchivo/$codigo_institucion/Boleta Calificaciones/",
+						"$TempSistema/$CarpetaArchivo/$codigo_institucion/Cuadros de Registro de Evaluacion/",);
 	$nombre_modalidad = array("Educacion Inicial/","Parvularia/","Educacion_Basica/","Educacion_Basica_Tercer_Ciclo/","Educacion_Media_General/","Educacion_Media_Tecnico/");
 	$nombre_modalidad_escribir = "";
 	$nombre_ann_lectivo = $nombre_ann_lectivo . "/";
@@ -98,13 +99,20 @@ function CrearDirectorios($ruta_url,$nombre_ann_lectivo,$codigo_modalidad,$codig
 						chmod ( $nombre_directorios[2].$nombre_modalidad_escribir,07777);
 							mkdir ( $nombre_directorios[2].$nombre_modalidad_escribir.$nombre_ann_lectivo);
 							chmod ( $nombre_directorios[2].$nombre_modalidad_escribir.$nombre_ann_lectivo,07777);
-				// Para Exportar Notas SIRAI
+				// Para Exportar Notas SIGES
 					mkdir ( $nombre_directorios[3]);
 					chmod( $nombre_directorios[3],07777);
 						mkdir ( $nombre_directorios[3].$nombre_modalidad_escribir);
 						chmod ( $nombre_directorios[3].$nombre_modalidad_escribir,07777);
 							mkdir ( $nombre_directorios[3].$nombre_modalidad_escribir.$nombre_ann_lectivo);
 							chmod ( $nombre_directorios[3].$nombre_modalidad_escribir.$nombre_ann_lectivo,07777);
+				// Para cuadros de registro de evaluacion.
+				mkdir ( $nombre_directorios[4]);
+				chmod( $nombre_directorios[4],07777);
+					mkdir ( $nombre_directorios[4].$nombre_modalidad_escribir);
+					chmod ( $nombre_directorios[4].$nombre_modalidad_escribir,07777);
+						mkdir ( $nombre_directorios[4].$nombre_modalidad_escribir.$nombre_ann_lectivo);
+						chmod ( $nombre_directorios[4].$nombre_modalidad_escribir.$nombre_ann_lectivo,07777);
 		}
 		// proceso para las nòminas.
 		if($codigo_destino === 1){
@@ -211,7 +219,32 @@ if($codigo_destino === 4){
 						chmod ( $nombre_directorios[4].$nombre_modalidad_escribir.$nombre_ann_lectivo,07777);
 		}
 }	
-	// Cóndicionar la ruta del archivos destino.
+// En el caso que es CUADRO DE REGISTRO DE EVALUACION, se crean los directorios o carpetas respectivas.
+if($codigo_destino === 5){
+	// proceso para el control de actividades..
+	if(!file_exists( $nombre_directorios[5])){
+			// Para Nóminas. Escolanadamente.
+				mkdir ( $nombre_directorios[5]);
+				chmod ( $nombre_directorios[5],07777);
+					mkdir ( $nombre_directorios[5].$nombre_modalidad_escribir);
+					chmod ( $nombre_directorios[5].$nombre_modalidad_escribir,07777);
+						mkdir ( $nombre_directorios[5].$nombre_modalidad_escribir.$nombre_ann_lectivo);
+						chmod ( $nombre_directorios[5].$nombre_modalidad_escribir.$nombre_ann_lectivo,07777);
+		}
+	if(!file_exists( $nombre_directorios[5].$nombre_modalidad_escribir)){
+			// Para Nóminas. Escolanadamente.
+					mkdir ( $nombre_directorios[5].$nombre_modalidad_escribir);
+					chmod ( $nombre_directorios[5].$nombre_modalidad_escribir,07777);
+						mkdir ( $nombre_directorios[5].$nombre_modalidad_escribir.$nombre_ann_lectivo);
+						chmod ( $nombre_directorios[5].$nombre_modalidad_escribir.$nombre_ann_lectivo,07777);
+		}
+	if(!file_exists( $nombre_directorios[5].$nombre_modalidad_escribir.$nombre_ann_lectivo)){
+			// Para Nóminas. Escolanadamente.
+						mkdir ( $nombre_directorios[5].$nombre_modalidad_escribir.$nombre_ann_lectivo);
+						chmod ( $nombre_directorios[5].$nombre_modalidad_escribir.$nombre_ann_lectivo,07777);
+		}
+}
+// Cóndicionar la ruta del archivos destino.
 	switch($codigo_destino)
 	{
 		case 1: // Nóminas
@@ -226,8 +259,10 @@ if($codigo_destino === 4){
 		case 4: // BOLETA DE CALIFICACIONES.
 			$DestinoArchivo =  $nombre_directorios[4].$nombre_modalidad_escribir.$nombre_ann_lectivo;
 			break;
+		case 5: // CUADRO DE REGISTRO DE EVALUACION.
+			$DestinoArchivo =  $nombre_directorios[5].$nombre_modalidad_escribir.$nombre_ann_lectivo;
+			break;
 	}
-	
 	return $DestinoArchivo;
 }
 

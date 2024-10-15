@@ -252,7 +252,6 @@ function consultas($ejecutar,$cerrar,$codigo_bachillerato,$codigo_grado,$codigo_
 	    $result = $db_link -> query($query);
 	    $result_encabezado = $db_link -> query($query);
     }  
-
      // para los diferntes listados a imprimir por género.
     if($ejecutar == 9)
     {
@@ -280,8 +279,6 @@ function consultas($ejecutar,$cerrar,$codigo_bachillerato,$codigo_grado,$codigo_
 	    $result_encabezado = $db_link -> query($query);
 	    $result_indicadores = $db_link -> query($query);
     }
-
-
      // para los diferntes listados a imprimir por género.
     if($ejecutar == 10)
     {
@@ -304,7 +301,6 @@ function consultas($ejecutar,$cerrar,$codigo_bachillerato,$codigo_grado,$codigo_
     // ejecutar la consulta.
         $result = $db_link -> query($query);
     }
-    
      // para los diferntes listados a imprimir
     if($ejecutar == 11)
     {
@@ -351,8 +347,6 @@ function consultas($ejecutar,$cerrar,$codigo_bachillerato,$codigo_grado,$codigo_
 		INNER JOIN ann_lectivo ann ON ann.codigo = am.codigo_ann_lectivo
                 WHERE a.edad >= 5 and a.fecha_nacimiento >= '01/01/1999' and a.fecha_nacimiento <= '19/05/2014' and btrim(am.codigo_bach_o_ciclo || am.codigo_grado || am.codigo_seccion || am.codigo_ann_lectivo) = '".$codigo_bachillerato.
 		"' ORDER BY edad DESC";
-		
-		
     // ejecutar la consulta.
 	    $result = $db_link -> query($query);
 	    $result_encabezado = $db_link -> query($query);
@@ -427,8 +421,6 @@ function consultas($ejecutar,$cerrar,$codigo_bachillerato,$codigo_grado,$codigo_
 	    $result = $db_link -> query($query);
 	    $result_encabezado = $db_link -> query($query);
     }
-    
-    
     // para los diferntes listados a imprimir por género.
     // PARA LOS DATOS ESTADISTICOS QUE PRESENTE LA MATRICULA MAXIMA.
     if($ejecutar == 15)
@@ -450,13 +442,11 @@ function consultas($ejecutar,$cerrar,$codigo_bachillerato,$codigo_grado,$codigo_
 				INNER JOIN ann_lectivo ann ON ann.codigo = am.codigo_ann_lectivo
                 WHERE btrim(am.codigo_bach_o_ciclo || am.codigo_grado || am.codigo_seccion || am.codigo_ann_lectivo || am.codigo_turno) = '".$codigo_bachillerato.
 					"' ORDER BY apellido_alumno ASC";
-		
             // Ejecutamos el Query. Tabla Bitacora.
 	    $result = $db_link -> query($query);
 	    $result_encabezado = $db_link -> query($query);
 	    $result_indicadores = $db_link -> query($query);
     }
-
 // para los diferntes listados a imprimir por género.
     if($ejecutar == 16)
     {
@@ -477,13 +467,11 @@ function consultas($ejecutar,$cerrar,$codigo_bachillerato,$codigo_grado,$codigo_
 				INNER JOIN ann_lectivo ann ON ann.codigo = am.codigo_ann_lectivo
                 WHERE btrim(am.codigo_bach_o_ciclo || am.codigo_grado || am.codigo_seccion || am.codigo_ann_lectivo || am.codigo_turno) = '".$codigo_bachillerato.
 					"' ORDER BY apellido_alumno ASC";
-		
             // Ejecutamos el Query. Tabla Bitacora.
 	    $result = $db_link -> query($query);
 	    $result_encabezado = $db_link -> query($query);
 	    $result_indicadores = $db_link -> query($query);
     }
-    
 	// PARA CONSULTAR LAS ASIGNATURAS QUE TIENEN NOTA DE RECUPERACION DIFERENTE DE 0.
 	if($ejecutar == 17)
     {
@@ -510,25 +498,23 @@ function consultas($ejecutar,$cerrar,$codigo_bachillerato,$codigo_grado,$codigo_
     }
 /* SOLO PARA EL ENCABEZADO **************************************************************************************************************************/
 /* SOLO PARA EL ENCABEZADO **************************************************************************************************************************/
-
 if($ejecutar == 18)
 {
-        $query = "SELECT  a.id_alumno as codigo_alumno, am.id_alumno_matricula as codigo_matricula,
-                am.codigo_ann_lectivo, ann.nombre as nombre_ann_lectivo, 
-                am.codigo_grado, gan.nombre as nombre_grado,
-                am.codigo_turno, tur.nombre as nombre_turno,
-                am.codigo_seccion, sec.nombre as nombre_seccion,
-                bach.codigo as codigo_bachillerato, bach.nombre as nombre_bachillerato
-                FROM alumno a
-			    INNER JOIN alumno_encargado ae ON a.id_alumno = ae.codigo_alumno and ae.encargado = 't'
-			    INNER JOIN alumno_matricula am ON a.id_alumno = am.codigo_alumno and am.retirado = 'f'
-                INNER JOIN bachillerato_ciclo bach ON bach.codigo = am.codigo_bach_o_ciclo
-                INNER JOIN grado_ano gan ON gan.codigo = am.codigo_grado
-                INNER JOIN seccion sec ON sec.codigo = am.codigo_seccion
-                INNER JOIN ann_lectivo ann ON ann.codigo = am.codigo_ann_lectivo
-                INNER JOIN turno tur ON tur.codigo = am.codigo_turno
-                WHERE btrim(am.codigo_bach_o_ciclo || am.codigo_grado || am.codigo_seccion || am.codigo_ann_lectivo || am.codigo_turno) = '".$codigo_bachillerato."' LIMIT 1";
-
+    $query = "SELECT  a.id_alumno as codigo_alumno, am.id_alumno_matricula as codigo_matricula,
+        am.codigo_ann_lectivo, ann.nombre as nombre_ann_lectivo, 
+        am.codigo_grado, gan.nombre as nombre_grado,
+        am.codigo_turno, tur.nombre as nombre_turno,
+        am.codigo_seccion, sec.nombre as nombre_seccion,
+        bach.codigo as codigo_bachillerato, bach.nombre as nombre_bachillerato
+        FROM alumno a
+        INNER JOIN alumno_encargado ae ON a.id_alumno = ae.codigo_alumno and ae.encargado = 't'
+        INNER JOIN alumno_matricula am ON a.id_alumno = am.codigo_alumno and am.retirado = 'f'
+        INNER JOIN bachillerato_ciclo bach ON bach.codigo = am.codigo_bach_o_ciclo
+        INNER JOIN grado_ano gan ON gan.codigo = am.codigo_grado
+        INNER JOIN seccion sec ON sec.codigo = am.codigo_seccion
+        INNER JOIN ann_lectivo ann ON ann.codigo = am.codigo_ann_lectivo
+        INNER JOIN turno tur ON tur.codigo = am.codigo_turno
+        WHERE btrim(am.codigo_bach_o_ciclo || am.codigo_grado || am.codigo_seccion || am.codigo_ann_lectivo || am.codigo_turno) = '".$codigo_bachillerato."' LIMIT 1";
 // ejecutar la consulta.
     $result_encabezado = $db_link -> query($query);
 }  
@@ -598,9 +584,7 @@ if($ejecutar == 19)
             // Ejecutamos el Query. Tabla Bitacora. and am.retirado = 'f'
         $result = $db_link -> query($query);
         $result_encabezado = $db_link -> query($query);
-        
     }  
-
     // EXPORTAR INFORMACION A ARCHIVO DE EXCEL.
     if($ejecutar == 21)
     {
@@ -609,22 +593,21 @@ if($ejecutar == 19)
     if($por_genero == 'true'){
         $order = ' ORDER BY a.genero, apellido_alumno ASC';
     }
-
     $query = "SELECT a.estudio_parvularia, a.id_alumno, a.codigo_nie, btrim(a.apellido_paterno || CAST(' ' AS VARCHAR) || a.apellido_materno || CAST(', ' AS VARCHAR) || a.nombre_completo) as apellido_alumno,
-    btrim(a.apellido_paterno || CAST(' ' AS VARCHAR) || a.apellido_materno) as apellidos_alumno, a.nombre_completo,
-    btrim(a.nombre_completo || CAST(' ' AS VARCHAR) || a.apellido_paterno  || CAST(' ' AS VARCHAR) || a.apellido_materno) as nombre_completo_alumno,
-    ae.codigo_alumno, ae.nombres, ae.encargado, ae.dui as encargado_dui, ae.telefono as telefono_encargado, ae.fecha_nacimiento as encargado_fecha_nacimiento, ae.direccion as encargado_direccion, ae.telefono as encargado_telefono,
-    a.foto, a.pn_folio, a.pn_tomo, a.pn_numero, a.pn_libro, a.fecha_nacimiento, a.direccion_alumno, telefono_alumno, a.edad, a.genero, a.estudio_parvularia, a.codigo_discapacidad, a.codigo_apoyo_educativo, a.codigo_actividad_economica, a.codigo_estado_familiar, a.partida_nacimiento, a.telefono_celular,
-    a.codigo_departamento, a.codigo_municipio, a.codigo_genero,
-    am.imprimir_foto, am.pn, am.repitente, am.sobreedad, am.retirado, am.codigo_bach_o_ciclo, am.certificado, am.ann_anterior,
-    am.nuevo_ingreso, bach.nombre as nombre_bachillerato, am.codigo_ann_lectivo, ann.nombre as nombre_ann_lectivo, bach.codigo as codigo_bachillerato,
-    am.codigo_grado, gan.nombre as nombre_grado, am.codigo_seccion, sec.nombre as nombre_seccion, am.id_alumno_matricula as codigo_matricula, am.codigo_turno,
-    am.observaciones, am.id_alumno_matricula as cod_matricula,
-    ae.codigo_departamento as encargado_departamento, ae.codigo_municipio as encargado_municipio,
-    cat_f.descripcion as nombre_tipo_parentesco,
-    cat_g.descripcion as nombre_sexo,
-    tur.nombre as nombre_turno
-        FROM alumno a
+        btrim(a.apellido_paterno || CAST(' ' AS VARCHAR) || a.apellido_materno) as apellidos_alumno, a.nombre_completo,
+        btrim(a.nombre_completo || CAST(' ' AS VARCHAR) || a.apellido_paterno  || CAST(' ' AS VARCHAR) || a.apellido_materno) as nombre_completo_alumno,
+        ae.codigo_alumno, ae.nombres, ae.encargado, ae.dui as encargado_dui, ae.telefono as telefono_encargado, ae.fecha_nacimiento as encargado_fecha_nacimiento, ae.direccion as encargado_direccion, ae.telefono as encargado_telefono,
+        a.foto, a.pn_folio, a.pn_tomo, a.pn_numero, a.pn_libro, a.fecha_nacimiento, a.direccion_alumno, telefono_alumno, a.edad, a.genero, a.estudio_parvularia, a.codigo_discapacidad, a.codigo_apoyo_educativo, a.codigo_actividad_economica, a.codigo_estado_familiar, a.partida_nacimiento, a.telefono_celular,
+        a.codigo_departamento, a.codigo_municipio, a.codigo_genero,
+        am.imprimir_foto, am.pn, am.repitente, am.sobreedad, am.retirado, am.codigo_bach_o_ciclo, am.certificado, am.ann_anterior,
+        am.nuevo_ingreso, bach.nombre as nombre_bachillerato, am.codigo_ann_lectivo, ann.nombre as nombre_ann_lectivo, bach.codigo as codigo_bachillerato,
+        am.codigo_grado, gan.nombre as nombre_grado, am.codigo_seccion, sec.nombre as nombre_seccion, am.id_alumno_matricula as codigo_matricula, am.codigo_turno,
+        am.observaciones, am.id_alumno_matricula as cod_matricula,
+        ae.codigo_departamento as encargado_departamento, ae.codigo_municipio as encargado_municipio,
+        cat_f.descripcion as nombre_tipo_parentesco,
+        cat_g.descripcion as nombre_sexo,
+        tur.nombre as nombre_turno
+            FROM alumno a
             INNER JOIN alumno_encargado ae ON a.id_alumno = ae.codigo_alumno and ae.encargado = 't'
             INNER JOIN alumno_matricula am ON a.id_alumno = am.codigo_alumno and am.retirado = 'f'
             INNER JOIN bachillerato_ciclo bach ON bach.codigo = am.codigo_bach_o_ciclo
@@ -647,30 +630,28 @@ if($ejecutar == 19)
   if($ejecutar == 22)
   {
    $query = "SELECT a.estudio_parvularia, a.id_alumno, a.codigo_nie, btrim(a.apellido_paterno || CAST(' ' AS VARCHAR) || a.apellido_materno || CAST(', ' AS VARCHAR) || a.nombre_completo) as apellido_alumno,
-              btrim(a.apellido_paterno || CAST(' ' AS VARCHAR) || a.apellido_materno) as apellidos_alumno, a.nombre_completo,
-              ae.codigo_alumno, ae.nombres, ae.encargado, ae.dui, ae.telefono,
-              a.foto, a.pn_folio, a.pn_tomo, a.pn_numero, a.pn_libro, a.fecha_nacimiento, a.direccion_alumno, telefono_alumno, a.edad, a.genero, a.ruta_pn,
-              a.id_alumno as cod_alumno, am.id_alumno_matricula as cod_matricula,
-              am.imprimir_foto, am.pn, am.repitente, am.sobreedad, am.retirado, am.codigo_bach_o_ciclo, am.certificado, am.codigo_turno,
-              am.nuevo_ingreso, bach.nombre as nombre_bachillerato, am.codigo_ann_lectivo, ann.nombre as nombre_ann_lectivo,
-              am.codigo_grado, gan.nombre as nombre_grado, am.codigo_seccion, sec.nombre as nombre_seccion, tur.nombre as nombre_turno
-                  FROM alumno a
-              INNER JOIN alumno_encargado ae ON a.id_alumno = ae.codigo_alumno and ae.encargado = 't'
-              INNER JOIN alumno_matricula am ON a.id_alumno = am.codigo_alumno  and am.retirado = 'f' and am.sobreedad = 't'
-              INNER JOIN bachillerato_ciclo bach ON bach.codigo = am.codigo_bach_o_ciclo
-              INNER JOIN grado_ano gan ON gan.codigo = am.codigo_grado
-              INNER JOIN seccion sec ON sec.codigo = am.codigo_seccion
-              INNER JOIN ann_lectivo ann ON ann.codigo = am.codigo_ann_lectivo
-              INNER JOIN turno tur ON tur.codigo = am.codigo_turno
-              WHERE btrim(am.codigo_bach_o_ciclo || am.codigo_grado || am.codigo_seccion || am.codigo_ann_lectivo || am.codigo_turno) = '".$codigo_bachillerato.
-                  "' ORDER BY apellido_alumno ASC";
-      
+            btrim(a.apellido_paterno || CAST(' ' AS VARCHAR) || a.apellido_materno) as apellidos_alumno, a.nombre_completo,
+            ae.codigo_alumno, ae.nombres, ae.encargado, ae.dui, ae.telefono,
+            a.foto, a.pn_folio, a.pn_tomo, a.pn_numero, a.pn_libro, a.fecha_nacimiento, a.direccion_alumno, telefono_alumno, a.edad, a.genero, a.ruta_pn,
+            a.id_alumno as cod_alumno, am.id_alumno_matricula as cod_matricula,
+            am.imprimir_foto, am.pn, am.repitente, am.sobreedad, am.retirado, am.codigo_bach_o_ciclo, am.certificado, am.codigo_turno,
+            am.nuevo_ingreso, bach.nombre as nombre_bachillerato, am.codigo_ann_lectivo, ann.nombre as nombre_ann_lectivo,
+            am.codigo_grado, gan.nombre as nombre_grado, am.codigo_seccion, sec.nombre as nombre_seccion, tur.nombre as nombre_turno
+                FROM alumno a
+            INNER JOIN alumno_encargado ae ON a.id_alumno = ae.codigo_alumno and ae.encargado = 't'
+            INNER JOIN alumno_matricula am ON a.id_alumno = am.codigo_alumno  and am.retirado = 'f' and am.sobreedad = 't'
+            INNER JOIN bachillerato_ciclo bach ON bach.codigo = am.codigo_bach_o_ciclo
+            INNER JOIN grado_ano gan ON gan.codigo = am.codigo_grado
+            INNER JOIN seccion sec ON sec.codigo = am.codigo_seccion
+            INNER JOIN ann_lectivo ann ON ann.codigo = am.codigo_ann_lectivo
+            INNER JOIN turno tur ON tur.codigo = am.codigo_turno
+            WHERE btrim(am.codigo_bach_o_ciclo || am.codigo_grado || am.codigo_seccion || am.codigo_ann_lectivo || am.codigo_turno) = '".$codigo_bachillerato.
+                "' ORDER BY apellido_alumno ASC";
           // Ejecutamos el Query. Tabla Bitacora.
       $result = $db_link -> query($query);
       $result_encabezado = $db_link -> query($query);
       $result_indicadores = $db_link -> query($query);
   }
-
 }   // FIN DE LA FUNCION CONSULTAS
 
 function consultas_alumno($ejecutar,$cerrar,$buscar_nombre,$codigo_alumno,$codigo_matricula,$codigo_ann_lectivo, $db_link,$result)
@@ -693,8 +674,6 @@ function consultas_alumno($ejecutar,$cerrar,$buscar_nombre,$codigo_alumno,$codig
     // ejecutar la consulta.
         $result = $db_link -> query($query);
     }            
-
-    
     if($ejecutar == 2)
     {
      $query = "SELECT DISTINCT a.codigo_nie, btrim(a.apellido_paterno || CAST(' ' AS VARCHAR) || a.apellido_materno || CAST(', ' AS VARCHAR) || a.nombre_completo) as apellido_alumno,
@@ -727,7 +706,6 @@ function consultas_alumno($ejecutar,$cerrar,$buscar_nombre,$codigo_alumno,$codig
     // ejecutar la consulta.
         $result = $db_link -> query($query);
     }
-
     // consultas utilizadas en la ficha. tabla alumno
     if($ejecutar == 3)
     {
@@ -753,7 +731,6 @@ function consultas_alumno($ejecutar,$cerrar,$buscar_nombre,$codigo_alumno,$codig
     // ejecutar la consulta.
         $result = $db_link -> query($query_a);
     }
-
     // consultas utilizadas en la ficha. tabla encargado
     if($ejecutar == 4)
     {
@@ -764,7 +741,6 @@ function consultas_alumno($ejecutar,$cerrar,$buscar_nombre,$codigo_alumno,$codig
     // ejecutar la consulta.
         $result = $db_link -> query($query);
     }    
-
     // consultas utilizadas en la ficha. tabla estudios realizados
     if($ejecutar == 5)
     {
@@ -791,8 +767,6 @@ function consultas_alumno($ejecutar,$cerrar,$buscar_nombre,$codigo_alumno,$codig
     	pg_close($db_link);
     }
 }
-
-
 function consulta_docente($ejecutar,$cerrar,$codigo_annlectivo,$codigo_docentes,$codigo_contratacion,$db_link,$result,$fecha_desde,$fecha_hasta,$codigo_licencia_permiso,$codigo_turno)
 {
     global $result, $result_saldo;
@@ -813,7 +787,6 @@ function consulta_docente($ejecutar,$cerrar,$codigo_annlectivo,$codigo_docentes,
     // ejecutar la consulta.
         $result = $db_link -> query($query);;
     }    
-
         // conteo de los datos.
     if($ejecutar == 2)
     {
@@ -844,7 +817,6 @@ function consulta_docente($ejecutar,$cerrar,$codigo_annlectivo,$codigo_docentes,
         $result = pg_query($db_link, $query);
         $result_encabezado = pg_query($db_link, $query);
     } */   
-
     // tabla planta docente.
     if($ejecutar == 3)
     {
@@ -853,7 +825,6 @@ function consulta_docente($ejecutar,$cerrar,$codigo_annlectivo,$codigo_docentes,
         $result = $db_link -> query($query);
         $result_encabezado = pg_query($db_link, $query);
     }    
-
     // tabla tipo de licencia o permiso
     if($ejecutar == 4)
     {
@@ -862,7 +833,6 @@ function consulta_docente($ejecutar,$cerrar,$codigo_annlectivo,$codigo_docentes,
         $result = $db_link -> query($query);
         $result_encabezado = pg_query($db_link, $query);
     }    
-
     // conteo de los datos.
     if($ejecutar == 5)
     {   
@@ -1232,7 +1202,6 @@ function consulta_indicadores($ejecutar,$cerrar,$codigo_all,$codigo_grado,$codig
 	    
 	    $result_indicadores = $db_link -> query($query);
     }
-
      // total femenino.
     if($ejecutar == 10)
     {
@@ -1242,7 +1211,6 @@ function consulta_indicadores($ejecutar,$cerrar,$codigo_all,$codigo_grado,$codig
 	    
 	    $result_indicadores = $db_link -> query($query);
     }
-    
     // total masculino deserción.
     if($ejecutar == 11)
     {
@@ -1252,7 +1220,6 @@ function consulta_indicadores($ejecutar,$cerrar,$codigo_all,$codigo_grado,$codig
 	    
 	    $result_indicadores = $db_link -> query($query);
     }
-    
         // total femenino deserción.
     if($ejecutar == 12)
     {
@@ -1262,7 +1229,6 @@ function consulta_indicadores($ejecutar,$cerrar,$codigo_all,$codigo_grado,$codig
 	    
 	    $result_indicadores = $db_link -> query($query);
     }
-    
         // total masculino deserción.
     if($ejecutar == 13)
     {
@@ -1272,7 +1238,6 @@ function consulta_indicadores($ejecutar,$cerrar,$codigo_all,$codigo_grado,$codig
 	    
 	    $result_indicadores = $db_link -> query($query);
     }
-    
         // total femenino deserción.
     if($ejecutar == 14)
     {
@@ -1282,7 +1247,6 @@ function consulta_indicadores($ejecutar,$cerrar,$codigo_all,$codigo_grado,$codig
 	    
 	    $result_indicadores = $db_link -> query($query);
     }
- 
          // total masculino deserción.
     if($ejecutar == 15)
     {
@@ -1292,7 +1256,6 @@ function consulta_indicadores($ejecutar,$cerrar,$codigo_all,$codigo_grado,$codig
 	    
 	    $result_indicadores = $db_link -> query($query);
     }
-    
         // total femenino deserción.
     if($ejecutar == 16)
     {
@@ -1302,7 +1265,6 @@ function consulta_indicadores($ejecutar,$cerrar,$codigo_all,$codigo_grado,$codig
 	    
 	    $result_indicadores = $db_link -> query($query);
     }
-    
       // total masculino nuevo ingreso.
     if($ejecutar == 17)
     {
@@ -1312,7 +1274,6 @@ function consulta_indicadores($ejecutar,$cerrar,$codigo_all,$codigo_grado,$codig
 	    
 	    $result_indicadores = $db_link -> query($query);
     }
-    
         // total femenino nuevo ingreso.
     if($ejecutar == 18)
     {
@@ -1322,5 +1283,4 @@ function consulta_indicadores($ejecutar,$cerrar,$codigo_all,$codigo_grado,$codig
 	    
 	    $result_indicadores = $db_link -> query($query);
     }
-    
 }

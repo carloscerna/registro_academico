@@ -524,7 +524,7 @@ for($listado=0;$listado<count($codigo_alumno_listado);$listado++)
 	// Salida del pdf.
 	if($crear_archivos == "si"){
 		// Tipo de Carpeta a Grabar.
-			$codigo_destino = 4;
+			$codigo_destino = 5;
 			$nuevo_grado = replace_3(trim($nombreGrado));
 			CrearDirectorios($path_root,$nombreAñolectivo,$codigoNivel,$codigo_destino,"");
 		// verificar si existe el grado y sección.

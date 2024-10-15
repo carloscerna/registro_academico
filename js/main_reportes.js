@@ -72,6 +72,7 @@ $('body').on('click','#listaUsuariosOK a',function (e){
 // Ajax hide. y controlar que informe se va a presentar.
         var ann_lectivo = $('#lstannlectivo').val();
         var varbach = $('#lstmodalidad').val();
+        var LstNombreModalidad = $('#lstmodalidad option:selected').text();
         var lstlist_nominas = $("#lstlist option:selected").val();
 
         var lstlist_fechames = $("#lstFechaMes option:selected").val();
@@ -412,12 +413,23 @@ if (lstlist_nominas == 'hoja-de-calculo' && $(this).attr('data-accion') == 'list
         //AbrirVentana(varenviar);
 }
 if (lstlist_nominas == 'cuadro-de-promocion' && $(this).attr('data-accion') == 'listados_01') {
+        // crear variable para el nivel o modalidad.
+        $url_ = "php_libs/soporte/CrearCuadrodePromocion.php";                
+                switch(LstNombreModalidad)
+                {
+                        case "Educación Básica - Estándar de Desarrollo":
+                                $url_ = "php_libs/soporte/CrearCuadroRegistroEvaluacionEstandarBasicaParvularia.php";
+
+                        break;
+                        default:
+                                $url_ = "php_libs/soporte/CrearCuadrodePromocion.php";                
+                        break;
+                }
         $.ajax({
                 cache: false,
                 type: "POST",
                 dataType: "json",
-                //url:"php_libs/soporte/CrearNominas.php",
-                url:"php_libs/soporte/CrearCuadrodePromocion.php",
+                url: $url_,
                 data: "todos="+ reporte_ok + "&id=" + Math.random(),
                 success: function(response){
                         // Validar mensaje de error
@@ -431,11 +443,6 @@ if (lstlist_nominas == 'cuadro-de-promocion' && $(this).attr('data-accion') == '
                         error_();
                 }
                 });
-        
-        // construir la variable con el url.
-        //varenviar = "/registro_academico/php_libs/soporte/CrearNominas.php?todos="+reporte_ok;
-        // Ejecutar la función
-        //AbrirVentana(varenviar);
 }
 if (lstlist_nominas == 'hoja-de-calculo-caracterizacion' && $(this).attr('data-accion') == 'listados_01') {
         $.ajax({
