@@ -434,10 +434,10 @@ if (lstlist_nominas == 'cuadro-de-promocion' && $(this).attr('data-accion') == '
                 success: function(response){
                         // Validar mensaje de error
                         if(response.respuesta === false){
-                                toastr["error"](response.mensaje, "Sistema");
+                                toastr.error(response.mensaje, "Sistema");
                         }
                         else{
-                                toastr["info"](response.contenido, "Sistema");}
+                                toastr.info(response.contenido, "Sistema");}
                 },
                 error:function(){
                         error_();
@@ -702,6 +702,6 @@ function ok_(){
 }
 			
 function error_(){
-        toastr.warning("Registros no Encontrados."); 
+        toastr.error("Revisar la información."); 
 	return false; 
 }

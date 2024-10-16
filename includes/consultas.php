@@ -44,8 +44,8 @@ function consultas_docentes($ejecutar,$cerrar,$codigo_bachillerato,$codigo_grado
 function consultas($ejecutar,$cerrar,$codigo_bachillerato,$codigo_grado,$codigo_seccion,$codigo_annlectivo,$db_link,$result)
 {
     global $result, $result_encabezado, $codigo_encargado, $por_genero, $result_indicadores, $result_nombre_asignatura;
-    global $nombreNivel, $nombreGrado, $nombreSeccion, $nombreTurno, $nombreAñoLectivo, $print_periodo;
-    global $codigoNivel, $codigoGrado, $codigoSeccion, $codigoTurno, $codigoAñoLectivo;
+    global $nombreNivel, $nombreGrado, $nombreSeccion, $nombreTurno, $nombreAñoLectivo, $print_periodo, $nombreAnnlectivo;
+    global $codigoNivel, $codigoGrado, $codigoSeccion, $codigoTurno, $codigoAñoLectivo; 
     $CodigoTodos = $codigo_bachillerato;
 
     if($ejecutar == 1)
@@ -377,10 +377,11 @@ function consultas($ejecutar,$cerrar,$codigo_bachillerato,$codigo_grado,$codigo_
         while($row = $result_encabezado -> fetch(PDO::FETCH_BOTH))
         {
             $nombreNivel = convertirTexto(trim($row['nombre_bachillerato']));            
-            $nombreGrado = convertirtexto(trim($row['nombre_grado']));
-            $nombreSeccion = convertirtexto(trim($row['nombre_seccion']));
-            $nombreTurno = convertirtexto(trim($row['nombre_turno']));
-            $nombreAñoLectivo = convertirtexto(trim($row['nombre_ann_lectivo']));
+            $nombreGrado = convertirTexto(trim($row['nombre_grado']));
+            $nombreSeccion = convertirTexto(trim($row['nombre_seccion']));
+            $nombreTurno = convertirTexto(trim($row['nombre_turno']));
+            $nombreAñoLectivo = convertirTexto(trim($row['nombre_ann_lectivo']));
+            $nombreAnnLectivo = convertirTexto(trim($row['nombre_ann_lectivo']));
 
             $codigoNivel = trim($row["codigo_modalidad"]);
             $codigoGrado = trim($row["codigo_grado"]);

@@ -7,21 +7,22 @@
     include($path_root."/registro_academico/includes/consultas.php");
     include($path_root."/registro_academico/includes/mainFunctions_conexion.php");
 // variables y consulta a la tabla.
-  $codigo_all = $_REQUEST["todos"];
-  $db_link = $dblink;
-
+    $codigo_all = $_REQUEST["todos"];
+    $db_link = $dblink;
 // Inicializamos variables de mensajes y JSON
-$respuestaOK = true;
-$mensajeError = "No se puede ejecutar la aplicación";
-$contenidoOK = "";
+    $respuestaOK = true;
+    $mensajeError = "No se puede ejecutar la aplicación";
+    $contenidoOK = "";
 // Información Académica.
-       $codigo_bachillerato = substr($codigo_all,0,2);
-       $codigo_grado = substr($codigo_all,2,2);
-       $codigo_seccion = substr($codigo_all,4,2);
-       $codigo_annlectivo = substr($codigo_all,6,2);
-       $codigo_all_ = $codigo_bachillerato . $codigo_grado . $codigo_seccion . $codigo_annlectivo;
+    $codigo_bachillerato = substr($codigo_all,0,2);
+    $codigo_grado = substr($codigo_all,2,2);
+    $codigo_seccion = substr($codigo_all,4,2);
+    $codigo_annlectivo = substr($codigo_all,6,2);
+    $codigo_all_ = $codigo_bachillerato . $codigo_grado . $codigo_seccion . $codigo_annlectivo;
 // buscar la consulta y la ejecuta.
   consultas(13,0,$codigo_all,'','','',$db_link,'');
+//  imprimir datos del grado en general. extrar la información de la cosulta del archivo consultas.php
+  global $nombreNivel, $nombreGrado, $nombreSeccion, $nombreTurno, $nombreAñolectivo, $print_periodo, $codigoNivel;
 // Proceso de la creaciòn de la Hoja de cálculo.
     $n_hoja = 0;	// variable para el activesheet.
 // call the autoload
@@ -45,10 +46,13 @@ $contenidoOK = "";
     $objReader = \PhpOffice\PhpSpreadsheet\IOFactory::createReader("Xlsx");
     $origen = $path_root."/registro_academico/formatos_hoja_de_calculo/";
 //
-    if($nombre_modalidad == "Educación Básica - Estándar de Desarrollo"){
-        $objPHPExcel = $objReader->load($origen."CUADRO DE REGISTRO DE EVALUACION DE EDUCACION BASICA ESTANDAR DE DESARROLLO.xlsx");
+    if($codigoNivel == '14'){
+        $objPHPExcel = $objReader->load($origen."CUADRO EDUCACION BASICA ESTANDAR DE DESARROLLO.xlsx");
+        $EstudianteIndicadorFinal = ["D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z",
+            "AA","AB","AC","AD","AE","AF","AG","AH","AI","AJ","AK","AL","AM","AN","AO","AP","AQ","AR","A2","AT","AU","AW","AX","AY","AZ","BA",
+        "BB","BC","BD","BE","BF","BG","BH","BI","BJ","BK","BL","BM","BN","BO","BP","BR","BS","BT","BU","BV","BW","BX","BY","BZ","CA","CB","CC","CD"];
     }else{
-        $objPHPExcel = $objReader->load($origen."CUADRO DE REGISTRO DE EDUCACION BASICA III.xlsx");
+       // $objPHPExcel = $objReader->load($origen."CUADRO DE REGISTRO DE EDUCACION BASICA III.xlsx");
     }
     // OBTENER EL NOMBRE DEL DOCENTE ENCARGADO.
     $query_encargado = "SELECT eg.id_encargado_grado, eg.encargado, btrim(p.nombres || CAST(' ' AS VARCHAR) || p.apellidos) as nombre_docente, eg.codigo_docente, bach.nombre, gann.nombre, sec.nombre, ann.nombre
@@ -61,71 +65,118 @@ $contenidoOK = "";
 					WHERE btrim(bach.codigo || gann.codigo || sec.codigo || ann.codigo) = '".$codigo_all_."' and eg.encargado = 't' ORDER BY p.nombres";
     $result_encargado = $db_link -> query($query_encargado);
 //  Nombre del Encargado.
-    $nombre_encargado = '';
+    $nombreEncargado = '';
     while($rows_encargado = $result_encargado -> fetch(PDO::FETCH_BOTH))
     {
-            $nombre_encargado = trim($rows_encargado['nombre_docente']);
+            $nombreEncargado = trim($rows_encargado['nombre_docente']);
             $codigo_docente = trim($rows_encargado['codigo_docente']);
     }
     // NOMBRE DIRECTOR.
-    $nombre_director =  $_SESSION['nombre_director'];
+    $nombreDirector =  $_SESSION['nombre_director'];
+    $nombreInstitucion  = $_SESSION['institucion'];     // Nombre Institución.
+    $nombreCodigoInstitucion = $_SESSION['codigo_escuela']; // Código Institucón.
+    $nombreDepartamento =  $_SESSION['nombre_departamento'];
+    $nombreMunicipio =  $_SESSION['nombre_municipio'];
+////////////////////////////////////////////////////////////////////
+//////// CONTAR CUANTAS ASIGNATURAS TIENE CADA MODALIDAD.
+//////////////////////////////////////////////////////////////////
+// buscar la consulta y la ejecuta.
+//consulta_contar(1,0,$codigo_all,'','','',$db_link,'');
+$query_asig = "SELECT count(*) as total_asignaturas FROM a_a_a_bach_o_ciclo
+WHERE btrim(codigo_bach_o_ciclo || codigo_grado || codigo_ann_lectivo) = '".substr($codigo_all,0,4) . substr($codigo_all,6,2) ."'";
+// ejecutar la consulta.
+$result = $db_link -> query($query_asig);
+// EJECUTAR CONDICIONES PARA EL NOMBRE DEL NIVEL Y EL N�MERO DE ASIGNATURAS.
+$total_asignaturas = 0;	
+while($row = $result -> fetch(PDO::FETCH_BOTH))	// RECORRER PARA EL CONTEO DE Nº DE ASIGNATURAS.
+{
+  $total_asignaturas = trim($row['total_asignaturas']);
+}
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // consulta a la tabla para optener la nomina.
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//  matriz y query nomina de estudiantes y 
+    $EstudianteCodigoMatricula = []; $EstudianteCodigo = [];
+    consultas(4,0,$codigo_all,'','','',$db_link,'');
+    while($row = $result -> fetch(PDO::FETCH_BOTH))	// RECORRER PARA EL CONTEO DE Nº DE ASIGNATURAS.
+    {
+        $EstudianteCodigo[] = trim($row['id_alumno']);
+        $EstudianteCodigoMatricula[] = trim($row['codigo_matricula']);
+    }
 //  Get the current sheet with all its newly-set style properties
-    $objWorkSheetBase = $objPHPExcel->getSheet(0); 
+    $objWorkSheetBase = $objPHPExcel->getSheet($n_hoja); 
 // Indicamos que se pare en la hoja uno del libro
     $objPHPExcel->setActiveSheetIndex($n_hoja);
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Escribimos en la hoja en la celda e3. los datos del bachillerato, grado, sección, año lectivo, etc.
-    $objPHPExcel->getActiveSheet()->SetCellValue('B2', $nombre_grado);
-    $objPHPExcel->getActiveSheet()->SetCellValue('B3', $nombre_seccion);
-    $objPHPExcel->getActiveSheet()->SetCellValue('B4', $nombre_modalidad);
-    $objPHPExcel->getActiveSheet()->SetCellValue('B18', $nombre_encargado);
-    $objPHPExcel->getActiveSheet()->SetCellValue('B19', $nombre_director);
-// Indicamos que se pare en la hoja uno del libro
-    $n_hoja++;    
-    $objPHPExcel->setActiveSheetIndex($n_hoja);
-// Correlativo, numero de linea.
-    $num = 0; $fila_excel = 1;
-//  query 
-    consultas(4,0,$codigo_all,'','','',$db_link,'');
+    $objPHPExcel->getActiveSheet()->SetCellValue('C3', $nombreNivel);
+    $objPHPExcel->getActiveSheet()->SetCellValue('C4', $nombreGrado);
+    $objPHPExcel->getActiveSheet()->SetCellValue('F4', $nombreSeccion);
+    $objPHPExcel->getActiveSheet()->SetCellValue('K4', $nombreTurno);
+    $objPHPExcel->getActiveSheet()->SetCellValue('S4', $nombreAñoLectivo);
+    $objPHPExcel->getActiveSheet()->SetCellValue('H2', $nombreInstitucion);
+    $objPHPExcel->getActiveSheet()->SetCellValue('C2', $nombreCodigoInstitucion);
+    $objPHPExcel->getActiveSheet()->SetCellValue('X2', $nombreDepartamento);
+    $objPHPExcel->getActiveSheet()->SetCellValue('X3', $nombreMunicipio);
 //
-    while($row = $result -> fetch(PDO::FETCH_BOTH))
-    {
-        // acumular correlativo y fila.
-        $num++; $fila_excel++;
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        $CodigoNie = TRIM($row['codigo_nie']);  // Codigo Nie.
-	    $ApellidosNombres = trim(cambiar_de_del_2($row['apellido_alumno'])); // Apellidos (paterno y materno) - nombres.
-        // INFORMACION PARA EL CUADRO DE REGISTRO DE EVALUACIÓN.
-        $objPHPExcel->getActiveSheet()->SetCellValue("B".$fila_excel, $CodigoNie);
-        $objPHPExcel->getActiveSheet()->SetCellValue("C".$fila_excel,($ApellidosNombres));
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////        
-   }    //  FIN DEL WHILE.
-// Verificar si Existe el directorio archivos.
-		$codigo_modalidad = $codigo_bachillerato;
-		//$nombre_ann_lectivo = $nombre_ann_lectivo;
-	// Tipo de Carpeta a Grabar Cuadro de Calificaciones.
+    $objPHPExcel->getActiveSheet()->SetCellValue('B67', $nombreDirector);
+    $objPHPExcel->getActiveSheet()->SetCellValue('T67', $nombreEncargado);
+// Indicamos que se pare en la hoja uno del libro
+    //$n_hoja++;    
+    $objPHPExcel->setActiveSheetIndex(0);
+// Correlativo, numero de linea.
+    $num = 0; $fila_excel = 12; $numIndicadorFinal = 0;
+// Verificar los estudiantes uno po uno.
+    for ($EstudiantesFor=0; $EstudiantesFor < count($EstudianteCodigo)-1; $EstudiantesFor++) { 
+        consultas_alumno(2,0,'',$EstudianteCodigo[$EstudiantesFor],$EstudianteCodigoMatricula[$EstudiantesFor],$codigo_annlectivo,$db_link,'');
+            while($row = $result -> fetch(PDO::FETCH_BOTH))
+            {
+                // acumular correlativo y fila.
+                $num++; 
+                $indicadorFinal = trim($row['indicador_final']);  // Indicador Final.
+                if($num == 1){
+                    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                    $CodigoNie = TRIM($row['codigo_nie']);  // Codigo Nie.
+                    $ApellidosNombres = trim(cambiar_de_del_2($row['apellido_alumno'])); // Apellidos (paterno y materno) - nombres.
+                    // INFORMACION PARA EL CUADRO DE REGISTRO DE EVALUACIÓN.
+                    $objPHPExcel->getActiveSheet()->SetCellValue("B".$fila_excel, $CodigoNie);
+                    $objPHPExcel->getActiveSheet()->SetCellValue("C".$fila_excel,($ApellidosNombres));
+                    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                    $objPHPExcel->getActiveSheet()->SetCellValue($EstudianteIndicadorFinal[$numIndicadorFinal].$fila_excel,($indicadorFinal));
+                }else{
+                    $objPHPExcel->getActiveSheet()->SetCellValue($EstudianteIndicadorFinal[$numIndicadorFinal].$fila_excel,($indicadorFinal));
+                }
+                // Total de indicadores o asignaturas.
+                    if($num == $total_asignaturas){
+                        $numIndicadorFinal = 0;
+                        $fila_excel = 12;
+                    }else{
+                        $numIndicadorFinal++;
+                    }
+            }    //  FIN DEL WHILE.
+    }   // FIN DEL FOR.
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	// Tipo de Carpeta a Grabar Cuadro de Registro de Evaluación.
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		$codigo_destino = 5;
-		CrearDirectorios($path_root,$nombre_ann_lectivo,$codigo_modalidad,$codigo_destino,"");
+		CrearDirectorios($path_root,$nombreAñoLectivo,$codigoNivel,$codigo_destino,"");
 	// Nombre del archivo.
-		$nombre_archivo = replace_3("Cuadro de Promoción " . $codigo_modalidad . "-". $nombre_grado ."-".$nombre_seccion.".xlsx");
-        $contenidoOK = "Archivo Creado: " . $nombre_archivo;
+		$nombre_archivo = convertirTexto("Cuadro de Regisro de Evaluacion  -  $nombreGrado  - $nombreSeccion.xlsx");
+        $contenidoOK = "Archivo Creado: $nombre_archivo";
 	try {
         // Grabar el archivo.
             $objWriter = new Xlsx($objPHPExcel);
-            $objWriter->save($DestinoArchivo.$nombre_archivo);
+            $objWriter->save("$DestinoArchivo$nombre_archivo");
         // cambiar permisos del archivo antes grabado.
             chmod($DestinoArchivo.$nombre_archivo,07777);
 	}catch(Exception $e){
 		$respuestaOK = false;
 		$mensajeError = "No Save";
-		$contenidoOK = "Error - > ".$e;
+		$contenidoOK = "Error - > $e";
 	}
 // Armamos array para convertir a JSON
-$salidaJson = array("respuesta" => $respuestaOK,
+    $salidaJson = array("respuesta" => $respuestaOK,
 		"mensaje" => $mensajeError,
 		"contenido" => $contenidoOK);
-echo json_encode($salidaJson);	
+    echo json_encode($salidaJson);	
