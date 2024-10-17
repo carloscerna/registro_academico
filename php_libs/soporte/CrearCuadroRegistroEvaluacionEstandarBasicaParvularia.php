@@ -19,6 +19,7 @@
     $codigo_seccion = substr($codigo_all,4,2);
     $codigo_annlectivo = substr($codigo_all,6,2);
     $codigo_all_ = $codigo_bachillerato . $codigo_grado . $codigo_seccion . $codigo_annlectivo;
+    $codigo_all__ = $codigo_bachillerato . $codigo_annlectivo;
 // buscar la consulta y la ejecuta.
   consultas(13,0,$codigo_all,'','','',$db_link,'');
 //  imprimir datos del grado en general. extrar la información de la cosulta del archivo consultas.php
@@ -49,8 +50,9 @@
     if($codigoNivel == '14'){
         $objPHPExcel = $objReader->load($origen."CUADRO EDUCACION BASICA ESTANDAR DE DESARROLLO.xlsx");
         $EstudianteIndicadorFinal = ["D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z",
-            "AA","AB","AC","AD","AE","AF","AG","AH","AI","AJ","AK","AL","AM","AN","AO","AP","AQ","AR","A2","AT","AU","AW","AX","AY","AZ","BA",
-        "BB","BC","BD","BE","BF","BG","BH","BI","BJ","BK","BL","BM","BN","BO","BP","BR","BS","BT","BU","BV","BW","BX","BY","BZ","CA","CB","CC","CD"];
+            "AA","AB","AC","AD","AE","AF","AG","AH","AI","AJ","AK","AL","AM","AN","AO","AP","AQ","AR","AS","AT","AU","AV","AW","AX","AY","AZ",
+            "BA","BB","BC","BD","BE","BF","BG","BH","BI","BJ","BK","BL","BM","BN","BO","BP","BQ","BR","BS","BT","BU","BV","BW","BX","BY","BZ",
+            "CA","CB","CC","CD"];
     }else{
        // $objPHPExcel = $objReader->load($origen."CUADRO DE REGISTRO DE EDUCACION BASICA III.xlsx");
     }
@@ -77,6 +79,7 @@
     $nombreCodigoInstitucion = $_SESSION['codigo_escuela']; // Código Institucón.
     $nombreDepartamento =  $_SESSION['nombre_departamento'];
     $nombreMunicipio =  $_SESSION['nombre_municipio'];
+    $numeroDeAcuerdo = $_SESSION['numero_acuerdo'];
 ////////////////////////////////////////////////////////////////////
 //////// CONTAR CUANTAS ASIGNATURAS TIENE CADA MODALIDAD.
 //////////////////////////////////////////////////////////////////
@@ -119,6 +122,8 @@ while($row = $result -> fetch(PDO::FETCH_BOTH))	// RECORRER PARA EL CONTEO DE N�
     $objPHPExcel->getActiveSheet()->SetCellValue('C2', $nombreCodigoInstitucion);
     $objPHPExcel->getActiveSheet()->SetCellValue('X2', $nombreDepartamento);
     $objPHPExcel->getActiveSheet()->SetCellValue('X3', $nombreMunicipio);
+    $objPHPExcel->getActiveSheet()->SetCellValue('R9', $numeroDeAcuerdo);
+
 //
     $objPHPExcel->getActiveSheet()->SetCellValue('B67', $nombreDirector);
     $objPHPExcel->getActiveSheet()->SetCellValue('G67', $nombreEncargado);
@@ -126,16 +131,27 @@ while($row = $result -> fetch(PDO::FETCH_BOTH))	// RECORRER PARA EL CONTEO DE N�
     //$n_hoja++;    
     $objPHPExcel->setActiveSheetIndex(0);
 // Correlativo, numero de linea.
-    $num = 0; $fila_excel = 12; $numIndicadorFinal = 0;
+    $num = 0; $fila_excel = 12; $numIndicadorFinal = 0; $filaComponente = 11;
+    $NombreArea = []; // matriz para el conteo de elementos de cada area.
 // Verificar los estudiantes uno po uno.
-    for ($EstudiantesFor=0; $EstudiantesFor < count($EstudianteCodigo)-1; $EstudiantesFor++) { 
-        consultas_alumno(2,0,"",$EstudianteCodigo[$EstudiantesFor],$EstudianteCodigoMatricula[$EstudiantesFor],$codigo_annlectivo,$db_link,"");
+    for ($EstudiantesFor=0; $EstudiantesFor < count($EstudianteCodigo); $EstudiantesFor++) { 
+        consultas_alumno(2,0,"",$EstudianteCodigo[$EstudiantesFor],$EstudianteCodigoMatricula[$EstudiantesFor],$codigo_all__,$db_link,"");
             while($row = $result -> fetch(PDO::FETCH_BOTH))
             {
-                // acumular correlativo y fila.
-                $num++; 
-                $indicadorFinal = trim($row['indicador_final']);  // Indicador Final.
-                if($num == 1){
+                // COLOCAR EL NOMBRE DE LOS COMPONENTES DE ESTUDIO.
+                // CUANDO $ESTUDIANTESFOR = 0
+                    if($EstudiantesFor == 0){
+                        $NombreArea[] = trim(($row['nombre_area'])); //
+                        $NombreAreaDimension = trim(($row['descripcion_area_dimension'])); //
+                        $NombreAsignatura = cambiar_de_del_2(trim(($row['n_asignatura']))); // Nombre Area Dimensión.
+                        $NombreComponente = $NombreAreaDimension . " - " . $NombreAsignatura;
+                        // Escribir nombre del componente.
+                        $objPHPExcel->getActiveSheet()->SetCellValue($EstudianteIndicadorFinal[$numIndicadorFinal].$filaComponente, $NombreComponente);
+
+                    }
+                // RECORRER LA INFORMACIÓN PARA COLOCAR EL NOMBRE DEL ESTUDIANTE E INDICADOR FINAL.
+                $indicadorFinal = trim($row['indicador_p_p_2']);  // Indicador Final.
+                if($num == 0){
                     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                     $CodigoNie = TRIM($row['codigo_nie']);  // Codigo Nie.
                     $ApellidosNombres = trim(cambiar_de_del_2($row['apellido_alumno'])); // Apellidos (paterno y materno) - nombres.
@@ -148,15 +164,68 @@ while($row = $result -> fetch(PDO::FETCH_BOTH))	// RECORRER PARA EL CONTEO DE N�
                     $objPHPExcel->getActiveSheet()->SetCellValue($EstudianteIndicadorFinal[$numIndicadorFinal].$fila_excel,($indicadorFinal));
                 }
                 // Total de indicadores o asignaturas.
-                    if($num == $total_asignaturas){
+                    if($num == $total_asignaturas-1){
                         $numIndicadorFinal = 0;
-                        $fila_excel = 12;
+                        $fila_excel++;
+                        $num = 0;
                     }else{
                         $numIndicadorFinal++;
-                        $fila_excel++;
+                        // acumular correlativo y fila.
+                        $num++; 
                     }
             }    //  FIN DEL WHILE.
     }   // FIN DEL FOR.
+    // DESCRIPCION DE CADA AREA APARTIR DE LA MATRIZ NombreArea.
+        $buscarArea = ["DESARROLLO PERSONAL Y SOCIAL","MOTORA","COMUNICACION Y EXPRESIÓN","RELACION CON EL MEDIO","ALERTAS"];
+        $CeldaCombinada = []; $UltimaCelda = 0; $PrimerCelda = [];
+    // a partir de la fila 10 columna D.
+        $filaArea = 10;
+    // Contar los valores repetidos
+        $conteo = array_count_values($NombreArea);
+        //var_dump($conteo);
+        //var_dump($conteo);
+        for ($Pi=0; $Pi < count($buscarArea) ; $Pi++) {
+            if (array_key_exists($buscarArea[$Pi], $conteo)) {
+                print "elemento $Pi: " . $conteo[$buscarArea[$Pi]];
+                switch ($Pi) {
+                    case 0:
+                        $CeldaCombinada[] = $EstudianteIndicadorFinal[0] . $filaArea . ":" . $EstudianteIndicadorFinal[$conteo["$buscarArea[$Pi]"] - 1] . $filaArea;
+                        //
+                        $UltimaCelda = $EstudianteIndicadorFinal[$conteo["$buscarArea[$Pi]"]];
+                        $PrimerCelda[] = "D";
+                        $PrimerCelda[] = $EstudianteIndicadorFinal[$conteo["$buscarArea[$Pi]"]];
+                        break;
+                    case 1:
+                        $CeldaCombinada[] = $UltimaCelda . $filaArea . ":" . $EstudianteIndicadorFinal[$conteo["$buscarArea[$Pi]"] + $conteo[$buscarArea[$Pi-1]] - 1] . $filaArea;
+                        $UltimaCelda = $EstudianteIndicadorFinal[$conteo["$buscarArea[$Pi]"] + $conteo[$buscarArea[$Pi-1]]];
+                        $PrimerCelda[] = $UltimaCelda;
+                        break;
+                    case 2:
+                        $CeldaCombinada[] = $UltimaCelda . $filaArea . ":" . $EstudianteIndicadorFinal[$conteo["$buscarArea[$Pi]"] + $conteo[$buscarArea[$Pi-1]] + $conteo[$buscarArea[$Pi-2]] - 1] . $filaArea;
+                        $UltimaCelda = $EstudianteIndicadorFinal[$conteo["$buscarArea[$Pi]"] + $conteo[$buscarArea[$Pi-1]] + $conteo[$buscarArea[$Pi-2]]];
+                        $PrimerCelda[] = $UltimaCelda;
+                        break;
+                    case 3:
+                        $CeldaCombinada[] = $UltimaCelda . $filaArea . ":" . $EstudianteIndicadorFinal[$conteo["$buscarArea[$Pi]"] + $conteo[$buscarArea[$Pi-1]] + $conteo[$buscarArea[$Pi-2]] + $conteo[$buscarArea[$Pi-3]] - 1] . $filaArea;
+                        $UltimaCelda = $EstudianteIndicadorFinal[$conteo["$buscarArea[$Pi]"] + $conteo[$buscarArea[$Pi-1]] + $conteo[$buscarArea[$Pi-2]] + $conteo[$buscarArea[$Pi-3]]];
+                        $PrimerCelda[] = $UltimaCelda;
+                        break;
+                    default:
+                        break;
+                }
+            }   
+        }
+        var_dump($CeldaCombinada);
+        var_dump($PrimerCelda);
+        //$NumAreaAncho = $conteo["DESARROLLO PERSONAL Y SOCIAL"];
+        //$CeldaCombinada = $EstudianteIndicadorFinal[0].$filaArea.":".$EstudianteIndicadorFinal[$NumAreaAncho].$filaArea;    // primer titulo del area.
+        for ($Ti=0; $Ti < count($CeldaCombinada); $Ti++) { 
+            $objPHPExcel->getActiveSheet()->mergeCells($CeldaCombinada[$Ti])->setCellValue($PrimerCelda[$Ti].$filaArea,$buscarArea[$Ti]);    # code...
+            $objPHPExcel->getActiveSheet()->getStyle($CeldaCombinada[$Ti])->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+            $objPHPExcel->getActiveSheet()->getStyle($CeldaCombinada[$Ti])->getAlignment()->setVertical(\PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER);
+        }
+        
+        //$objPHPExcel->getActiveSheet()->mergeCells("D".$filaArea,"F".$filaArea)->setCellValue("D".$filaArea,$buscarArea[0]);
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Tipo de Carpeta a Grabar Cuadro de Registro de Evaluación.
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
