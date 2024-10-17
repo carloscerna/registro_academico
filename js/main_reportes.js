@@ -437,7 +437,9 @@ if (lstlist_nominas == 'cuadro-de-promocion' && $(this).attr('data-accion') == '
                                 toastr.error(response.mensaje, "Sistema");
                         }
                         else{
-                                toastr.info(response.contenido, "Sistema");}
+                                toastr.options.showEasing = 'swing';
+                                toastr.options.hideEasing = 'linear';
+                                toastr.info(response.contenido, "Sistema de Registro Académico");}
                 },
                 error:function(){
                         error_();

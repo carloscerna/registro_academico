@@ -121,7 +121,7 @@ while($row = $result -> fetch(PDO::FETCH_BOTH))	// RECORRER PARA EL CONTEO DE NÂ
     $objPHPExcel->getActiveSheet()->SetCellValue('X3', $nombreMunicipio);
 //
     $objPHPExcel->getActiveSheet()->SetCellValue('B67', $nombreDirector);
-    $objPHPExcel->getActiveSheet()->SetCellValue('T67', $nombreEncargado);
+    $objPHPExcel->getActiveSheet()->SetCellValue('G67', $nombreEncargado);
 // Indicamos que se pare en la hoja uno del libro
     //$n_hoja++;    
     $objPHPExcel->setActiveSheetIndex(0);
@@ -129,7 +129,7 @@ while($row = $result -> fetch(PDO::FETCH_BOTH))	// RECORRER PARA EL CONTEO DE NÂ
     $num = 0; $fila_excel = 12; $numIndicadorFinal = 0;
 // Verificar los estudiantes uno po uno.
     for ($EstudiantesFor=0; $EstudiantesFor < count($EstudianteCodigo)-1; $EstudiantesFor++) { 
-        consultas_alumno(2,0,'',$EstudianteCodigo[$EstudiantesFor],$EstudianteCodigoMatricula[$EstudiantesFor],$codigo_annlectivo,$db_link,'');
+        consultas_alumno(2,0,"",$EstudianteCodigo[$EstudiantesFor],$EstudianteCodigoMatricula[$EstudiantesFor],$codigo_annlectivo,$db_link,"");
             while($row = $result -> fetch(PDO::FETCH_BOTH))
             {
                 // acumular correlativo y fila.
@@ -153,6 +153,7 @@ while($row = $result -> fetch(PDO::FETCH_BOTH))	// RECORRER PARA EL CONTEO DE NÂ
                         $fila_excel = 12;
                     }else{
                         $numIndicadorFinal++;
+                        $fila_excel++;
                     }
             }    //  FIN DEL WHILE.
     }   // FIN DEL FOR.
