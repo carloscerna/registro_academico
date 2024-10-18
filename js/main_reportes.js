@@ -518,6 +518,7 @@ if (lstlist_nominas == 'cuadro-de-notas-hoja-de-calculo' && $(this).attr('data-a
 // bloque para los diferentes informes de notas.
 ////////////////////////////////////////////////////
 if (lstlist_notas == 'boleta_notas' && $(this).attr('data-accion') == 'listados_02') {
+        alert("Boleta de Calificaciones.");
         parvularia_seccion = reporte_ok.substring(2,2);
         // Verificar si el Parvularia... primeros grados y segundo y tercero focalizado.
         if(varbach >= '13' && varbach <= '14' || varbach == '17' || varbach == '16' || varbach == '18'){

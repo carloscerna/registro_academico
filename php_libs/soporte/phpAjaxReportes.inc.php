@@ -28,7 +28,8 @@ if($errorDbConexion == false){
 				if(empty($codigo_modalidad)){
 
 				}else{
-					$query = "SELECT orgs.codigo_bachillerato, orgs.codigo_grado, orgs.codigo_seccion, orgs.codigo_ann_lectivo, orgs.codigo_turno,
+					$query = "SELECT orgs.codigo_bachillerato, orgs.codigo_grado, orgs.codigo_seccion, orgs.codigo_ann_lectivo, orgs.codigo_turno, encargado.codigo_docente,
+						btrim(per.nombres || CAST(' ' AS VARCHAR) || per.apellidos) as nombre_docente,
 						bach.nombre as nombre_bachillerato, gan.nombre as nombre_grado, sec.nombre as nombre_seccion, ann.nombre as nombre_ann_lectivo, tur.nombre as nombre_turno
 						FROM organizacion_grados_secciones orgs
 						INNER JOIN bachillerato_ciclo bach ON bach.codigo = orgs.codigo_bachillerato
@@ -36,8 +37,10 @@ if($errorDbConexion == false){
 						INNER JOIN seccion sec ON sec.codigo = orgs.codigo_seccion
 						INNER JOIN ann_lectivo ann ON ann.codigo = orgs.codigo_ann_lectivo
 						INNER JOIN turno tur ON tur.codigo = orgs.codigo_turno
-						 WHERE orgs.codigo_bachillerato = '$codigo_modalidad' and orgs.codigo_ann_lectivo = '$codigo_annlectivo'
-							ORDER BY orgs.codigo_grado, orgs.codigo_seccion ASC";
+						INNER JOIN encargado_grado encargado ON encargado.codigo_bachillerato = orgs.codigo_bachillerato and encargado.codigo_grado = orgs.codigo_grado and encargado.codigo_seccion = orgs.codigo_seccion and encargado.codigo_ann_lectivo = orgs.codigo_ann_lectivo
+						INNER JOIN personal per ON per.id_personal = encargado.codigo_docente
+						 	WHERE orgs.codigo_bachillerato = '$codigo_modalidad' and orgs.codigo_ann_lectivo = '$codigo_annlectivo'
+								ORDER BY orgs.codigo_grado, orgs.codigo_seccion ASC";
 				}
 				// Ejecutamos el Query.
 				$consulta = $dblink -> query($query);
@@ -53,11 +56,20 @@ if($errorDbConexion == false){
 						$num++; $codigo_grado = $listado['codigo_grado']; $codigo_seccion = $listado['codigo_seccion'];
 						$codigo_modalidad = $listado['codigo_bachillerato']; $codigo_annlectivo = trim($listado['codigo_ann_lectivo']);
 						$codigo_turno = $listado['codigo_turno']; $nombre_bachillerato = $listado['nombre_bachillerato'];
-						
+						$nombreGrado = trim($listado['nombre_grado']);
+						$nombreSeccion = trim($listado['nombre_seccion']);
+						$nombreTurno = trim($listado['nombre_turno']);
+						$nombreDocente = trim($listado['nombre_docente']);
+						//
 						$todos = $codigo_modalidad.$codigo_grado.$codigo_seccion.$codigo_annlectivo.$codigo_turno;
-						
+						//
 						$contenidoOK .= '<tr><td style="width: 5px">'.$num.'</td>'
-							.'<td style="width: 25px"><label>'.trim($listado['nombre_grado']).' - ' . trim($listado['nombre_seccion']). ' - '.trim($listado['nombre_turno']).'</label></td>'
+							.'<td style="width: 25px"><label>'. $nombreGrado.' - ' . $nombreSeccion . ' - '. $nombreTurno.'</label>
+								<br>Encargado:
+								<span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-primary">
+									<span "class=visually-hidden">'.$nombreDocente.'</span>
+								</span>
+							</td>'
 							.'<td style="width: 35px"><a data-accion=listados_01 class="btn btn-md btn-secondary data-toggle="tooltip" data-placement="top" title="Ver o Imprimir" href='.$todos.'><span class="fas fa-print"></span></a>'.'</td>'
 							.'<td style="width: 35px"><a data-accion=listados_02 class="btn btn-md btn-secondary data-toggle="tooltip" data-placement="top" title="Ver o Imprimir" href='.$todos.'><span class="fas fa-print"></span></a>'.'</td>'
 							.'</tr>';

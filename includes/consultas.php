@@ -1284,4 +1284,35 @@ function consulta_indicadores($ejecutar,$cerrar,$codigo_all,$codigo_grado,$codig
 	    
 	    $result_indicadores = $db_link -> query($query);
     }
+    //
+    if($ejecutar == 19){
+        global $totalMasculino, $totalFemenino, $totalMasculinoRetirados, $totalFemeninoRetirados;
+        $query = "SELECT am.codigo_alumno,  a.codigo_genero, am.retirado
+            FROM alumno a
+            INNER JOIN alumno_matricula am ON a.id_alumno = am.codigo_alumno
+            INNER JOIN bachillerato_ciclo bach ON bach.codigo = am.codigo_bach_o_ciclo
+            INNER JOIN grado_ano gan ON gan.codigo = am.codigo_grado
+            INNER JOIN seccion sec ON sec.codigo = am.codigo_seccion
+            INNER JOIN ann_lectivo ann ON ann.codigo = am.codigo_ann_lectivo
+                WHERE btrim(am.codigo_bach_o_ciclo || am.codigo_grado || am.codigo_seccion || am.codigo_ann_lectivo  || am.codigo_turno) = '$codigo_all'
+                    ORDER BY am.codigo_alumno";
+        //
+            $result_indicadores = $db_link -> query($query);
+        //
+            while($row = $result_indicadores -> fetch(PDO::FETCH_BOTH))
+            {
+                $codigoGenero = $row['codigo_genero'];
+                //
+                switch ($codigoGenero) {
+                    case 'value':
+                        # code...
+                        break;
+                    
+                    default:
+                        # code...
+                        break;
+                }
+            }
+    }
+
 }
