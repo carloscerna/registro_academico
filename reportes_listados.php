@@ -1,7 +1,6 @@
 <?php
 session_name('demoUI');
 session_start();
-
 // Comprobar si existen las variables de SESSION.
 if(empty($_SESSION['userNombre']))
 {
@@ -10,7 +9,7 @@ if(empty($_SESSION['userNombre']))
 // Es utilizando en templateEngine.inc.php
 $root = '';
     include('includes/templateEngine.inc.php');
-
+    //
     $twig->display('layout-reportes.html',array(
         "userName" => $_SESSION['userNombre'],
         "userID" => $_SESSION['userID'],
@@ -23,4 +22,3 @@ $root = '';
         "codigo_institucion" => $_SESSION['codigo_institucion']
     ));
 }
-?>

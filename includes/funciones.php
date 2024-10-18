@@ -1060,5 +1060,3 @@ function fechaYMD()
     
     return $fecha;
 }*/
-
-?>

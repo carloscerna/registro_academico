@@ -1194,7 +1194,7 @@ function consulta_indicadores($ejecutar,$cerrar,$codigo_all,$codigo_grado,$codig
    
    //*************************************************************
    //		CONSULTA DE GRADOS PARA CONSOLIDAR RESULTADOS
-      // total masculino.
+      // total masculino por Grado.
     if($ejecutar == 9)
     {
         $query = "SELECT count(genero) as total_masculino from alumno_matricula am 
@@ -1203,7 +1203,7 @@ function consulta_indicadores($ejecutar,$cerrar,$codigo_all,$codigo_grado,$codig
 	    
 	    $result_indicadores = $db_link -> query($query);
     }
-     // total femenino.
+     // total femenino por Grado.
     if($ejecutar == 10)
     {
         $query = "SELECT count(genero) as total_femenino from alumno_matricula am 
@@ -1212,7 +1212,7 @@ function consulta_indicadores($ejecutar,$cerrar,$codigo_all,$codigo_grado,$codig
 	    
 	    $result_indicadores = $db_link -> query($query);
     }
-    // total masculino deserción.
+    // total masculino Retirado por Grado.
     if($ejecutar == 11)
     {
         $query = "SELECT count(retirado) as total_masculino_desercion from alumno_matricula am 
@@ -1221,7 +1221,7 @@ function consulta_indicadores($ejecutar,$cerrar,$codigo_all,$codigo_grado,$codig
 	    
 	    $result_indicadores = $db_link -> query($query);
     }
-        // total femenino deserción.
+        // total femenino Retirado por Grado..
     if($ejecutar == 12)
     {
         $query = "SELECT count(retirado) as total_femenino_desercion from alumno_matricula am 
@@ -1230,7 +1230,7 @@ function consulta_indicadores($ejecutar,$cerrar,$codigo_all,$codigo_grado,$codig
 	    
 	    $result_indicadores = $db_link -> query($query);
     }
-        // total masculino deserción.
+        // total masculino Repitente..
     if($ejecutar == 13)
     {
         $query = "SELECT count(repitente) as total_masculino_repitente from alumno_matricula am 
@@ -1239,7 +1239,7 @@ function consulta_indicadores($ejecutar,$cerrar,$codigo_all,$codigo_grado,$codig
 	    
 	    $result_indicadores = $db_link -> query($query);
     }
-        // total femenino deserción.
+        // total femenino Repitente.
     if($ejecutar == 14)
     {
         $query = "SELECT count(repitente) as total_femenino_repitente from alumno_matricula am 
@@ -1248,7 +1248,7 @@ function consulta_indicadores($ejecutar,$cerrar,$codigo_all,$codigo_grado,$codig
 	    
 	    $result_indicadores = $db_link -> query($query);
     }
-         // total masculino deserción.
+         // total masculino Sobreedad.
     if($ejecutar == 15)
     {
         $query = "SELECT count(sobreedad) as total_masculino_sobreedad from alumno_matricula am 
@@ -1257,7 +1257,7 @@ function consulta_indicadores($ejecutar,$cerrar,$codigo_all,$codigo_grado,$codig
 	    
 	    $result_indicadores = $db_link -> query($query);
     }
-        // total femenino deserción.
+        // total femenino Sobreedad.
     if($ejecutar == 16)
     {
         $query = "SELECT count(sobreedad) as total_femenino_sobreedad from alumno_matricula am 

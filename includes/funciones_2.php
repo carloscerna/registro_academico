@@ -92,7 +92,6 @@ function replace_2($s) {
 	return $s;
 }
 
-
 function replace_($s) {
 		$s = mb_convert_encoding($s, "UTF-8","auto");
 		$s = preg_replace("/á|à|â|ã|ª/","a",$s);
@@ -112,4 +111,3 @@ function replace_($s) {
 		$s = preg_replace('/[^a-zA-Z0-9_.-]/', '', $s);
 		return $s;
 	}
-?>

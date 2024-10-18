@@ -1,25 +1,14 @@
 <?php
-//session_name('demoUI');
-//session_start();
-// limpiar cache.
 clearstatcache();
-// Script para ejecutar AJAX
-// cambiar a utf-8.
 header("Content-Type: text/html;charset=iso-8859-1");
-// Insertar y actualizar tabla de usuarios
-//sleep(1);
-
 // Inicializamos variables de mensajes y JSON
-$respuestaOK = false;
-$mensajeError = "No se puede ejecutar la aplicación";
-$contenidoOK = "";
+	$respuestaOK = false;
+	$mensajeError = "No se puede ejecutar la aplicación";
+	$contenidoOK = "";
 // ruta de los archivos con su carpeta
     $path_root=trim($_SERVER['DOCUMENT_ROOT']);
-    
 // Incluimos el archivo de funciones y conexión a la base de datos
-
-include($path_root."/registro_academico/includes/mainFunctions_conexion.php");
-
+	include($path_root."/registro_academico/includes/mainFunctions_conexion.php");
 // Validar conexión con la base de datos
 if($errorDbConexion == false){
 	// Validamos qe existan las variables post
@@ -35,7 +24,7 @@ if($errorDbConexion == false){
 				// Armamos el query.
 				$codigo_annlectivo = trim($_POST['lstannlectivo']);
 				$codigo_modalidad = trim($_POST['lstmodalidad']);
-				
+				//
 				if(empty($codigo_modalidad)){
 
 				}else{
@@ -46,23 +35,18 @@ if($errorDbConexion == false){
 						INNER JOIN grado_ano gan ON gan.codigo = orgs.codigo_grado
 						INNER JOIN seccion sec ON sec.codigo = orgs.codigo_seccion
 						INNER JOIN ann_lectivo ann ON ann.codigo = orgs.codigo_ann_lectivo
-						INNER JOIN turno tur ON tur.codigo = orgs.codigo_turno".
-						" WHERE ".
-						"orgs.codigo_bachillerato = '".$codigo_modalidad.
-						"' and orgs.codigo_ann_lectivo = '".$codigo_annlectivo.
-						"' ORDER BY orgs.codigo_grado, orgs.codigo_seccion ASC";
-  
+						INNER JOIN turno tur ON tur.codigo = orgs.codigo_turno
+						 WHERE orgs.codigo_bachillerato = '$codigo_modalidad' and orgs.codigo_ann_lectivo = '$codigo_annlectivo'
+							ORDER BY orgs.codigo_grado, orgs.codigo_seccion ASC";
 				}
 				// Ejecutamos el Query.
 				$consulta = $dblink -> query($query);
-
+				//
 				if($consulta -> rowCount() != 0){
 					$respuestaOK = true;
 					$num = 0;
 				        // rellenar antes el $contenidoOK.
-					$contenidoOK = "
-						    ";
-						    
+					$contenidoOK = "";
 					// convertimos el objeto
 					while($listado = $consulta -> fetch(PDO::FETCH_BOTH))
 					{
@@ -84,7 +68,7 @@ if($errorDbConexion == false){
 					$respuestaOK = true;
 					$contenidoOK = '
 						<tr id="sinDatos">
-							<td colspan="8" class="centerTXT">No Hay Registros de este empleado...</td>
+							<td colspan="8" class="centerTXT">No Hay Registros.</td>
 						</tr>
 					'.$query;
 				}
@@ -100,11 +84,8 @@ if($errorDbConexion == false){
 }
 else{
 	$mensajeError = 'No se puede establecer conexión con la base de datos';}
-
 // Armamos array para convertir a JSON
 $salidaJson = array("respuesta" => $respuestaOK,
 		"mensaje" => $mensajeError,
 		"contenido" => $contenidoOK);
-
 echo json_encode($salidaJson);
-?>
