@@ -128,7 +128,7 @@ function consultas($ejecutar,$cerrar,$codigo_bachillerato,$codigo_grado,$codigo_
 	    $order = ' ORDER BY a.genero, apellido_alumno ASC';
 	}
 	
-     $query = "SELECT a.estudio_parvularia, a.id_alumno, a.codigo_nie, btrim(a.apellido_paterno || CAST(' ' AS VARCHAR) || a.apellido_materno || CAST(', ' AS VARCHAR) || a.nombre_completo) as apellido_alumno,
+    $query = "SELECT a.estudio_parvularia, a.id_alumno, a.codigo_nie, btrim(a.apellido_paterno || CAST(' ' AS VARCHAR) || a.apellido_materno || CAST(', ' AS VARCHAR) || a.nombre_completo) as apellido_alumno,
        btrim(a.apellido_paterno || CAST(' ' AS VARCHAR) || a.apellido_materno) as apellidos_alumno, a.nombre_completo, a.apellido_paterno, a.apellido_materno,
        btrim(a.nombre_completo || CAST(' ' AS VARCHAR) || a.apellido_paterno  || CAST(' ' AS VARCHAR) || a.apellido_materno) as nombre_completo_alumno,
        ae.codigo_alumno, ae.nombres, ae.encargado, ae.dui as encargado_dui, ae.telefono as telefono_encargado, ae.fecha_nacimiento as encargado_fecha_nacimiento, ae.direccion as encargado_direccion, ae.telefono as encargado_telefono,
@@ -677,7 +677,7 @@ function consultas_alumno($ejecutar,$cerrar,$buscar_nombre,$codigo_alumno,$codig
     }            
     if($ejecutar == 2)
     {
-        $query = "SELECT DISTINCT a.codigo_nie, btrim(a.apellido_paterno || CAST(' ' AS VARCHAR) || a.apellido_materno || CAST(', ' AS VARCHAR) || a.nombre_completo) as apellido_alumno,
+      $query = "SELECT DISTINCT a.codigo_nie, btrim(a.apellido_paterno || CAST(' ' AS VARCHAR) || a.apellido_materno || CAST(', ' AS VARCHAR) || a.nombre_completo) as apellido_alumno,
 		    a.apellido_paterno, a.nombre_completo, btrim(a.apellido_paterno || CAST(' ' AS VARCHAR) || a.apellido_materno) as apellidos_alumno, a.foto, a.codigo_genero,
             am.codigo_bach_o_ciclo, am.pn, bach.nombre as nombre_bachillerato, am.codigo_ann_lectivo, ann.nombre as nombre_ann_lectivo, am.codigo_grado, 
             gan.nombre as nombre_grado, am.codigo_seccion, am.retirado, am.id_alumno_matricula as codigo_matricula, am.id_alumno_matricula as cod_matricula,
@@ -1286,7 +1286,7 @@ function consulta_indicadores($ejecutar,$cerrar,$codigo_all,$codigo_grado,$codig
     }
     //
     if($ejecutar == 19){
-        global $totalMasculino, $totalFemenino, $totalMasculinoRetirados, $totalFemeninoRetirados;
+        global $totalMasculino, $totalFemenino, $totalMasculinoRetirados, $totalFemeninoRetirados, $EstudianteRetirados;
         $query = "SELECT am.codigo_alumno,  a.codigo_genero, am.retirado
             FROM alumno a
             INNER JOIN alumno_matricula am ON a.id_alumno = am.codigo_alumno
@@ -1299,20 +1299,27 @@ function consulta_indicadores($ejecutar,$cerrar,$codigo_all,$codigo_grado,$codig
         //
             $result_indicadores = $db_link -> query($query);
         //
+            $codigoGenero = ""; $EstudianteRetirados = ""; $totalFemeninoRetirados = 0; $totalMasculinoRetirados = 0;
             while($row = $result_indicadores -> fetch(PDO::FETCH_BOTH))
             {
                 $codigoGenero = $row['codigo_genero'];
+                $EstudianteRetirados = $row['retirado'];
                 //
                 switch ($codigoGenero) {
-                    case 'value':
-                        # code...
+                    case '01':  // masculino.
+                        $totalMasculino++;
+                        if($EstudianteRetirados == '1'){
+                            $totalMasculinoRetirados++;
+                        }
                         break;
-                    
-                    default:
-                        # code...
+                    case '02':  // femenino.
+                        $totalFemenino++;
+                        if($EstudianteRetirados == '1'){
+                            $totalFemeninoRetirados++;
+                        }
                         break;
                 }
-            }
+            }   // fin dle while.
     }
 
 }

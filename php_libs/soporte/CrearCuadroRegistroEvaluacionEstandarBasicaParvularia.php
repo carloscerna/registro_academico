@@ -20,6 +20,24 @@
     $codigo_annlectivo = substr($codigo_all,6,2);
     $codigo_all_ = $codigo_bachillerato . $codigo_grado . $codigo_seccion . $codigo_annlectivo;
     $codigo_all__ = $codigo_bachillerato . $codigo_annlectivo;
+// Establecer formato para la fecha.
+    date_default_timezone_set('America/El_Salvador');
+    setlocale(LC_TIME,'es_SV');
+// CREAR MATRIZ DE MESES Y FECH.
+    $meses = ["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
+//Crear una línea. Fecha con getdate();
+    $hoy = getdate();
+    $NombreDia = $hoy["wday"];  // dia de la semana Nombre.
+    $dia = $hoy["mday"];    // dia de la semana
+    $mes = $hoy["mon"];     // mes
+    $año = $hoy["year"];    // año
+    $total_de_dias = cal_days_in_month(CAL_GREGORIAN, (int)$mes, $año);
+    $NombreMes = $meses[(int)$mes - 1];
+// definimos 2 array uno para los nombre de los dias y otro para los nombres de los meses
+    $nombresDias = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
+    $nombresMeses = [1=>"Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
+    $fecha = convertirTexto("Santa Ana, $nombresDias[$NombreDia] $dia de $nombresMeses[$mes] de $año");
+    setlocale(LC_MONETARY,"es_ES");
 // buscar la consulta y la ejecuta.
     consultas(13,0,$codigo_all,'','','',$db_link,'');
 //  imprimir datos del grado en general. extrar la información de la cosulta del archivo consultas.php
@@ -47,12 +65,12 @@
     $objReader = \PhpOffice\PhpSpreadsheet\IOFactory::createReader("Xlsx");
     $origen = $path_root."/registro_academico/formatos_hoja_de_calculo/";
 //
-    if($codigoNivel == '14'){
+    if($codigoNivel == '14' || $codigoNivel == '13'){
         $objPHPExcel = $objReader->load($origen."CUADRO EDUCACION BASICA ESTANDAR DE DESARROLLO.xlsx");
         $EstudianteIndicadorFinal = ["D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z",
             "AA","AB","AC","AD","AE","AF","AG","AH","AI","AJ","AK","AL","AM","AN","AO","AP","AQ","AR","AS","AT","AU","AV","AW","AX","AY","AZ",
             "BA","BB","BC","BD","BE","BF","BG","BH","BI","BJ","BK","BL","BM","BN","BO","BP","BQ","BR","BS","BT","BU","BV","BW","BX","BY","BZ",
-            "CA","CB","CC","CD"];
+            "CA","CB","CC","CD","CE","CF","CG","CH","CI","CJ","CK","CL","CM","CN"];
     }else{
        // $objPHPExcel = $objReader->load($origen."CUADRO DE REGISTRO DE EDUCACION BASICA III.xlsx");
     }
@@ -80,6 +98,7 @@
     $nombreDepartamento =  $_SESSION['nombre_departamento'];
     $nombreMunicipio =  $_SESSION['nombre_municipio'];
     $numeroDeAcuerdo = $_SESSION['numero_acuerdo'];
+    $diaEntrega = $_SESSION['dia_entrega'];
 ////////////////////////////////////////////////////////////////////
 //////// CONTAR CUANTAS ASIGNATURAS TIENE CADA MODALIDAD.
 //////////////////////////////////////////////////////////////////
@@ -123,7 +142,7 @@
     $objPHPExcel->getActiveSheet()->SetCellValue('X2', $nombreDepartamento);
     $objPHPExcel->getActiveSheet()->SetCellValue('X3', $nombreMunicipio);
     $objPHPExcel->getActiveSheet()->SetCellValue('R9', $numeroDeAcuerdo);
-
+    $objPHPExcel->getActiveSheet()->SetCellValue('C63', $fecha);
 //
     $objPHPExcel->getActiveSheet()->SetCellValue('B67', $nombreDirector);
     $objPHPExcel->getActiveSheet()->SetCellValue('G67', $nombreEncargado);
@@ -144,7 +163,13 @@
                         $NombreArea[] = trim(($row['nombre_area'])); //
                         $NombreAreaDimension = trim(($row['descripcion_area_dimension'])); //
                         $NombreAsignatura = cambiar_de_del_2(trim($row['n_asignatura'])); // Nombre Area Dimensión.
-                        $NombreComponente = $NombreAreaDimension . " - " . $NombreAsignatura;
+                        // condicinar el Area Demnsión cuando sea igual.
+                            if($NombreAreaDimension == "Ninguno"){
+                                $NombreAreaDimension = "";
+                                $NombreComponente = $NombreAsignatura;
+                            }else{
+                                $NombreComponente = $NombreAreaDimension . " - " . $NombreAsignatura;
+                            }
                         // Escribir nombre del componente.
                         $objPHPExcel->getActiveSheet()->SetCellValue($EstudianteIndicadorFinal[$numIndicadorFinal].$filaComponente, $NombreComponente);
 
@@ -176,7 +201,12 @@
             }    //  FIN DEL WHILE.
     }   // FIN DEL FOR.
     // DESCRIPCION DE CADA AREA APARTIR DE LA MATRIZ NombreArea.
-        $buscarArea = ["DESARROLLO PERSONAL Y SOCIAL","MOTORA","COMUNICACION Y EXPRESIÓN","RELACION CON EL MEDIO","ALERTAS"];
+        if($codigoGrado == "4P" || $codigoGrado == "5P"){
+            $buscarArea = ["Alertas","DESARROLLO PERSONAL Y SOCIAL","MOTORA","COMUNICACION Y EXPRESIÓN","RELACION CON EL MEDIO","ALERTAS"];
+        }else{
+            $buscarArea = ["DESARROLLO PERSONAL Y SOCIAL","MOTORA","COMUNICACION Y EXPRESIÓN","RELACION CON EL MEDIO","ALERTAS"];
+        }
+
         $CeldaCombinada = []; $UltimaCelda = 0; $PrimerCelda = [];
     // a partir de la fila 10 columna D.
         $filaArea = 10;
@@ -229,12 +259,22 @@
             $objPHPExcel->getActiveSheet()->getStyle($CeldaCombinada[$Ti])->getAlignment()->setVertical(\PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER);
         }
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // CONTEO PARA EL CUADRO ESTADISTICO.
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    consulta_indicadores(19,0,$codigo_all,'','','',$db_link,'');
+        global $totalMasculino, $totalFemenino, $totalMasculinoRetirados, $totalFemeninoRetirados, $EstudianteRetirados;
+            $objPHPExcel->getActiveSheet()->SetCellValue('W66', $totalMasculino);
+            $objPHPExcel->getActiveSheet()->SetCellValue('W67', $totalFemenino);
+            //
+            $objPHPExcel->getActiveSheet()->SetCellValue('Y66', $totalMasculinoRetirados);
+            $objPHPExcel->getActiveSheet()->SetCellValue('Y67', $totalFemeninoRetirados);
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Tipo de Carpeta a Grabar Cuadro de Registro de Evaluación.
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		$codigo_destino = 5;
 		CrearDirectorios($path_root,$nombreAñoLectivo,$codigoNivel,$codigo_destino,"");
 	// Nombre del archivo.
-		$nombre_archivo = convertirTexto("Cuadro de Regisro de Evaluacion  -  $nombreGrado  - $nombreSeccion.xlsx");
+		$nombre_archivo = convertirTexto("Cuadro de Regisro de Evaluacion  -  "). $nombreGrado . " - " . $nombreSeccion . ".xlsx";
         $contenidoOK = "Archivo Creado: $nombre_archivo";
 	try {
         // Grabar el archivo.
