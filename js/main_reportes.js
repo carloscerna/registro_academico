@@ -423,6 +423,9 @@ if (lstlist_nominas == 'cuadro-de-promocion' && $(this).attr('data-accion') == '
                         case "Educación Parvularia - Estándar de Desarrollo":
                                 $url_ = "php_libs/soporte/CrearCuadroRegistroEvaluacionEstandarBasicaParvularia.php";
                         break;
+                        case "Educación Básica - Segundo y Tercer Grado Focalizado":
+                                $url_ = "php_libs/soporte/CrearCuadroRegistroEvaluacionEstandarBasicaParvularia.php";
+                        break;
                         default:
                                 $url_ = "php_libs/soporte/CrearCuadrodePromocion.php";                
                         break;

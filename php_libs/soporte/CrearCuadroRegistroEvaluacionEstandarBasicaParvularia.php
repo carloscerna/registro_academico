@@ -65,14 +65,15 @@
     $objReader = \PhpOffice\PhpSpreadsheet\IOFactory::createReader("Xlsx");
     $origen = $path_root."/registro_academico/formatos_hoja_de_calculo/";
 //
-    if($codigoNivel == '14' || $codigoNivel == '13'){
+    if($codigoNivel == '14' || $codigoNivel == '13' || $codigoNivel == '16'){
         $objPHPExcel = $objReader->load($origen."CUADRO EDUCACION BASICA ESTANDAR DE DESARROLLO.xlsx");
         $EstudianteIndicadorFinal = ["D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z",
             "AA","AB","AC","AD","AE","AF","AG","AH","AI","AJ","AK","AL","AM","AN","AO","AP","AQ","AR","AS","AT","AU","AV","AW","AX","AY","AZ",
             "BA","BB","BC","BD","BE","BF","BG","BH","BI","BJ","BK","BL","BM","BN","BO","BP","BQ","BR","BS","BT","BU","BV","BW","BX","BY","BZ",
             "CA","CB","CC","CD","CE","CF","CG","CH","CI","CJ","CK","CL","CM","CN"];
-    }else{
-       // $objPHPExcel = $objReader->load($origen."CUADRO DE REGISTRO DE EDUCACION BASICA III.xlsx");
+    }else if($codigoNivel == '116'){
+        $objPHPExcel = $objReader->load($origen."CUADRO REGISTRO DE EVALUACION EDUCACION BASICA SEGUNDO Y TERCERO FOCALIZADO.xlsx");
+        $EstudianteIndicadorFinal = ["D","E","F","G","H","I","J"];
     }
     // OBTENER EL NOMBRE DEL DOCENTE ENCARGADO.
     $query_encargado = "SELECT eg.id_encargado_grado, eg.encargado, btrim(p.nombres || CAST(' ' AS VARCHAR) || p.apellidos) as nombre_docente, eg.codigo_docente, bach.nombre, gann.nombre, sec.nombre, ann.nombre
@@ -132,13 +133,16 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Escribimos en la hoja en la celda e3. los datos del bachillerato, grado, sección, año lectivo, etc.
+    $objPHPExcel->getActiveSheet()->SetCellValue('H2', $nombreInstitucion);
+    $objPHPExcel->getActiveSheet()->SetCellValue('C2', $nombreCodigoInstitucion);
+    //
     $objPHPExcel->getActiveSheet()->SetCellValue('C3', $nombreNivel);
     $objPHPExcel->getActiveSheet()->SetCellValue('C4', $nombreGrado);
+    //
     $objPHPExcel->getActiveSheet()->SetCellValue('F4', $nombreSeccion);
     $objPHPExcel->getActiveSheet()->SetCellValue('K4', $nombreTurno);
     $objPHPExcel->getActiveSheet()->SetCellValue('S4', $nombreAñoLectivo);
-    $objPHPExcel->getActiveSheet()->SetCellValue('H2', $nombreInstitucion);
-    $objPHPExcel->getActiveSheet()->SetCellValue('C2', $nombreCodigoInstitucion);
+
     $objPHPExcel->getActiveSheet()->SetCellValue('X2', $nombreDepartamento);
     $objPHPExcel->getActiveSheet()->SetCellValue('X3', $nombreMunicipio);
     $objPHPExcel->getActiveSheet()->SetCellValue('R9', $numeroDeAcuerdo);
@@ -175,7 +179,26 @@
 
                     }
                 // RECORRER LA INFORMACIÓN PARA COLOCAR EL NOMBRE DEL ESTUDIANTE E INDICADOR FINAL.
-                $indicadorFinal = trim($row['indicador_p_p_2']);  // Indicador Final.
+                    if($codigoNivel == '16'){
+                        $indicadorFinal = ucwords(trim($row['indicador_p_p_2']));  // Indicador Final.
+                        switch ($indicadorFinal) {
+                            case 'Sobresaliente':
+                                $indicadorFinal = "SO";  // Indicador Final.
+                                break;
+                            case 'Satisfactorio':
+                                $indicadorFinal = "SA";  // Indicador Final.
+                                break;
+                            case 'En proceso':
+                                $indicadorFinal = "E/P";  // Indicador Final.
+                                break;
+                            case 'No lo hace':
+                                $indicadorFinal = "N/H";  // Indicador Final.
+                                break;
+                        }
+                    }else{
+                        $indicadorFinal = trim($row['indicador_p_p_2']);  // Indicador Final.
+                    }
+                //
                 if($num == 0){
                     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                     $CodigoNie = TRIM($row['codigo_nie']);  // Codigo Nie.
@@ -203,8 +226,10 @@
     // DESCRIPCION DE CADA AREA APARTIR DE LA MATRIZ NombreArea.
         if($codigoGrado == "4P" || $codigoGrado == "5P"){
             $buscarArea = ["Alertas","DESARROLLO PERSONAL Y SOCIAL","MOTORA","COMUNICACION Y EXPRESIÓN","RELACION CON EL MEDIO","ALERTAS"];
-        }else{
+        }else if($codigoGrado == '6P'){
             $buscarArea = ["DESARROLLO PERSONAL Y SOCIAL","MOTORA","COMUNICACION Y EXPRESIÓN","RELACION CON EL MEDIO","ALERTAS"];
+        }else{
+            $buscarArea = ["LENGUAJE","MATEMÁTICA","CIENCIA Y TECNOLOGÍA","ESTUDIOS SOCIALES","EDUCACIÓN FÍSICA","EDUCACIÓN ARTÍSTICA","INGLES"];
         }
 
         $CeldaCombinada = []; $UltimaCelda = 0; $PrimerCelda = [];
@@ -243,6 +268,16 @@
                     case 4: // AREA
                         $CeldaCombinada[] = $UltimaCelda . $filaArea . ":" . $EstudianteIndicadorFinal[$conteo["$buscarArea[$Pi]"] + $conteo[$buscarArea[$Pi-1]] + $conteo[$buscarArea[$Pi-2]] + $conteo[$buscarArea[$Pi-3]] + $conteo[$buscarArea[$Pi-4]] - 1] . $filaArea;
                         $UltimaCelda = $EstudianteIndicadorFinal[$conteo["$buscarArea[$Pi]"] + $conteo[$buscarArea[$Pi-1]] + $conteo[$buscarArea[$Pi-2]] + $conteo[$buscarArea[$Pi-3]] + $conteo[$buscarArea[$Pi-4]]];
+                        $PrimerCelda[] = $UltimaCelda;
+                        break;
+                    case 5: // AREA
+                        $CeldaCombinada[] = $UltimaCelda . $filaArea . ":" . $EstudianteIndicadorFinal[$conteo["$buscarArea[$Pi]"] + $conteo[$buscarArea[$Pi-1]] + $conteo[$buscarArea[$Pi-2]] + $conteo[$buscarArea[$Pi-3]] + $conteo[$buscarArea[$Pi-4]] + $conteo[$buscarArea[$Pi-5]] - 1] . $filaArea;
+                        $UltimaCelda = $EstudianteIndicadorFinal[$conteo["$buscarArea[$Pi]"] + $conteo[$buscarArea[$Pi-1]] + $conteo[$buscarArea[$Pi-2]] + $conteo[$buscarArea[$Pi-3]] + $conteo[$buscarArea[$Pi-4]] + $conteo[$buscarArea[$Pi-5]]];
+                        $PrimerCelda[] = $UltimaCelda;
+                        break;
+                    case 6: // AREA
+                        $CeldaCombinada[] = $UltimaCelda . $filaArea . ":" . $EstudianteIndicadorFinal[$conteo["$buscarArea[$Pi]"] + $conteo[$buscarArea[$Pi-1]] + $conteo[$buscarArea[$Pi-2]] + $conteo[$buscarArea[$Pi-3]] + $conteo[$buscarArea[$Pi-4]] + $conteo[$buscarArea[$Pi-5]] + $conteo[$buscarArea[$Pi-6]] - 1] . $filaArea;
+                        $UltimaCelda = $EstudianteIndicadorFinal[$conteo["$buscarArea[$Pi]"] + $conteo[$buscarArea[$Pi-1]] + $conteo[$buscarArea[$Pi-2]] + $conteo[$buscarArea[$Pi-3]] + $conteo[$buscarArea[$Pi-4]] + $conteo[$buscarArea[$Pi-5]] + $conteo[$buscarArea[$Pi-6]]];
                         $PrimerCelda[] = $UltimaCelda;
                         break;
                     default:
