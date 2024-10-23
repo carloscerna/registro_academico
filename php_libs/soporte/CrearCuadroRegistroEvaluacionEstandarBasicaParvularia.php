@@ -36,7 +36,7 @@
 // definimos 2 array uno para los nombre de los dias y otro para los nombres de los meses
     $nombresDias = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
     $nombresMeses = [1=>"Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
-    $fecha = convertirTexto("Santa Ana, $nombresDias[$NombreDia] $dia de $nombresMeses[$mes] de $año");
+    $fecha = ("Santa Ana, $nombresDias[$NombreDia] $dia de $nombresMeses[$mes] de $año");
     setlocale(LC_MONETARY,"es_ES");
 // buscar la consulta y la ejecuta.
     consultas(13,0,$codigo_all,'','','',$db_link,'');
@@ -71,9 +71,6 @@
             "AA","AB","AC","AD","AE","AF","AG","AH","AI","AJ","AK","AL","AM","AN","AO","AP","AQ","AR","AS","AT","AU","AV","AW","AX","AY","AZ",
             "BA","BB","BC","BD","BE","BF","BG","BH","BI","BJ","BK","BL","BM","BN","BO","BP","BQ","BR","BS","BT","BU","BV","BW","BX","BY","BZ",
             "CA","CB","CC","CD","CE","CF","CG","CH","CI","CJ","CK","CL","CM","CN"];
-    }else if($codigoNivel == '116'){
-        $objPHPExcel = $objReader->load($origen."CUADRO REGISTRO DE EVALUACION EDUCACION BASICA SEGUNDO Y TERCERO FOCALIZADO.xlsx");
-        $EstudianteIndicadorFinal = ["D","E","F","G","H","I","J"];
     }
     // OBTENER EL NOMBRE DEL DOCENTE ENCARGADO.
     $query_encargado = "SELECT eg.id_encargado_grado, eg.encargado, btrim(p.nombres || CAST(' ' AS VARCHAR) || p.apellidos) as nombre_docente, eg.codigo_docente, bach.nombre, gann.nombre, sec.nombre, ann.nombre
@@ -166,7 +163,7 @@
                     if($EstudiantesFor == 0){
                         $NombreArea[] = trim(($row['nombre_area'])); //
                         $NombreAreaDimension = trim(($row['descripcion_area_dimension'])); //
-                        $NombreAsignatura = cambiar_de_del_2(trim($row['n_asignatura'])); // Nombre Area Dimensión.
+                        $NombreAsignatura = (trim($row['n_asignatura'])); // Nombre Area Dimensión.
                         // condicinar el Area Demnsión cuando sea igual.
                             if($NombreAreaDimension == "Ninguno"){
                                 $NombreAreaDimension = "";
@@ -182,16 +179,16 @@
                     if($codigoNivel == '16'){
                         $indicadorFinal = ucwords(trim($row['indicador_p_p_2']));  // Indicador Final.
                         switch ($indicadorFinal) {
-                            case 'Sobresaliente':
+                            case ($indicadorFinal == 'Sobresaliente' || $indicadorFinal == 'sobresaliente'):
                                 $indicadorFinal = "SO";  // Indicador Final.
                                 break;
-                            case 'Satisfactorio':
+                            case ($indicadorFinal == 'Satisfactorio' || $indicadorFinal == 'satisfactorio'):
                                 $indicadorFinal = "SA";  // Indicador Final.
                                 break;
-                            case 'En proceso':
+                            case ($indicadorFinal == 'En proceso' || $indicadorFinal == 'En Proceso'):
                                 $indicadorFinal = "E/P";  // Indicador Final.
                                 break;
-                            case 'No lo hace':
+                            case ($indicadorFinal == 'No lo hace' || $indicadorFinal == 'No Lo Hace'):
                                 $indicadorFinal = "N/H";  // Indicador Final.
                                 break;
                         }
@@ -226,7 +223,7 @@
     // DESCRIPCION DE CADA AREA APARTIR DE LA MATRIZ NombreArea.
         if($codigoGrado == "4P" || $codigoGrado == "5P"){
             $buscarArea = ["Alertas","DESARROLLO PERSONAL Y SOCIAL","MOTORA","COMUNICACION Y EXPRESIÓN","RELACION CON EL MEDIO","ALERTAS"];
-        }else if($codigoGrado == '6P'){
+        }else if($codigoGrado == '6P' || $codigoGrado == '01'){
             $buscarArea = ["DESARROLLO PERSONAL Y SOCIAL","MOTORA","COMUNICACION Y EXPRESIÓN","RELACION CON EL MEDIO","ALERTAS"];
         }else{
             $buscarArea = ["LENGUAJE","MATEMÁTICA","CIENCIA Y TECNOLOGÍA","ESTUDIOS SOCIALES","EDUCACIÓN FÍSICA","EDUCACIÓN ARTÍSTICA","INGLES"];
