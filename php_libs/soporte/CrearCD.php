@@ -247,9 +247,8 @@ $salidaJson = array("respuesta" => $respuestaOK,
 		"contenido" => $contenidoOK,
 		"encabezado"=>$encabezado);
 
-if($_POST{'accion'} == 'EditarCD'){
+if($_POST['accion'] == 'EditarCD'){
 	
 }else{
 echo json_encode($salidaJson);
 }
-?>
