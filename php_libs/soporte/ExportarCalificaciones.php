@@ -63,18 +63,36 @@
       $codigo_seccion = substr($codigo_all,4,2);
       $codigo_annlectivo = substr($codigo_all,6,2);
 // Evaluador nota para basica y parvularia, Extraer el nombre del grado
-      if($codigo_modalidad >= '03' and $codigo_modalidad <="12" or $codigo_modalidad = "15"){
-          if($periodo == "Periodo 1"){$nota_p_p = "nota_p_p_1";}
-          if($periodo == "Periodo 2"){$nota_p_p = "nota_p_p_2";}
-          if($periodo == "Periodo 3"){$nota_p_p = "nota_p_p_3";}
-          if($periodo == "Periodo 4"){$nota_p_p = "nota_p_p_4";}
-          if($periodo == "Periodo 5"){$nota_p_p = "nota_p_p_5";}
-      }else{
-          if($periodo == "Periodo 1"){$nota_p_p = "indicador_p_p_1";}
-          if($periodo == "Periodo 2"){$nota_p_p = "indicador_p_p_2";}
-          if($periodo == "Periodo 3"){$nota_p_p = "indicador_p_p_3";}        
-          if($periodo == "Alertas"){$nota_p_p = "alertas";}
-      }
+        switch ($codigo_modalidad) {
+          case ($codigo_modalidad >= '03' and $codigo_modalidad <= '05'): // educación basica y III Ciclo.
+            if($periodo == "Periodo 1"){$nota_p_p = "nota_p_p_1";}
+            if($periodo == "Periodo 2"){$nota_p_p = "nota_p_p_2";}
+            if($periodo == "Periodo 3"){$nota_p_p = "nota_p_p_3";}        
+              break;
+          case ($codigo_modalidad >= '06' and $codigo_modalidad <= '09'): // Edcuación Media Jornada Completa.
+            if($periodo == "Periodo 1"){$nota_p_p = "nota_p_p_1";}
+            if($periodo == "Periodo 2"){$nota_p_p = "nota_p_p_2";}
+            if($periodo == "Periodo 3"){$nota_p_p = "nota_p_p_3";}
+            if($periodo == "Periodo 4"){$nota_p_p = "nota_p_p_4";}
+              break;
+          case ($codigo_modalidad >= '10' and $codigo_modalidad <= '12'): // educación media y III ciclo nocturna.
+            if($periodo == "Periodo 1"){$nota_p_p = "nota_p_p_1";}
+            if($periodo == "Periodo 2"){$nota_p_p = "nota_p_p_2";}
+            if($periodo == "Periodo 3"){$nota_p_p = "nota_p_p_3";}
+            if($periodo == "Periodo 4"){$nota_p_p = "nota_p_p_4";}
+            if($periodo == "Periodo 5"){$nota_p_p = "nota_p_p_5";}
+              break;
+          case ($codigo_modalidad >= '13' and $codigo_modalidad <= '14'): // Educación Parvularia Estándar de desarrollo
+            if($periodo == "Periodo 1"){$nota_p_p = "indicador_p_p_1";}
+            if($periodo == "Periodo 2"){$nota_p_p = "indicador_p_p_2";}
+            if($periodo == "Periodo 3"){$nota_p_p = "indicador_p_p_3";}        
+            if($periodo == "Alertas"){$nota_p_p = "alertas";}
+              break;
+          default:
+            if($periodo == "Periodo 1"){$nota_p_p = "nota_p_p_1";}
+            if($periodo == "Periodo 2"){$nota_p_p = "nota_p_p_2";}
+            if($periodo == "Periodo 3"){$nota_p_p = "nota_p_p_3";}
+        }
 //
 //  EVALUAR SI SON TODAS LAS ASIGNATURAS O SOLO UNA.
 //
@@ -138,7 +156,6 @@
             if($codigo_grado == "17" || $codigo_grado == "18"){
               $NombreAsignatura = trim($nombre_asignatura_t[$i]); 
             }      
-
         // lo asigna para poder realizar la busqueda.
           $codigo_asignatura = $codigo_asignatura_t[$i];
         // CONSULTA PARA OBTENER LAS NOTAS DE LOS PERIODOS.
