@@ -97,7 +97,7 @@ function encabezado()
 		$this->Cell(5,4,convertirTexto('N.ª'),'LTR',0,'C');
 		$this->Cell(50,4,'Docente Encargado','LTR',0,'C');
 		$this->Cell(70,4,'NIVEL','LTR',0,'C');
-		$this->Cell(10,4,'GRADO','LTR',0,'C');
+		$this->Cell(40,4,'GRADO','LTR',0,'C');
 		$this->Cell(10,4,'SEC.','LTR',0,'C');
 		$this->Cell(30,4,'MATRICULA MAXIMA','LTR',0,'C');
 		$this->Cell(30,4,'DESERCION','LTR',0,'C');
@@ -109,7 +109,7 @@ function encabezado()
 		$this->Cell(5,4,'','LB',0,'C');
 		$this->Cell(50,4,'','LBR',0,'C');
 		$this->Cell(70,4,'','LBR',0,'C');
-		$this->Cell(10,4,'','LBR',0,'C');
+		$this->Cell(40,4,'','LBR',0,'C');
 		$this->Cell(10,4,'','LBR',0,'C');
 		for ($i=0; $i <=4 ; $i++) { 
 			$this->Cell(10,4,'M',1,0,'C');
@@ -149,7 +149,7 @@ function encabezado()
 			// llamar al encabezado.
 				$pdf->encabezado();
 			// Ancho de las diferentes columnas	
-				$w=[5,50,70,10,15,10,15,15,15]; //determina el ancho de las columnas
+				$w=[5,50,70,10,15,10,15,15,15,40]; //determina el ancho de las columnas
 			// Variables para los diferentes cálculos.
 				$fill=false; $i=0; $m = 0; $f = 0; $suma = 0; $n_a = 0;
 				$contador_tabla_grado = 0;
@@ -174,7 +174,7 @@ function encabezado()
 								$pdf->Cell($w[0],$alto_fila,$i,'LR',0,'C',$fill);        // núermo correlativo
 								$pdf->Cell($w[1],$alto_fila,$print_nombre_docente,'LR',0,'J',$fill);
 								$pdf->Cell($w[2],$alto_fila,$nombre_modalidad[$j],'LR',0,'J',$fill);
-								$pdf->Cell($w[3],$alto_fila,$nombre_grado[$j],'LR',0,'J',$fill);
+								$pdf->Cell($w[9],$alto_fila,$nombre_grado[$j],'LR',0,'J',$fill);
 							$pdf->SetFont('Arial','',10);
 							$pdf->Cell($w[3],$alto_fila,$nombre_seccion[$j],'LR',0,'C',$fill);
 							//$pdf->Cell($w[3],$alto_fila,$nombre_turno[$j],'LR',0,'C',$fill);
@@ -282,13 +282,14 @@ else{
 
 	 // FUNCIONES.
 function ($codigoGrado){
+	global $codigoGrado;
 	switch ($codigoGrado) {
-		case 'value':
-			# code...
+		case ($codigoGrado == '4P'):
+			$codigoGrado = '';
 			break;
 		
 		default:
 			# code...
 			break;
 	}
-}
+};
