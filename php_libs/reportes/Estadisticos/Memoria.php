@@ -24,7 +24,6 @@
                                 WHERE codigo_ann_lectivo = '$codigo_ann_lectivo' ORDER BY org.codigo_bachillerato, org.codigo_grado, org.codigo_ann_lectivo";
     //  ejecutar consulta para la memoria estadistica.
 	    $result_grados = $db_link -> query($query_grados);
-
 //  captura de datos para información individual de grado y sección.
      while($row = $result_grados -> fetch(PDO::FETCH_BOTH))
         {
@@ -37,8 +36,6 @@
 	    	// modalidad, grado y año lectivo.
 	    	$codigo_indicadores[] = $codigo_modalidad . $codigo_grado . $codigo_ann_lectivo;
         }
-
-      
 class PDF extends FPDF
 {
 //Cabecera de página
@@ -118,7 +115,7 @@ function encabezado()
 
 //************************************************************************************************************************
 // Creando el Informe.
-    $pdf=new PDF('L','mm','Letter');
+    $pdf=new PDF('L','mm','Legal');
     $data = array();
     #Establecemos los márgenes izquierda, arriba y derecha: 
 	    $pdf->SetMargins(5, 15, 5);
@@ -543,9 +540,7 @@ function encabezado()
 			$pdf->SetFont('Arial','',10);
 			//
 			$pdf->ln(); 
-
 // Salida del pdf.
      $modo = 'I'; // Envia al navegador (I), Descarga el archivo (D).
      $print_nombre = 'MEMORIA ESTADISTICA ' . $nombre_ann_lectivo;
      $pdf->Output($print_nombre,$modo);
-?>

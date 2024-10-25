@@ -14,9 +14,7 @@
      $db_link = $dblink;
      $codigo_all_indicadores = []; $nombre_grado = []; $nombre_seccion = []; $nombre_modalidad = []; $nombre_ann_lectivo = [];
      $codigo_grado_tabla = []; $codigo_grado_comparar = []; $nombre_modalidad_consolidad = []; $nombre_turno = []; $nombre_turno_consolidado = [];
-     
-	//print_r($codigo_all_indicadores);
-	// buscar la consulta y la ejecuta.
+// buscar la consulta y la ejecuta.
 	consultas(14,0,$codigo_ann_lectivo,'','','',$db_link,'');
 //  captura de datos para información individual de grado y sección.
      while($row = $result_encabezado -> fetch(PDO::FETCH_BOTH))
@@ -69,7 +67,6 @@ function Header()
     //Salto de línea
    // $this->Ln(20);
 }
-
 //Pie de página
 function Footer()
 {
@@ -89,7 +86,6 @@ function Footer()
     $fecha = date("l, F jS Y ");
     $this->Cell(0,10,'Page '.$this->PageNo().'/{nb}       '.$fecha,0,0,'C');
 }
-
 //encabezado
 function encabezado()
 {
@@ -173,7 +169,7 @@ function encabezado()
 
 //************************************************************************************************************************
 // Creando el Informe.
-    $pdf=new PDF('L','mm','Letter');
+    $pdf=new PDF('L','mm','Legal');
     $data = [];
     #Establecemos los márgenes izquierda, arriba y derecha: 
     $pdf->SetMargins(5, 5, 5);
@@ -348,17 +344,14 @@ else{
  // Evaluar si existen registros.
     if($result -> rowCount() != 0){
 	// llamar al encabezado.
-	    $pdf->encabezado();
-	    
-	$w=array(10,40,20,15,10,15,15,15); //determina el ancho de las columnas
+		$pdf->encabezado();
+		$w=array(10,40,20,15,10,15,15,15); //determina el ancho de las columnas
 	
 	$fill=false; $i=1; $m = 0; $f = 0; $suma = 0; $n_a = 0;
 	$contador_tabla_grado = 0;
 	$repitentem = 0; $repitentef = 0; $totalrepitente = 0;
 	$sobreedadm = 0; $sobreedadf = 0; $totalsobreedad = 0;
 	$alto_fila = 6;
-
-  
 	// recorrer la tabla.	 
 	    for($j=0;$j<=count($codigo_indicadores)-1;$j++)
 		{

@@ -53,7 +53,7 @@ $(function(){
   $('#goVerMemoriaEstadistica').on('click',function(){
     // BUSCAR EL �LTINMO DE LA ASIGNATURA PARA ASIGNARLE A UN NUEVO REGISTRO.
      var codigo_annlectivo = $("#lstannlectivo").val();
-                  varenviar = "/registro_academico/php_libs/reportes/memoria_estadistica.php?lstannlectivo="+codigo_annlectivo;
+                  varenviar = "/registro_academico/php_libs/reportes/Estadisticos/Memoria.php?lstannlectivo="+codigo_annlectivo;
                // Ejecutar la funci�n
                   AbrirVentana(varenviar);        
     });

@@ -29,7 +29,7 @@ $(function(){
 		            	else{
 		            	// si es exitosa la operaci�n
                                    var varbach = $('#lstannlectivo').val();
-                                   varenviar = "/registro_academico/php_libs/reportes/indicadores-educativos.php?lstannlectivo="+varbach;
+                                   varenviar = "/registro_academico/php_libs/reportes/Estadisticos/IndicadoresEducativos.php?lstannlectivo="+varbach;
                                 // Ejecutar la funci�n
                                    AbrirVentana(varenviar);
                                 }
