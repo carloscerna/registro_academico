@@ -16,15 +16,14 @@
 	 $codigo_modalidad_matriz = array();
      //CONSULTA PARA LE MEMORIA ESTADISTICA
         $query_grados = "SELECT DISTINCT ROW(org.codigo_bachillerato), org.codigo_bachillerato as codigo_modalidad, org.codigo_grado, org.codigo_ann_lectivo,
-                    gan.nombre as nombre_grado, ann.nombre as nombre_ann_lectivo,  bach.nombre as nombre_modalidad
+                    gan.nombre as nombre_grado, ann.nombre as nombre_ann_lectivo,  bach.nombre as nombre_modalidad, bach.ordenar
 			            FROM organizacion_grados_secciones org
                             INNER JOIN grado_ano gan ON gan.codigo = org.codigo_grado
                             INNER JOIN ann_lectivo ann ON ann.codigo = org.codigo_ann_lectivo
                             INNER JOIN bachillerato_ciclo bach ON bach.codigo = org.codigo_bachillerato
-                                WHERE codigo_ann_lectivo = '$codigo_ann_lectivo' ORDER BY org.codigo_bachillerato, org.codigo_grado, org.codigo_ann_lectivo";
+                                WHERE codigo_ann_lectivo = '$codigo_ann_lectivo' ORDER BY bach.ordenar, org.codigo_bachillerato, org.codigo_grado, org.codigo_ann_lectivo";
     //  ejecutar consulta para la memoria estadistica.
 	    $result_grados = $db_link -> query($query_grados);
-
 //  captura de datos para información individual de grado y sección.
      while($row = $result_grados -> fetch(PDO::FETCH_BOTH))
         {
@@ -32,13 +31,11 @@
             $nombre_ann_lectivo = trim($row['nombre_ann_lectivo']);
             $codigo_modalidad = trim($row['codigo_modalidad']);
 			$codigo_modalidad_matriz[] = trim($row['codigo_modalidad']);
-            $nombre_modalidad[] = trim($row['nombre_modalidad']);
+            $nombre_modalidad[] = convertirTexto(trim($row['nombre_modalidad']));
             $nombre_grado[] = cambiar_de_del(trim($row['nombre_grado']));
 	    	// modalidad, grado y año lectivo.
 	    	$codigo_indicadores[] = $codigo_modalidad . $codigo_grado . $codigo_ann_lectivo;
         }
-
-      
 class PDF extends FPDF
 {
 //Cabecera de página
@@ -50,25 +47,24 @@ function Header()
     $this->Image($img,10,15,12,15);
     //Título
     $this->SetFont('Arial','',10);
-    $this->Cell(270,4,utf8_decode('MINISTERIO DE EDUCACION, CIENCIA Y TECNOLOGIA'),0,1,'C');
-    $this->Cell(270,4,utf8_decode('DIRECCION DEPARTAMENTAL DE SANTA ANA'),0,1,'C');
+    $this->Cell(270,4,convertirtexto('MINISTERIO DE EDUCACION, CIENCIA Y TECNOLOGIA'),0,1,'C');
+    $this->Cell(270,4,convertirtexto('DIRECCION DEPARTAMENTAL DE SANTA ANA'),0,1,'C');
     $this->SetFont('Arial','B',10);
-    $this->Cell(270,4,utf8_decode('MEMORIA ESTADISTICA ') . $nombre_ann_lectivo,0,1,'C');
+    $this->Cell(270,4,convertirtexto('MEMORIA ESTADISTICA ') . $nombre_ann_lectivo,0,1,'C');
     $this->SetFont('Arial','',8);
     $this->ln();
-    $this->Cell(150,4,'CENTRO ESCOLAR: ' . utf8_decode($_SESSION['institucion']),0,0,'L');
-    $this->Cell(100,4,'CODIGO: ' . utf8_decode($_SESSION['codigo']),0,1,'R');
+    $this->Cell(150,4,'CENTRO ESCOLAR: ' . convertirtexto($_SESSION['institucion']),0,0,'L');
+    $this->Cell(100,4,'CODIGO: ' . convertirtexto($_SESSION['codigo']),0,1,'R');
     //
-    $this->Cell(150,4,utf8_decode('DISTRITO EDUCATIVO 02-02 ZONA 3'),0,0,'L');
+    $this->Cell(150,4,convertirtexto('DISTRITO EDUCATIVO 02-02 ZONA 3'),0,0,'L');
     $this->Cell(100,4,'MUNICIPIO: SANTA ANA',0,1,'R');}
-
 //Pie de página
 function Footer()
 {
 	//Firma Director.
 	$nombre_director = cambiar_de_del($_SESSION['nombre_director']);
-		$this->RotatedText(170,200,$nombre_director,0,1,'C');	    // Nombre Director
-		$this->RotatedText(180,205,'Director(a)',0,1,'C');			// ETIQUETA DIRECTOR.
+		$this->RotatedText(170,200,$nombre_director,0);	    // Nombre Director
+		$this->RotatedText(180,205,'Director(a)',0);			// ETIQUETA DIRECTOR.
   //
   // Establecer formato para la fecha.
   // 
@@ -85,7 +81,6 @@ function Footer()
     $fecha = date("l, F jS Y ");
     $this->Cell(0,10,'Page '.$this->PageNo().'/{nb}       '.$fecha,0,0,'C');
 }
-
 //encabezado
 function encabezado()
 {
@@ -96,8 +91,8 @@ function encabezado()
 		$this->SetFont('');
 		$this->SetFont('Arial','B',8);
     // PRIMERA LINEA
-        $this->Cell(50,4,'GRADO','LTR',0,'C');
-        $this->Cell(30,4,'MATRICULA INICIAL','LTR',0,'C');
+        $this->Cell(120,4,'NIVEL/GRADO','LTR',0,'C');
+        $this->Cell(30,4,'MATRICULA MAXIMA','LTR',0,'C');
         $this->Cell(30,4,'DESERCION','LTR',0,'C');
         $this->Cell(30,4,'REPITENCIA','LTR',0,'C');
         $this->Cell(30,4,'APROBADOS','LTR',0,'C');
@@ -105,7 +100,7 @@ function encabezado()
         $this->Cell(30,4,'SOBREEDAD','LTR',0,'C');
         $this->Cell(30,4,'MATRICULA FINAL','LTR',1,'C');
     // SEGUNDA LINEA
-        $this->Cell(50,4,'','LBR',0,'C');
+        $this->Cell(120,4,'','LBR',0,'C');
         for ($i=0; $i <=6 ; $i++) { 
             $this->Cell(10,4,'M',1,0,'C');
             $this->Cell(10,4,'F',1,0,'C');
@@ -115,10 +110,9 @@ function encabezado()
 		$this->ln();
 }
 }
-
 //************************************************************************************************************************
 // Creando el Informe.
-    $pdf=new PDF('L','mm','Letter');
+    $pdf=new PDF('L','mm','Legal');
     $data = array();
     #Establecemos los márgenes izquierda, arriba y derecha: 
 	    $pdf->SetMargins(5, 15, 5);
@@ -131,9 +125,8 @@ function encabezado()
 		$pdf->SetX(5);
 	// llamar al encabezado.
        $pdf->encabezado();
-	   $pdf->SetFont('Arial','',10);
 	// Ancho de las diferentes columnas	
-		$ancho=array(0,50,30,10); //determina el ancho de las columnas
+		$ancho=array(0,120,30,10); //determina el ancho de las columnas
 		$alto=array(0,5.5);
 		$indicadores = array("maxima","desercion","repitencia","aprobados","reprobados","sobreedad","final");
 		$tmm = array(); $tmf = array(); $tdm = array(); $tdf = array(); $trm = array(); $trf = array();
@@ -141,35 +134,37 @@ function encabezado()
 	   // Evaluar si existen registros.
 		for($jh=0;$jh<=count($codigo_indicadores)-1;$jh++)
 		{
+			//
+			$pdf->SetFont('Arial','',8);
 			// CAMBIAR ETIQUETA PARA LA DESCRIPCIÓN DEL GRADO
 			switch ($codigo_modalidad_matriz[$jh]) {
 				case '02':
-					$pdf->Cell($ancho[1],$alto[1],$nombre_modalidad[$jh] . ' ' . ($nombre_grado[$jh] . utf8_decode(' años')),1,0,'L');
+					$pdf->Cell($ancho[1],$alto[1],$nombre_modalidad[$jh] . ' - ' . ($nombre_grado[$jh] . convertirtexto(' años')),1,0,'L');
 					break;
 				case '06':
-					$pdf->Cell($ancho[1],$alto[1],($nombre_grado[$jh] . ' General'),1,0,'L');
+					$pdf->Cell($ancho[1],$alto[1],$nombre_modalidad[$jh] . ' - ' . ($nombre_grado[$jh] . ' General'),1,0,'L');
 					break;
 				case '07':
-					$pdf->Cell($ancho[1],$alto[1],($nombre_grado[$jh] . utf8_decode(' Técnico')),1,0,'L');
+					$pdf->Cell($ancho[1],$alto[1],$nombre_modalidad[$jh] . ' - ' . ($nombre_grado[$jh] . convertirtexto(' Técnico')),1,0,'L');
 					break;
 				case '09':
-					$pdf->Cell($ancho[1],$alto[1],($nombre_grado[$jh] . utf8_decode(' Técnico')),1,0,'L');
+					$pdf->Cell($ancho[1],$alto[1],$nombre_modalidad[$jh] . ' - ' . ($nombre_grado[$jh] . convertirtexto(' Técnico')),1,0,'L');
 					break;
 				case '10':
-					$pdf->Cell($ancho[1],$alto[1],($nombre_grado[$jh] . utf8_decode(' Nocturna')),1,0,'L');
+					$pdf->Cell($ancho[1],$alto[1],$nombre_modalidad[$jh] . ' - ' . ($nombre_grado[$jh] . convertirtexto(' Nocturna')),1,0,'L');
 					break;
 				case '11':
-					$pdf->Cell($ancho[1],$alto[1],($nombre_grado[$jh] . utf8_decode(' Nocturna')),1,0,'L');
+					$pdf->Cell($ancho[1],$alto[1],$nombre_modalidad[$jh] . ' - ' . ($nombre_grado[$jh] . convertirtexto(' Nocturna')),1,0,'L');
 					break;
 				case '12':
-					$pdf->Cell($ancho[1],$alto[1],($nombre_grado[$jh] . utf8_decode(' Nocturna')),1,0,'L');
+					$pdf->Cell($ancho[1],$alto[1],$nombre_modalidad[$jh] . ' - ' .($nombre_grado[$jh] . convertirtexto(' Nocturna')),1,0,'L');
 					break;
 				default:
-					$pdf->Cell($ancho[1],$alto[1],($nombre_grado[$jh]),1,0,'L');
+					$pdf->Cell($ancho[1],$alto[1],$nombre_modalidad[$jh] . ' - ' . ($nombre_grado[$jh]),1,0,'L');
 					break;
 			}	// cierre del swicth
-		// ARMAS LAS DIFERENTES CONSULTAS 
-		// VARIABLES
+			// ARMAS LAS DIFERENTES CONSULTAS 
+			// VARIABLES
 			// variables para retenidos y promovidos.
 			$total_masculino = 0; $total_femenino = 0;
 			$total_final_masculino = 0; $total_final_femenino = 0;
@@ -312,8 +307,6 @@ function encabezado()
 					//
 						$total_alumnos_masculino = $total_final_masculino - $total_alumnos_masculino;
 						$total_alumnos_femenino = $total_final_femenino - $total_alumnos_femenino;
-
-
 				}else if($calculo_final == 2){
 					// ARMAR CONSULTAS
 					//consulta para obtener el total de alumnos masculino.
@@ -351,9 +344,6 @@ function encabezado()
 										$total_alumnos_femenino = 0;
 									}
 								}	
-					//
-					//
-					//
 				}else{
 					// ARMAR CONSULTAS
 					//consulta para obtener el total de alumnos masculino.
@@ -400,7 +390,6 @@ function encabezado()
 									}
 								}			
 				}
-							
 					//
 					//	IMPRIMIR VALORES 
 					//
@@ -543,9 +532,7 @@ function encabezado()
 			$pdf->SetFont('Arial','',10);
 			//
 			$pdf->ln(); 
-
 // Salida del pdf.
-     $modo = 'I'; // Envia al navegador (I), Descarga el archivo (D).
-     $print_nombre = 'MEMORIA ESTADISTICA ' . $nombre_ann_lectivo;
-     $pdf->Output($print_nombre,$modo);
-?>
+	$modo = 'I'; // Envia al navegador (I), Descarga el archivo (D).
+	$print_nombre = 'MEMORIA ESTADISTICA ' . $nombre_ann_lectivo;
+	$pdf->Output($print_nombre,$modo);

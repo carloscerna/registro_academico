@@ -398,7 +398,7 @@ function consultas($ejecutar,$cerrar,$codigo_bachillerato,$codigo_grado,$codigo_
          $query = "SELECT DISTINCT ROW(org.codigo_grado), 
                     org.codigo_bachillerato, org.codigo_grado, org.codigo_ann_lectivo, org.codigo_turno, org.codigo_seccion,
                     sec.nombre as nombre_seccion, 
-                    gan.nombre as nombre_grado, ann.nombre as nombre_ann_lectivo, tur.nombre as nombre_turno, bach.nombre as nombre_modalidad
+                    gan.nombre as nombre_grado, ann.nombre as nombre_ann_lectivo, tur.nombre as nombre_turno, bach.nombre as nombre_modalidad, bach.ordenar
 			            FROM organizacion_grados_secciones org
                             INNER JOIN grado_ano gan ON gan.codigo = org.codigo_grado
                             INNER JOIN seccion sec ON sec.codigo = org.codigo_seccion
@@ -406,7 +406,7 @@ function consultas($ejecutar,$cerrar,$codigo_bachillerato,$codigo_grado,$codigo_
                             INNER JOIN bachillerato_ciclo bach ON bach.codigo = org.codigo_bachillerato
                             INNER JOIN turno tur ON tur.codigo = org.codigo_turno
                                 WHERE codigo_ann_lectivo = '$codigo_bachillerato'
-	                			 ORDER BY org.codigo_grado, org.codigo_seccion, org.codigo_bachillerato, org.codigo_ann_lectivo";
+	                			 ORDER BY bach.ordenar, org.codigo_grado, org.codigo_seccion, org.codigo_bachillerato, org.codigo_ann_lectivo";
             /*
             CONSULTA PARA LE MEMORIA ESTADISTICA
             SELECT DISTINCT ROW(org.codigo_bachillerato), org.codigo_bachillerato, org.codigo_grado, org.codigo_ann_lectivo,
