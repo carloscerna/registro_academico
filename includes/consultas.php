@@ -677,7 +677,7 @@ function consultas_alumno($ejecutar,$cerrar,$buscar_nombre,$codigo_alumno,$codig
     }            
     if($ejecutar == 2)
     {
-      $query = "SELECT DISTINCT a.codigo_nie, btrim(a.apellido_paterno || CAST(' ' AS VARCHAR) || a.apellido_materno || CAST(', ' AS VARCHAR) || a.nombre_completo) as apellido_alumno,
+     $query = "SELECT DISTINCT a.codigo_nie, btrim(a.apellido_paterno || CAST(' ' AS VARCHAR) || a.apellido_materno || CAST(', ' AS VARCHAR) || a.nombre_completo) as apellido_alumno,
 		    a.apellido_paterno, a.nombre_completo, btrim(a.apellido_paterno || CAST(' ' AS VARCHAR) || a.apellido_materno) as apellidos_alumno, a.foto, a.codigo_genero,
             am.codigo_bach_o_ciclo, am.pn, bach.nombre as nombre_bachillerato, am.codigo_ann_lectivo, ann.nombre as nombre_ann_lectivo, am.codigo_grado, 
             gan.nombre as nombre_grado, am.codigo_seccion, am.retirado, am.id_alumno_matricula as codigo_matricula, am.id_alumno_matricula as cod_matricula,

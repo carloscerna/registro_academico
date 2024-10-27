@@ -177,7 +177,7 @@
                     }
                 // RECORRER LA INFORMACIÓN PARA COLOCAR EL NOMBRE DEL ESTUDIANTE E INDICADOR FINAL.
                     if($codigoNivel == '16'){
-                        $indicadorFinal = ucwords(trim($row['indicador_p_p_2']));  // Indicador Final.
+                        $indicadorFinal = ucwords(trim($row['indicador_final']));  // Indicador Final.
                         switch ($indicadorFinal) {
                             case ($indicadorFinal == 'Sobresaliente' || $indicadorFinal == 'sobresaliente'):
                                 $indicadorFinal = "SO";  // Indicador Final.
@@ -193,7 +193,7 @@
                                 break;
                         }
                     }else{
-                        $indicadorFinal = trim($row['indicador_p_p_2']);  // Indicador Final.
+                        $indicadorFinal = trim($row['indicador_final']);  // Indicador Final.
                     }
                 //
                 if($num == 0){
