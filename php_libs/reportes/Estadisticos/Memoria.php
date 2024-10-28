@@ -14,18 +14,36 @@
      $db_link = $dblink;
      $codigo_all_indicadores = array(); $nombre_grado = array(); $nombre_modalidad = array(); $nombre_ann_lectivo = array();
 	 $codigo_modalidad_matriz = array();
-     //CONSULTA PARA LE MEMORIA ESTADISTICA
-        $query_grados = "SELECT DISTINCT ROW(org.codigo_bachillerato), org.codigo_bachillerato as codigo_modalidad, org.codigo_grado, org.codigo_ann_lectivo,
-                    gan.nombre as nombre_grado, ann.nombre as nombre_ann_lectivo,  bach.nombre as nombre_modalidad, bach.ordenar
-			            FROM organizacion_grados_secciones org
-                            INNER JOIN grado_ano gan ON gan.codigo = org.codigo_grado
-                            INNER JOIN ann_lectivo ann ON ann.codigo = org.codigo_ann_lectivo
-                            INNER JOIN bachillerato_ciclo bach ON bach.codigo = org.codigo_bachillerato
-                                WHERE codigo_ann_lectivo = '$codigo_ann_lectivo' ORDER BY bach.ordenar, org.codigo_bachillerato, org.codigo_grado, org.codigo_ann_lectivo";
-    //  ejecutar consulta para la memoria estadistica.
-	    $result_grados = $db_link -> query($query_grados);
+// Establecer formato para la fecha.
+	date_default_timezone_set('America/El_Salvador');
+	setlocale(LC_TIME,'es_SV');
+// CREAR MATRIZ DE MESES Y FECH.
+	$meses = ["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
+//Crear una línea. Fecha con getdate();
+	$hoy = getdate();
+	$NombreDia = $hoy["wday"];  // dia de la semana Nombre.
+	$dia = $hoy["mday"];    // dia de la semana
+	$mes = $hoy["mon"];     // mes
+	$año = $hoy["year"];    // año
+	$total_de_dias = cal_days_in_month(CAL_GREGORIAN, (int)$mes, $año);
+	$NombreMes = $meses[(int)$mes - 1];
+// definimos 2 array uno para los nombre de los dias y otro para los nombres de los meses
+	$nombresDias = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
+	$nombresMeses = [1=>"Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
+	$fecha = convertirTexto("Santa Ana, $nombresDias[$NombreDia] $dia de $nombresMeses[$mes] de $año");
+	setlocale(LC_MONETARY,"es_ES");
+//CONSULTA PARA LE MEMORIA ESTADISTICA
+	$query_grados = "SELECT DISTINCT ROW(org.codigo_bachillerato), org.codigo_bachillerato as codigo_modalidad, org.codigo_grado, org.codigo_ann_lectivo,
+		gan.nombre as nombre_grado, ann.nombre as nombre_ann_lectivo,  bach.nombre as nombre_modalidad, bach.ordenar
+			FROM organizacion_grados_secciones org
+				INNER JOIN grado_ano gan ON gan.codigo = org.codigo_grado
+				INNER JOIN ann_lectivo ann ON ann.codigo = org.codigo_ann_lectivo
+				INNER JOIN bachillerato_ciclo bach ON bach.codigo = org.codigo_bachillerato
+					WHERE codigo_ann_lectivo = '$codigo_ann_lectivo' ORDER BY bach.ordenar, org.codigo_bachillerato, org.codigo_grado, org.codigo_ann_lectivo";
+//  ejecutar consulta para la memoria estadistica.
+	$result_grados = $db_link -> query($query_grados);
 //  captura de datos para información individual de grado y sección.
-     while($row = $result_grados -> fetch(PDO::FETCH_BOTH))
+	while($row = $result_grados -> fetch(PDO::FETCH_BOTH))
         {
 	    	$codigo_grado = trim($row['codigo_grado']);
             $nombre_ann_lectivo = trim($row['nombre_ann_lectivo']);
@@ -47,10 +65,10 @@ function Header()
     $this->Image($img,10,15,12,15);
     //Título
     $this->SetFont('Arial','',10);
-    $this->Cell(270,4,convertirtexto('MINISTERIO DE EDUCACION, CIENCIA Y TECNOLOGIA'),0,1,'C');
-    $this->Cell(270,4,convertirtexto('DIRECCION DEPARTAMENTAL DE SANTA ANA'),0,1,'C');
+    $this->Cell(350,4,convertirtexto('MINISTERIO DE EDUCACION, CIENCIA Y TECNOLOGIA'),0,1,'C');
+    $this->Cell(350,4,convertirtexto('DIRECCION DEPARTAMENTAL DE SANTA ANA'),0,1,'C');
     $this->SetFont('Arial','B',10);
-    $this->Cell(270,4,convertirtexto('MEMORIA ESTADISTICA ') . $nombre_ann_lectivo,0,1,'C');
+    $this->Cell(350,4,convertirtexto('MEMORIA ESTADISTICA ') . $nombre_ann_lectivo,0,1,'C');
     $this->SetFont('Arial','',8);
     $this->ln();
     $this->Cell(150,4,'CENTRO ESCOLAR: ' . convertirtexto($_SESSION['institucion']),0,0,'L');
@@ -63,23 +81,20 @@ function Footer()
 {
 	//Firma Director.
 	$nombre_director = cambiar_de_del($_SESSION['nombre_director']);
-		$this->RotatedText(170,200,$nombre_director,0);	    // Nombre Director
-		$this->RotatedText(180,205,'Director(a)',0);			// ETIQUETA DIRECTOR.
+		$this->RotatedText(260,205,$nombre_director,0);	    // Nombre Director
+		$this->RotatedText(270,210,'Director(a)',0);			// ETIQUETA DIRECTOR.
   //
   // Establecer formato para la fecha.
   // 
-   date_default_timezone_set('America/El_Salvador');
-   setlocale(LC_TIME, 'spanish');
-	//				
-    //Posición: a 1,5 cm del final
-    $this->SetY(-10);
-    //Arial italic 8
-    $this->SetFont('Arial','I',8);
-    //Crear ubna línea
-    $this->Line(10,285,200,285);
-    //Número de página
-    $fecha = date("l, F jS Y ");
-    $this->Cell(0,10,'Page '.$this->PageNo().'/{nb}       '.$fecha,0,0,'C');
+  global $fecha;
+  //Posición: a 1,5 cm del final
+  $this->SetY(-10);
+  //Arial italic 8
+  $this->SetFont('Arial','I',8);
+  //Crear ubna línea
+  $this->Line(5,270,210,270);
+  //Número de página y fecha.
+  $this->Cell(0,10,convertirTexto('Página ').$this->PageNo().'/{nb}       '.$fecha,0,0,'C');
 }
 //encabezado
 function encabezado()

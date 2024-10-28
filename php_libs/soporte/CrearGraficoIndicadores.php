@@ -84,33 +84,32 @@ if($errorDbConexion == false)
 							{
 									for($id=0;$id<=count($codigo_indicadores_bucle)-1;$id++)
 									{
-												for($ig=0;$ig<=count($codigo_genero_bucle)-1;$ig++)
-													{
-														if($nombre_indicadores_bucle[$id] === 'matricula maxima')
-														{
-															// Armar query para la matricula masculino 
-																	$query = "UPDATE temp_indicadores_educativos set ($campo_indicador[$ig]) = 
-																					(SELECT count(codigo_genero) as total_ FROM alumno_matricula am 
-																						INNER JOIN alumno a ON a.id_alumno = am.codigo_alumno
-																							WHERE btrim(codigo_turno || codigo_bach_o_ciclo || codigo_ann_lectivo) = '$codigo_t_m_a[$tma]'
-																								and a.codigo_genero = '$codigo_genero_bucle[$ig]')
-																					WHERE codigo_modalidad_turno_ann_lectivo = '$codigo_t_m_a[$tma]'";
-															//  Ejecutar query.
-																$result_conteo = $dblink -> query($query);
-														}else{
-															// Armar query para la matricula masculino 
-																$query = "UPDATE temp_indicadores_educativos set ($nombre_indicadores_bucle[$id]$campo_m_f[$ig]) = 
-																			(SELECT count($nombre_indicadores_bucle[$id]) as total_ FROM alumno_matricula am 
+										for($ig=0;$ig<=count($codigo_genero_bucle)-1;$ig++)
+											{
+												if($nombre_indicadores_bucle[$id] === 'matricula maxima')
+												{
+													// Armar query para la matricula masculino 
+															$query = "UPDATE temp_indicadores_educativos set ($campo_indicador[$ig]) = 
+																			(SELECT count(codigo_genero) as total_ FROM alumno_matricula am 
 																				INNER JOIN alumno a ON a.id_alumno = am.codigo_alumno
-																				WHERE btrim(codigo_turno || codigo_bach_o_ciclo || codigo_ann_lectivo) = '$codigo_t_m_a[$tma]'
-																					and a.codigo_genero = '$codigo_genero_bucle[$ig]' 
-																					and am.$nombre_indicadores_bucle[$id] = 't')
+																					WHERE btrim(codigo_turno || codigo_bach_o_ciclo || codigo_ann_lectivo) = '$codigo_t_m_a[$tma]'
+																						and a.codigo_genero = '$codigo_genero_bucle[$ig]')
 																			WHERE codigo_modalidad_turno_ann_lectivo = '$codigo_t_m_a[$tma]'";
-															//  Ejecutar query.
-																$result_conteo = $dblink -> query($query);
-															}
-															
-													} // FOR DEL CODIGO GENERO
+													//  Ejecutar query.
+														$result_conteo = $dblink -> query($query);
+												}else{
+													// Armar query para la matricula masculino 
+														$query = "UPDATE temp_indicadores_educativos set ($nombre_indicadores_bucle[$id]$campo_m_f[$ig]) = 
+																	(SELECT count($nombre_indicadores_bucle[$id]) as total_ FROM alumno_matricula am 
+																		INNER JOIN alumno a ON a.id_alumno = am.codigo_alumno
+																		WHERE btrim(codigo_turno || codigo_bach_o_ciclo || codigo_ann_lectivo) = '$codigo_t_m_a[$tma]'
+																			and a.codigo_genero = '$codigo_genero_bucle[$ig]' 
+																			and am.$nombre_indicadores_bucle[$id] = 't')
+																	WHERE codigo_modalidad_turno_ann_lectivo = '$codigo_t_m_a[$tma]'";
+													//  Ejecutar query.
+														$result_conteo = $dblink -> query($query);
+													}
+											} // FOR DEL CODIGO GENERO
 									} // FOR DEL INDICADOR, matricula, retirado, sobreedad, nuevo ingreso.
 								} // FOR DE LA MODALIDAD TURNO Y AÑO LECTIVO.
 								// CONTRUIR MATRIZ PARA EL GRAFICO Y TABLA DE DATOS.
@@ -164,7 +163,6 @@ if($errorDbConexion == false)
 											$datos[$fila_array]["nuevo_ingreso_femenino"] = $row["nuevo_ingreso_f"];
 												$fila_array++;
 										}
-
 							}else
 								{
 									$respuestaOK = false;
@@ -172,7 +170,6 @@ if($errorDbConexion == false)
 									$contenidoOK = '<tr><td colspan="6">No se encontraron Registros</td></tr>';
 								}
 				break;
-
 			default:
 				$mensajeError = 'Esta acción no se encuentra disponible';
 			break;
