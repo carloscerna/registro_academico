@@ -159,6 +159,7 @@
             while($row = $result -> fetch(PDO::FETCH_BOTH))
             {
                 // COLOCAR EL NOMBRE DE LOS COMPONENTES DE ESTUDIO.
+                    $codigoArea = trim($row['codigo_area']); // Nombre Area Dimensión.
                 // CUANDO $ESTUDIANTESFOR = 0
                     if($EstudiantesFor == 0){
                         $NombreArea[] = trim(($row['nombre_area'])); //
@@ -193,7 +194,20 @@
                                 break;
                         }
                     }else{
-                        $indicadorFinal = trim($row['indicador_final']);  // Indicador Final.
+                        if($codigoArea == '09'){
+                            $indicadorFinal = trim($row['alertas']);  // Indicador Final.    
+                            switch ($indicadorFinal) {
+                                case 'SIN ALERTA':
+                                    $indicadorFinal = "S/A";                                    
+                                    break;
+                                case 'CON ALERTA':
+                                    $indicadorFinal = "C/A";                                    
+                                    break;
+                            }
+                        }else{
+                            $indicadorFinal = trim($row['indicador_final']);  // Indicador Final.
+                        }
+                        
                     }
                 //
                 if($num == 0){
