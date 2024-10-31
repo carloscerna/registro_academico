@@ -88,6 +88,11 @@
             if($periodo == "Periodo 3"){$nota_p_p = "indicador_p_p_3";}        
             if($periodo == "Alertas"){$nota_p_p = "alertas";}
               break;
+          case ($codigo_modalidad = '16'): // Educación Básica Segundo y Tercer grado Focalizado.
+            if($periodo == "Periodo 1"){$nota_p_p = "indicador_p_p_1";}
+            if($periodo == "Periodo 2"){$nota_p_p = "indicador_p_p_2";}
+            if($periodo == "Periodo 3"){$nota_p_p = "indicador_p_p_3";}        
+              break;
           default:
             if($periodo == "Periodo 1"){$nota_p_p = "nota_p_p_1";}
             if($periodo == "Periodo 2"){$nota_p_p = "nota_p_p_2";}
