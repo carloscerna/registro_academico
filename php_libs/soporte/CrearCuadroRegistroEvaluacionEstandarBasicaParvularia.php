@@ -56,7 +56,7 @@
     //echo date('H:i:s') . " Set Time Zone"."<br />";
     date_default_timezone_set('America/El_Salvador');
 // set codings.
-//    $objPHPExcel->_defaultEncoding = 'ISO-8859-1';
+    $objPHPExcel->_defaultEncoding = 'ISO-8859-1';
 // Set default font
     //echo date('H:i:s') . " Set default font"."<br />";
     $objPHPExcel->getDefaultStyle()->getFont()->setName('Arial');
@@ -143,10 +143,10 @@
     $objPHPExcel->getActiveSheet()->SetCellValue('X2', $nombreDepartamento);
     $objPHPExcel->getActiveSheet()->SetCellValue('X3', $nombreMunicipio);
     $objPHPExcel->getActiveSheet()->SetCellValue('R9', $numeroDeAcuerdo);
-    $objPHPExcel->getActiveSheet()->SetCellValue('C63', $fecha);
+    $objPHPExcel->getActiveSheet()->SetCellValue('BQ63', $fecha);
 //
-    $objPHPExcel->getActiveSheet()->SetCellValue('B67', $nombreDirector);
-    $objPHPExcel->getActiveSheet()->SetCellValue('G67', $nombreEncargado);
+    $objPHPExcel->getActiveSheet()->SetCellValue('BO66', $nombreDirector);
+    $objPHPExcel->getActiveSheet()->SetCellValue('CG66', $nombreEncargado);
 // Indicamos que se pare en la hoja uno del libro
     //$n_hoja++;    
     $objPHPExcel->setActiveSheetIndex(0);
@@ -309,11 +309,11 @@
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     consulta_indicadores(19,0,$codigo_all,'','','',$db_link,'');
         global $totalMasculino, $totalFemenino, $totalMasculinoRetirados, $totalFemeninoRetirados, $EstudianteRetirados;
-            $objPHPExcel->getActiveSheet()->SetCellValue('W66', $totalMasculino);
-            $objPHPExcel->getActiveSheet()->SetCellValue('W67', $totalFemenino);
+            $objPHPExcel->getActiveSheet()->SetCellValue('CT65', $totalMasculino);
+            $objPHPExcel->getActiveSheet()->SetCellValue('CT66', $totalFemenino);
             //
-            $objPHPExcel->getActiveSheet()->SetCellValue('Y66', $totalMasculinoRetirados);
-            $objPHPExcel->getActiveSheet()->SetCellValue('Y67', $totalFemeninoRetirados);
+            $objPHPExcel->getActiveSheet()->SetCellValue('CV65', $totalMasculinoRetirados);
+            $objPHPExcel->getActiveSheet()->SetCellValue('CV66', $totalFemeninoRetirados);
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Tipo de Carpeta a Grabar Cuadro de Registro de Evaluación.
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
