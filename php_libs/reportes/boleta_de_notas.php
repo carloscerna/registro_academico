@@ -302,7 +302,7 @@ function FancyTable($header)
 	{
 		$n_label = 8; $n_etiqueta = 3;
 	}else{
-		$n_label = 8; $n_etiqueta = 3;}
+		$n_label = 8; $n_etiqueta = 4;}
 	// medidas para NOCTURNA POR EL N-º DE MODULOS.
 	// crear las columnas de TRIMESTRE, PERIODO O MODULOS.
 		$x = 85; $n_e = 0; $n_r = 0; $n_f = 0;
