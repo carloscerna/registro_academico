@@ -56,7 +56,7 @@
     //echo date('H:i:s') . " Set Time Zone"."<br />";
     date_default_timezone_set('America/El_Salvador');
 // set codings.
-    $objPHPExcel->_defaultEncoding = 'ISO-8859-1';
+    $objPHPExcel->$_defaultEncoding = 'ISO-8859-1';
 // Set default font
     //echo date('H:i:s') . " Set default font"."<br />";
     $objPHPExcel->getDefaultStyle()->getFont()->setName('Arial');
@@ -133,7 +133,7 @@
     $objPHPExcel->getActiveSheet()->SetCellValue('H2', $nombreInstitucion);
     $objPHPExcel->getActiveSheet()->SetCellValue('C2', $nombreCodigoInstitucion);
     //
-    $objPHPExcel->getActiveSheet()->SetCellValue('C3', $nombreNivel);
+    $objPHPExcel->getActiveSheet()->SetCellValue('C3',$nombreNivel);
     $objPHPExcel->getActiveSheet()->SetCellValue('C4', $nombreGrado);
     //
     $objPHPExcel->getActiveSheet()->SetCellValue('F4', $nombreSeccion);

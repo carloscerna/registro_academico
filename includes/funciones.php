@@ -655,6 +655,19 @@ function genera_bach()
 		
 		return $nota;
 	}
+// verificar para media bachillerato contable.
+function verificar_nota_media_contable($nota_final, $recuperacion)
+{
+	$nota = 0;
+	
+	if($nota_final < 3 && $recuperacion != 0){
+		// calcular la nota entre dos.
+	$nota = round(($nota_final+$recuperacion)/2,0);}
+	else{
+		$nota = number_format($nota_final,0);}
+	
+	return $nota;
+}
 /////////////////////////////////////////////////////////////////////////////////////////
 //				**	cambiar el Del por del ó De por de.
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -932,7 +945,7 @@ function cambiar_aprobado_reprobado_media_contable($ap_re,$nombre_area){
 	if($nombre_area == "TéCNICA" || $nombre_area == "Técnica"){
 		$calificacion_maxima = 4;
 	}else{
-		$calificacion_maxima = 6;
+		$calificacion_maxima = 5;
 	}
 		if($ap_re !=0){
 			if($ap_re >= $calificacion_maxima){$ap_res = "A";}else{$ap_res = "R";}}

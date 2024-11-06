@@ -32,18 +32,28 @@
   $crear_archivos = $_REQUEST["chkCrearArchivoPdf"];
   $print_uno = $_REQUEST["print_uno"]; // variable para imprimir un solo registro.
 // variables a utilizar en el encabezado de la tabla para las notas.
-	$registro_docente = "Carlos Wilfredo Cerna";//$_SESSION['nombre_personal']; //
+	$registro_docente = "";//$_SESSION['nombre_personal']; //
 	$periodo_trimestre = "TRIMESTRE";
 	$conteo_reprobadas = array();
 	$conteo_aprobadas = array();
 // Establecer formato para la fecha.
 	date_default_timezone_set('America/El_Salvador');
 	setlocale(LC_TIME,'es_SV');
-	//$dias = array("Domingo","Lunes","Martes","Miercoles","Jueves","Viernes","S�bado");
-    $meses = array("enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre");
-	$dia = strftime("%d");		// El Día.
-    $mes = $meses[date('n')-1];     // El Mes.
-	$año = strftime("%Y");		// El Año.
+// CREAR MATRIZ DE MESES Y FECH.
+	$meses = ["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
+//Crear una línea. Fecha con getdate();
+	$hoy = getdate();
+	$NombreDia = $hoy["wday"];  // dia de la semana Nombre.
+	$dia = $hoy["mday"];    // dia de la semana
+	$mes = $hoy["mon"];     // mes
+	$año = $hoy["year"];    // año
+	$total_de_dias = cal_days_in_month(CAL_GREGORIAN, (int)$mes, $año);
+	$NombreMes = $meses[(int)$mes - 1];
+// definimos 2 array uno para los nombre de los dias y otro para los nombres de los meses
+	$nombresDias = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
+	$nombresMeses = [1=>"Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
+	$fecha = convertirTexto("Santa Ana, $nombresDias[$NombreDia] $dia de $nombresMeses[$mes] de $año");
+	setlocale(LC_MONETARY,"es_ES");
 // variable de la conexi�n dbf.
     $db_link = $dblink;
 ////////////////////////////////////////////////////////////////////
@@ -288,8 +298,11 @@ function FancyTable($header)
 	else if($print_codigo_bachillerato >= '06' and  $print_codigo_bachillerato <= '09')
 	{
 		$n_label = 8; $n_etiqueta = 3;}
-    else{
-		$n_label = 14; $n_etiqueta = 1;}
+	else if($print_codigo_bachillerato == '20' || $print_codigo_bachillerato == '13')
+	{
+		$n_label = 8; $n_etiqueta = 3;
+	}else{
+		$n_label = 8; $n_etiqueta = 3;}
 	// medidas para NOCTURNA POR EL N-º DE MODULOS.
 	// crear las columnas de TRIMESTRE, PERIODO O MODULOS.
 		$x = 85; $n_e = 0; $n_r = 0; $n_f = 0;
@@ -627,6 +640,7 @@ while($row = $result -> fetch(PDO::FETCH_BOTH)) // bucle para la recorrer las as
 					if($row['nota_final'] != 0){$pdf->Cell($ancho[3],($line * $alto[0]),trim($row['nota_final']),0,0,'C',$fill);}else{$pdf->Cell($ancho[3],($line * $alto[0]),'',0,0,'C',$fill);}
 					if($row['recuperacion'] != 0){$pdf->Cell($ancho[3],($line * $alto[0]),trim($row['recuperacion']),0,0,'C',$fill);}else{$pdf->Cell($ancho[3],($line * $alto[0]),'',0,0,'C',$fill);}
 					if(verificar_nota($row['nota_final'],$row['recuperacion'] != 0)){
+						// CONDICIÓN PARA EDUCACIÓN BÁSICA I Y II CICLO.
 						if($print_codigo_bachillerato >= '01' and  $print_codigo_bachillerato <= '05')
 						{
 							if(verificar_nota($row['nota_final'],$row['recuperacion']) < 5){
@@ -652,8 +666,8 @@ while($row = $result -> fetch(PDO::FETCH_BOTH)) // bucle para la recorrer las as
 							if(verificar_nota($row['nota_final'],$row['recuperacion']) > 5){
 								$conteo_aprobadas++;
 							}
-						}	// CONDICION PARA BASICA DE 1.º A 9.º
-						if($print_codigo_bachillerato >= '06' and  $print_codigo_bachillerato <= '09' || $print_codigo_bachillerato == '15')
+						}	// CONDICION PARA EDUCACIÓN MEDIA TURNO REGULAR
+						if($print_codigo_bachillerato >= '06' and  $print_codigo_bachillerato <= '09')
 						{
 							if(verificar_nota_media($row['nota_final'],$row['recuperacion']) < 6){
 								$pdf->SetLineWidth(.3);				// GROSOR.
@@ -672,7 +686,7 @@ while($row = $result -> fetch(PDO::FETCH_BOTH)) // bucle para la recorrer las as
 								$pdf->SetTextColor(0,0,0);
 									$pdf->Cell($ancho[3],($line * $alto[0]),verificar_nota_media($row['nota_final'],$row['recuperacion']) . ' Apr ',0,0,'C',$fill);
 							}
-						}	// CONDICION PARA BASICA DE 1.º A 9.º
+						}	// CONDICION PARA EDUCACIÓN BÁSICA Y III CICLO MODALIDADES FLEXIBLES.
 						if($print_codigo_bachillerato == '10' || $print_codigo_bachillerato == '12')
 						{
 							if(verificar_nota_media($row['nota_final'],$row['recuperacion']) < 5){
@@ -692,7 +706,7 @@ while($row = $result -> fetch(PDO::FETCH_BOTH)) // bucle para la recorrer las as
 								$pdf->SetTextColor(0,0,0);
 									$pdf->Cell($ancho[3],($line * $alto[0]),verificar_nota_media($row['nota_final'],$row['recuperacion']) . ' Apr ',0,0,'C',$fill);
 							}
-						}	// CONDICION PARA BASICA DE 1.º A 9.º
+						}	// CONDICION PARA EDUCACIÓN MEDIA NOCTURNA - MODALIDADES FLEXIBLES
 						if($print_codigo_bachillerato == '11')
 						{
 							if(verificar_nota_media($row['nota_final'],$row['recuperacion']) < 5){
@@ -712,7 +726,27 @@ while($row = $result -> fetch(PDO::FETCH_BOTH)) // bucle para la recorrer las as
 								$pdf->SetTextColor(0,0,0);
 									$pdf->Cell($ancho[3],($line * $alto[0]),verificar_nota_media($row['nota_final'],$row['recuperacion']) . ' Apr ',0,0,'C',$fill);
 							}
-						}	// CONDICION PARA BASICA DE 1.º A 9.º
+						}	// CONDICION PARA EDUCACIÓN MEDIA NOCTURNA - MODALIDADES FLEXIBLES
+						if($print_codigo_bachillerato == '15')
+						{
+							if(verificar_nota_media_contable($row['nota_final'],$row['recuperacion']) < 3){
+								$pdf->SetLineWidth(.3);				// GROSOR.
+								$pdf->SetDrawColor(255, 0, 0);			// COLOR DE LA LÍNEA.
+								$pdf->SetFont('Arial','B',9);
+								$pdf->SetTextColor(255, 25, 0);
+									$pdf->Cell($ancho[3],($line * $alto[0]),verificar_nota_media_contable($row['nota_final'],$row['recuperacion']) . ' Rep',1,0,'C',$fill);
+								$pdf->SetFont('');
+								$pdf->SetTextColor(0,0,0);
+								$pdf->SetLineWidth(0.1);				// GROSOR.
+								$pdf->SetDrawColor(0, 0, 0);			// COLOR DE LA LÍNEA.
+							}else{
+								$pdf->SetLineWidth(0.1);				// GROSOR.
+								$pdf->SetDrawColor(0, 0, 0);			// COLOR DE LA LÍNEA.
+								$pdf->SetFont('');
+								$pdf->SetTextColor(0,0,0);
+									$pdf->Cell($ancho[3],($line * $alto[0]),verificar_nota_media_contable($row['nota_final'],$row['recuperacion']) . ' Apr ',0,0,'C',$fill);
+							}
+						}	// CONDICION PARA EDUCACIÓN MEDIA NOCTURNA - MODALIDADES FLEXIBLES
 					}else{
 						$pdf->Cell($ancho[3],($line * $alto[0]),'',0,0,'C',$fill);
 					}
@@ -743,7 +777,7 @@ while($row = $result -> fetch(PDO::FETCH_BOTH)) // bucle para la recorrer las as
 				}
 				if($codigo_servicio_educativo == "20" || $codigo_servicio_educativo == "13"){
 					$pdf->SetFont('Arial','',6);
-					$leyenda = " Modulo >= .6.";
+					$leyenda = " Modulo >= .3.";
 					$pdf->Cell(120,3,'Nota. Para Aprobar cada asignatura por '.convertirtexto($leyenda),0,1,'L');
 					$pdf->Cell(160,3,'Si alguna ASIGNATURA aparece en BLANCO consulte con el DOCENTE que la imparte.',0,1,'L');
 					$pdf->Cell(40,3,'A = Aprobado; R = Reprobado ',0,1,'L');
