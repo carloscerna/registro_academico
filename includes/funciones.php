@@ -620,7 +620,6 @@ function genera_bach()
 				$sobreedad_escala = 4;
 			}
 		}
-		
 		return $sobreedad_escala;
 	}
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -629,17 +628,13 @@ function genera_bach()
 	function verificar_nota($nota_final, $recuperacion)
 	{
 		$nota = 0;
-		
 		if($nota_final < 5 && $recuperacion != 0){
 			// calcular la nota entre dos.
 			$nota = round(($nota_final+$recuperacion)/2,0);}
-			
 			// no calcular la nota entre dos.
 			//$nota = number_format($recuperacion,0);}
-
 		else{
 			$nota = number_format($nota_final,0);}
-		
 		return $nota;
 	}
 // verificar para media
@@ -652,7 +647,6 @@ function genera_bach()
 		$nota = round(($nota_final+$recuperacion)/2,0);}
 		else{
 			$nota = number_format($nota_final,0);}
-		
 		return $nota;
 	}
 // verificar para media bachillerato contable.
@@ -662,10 +656,9 @@ function verificar_nota_media_contable($nota_final, $recuperacion)
 	
 	if($nota_final < 3 && $recuperacion != 0){
 		// calcular la nota entre dos.
-	$nota = round(($nota_final+$recuperacion)/2,0);}
+		$nota = round(($nota_final+$recuperacion)/2,0);}
 	else{
 		$nota = number_format($nota_final,0);}
-	
 	return $nota;
 }
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -924,6 +917,23 @@ function contar_promovidos_media($x1, $x2, $nota_e){
 	//
 		if($x1 == 'f' && $x2 >= 6){$contar_p_f++;}
 		if($x1 == 'f' && $x2 < 6){$contar_r_f++;}
+	//	
+		if($x2 >= $nota_e){$si_aprobado++;}
+		if($x2 < $nota_e){$no_aprobado++;}
+			return ;
+}
+////////////////////////////////////////////////////
+//contar promovidos masculino MEDIA tecnico modular
+////////////////////////////////////////////////////
+
+function contar_promovidos_media_modular($x1, $x2, $nota_e){
+	global $contar_p_m, $contar_r_m, $contar_p_f, $contar_r_f, $si_aprobado, $no_aprobado;;
+	//
+		if($x1 == 'm' && $x2 >= 3){$contar_p_m++;}
+		if($x1 == 'm' && $x2 < 3){$contar_r_m++;}
+	//
+		if($x1 == 'f' && $x2 >= 3){$contar_p_f++;}
+		if($x1 == 'f' && $x2 < 3){$contar_r_f++;}
 	//	
 		if($x2 >= $nota_e){$si_aprobado++;}
 		if($x2 < $nota_e){$no_aprobado++;}
