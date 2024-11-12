@@ -88,10 +88,16 @@
             if($periodo == "Periodo 3"){$nota_p_p = "indicador_p_p_3";}        
             if($periodo == "Alertas"){$nota_p_p = "alertas";}
               break;
-          case ($codigo_modalidad = '16'): // Educación Básica Segundo y Tercer grado Focalizado.
+          case ($codigo_modalidad == '16'): // Educación Básica Segundo y Tercer grado Focalizado.
             if($periodo == "Periodo 1"){$nota_p_p = "indicador_p_p_1";}
             if($periodo == "Periodo 2"){$nota_p_p = "indicador_p_p_2";}
             if($periodo == "Periodo 3"){$nota_p_p = "indicador_p_p_3";}        
+              break;
+          case ($codigo_modalidad == '15'): // Educación Media Bachillerato Tecnico Vocacion Administrativo Contable.
+            if($periodo == "Periodo 1"){$nota_p_p = "nota_p_p_1";}
+            if($periodo == "Periodo 2"){$nota_p_p = "nota_p_p_2";}
+            if($periodo == "Periodo 3"){$nota_p_p = "nota_p_p_3";}
+            if($periodo == "Periodo 4"){$nota_p_p = "nota_p_p_4";}
               break;
           default:
             if($periodo == "Periodo 1"){$nota_p_p = "nota_p_p_1";}
@@ -173,7 +179,12 @@
         {
           $nombre_completo = (trim($listado['apellido_alumno']));
           $codigo_area = trim($listado['codigo_area']);
-          $nota_p_p_ = $listado[$nota_p_p];
+          // verificar si es BTC ADministrativo Contable, porque obtendremos el promedio final.
+            if($codigo_area == "03" and $codigo_modalidad == "15"){
+              $nota_p_p_ = $listado["nota_final"];
+            }else{
+              $nota_p_p_ = $listado[$nota_p_p];
+            }
           $codigo_cc = (trim($listado['codigo_cc']));         // Variable para saber si la asignatura es de concepto o de calificación.
           $fila_excel++; $valor_uno = 1;  // inremento del valor de la fila para excel.
             ConceptoCalificacion($codigo_cc);         // Evaluar si la asignatura es de CONCEPTO O CALIFICACIÓN.
@@ -191,8 +202,13 @@ else
         while($listado = $result -> fetch(PDO::FETCH_BOTH))
             {
               $nombre_completo = (trim($listado['apellido_alumno']));               
-              $nota_p_p_ = $listado[$nota_p_p];
               $codigo_area = trim($listado['codigo_area']);
+              // verificar si es BTC ADministrativo Contable, porque obtendremos el promedio final.
+              if($codigo_area == "03" and $codigo_modalidad == "15"){
+                $nota_p_p_ = $listado["nota_final"];
+              }else{
+                $nota_p_p_ = $listado[$nota_p_p];
+              }
               $codigo_cc = (trim($listado['codigo_cc']));               // Variable para saber si la asignatura es de concepto o de calificación.
               $fila_excel++; $valor_uno = 1; // inremento del valor de la fila para excel.
               ConceptoCalificacion($codigo_cc);         // Evaluar si la asignatura es de CONCEPTO O CALIFICACIÓN.
