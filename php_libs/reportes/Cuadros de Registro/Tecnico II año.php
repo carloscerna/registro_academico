@@ -25,19 +25,19 @@
     $total_retenidos_f=0;
     $total_retenidos_m=0;
     $retirados_m_f=0;
-//
-						// Establecer formato para la fecha.
-						// 
-            date_default_timezone_set('America/El_Salvador');
-            setlocale(LC_TIME,'es_SV');
-              //
-            //$dias = array("Domingo","Lunes","Martes","Miercoles","Jueves","Viernes","Sábado");
-            $meses = array("enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre");
-                        //Salida: Viernes 24 de Febrero del 2012		
-            //Crear una línea. Fecha.
-            $dia = strftime("%d");		// El Día.
-            $mes = $meses[date('n')-1];     // El Mes.
-            $año = strftime("%Y");		// El Año.
+// Establecer formato para la fecha.
+  date_default_timezone_set('America/El_Salvador');
+  setlocale(LC_TIME,'es_SV');
+// CREAR MATRIZ DE MESES Y FECH.
+  $meses = array("enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre");
+//Crear una línea. Fecha con getdate();
+  $hoy = getdate();
+  $NombreDia = $hoy["wday"];  // dia de la semana Nombre.
+  $dia = $hoy["mday"];    // dia de la semana
+  $mes = $hoy["mon"];     // mes
+  $año = $hoy["year"];    // año
+  $total_de_dias = cal_days_in_month(CAL_GREGORIAN, (int)$mes, $año);
+  $NombreMes = $meses[(int)$mes - 1];
 // buscar la consulta y la ejecuta.
   consultas(9,0,$codigo_all,'','','',$db_link,'');
 //  almacenar variables de datos del bachillerato.
@@ -187,19 +187,10 @@ while($rows_promovidos_retenidos = $result_promovidos_retenidos -> fetch(PDO::FE
     $nota_r_2 = $rows_promovidos_retenidos['nota_recuperacion_2'];
     $nota_final = $rows_promovidos_retenidos['nota_final'];
     $CodigoArea = trim($rows_promovidos_retenidos['codigo_area']);
-// CALCULO DE LA NOTA FINAL EN RELACIÓN A LA RECUPERACIÓN UNO Y DOS.    
-    if($nota_r_1 != 0){
-      $nueva_nota_final = round(($nota_final + $nota_r_1)/2,0);
-        if($nueva_nota_final < 6){
-            if($nota_r_2 != 0){
-                $nueva_nota_final = round(($nota_final + $nota_r_2)/2,0);
-            }
-        }
-      $notas = $nueva_nota_final;
-    }
-    else{
-          $notas = number_format($rows_promovidos_retenidos['nota_final'],0);
-    } //
+		//////////////////////////////////////////////////////////////////////////////////////
+		//	Fórmula. para el calculo del promedio final.
+		//////////////////////////////////////////////////////////////////////////////////////
+      $notas = verificar_nota($nota_final, $nota_r_1, $nota_r_2);
 /////////////////////////////////////////////////////////////////////////////////////////////
     switch($CodigoArea){
       case ($CodigoArea == "01" || $CodigoArea == "03"): 
@@ -237,7 +228,6 @@ while($rows_promovidos_retenidos = $result_promovidos_retenidos -> fetch(PDO::FE
               $nombre_bachillerato = trim($rows['nombre_bachillerato']);
               $nombre_grado = trim($rows['nombre_grado']);
       }
-//print_r($nombre_asignatura);/
       //contar el total de promovidos segun genero y si contar_p_m es mayor igual que cinco.
       $promocion = "No";
             if($ji == $total_asignaturas)
@@ -442,12 +432,11 @@ class PDF extends FPDF
     $header=array('');
     $pdf->AliasNbPages();
     $pdf->AddPage();
-                                                     
 //  cuenta el total de alumnos para colocar en la estadistica.
     $total_alumnos_masculino = 0;
 	while($rows_total_alumnos_m = $result_total_alumnos_m -> fetch(PDO::FETCH_BOTH))
     {
-     		$total_alumnos_masculino = trim($rows_total_alumnos_m['total_alumnos_masculino']);
+      $total_alumnos_masculino = trim($rows_total_alumnos_m['total_alumnos_masculino']);
     }
 
 //  cuenta el total de alumnos para colocar en la estadistica MATRICULA INICIAL..
@@ -497,9 +486,7 @@ class PDF extends FPDF
      		$nombre_encargado = trim($rows_encargado['nombre_docente']);
      		$codigo_docente = trim($rows_encargado['codigo_docente']);
     }
-
 //  cuenta el numero de asignaturas y asigna el valor a una matriz.    
-
 /////////////////////////////////////////////////////////////////////////////////////////
 // Consulta para grabar o actualizar en la tabla estadistica_grados
 $codigo_all_ = substr($codigo_all,0,8);
@@ -767,10 +754,7 @@ $codigo_all_ = substr($codigo_all,0,8);
     }else{
       $pdf->Cell(65,5,strtolower(convertirtexto(num2letras($total_promovidos_f+$total_promovidos_m))),0,0,'C');
     }
-		
-		
     $pdf->Rect(290,170,50,0);
-		
 		$pdf->SetXY(260,165);
 		$pdf->Cell(11,5,'RETENIDOS:',0,0,'L');
 		$pdf->SetXY(280,165);
@@ -780,8 +764,6 @@ $codigo_all_ = substr($codigo_all,0,8);
     }else{
       $pdf->Cell(65,5,strtolower(convertirtexto(num2letras($total_retenidos_f+$total_retenidos_m))),0,0,'C');  
     }
-    
-    
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 //  INICIO PARA MOSTRAR LOS DATOS DE LA TABLA.
@@ -811,6 +793,10 @@ $codigo_all_ = substr($codigo_all,0,8);
      $result = $db_link -> query($query);
 		while($row = $result -> fetch(PDO::FETCH_BOTH))
           {
+                // variables a evaluar.
+                $nota_final = $row['nota_final'];
+                $nota_r_1 = $row['recuperacion'];
+                $nota_r_2 = $row['nota_recuperacion_2'];
             switch($i)
             {
               case 1:
@@ -821,7 +807,8 @@ $codigo_all_ = substr($codigo_all,0,8);
                   $pdf->Cell(20,$h[0],trim($row['codigo_nie']),1,0,'R',$fill);  // N| de Orden.
                   $pdf->Cell(65,$h[0],cambiar_de_del(trim($row['apellido_alumno'])),1,0,'l',$fill);  // nombre del alumno.
                   // camibar color menor de 5.
-                    $nota_final_ = verificar_nota_media($row['nota_final'],$row['recuperacion']);
+                  $nota_final_ = verificar_nota_media($nota_final, $nota_r_1, $nota_r_2);
+                  $total_puntos_01_array[] = $nota_final_;
                       if($nota_final_ < 6 ){
                         $pdf->SetTextColor(255,0,0);
                           $pdf->Cell($w[0],$h[0],$nota_final_,1,0,'C',$fill); 
@@ -829,21 +816,20 @@ $codigo_all_ = substr($codigo_all,0,8);
                       }else{
                         $pdf->Cell($w[0],$h[0],$nota_final_,1,0,'C',$fill); 
                       }
-                    $total_puntos_01_array[] = verificar_nota_media($row['nota_final'],$row['recuperacion']);
 										$conteo_alumnos++;
                     break;  // nota final
               case ($i>=2 && $i<=10):
-                  if($i == 2){$total_puntos_02_array[] = verificar_nota_media($row['nota_final'],$row['recuperacion']);}
-                  if($i == 3){$total_puntos_03_array[] = verificar_nota_media($row['nota_final'],$row['recuperacion']);}
-                  if($i == 4){$total_puntos_04_array[] = verificar_nota_media($row['nota_final'],$row['recuperacion']);}
-                  if($i == 5){$total_puntos_05_array[] = verificar_nota_media($row['nota_final'],$row['recuperacion']);}
-                  if($i == 6){$total_puntos_06_array[] = verificar_nota_media($row['nota_final'],$row['recuperacion']);}
-                  if($i == 7){$total_puntos_07_array[] = verificar_nota_media($row['nota_final'],$row['recuperacion']);}
-                  if($i == 8){$total_puntos_08_array[] = verificar_nota_media($row['nota_final'],$row['recuperacion']);}
-                  if($i == 9){$total_puntos_09_array[] = verificar_nota_media($row['nota_final'],$row['recuperacion']);}
-                  if($i == 10){$total_puntos_10_array[] = verificar_nota_media($row['nota_final'],$row['recuperacion']);}
+                  if($i == 2){$total_puntos_02_array[] = verificar_nota_media($nota_final, $nota_r_1, $nota_r_2);}
+                  if($i == 3){$total_puntos_03_array[] = verificar_nota_media($nota_final, $nota_r_1, $nota_r_2);}
+                  if($i == 4){$total_puntos_04_array[] = verificar_nota_media($nota_final, $nota_r_1, $nota_r_2);}
+                  if($i == 5){$total_puntos_05_array[] = verificar_nota_media($nota_final, $nota_r_1, $nota_r_2);}
+                  if($i == 6){$total_puntos_06_array[] = verificar_nota_media($nota_final, $nota_r_1, $nota_r_2);}
+                  if($i == 7){$total_puntos_07_array[] = verificar_nota_media($nota_final, $nota_r_1, $nota_r_2);}
+                  if($i == 8){$total_puntos_08_array[] = verificar_nota_media($nota_final, $nota_r_1, $nota_r_2);}
+                  if($i == 9){$total_puntos_09_array[] = verificar_nota_media($nota_final, $nota_r_1, $nota_r_2);}
+                  if($i == 10){$total_puntos_10_array[] = verificar_nota_media($nota_final, $nota_r_1, $nota_r_2);}
                 
-                $nota_final_ = verificar_nota_media($row['nota_final'],$row['recuperacion']);
+                  $nota_final_ = verificar_nota_media($nota_final, $nota_r_1, $nota_r_2);
                 if($nota_final_ < 6 ){
                   $pdf->SetTextColor(255,0,0);
                     $pdf->Cell($w[0],$h[0],$nota_final_,1,0,'C',$fill); 
@@ -853,11 +839,11 @@ $codigo_all_ = substr($codigo_all,0,8);
                 }
               break;
               case ($i>=11 && $i<=15):  // muci
-              	$nota_concepto = verificar_nota_media($row['nota_final'],$row['recuperacion']);
+              	$nota_concepto = verificar_nota_media($nota_final, $nota_r_1, $nota_r_2);
                 $concepto_asignatura = cambiar_concepto($nota_concepto);
                 $pdf->Cell(10,$h[0],$concepto_asignatura,1,0,'C',$fill); break;
               case $i = 16:
-                  $nota_concepto = verificar_nota_media($row['nota_final'],$row['recuperacion']);
+                $nota_concepto = verificar_nota_media($nota_final, $nota_r_1, $nota_r_2);
                   $concepto_asignatura = cambiar_concepto($nota_concepto);
                   $pdf->Cell(10,$h[0],$concepto_asignatura,1,1,'C',$fill); break;
                   
