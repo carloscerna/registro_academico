@@ -14,7 +14,7 @@
     $codigo_all = $_REQUEST["todos"];
     $db_link = $dblink;
 	  $valor_x_encabezado = false;
-	  $contar_evaluar = 5;
+	  $contar_evaluar = 6;
 // variables para retenidos y promovidos.
     $total_matricula_inicial_masculino = 0;
     $total_matricula_final_femenino = 0;

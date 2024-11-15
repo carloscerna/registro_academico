@@ -625,17 +625,32 @@ function genera_bach()
 /////////////////////////////////////////////////////////////////////////////////////////
 //				**	verificar la nota mayor, la final o recuperación.
 /////////////////////////////////////////////////////////////////////////////////////////
-	function verificar_nota($nota_final, $recuperacion)
+	function verificar_nota($nota_final, $nota_r_1, $nota_r_2)
 	{
-		$nota = 0;
-		if($nota_final < 5 && $recuperacion != 0){
-			// calcular la nota entre dos.
-			$nota = round(($nota_final+$recuperacion)/2,0);}
-			// no calcular la nota entre dos.
-			//$nota = number_format($recuperacion,0);}
-		else{
-			$nota = number_format($nota_final,0);}
-		return $nota;
+
+		$nota = intval($nota_final);
+		$nota_promedio_final = intval($nota_final);
+		//////////////////////////////////////////////////////////////////////////////////////
+		//	Fórmula.
+		//////////////////////////////////////////////////////////////////////////////////////
+		if($nota_r_2 == 0){
+			if($nota_r_1 == 0){
+
+			}else{
+				$nota_promedio_final = round(($nota_final + $nota_r_1) / 2,0);	
+			}
+		}else{
+			$nota_promedio_final = round(($nota_final + $nota_r_2) / 2,0);
+		}
+			$nota = $nota_promedio_final;
+		/*
+			$nota = $nota_promedio_final;
+			print "nota final: " . $nota_final;
+			print "<br>" . "nota r1:" . $nota_r_1;
+			print "<br>" . "nota r2:" .$nota_r_2;
+			print "<br>" . "nota final:" .$nota;
+			*/
+			return $nota;
 	}
 // verificar para media
 	function verificar_nota_media($nota_final, $recuperacion)

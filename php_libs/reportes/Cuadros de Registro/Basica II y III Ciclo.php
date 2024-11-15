@@ -14,7 +14,8 @@
   $codigo_all = $_REQUEST["todos"];
   $db_link = $dblink;
   $valor_x_encabezado = false;
-  $contar_evaluar = 5;
+  $contar_evaluar = 6;
+  $BasicaPromocion = 6;
 // variables para retenidos y promovidos.
     $total_matricula_inicial_masculino = 0;
     $total_matricula_final_femenino = 0;
@@ -219,7 +220,7 @@ if($verificar != 0)	// IF PRINCIPAL QUE VERIFICA SI HAY REGISTROS.
 				INNER JOIN seccion sec ON eg.codigo_seccion = sec.codigo
 					WHERE btrim(bach.codigo || gann.codigo || sec.codigo || ann.codigo) = '".$codigo_all_."' and eg.encargado = 't' ORDER BY p.nombres";
     //consulta para las notas finales y nombre de asignaturas.
-	$query = "SELECT DISTINCT a.codigo_nie, btrim(a.apellido_paterno || CAST(' ' AS VARCHAR) || a.apellido_materno || CAST(', ' AS VARCHAR) || a.nombre_completo) as apellido_alumno,
+	  $query = "SELECT DISTINCT a.codigo_nie, btrim(a.apellido_paterno || CAST(' ' AS VARCHAR) || a.apellido_materno || CAST(', ' AS VARCHAR) || a.nombre_completo) as apellido_alumno,
                 a.nombre_completo, btrim(a.apellido_paterno || CAST(' ' AS VARCHAR) || a.apellido_materno) as apellidos_alumno, 
                 am.codigo_bach_o_ciclo, am.pn, bach.nombre as nombre_bachillerato, am.codigo_ann_lectivo, ann.nombre as nombre_ann_lectivo, am.codigo_grado, am.id_alumno_matricula as codigo_matricula,
                 gan.nombre as nombre_grado, am.codigo_seccion, am.retirado, a.genero, asig.ordenar,
@@ -339,19 +340,10 @@ INNER JOIN ann_lectivo ann ON ann.codigo = am.codigo_ann_lectivo
         $nota_r_2 = $rows_promovidos_retenidos['nota_recuperacion_2'];
         $nota_final = $rows_promovidos_retenidos['nota_final'];
         $CodigoArea = trim($rows_promovidos_retenidos['codigo_area']);
-        // CALCULO DE LA NOTA FINAL EN RELACIÓN A LA RECUPERACIÓN UNO Y DOS.    
-        if($nota_r_1 != 0){
-          $nueva_nota_final = round(($nota_final + $nota_r_1)/2,0);
-            if($nueva_nota_final < 6){
-                if($nota_r_2 != 0){
-                    $nueva_nota_final = round(($nota_final + $nota_r_2)/2,0);
-                }
-            }
-          $notas = $nueva_nota_final;
-        }
-        else{
-              $notas = number_format($rows_promovidos_retenidos['nota_final'],0);
-        } //
+		//////////////////////////////////////////////////////////////////////////////////////
+		//	Fórmula. par
+		//////////////////////////////////////////////////////////////////////////////////////
+      $notas = verificar_nota($nota_final, $nota_r_1, $nota_r_2);
         /////////////////////////////////////////////////////////////////////////////////////////////
               switch($CodigoArea){
                 case ($CodigoArea == "01" || $CodigoArea == "03"): 
@@ -373,7 +365,6 @@ INNER JOIN ann_lectivo ann ON ann.codigo = am.codigo_ann_lectivo
                     $promocion = "Si";
                   }
       					}
-      				
       				if($contar_r_f > 0)
       					{$total_retenidos_f++;
                   $promocion = "No";
@@ -385,18 +376,15 @@ INNER JOIN ann_lectivo ann ON ann.codigo = am.codigo_ann_lectivo
                     $promocion = "Si";
                   }
       					}
-      					
       				$contar_r_m = 0;
       				$contar_p_m = 0;
       				
       				$contar_r_f = 0;
       				$contar_p_f = 0;
         		}		
-        		
        // Incremento del Número.
           if($ji == $total_asignaturas){
             $ji = 1;
-            
             // actualizar estatus PROMOCIONEN ALUMNO MATRICULA.
               if($promocion == "Si"){
                 $codigo_promocion = 3;
@@ -786,10 +774,13 @@ $codigo_all_ = substr($codigo_all,0,8);
 		 $total_puntos_07_array = array(); $nota_final_ = 0;
      // Define el alto de la fila.
      $h=array(5); //determina el ancho de las columnas
+     $result = $db_link -> query($query); // VOLVER A REALIZAR LA CONSULTA.
 		while($row = $result -> fetch(PDO::FETCH_BOTH))
           {
             // variables a evaluar.
-            
+              $nota_final = $row['nota_final'];
+              $nota_r_1 = $row['recuperacion'];
+              $nota_r_2 = $row['nota_recuperacion_2'];
             switch($i)
             {
               case 1:
@@ -802,7 +793,7 @@ $codigo_all_ = substr($codigo_all,0,8);
                   //$pdf->Cell(20,6,trim($row['codigo_nie']),1,0,'C');  // NIE
                   //$pdf->Cell(10,$h[0],verificar_nota($row['nota_final'],$row['recuperacion']),1,0,'C'); 
                   // camibar color menor de 5.
-                    $nota_final_ = verificar_nota($row['nota_final'],$row['recuperacion']);
+                    $nota_final_ = verificar_nota($nota_final, $nota_r_1, $nota_r_2);
                       if($nota_final_ < 5 ){
                         $pdf->SetTextColor(255,0,0);
                           $pdf->Cell(10,$h[0],$nota_final_,1,0,'C'); 
@@ -810,12 +801,12 @@ $codigo_all_ = substr($codigo_all,0,8);
                       }else{
                         $pdf->Cell(10,$h[0],$nota_final_,1,0,'C'); 
                       }
-                    $total_puntos_01_array[] = verificar_nota($row['nota_final'],$row['recuperacion']);
+                    $total_puntos_01_array[] = $nota_final_;
 										$conteo_alumnos++;
                     break;  // nota final
               case 2:
-                $total_puntos_02_array[] = verificar_nota($row['nota_final'],$row['recuperacion']);
-                $nota_final_ = verificar_nota($row['nota_final'],$row['recuperacion']);
+                $nota_final_ = verificar_nota($nota_final, $nota_r_1, $nota_r_2);
+                $total_puntos_02_array[] = $nota_final_;
                 if($nota_final_ < 5 ){
                   $pdf->SetTextColor(255,0,0);
                     $pdf->Cell(10,$h[0],$nota_final_,1,0,'C'); 
@@ -826,8 +817,8 @@ $codigo_all_ = substr($codigo_all,0,8);
                 //$pdf->Cell(10,$h[0],verificar_nota($row['nota_final'],$row['recuperacion']),1,0,'C');
               break;
               case 3:
-                $total_puntos_03_array[] = verificar_nota($row['nota_final'],$row['recuperacion']);
-                $nota_final_ = verificar_nota($row['nota_final'],$row['recuperacion']);
+                $nota_final_ = verificar_nota($nota_final, $nota_r_1, $nota_r_2);
+                $total_puntos_03_array[] = $nota_final;
                 if($nota_final_ < 5 ){
                   $pdf->SetTextColor(255,0,0);
                     $pdf->Cell(10,$h[0],$nota_final_,1,0,'C'); 
@@ -838,8 +829,8 @@ $codigo_all_ = substr($codigo_all,0,8);
                 //$pdf->Cell(10,$h[0],verificar_nota($row['nota_final'],$row['recuperacion']),1,0,'C');
               break;
               case 4:
-                $total_puntos_04_array[] = verificar_nota($row['nota_final'],$row['recuperacion']);
-                $nota_final_ = verificar_nota($row['nota_final'],$row['recuperacion']);
+                $nota_final_ = verificar_nota($nota_final, $nota_r_1, $nota_r_2);
+                $total_puntos_04_array[] = $nota_final;
                 if($nota_final_ < 5 ){
                   $pdf->SetTextColor(255,0,0);
                     $pdf->Cell(10,$h[0],$nota_final_,1,0,'C'); 
@@ -850,8 +841,8 @@ $codigo_all_ = substr($codigo_all,0,8);
                 //$pdf->Cell(10,$h[0],verificar_nota($row['nota_final'],$row['recuperacion']),1,0,'C');
               break;              
               case 5:
-                $total_puntos_05_array[] = verificar_nota($row['nota_final'],$row['recuperacion']);
-                $nota_final_ = verificar_nota($row['nota_final'],$row['recuperacion']);
+                $nota_final_ = verificar_nota($nota_final, $nota_r_1, $nota_r_2);
+                $total_puntos_05_array[] = $nota_final;
                 if($nota_final_ < 5 ){
                   $pdf->SetTextColor(255,0,0);
                     $pdf->Cell(10,$h[0],$nota_final_,1,0,'C'); 
@@ -862,8 +853,8 @@ $codigo_all_ = substr($codigo_all,0,8);
                 //$pdf->Cell(10,$h[0],verificar_nota($row['nota_final'],$row['recuperacion']),1,0,'C');
               break;              
               case 6:
-                $total_puntos_06_array[] = verificar_nota($row['nota_final'],$row['recuperacion']);
-                $nota_final_ = verificar_nota($row['nota_final'],$row['recuperacion']);
+                $nota_final_ = verificar_nota($nota_final, $nota_r_1, $nota_r_2);
+                $total_puntos_06_array[] = $nota_final;
                 if($nota_final_ < 5 ){
                   $pdf->SetTextColor(255,0,0);
                     $pdf->Cell(10,$h[0],$nota_final_,1,0,'C'); 
@@ -874,8 +865,8 @@ $codigo_all_ = substr($codigo_all,0,8);
                 //$pdf->Cell(10,$h[0],verificar_nota($row['nota_final'],$row['recuperacion']),1,0,'C');
               break;              
               case 7:
-                $total_puntos_07_array[] = verificar_nota($row['nota_final'],$row['recuperacion']);
-                $nota_final_ = verificar_nota($row['nota_final'],$row['recuperacion']);
+                $nota_final_ = verificar_nota($nota_final, $nota_r_1, $nota_r_2);
+                $total_puntos_07_array[] = $nota_final;
                 if($nota_final_ < 5 ){
                   $pdf->SetTextColor(255,0,0);
                     $pdf->Cell(10,$h[0],$nota_final_,1,0,'C'); 
@@ -886,19 +877,19 @@ $codigo_all_ = substr($codigo_all,0,8);
                 //$pdf->Cell(10,$h[0],verificar_nota($row['nota_final'],$row['recuperacion']),1,0,'C');
               break;              
               case 8:
-              	$nota_concepto = verificar_nota($row['nota_final'],$row['recuperacion']);
+              	$nota_concepto = verificar_nota($nota_final, $nota_r_1, $nota_r_2);
                 $concepto_asignatura = cambiar_concepto($nota_concepto);
                 $pdf->Cell(10,$h[0],$concepto_asignatura,1,0,'C'); break;
               case 9:
-                $nota_concepto = verificar_nota($row['nota_final'],$row['recuperacion']);
+                $nota_concepto = verificar_nota($nota_final, $nota_r_1, $nota_r_2);
                 $concepto_asignatura = cambiar_concepto($nota_concepto);
                 $pdf->Cell(10,$h[0],$concepto_asignatura,1,0,'C'); break;                
               case 10:
-                $nota_concepto = verificar_nota($row['nota_final'],$row['recuperacion']);
+                $nota_concepto = verificar_nota($nota_final, $nota_r_1, $nota_r_2);
                 $concepto_asignatura = cambiar_concepto($nota_concepto);
                 $pdf->Cell(10,$h[0],$concepto_asignatura,1,0,'C'); break;                
               case 11:
-                $nota_concepto = verificar_nota($row['nota_final'],$row['recuperacion']);
+                $nota_concepto = verificar_nota($nota_final, $nota_r_1, $nota_r_2);
                 $concepto_asignatura = cambiar_concepto($nota_concepto);
                 $pdf->Cell(10,$h[0],$concepto_asignatura,1,1,'C'); break;
               case 12:
