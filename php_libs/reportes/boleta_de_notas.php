@@ -672,17 +672,18 @@ while($row = $result -> fetch(PDO::FETCH_BOTH)) // bucle para la recorrer las as
 						if($row['total_puntos_nocturna'] != 0){$pdf->Cell($ancho[3],($line * $alto[0]),trim($row['total_puntos_nocturna']),'L',0,'C',$fill);}else{$pdf->Cell($ancho[3],($line * $alto[0]),'',0,0,'C',$fill);}
 						if($row['nota_final'] != 0){$pdf->Cell($ancho[3],($line * $alto[0]),trim($row['nota_final']),0,0,'C',$fill);}else{$pdf->Cell($ancho[3],($line * $alto[0]),'',0,0,'C',$fill);}
 						if($row['recuperacion'] != 0){$pdf->Cell($ancho[3],($line * $alto[0]),trim($row['recuperacion']),0,0,'C',$fill);}else{$pdf->Cell($ancho[3],($line * $alto[0]),'',0,0,'C',$fill);}
+						if($row['nota_recuperacion_2'] != 0){$pdf->Cell($ancho[3],($line * $alto[0]),trim($row['nota_recuperacion_2']),0,0,'C',$fill);}else{$pdf->Cell($ancho[3],($line * $alto[0]),'',0,0,'C',$fill);}
 
-						if(verificar_nota($row['nota_final'],$row['recuperacion'] != 0)){
+						if(verificar_nota($row['nota_final'],$row['recuperacion'] != 0,$row['nota_recuperacion_2'] != 0)){
 							// CONDICIÓN PARA EDUCACIÓN BÁSICA I Y II CICLO.
 							if($print_codigo_bachillerato >= '01' and  $print_codigo_bachillerato <= '05')
 							{
-								if(verificar_nota($row['nota_final'],$row['recuperacion']) < 5){
+								if(verificar_nota($row['nota_final'],$row['recuperacion'],$row['nota_recuperacion_2']) < 5){
 									$pdf->SetLineWidth(.3);				// GROSOR.
 									$pdf->SetDrawColor(255, 0, 0);			// COLOR DE LA LÍNEA.
 									$pdf->SetFont('Arial','B',9);
 									$pdf->SetTextColor(255, 25, 0);
-										$pdf->Cell($ancho[3],($line * $alto[0]),verificar_nota($row['nota_final'],$row['recuperacion']) . ' Rep',1,0,'C',$fill);
+										$pdf->Cell($ancho[3],($line * $alto[0]),verificar_nota($row['nota_final'],$row['recuperacion'],$row['nota_recuperacion_2']) . ' Rep',1,0,'C',$fill);
 										$pdf->Cell($ancho[3],($line * $alto[0]),'',0,0,'C',$fill);
 									$pdf->SetFont('');
 									$pdf->SetTextColor(0,0,0);
@@ -693,22 +694,22 @@ while($row = $result -> fetch(PDO::FETCH_BOTH)) // bucle para la recorrer las as
 									$pdf->SetDrawColor(0, 0, 0);			// COLOR DE LA LÍNEA.
 									$pdf->SetFont('');
 									$pdf->SetTextColor(0,0,0);
-										$pdf->Cell($ancho[3],($line * $alto[0]),verificar_nota($row['nota_final'],$row['recuperacion']) . ' Apr ',0,0,'C',$fill);
+										$pdf->Cell($ancho[3],($line * $alto[0]),verificar_nota($row['nota_final'],$row['recuperacion'],$row['nota_recuperacion_2']) . ' Apr ',0,0,'C',$fill);
 										$pdf->Cell($ancho[3],($line * $alto[0]),'',0,0,'C',$fill);
 										}
 								$concepto_calificacion = trim($row['codigo_cc']);
-								if(verificar_nota($row['nota_final'],$row['recuperacion']) > 5){
+								if(verificar_nota($row['nota_final'],$row['recuperacion'],$row['nota_recuperacion_2']) > 5){
 									$conteo_aprobadas++;
 								}
 							}	// CONDICION PARA EDUCACIÓN MEDIA TURNO REGULAR
 							if($print_codigo_bachillerato >= '06' and  $print_codigo_bachillerato <= '09')
 							{
-								if(verificar_nota_media($row['nota_final'],$row['recuperacion']) < 6){
+								if(verificar_nota_media($row['nota_final'],$row['recuperacion'],$row['nota_recuperacion_2']) < 6){
 									$pdf->SetLineWidth(.3);				// GROSOR.
 									$pdf->SetDrawColor(255, 0, 0);			// COLOR DE LA LÍNEA.
 									$pdf->SetFont('Arial','B',9);
 									$pdf->SetTextColor(255, 25, 0);
-										$pdf->Cell($ancho[3],($line * $alto[0]),verificar_nota_media($row['nota_final'],$row['recuperacion']) . ' Rep',1,0,'C',$fill);
+										$pdf->Cell($ancho[3],($line * $alto[0]),verificar_nota_media($row['nota_final'],$row['recuperacion'],$row['nota_recuperacion_2']) . ' Rep',1,0,'C',$fill);
 									$pdf->SetFont('');
 									$pdf->SetTextColor(0,0,0);
 									$pdf->SetLineWidth(0.1);				// GROSOR.
@@ -718,17 +719,17 @@ while($row = $result -> fetch(PDO::FETCH_BOTH)) // bucle para la recorrer las as
 									$pdf->SetDrawColor(0, 0, 0);			// COLOR DE LA LÍNEA.
 									$pdf->SetFont('');
 									$pdf->SetTextColor(0,0,0);
-										$pdf->Cell($ancho[3],($line * $alto[0]),verificar_nota_media($row['nota_final'],$row['recuperacion']) . ' Apr ',0,0,'C',$fill);
+										$pdf->Cell($ancho[3],($line * $alto[0]),verificar_nota_media($row['nota_final'],$row['recuperacion'],$row['nota_recuperacion_2']) . ' Apr ',0,0,'C',$fill);
 								}
 							}	// CONDICION PARA EDUCACIÓN BÁSICA Y III CICLO MODALIDADES FLEXIBLES.
 							if($print_codigo_bachillerato == '10' || $print_codigo_bachillerato == '12')
 							{
-								if(verificar_nota_media($row['nota_final'],$row['recuperacion']) < 5){
+								if(verificar_nota_media($row['nota_final'],$row['recuperacion'],$row['nota_recuperacion_2']) < 5){
 									$pdf->SetLineWidth(.3);				// GROSOR.
 									$pdf->SetDrawColor(255, 0, 0);			// COLOR DE LA LÍNEA.
 									$pdf->SetFont('Arial','B',9);
 									$pdf->SetTextColor(255, 25, 0);
-										$pdf->Cell($ancho[3],($line * $alto[0]),verificar_nota_media($row['nota_final'],$row['recuperacion']) . ' Rep',1,0,'C',$fill);
+										$pdf->Cell($ancho[3],($line * $alto[0]),verificar_nota_media($row['nota_final'],$row['recuperacion'],$row['nota_recuperacion_2']) . ' Rep',1,0,'C',$fill);
 									$pdf->SetFont('');
 									$pdf->SetTextColor(0,0,0);
 									$pdf->SetLineWidth(0.1);				// GROSOR.
@@ -738,17 +739,17 @@ while($row = $result -> fetch(PDO::FETCH_BOTH)) // bucle para la recorrer las as
 									$pdf->SetDrawColor(0, 0, 0);			// COLOR DE LA LÍNEA.
 									$pdf->SetFont('');
 									$pdf->SetTextColor(0,0,0);
-										$pdf->Cell($ancho[3],($line * $alto[0]),verificar_nota_media($row['nota_final'],$row['recuperacion']) . ' Apr ',0,0,'C',$fill);
+										$pdf->Cell($ancho[3],($line * $alto[0]),verificar_nota_media($row['nota_final'],$row['recuperacion'],$row['nota_recuperacion_2']) . ' Apr ',0,0,'C',$fill);
 								}
 							}	// CONDICION PARA EDUCACIÓN MEDIA NOCTURNA - MODALIDADES FLEXIBLES
 							if($print_codigo_bachillerato == '11' or $print_codigo_bachillerato == "15")
 							{
-								if(verificar_nota_media($row['nota_final'],$row['recuperacion']) < 5){
+								if(verificar_nota_media($row['nota_final'],$row['recuperacion'],$row['nota_recuperacion_2']) < 5){
 									$pdf->SetLineWidth(.3);				// GROSOR.
 									$pdf->SetDrawColor(255, 0, 0);			// COLOR DE LA LÍNEA.
 									$pdf->SetFont('Arial','B',9);
 									$pdf->SetTextColor(255, 25, 0);
-										$pdf->Cell($ancho[3],($line * $alto[0]),verificar_nota_media($row['nota_final'],$row['recuperacion']) . ' Rep',1,0,'C',$fill);
+										$pdf->Cell($ancho[3],($line * $alto[0]),verificar_nota_media($row['nota_final'],$row['recuperacion'],$row['nota_recuperacion_2']) . ' Rep',1,0,'C',$fill);
 									$pdf->SetFont('');
 									$pdf->SetTextColor(0,0,0);
 									$pdf->SetLineWidth(0.1);				// GROSOR.
@@ -758,7 +759,7 @@ while($row = $result -> fetch(PDO::FETCH_BOTH)) // bucle para la recorrer las as
 									$pdf->SetDrawColor(0, 0, 0);			// COLOR DE LA LÍNEA.
 									$pdf->SetFont('');
 									$pdf->SetTextColor(0,0,0);
-										$pdf->Cell($ancho[3],($line * $alto[0]),verificar_nota_media($row['nota_final'],$row['recuperacion']) . ' Apr ',0,0,'C',$fill);
+										$pdf->Cell($ancho[3],($line * $alto[0]),verificar_nota_media($row['nota_final'],$row['recuperacion'],$row['nota_recuperacion_2']) . ' Apr ',0,0,'C',$fill);
 								}
 							}	// CONDICION PARA EDUCACIÓN MEDIA NOCTURNA - MODALIDADES FLEXIBLES
 						}else{

@@ -225,10 +225,10 @@ function FancyTable($header)
 						if(trim($row['recuperacion']) <> 0){$pdf->Cell($w[9],$h[0],trim($row['recuperacion']),0,0,'C',$fill);}else{$pdf->Cell($w[9],$h[0],'',0,0,'C',$fill);}
                         if(trim($row['nota_recuperacion_2']) <> 0){$pdf->Cell($w[9],$h[0],trim($row['nota_recuperacion_2']),0,0,'C',$fill);}else{$pdf->Cell($w[9],$h[0],'',0,0,'C',$fill);}
                         // calculo de la calificacion
-						if(verificar_nota($row['nota_final'],$row['recuperacion'] != 0)){
-                            $nota_ = verificar_nota($row['nota_final'],$row['recuperacion']);
+						if(verificar_nota($row['nota_final'],$row['recuperacion'],$row['nota_recuperacion_2'] != 0)){
+                            $nota_ = verificar_nota($row['nota_final'],$row['recuperacion'],$row['nota_recuperacion_2']);
                                 if($nota_ < 6){
-                                    $nota_ = verificar_nota_media($row['nota_final'],$row['nota_recuperacion_2']);
+                                    $nota_ = verificar_nota_media($row['nota_final'],$row['recuperacion'],$row['nota_recuperacion_2']);
                                 }
                             $pdf->Cell($w[10],$h[0],$nota_,0,0,'C',$fill);
                         }else{

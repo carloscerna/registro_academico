@@ -683,7 +683,7 @@ function consultas_alumno($ejecutar,$cerrar,$buscar_nombre,$codigo_alumno,$codig
             gan.nombre as nombre_grado, am.codigo_seccion, am.retirado, am.id_alumno_matricula as codigo_matricula, am.id_alumno_matricula as cod_matricula,
             sec.nombre as nombre_seccion, ae.codigo_alumno, id_alumno, n.codigo_alumno, n.codigo_asignatura, asig.nombre AS n_asignatura,
             n.nota_p_p_1, n.nota_p_p_2, n.nota_p_p_3, n.nota_p_p_4, n.nota_p_p_5, n.nota_final, n.recuperacion, n.nota_paes, n.alertas,
-            n.indicador_p_p_1, n.indicador_p_p_2, n.indicador_p_p_3, n.indicador_final,
+            n.indicador_p_p_1, n.indicador_p_p_2, n.indicador_p_p_3, n.indicador_final, nota_recuperacion_2,
             round((n.nota_p_p_1+n.nota_p_p_2+n.nota_p_p_3),1) as total_puntos_basica, 
             round((n.nota_p_p_1+n.nota_p_p_2+n.nota_p_p_3+n.nota_p_p_4),1) as total_puntos_media, 
             round((n.nota_p_p_1+n.nota_p_p_2+n.nota_p_p_3+n.nota_p_p_4+n.nota_p_p_5),1) as total_puntos_nocturna,
