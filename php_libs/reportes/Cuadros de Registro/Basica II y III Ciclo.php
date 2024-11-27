@@ -100,61 +100,63 @@ function Header()
   // dParte superior izquierda.
     $this->SetFont('Arial','',8); // I : Italica; U: Normal;
     $this->Cell(343,8,mb_convert_encoding($print_bachillerato,"ISO-8859-1","UTF-8"),0,0,'R');
-  /*  
+    
 if($valor_x_encabezado == true)
 {    
-// PRIEMRA PARTE DEL RECTANGULO.
+// PRIMERA PARTE DEL RECTANGULO.
     $this->Rect(10,5,227,50);
 // segunda PARTE DEL RECTANGULO. numero de orden
     $this->Rect(10,5,7,50);
-    $this->RotatedText(15,30,convertirtexto('N° de Orden'),90);
+    $this->RotatedText(15,38,convertirtexto('N° de Orden'),90);
 // segunda PARTE DEL RECTANGULO. numero de orden
     $this->Rect(17,5,20,50);
-    $this->RotatedText(25,30,convertirtexto('N° de NIE'),90);
+    $this->RotatedText(30,38,convertirtexto('N° de NIE'),90);
 // tercera PARTE DEL RECTANGULO.   nombre del alumno
     $this->Rect(17,5,110,50);
     $this->SetFont('Arial','',11); // I : Italica; U: Normal;
     $this->SetXY(38,25);
     $this->SetFillColor(255,255,255);
-    $this->MultiCell(90,8,convertirtexto('Nombre de los Alumnos(as) en orden alfabético de apellidos'),0,2,'C',true);
+    $this->MultiCell(90,8,convertirtexto('Nombre de los Alumnos(as) en orden alfabético de apellidos'),0,2,'C');
 // cuarta PARTE DEL RECTANGULO. nie
-    //$pdf->Rect(107,45,20,50);
-    //$pdf->SetXY(110,65);
-    //$pdf->Cell(10,8,'NIE',0,2,'C');
+    //$this->Rect(107,45,20,50);
+    //$this->SetXY(110,65);
+    //$this->Cell(10,8,'NIE',0,2,'C');
 // cuarta PARTE DEL RECTANGULO. asignatura
     $this->SetFont('Arial','',13); // I : Italica; U: Normal;
-    $this->Rect(127,5,70,7);
+    $this->Rect(127,5,60,7);
     $this->SetXY(132,5);
-    $this->Cell(60,8,'ASIGNATURA',0,2,'C');
+    $this->Cell(50,8,'ASIGNATURA',0,2,'C');
 // cuarta PARTE DEL RECTANGULO. educacion moral y civica
-    $this->Rect(197,5,40,7);
-    $this->SetXY(192,5);
+    $this->Rect(187,5,50,7);
+    $this->SetXY(187,5);
     $this->SetFont('Arial','',7); // I : Italica; U: Normal;
     $this->Cell(50,8,convertirtexto('COMPETENCIAS CIUDADANAS'),0,2,'C');
     $this->SetFont('Arial','',9); // I : Italica; U: Normal;
     //$this->Cell(60,3,convertirtexto('Aspectos de la Conducta'),0,2,'C');
 // cuarta PARTE DEL RECTANGULO. asignaturas nombres
     $espacio = 0;
-    for($i=0;$i<=10;$i++){
-      if($i >= 0 && $i <= 6){
-        $this->Rect(127+$espacio,12,10,36);
-        $this->RotatedTextMultiCell(128+$espacio,45,$nombre_asignatura[$i],90);}
-      else{
-        $this->RotatedTextMultiCellAspectos(128+$espacio,55,$nombre_asignatura[$i],90);}
-      $espacio = $espacio + 10;}
+    
+    for($ix=0;$ix<=$total_asignaturas-1;$ix++){
+        if($ix >= 0 && $ix <= 5){
+          $this->Rect(127+$espacio,12,10,33);
+          $this->RotatedTextMultiCell(127+$espacio,44,$nombre_asignatura[$ix],90);
+        }
+        else{
+          $this->RotatedTextMultiCellAspectos(127+$espacio,54,$nombre_asignatura[$ix],90);
+        }
+          $espacio = $espacio + 10;
+      }
 // cuarta PARTE DEL RECTANGULO. calificacion
     $espacio = 0;
-    $this->SetFont('Arial','',7); // I : Italica; U: Normal;
       $this->SetFont('Arial','b',13);
-      $this->Rect(127,45,70,10);
-      $this->RotatedText(145,52,convertirtexto('CALIFICACIÓN'),0);
+      $this->Rect(127,45,60,10);
+      $this->RotatedText(143,52,convertirtexto('CALIFICACIÓN'),0);
 // cuarta PARTE DEL RECTANGULO. aspectos de la conducta
     $espacio = 0;
     for($i=1;$i<=4;$i++){
       $this->Rect(197+$espacio,12,10,43);
-      $espacio = $espacio + 10;}
+      $espacio += 10;}    
 }
-*/
 }
 //Pie de página
 function Footer()
@@ -529,7 +531,7 @@ $codigo_all_ = substr($codigo_all,0,8);
     $pdf->Cell(235,5,convertirtexto('CUADRO FINAL DE EVALUACIÓN DE'),0,2,'L');
     $pdf->Cell(235,5,convertirtexto('NOMBRE DEL CENTRO EDUCATIVO:'),0,2,'L');
     $pdf->Cell(235,5,convertirtexto('DIRECCIÓN:'),0,2,'L');
-    $pdf->Cell(235,5,'DEPARTAMENTO:',0,2,'L');
+    $pdf->Cell(235,5,'MUNICIPIO: ',0,2,'L');
     
 // Imprimir el primer encabezado EL ESCUDO DE EL SALVADOR... Y TEXTO. 3 LINEAS
     $img = $_SERVER['DOCUMENT_ROOT'].'/registro_academico/img/escudo.jpg';
@@ -762,9 +764,9 @@ $codigo_all_ = substr($codigo_all,0,8);
             $pdf->Cell(85,5.5,convertirtexto(substr($codigo_grado,1,1).'.° GRADO.      SECCIÓN: '.$nombre_seccion.'    CÓDIGO DE INFRAESTRUCTURA: '.$_SESSION['codigo']),0,2,'L');
             $pdf->Cell(140,6,cambiar_de_del($_SESSION['institucion']),0,2,'C');
             $pdf->SetXY(105,34.5);
-            $pdf->Cell(85,6,convertirtexto($_SESSION['direccion']).'                       MUNICIPIO: '.$_SESSION['nombre_municipio'],0,2,'L');
-            $pdf->SetXY(115,39.3);
-            $pdf->Cell(85,6,convertirtexto($_SESSION['nombre_departamento'].'                   Nº de acuerdo de creación: ').$_SESSION['numero_acuerdo'],0,2,'L');    
+            $pdf->Cell(85,6,convertirtexto($_SESSION['direccion']).'                       DEPARTAMENTO: '.$_SESSION['nombre_departamento'],0,2,'L');
+            $pdf->SetXY(105,39.3);
+            $pdf->Cell(85,6,"Santa Ana Centro           DISTRITO: ".convertirtexto($_SESSION['nombre_municipio'].'              Nº de acuerdo de creación: ').$_SESSION['numero_acuerdo'],0,2,'L');    
 //Datos para nombres, asignaturas.
     $pdf->SetXY(10,95);
     $pdf->SetFont('Arial','',10);

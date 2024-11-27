@@ -391,7 +391,7 @@ class PDF extends FPDF
         $w2=array(5,12); //determina el ancho de las columnas      
         $this->Ln();
         //Restauración de colores y fuentes
-        $this->SetFillColor(244,246,244);
+        $this->SetFillColor(244,246,244); // rgb(224,235,255);
         $this->SetTextColor(0);
         $this->SetFont('');
         //Datos
@@ -548,7 +548,7 @@ $codigo_all_ = substr($codigo_all,0,8);
     $pdf->Cell(235,5,convertirtexto('CUADRO FINAL DE EVALUACIÓN DE'),0,2,'L');
     $pdf->Cell(235,5,convertirtexto('NOMBRE DEL CENTRO EDUCATIVO:'),0,2,'L');
     $pdf->Cell(235,5,convertirtexto('DIRECCIÓN:'),0,2,'L');
-    $pdf->Cell(235,5,'DEPARTAMENTO:',0,2,'L');
+    $pdf->Cell(235,5,'MUNICIPIO:',0,2,'L');
     
 // Imprimir el primer encabezado EL ESCUDO DE EL SALVADOR... Y TEXTO. 3 LINEAS
     $img = $_SERVER['DOCUMENT_ROOT'].'/registro_academico/img/escudo.jpg';
@@ -760,11 +760,11 @@ $codigo_all_ = substr($codigo_all,0,8);
             $pdf->SetXY(152,24.3);
             $pdf->SetFont('Arial','b',11); // I : Italica; U: Normal;
             $pdf->Cell(85,5.5,convertirtexto($nombre_grado .' SECCIÓN: '.$print_seccion.'    CÓDIGO DE INFRAESTRUCTURA: '.$_SESSION['codigo']),0,2,'L');
-            $pdf->Cell(140,6,cambiar_de_del($_SESSION['institucion']),0,2,'C');
+            $pdf->Cell(140,6,cambiar_de_del($_SESSION['institucion']),0,2,'L');
             $pdf->SetXY(105,34.5);
-            $pdf->Cell(85,6,convertirtexto($_SESSION['direccion']).'                       MUNICIPIO: '.$_SESSION['nombre_municipio'],0,2,'L');
-            $pdf->SetXY(115,39.3);
-            $pdf->Cell(85,6,convertirtexto($_SESSION['nombre_departamento'].'                   Nº de acuerdo de creación: ').$_SESSION['numero_acuerdo'],0,2,'L');    
+            $pdf->Cell(85,6,convertirtexto($_SESSION['direccion']).'                       DEPARTAMENTO: '.$_SESSION['nombre_departamento'],0,2,'L');
+            $pdf->SetXY(105,39.3);
+            $pdf->Cell(85,6,"Santa Ana Centro           DISTRITO: ".convertirtexto($_SESSION['nombre_municipio'].'              Nº de acuerdo de creación: ').$_SESSION['numero_acuerdo'],0,2,'L');    
 //Datos para nombres, asignaturas.
     $pdf->SetXY(10,95);
     $pdf->SetFont('Arial','',10);
