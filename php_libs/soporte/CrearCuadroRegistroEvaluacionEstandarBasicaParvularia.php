@@ -94,7 +94,8 @@
     $nombreInstitucion  = $_SESSION['institucion'];     // Nombre Institución.
     $nombreCodigoInstitucion = $_SESSION['codigo_escuela']; // Código Institucón.
     $nombreDepartamento =  $_SESSION['nombre_departamento'];
-    $nombreMunicipio =  $_SESSION['nombre_municipio'];
+    $nombreMunicipio =  "Santa Ana Centro";//$_SESSION['nombre_municipio'];  // ACTUALIZAR POSTERIORMENTE A LA TABLA REAL.
+    $nombreDistrito = "Santa Ana";
     $numeroDeAcuerdo = $_SESSION['numero_acuerdo'];
     $diaEntrega = $_SESSION['dia_entrega'];
 ////////////////////////////////////////////////////////////////////
@@ -140,8 +141,9 @@
     $objPHPExcel->getActiveSheet()->SetCellValue('K4', $nombreTurno);
     $objPHPExcel->getActiveSheet()->SetCellValue('S4', $nombreAñoLectivo);
 
-    $objPHPExcel->getActiveSheet()->SetCellValue('X2', $nombreDepartamento);
-    $objPHPExcel->getActiveSheet()->SetCellValue('X3', $nombreMunicipio);
+    $objPHPExcel->getActiveSheet()->SetCellValue('W2', $nombreDepartamento);
+    $objPHPExcel->getActiveSheet()->SetCellValue('W3', $nombreMunicipio);
+    $objPHPExcel->getActiveSheet()->SetCellValue('W4', $nombreDistrito);
     $objPHPExcel->getActiveSheet()->SetCellValue('R9', $numeroDeAcuerdo);
     $objPHPExcel->getActiveSheet()->SetCellValue('BQ63', $fecha);
 //

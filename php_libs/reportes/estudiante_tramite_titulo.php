@@ -131,7 +131,7 @@ function Footer()
                 $segundo_parrafo = utf8_decode('HACE CONSTAR QUE: '. $nombre_estudiante .', Con Número de Identificación Estudiantil (NIE): '.trim($row['codigo_nie'])
                  .' ha culminado satisfactoriamente sus estudios de bachillerato en la modalidad de '. $nombre_modalidad .'  en este Centro Educativo, dando cumplimiento a todos los requisitos exigidos por el  Ministerio de Educación para la legalización del Título de Bachillerato '.$nombre_modalidad) . '.';
                 $tercer_parrafo = utf8_decode('Por tanto, su título que le acredita como Bachiller de la República, se encuentra en trámite de legalización. Ante ello, el Ministerio de Educación, Ciencia y Tecnología está haciendo las gestiones pertinentes con base a la solicitud enviada por nuestra institución'
-                .', para la emisión del respectivo título en la mayor brevedad posible, el cual tendrá validez a partir del 12 de diciembre del año '. $año_anterior .'.');
+                .', para la emisión del respectivo título en la mayor brevedad posible, el cual tendrá validez a partir del 26 de noviembre del año '. $año_anterior .'.');
                 $cuarto_parrafo = utf8_decode('Y para los usos que el/la interesado(a) estime conveniente, se le extiende la presente constancia, en el municipio de '. $nombre_municipio . '  departamento de '. $nombre_departamento.', '
                 . 'a los '. strtolower(num2letras($dia)).' días de '.$mes.' de '.strtolower(num2letras($año))).'.';
                 // Imprimir párrafos en pantallas
