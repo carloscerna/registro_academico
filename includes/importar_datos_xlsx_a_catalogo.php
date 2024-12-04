@@ -10,7 +10,7 @@ include($path_root."/registro_academico/includes/funciones.php");
 // variables. del post.
 //  $ruta = $path_root.'/sgp_web/formatos_hoja_de_calculo/fianzas.xls';
 // $ruta = $path_root.'/sgp_web/formatos_hoja_de_calculo/prestamos.xls';
-	$ruta = $path_root.'/registro_academico/formatos_hoja_de_calculo/EDUCACIÓN DESARROLLO ESTANDAR.xlsx';
+	$ruta = $path_root.'/registro_academico/formatos_hoja_de_calculo/catalogos/departamentos municipios y distritos.xlsx';
   //$trimestre = trim($_REQUEST["periodo_"]);
 // variable de la conexi�n dbf.
     $db_link = $dblink;
@@ -36,7 +36,7 @@ $datos=array(); $fila_array = 0;
 // Leemos un archivo Excel 2007
    $objReader = \PhpOffice\PhpSpreadsheet\IOFactory::createReader("Xlsx");
     $origen = $ruta;
-	 $fila = 5;
+	 $fila = 2;
 	 $fila2 = 2;
 	 $discapacidad = "nada";
 	 $nip2 = "nada";
@@ -51,47 +51,50 @@ $datos=array(); $fila_array = 0;
 	$fecha_actual = date("d-m-Y h:i:s");
 	$timestamp = strtotime($fecha_actual);
 // N�mero de hoja.
-   $numero_de_hoja = 14;
+   $numero_de_hoja = 2;
 	$numero = 2;	
 // 	Recorre el numero de hojas que contenga el libro
        $objPHPExcel->setActiveSheetIndex($numero_de_hoja);
 		//	BUCLE QUE RECORRE TODA LA CUADRICULA DE LA HOJA DE CALCULO.
-		while($objPHPExcel->getActiveSheet()->getCell("A".$fila)->getValue() != "")
+		while($objPHPExcel->getActiveSheet()->getCell("J".$fila)->getValue() != "")
 		  {
-			/*
+			
 			 //  DATOS GENERALES.
-			 	$codigo = $objPHPExcel->getActiveSheet()->getCell("A".$fila)->getValue();
-				$descripcion = trim($objPHPExcel->getActiveSheet()->getCell("B".$fila)->getValue());
-                $codigo_departamento = trim(htmlspecialchars($objPHPExcel->getActiveSheet()->getCell("C".$fila)->getValue()));
-				$codigo_municipio = trim(htmlspecialchars($objPHPExcel->getActiveSheet()->getCell("D".$fila)->getValue()));
+			 	$codigo = $objPHPExcel->getActiveSheet()->getCell("I".$fila)->getValue();
+				$descripcion = trim($objPHPExcel->getActiveSheet()->getCell("J".$fila)->getValue());
+                $codigo_departamento = trim(htmlspecialchars($objPHPExcel->getActiveSheet()->getCell("K".$fila)->getValue()));
+				$codigo_municipio = trim(htmlspecialchars($objPHPExcel->getActiveSheet()->getCell("G".$fila)->getValue()));
 				//print $query = "INSERT INTO catalogo_abastecimiento (codigo, descripcion) values ('$codigo','$descripcion')";
-				$query = "INSERT INTO catalogo_canton (codigo, descripcion, codigo_departamento, codigo_municipio) values ('$codigo','$descripcion','$codigo_departamento','$codigo_municipio')";
+				//$query = "INSERT INTO catalogo_canton (codigo, descripcion, codigo_departamento, codigo_municipio) values ('$codigo','$descripcion','$codigo_departamento','$codigo_municipio')";
 				//print "<br>";
-				$consulta = $dblink -> query($query);
+				//$consulta = $dblink -> query($query);
 
-				print $codigo . ' - ' . $descripcion  . ' - ' . $codigo_departamento . ' - ' .  $codigo_municipio . ' - ' .  "<br>";
-				$fila++;*/
-				$codigo_area = $objPHPExcel->getActiveSheet()->getCell("A".$fila)->getValue();
-				$codigo_dimension = $objPHPExcel->getActiveSheet()->getCell("C".$fila)->getValue();
-				$codigo_subdimension = $objPHPExcel->getActiveSheet()->getCell("E".$fila)->getValue();
-			//	$descripcion_subdimension = $objPHPExcel->getActiveSheet()->getCell("F".$fila)->getValue();
-				$codigo = $objPHPExcel->getActiveSheet()->getCell("G".$fila)->getValue();
-				$descripcion = trim($objPHPExcel->getActiveSheet()->getCell("H".$fila)->getValue());
-				$ordenar = $objPHPExcel->getActiveSheet()->getCell("I".$fila)->getValue();
-				$codigo_cc = '03';
-				$codigo_servicio_educativo = $objPHPExcel->getActiveSheet()->getCell("E2")->getValue();
+				//print $codigo . ' - ' . $descripcion  . ' - ' . $codigo_departamento . ' - ' .  $codigo_municipio . ' - ' .  "<br>";
+//				$fila++;
+			// 	$codigo_area = $objPHPExcel->getActiveSheet()->getCell("A".$fila)->getValue();
+			// 	$codigo_dimension = $objPHPExcel->getActiveSheet()->getCell("C".$fila)->getValue();
+			// 	$codigo_subdimension = $objPHPExcel->getActiveSheet()->getCell("E".$fila)->getValue();
+			// //	$descripcion_subdimension = $objPHPExcel->getActiveSheet()->getCell("F".$fila)->getValue();
+			// 	$codigo = $objPHPExcel->getActiveSheet()->getCell("G".$fila)->getValue();
+			// 	$descripcion = trim($objPHPExcel->getActiveSheet()->getCell("H".$fila)->getValue());
+			// 	$ordenar = $objPHPExcel->getActiveSheet()->getCell("I".$fila)->getValue();
+			// 	$codigo_cc = '03';
+			// 	$codigo_servicio_educativo = $objPHPExcel->getActiveSheet()->getCell("E2")->getValue();
 
 				// Armar query para guardar en la tabla CATALOGO_PRODUCTOS.
-
+				$query = "INSERT INTO catalogo_distritos (codigo, descripcion, codigo_departamento, codigo_municipio) VALUES ('$codigo','$descripcion','$codigo_departamento','$codigo_municipio')";
+				//$query = "INSERT INTO catalogo_municipios (codigo, descripcion, codigo_departamento) VALUES ('$codigo','$descripcion','$codigo_departamento')";
+				//	$query = "INSERT INTO catalogo_departamentos (codigo, descripcion) VALUES ('$codigo','$descripcion')";
 					//$query = "INSERT INTO catalogo_area_subdimension (codigo_area, codigo_dimension, codigo, descripcion) values ('$codigo_area','$codigo_dimension','$codigo_subdimension','$descripcion_subdimension')";
 					//$query = "INSERT INTO catalogo_area_dimension (codigo, descripcion, codigo_area) VALUES ('$codigo', '$descripcion','$codigo_area')";
-				 	$query = "INSERT INTO asignatura (nombre, codigo, codigo_cc, codigo_area, codigo_servicio_educativo, codigo_area_dimension, codigo_area_subdimension, ordenar) 
-					VALUES ('$descripcion','$codigo','$codigo_cc','$codigo_area','$codigo_servicio_educativo','$codigo_dimension','$codigo_subdimension','$ordenar')";
+				 	//$query = "INSERT INTO asignatura (nombre, codigo, codigo_cc, codigo_area, codigo_servicio_educativo, codigo_area_dimension, codigo_area_subdimension, ordenar) 
+					//VALUES ('$descripcion','$codigo','$codigo_cc','$codigo_area','$codigo_servicio_educativo','$codigo_dimension','$codigo_subdimension','$ordenar')";
 					$consulta = $dblink -> query($query);
 			
          	$fila++;
-			print $codigo_area . ' - ' . $codigo_dimension . ' - ' . $codigo_subdimension . ' - ' . $codigo . ' - ' . $descripcion . ' - ' . $codigo_cc . ' SE ' . $codigo_servicio_educativo . ' # ' . $ordenar;
-			print $codigo_area . ' - ' . $codigo  . ' - ' . $descripcion . ' - ' . $codigo_cc . ' - ' . $codigo_servicio_educativo;
+			print $codigo . ' - ' . $descripcion . ' - ' . $codigo_departamento;
+			//print $codigo_area . ' - ' . $codigo_dimension . ' - ' . $codigo_subdimension . ' - ' . $codigo . ' - ' . $descripcion . ' - ' . $codigo_cc . ' SE ' . $codigo_servicio_educativo . ' # ' . $ordenar;
+			//print $codigo_area . ' - ' . $codigo  . ' - ' . $descripcion . ' - ' . $codigo_cc . ' - ' . $codigo_servicio_educativo;
 			print "<br>";
 		}	// FIN DEL WHILE PRINCIPAL DE L AHOJA DE CALCULO.
 
