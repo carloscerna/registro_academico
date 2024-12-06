@@ -17,6 +17,7 @@ session_start();
     $dsn = "pgsql:host=$host;port=$port;dbname=$database";
 // Creamos el objeto
     $dblink = new PDO($dsn, $username, $password);
+	$dblink->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 // Variable que indica el status de la conexión a la base de datos
 	$errorDbConexion = false;
 

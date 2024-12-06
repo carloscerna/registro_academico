@@ -1,7 +1,17 @@
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////PARA LA MATRICULA. /////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Carga la INformación de Tabla Año Lectivo.
+
+// Carga Datos General del Estudiante cuando sea Nuevo o Edición.
+// Variables publicas.
+var CodigoDepartamento = "02";
+var CodigoMunicipio = "02";
+var CodigoDistrito = "01";
+var url_data = "includes/cargar_elsalvador.php";
+var condicion = 0;
+//
+//
+
 $(document).ready(function()
 {
 	if($("#accion").val() == "AgregarNuevoEstudiante"){
@@ -254,8 +264,50 @@ $(document).ready(function()
 						miselect.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');
 					}
 			}, "json");
-	});        
- 	// Carga la INformación de Tabla Zona Residencia para el Estudiante, Padre, Madre u Otro.
+	});       
+	// DESARROLLO PARA CARGA DE DATOS DEPARTAMENTOS, MUNICIPIOS Y DISTRITOS. VISTA ELSALVADOR.
+		url_data = "includes/cargar_elsalvador.php";
+	// llenar select.
+		condicion = 1;	// DEPARTAMENTOS.
+		ElSalvador(url_data, condicion, CodigoDepartamento, CodigoMunicipio, CodigoDistrito);
+	// llenar select.
+		condicion = 2;	// MUNICIPIOS.
+		ElSalvador(url_data, condicion, CodigoDepartamento, CodigoMunicipio, CodigoDistrito);
+	// llenar select
+		condicion = 3;	// DISTRITOS.
+		ElSalvador(url_data, condicion, CodigoDepartamento, CodigoMunicipio, CodigoDistrito);
+ 	// 
+	//	EVENTO CHANGE
+	//	DESARROLLO PARA CARGA DE DATOS DEPARTAMENTOS, MUNICIPIOS Y DISTRITOS. VISTA ELSALVADOR.
+		$(document).ready(function()
+		{
+			//	CUANDO CAMBIE EL DEPARTAMENTO.
+			$("#lstDepartamentoPN").change(function () {
+				$("#lstDepartamentoPN option:selected").each(function () {
+					CodigoDepartamento = $(this).val(); CodigoMunicipio = "";
+					//	limpiar select y rellenar.
+						var select = $('#lstDistritoPN'); select.empty();
+						condicion = 2;
+						ElSalvador(url_data, condicion, CodigoDepartamento, CodigoMunicipio, CodigoDistrito);
+				});
+					// buscar el distrito segun Municipio.
+						CodigoMunicipio = $("#lstMunicipioPN").val(); CodigoDistrito = "";
+						condicion = 3;
+						ElSalvador(url_data, condicion, CodigoDepartamento, CodigoMunicipio, CodigoDistrito);
+			});
+			//	CUANDO CAMBIE EL MUNICIPIO
+			$("#lstMunicipioPN").change(function () {
+				$("#lstMunicipioPN option:selected").each(function () {
+					CodigoDepartamento = $("#lstDepartamentoPN").val(); CodigoMunicipio = $(this).val(); CodigoDistrito = "";
+					//	limpiar select y rellenar.
+						var select = $('#lstDistritoPN'); select.empty();
+						condicion = 3;
+						ElSalvador(url_data, condicion, CodigoDepartamento, CodigoMunicipio, CodigoDistrito);
+				});
+			});
+		});
+
+
 	$(document).ready(function()
 	{
 			var miselect=$("#lstZonaResidencia");
@@ -668,3 +720,43 @@ $(document).ready(function()
 					}
 			}, "json");
 	});
+// FUNCIONES PARA VER LOS DEPARTAMENTOS, MUNICIPIOS Y DISTRITOS.
+	function ElSalvador(url_data, Condicion, CodigoDepartamento, CodigoMunicipio, CodigoDistrito){
+		$.ajax({ 
+			url: url_data, 
+			type: 'GET', 
+			dataType: 'json', 
+			data: '&NumeroCondicion='+Condicion+"&CodigoDepartamento="+CodigoDepartamento+"&CodigoMunicipio="+CodigoMunicipio+"&CodigoDistrito="+CodigoDistrito,
+			success: function(data) 
+			{ 
+				switch (Condicion) {
+					case 1:
+						var BuscarVariable = CodigoDepartamento;
+						var select = $('#lstDepartamentoPN'); 										
+						break;
+					case 2:
+						var BuscarVariable = CodigoMunicipio;
+						var select = $('#lstMunicipioPN'); 										
+						break;
+					case 3:
+						var BuscarVariable = CodigoDistrito;
+						var select = $('#lstDistritoPN'); 										
+						break;
+				}
+				//
+				select.empty(); // Limpia el select 
+				$.each(data, function(index, elsalvador)
+				{
+					if(elsalvador.codigo == BuscarVariable){
+					//if(elsalvador.codigo_distrito == CodigoDistrito){
+						select.append('<option value=' + elsalvador.codigo+ ' selected>' + elsalvador.descripcion + '</option>');
+					}else{	
+						select.append('<option value=' + elsalvador.codigo + '>' + elsalvador.descripcion + '</option>');
+					}
+					
+				});
+			}, 
+			error: function() {
+				console.log('Error al cargar...');
+			}});
+	}

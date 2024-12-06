@@ -492,7 +492,6 @@ $(function(){ // INICIO DEL FUNCTION.
 					"sSortDescending": ": Activar para ordenar la columna de manera descendente"
 				}
 			};	   
-
 	var obtener_data_editar = function(tbody, tableA){
 	///////////////////////////////////////////////////////////////////////////////
 	//	FUNCION que al dar clic buscar el registro para posterior mente abri una
@@ -501,7 +500,6 @@ $(function(){ // INICIO DEL FUNCTION.
 		$(tbody).on("click","a.imprimir-notas",function(){
 			var data = tableA.row($(this).parents("tr")).data();
 			console.log(data); console.log(data[0]);
-		
 				// pasar el valor a variables.
 			var id_alumno = id_;
 			var txtcodigomatricula = data[0];
