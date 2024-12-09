@@ -29,11 +29,9 @@ small.required {
     <!-- JS para esta página. -->
     <script type="text/JavaScript" src="js/Estudiantes/EditarNuevoEstudiante.js"></script>
     <script type="text/JavaScript" src="js/Estudiantes/EditarNuevoEstudiantePortafolio.js"></script>
-    <script type="text/javascript" src="js/Estudiantes/CargarDatosEstudiantes.js"></script>
+    <script type="text/javascript" src="js/Estudiantes/CargarDatosEstudiantes.js"></script> 
     <script type="text/JavaScript" src="js/calcular_edad.js"></script>
     <script type="text/javascript" src="js/jquery-mask/jquery.maskedinput.js"></script>
-
-
 <script>
 $(document).ready(function() { 
   // Datatoggle
@@ -112,6 +110,19 @@ $(document).ready(function() {
         });
 		return false;
     }
+// VALIDAR LOS ENTER DEL FORMULARIO.
+  $('form').keypress(function(e){   
+    if(e == 13){
+      return false;
+    }
+  });
+
+  $('input').keypress(function(e){
+    if(e.which == 13){
+      return false;
+    }
+  });
+
 });
 /* SCRIPT PARA SUBIR LA IMAGEN DE LA PARTIDA DE NACIMIENTO.*/
 $('#fileupPN').change(function(){
@@ -179,23 +190,6 @@ $('#fileupPN').change(function(){
       return false;
       }
   });
-});
-</script>
-<script language="javascript">
-	// VALIDAR LOS ENTER EN EL FORMULARIO.
-$(document).ready(function() {
-  $('form').keypress(function(e){   
-    if(e == 13){
-      return false;
-    }
-  });
-
-  $('input').keypress(function(e){
-    if(e.which == 13){
-      return false;
-    }
-  });
-
 });
 </script>
 {% endblock %}
@@ -453,14 +447,14 @@ $(document).ready(function() {
                                                 <div class="input-group-prepend">
                                                   <span class="input-group-text text-bold bg-gradient-gray"><i class="fad fa-home"></i></span>
                                                 </div>
-                                                <select id="lstDepartamentoPN" name="lstdepartamentoPn" class="custom-select" aria-label="LstDepartamentoPn"></select>
+                                                <select id="lstDepartamentoPN" name="lstDepartamentoPN" class="custom-select" aria-label="LstDepartamentoPn"></select>
                                               </div>
                                                 <label class="col-sm-4 col-form-label form-control-label">Municipio</label>
                                                 <div class="input-group col-sm-8">
                                                   <div class="input-group-prepend">
                                                     <span class="input-group-text text-bold bg-gradient-gray"><i class="fad fa-home"></i></span>
                                                   </div>
-                                                  <select id="lstMunicipioPN" name="lstmunicipioPn" class="custom-select" aria-label="LstMunicipioPn"></select>
+                                                  <select id="lstMunicipioPN" name="lstMunicipioPN" class="custom-select" aria-label="LstMunicipioPn"></select>
                                                 </div>
                                                 <label class="col-sm-4 col-form-label form-control-label">Distrito</label>
                                                 <div class="input-group col-sm-8">
@@ -665,7 +659,7 @@ $(document).ready(function() {
                                           <div class="input-group-prepend">
                                             <span class="input-group-text text-bold bg-gradient-gray"><i class="fad fa-home"></i></span>
                                           </div>
-                                          <select id="lstZonaResidencia" name="lstzonaresidencia" class="custom-select" aria-label="LstZonaResidencia"></select>
+                                          <select id="lstZonaResidencia" name="lstZonaResidencia" class="custom-select" aria-label="LstZonaResidencia"></select>
                                         </div>
                                       <!-- PESTAÑA DATOS PERSONALES - Tipo de vivienda del Estudiante.-->
                                       <label class="col-sm-8 col-form-label form-control-label">¿Tipo de Vivienda del Estudiante?</label>
@@ -689,6 +683,13 @@ $(document).ready(function() {
                                             <span class="input-group-text text-bold bg-gradient-gray"><i class="fad fa-home"></i></span>
                                           </div>
                                           <select id="lstMunicipio" name="lstmunicipio" class="custom-select" aria-label="LstMunicipio"></select>
+                                        </div>
+                                        <label class="col-sm-4 col-form-label form-control-label">Distrito</label>
+                                        <div class="input-group col-sm-8">
+                                          <div class="input-group-prepend">
+                                            <span class="input-group-text text-bold bg-gradient-gray"><i class="fad fa-home"></i></span>
+                                          </div>
+                                          <select id="lstDistrito" name="lstDistrito" class="custom-select" aria-label="LstDistrito"></select>
                                         </div>
 
                                       <!-- PESTAÑA DATOS PERSONALES - Cantón y Caserio-->

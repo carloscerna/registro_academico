@@ -34,4 +34,18 @@ try {
 
 // Close the database connection
 $pdo = null;
-?>
+
+try {
+    $pdo = new PDO('mysql:host=localhost;dbname=tu_base_de_datos', 'usuario', 'contraseña');
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+    $stmt = $pdo->prepare('SELECT * FROM tabla WHERE id = :id');
+    $stmt->execute(['id' => 1]);
+    $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    foreach ($result as $row) {
+        echo $row['nombre'];
+    }
+} catch (PDOException $e) {
+    echo 'Error: ' . $e->getMessage();
+}

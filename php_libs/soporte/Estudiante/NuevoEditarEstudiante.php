@@ -75,6 +75,10 @@ if($errorDbConexion == false){
 				$folio = trim($_POST['folio_pn']);
 				$tomo = trim($_POST['tomo_pn']);
 				$libro = trim($_POST['libro_pn']);
+				$codigo_departamento_pn = trim($_POST['lstDepartamentoPN']);
+				$codigo_municipio_pn = trim($_POST['lstMunicipioPN']);
+				$codigo_distrito_pn = trim($_POST['lstDistritoPN']);
+				//
 				$edad = trim($_POST['edad_enviar']);
 				$dui = trim($_POST['dui']);
 				$pasaporte = trim($_POST['pasaporte_otro']);
@@ -152,12 +156,14 @@ if($errorDbConexion == false){
 						codigo_municipio, fecha_nacimiento, pn_numero, pn_folio, pn_tomo, pn_libro, direccion_email,
 						edad, genero, codigo_estado_civil, codigo_estado_familiar, codigo_actividad_economica,
 						codigo_apoyo_educativo, codigo_discapacidad, codigo_zona_residencia, telefono_celular, codigo_genero, codigo_estatus, dui, pasaporte, codigo_nacionalidad, retornado,
-						presenta_pn, posee_pn, codigo_etnia, codigo_diagnostico, embarazada, codigo_tipo_vivienda, codigo_canton, codigo_caserio, servicio_energia, recoleccion_basura, codigo_abastecimiento, cantidad_hijos)
+						presenta_pn, posee_pn, codigo_etnia, codigo_diagnostico, embarazada, codigo_tipo_vivienda, codigo_canton, codigo_caserio, servicio_energia, recoleccion_basura, codigo_abastecimiento, cantidad_hijos,
+						codigo_departamento_pn, codigo_municipio_pn, codigo_distrito_pn)
 						VALUES ('$apellido_materno','$apellido_paterno','$nombre_completo','$nie','$direccion_alumno','$codigo_departamento',
 						'$codigo_municipio','$fecha_nacimiento','$numero','$folio','$tomo','$libro','$email_alumno',
 						'$edad','$genero','$codigo_estado_civil','$codigo_estado_familiar','$codigo_actividad_economica',
 						'$codigo_servicio_apoyo_educativo','$codigo_tipo_discapacidad','$codigo_zona_residencia','$telcelular','$codigo_genero','$codigo_estatus','$dui','$pasaporte','$codigo_nacionalidad','$retornado',
-						'$presenta_pn','$posee_pn','$codigo_etnia','$codigo_diagnostico','$embarazada','$codigo_tipo_de_vivienda','$codigo_canton','$codigo_caserio','$servicio_energia','$recoleccion_basura','$codigo_abastecimiento', '$CantidadHijos')";
+						'$presenta_pn','$posee_pn','$codigo_etnia','$codigo_diagnostico','$embarazada','$codigo_tipo_de_vivienda','$codigo_canton','$codigo_caserio','$servicio_energia','$recoleccion_basura','$codigo_abastecimiento', '$CantidadHijos',
+						'$codigo_departamento_pn','$codigo_municipio_pn','$codigo_distrito_pn')";
 					// Ejecutamos el query
 					$resultadoQuery = $dblink -> query($query);
 					// Obtenemos el id de user para edici�n
@@ -266,6 +272,11 @@ if($errorDbConexion == false){
 				$tomo = trim($_POST['tomo_pn']);
 				$libro = trim($_POST['libro_pn']);
 				$edad = trim($_POST['edad_enviar']);
+
+				$codigo_departamento_pn = trim($_POST['lstDepartamentoPN']);
+				$codigo_municipio_pn = trim($_POST['lstMunicipioPN']);
+				$codigo_distrito_pn = trim($_POST['lstDistritoPN']);
+				//
 				$presenta_pn = trim($_POST['lstPnPresenta']);
 				$posee_pn = trim($_POST['lstPnPosee']);
 				//crear una variable diferente ppara el genero, guardar en campo genero y .
@@ -340,7 +351,8 @@ if($errorDbConexion == false){
 						  codigo_discapacidad = '%s', codigo_apoyo_educativo = '%s', codigo_zona_residencia = '%s',
 						  codigo_estatus = '%s', genero = '%s', dui = '%s', pasaporte = '%s', codigo_nacionalidad = '%s', retornado = '%s', presenta_pn = '%s', posee_pn = '%s',
 						  codigo_etnia = '%s', codigo_diagnostico = '%s', embarazada = '%s', codigo_tipo_vivienda = '%s', codigo_canton = '%s', codigo_caserio = '%s',
-						  servicio_energia = '%s', recoleccion_basura = '%s', codigo_abastecimiento = '%s', cantidad_hijos = '%s'
+						  servicio_energia = '%s', recoleccion_basura = '%s', codigo_abastecimiento = '%s', cantidad_hijos = '%s',
+						  codigo_departamento_pn = '%s', codigo_municipio_pn = '%s', codigo_distrigo_pn = '%s'
 							WHERE id_alumno=%d",
 							$apellido_materno,$apellido_paterno,$nombre_completo,
 							$direccion_alumno,$nie,$telcelular,$email_alumno,
@@ -349,7 +361,8 @@ if($errorDbConexion == false){
 							$codigo_tipo_discapacidad,$codigo_servicio_apoyo_educativo,$codigo_zona_residencia,
 							$codigo_estatus, $genero, $dui, $pasaporte, $codigo_nacionalidad, $retornado, $presenta_pn, $posee_pn,
 							$codigo_etnia, $codigo_diagnostico, $embarazada, $codigo_tipo_de_vivienda, $codigo_canton, $codigo_caserio,
-							$servicio_energia, $recoleccion_basura, $codigo_abastecimiento, $CantidadHijos
+							$servicio_energia, $recoleccion_basura, $codigo_abastecimiento, $CantidadHijos,
+							$codigo_departamento_pn, $codigo_municipio_pn, $codigo_distrito_pn
 							,$_POST['id_user']);
                     //, $pn_doc , partida_nacimiento = '%s'
 							
@@ -435,7 +448,7 @@ if($errorDbConexion == false){
 					$mensajeError = 'Si Update';
 					$contenidoOK = 'Se ha Afectado '.' Registro(s).<br>'.'Se ha afectado ' . $CrearMatricula;
 				}else{
-					$mensajeError = 'No se ha actualizado el registro'.$query;
+					$mensajeError = "No se ha actualizado el registro.";
 				}
 			break;
 		

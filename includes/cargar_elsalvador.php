@@ -14,7 +14,7 @@
     switch ($NumeroCondicion) {
         case 1:
             // FILTRAR DEPARTAMENTOS.
-            $dblink = $dblink->prepare("SELECT distinct codigo_departamento as codigo, nombre_departamento as descripcion FROM elsalvador
+                $dblink = $dblink->prepare("SELECT distinct codigo_departamento as codigo, nombre_departamento as descripcion FROM elsalvador
                     ORDER BY codigo_departamento"); 
             break;
         case 2:
@@ -24,10 +24,10 @@
             break;
         case 3:
             // FILTAR POR DISTRITO.
-            $dblink = $dblink->prepare("SELECT codigo_departamento, nombre_departamento, codigo_municipio, nombre_municipio, codigo_distrito as codigo, nombre_distrito as descripcion
+                $dblink = $dblink->prepare("SELECT codigo_departamento, nombre_departamento, codigo_municipio, nombre_municipio, codigo_distrito as codigo, nombre_distrito as descripcion
                     FROM elsalvador
-                    WHERE codigo_municipio = '$codigoMunicipio' and codigo_departamento = '$codigoDepartamento'
-                    ORDER BY codigo_departamento");
+                        WHERE codigo_municipio = '$codigoMunicipio' and codigo_departamento = '$codigoDepartamento'
+                            ORDER BY codigo_departamento");
             break;
     }
 // Ejectuar consulta
