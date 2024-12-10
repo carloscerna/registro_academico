@@ -42,7 +42,7 @@ $(function(){ // INICIO DEL FUNCTION.
 		var day = ("0" + now.getDate()).slice(-2);
 		var month = ("0" + (now.getMonth() + 1)).slice(-2);
 		var today = now.getFullYear()+"-"+(month)+"-"+(day) ;
-		
+	//	
 		var day_M = ("20");
 		var today_M = now.getFullYear()+"-"+(month)+"-"+(day_M) ;
 		//alert(today);
@@ -192,6 +192,9 @@ $(function(){ // INICIO DEL FUNCTION.
 						$('#folio_pn').val(data[0].pn_folio);
 						$('#tomo_pn').val(data[0].pn_tomo);
 						$('#libro_pn').val(data[0].pn_libro);
+						$('#lstDepartamentoPN').val(data[0].codigo_departamento_pn);
+						$('#lstMunicipioPN').val(data[0].codigo_municipio_pn);
+						$('#lstDistritoPN').val(data[0].codigo_distrito_pn);
 						/// Seleccionar genero de la base de datos guardado.
 						//$('#').val(data[0].);
 						$('#lstgenero').val(data[0].codigo_genero);

@@ -11,11 +11,11 @@ sleep(0);
 
 // Inicializamos variables de mensajes y JSON
 $respuestaOK = false;
-$mensajeError = "No se puede ejecutar la aplicaci�n";
+$mensajeError = "No se puede ejecutar la aplicación";
 $contenidoOK = "";
 $lista = "";
-$arreglo = array();
-$datos = array();
+$arreglo = [];
+$datos = [];
 // ruta de los archivos con su carpeta
     $path_root=trim($_SERVER['DOCUMENT_ROOT']);
     
@@ -124,6 +124,7 @@ if($errorDbConexion == false){
                     $codigo_zona_e = array($_POST["lstZonaResidenciaP"],$_POST["lstZonaResidenciaM"],$_POST["lstZonaResidenciaO"]);
                     $codigo_departamento_e = array($_POST["lstDepartamentoP"],$_POST["lstDepartamentoM"],$_POST["lstDepartamentoO"]);
                     $codigo_municipio_e = array($_POST["lstMunicipioP"],$_POST["lstMunicipioM"],$_POST["lstMunicipioO"]);
+					$codigo_distrito_e = array($_POST["lstDistritoP"],$_POST["lstDistritoM"],$_POST["lstDistritoO"]);
                     // DATOS DEL RESPONSABLE.
 					$nombre_padre = array($_POST["txtnombrep"],$_POST["txtnombrem"],$_POST["txtnombreo"]);
 					$lugar_padre = array($_POST["txtlugarp"],$_POST["txtlugarm"],$_POST["txtlugaro"]);
@@ -158,13 +159,13 @@ if($errorDbConexion == false){
 						edad, genero, codigo_estado_civil, codigo_estado_familiar, codigo_actividad_economica,
 						codigo_apoyo_educativo, codigo_discapacidad, codigo_zona_residencia, telefono_celular, codigo_genero, codigo_estatus, dui, pasaporte, codigo_nacionalidad, retornado,
 						presenta_pn, posee_pn, codigo_etnia, codigo_diagnostico, embarazada, codigo_tipo_vivienda, codigo_canton, codigo_caserio, servicio_energia, recoleccion_basura, codigo_abastecimiento, cantidad_hijos,
-						codigo_departamento_pn, codigo_municipio_pn, codigo_distrito_pn)
+						codigo_departamento_pn, codigo_municipio_pn, codigo_distrito_pn, codigo_distrito)
 						VALUES ('$apellido_materno','$apellido_paterno','$nombre_completo','$nie','$direccion_alumno','$codigo_departamento',
 						'$codigo_municipio','$fecha_nacimiento','$numero','$folio','$tomo','$libro','$email_alumno',
 						'$edad','$genero','$codigo_estado_civil','$codigo_estado_familiar','$codigo_actividad_economica',
 						'$codigo_servicio_apoyo_educativo','$codigo_tipo_discapacidad','$codigo_zona_residencia','$telcelular','$codigo_genero','$codigo_estatus','$dui','$pasaporte','$codigo_nacionalidad','$retornado',
 						'$presenta_pn','$posee_pn','$codigo_etnia','$codigo_diagnostico','$embarazada','$codigo_tipo_de_vivienda','$codigo_canton','$codigo_caserio','$servicio_energia','$recoleccion_basura','$codigo_abastecimiento', '$CantidadHijos',
-						'$codigo_departamento_pn','$codigo_municipio_pn','$codigo_distrito_pn')";
+						'$codigo_departamento_pn','$codigo_municipio_pn','$codigo_distrito_pn','$codigo_distrito')";
 					// Ejecutamos el query
 					$resultadoQuery = $dblink -> query($query);
 					// Obtenemos el id de user para edici�n
@@ -181,8 +182,8 @@ if($errorDbConexion == false){
 					// Agregar valores para el encargado.
 					// Actualizar valores del encargado.
 					for ($i=0;$i<=2;$i++){
-						$query_encargado ="INSERT INTO alumno_encargado (codigo_alumno,nombres,lugar_trabajo,profesion_oficio,dui,telefono,direccion,encargado, fecha_nacimiento, codigo_nacionalidad, codigo_familiar, codigo_zona, codigo_departamento, codigo_municipio)
-							VALUES ($codigo_alumno,'$nombre_padre[$i]','$lugar_padre[$i]','$pop_padre[$i]','$dui_padre[$i]','$telefono_padre[$i]','$direccion_padre[$i]','$encargado[$i]','$fecha_nacimiento_e[$i]','$codigo_nacionalidad_e[$i]','$codigo_estado_familiar_e[$i]','$codigo_zona_e[$i]','$codigo_departamento_e[$i]','$codigo_municipio_e[$i]')";
+						$query_encargado ="INSERT INTO alumno_encargado (codigo_alumno,nombres,lugar_trabajo,profesion_oficio,dui,telefono,direccion,encargado, fecha_nacimiento, codigo_nacionalidad, codigo_familiar, codigo_zona, codigo_departamento, codigo_municipio, codigo_distrito)
+							VALUES ($codigo_alumno,'$nombre_padre[$i]','$lugar_padre[$i]','$pop_padre[$i]','$dui_padre[$i]','$telefono_padre[$i]','$direccion_padre[$i]','$encargado[$i]','$fecha_nacimiento_e[$i]','$codigo_nacionalidad_e[$i]','$codigo_estado_familiar_e[$i]','$codigo_zona_e[$i]','$codigo_departamento_e[$i]','$codigo_municipio_e[$i]','$codigo_distrito_e[$i]')";
 	    
 						// Ejecutamos el query guardar los datos en la tabla alumno..
 							$resultadoQueryEncargado = $dblink -> query($query_encargado);				
@@ -301,6 +302,7 @@ if($errorDbConexion == false){
 				$codigo_canton = trim($_POST['lstCanton']);
 				$codigo_caserio = trim($_POST['lstCaserio']);
 				$codigo_municipio = trim($_POST['lstmunicipio']);
+				$codigo_distrito = trim($_POST['lstDistrito']);
 				$direccion_alumno = trim($_POST['direccion_alumno']);
 				// SERVICIOS BASICOS
 				$servicio_energia = trim($_POST['lstServicioEnergia']);
@@ -328,7 +330,8 @@ if($errorDbConexion == false){
                     $codigo_zona_e = array($_POST["lstZonaResidenciaP"],$_POST["lstZonaResidenciaM"],$_POST["lstZonaResidenciaO"]);
                     $codigo_departamento_e = array($_POST["lstDepartamentoP"],$_POST["lstDepartamentoM"],$_POST["lstDepartamentoO"]);
                     $codigo_municipio_e = array($_POST["lstMunicipioP"],$_POST["lstMunicipioM"],$_POST["lstMunicipioO"]);
-                
+					$codigo_distrito_e = array($_POST["lstDistritoP"],$_POST["lstDistritoM"],$_POST["lstDistritoO"]);
+
 					$nombre_padre = array($_POST["txtnombrep"],$_POST["txtnombrem"],$_POST["txtnombreo"]);
 					$lugar_padre = array($_POST["txtlugarp"],$_POST["txtlugarm"],$_POST["txtlugaro"]);
 					$pop_padre = array($_POST["txtpop"],$_POST["txtpom"],$_POST["txtpoo"]);
@@ -353,7 +356,7 @@ if($errorDbConexion == false){
 						  codigo_estatus = '%s', genero = '%s', dui = '%s', pasaporte = '%s', codigo_nacionalidad = '%s', retornado = '%s', presenta_pn = '%s', posee_pn = '%s',
 						  codigo_etnia = '%s', codigo_diagnostico = '%s', embarazada = '%s', codigo_tipo_vivienda = '%s', codigo_canton = '%s', codigo_caserio = '%s',
 						  servicio_energia = '%s', recoleccion_basura = '%s', codigo_abastecimiento = '%s', cantidad_hijos = '%s',
-						  codigo_departamento_pn = '%s', codigo_municipio_pn = '%s', codigo_distrigo_pn = '%s'
+						  codigo_departamento_pn = '%s', codigo_municipio_pn = '%s', codigo_distrigo_pn = '%s', codigo_distrito = '%s'
 							WHERE id_alumno=%d",
 							$apellido_materno,$apellido_paterno,$nombre_completo,
 							$direccion_alumno,$nie,$telcelular,$email_alumno,
@@ -363,7 +366,7 @@ if($errorDbConexion == false){
 							$codigo_estatus, $genero, $dui, $pasaporte, $codigo_nacionalidad, $retornado, $presenta_pn, $posee_pn,
 							$codigo_etnia, $codigo_diagnostico, $embarazada, $codigo_tipo_de_vivienda, $codigo_canton, $codigo_caserio,
 							$servicio_energia, $recoleccion_basura, $codigo_abastecimiento, $CantidadHijos,
-							$codigo_departamento_pn, $codigo_municipio_pn, $codigo_distrito_pn
+							$codigo_departamento_pn, $codigo_municipio_pn, $codigo_distrito_pn, $codigo_distrito
 							,$_POST['id_user']);
                     //, $pn_doc , partida_nacimiento = '%s'
 							
@@ -382,11 +385,11 @@ if($errorDbConexion == false){
                         
 						$query_encargado = sprintf("UPDATE alumno_encargado SET nombres = '%s', lugar_trabajo = '%s', profesion_oficio = '%s', dui = '%s',
 							telefono = '%s', direccion = '%s', encargado = '%s', fecha_nacimiento = '%s', codigo_nacionalidad = '%s', codigo_familiar = '%s',
-                            codigo_zona = '%s', codigo_departamento = '%s', codigo_municipio = '%s'
+                            codigo_zona = '%s', codigo_departamento = '%s', codigo_municipio = '%s', codigo_distrito = '%s'
 							WHERE codigo_alumno = %d and id_alumno_encargado = %d",
 							$nombre_padre[$i],$lugar_padre[$i],$pop_padre[$i],$dui_padre[$i],$telefono_padre[$i],$direccion_padre[$i],
 							$encargado[$i], $fecha_nacimiento_e[$i], $codigo_nacionalidad_e[$i], $codigo_estado_familiar_e[$i], $codigo_zona_e[$i], $codigo_departamento_e[$i],
-                            $codigo_municipio_e[$i]
+                            $codigo_municipio_e[$i], $codigo_distrito_e[$i]
 							,$_POST['id_user'],$idaencargado[$i]);	
 
 						// Ejecutamos el query guardar los datos en la tabla alumno..

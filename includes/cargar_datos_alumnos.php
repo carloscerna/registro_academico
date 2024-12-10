@@ -13,7 +13,7 @@ $query = "SELECT id_alumno, apellido_materno, apellido_paterno, nombre_completo,
 	    codigo_estado_familiar, codigo_actividad_economica, codigo_apoyo_educativo, codigo_discapacidad, ruta_pn,
 	    ruta_pn_vuelto, codigo_zona_residencia, tiene_hijos, cantidad_hijos, codigo_genero, codigo_estatus, dui, pasaporte, codigo_nacionalidad, retornado,
       posee_pn, presenta_pn, codigo_etnia, codigo_diagnostico, embarazada, codigo_tipo_vivienda, codigo_canton, codigo_caserio, servicio_energia, recoleccion_basura,
-      codigo_abastecimiento
+      codigo_abastecimiento, codigo_departamento_pn, codigo_municipio_pn, codigo_distrito_pn, codigo_distrito
 	  FROM alumno
 	  WHERE id_alumno = ".
 	  $_POST['id_x'];
@@ -24,7 +24,7 @@ $query_historial = "SELECT id_alumno_bitacora, codigo_alumno, fecha_ob, historia
 	  $_POST['id_x']." ORDER BY fecha_ob";
 // armando el Query. PARA LA TABLA ALUMNO ENCARGADO.
 $query_encargado = "SELECT id_alumno_encargado, codigo_alumno, nombres, lugar_trabajo, profesion_oficio, dui, telefono,
-                    direccion, encargado, institucion_proviene, fecha_nacimiento, codigo_nacionalidad, codigo_familiar, codigo_zona, codigo_departamento, codigo_municipio
+                    direccion, encargado, institucion_proviene, fecha_nacimiento, codigo_nacionalidad, codigo_familiar, codigo_zona, codigo_departamento, codigo_municipio, codigo_distrito
             FROM alumno_encargado WHERE codigo_alumno = ". $_POST['id_x']." order by id_alumno_encargado";
 // Ejecutamos el Query. PARA LA TABLA HISTORIAL ALUMNOS.
    $consulta_historial = $dblink -> query($query_historial);
@@ -35,7 +35,7 @@ $query_encargado = "SELECT id_alumno_encargado, codigo_alumno, nombres, lugar_tr
 // Ejecutamos el Query. para la tabla alumno matricula.
   // $consulta_historial_matricula = $dblink -> query($query_alumno_matricula);
 // Inicializando el array
-$datos=array(); $fila_array = 0;
+$datos=[]; $fila_array = 0;
 $codigo_institucion = $_SESSION['codigo_institucion'];
 // Recorriendo la Tabla con PDO::
       while($listado = $consulta -> fetch(PDO::FETCH_BOTH))
@@ -67,27 +67,32 @@ $codigo_institucion = $_SESSION['codigo_institucion'];
 
 	 // Nombres de los campos de la tabla. segundo tabs.
 	 $fecha_nacimiento = trim($listado['fecha_nacimiento']);
-    $partida_nacimiento = trim($listado['partida_nacimiento']);
+   $partida_nacimiento = trim($listado['partida_nacimiento']);
 	 $edad = trim($listado['edad']);
    $dui = trim($listado['dui']);
    $pasaporte = trim($listado['pasaporte']);
    $codigo_nacionalidad = trim($listado['codigo_nacionalidad']);
    $retornado = trim($listado['retornado']);
+// DATOS DE PARTIDA DE NACIMIENTO.
    $posee_pn = trim($listado['posee_pn']);
    $presenta_pn = trim($listado['presenta_pn']);
 	 $pn_numero = trim($listado['pn_numero']);
 	 $pn_folio = trim($listado['pn_folio']);
 	 $pn_tomo = trim($listado['pn_tomo']);
 	 $pn_libro = trim($listado['pn_libro']);
+   $codigo_departamento_pn = trim($listado['codigo_departamento_pn']);
+	 $codigo_municipio_pn = trim($listado['codigo_municipio_pn']);
+   $codigo_distrito_pn = trim($listado['codigo_distrito_pn']);
 	 $codigo_genero = trim($listado['codigo_genero']);
    $codigo_etnia = trim($listado['codigo_etnia']);
 	 $codigo_tipo_discapacidad = trim($listado['codigo_discapacidad']);
-
+// RESIDENCIA.
    $codigo_diagnostico = trim($listado['codigo_diagnostico']);
    $codigo_servicio_apoyo_educativo = trim($listado['codigo_apoyo_educativo']);
 	 $codigo_estado_civil = trim($listado['codigo_estado_civil']);
 	 $codigo_departamento = trim($listado['codigo_departamento']);
 	 $codigo_municipio = trim($listado['codigo_municipio']);
+   $codigo_distrito = trim($listado['codigo_distrito']);
 	 $codigo_estado_familiar = trim($listado['codigo_estado_familiar']);
 	 
 	 $codigo_actividad_economica = trim($listado['codigo_actividad_economica']);
@@ -126,6 +131,10 @@ $codigo_institucion = $_SESSION['codigo_institucion'];
    $datos[$fila_array]["retornado"] = $retornado;
    $datos[$fila_array]["posee_pn"] = $posee_pn;
    $datos[$fila_array]["presenta_pn"] = $presenta_pn;
+   $datos[$fila_array]["codigo_departamento_pn"] = $codigo_departamento_pn;
+   $datos[$fila_array]["codigo_municipio_pn"] = $codigo_municipio_pn;
+   $datos[$fila_array]["codigo_distrito_pn"] = $codigo_distrito_pn;
+
 
 	 $datos[$fila_array]["pn_numero"] = $pn_numero;
 	 $datos[$fila_array]["pn_folio"] = $pn_folio;
@@ -141,6 +150,7 @@ $codigo_institucion = $_SESSION['codigo_institucion'];
 	 $datos[$fila_array]["codigo_estado_civil"] = $codigo_estado_civil;
 	 $datos[$fila_array]["codigo_departamento"] = $codigo_departamento;
 	 $datos[$fila_array]["codigo_municipio"] = $codigo_municipio;
+   $datos[$fila_array]["codigo_distrito"] = $codigo_distrito;
 	 $datos[$fila_array]["codigo_estado_familiar"] = $codigo_estado_familiar;
 	 $datos[$fila_array]["codigo_actividad_economica"] = $codigo_actividad_economica;
 	 $datos[$fila_array]["codigo_tipo_discapacidad"] = $codigo_tipo_discapacidad;
@@ -191,6 +201,7 @@ $codigo_institucion = $_SESSION['codigo_institucion'];
                     $codigo_zona = trim($listadoEncargado['codigo_zona']);
                     $codigo_departamento = trim($listadoEncargado['codigo_departamento']);
                     $codigo_municipio = trim($listadoEncargado['codigo_municipio']);
+                    $codigo_distrito = trim($listadoEncargado['codigo_distrito']);
                     // pasar a la matriz.
                         $datos[$fila_array]["id_alumno_encargado"] = $id_alumno_encargado;
                         $datos[$fila_array]["nombres"] = $nombres;
@@ -207,6 +218,7 @@ $codigo_institucion = $_SESSION['codigo_institucion'];
                         $datos[$fila_array]["codigo_zona"] = $codigo_zona;
                         $datos[$fila_array]["codigo_departamento"] = $codigo_departamento;
                         $datos[$fila_array]["codigo_municipio"] = $codigo_municipio;
+                        $datos[$fila_array]["codigo_distrito"] = $codigo_distrito;
                     // Incrementar el valor del array.
                     $fila_array++;
                   }
@@ -220,7 +232,7 @@ $codigo_institucion = $_SESSION['codigo_institucion'];
                   $id_bitacora = trim($listadoHistorial['id_alumno_bitacora']);
                   $cod_alumno = trim($listadoHistorial['codigo_alumno']);
                   $fecha_ob = cambiaf_a_normal(trim($listadoHistorial['fecha_ob']));
-                  $historial = utf8_encode(trim($listadoHistorial['historial']));
+                  $historial = convertirTexto(trim($listadoHistorial['historial']));
                   
                   // pasar a la matriz.
 		  $datos[$fila_array]["todos"] = '<tr><td>'.trim($num).'<td>'.$id_bitacora.'<td>'.$cod_alumno.'<td>'.$fecha_ob.
@@ -237,4 +249,3 @@ $codigo_institucion = $_SESSION['codigo_institucion'];
         }
 // Enviando la matriz con Json.
 echo json_encode($datos);	
-?>
