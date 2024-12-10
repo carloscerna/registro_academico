@@ -105,6 +105,7 @@ if($errorDbConexion == false){
 				$codigo_zona_residencia = trim($_POST['lstzonaresidencia']);
 				$codigo_tipo_de_vivienda = trim($_POST['LstTipoVivienda']);
 				$codigo_departamento = trim($_POST['lstdepartamento']);
+				$codigo_distrito = trim($_POST['lstDistrito']);
 				$codigo_canton = trim($_POST['lstCanton']);
 				$codigo_caserio = trim($_POST['lstCaserio']);
 				$codigo_municipio = trim($_POST['lstmunicipio']);

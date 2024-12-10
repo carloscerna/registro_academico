@@ -86,6 +86,7 @@ $(function(){ // INICIO DEL FUNCTION.
 				accion = $("#accion").val();
 				// OCULTAR TAB BITACORA MATRICULA
 				$("#bitacora-tab").hide();
+				$("#digitalizacion-tab").hide();
 				// cambiar texto de label y enlace.
 				$("label[for='txtEdicionNuevo']").text("Nuevo Registro");
 				$("label[for='iEdicionNuevo']").text("Nuevo");
@@ -97,7 +98,6 @@ $(function(){ // INICIO DEL FUNCTION.
 				//
 				$("#CargarArchivoFotoPN").css("display","none");
 				$("#fileupPN").attr("disabled",true);		// Botón Subir Imagen Portafolio
-
 			}				
 		});
 	//////////////////////////////////////////////////////////////////////////////////
