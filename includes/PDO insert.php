@@ -34,4 +34,3 @@ try {
 
 // Close the database connection
 $pdo = null;
-?>

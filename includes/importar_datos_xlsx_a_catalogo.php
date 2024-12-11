@@ -10,17 +10,17 @@ include($path_root."/registro_academico/includes/funciones.php");
 // variables. del post.
 //  $ruta = $path_root.'/sgp_web/formatos_hoja_de_calculo/fianzas.xls';
 // $ruta = $path_root.'/sgp_web/formatos_hoja_de_calculo/prestamos.xls';
-	$ruta = $path_root.'/registro_academico/formatos_hoja_de_calculo/catalogos/departamentos municipios y distritos.xlsx';
+	$ruta = $path_root.'/registro_academico/formatos_hoja_de_calculo/catalogos/DEPARTAMENTO Y MUNICIPIIOS EN TABLA VIEJA.xlsx';
   //$trimestre = trim($_REQUEST["periodo_"]);
 // variable de la conexi�n dbf.
     $db_link = $dblink;
 // Inicializando el array
-$datos=array(); $fila_array = 0;
+	$datos=[]; $fila_array = 0;
 // call the autoload
     require $path_root."/registro_academico/vendor/autoload.php";
 // load phpspreadsheet class using namespaces.
     use PhpOffice\PhpSpreadsheet\Spreadsheet;
-// call xlsx weriter class to make an xlsx file
+	// call xlsx weriter class to make an xlsx file
     use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 // Creamos un objeto Spreadsheet object
     $objPHPExcel = new Spreadsheet();
@@ -28,7 +28,7 @@ $datos=array(); $fila_array = 0;
     //echo date('H:i:s') . " Set Time Zone"."<br />";
     //date_default_timezone_set('America/El_Salvador');
 // set codings.
-    $objPHPExcel->_defaultEncoding = 'ISO-8859-1';
+//    $objPHPExcel->_defaultEncoding = 'ISO-8859-1';
 // Set default font
     //echo date('H:i:s') . " Set default font"."<br />";
     $objPHPExcel->getDefaultStyle()->getFont()->setName('Arial');
@@ -51,19 +51,20 @@ $datos=array(); $fila_array = 0;
 	$fecha_actual = date("d-m-Y h:i:s");
 	$timestamp = strtotime($fecha_actual);
 // N�mero de hoja.
-   $numero_de_hoja = 2;
+   $numero_de_hoja = 0;
 	$numero = 2;	
 // 	Recorre el numero de hojas que contenga el libro
        $objPHPExcel->setActiveSheetIndex($numero_de_hoja);
 		//	BUCLE QUE RECORRE TODA LA CUADRICULA DE LA HOJA DE CALCULO.
-		while($objPHPExcel->getActiveSheet()->getCell("J".$fila)->getValue() != "")
+		while($objPHPExcel->getActiveSheet()->getCell("B".$fila)->getValue() != "")
 		  {
 			
 			 //  DATOS GENERALES.
-			 	$codigo = $objPHPExcel->getActiveSheet()->getCell("I".$fila)->getValue();
-				$descripcion = trim($objPHPExcel->getActiveSheet()->getCell("J".$fila)->getValue());
-                $codigo_departamento = trim(htmlspecialchars($objPHPExcel->getActiveSheet()->getCell("K".$fila)->getValue()));
-				$codigo_municipio = trim(htmlspecialchars($objPHPExcel->getActiveSheet()->getCell("G".$fila)->getValue()));
+			 	$codigo_viejo_municipio = $objPHPExcel->getActiveSheet()->getCell("B".$fila)->getValue();
+				//$descripcion = trim($objPHPExcel->getActiveSheet()->getCell("J".$fila)->getValue());
+                $codigo_departamento = trim(htmlspecialchars($objPHPExcel->getActiveSheet()->getCell("D".$fila)->getValue()));
+				$codigo_nuevo_municipio = trim(htmlspecialchars($objPHPExcel->getActiveSheet()->getCell("E".$fila)->getValue()));
+				$codigo_distrito = trim(htmlspecialchars($objPHPExcel->getActiveSheet()->getCell("F".$fila)->getValue()));
 				//print $query = "INSERT INTO catalogo_abastecimiento (codigo, descripcion) values ('$codigo','$descripcion')";
 				//$query = "INSERT INTO catalogo_canton (codigo, descripcion, codigo_departamento, codigo_municipio) values ('$codigo','$descripcion','$codigo_departamento','$codigo_municipio')";
 				//print "<br>";
@@ -82,17 +83,20 @@ $datos=array(); $fila_array = 0;
 			// 	$codigo_servicio_educativo = $objPHPExcel->getActiveSheet()->getCell("E2")->getValue();
 
 				// Armar query para guardar en la tabla CATALOGO_PRODUCTOS.
-				$query = "INSERT INTO catalogo_distritos (codigo, descripcion, codigo_departamento, codigo_municipio) VALUES ('$codigo','$descripcion','$codigo_departamento','$codigo_municipio')";
+//				$query = "INSERT INTO catalogo_distritos (codigo, descripcion, codigo_departamento, codigo_municipio) VALUES ('$codigo','$descripcion','$codigo_departamento','$codigo_municipio')";
 				//$query = "INSERT INTO catalogo_municipios (codigo, descripcion, codigo_departamento) VALUES ('$codigo','$descripcion','$codigo_departamento')";
 				//	$query = "INSERT INTO catalogo_departamentos (codigo, descripcion) VALUES ('$codigo','$descripcion')";
 					//$query = "INSERT INTO catalogo_area_subdimension (codigo_area, codigo_dimension, codigo, descripcion) values ('$codigo_area','$codigo_dimension','$codigo_subdimension','$descripcion_subdimension')";
 					//$query = "INSERT INTO catalogo_area_dimension (codigo, descripcion, codigo_area) VALUES ('$codigo', '$descripcion','$codigo_area')";
 				 	//$query = "INSERT INTO asignatura (nombre, codigo, codigo_cc, codigo_area, codigo_servicio_educativo, codigo_area_dimension, codigo_area_subdimension, ordenar) 
 					//VALUES ('$descripcion','$codigo','$codigo_cc','$codigo_area','$codigo_servicio_educativo','$codigo_dimension','$codigo_subdimension','$ordenar')";
-					$consulta = $dblink -> query($query);
+			$updateQuery = "UPDATE catalogo_canton SET codigo_nuevo_municipio = '$codigo_nuevo_municipio', codigo_distrito = '$codigo_distrito'
+							WHERE codigo_departamento = '$codigo_departamento' and codigo_municipio = '$codigo_viejo_municipio'
+							";
+					$consulta = $dblink -> query($udpateQuery);
 			
          	$fila++;
-			print $codigo . ' - ' . $descripcion . ' - ' . $codigo_departamento;
+			print $codigo_viejo_municipio . ' - ' . $codigo_nuevo_municipio . ' - ' . $codigo_departamento . ' - ' . $codigo_distrito;
 			//print $codigo_area . ' - ' . $codigo_dimension . ' - ' . $codigo_subdimension . ' - ' . $codigo . ' - ' . $descripcion . ' - ' . $codigo_cc . ' SE ' . $codigo_servicio_educativo . ' # ' . $ordenar;
 			//print $codigo_area . ' - ' . $codigo  . ' - ' . $descripcion . ' - ' . $codigo_cc . ' - ' . $codigo_servicio_educativo;
 			print "<br>";
@@ -133,5 +137,3 @@ $datos=array(); $fila_array = 0;
 				$numero = $numero + 1;
 			}
 			$objPHPExcel->getActiveSheet()->SetCellValue("B".$fila, $codigo_producto);*/
-			
-?>

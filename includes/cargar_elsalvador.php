@@ -11,6 +11,7 @@
     $codigoMunicipio = $_REQUEST["CodigoMunicipio"];
     $codigoDistrito = $_REQUEST["CodigoDistrito"];
 // consulta PDO.
+try{
     switch ($NumeroCondicion) {
         case 1:
             // FILTRAR DEPARTAMENTOS.
@@ -29,9 +30,20 @@
                         WHERE codigo_municipio = '$codigoMunicipio' and codigo_departamento = '$codigoDepartamento'
                             ORDER BY codigo_departamento");
             break;
+        case 4:
+            // FILTAR POR CANTÓN.
+                $dblink = $dblink->prepare("SELECT codigo_departamento, codigo_municipio, codigo_distrito, codigo, descripcion
+                    FROM catalogo_canton
+                        WHERE codigo_departamento = '$codigoDepartamento' and codigo_nuevo_municipio = '$codigoMunicipio' and codigo_distrito = '$codigoDistrito'
+                            ORDER BY codigo");
+            break;
     }
 // Ejectuar consulta
     $dblink->execute(); 
     $ElSalvador = $dblink->fetchAll(PDO::FETCH_ASSOC); 
 // Enviar datos.
     echo json_encode($ElSalvador);
+}
+catch (PDOException $e) {
+    echo 'Error: ' . $e->getMessage();
+}

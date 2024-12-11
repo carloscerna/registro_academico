@@ -219,40 +219,9 @@ $(function(){ // INICIO DEL FUNCTION.
 						$('#lstServicioEnergia').val(data[0].servicio_energia);
 						$('#lstRecoleccionBasura').val(data[0].recoleccion_basura);
 						$('#lstAbastecimientoAgua').val(data[0].codigo_abastecimiento);
-						// I SELECT ACTIVIDAD ECONOMICA..
-						/// Seleccionar genero de la base de datos guardado.
-						var miselect_departamento=$("#lstDepartamento");
-						var codigo_departamento = data[0].codigo_departamento;
-						$("#lstDepartamento").val(codigo_departamento);
-						/* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
-						miselect_departamento.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
-							$.post("includes/cargar_departamento.php",
-								function(data){
-									miselect_departamento.empty();
-										for (var i=0; i<data.length; i++) {
-											if(codigo_departamento == data[i].codigo){
-												miselect_departamento.append('<option value="' + data[i].codigo + '" selected>' + data[i].descripcion + '</option>');             
-											}else{
-												miselect_departamento.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');
-											}
-											}
-										}, "json");   
-								/// Seleccionar municipio en base al departamento guardado.
-								var miselect=$("#lstMunicipio");
-								var codigo_municipio = data[0].codigo_municipio;
-								/* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
-								miselect.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
-									$.post("includes/cargar_municipio.php", { departamento: codigo_departamento },
-										function(data){
-											miselect.empty();
-												for (var i=0; i<data.length; i++) {
-													if(codigo_municipio == data[i].codigo){
-														miselect.append('<option value="' + data[i].codigo + '" selected>' + data[i].descripcion + '</option>');             
-															}else{
-																miselect.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');
-															}
-														}
-													}, "json");
+						$('#lstDepartamento').val(data[0].codigo_departamento);
+						$('#lstMunicipio').val(data[0].codigo_municipio);
+						$('#lstDistrito').val(data[0].codigo_distrito);													
 						/* **********************************************************************************************************************************/	
 						/* DATOS DEL RESPONSABLE - MADRE*/
 							// blorque para data[1].
@@ -269,44 +238,13 @@ $(function(){ // INICIO DEL FUNCTION.
 								$('#lstNacionalidadP').val(data[1].codigo_nacionalidad);
 								$('#lstEstadoFamiliarP').val(data[1].codigo_familiar);
 								$('#lstZonaResidenciaP').val(data[1].codigo_zona); 					
-								/// Seleccionar genero de la base de datos guardado.
-								var miselect_departamento_p=$("#lstDepartamentoP");
-								var codigo_departamento_p = data[1].codigo_departamento;
-								$("#lstDepartamentoP").val(codigo_departamento_p);
-								/* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
-								miselect_departamento_p.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
-									$.post("includes/cargar_departamento.php",
-										function(data){
-											miselect_departamento_p.empty();
-												for (var i=0; i<data.length; i++) {
-													if(codigo_departamento_p == data[i].codigo){
-														miselect_departamento_p.append('<option value="' + data[i].codigo + '" selected>' + data[i].descripcion + '</option>');             
-													}else{
-														miselect_departamento_p.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');
-													}
-													}
-												}, "json");   
-										/// Seleccionar municipio en base al departamento guardado.
-										var miselect_p=$("#lstMunicipioP");
-										var codigo_municipio_p = data[1].codigo_municipio;
-										/* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
-										miselect_p.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
-										//departamento=$("#lstDepartamento").val();
-											$.post("includes/cargar_municipio.php", { departamento: codigo_departamento_p },
-														function(data){
-															miselect_p.empty();
-															for (var i=0; i<data.length; i++) {
-																		if(codigo_municipio_p == data[i].codigo){
-																			miselect_p.append('<option value="' + data[i].codigo + '" selected>' + data[i].descripcion + '</option>');             
-																		}else{
-																			miselect_p.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');
-																		}
-																}
-												}, "json");		 							  
-										// chekear responsable.
-											if (data[1].encargado_bollean == "1") {
-													$("#encargadop").prop("checked", true);
-											}
+								$('#lstDepartamentoP').val(data[1].codigo_departamento);
+								$('#lstMunicipioP').val(data[1].codigo_municipio);
+								$('#lstDistritoP').val(data[1].codigo_distrito);
+								// chekear responsable.
+									if (data[1].encargado_bollean == "1") {
+											$("#encargadop").prop("checked", true);
+									}
 						// bloque para data[2].
 							$('#txtidem').val(data[2].id_alumno_encargado);                
 							$('#nombrem').val(data[2].nombres);                
@@ -320,44 +258,13 @@ $(function(){ // INICIO DEL FUNCTION.
 							$('#lstNacionalidadM').val(data[2].codigo_nacionalidad);
 							$('#lstEstadoFamiliarM').val(data[2].codigo_familiar);
 							$('#lstZonaResidenciaM').val(data[2].codigo_zona); 	
-							/// Seleccionar genero de la base de datos guardado.
-							var miselect_departamento_m=$("#lstDepartamentoM");
-							var codigo_departamento_m = data[2].codigo_departamento;
-							$("#lstDepartamento").val(codigo_departamento_m);
-							/* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
-							miselect_departamento_m.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
-								$.post("includes/cargar_departamento.php",
-									function(data){
-										miselect_departamento_m.empty();
-											for (var i=0; i<data.length; i++) {
-												if(codigo_departamento_m == data[i].codigo){
-													miselect_departamento_m.append('<option value="' + data[i].codigo + '" selected>' + data[i].descripcion + '</option>');             
-												}else{
-													miselect_departamento_m.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');
-												}
-											}
-										}, "json");   
-							/// Seleccionar municipio en base al departamento guardado.
-							var miselect_m=$("#lstMunicipioM");
-							var codigo_municipio_m = data[2].codigo_municipio;
-							/* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
-							miselect_m.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
-								//departamento=$("#lstDepartamento").val();
-									$.post("includes/cargar_municipio.php", { departamento: codigo_departamento_m },
-												function(data){
-													miselect_m.empty();
-													for (var i=0; i<data.length; i++) {
-																if(codigo_municipio_m == data[i].codigo){
-																	miselect_m.append('<option value="' + data[i].codigo + '" selected>' + data[i].descripcion + '</option>');             
-																}else{
-																	miselect_m.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');
-																}
-														}
-								}, "json");                                                                 
+							$('#lstDepartamentoM').val(data[2].codigo_departamento);
+							$('#lstMunicipioM').val(data[2].codigo_municipio);
+							$('#lstDistritoM').val(data[2].codigo_distrito);
 							//**************chekear responsable.*************************************************************
-									if (data[2].encargado_bollean == "1") {
-											$("#encargadom").prop("checked", true);
-									}		
+								if (data[2].encargado_bollean == "1") {
+										$("#encargadom").prop("checked", true);
+								}		
 								// blorque para data[3].
 									$('#txtideo').val(data[3].id_alumno_encargado);
 									$('#nombreo').val(data[3].nombres);
@@ -376,40 +283,9 @@ $(function(){ // INICIO DEL FUNCTION.
 									$('#lstNacionalidadO').val(data[3].codigo_nacionalidad);
 									$('#lstEstadoFamiliarO').val(data[3].codigo_familiar);
 									$('#lstZonaResidenciaO').val(data[3].codigo_zona); 	
-										/// Seleccionar genero de la base de datos guardado.
-										var miselect_departamento_o=$("#lstDepartamentoO");
-										var codigo_departamento_o = data[3].codigo_departamento;
-										$("#lstDepartamentoO").val(codigo_departamento_o);
-										/* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
-										miselect_departamento_o.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
-											$.post("includes/cargar_departamento.php",
-												function(data){
-													miselect_departamento_o.empty();
-														for (var i=0; i<data.length; i++) {
-															if(codigo_departamento_o == data[i].codigo){
-																miselect_departamento_o.append('<option value="' + data[i].codigo + '" selected>' + data[i].descripcion + '</option>');             
-															}else{
-																miselect_departamento_o.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');
-															}
-														}
-													}, "json");   
-										/// Seleccionar municipio en base al departamento guardado.
-										var miselect_o=$("#lstMunicipioO");
-										var codigo_municipio_o = data[3].codigo_municipio;
-										/* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
-										miselect_o.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
-											//departamento=$("#lstDepartamento").val();
-											$.post("includes/cargar_municipio.php", { departamento: codigo_departamento_o },
-												function(data){
-												miselect_o.empty();
-												for (var i=0; i<data.length; i++) {
-																if(codigo_municipio_o == data[i].codigo){
-																miselect_o.append('<option value="' + data[i].codigo + '" selected>' + data[i].descripcion + '</option>');             
-																}else{
-																miselect_o.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');
-																}
-													}
-											}, "json");						
+									$('#lstDepartamentoO').val(data[3].codigo_departamento);
+									$('#lstMunicipioO').val(data[3].codigo_municipio);
+									$('#lstDistritoO').val(data[3].codigo_distrito);
 					/* LLENAR LA TABLA MATRICULA*/		
 						listarMatriculaAlumno();
 					/* FINAL DEL DATA QUE BUSCAR EL REGISTRO*/		

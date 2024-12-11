@@ -63,6 +63,10 @@ header("Content-Type: text/html; charset=UTF-8");
             // TABLA Estatus
             $stmt = $dblink->prepare("SELECT codigo, descripcion from catalogo_estatus ORDER BY codigo");
             break;
+        case 14:
+            // TABLA Estatus
+            $stmt = $dblink->prepare("SELECT codigo, descripcion from catalogo_familiar ORDER BY codigo");
+            break;
     }
 // 
 try {
