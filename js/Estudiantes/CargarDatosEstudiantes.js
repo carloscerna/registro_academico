@@ -272,7 +272,7 @@ $(document).ready(function(){
 		var selectMunicipio = $('#lstMunicipioPN').attr('name'); 
 		ElSalvador(url_data, condicion, CodigoDepartamento, CodigoMunicipio, CodigoDistrito, selectMunicipio);
 	// llenar select
-		condicion = 3; miObjeto = 3;	// DISTRITOS.
+		condicion = 3; 	// DISTRITOS.
 		var selectDistrito = $('#lstDistritoPN').attr('name'); 
 		ElSalvador(url_data, condicion, CodigoDepartamento, CodigoMunicipio, CodigoDistrito, selectDistrito);
  	//  RELLENAR RESIDENCIA DEL ESTUDIANTE.

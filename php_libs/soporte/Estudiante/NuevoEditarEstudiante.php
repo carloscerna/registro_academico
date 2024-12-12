@@ -102,13 +102,13 @@ if($errorDbConexion == false){
 				// RESIDENCIA
 				$CantidadHijos = trim($_POST['CantidadHijos']);
 				
-				$codigo_zona_residencia = trim($_POST['lstzonaresidencia']);
+				$codigo_zona_residencia = trim($_POST['lstZonaResidencia']);
 				$codigo_tipo_de_vivienda = trim($_POST['LstTipoVivienda']);
-				$codigo_departamento = trim($_POST['lstdepartamento']);
+				$codigo_departamento = trim($_POST['lstDepartamento']);
 				$codigo_distrito = trim($_POST['lstDistrito']);
 				$codigo_canton = trim($_POST['lstCanton']);
 				$codigo_caserio = trim($_POST['lstCaserio']);
-				$codigo_municipio = trim($_POST['lstmunicipio']);
+				$codigo_municipio = trim($_POST['lstMunicipio']);
 				$direccion_alumno = trim($_POST['direccion_alumno']);
 				// SERVICIOS BASICOS
 				$servicio_energia = trim($_POST['lstServicioEnergia']);
@@ -296,12 +296,12 @@ if($errorDbConexion == false){
 				$CantidadHijos = trim($_POST['CantidadHijos']);
 
 				// RESIDENCIA
-				$codigo_zona_residencia = trim($_POST['lstzonaresidencia']);
+				$codigo_zona_residencia = trim($_POST['lstZonaResidencia']);
 				$codigo_tipo_de_vivienda = trim($_POST['LstTipoVivienda']);
-				$codigo_departamento = trim($_POST['lstdepartamento']);
+				$codigo_departamento = trim($_POST['lstDepartamento']);
 				$codigo_canton = trim($_POST['lstCanton']);
 				$codigo_caserio = trim($_POST['lstCaserio']);
-				$codigo_municipio = trim($_POST['lstmunicipio']);
+				$codigo_municipio = trim($_POST['lstMunicipio']);
 				$codigo_distrito = trim($_POST['lstDistrito']);
 				$direccion_alumno = trim($_POST['direccion_alumno']);
 				// SERVICIOS BASICOS
@@ -356,7 +356,7 @@ if($errorDbConexion == false){
 						  codigo_estatus = '%s', genero = '%s', dui = '%s', pasaporte = '%s', codigo_nacionalidad = '%s', retornado = '%s', presenta_pn = '%s', posee_pn = '%s',
 						  codigo_etnia = '%s', codigo_diagnostico = '%s', embarazada = '%s', codigo_tipo_vivienda = '%s', codigo_canton = '%s', codigo_caserio = '%s',
 						  servicio_energia = '%s', recoleccion_basura = '%s', codigo_abastecimiento = '%s', cantidad_hijos = '%s',
-						  codigo_departamento_pn = '%s', codigo_municipio_pn = '%s', codigo_distrigo_pn = '%s', codigo_distrito = '%s'
+						  codigo_departamento_pn = '%s', codigo_municipio_pn = '%s', codigo_distrito_pn = '%s', codigo_distrito = '%s'
 							WHERE id_alumno=%d",
 							$apellido_materno,$apellido_paterno,$nombre_completo,
 							$direccion_alumno,$nie,$telcelular,$email_alumno,

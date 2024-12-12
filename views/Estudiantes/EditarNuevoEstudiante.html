@@ -96,15 +96,18 @@ $(document).ready(function() {
   });
   // Datatoggle
   $('[data-toggle="tooltip"]').tooltip();
-  // colocar la misma dirección en la del encargado.
-   $("#direccion_alumno").keyup(function () {
-             var value = $(this).val();
-             $("#direccionp").val(value);
-             $("#direccionm").val(value);
-             $("#direcciono").val(value);
-         });
 
 }); // final del $(document).ready();
+
+$(document).ready(function() {
+  // colocar la misma dirección en la del encargado.
+  $("#direccion_alumno").keyup(function () {
+    var value = $(this).val();
+    $("#direccionp").val(value);
+    $("#direccionm").val(value);
+    $("#direcciono").val(value);
+});  
+});
 
 $(document).ready(function() {
 // Jquery-mask - entrado de datos.

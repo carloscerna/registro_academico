@@ -192,11 +192,22 @@ $(function(){ // INICIO DEL FUNCTION.
 						$('#folio_pn').val(data[0].pn_folio);
 						$('#tomo_pn').val(data[0].pn_tomo);
 						$('#libro_pn').val(data[0].pn_libro);
-						$('#lstDepartamentoPN').val(data[0].codigo_departamento_pn);
-						$('#lstMunicipioPN').val(data[0].codigo_municipio_pn);
-						$('#lstDistritoPN').val(data[0].codigo_distrito_pn);
+						// llenar select.
+						condicion = 1; 	// DEPARTAMENTOS.
+						CodigoDepartamento = data[0].codigo_departamento_pn;
+						var selectDepartamento = $('#lstDepartamentoPN').attr('name'); 
+						ElSalvador(url_data, condicion, CodigoDepartamento, CodigoMunicipio, CodigoDistrito, selectDepartamento);
+						// llenar select.
+						condicion = 2; 	// MUNICIPIOS.
+						CodigoMunicipio = data[0].codigo_municipio_pn;
+						var selectMunicipio = $('#lstMunicipioPN').attr('name'); 
+						ElSalvador(url_data, condicion, CodigoDepartamento, CodigoMunicipio, CodigoDistrito, selectMunicipio);
+					// llenar select
+						condicion = 3; 	// DISTRITOS.
+						CodigoDistrito = data[0].codigo_distrito_pn;
+						var selectDistrito = $('#lstDistritoPN').attr('name'); 
+						ElSalvador(url_data, condicion, CodigoDepartamento, CodigoMunicipio, CodigoDistrito, selectDistrito);
 						/// Seleccionar genero de la base de datos guardado.
-						//$('#').val(data[0].);
 						$('#lstgenero').val(data[0].codigo_genero);
 						$('#lstEtnia').val(data[0].codigo_etnia);
 						$('#lstEstadoCivil').val(data[0].codigo_estado_civil);
@@ -214,78 +225,72 @@ $(function(){ // INICIO DEL FUNCTION.
 						$('#CantidadHijos').val(data[0].cantidad_hijos);
 						//
 						$('#LstTipoVivienda').val(data[0].codigo_tipo_vivienda);
-						$('#lstCanton').val(data[0].codigo_canton);
 						$('#lstCaserio').val(data[0].codigo_caserio);
 						$('#lstServicioEnergia').val(data[0].servicio_energia);
 						$('#lstRecoleccionBasura').val(data[0].recoleccion_basura);
-						$('#lstAbastecimientoAgua').val(data[0].codigo_abastecimiento);
-						$('#lstDepartamento').val(data[0].codigo_departamento);
-						$('#lstMunicipio').val(data[0].codigo_municipio);
-						$('#lstDistrito').val(data[0].codigo_distrito);													
+						$('#lstAbastecimientoAgua').val(data[0].codigo_abastecimiento);							
+						// llenar select.
+						condicion = 1; 	// DEPARTAMENTOS.
+						CodigoDepartamento = data[0].codigo_departamento;
+						var selectDepartamento = $('#lstDepartamento').attr('name'); 
+						ElSalvador(url_data, condicion, CodigoDepartamento, CodigoMunicipio, CodigoDistrito, selectDepartamento);
+						// llenar select.
+						condicion = 2; 	// MUNICIPIOS.
+						CodigoMunicipio = data[0].codigo_municipio;
+						var selectMunicipio = $('#lstMunicipio').attr('name'); 
+						ElSalvador(url_data, condicion, CodigoDepartamento, CodigoMunicipio, CodigoDistrito, selectMunicipio);
+						// llenar select
+						condicion = 3; 	// DISTRITOS.
+						CodigoDistrito = data[0].codigo_distrito;
+						var selectDistrito = $('#lstDistrito').attr('name'); 
+						ElSalvador(url_data, condicion, CodigoDepartamento, CodigoMunicipio, CodigoDistrito, selectDistrito);
+						//	llenar select
+						condicion = 4;		// Cantón.
+						var selectCanton = $('#lstCanton').attr('name'); 
+						ElSalvador(url_data, condicion, CodigoDepartamento, CodigoMunicipio, CodigoDistrito, selectCanton);
 						/* **********************************************************************************************************************************/	
-						/* DATOS DEL RESPONSABLE - MADRE*/
-							// blorque para data[1].
-								$('#txtidep').val(data[1].id_alumno_encargado);
-								$('#nombrep').val(data[1].nombres);
-								$('#lugarp').val(data[1].lugar_trabajo);
-								$('#pop').val(data[1].profesion);
-								$('#duip').val(data[1].dui);
-								$('#telefonop').val(data[1].telefono);
-								$('#direccionp').val(data[1].direccion);
-								$('#txtfechanacimientop').val(data[1].fecha_nacimiento);
-								////
-								//$('#').val(data[1].);
-								$('#lstNacionalidadP').val(data[1].codigo_nacionalidad);
-								$('#lstEstadoFamiliarP').val(data[1].codigo_familiar);
-								$('#lstZonaResidenciaP').val(data[1].codigo_zona); 					
-								$('#lstDepartamentoP').val(data[1].codigo_departamento);
-								$('#lstMunicipioP').val(data[1].codigo_municipio);
-								$('#lstDistritoP').val(data[1].codigo_distrito);
-								// chekear responsable.
-									if (data[1].encargado_bollean == "1") {
-											$("#encargadop").prop("checked", true);
-									}
-						// bloque para data[2].
-							$('#txtidem').val(data[2].id_alumno_encargado);                
-							$('#nombrem').val(data[2].nombres);                
-							$('#lugarm').val(data[2].lugar_trabajo);                
-							$('#pom').val(data[2].profesion);                
-							$('#duim').val(data[2].dui);                
-							$('#telefonom').val(data[2].telefono);                
-							$('#direccionm').val(data[2].direccion);                
-							$('#txtfechanacimientom').val(data[2].fecha_nacimiento);
-							//// GLOQUE DE SELECT
-							$('#lstNacionalidadM').val(data[2].codigo_nacionalidad);
-							$('#lstEstadoFamiliarM').val(data[2].codigo_familiar);
-							$('#lstZonaResidenciaM').val(data[2].codigo_zona); 	
-							$('#lstDepartamentoM').val(data[2].codigo_departamento);
-							$('#lstMunicipioM').val(data[2].codigo_municipio);
-							$('#lstDistritoM').val(data[2].codigo_distrito);
-							//**************chekear responsable.*************************************************************
-								if (data[2].encargado_bollean == "1") {
-										$("#encargadom").prop("checked", true);
-								}		
-								// blorque para data[3].
-									$('#txtideo').val(data[3].id_alumno_encargado);
-									$('#nombreo').val(data[3].nombres);
-									$('#lugaro').val(data[3].lugar_trabajo);
-									$('#poo').val(data[3].profesion);
-									$('#duio').val(data[3].dui);
-									$('#telefonoo').val(data[3].telefono);
-									$('#direcciono').val(data[3].direccion);
-								// chekear responsable.
-									if (data[3].encargado_bollean == "1") {
-											$("#encargadoo").prop("checked", true);
-									}
-									$('#txtfechanacimientoo').val(data[3].fecha_nacimiento);
-								///
-								//// SELECT
-									$('#lstNacionalidadO').val(data[3].codigo_nacionalidad);
-									$('#lstEstadoFamiliarO').val(data[3].codigo_familiar);
-									$('#lstZonaResidenciaO').val(data[3].codigo_zona); 	
-									$('#lstDepartamentoO').val(data[3].codigo_departamento);
-									$('#lstMunicipioO').val(data[3].codigo_municipio);
-									$('#lstDistritoO').val(data[3].codigo_distrito);
+						//
+							var letraMayuscula = ["P","M","O"]; var num = 1;
+							var letraMinuscula = ["p","m","o"];
+							for (let index = 0; index <= letraMayuscula.length; index++) {
+								/* DATOS DEL RESPONSABLE - PADRE, MADRE U OTRO.*/
+									$('#txtide'+letraMinuscula[index]).val(data[num].id_alumno_encargado);
+									$('#nombre'+letraMinuscula[index]).val(data[num].nombres);
+									$('#lugar'+letraMinuscula[index]).val(data[num].lugar_trabajo);
+									$('#po'+letraMinuscula[index]).val(data[num].profesion);
+									$('#dui'+letraMinuscula[index]).val(data[num].dui);
+									$('#telefono'+letraMinuscula[index]).val(data[num].telefono);
+									$('#direccion'+letraMinuscula[index]).val(data[num].direccion);
+									$('#txtfechanacimiento'+letraMinuscula[index]).val(data[num].fecha_nacimiento);
+									////
+									$('#lstNacionalidad'+letraMayuscula[index]).val(data[num].codigo_nacionalidad);
+									$('#lstEstadoFamiliar'+letraMayuscula[index]).val(data[num].codigo_familiar);
+									$('#lstZonaResidencia'+letraMayuscula[index]).val(data[num].codigo_zona); 					
+									// llenar select.
+									condicion = 1; 	// DEPARTAMENTOS.
+									CodigoDepartamento = data[num].codigo_departamento;
+									var selectDepartamento = $('#lstDepartamento'+letraMayuscula[index]).attr('name'); 
+									//console.log("Código Departamento: "+data[num].codigo_departamento)
+									ElSalvador(url_data, condicion, CodigoDepartamento, CodigoMunicipio, CodigoDistrito, selectDepartamento);
+									// llenar select.
+									condicion = 2; 	// MUNICIPIOS.
+									CodigoMunicipio = data[num].codigo_municipio;
+									var selectMunicipio = $('#lstMunicipio'+letraMayuscula[index]).attr('name'); 
+									//console.log("Código Municipio: "+data[num].codigo_municipio)
+									ElSalvador(url_data, condicion, CodigoDepartamento, CodigoMunicipio, CodigoDistrito, selectMunicipio);
+									// llenar select
+									condicion = 3; 	// DISTRITOS.
+									CodigoDistrito = data[num].codigo_distrito;
+									var selectDistrito = $('#lstDistrito'+letraMayuscula[index]).attr('name'); 
+									//console.log("Código Distrito: " + data[num].codigo_distrito)
+									ElSalvador(url_data, condicion, CodigoDepartamento, CodigoMunicipio, CodigoDistrito, selectDistrito);
+									// chekear responsable.
+										if (data[index].encargado_bollean == "1") {
+												$("#encargado"+letraMinuscula[num]).prop("checked", true);
+										}								
+									// 
+										num++;
+							}
 					/* LLENAR LA TABLA MATRICULA*/		
 						listarMatriculaAlumno();
 					/* FINAL DEL DATA QUE BUSCAR EL REGISTRO*/		
@@ -625,12 +630,6 @@ $(function(){ // INICIO DEL FUNCTION.
 			invalidHandler: function() {
 				setTimeout(function() {
 					toastr.error("Faltan Datos...");
-							/*
-							$('.nav-tabs a small.required').remove();
-								var validatePane = $('.tab-content.tab-validate .tab-pane:has(input.error)').each(function() {
-									var id = $(this).attr('id');
-									$('.nav-tabs').find('a[href="#' + id + '"]').append(' <small class="required">***</small>');
-								});*/
 						});            
 					},
 				submitHandler: function(){	

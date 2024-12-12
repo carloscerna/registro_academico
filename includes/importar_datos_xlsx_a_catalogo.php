@@ -10,7 +10,7 @@ include($path_root."/registro_academico/includes/funciones.php");
 // variables. del post.
 //  $ruta = $path_root.'/sgp_web/formatos_hoja_de_calculo/fianzas.xls';
 // $ruta = $path_root.'/sgp_web/formatos_hoja_de_calculo/prestamos.xls';
-	$ruta = $path_root.'/registro_academico/formatos_hoja_de_calculo/catalogos/DEPARTAMENTO Y MUNICIPIIOS EN TABLA VIEJA.xlsx';
+	$ruta = $path_root.'/registro_academico/formatos_hoja_de_calculo/catalogos/catalogo_canton.xlsx';
   //$trimestre = trim($_REQUEST["periodo_"]);
 // variable de la conexi�n dbf.
     $db_link = $dblink;
@@ -51,20 +51,21 @@ include($path_root."/registro_academico/includes/funciones.php");
 	$fecha_actual = date("d-m-Y h:i:s");
 	$timestamp = strtotime($fecha_actual);
 // N�mero de hoja.
-   $numero_de_hoja = 0;
+   $numero_de_hoja = 3;
 	$numero = 2;	
 // 	Recorre el numero de hojas que contenga el libro
        $objPHPExcel->setActiveSheetIndex($numero_de_hoja);
 		//	BUCLE QUE RECORRE TODA LA CUADRICULA DE LA HOJA DE CALCULO.
-		while($objPHPExcel->getActiveSheet()->getCell("B".$fila)->getValue() != "")
+		while($objPHPExcel->getActiveSheet()->getCell("A".$fila)->getValue() != "")
 		  {
 			
 			 //  DATOS GENERALES.
-			 	$codigo_viejo_municipio = $objPHPExcel->getActiveSheet()->getCell("B".$fila)->getValue();
-				//$descripcion = trim($objPHPExcel->getActiveSheet()->getCell("J".$fila)->getValue());
-                $codigo_departamento = trim(htmlspecialchars($objPHPExcel->getActiveSheet()->getCell("D".$fila)->getValue()));
-				$codigo_nuevo_municipio = trim(htmlspecialchars($objPHPExcel->getActiveSheet()->getCell("E".$fila)->getValue()));
-				$codigo_distrito = trim(htmlspecialchars($objPHPExcel->getActiveSheet()->getCell("F".$fila)->getValue()));
+			 	$codigo_departamento = trim(htmlspecialchars($objPHPExcel->getActiveSheet()->getCell("A".$fila)->getValue()));
+			 	$codigo_municipio = $objPHPExcel->getActiveSheet()->getCell("B".$fila)->getValue();
+				$codigo_distrito = trim(htmlspecialchars($objPHPExcel->getActiveSheet()->getCell("C".$fila)->getValue()));
+				$nombre_distrito = trim(htmlspecialchars($objPHPExcel->getActiveSheet()->getCell("D".$fila)->getValue()));
+				$codigo_canton = trim(htmlspecialchars($objPHPExcel->getActiveSheet()->getCell("E".$fila)->getValue()));
+				$descripcion = trim($objPHPExcel->getActiveSheet()->getCell("F".$fila)->getValue());
 				//print $query = "INSERT INTO catalogo_abastecimiento (codigo, descripcion) values ('$codigo','$descripcion')";
 				//$query = "INSERT INTO catalogo_canton (codigo, descripcion, codigo_departamento, codigo_municipio) values ('$codigo','$descripcion','$codigo_departamento','$codigo_municipio')";
 				//print "<br>";
@@ -90,13 +91,22 @@ include($path_root."/registro_academico/includes/funciones.php");
 					//$query = "INSERT INTO catalogo_area_dimension (codigo, descripcion, codigo_area) VALUES ('$codigo', '$descripcion','$codigo_area')";
 				 	//$query = "INSERT INTO asignatura (nombre, codigo, codigo_cc, codigo_area, codigo_servicio_educativo, codigo_area_dimension, codigo_area_subdimension, ordenar) 
 					//VALUES ('$descripcion','$codigo','$codigo_cc','$codigo_area','$codigo_servicio_educativo','$codigo_dimension','$codigo_subdimension','$ordenar')";
-			$updateQuery = "UPDATE catalogo_canton SET codigo_nuevo_municipio = '$codigo_nuevo_municipio', codigo_distrito = '$codigo_distrito'
-							WHERE codigo_departamento = '$codigo_departamento' and codigo_municipio = '$codigo_viejo_municipio'
-							";
-					$consulta = $dblink -> query($udpateQuery);
-			
-         	$fila++;
-			print $codigo_viejo_municipio . ' - ' . $codigo_nuevo_municipio . ' - ' . $codigo_departamento . ' - ' . $codigo_distrito;
+//			$updateQuery = "UPDATE catalogo_canton SET codigo_nuevo_municipio = '$codigo_nuevo_municipio', codigo_distrito = '$codigo_distrito'
+//							WHERE codigo_departamento = '$codigo_departamento' and codigo_municipio = '$codigo_viejo_municipio'
+//							";
+//					$consulta = $dblink -> query($udpateQuery);
+				$query = "INSERT INTO catalogo_canton (codigo, descripcion, codigo_departamento, codigo_nuevo_municipio, codigo_distrito) VALUES ('$codigo_canton','$descripcion','$codigo_departamento','$codigo_municipio','$codigo_distrito')";			
+				//$consulta = $dblink -> query($query);
+			if(empty($codigo_municipio)){
+				print "NO GRABADO";
+			}else{
+				$consulta = $dblink -> query($query);
+				print $codigo_municipio . ' - ' . $codigo_departamento . ' - ' . $codigo_distrito .  ' - ' . $nombre_distrito . ' - ' . $codigo_canton . ' - ' . $descripcion;
+			}
+				 $fila++;
+
+
+//			print $codigo_viejo_municipio . ' - ' . $codigo_nuevo_municipio . ' - ' . $codigo_departamento . ' - ' . $codigo_distrito;
 			//print $codigo_area . ' - ' . $codigo_dimension . ' - ' . $codigo_subdimension . ' - ' . $codigo . ' - ' . $descripcion . ' - ' . $codigo_cc . ' SE ' . $codigo_servicio_educativo . ' # ' . $ordenar;
 			//print $codigo_area . ' - ' . $codigo  . ' - ' . $descripcion . ' - ' . $codigo_cc . ' - ' . $codigo_servicio_educativo;
 			print "<br>";

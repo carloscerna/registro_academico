@@ -32,7 +32,7 @@ try{
             break;
         case 4:
             // FILTAR POR CANTÓN.
-                $dblink = $dblink->prepare("SELECT codigo_departamento, codigo_municipio, codigo_distrito, codigo, descripcion
+                $dblink = $dblink->prepare("SELECT codigo_departamento, codigo_nuevo_municipio, codigo_distrito, codigo, descripcion
                     FROM catalogo_canton
                         WHERE codigo_departamento = '$codigoDepartamento' and codigo_nuevo_municipio = '$codigoMunicipio' and codigo_distrito = '$codigoDistrito'
                             ORDER BY codigo");
