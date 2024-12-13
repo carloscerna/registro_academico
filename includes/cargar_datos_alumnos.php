@@ -2,7 +2,8 @@
 // ruta de los archivos con su carpeta
     $path_root=trim($_SERVER['DOCUMENT_ROOT']);
 // Incluimos el archivo de funciones y conexi�n a la base de datos
-include($path_root."/registro_academico/includes/mainFunctions_conexion.php");
+  include($path_root."/registro_academico/includes/mainFunctions_conexion.php");
+  include($path_root."/registro_academico/includes/funciones.php");
 // variables que traer el ID DEL ALUMNO.
 
 // armando el Query. PARA LA TABLA ALUMNO.
