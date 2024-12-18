@@ -382,7 +382,7 @@ $(function(){ // INICIO DEL FUNCTION.
 	$('#goImprimirPortada').on( 'click', function () {
 		id_ = $("#id_user").val();
 		// construir la variable con el url.
-			varenviar = "/registro_academico/php_libs/reportes/alumno_portada.php?txtidalumno="+id_;
+			varenviar = "/registro_academico/php_libs/reportes/Estudiante/Portada.php?txtidalumno="+id_;
 		// Ejecutar la función
 			AbrirVentana(varenviar);
 	});

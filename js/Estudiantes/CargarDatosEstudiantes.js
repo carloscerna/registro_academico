@@ -496,7 +496,7 @@ $(document).ready(function()
 // FUNCIONES.
 //	
 // FUNCIONES PARA VER LOS DEPARTAMENTOS, MUNICIPIOS Y DISTRITOS.
-function ElSalvador(url_data, Condicion, CodigoDepartamento, CodigoMunicipio, CodigoDistrito, select)	{
+function ElSalvador(url_data, Condicion, CodigoDepartamento, CodigoMunicipio, CodigoDistrito, select, CodigoCanton)	{
 	var Oselect = $('#'+select);
 	$.ajax({ 
 		url: url_data, 
@@ -516,12 +516,15 @@ function ElSalvador(url_data, Condicion, CodigoDepartamento, CodigoMunicipio, Co
 				case 3:
 					var BuscarVariable = CodigoDistrito;
 					break;
+				case 4:
+					var BuscarVariable = CodigoCanton;
+					break;
 			}
 			//
 			Oselect.empty(); // Limpia el select 
 			$.each(data, function(index, elsalvador)
 			{
-				if(elsalvador.codigo == BuscarVariable){
+				if(elsalvador.codigo.trim() == BuscarVariable){
 					Oselect.append('<option value=' + elsalvador.codigo+ ' selected>' + elsalvador.descripcion + '</option>');
 				}else{	
 					Oselect.append('<option value=' + elsalvador.codigo + '>' + elsalvador.descripcion + '</option>');
@@ -550,7 +553,7 @@ function Catalogos(url_data, Condicion, select, CodigoValor)	{
 			Oselect.empty(); // Limpia el select 
 			$.each(data, function(index, catalogos)
 			{
-				if(catalogos.codigo == BuscarVariable){
+				if(catalogos.codigo.trim() == BuscarVariable){
 					Oselect.append('<option value=' + catalogos.codigo+ ' selected>' + catalogos.descripcion + '</option>');
 				}else{	
 					Oselect.append('<option value=' + catalogos.codigo + '>' + catalogos.descripcion + '</option>');

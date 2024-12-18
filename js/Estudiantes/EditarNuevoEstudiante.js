@@ -145,7 +145,7 @@ $(function(){ // INICIO DEL FUNCTION.
 							$(".card-img-top-PN").attr("src", "../registro_academico/img/NoDisponible.jpg");	
 						}else{
 							//alert(myExtension[1]);
-							if(myExtension[1] == "pdf"){
+							if(myExtension[1] == "pdf" || myExtension[1] == "PDF"){
 								$('#iframePDFPn').attr('src',ruta_imagen)
 								$("#iframePDFPn").css("display","block");		// Botón Ver
 								$(".card-img-top-PN").css("display","none");
@@ -247,7 +247,8 @@ $(function(){ // INICIO DEL FUNCTION.
 						//	llenar select
 						condicion = 4;		// Cantón.
 						var selectCanton = $('#lstCanton').attr('name'); 
-						ElSalvador(url_data, condicion, CodigoDepartamento, CodigoMunicipio, CodigoDistrito, selectCanton);
+						CodigoCanton = data[0].codigo_canton
+						ElSalvador(url_data, condicion, CodigoDepartamento, CodigoMunicipio, CodigoDistrito, selectCanton, CodigoCanton);
 						/* **********************************************************************************************************************************/	
 						//
 							var letraMayuscula = ["P","M","O"]; var num = 1;
@@ -685,7 +686,7 @@ $(function(){ // INICIO DEL FUNCTION.
 		// construir la variable con el url.
 			var nombre_archivo = $("label[for='Pn']").text();
 			var id_alumno = $("#id_user").val();
-			varenviar = "/registro_academico/php_libs/reportes/imprimir_partida_nacimiento.php?nombre_archivo="+nombre_archivo+"&codigo_alumno="+id_alumno;
+			varenviar = "/registro_academico/php_libs/reportes/Estudiante/PartidaNacimiento.php?nombre_archivo="+nombre_archivo+"&codigo_alumno="+id_alumno;
 		// Ejecutar la función
 			AbrirVentana2(varenviar);
 		});

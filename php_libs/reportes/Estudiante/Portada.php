@@ -119,7 +119,7 @@ function Footer()
        a.pn_numero, a.pn_folio, a.pn_tomo, a.pn_libro,
 	   es.nombre_departamento, es.nombre_municipio, es.nombre_distrito
         FROM alumno a
-        INNER JOIN elsalvador es ON es.codigo_departamento = a.codigo_departamento and es.codigo_municipio = a.codigo_municipio and es.codigo_distrito = a.codigo_distrito
+        INNER JOIN elsalvador es ON es.codigo_departamento = a.codigo_departamento_pn and es.codigo_municipio = a.codigo_municipio_pn and es.codigo_distrito = a.codigo_distrito_pn
         WHERE id_alumno = '$codigo_alumno'";
         $result = $db_link -> query($query);
         while($row = $result -> fetch(PDO::FETCH_BOTH))
