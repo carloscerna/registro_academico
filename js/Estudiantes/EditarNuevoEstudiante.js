@@ -286,8 +286,11 @@ $(function(){ // INICIO DEL FUNCTION.
 									//console.log("Código Distrito: " + data[num].codigo_distrito)
 									ElSalvador(url_data, condicion, CodigoDepartamento, CodigoMunicipio, CodigoDistrito, selectDistrito);
 									// chekear responsable.
-										if (data[index].encargado_bollean == "1") {
-												$("#encargado"+letraMinuscula[num]).prop("checked", true);
+										//alert(data[num].encargado_bollean);
+										//alert("#encargado"+letraMinuscula[num]);
+										if (data[num].encargado_bollean == "1") {
+												$("#encargado"+letraMinuscula[index]).prop("checked", true);
+
 										}								
 									// 
 										num++;

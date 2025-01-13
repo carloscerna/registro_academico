@@ -551,4 +551,3 @@ else{
 			"contenido" => $contenidoOK);
 		echo json_encode($salidaJson);
 	}
-?>
