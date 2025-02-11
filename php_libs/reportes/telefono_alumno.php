@@ -180,7 +180,7 @@ function FancyTable($header)
                 $pdf->Cell($w[1],5.8,trim($row['codigo_nie']),'LR',0,'C',$fill);  // NIE
                 $pdf->Cell($w[2],5.8,convertirtexto(trim($row['apellido_alumno'])),'LR',0,'L',$fill); // Nombre + apellido_materno + apellido_paterno
                 $pdf->Cell($w[3],5.8,convertirtexto(trim($row['nombres'])),'LR',0,'L',$fill); // Nombre + apellido_materno + apellido_paterno
-                $pdf->Cell($w[4],5.8,"",'LR',0,'C',$fill);  // telefono encargado
+                $pdf->Cell($w[4],5.8,$row['telefono_encargado'],'LR',0,'C',$fill);  // telefono encargado
                 $pdf->Cell($w[5],5.8,"",'LR',0,'C',$fill);  // telefono casa
                 //
                 $pdf->Ln();
