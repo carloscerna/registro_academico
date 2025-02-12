@@ -1,36 +1,40 @@
 <?php
-// ruta de los archivos con su carpeta
-    $path_root=trim($_SERVER['DOCUMENT_ROOT']);
-// archivos que se incluyen.
-    include($path_root."/registro_academico/includes/funciones.php");
-    include($path_root."/registro_academico/includes/consultas.php");
-    include($path_root."/registro_academico/includes/mainFunctions_conexion.php");
-// Llamar a la libreria fpdf
-    include($path_root."/registro_academico/php_libs/fpdf/fpdf.php");
+// Define root path
+define('ROOT_PATH', trim($_SERVER['DOCUMENT_ROOT']));
+// Include necessary files
+    require_once ROOT_PATH . "/registro_academico/includes/funciones.php";
+    require_once ROOT_PATH . "/registro_academico/includes/consultas.php";
+    require_once ROOT_PATH . "/registro_academico/includes/mainFunctions_conexion.php";
+    require_once ROOT_PATH . "/registro_academico/php_libs/fpdf/fpdf.php";
 // cambiar a utf-8.
     header("Content-Type: text/html; charset=UTF-8");    
 // variables y consulta a la tabla.
 	$print_nombre = "";
-    $codigo_all = $_REQUEST["todos"];
+    $codigo_all = isset($_REQUEST["todos"]) ? $_REQUEST["todos"] : '';
+    if (empty($codigo_all)) {
+        die("Error: 'todos' parameter is missing.");
+    }
     $db_link = $dblink;
+    if (!$db_link) {
+        die("Error: Database connection failed.");
+    }
 // buscar la consulta y la ejecuta.
     consultas(9,0,$codigo_all,'','','',$db_link,'');
 //  imprimir datos del bachillerato.
      while($row = $result_encabezado -> fetch(PDO::FETCH_BOTH))
             {
-            $print_bachillerato = utf8_decode('Modalidad: '.trim($row['nombre_bachillerato']));
-            $nombre_modalidad = utf8_decode(trim($row['nombre_bachillerato']));
-            $print_grado = utf8_decode('Grado:     '.trim($row['nombre_grado']));
-            $nombre_grado = utf8_decode(trim($row['nombre_grado']));
-            $print_seccion = utf8_decode('Sección:  '.trim($row['nombre_seccion']));
-            $nombre_seccion = utf8_decode(trim($row['nombre_seccion']));
-            $print_ann_lectivo = utf8_decode('Año Lectivo: '.trim($row['nombre_ann_lectivo']));
-            $nombre_ann_lectivo = utf8_decode(trim($row['nombre_ann_lectivo']));
-            $print_periodo = utf8_decode('Período: _____');
+            $print_bachillerato = convertirtexto('Modalidad: '.trim($row['nombre_bachillerato']));
+            $nombre_modalidad = convertirtexto(trim($row['nombre_bachillerato']));
+            $print_grado = convertirtexto('Grado:     '.trim($row['nombre_grado']));
+            $nombre_grado = convertirtexto(trim($row['nombre_grado']));
+            $print_seccion = convertirtexto('Sección:  '.trim($row['nombre_seccion']));
+            $nombre_seccion = convertirtexto(trim($row['nombre_seccion']));
+            $print_ann_lectivo = convertirtexto('Año Lectivo: '.trim($row['nombre_ann_lectivo']));
+            $nombre_ann_lectivo = convertirtexto(trim($row['nombre_ann_lectivo']));
+            $print_periodo = convertirtexto('Período: _____');
             $codigo_grado = trim($row['codigo_grado']);
 	    break;
             }
-
 class PDF extends FPDF
 {
 // rotar texto funcion TEXT()
@@ -73,7 +77,7 @@ function Header()
         //Arial bold 15
         $this->SetFont('Arial','B',13);
         //Título
-        $this->RotatedText(35,10,utf8_decode($_SESSION['institucion']),0);
+        $this->RotatedText(35,10,convertirtexto($_SESSION['institucion']),0);
         $this->RotatedText(35,15,'Control de Actividades',0,1,'L');
         
         $this->SetFont('Arial','',9);
@@ -98,16 +102,16 @@ function Header()
         $this->RoundedRect(20, 35, 5, 55, .5, '');    // Nº
         $this->RoundedRect(25, 35, 12, 55, .5, '');    // NIE
         $this->RoundedRect(37, 35, 68, 55, .5, '');    // Nombre
-        $this->RotatedText(24, 75, utf8_decode('Nº de Orden'), 90);    // Nombre
-        $this->RotatedText(32, 75, utf8_decode(' N  I  E '), 90);    // NUMERO DE IDENTIFICACION ESTUDIANTIL
-        $this->RotatedText(50, 70, utf8_decode('Orden Alfabético por Apellido'), 0);    // Nombre
+        $this->RotatedText(24, 75, convertirtexto('Nº de Orden'), 90);    // Nombre
+        $this->RotatedText(32, 75, convertirtexto(' N  I  E '), 90);    // NUMERO DE IDENTIFICACION ESTUDIANTIL
+        $this->RotatedText(50, 70, convertirtexto('Orden Alfabético por Apellido'), 0);    // Nombre
     // Línea Horizontal. Actividades Realizadas.
         $this->RoundedRect(105, 35, 99, 5, .5, '');
-        $this->RotatedText(125, 39, utf8_decode('PRUEBAS Y ACTIVIDADES REALIZADAS'), 0);    // Nombre
+        $this->RotatedText(125, 39, convertirtexto('PRUEBAS Y ACTIVIDADES REALIZADAS'), 0);    // Nombre
     // Línea Horizontal. Porcentajes
         $this->RoundedRect(105, 40, 99, 5, .5, '');
         $this->RoundedRect(37, 35, 68, 10, .5, '');    // Porcentaje.
-        $this->RotatedText(75, 44, utf8_decode('PORCENTAJES (%)'), 0);    // Nombre
+        $this->RotatedText(75, 44, convertirtexto('PORCENTAJES (%)'), 0);    // Nombre
     // Líneas Verticales para la cuadricula.
         $mov_izq = 105;
         $ancho_1 = 9;
@@ -125,7 +129,7 @@ function Header()
         //Arial bold 15
         $this->SetFont('Arial','B',13);
         //Título
-        $this->RotatedText(25,10,utf8_decode($_SESSION['institucion']),0);
+        $this->RotatedText(25,10,convertirtexto($_SESSION['institucion']),0);
         $this->RotatedText(25,15,'Control de Actividades',0,1,'L');
         
         $this->SetFont('Arial','',9);
@@ -150,16 +154,16 @@ function Header()
         $this->RoundedRect(10, 35, 5, 55, .5, '');    // Nº
         $this->RoundedRect(15, 35, 12, 55, .5, '');    // NIE
         $this->RoundedRect(15, 35, 80, 55, .5, '');    // Nombre
-        $this->RotatedText(14, 75, utf8_decode('Nº de Orden'), 90);    // Nombre
-        $this->RotatedText(23, 75, utf8_decode(' N  I  E '), 90);    // NUMERO DE IDENTIFICACION ESTUDIANTIL
-        $this->RotatedText(40, 70, utf8_decode('Orden Alfabético por Apellido'), 0);    // Nombre
+        $this->RotatedText(14, 75, convertirtexto('Nº de Orden'), 90);    // Nombre
+        $this->RotatedText(23, 75, convertirtexto(' N  I  E '), 90);    // NUMERO DE IDENTIFICACION ESTUDIANTIL
+        $this->RotatedText(40, 70, convertirtexto('Orden Alfabético por Apellido'), 0);    // Nombre
     // Línea Horizontal. Actividades Realizadas.
         $this->RoundedRect(95, 35, 99, 5, .5, '');
-        $this->RotatedText(125, 39, utf8_decode('ACTIVIDADES REALIZADAS'), 0);    // Nombre
+        $this->RotatedText(125, 39, convertirtexto('ACTIVIDADES REALIZADAS'), 0);    // Nombre
     // Línea Horizontal. Porcentajes
         $this->RoundedRect(95, 40, 99, 5, .5, '');
         $this->RoundedRect(27, 35, 68, 10, .5, '');    // Porcentaje.
-        $this->RotatedText(65, 44, utf8_decode('PORCENTAJES (%)'), 0);    // Nombre
+        $this->RotatedText(65, 44, convertirtexto('PORCENTAJES (%)'), 0);    // Nombre
     // Líneas Verticales para la cuadricula.
         $mov_izq = 95;
         $ancho_1 = 9;
@@ -237,7 +241,7 @@ function FancyTable($header)
                     $pdf->SetFont('Arial','',7.5);   
                         $pdf->Cell($w[1],7,$codigo_nie,'LR',0,'C',$fill);        // número correlativo
                     $pdf->SetFont('Arial','',8);   
-                    $pdf->Cell($w[2],7,utf8_decode(trim($row['apellido_alumno'])),'LR',0,'L',$fill); // Nombre + apellido_materno + apellido_paterno
+                    $pdf->Cell($w[2],7,convertirtexto(trim($row['apellido_alumno'])),'LR',0,'L',$fill); // Nombre + apellido_materno + apellido_paterno
                 $pdf->SetFont('Arial','',9);
                 // Bloque que genera la cuadricula en total son 12.
                     for($j=0;$j<=10;$j++){
@@ -284,4 +288,3 @@ function FancyTable($header)
     $modo = 'I'; // Envia al navegador (I), Descarga el archivo (D), Guardar el fichero en un local(F).
     $print_nombre = trim($nombre_modalidad) . ' - ' . trim($nombre_grado) . ' ' . trim($nombre_seccion) . ' - ' . trim($nombre_ann_lectivo) . '-CA.pdf';
     $pdf->Output($print_nombre,$modo);
-?>
