@@ -77,7 +77,7 @@ if($errorDbConexion == false){
                                 .'<td>'.$id_alumno
 								.'<td>'.$nie
 								.'<td>'.$apellido_alumno
-								."<td><div class='d-flex justify-content-end'><input type=checkbox name=matricula class='form-control'></div>"
+								."<td><div class='d-flex justify-content-center'><input type=checkbox name=matricula class='form-check-input'></div>"
 								;
 					}	// Recorrido de la Tabla.
 					$mensajeError = "Si Registro";

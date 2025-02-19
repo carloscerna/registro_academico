@@ -86,7 +86,7 @@
 	consultas(18,0,$codigo_all,'','','',$db_link,'');
 	while($row = $result_encabezado -> fetch(PDO::FETCH_BOTH))
 		{
-			$print_bachillerato = convertirTexto(trim($row['nombre_bachillerato']));
+			$print_bachillerato = trim($row['nombre_bachillerato']);
 			$print_grado = (trim($row['nombre_grado']));
 			$print_seccion = convertirtexto(trim($row['nombre_seccion']));
 			$print_ann_lectivo = convertirtexto(trim($row['nombre_ann_lectivo']));
@@ -136,6 +136,16 @@
 				$total_asignaturas = (trim($row['total_asignaturas']));
             }
 // COLOCAR ENCABEZANDO A LA BOLETA DE CALIFICACIÓN.		
+			switch ($print_codigo_bachillerato) {
+				case '17':
+					//$nivel_educacion = "Educación Básica";
+					$nivel_educacion = $print_bachillerato;
+					break;
+				
+				default:
+					# code...
+					break;
+			}
       	if($print_codigo_bachillerato >= '03' and $print_codigo_bachillerato <= '05')
 	    	{
 			$nivel_educacion = "Educación Básica";
