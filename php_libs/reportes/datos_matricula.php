@@ -198,6 +198,7 @@ function FancyTable($header)
                     $stmt->execute(['CodigoMunicipio' => $codigoMunicipio, 'CodigoDepartamento' => $codigoDepartamento]); 
                     $ElSalvador = $stmt->fetchAll(PDO::FETCH_ASSOC); 
                 //  Ejecutar Query.
+                $nombres_d_m_e = "";
                     foreach ($ElSalvador as $row_d_m) {
                         $nombres_d_m_e = substr(strtolower(trim($row_d_m["nombre_departamento"])),0,4) . "/" . substr(strtolower(trim($row_d_m["nombre_municipio"])),0,4) . "/" . substr(strtolower(trim($row_d_m["descripcion"])),0,4);
                     }     
@@ -210,6 +211,7 @@ function FancyTable($header)
                     $stmt->execute(['CodigoMunicipio' => $codigoMunicipioDomicilio, 'CodigoDepartamento' => $codigoDepartamentoDomicilio]); 
                     $ElSalvador = $stmt->fetchAll(PDO::FETCH_ASSOC); 
                 //  Ejecutar Query.
+                $nombres_d_m_d = "";
                     foreach ($ElSalvador as $row_d_m) {
                         $nombres_d_m_d = substr(strtolower(trim($row_d_m["nombre_departamento"])),0,4) . "/" . substr(strtolower(trim($row_d_m["nombre_municipio"])),0,4) . "/" . substr(strtolower(trim($row_d_m["descripcion"])),0,4);
                     }       
@@ -239,12 +241,12 @@ function FancyTable($header)
                             $i=$i+1;
                         }
             //$pdf->ln();
-                if($i == 25 || $i == 37 || $i == 60){
+                if($i == 25 || $i == 50 || $i == 75){
                   $pdf->Cell(array_sum($w),0,'','T');   
                   $pdf->AddPage();
                   $pdf->SetY(30);
                   $pdf->SetX(10);
-                  $pdf->Ln(); $pdf->Ln(); $pdf->Ln();
+                  $pdf->Ln(); 
                   $pdf->FancyTable($header);
                 }
                 $fill=!$fill;

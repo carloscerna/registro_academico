@@ -1,27 +1,30 @@
 <?php
-// Nombre de la base de datos.
-$dataname = $_SESSION['dbname'];
-// omitir errores.
-ini_set("display_error", true);
-// variables para la conexion.
-    $host = 'localhost';
-    $port = 5432;
-    $database = $dataname;
-    $username = 'postgres';
-    $password = 'Orellana';
-//Construimos el DSN//
-try{
-    $dsn = "pgsql:host=$host;port=$port;dbname=$database";
-    // Creamos el objeto
-    $dblink = new PDO($dsn, $username, $password);
+//session_start(); // Start the session
 
-    // Validar la conexión.
-    if(!$dblink){
-     // Variable que indica el status de la conexión a la base de datos
-        $errorDbConexion = true;   
-    }
-}catch(PDOException $e) {
-         echo  $e->getMessage();
-         $errorDbConexion = true;   
-     }
-?>
+// Check if database name is set in session
+if (!isset($_SESSION['dbname'])) {
+    die("Database name is not set in the session.");
+}
+
+// Enable error display
+ini_set("display_errors", 1);
+
+// Variables for connection
+$host = 'localhost';
+$port = 5432;
+$database = $_SESSION['dbname'];
+$username = getenv('DB_USERNAME') ?: 'postgres'; // Use environment variable or fallback
+$password = getenv('DB_PASSWORD') ?: 'Orellana'; // Use environment variable or fallback
+
+// Initialize error flag
+$errorDbConexion = false;
+
+try {
+    // Construct DSN and create PDO object with exception handling enabled
+    $dsn = "pgsql:host=$host;port=$port;dbname=$database";
+    $dblink = new PDO($dsn, $username, $password);
+    $dblink->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+} catch (PDOException $e) {
+    echo "Connection failed: " . $e->getMessage();
+    exit(); // Stop execution if connection fails (optional)
+}

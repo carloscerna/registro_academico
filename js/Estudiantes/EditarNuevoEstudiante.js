@@ -614,6 +614,7 @@ $(function(){ // INICIO DEL FUNCTION.
 					lstannlectivo: {required: true},
 					lstmodalidad: {required: true},
 					lstgradoseccion: {required: true},
+					fechanacimiento: {required: true},
 					},
 			errorElement: "em",
 			errorPlacement: function ( error, element ) {

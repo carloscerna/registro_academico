@@ -195,6 +195,7 @@ jQuery(function($){
       }
   });
 });
+
 </script>
 {% endblock %}
 
@@ -343,14 +344,18 @@ jQuery(function($){
                                         </div>
                                         <!-- FECHA DE NACIMIENTO Y EDAD-->
                                         <div class="form-group row">
-                                          <label class="col-sm-4 col-form-label form-control-label">Fecha de Nacimiento</label>
+                                          <label class="col-sm-4 col-form-label form-control-label">Fecha de Nacimiento*</label>
                                           <div class="input-group col-sm-8">
                                             <div class="input-group-prepend">
                                               <span class="input-group-text text-bold bg-gradient-gray"><i class="far fa-calendar-day"></i></span>
                                             </div>
-                                            <input class="form-control" type="date" id="txtfechanacimiento" name="fechanacimiento" onblur="calcular_edad(this.value);" aria-label="FechaNacimiento">
-                                            <div><label for="lbl_edad_y_mes" class="control-label"></label></div>
+                                            <input class="form-control" type="date" id="txtfechanacimiento" name="fechanacimiento" onfocus="desplegarcalendario()" onblur="calcular_edad(this.value);" aria-label="FechaNacimiento">
+                                            <div>
+                                              <label for="lbl_edad_y_mes" class="control-label"></label>
+                                              <p id="resultado"></p>
+                                            </div>
                                           </div>
+
                                           <label class="col-sm-4 col-form-label form-control-label">Edad</label>
                                           <div class="input-group col-sm-8">
                                             <div class="input-group-prepend">

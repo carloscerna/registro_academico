@@ -75,6 +75,7 @@ if($errorDbConexion == false){
 						// Variables
 						$num++;
 						$id_alumno = $listado['id_alumno'];
+						$nie = trim($listado['codigo_nie']);
 						$codigo_matricula = $listado['codigo_matricula'];
 						$apellido_alumno = (trim($listado['apellido_alumno']));
                         $direccion = $listado['direccion_alumno'];
@@ -141,7 +142,7 @@ if($errorDbConexion == false){
 						// Armar Cadena con resultado de las respectivas variables.	
 						$contenidoOK .= '<tr class='.$color_tabla.'><td>'.$num
 							.'<td>'.$id_alumno
-							.'<td>'.$apellido_alumno
+							.'<td>'.$nie . ' - ' . $apellido_alumno
                             .'<td><input type=hidden name=id_p class=form-control value = '.$datos[0]["id_alumno_encargado"].'>'
                             .''.$boolean_1
                             ."<input type=text name=nombres_p class=form-control value='$nombre_p'>"

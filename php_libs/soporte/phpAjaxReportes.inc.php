@@ -66,7 +66,7 @@ if($errorDbConexion == false){
 						$contenidoOK .= '<tr><td style="width: 5px">'.$num.'</td>'
 							.'<td style="width: 25px"><label>'. $nombreGrado.' - ' . $nombreSeccion . ' - '. $nombreTurno.'</label>
 								<br>Encargado:
-								<span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-primary">
+								<span class="badge rounded-pill bg-dark">
 									<span "class=visually-hidden">'.$nombreDocente.'</span>
 								</span>
 							</td>'
