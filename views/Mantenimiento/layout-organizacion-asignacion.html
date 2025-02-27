@@ -5,6 +5,16 @@
 {% block extraCSS %}
   <link href="css/styles-loading.css" rel="stylesheet">
   <!-- <link rel="stylesheet" href="style.css"/> -->
+  <style>
+    .form-select{
+      width: auto;
+    }
+
+    /* Asegúrate de que Select2 se adapte al contenedor */
+    .select2-container {
+      width: 100% ;
+    }
+  </style>
   {% endblock %}
 
 {% block javascripts %}
@@ -71,6 +81,15 @@
 
 	});
 </script>
+<script>
+  $(document).ready(function () { 
+        $('#lstDocenteNivel').select2({
+          theme: 'bootstrap-5',
+          width: 'resolve' // Asegura que Select2 se ajuste automáticamente al contenedor
+        });
+});
+</script>
+
 {% endblock %}
 
 {% block contenidos %}

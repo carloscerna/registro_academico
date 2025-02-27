@@ -138,10 +138,11 @@
 // COLOCAR ENCABEZANDO A LA BOLETA DE CALIFICACIÓN.		
 			switch ($print_codigo_bachillerato) {
 				case '17':
-					//$nivel_educacion = "Educación Básica";
 					$nivel_educacion = $print_bachillerato;
 					break;
-				
+				case '19':
+					$nivel_educacion = $print_bachillerato;
+					break;
 				default:
 					# code...
 					break;
