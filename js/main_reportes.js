@@ -526,7 +526,7 @@ if (lstlist_notas == 'boleta_notas' && $(this).attr('data-accion') == 'listados_
         
         parvularia_seccion = reporte_ok.substring(2,2);
         // Verificar si el Parvularia... primeros grados y segundo y tercero focalizado.
-        if(varbach >= '13' && varbach <= '14' || varbach == '17' || varbach == '16' || varbach == '18'){
+        if(varbach >= '13' && varbach <= '14' || varbach == '17' || varbach == '16' || varbach == '18' || varbach == '20'){
                 switch (varbach) {
                         case '16':
                                 $url_ruta = "php_libs/reportes/Boletas Calificaciones/Segundo y Tercer grado Focalizado.php";
