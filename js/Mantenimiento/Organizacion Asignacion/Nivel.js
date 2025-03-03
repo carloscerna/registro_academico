@@ -329,6 +329,63 @@ $(function(){
                         });
                     },
             });
+                    //////////////////////////////////////////////////////////////////////////////////////////////
+        // GUARDAR EL ORDEN PARA EL NIVEL.
+        //////////////////////////////////////////////////////////////////////////////////////////////
+        $("#goActualizarOrden").on('click',function () {
+            var accion = "ActualizarOrden";
+            // Información de la tabla para actualizar código sirai.
+                var $objCuerpoTabla=$("#listadoContenidoModalidad").children().prev().parent();
+                var id_nivel_ = []; var orden_ = []; 
+                var fila = 0;
+            // recorre el contenido de la tabla.
+                $objCuerpoTabla.find("tbody tr").each(function(){
+                    var id_ = $(this).find('td').eq(2).html();
+                    var orden =$(this).find('td').eq(6).find("input[name='orden']").val();
+                // dar valor a las arrays.
+                    id_nivel_[fila] = id_;
+                    orden_[fila] = orden;
+                        fila = fila + 1;
+                });
+                //
+                $.ajax({
+                    beforeSend: function(){       
+                    },
+                    cache: false,
+                    type: "POST",
+                    dataType: "json",
+                    url:"php_libs/soporte/Mantenimiento/Organizacion Asignacion/phpAjaxOrganizacionAsignacion.php",
+                    data: {
+                            accion: accion, orden: orden_, fila: fila, 
+                            id_nivel: id_nivel_
+                            },
+                            success: function(response){
+                                // Validar mensaje de error
+                                if(response.respuesta == false){
+                                    toastr["error"](response.mensaje, "Sistema");
+                                }
+                                else{
+                                    toastr["success"](response.mensaje, "Sistema");
+                                    // Reiniciar los valores del Formulario.
+                                        //$("#FormModalidad").trigger("reset");
+                                    // Llamar al archivo php para hacer la consulta y presentar los datos.
+                                        $('#accion_modalidad').val('BuscarModalidad');
+                                        accion = 'BuscarModalidad';
+                                        $.post("php_libs/soporte/Mantenimiento/Organizacion Asignacion/phpAjaxOrganizacionAsignacion.php",  {accion: accion, codigo_annlectivo: codigo_annlectivo, codigo_modalidad: codigo_modalidad},
+                                            function(response) {
+                                                if (response.respuesta === true) {
+                                                    toastr["info"]('Registros Encontrados', "Sistema");
+                                                }
+                                                if (response.respuesta === false) {
+                                                    toastr["warning"]('Registros No Encontrados', "Sistema");
+                                                }                                                                                    // si es exitosa la operación
+                                                    $('#listaContenidoModalidad').empty();
+                                                    $('#listaContenidoModalidad').append(response.contenido);
+                                            },"json");
+                                    }               
+                            },
+                });
+        }); 
 }); // FIN DEL FUNCTION.
 //
 // Mensaje de Carga de Ajax.

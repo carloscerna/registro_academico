@@ -217,14 +217,15 @@ if($errorDbConexion == false){
 				$codigo_annlectivo = $_POST['codigo_annlectivo'];
 				$codigo_modalidad = $_POST['codigo_modalidad'];
 				// Armamos el query.
-					$query = "SELECT orgac.id_organizar_ann_lectivo_ciclos, orgac.codigo_ann_lectivo, orgac.codigo_bachillerato, orgac.codigo_servicio_educativo,
+					$query = "SELECT orgac.id_organizar_ann_lectivo_ciclos, orgac.codigo_ann_lectivo, orgac.codigo_bachillerato, orgac.codigo_servicio_educativo, orgac.ordenar,
 							cat_se.descripcion as descripcion_se,
 							ann.nombre as nombre_ann_lectivo, bach.nombre as nombre_modalidad
 								FROM organizar_ann_lectivo_ciclos orgac
 								INNER JOIN ann_lectivo ann ON ann.codigo = orgac.codigo_ann_lectivo
 								INNER JOIN bachillerato_ciclo bach ON bach.codigo = orgac.codigo_bachillerato
 								INNER JOIN catalogo_servicio_educativo cat_se ON cat_se.codigo = orgac.codigo_servicio_educativo
-								WHERE orgac.codigo_ann_lectivo = '$codigo_annlectivo' ORDER BY orgac.id_organizar_ann_lectivo_ciclos";
+								WHERE orgac.codigo_ann_lectivo = '$codigo_annlectivo' 
+								ORDER BY orgac.ordenar asc, orgac.id_organizar_ann_lectivo_ciclos";
 				// Ejecutamos el Query.
 					$consulta = $dblink -> query($query);
 				//
@@ -240,6 +241,7 @@ if($errorDbConexion == false){
 						$codigo_modalidad = trim($listado['codigo_bachillerato']);
 						$nombre_modalidad = trim($listado['nombre_modalidad']);
 						$nombre_se = trim($listado['descripcion_se']);
+						$orden = trim($listado["ordenar"]);
 						$num++;
 					// variables Json
 						$contenidoOK .= "<tr>
@@ -249,6 +251,7 @@ if($errorDbConexion == false){
 							<td>$codigo_modalidad
 							<td>$nombre_modalidad
 							<td>$nombre_se
+							<td><input type=number name=orden id=orden class=form-control value=$orden>
 							<td><a data-accion=EliminarModalidad class='btn btn-xs btn-warning' data-toggle='tooltip' data-placement='top' title='Eliminar' href=$id_><i class='fas fa-trash'></i></a>"
 						;
 					}
@@ -297,6 +300,27 @@ if($errorDbConexion == false){
 				}else{
 					$mensajeError = 'No se ha eliminado el registro';
 				}
+			break;
+			case 'ActualizarOrden':		
+				// armar variables y consulta Query.
+				$id_nivel[] = $_POST["id_nivel"];
+				$orden[] = $_POST["orden"];
+				// Variales.
+				$fila = $_POST["fila"];
+					$fila = $fila - 1;
+				// recorrer la array para extraer los datos.
+				for($i=0;$i<=$fila;$i++){
+					$id_nivel_ = trim($id_nivel[0][$i]);
+					$orden_ = $orden[0][$i];
+
+					// armar sql para actualizar tabla a_a_a_bacho_o_ciclo
+						$query_aaa = "UPDATE organizar_ann_lectivo_ciclos SET ordenar = '$orden_' WHERE id_organizar_ann_lectivo_ciclos = '$id_nivel_'";
+							$consulta_aaa = $dblink -> query($query_aaa); // Ejecutamos el Query.
+				}
+
+				$respuestaOK = true;
+				$contenidoOK = '';
+				$mensajeError =  'Registro Actualizado';
 			break;
 			///////////////////////////////////////////////////////////////////////////////////////////////////
 			////////////// BLOQUE DE REGISTRO ORGANIZACION GRADOS,SECCIÓN Y TURNO.
@@ -470,7 +494,7 @@ if($errorDbConexion == false){
 				$codigo_annlectivo = $_POST["codigo_annlectivo"];
 				$codigo_modalidad = $_POST["codigo_modalidad"];
 				// Armamos el query.
-					$query = "SELECT orgpda.id_organizar_planta_docente_ciclos, orgpda.codigo_bachillerato, orgpda.codigo_ann_lectivo, orgpda.codigo_turno, orgpda.codigo_docente,
+					$query = "SELECT orgpda.id_organizar_planta_docente_ciclos, orgpda.codigo_bachillerato, orgpda.codigo_ann_lectivo, orgpda.codigo_turno, orgpda.codigo_docente, orgpda.ordenar,
 								ann.nombre as nombre_ann_lectivo, bach.nombre as nombre_modalidad, btrim(p.nombres || CAST(' ' AS VARCHAR) || p.apellidos) as nombre_personal, p.id_personal,
 								tur.nombre as nombre_turno
 									FROM organizar_planta_docente_ciclos orgpda
@@ -494,6 +518,7 @@ if($errorDbConexion == false){
 							$nombre_personal = trim($listado["nombre_personal"]);
 							$nombre_turno = trim($listado["nombre_turno"]);
 							$id_ = trim($listado['id_organizar_planta_docente_ciclos']);
+							$orden = trim($listado["ordenar"]);
 							$num++;
 						// contenido
 						$contenidoOK .= "<tr>
@@ -809,7 +834,8 @@ if($_POST['accion'] == "BuscarHorarios" || $_POST['accion'] == "GuardarHorarios"
 	|| $_POST['accion'] == "BuscarModalidad" || $_POST['accion'] == "GuardarModalidad" || $_POST['accion'] == "EliminarModalidad" || $_POST['accion'] == "BuscarSeGST"
 	|| $_POST['accion'] == "ActualizarSeGST" || $_POST['accion'] == "GuardarSeGST" || $_POST['accion'] == "EliminarSeGST"  
 	|| $_POST['accion'] == "BuscarDN" || $_POST['accion'] == "GuardarDN" || $_POST['accion'] == "ActualizarDN"
-	|| $_POST["accion"] == "BuscarAAG" || $_POST['accion'] == "GuardarAAG" || $_POST['accion'] == "EliminarAAG")
+	|| $_POST["accion"] == "BuscarAAG" || $_POST['accion'] == "GuardarAAG" || $_POST['accion'] == "EliminarAAG"
+	|| $_POST['accion'] == "ActualizarOrden")
 {
 // Armamos array para convertir a JSON
 	$salidaJson = array("respuesta" => $respuestaOK,
