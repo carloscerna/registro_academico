@@ -6,10 +6,6 @@
 set_time_limit(0);
 ini_set("memory_limit","2000M");
 ini_set("display_error", true);
-
-//
-//
-//
 // variables/conexion.
     $host = 'localhost';
     $port = 5432;
@@ -28,13 +24,13 @@ try{
 // Validar la conexión.
     if(!$dblink){
      // Variable que indica el status de la conexión a la base de datos
-        $errorDbConexion = true;   
+         $errorDbConexion = true;   
     };
 $codigo_asignatura_inicio = 01;
 $codigo_asignatura_fin = 255;
 //$codigo_asignatura_array = array("01","02","03","04","05","08","234","236","237","238","239","240"); // Educación Básica de 1.º a 6.º.
 $codigo_asignatura_array = array(); // Educación Básica de 1.º a 6.º.
-$todos='134P24';
+$todos='206P2502';
 $codigo_bachillerato = substr($todos,0,2);
 $codigo_grado = substr($todos,2,2);
 $codigo_annlectivo = substr($todos,4,2);
@@ -48,6 +44,7 @@ $num = 0;
 		{
 			$codigo_asignatura_array[] = $row['codigo_asignatura'];
 		}
+
 // datos de la tabla de facturas_compras.
         $query = "SELECT a.codigo_nie, btrim(a.apellido_paterno || CAST(' ' AS VARCHAR) || a.apellido_materno || CAST(', ' AS VARCHAR) || a.nombre_completo) as apellido_alumno,
 		    a.nombre_completo, btrim(a.apellido_paterno || CAST(' ' AS VARCHAR) || a.apellido_materno) as apellidos_alumno, 
@@ -61,11 +58,10 @@ $num = 0;
 			INNER JOIN grado_ano gan ON gan.codigo = am.codigo_grado
 			INNER JOIN seccion sec ON sec.codigo = am.codigo_seccion
 			INNER JOIN ann_lectivo ann ON ann.codigo = am.codigo_ann_lectivo
-			WHERE btrim(am.codigo_bach_o_ciclo || am.codigo_grado || am.codigo_ann_lectivo) = '".$todos.
+			WHERE btrim(am.codigo_bach_o_ciclo || am.codigo_grado || am.codigo_ann_lectivo || am.codigo_seccion) = '".$todos.
 			"' ORDER BY apellido_alumno ASC";
             
       $result_ = $dblink -> query($query);
-
 // Extraer valore de la consulta. SOLO CON ARRAY.
 // recorre la nómina
 while($row_ = $result_ -> fetch(PDO::FETCH_BOTH))
@@ -101,4 +97,3 @@ while($row_ = $result_ -> fetch(PDO::FETCH_BOTH))
 		 } 
    }
 }
-?>

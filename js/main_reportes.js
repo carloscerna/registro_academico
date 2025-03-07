@@ -538,7 +538,7 @@ if (lstlist_notas == 'boleta_notas' && $(this).attr('data-accion') == 'listados_
                 
         }
         // EDUCACIÓN BASICA - BOLETA DE CALIFICACIÓN EDUCACIÓN BÁSICA Y MEDIA.
-        if(varbach >= '03' && varbach <='12' || varbach == '15' || varbach == '17' || varbach == '19'){
+        if(varbach >= '03' && varbach <='12' || varbach == '15' || varbach == '17' || varbach == '19' || varbach == '21'){
                 // VARIABLE PARA LA URL(INFORME)
                 $url_ruta = "php_libs/reportes/boleta_de_notas.php";
         }

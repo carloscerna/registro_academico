@@ -494,7 +494,7 @@ if($errorDbConexion == false){
 				$codigo_annlectivo = $_POST["codigo_annlectivo"];
 				$codigo_modalidad = $_POST["codigo_modalidad"];
 				// Armamos el query.
-					$query = "SELECT orgpda.id_organizar_planta_docente_ciclos, orgpda.codigo_bachillerato, orgpda.codigo_ann_lectivo, orgpda.codigo_turno, orgpda.codigo_docente, orgpda.ordenar,
+					$query = "SELECT orgpda.id_organizar_planta_docente_ciclos, orgpda.codigo_bachillerato, orgpda.codigo_ann_lectivo, orgpda.codigo_turno, orgpda.codigo_docente, 
 								ann.nombre as nombre_ann_lectivo, bach.nombre as nombre_modalidad, btrim(p.nombres || CAST(' ' AS VARCHAR) || p.apellidos) as nombre_personal, p.id_personal,
 								tur.nombre as nombre_turno
 									FROM organizar_planta_docente_ciclos orgpda
@@ -518,7 +518,6 @@ if($errorDbConexion == false){
 							$nombre_personal = trim($listado["nombre_personal"]);
 							$nombre_turno = trim($listado["nombre_turno"]);
 							$id_ = trim($listado['id_organizar_planta_docente_ciclos']);
-							$orden = trim($listado["ordenar"]);
 							$num++;
 						// contenido
 						$contenidoOK .= "<tr>
