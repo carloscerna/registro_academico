@@ -661,6 +661,7 @@ if($errorDbConexion == false){
 						$nombre_area_subdimension = trim($listado['descripcion_area_subdimension']);
 						$nombre_asignatura = trim($listado["nombre_asignatura"]);
 						$orden = trim($listado["orden"]);
+						$codigo_asignatura = trim($listado["codigo_asignatura"]);
 					// validar el nombre de la asignatura con su area, dimension y subdimension.
 						if($nombre_area_dimension == "Ninguno"){
 							$nombre_area_dimension_subdimension_asignatura = $nombre_area . " - " . $nombre_asignatura;
@@ -674,6 +675,7 @@ if($errorDbConexion == false){
 							<td><input type=checkbox class=case name=chk$id_ id=chk$id_>
 							<td>$num
 							<td>$id_
+							<td>$codigo_asignatura</td>
 							<td>$nombre_area_dimension_subdimension_asignatura
 							<td>$nombre_asignatura
 							<td>$orden
