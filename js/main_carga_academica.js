@@ -274,7 +274,7 @@ $('#goCerrarEG').on('click',function(){
 					 function(data){
 					  miselect.empty();
 					    for (var j=0; j<data.length; j++) {
-						miselect.append('<option value="' + data[j].codigo + '">' + data[j].descripcion + '</option>');
+						miselect.append('<option value="' + data[j].codigo_asignatura + '">' + data[j].nombre_asignatura + '</option>');
 					    }
 				 }, "json");			
 		 });
