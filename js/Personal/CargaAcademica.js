@@ -2,7 +2,13 @@
 var IdEG = 0;
 var IdCD = 0;
 var Accion_Editar_Eliminar = "noAccion";
-
+var accion = "BuscarCD";              
+var codigo_docente = "";
+var codigo_asignatura = "";
+var codigo_modalidad = "";
+var codigo_gst = "";
+var codigo_ann_lectivo = "";
+//
 $(function(){
 // funcionalidad del botón Actualizar
 		$('#goCancelar').on('click',function(){
@@ -280,98 +286,68 @@ $('#goCerrarEG').on('click',function(){
 		 });
 	    });
 /************************************************************************************************
-//      GO BUSCAR CARGA DOCENTE
+//      GO BUSCAR CARGA DOCENTE (ACADEMICA)
 /*************************************************************************************************/
 $('#goBuscarCD').on('click',function(){              
-  // cambiar el valor de la variable accion.              
-          var accion = "BuscarCD";              
-          var codigo_docente = $("#lstCodigoPersonal").val();              
-          var codigo_asignatura = $("#lstCodigoAsignaturaCD").val();              
-          var codigo_modalidad = $("#lstCodigoModalidadCD").val();              
-          var codigo_gst = $("#lstCodigoGSTCD").val();              
-          var codigo_ann_lectivo = $("#lstannlectivo").val();              
-// inicio del ajax
-  $.ajax({		      
-      beforeSend: function(){		      
-          // abrir caja de dialogo.		      
-                  $("label[for='lblOk']").text("");              
-                  $("label[for='lblCD']").text("");              
-                  $('#listaCD').empty();              
-      },		      
-      cache: false,		      
-      type: "POST",		      
-      dataType: "json",		      
-      url:"php_libs/soporte/CrearCD.php",		      
-      data: "&codigo_annlectivo=" + codigo_ann_lectivo + "&codigo_docente=" + codigo_docente +  "&codigo_asignatura=" + codigo_asignatura +		      
-            "&codigo_modalidad=" + codigo_modalidad + "&codigo_gst=" + codigo_gst + "&accion=" + accion + "&id=" +  Math.random(),              
-      success: function(response){		      
-      	// Validar mensaje de error		      
-      	if(response.respuesta === false){		      
-            if(response.mensaje === "No Existe"){              
-                toastr.info("Registros No Encontrados.");              
-                $('#listaCD').empty();              
-                $('#listaCD').append(response.contenido);              
-            }              
-      	}		      
-      	else if(response.respuesta === true && response.mensaje === 'Si Existe')		      
-            {              
-            $('#listaCD').empty();              
-            $('#listaCD').append(response.contenido);              
-            toastr.success("Registro Encontrado.");              
-            }                                                      
-      },		      
-      error:function(){		      
-        toastr.error(":(");                                    
-      }		      
-  });		      
+    // cambiar el valor de la variable accion.              
+        accion = "BuscarCD";              
+        codigo_docente = $("#lstCodigoPersonal").val();              
+        codigo_asignatura = $("#lstCodigoAsignaturaCD").val();              
+        codigo_modalidad = $("#lstCodigoModalidadCD").val();              
+        codigo_gst = $("#lstCodigoGSTCD").val();              
+        codigo_ann_lectivo = $("#lstannlectivo").val();            
+    // llamar funcion.
+        BuscarCargarAcademica();                            
   });
 // ************************************************************************************************
 // GO GUARDAR CARGA DOCENTE            //
 // ************************************************************************************************
-              $('#goAgregarCD').on('click',function(){
-                // cambiar el valor de la variable accion.
-                        var accion = "GuardarCD";
-                        var codigo_docente = $("#lstCodigoPersonal").val();
-                        var codigo_asignatura = $("#lstCodigoAsignaturaCD").val();
-                        var codigo_modalidad = $("#lstCodigoModalidadCD").val();
-                        var codigo_gst = $("#lstCodigoGSTCD").val();
-                        var codigo_ann_lectivo = $("#lstannlectivo").val();
-                        
-		        $.ajax({
-		            beforeSend: function(){
-		                // abrir caja de dialogo.
-                                $('#listaCD').empty();
-                                $("label[for='lblOk']").text("");
-                                $("label[for='lblCD']").text("");
-		            },
-		            cache: false,
-		            type: "POST",
-		            dataType: "json",
-		            url:"php_libs/soporte/CrearCD.php",
-		            data: "&codigo_annlectivo=" + codigo_ann_lectivo + "&codigo_docente=" + codigo_docente +  "&codigo_asignatura=" + codigo_asignatura +
-                                                        "&codigo_modalidad=" + codigo_modalidad + "&codigo_gst=" + codigo_gst + "&accion=" + accion + "&id=" +  Math.random(),
-		            success: function(response){
-		            	// Validar mensaje de error
-		            	if(response.respuesta === false){
-                                        if(response.mensaje === "Si Existe"){
-                                                toastr.error("Registro Ya Existe.");
-                                                $("label[for='lblCD']").text("Registro Ya Existe.");
-                                        }
-		            	}
-		            	else if(response.respuesta === true && response.mensaje === 'Si Save')
-                                        {
-                                                toastr.success("Registro Guardado.");
-                                                $("label[for='lblCD']").text("Registro Guardado.");
-                                        }                                        
-		            },
-		            error:function(){
-                                toastr.error(":(");                      
-		            }
-		        });
-                });
-//////////////////////////////////////////////////////////////////////////////////
-// Extracciòn del valor que va utilizar para Eliminar y Edición de Registros
-////////////////////////////////////////////////////////////////////////////////////
+$('#goAgregarCD').on('click',function(){
+// cambiar el valor de la variable accion.
+    accion = "GuardarCD";
+    codigo_docente = $("#lstCodigoPersonal").val();
+    codigo_asignatura = $("#lstCodigoAsignaturaCD").val();
+    codigo_modalidad = $("#lstCodigoModalidadCD").val();
+    codigo_gst = $("#lstCodigoGSTCD").val();
+    codigo_ann_lectivo = $("#lstannlectivo").val();
+        
+$.ajax({
+    beforeSend: function(){
+        // abrir caja de dialogo.
+                $('#listaCD').empty();
+                $("label[for='lblOk']").text("");
+                $("label[for='lblCD']").text("");
+    },
+    cache: false,
+    type: "POST",
+    dataType: "json",
+    url:"php_libs/soporte/CrearCD.php",
+    data: "&codigo_annlectivo=" + codigo_ann_lectivo + "&codigo_docente=" + codigo_docente +  "&codigo_asignatura=" + codigo_asignatura +
+                                        "&codigo_modalidad=" + codigo_modalidad + "&codigo_gst=" + codigo_gst + "&accion=" + accion + "&id=" +  Math.random(),
+    success: function(response){
+        // Validar mensaje de error
+        if(response.respuesta === false){
+            if(response.mensaje === "Si Existe"){
+                toastr.error("Registro Ya Existe.");
+                $("label[for='lblCD']").text("Registro Ya Existe.");
+            }
+        }
+        else if(response.respuesta === true && response.mensaje === 'Si Save')
+            {
+                toastr.success("Registro Guardado.");
+                $("label[for='lblCD']").text("Registro Guardado.");
+                accion = "BuscarCD";
+                BuscarCargarAcademica();
+            }                                        
+    },
+    error:function(){
+                toastr.error(":(");                      
+    }
+});
+});
+/*//////////////////////////////////////////////////////////////////////////////////////////////////////*/
+// //////////////////////////////////////////////////////////////////////////////////*/
+// Extracciòn del valor que va utilizar para Eliminar y Edición de Registros////////////////////////////////////////////////////////////////////////////////////
 $('body').on('click','#listaCD a',function (e){
 	e.preventDefault();
 	// Id Usuario
@@ -402,10 +378,9 @@ $('#goEliminarCD').on('click',function(){
 		       		toastr.error(response.mensaje);     
 		       	}     
 		       	else{     
-             // si es exitosa la operación           
-		            $('#listaCD').empty();     
-		            $('#listaCD').append(response.contenido);
-					toastr.info("Registro Eliminado.");
+             // si es exitosa la operación
+                toastr.info("Registro Eliminado.");
+                BuscarCargarAcademica();
 					}	
 		       },     
 		       error:function(){     
@@ -527,9 +502,46 @@ $('#goDescargar1').on('click',function(){
 
 }); 
 });     // FINAL DE LA FUNCIÓN.
-
+// Abrir Ventana Emergente.
 function AbrirVentana(url)
 {
     window.open(url, '_blank');
     return false;
+}
+// llamar a la buscar de Carga Académica.
+function BuscarCargarAcademica() {
+    // inicio del ajax
+  $.ajax({		      
+    beforeSend: function(){		      
+        // abrir caja de dialogo.		      
+                $("label[for='lblOk']").text("");              
+                $("label[for='lblCD']").text("");              
+                $('#listaCD').empty();              
+    },		      
+    cache: false,		      
+    type: "POST",		      
+    dataType: "json",		      
+    url:"php_libs/soporte/CrearCD.php",		      
+    data: "&codigo_annlectivo=" + codigo_ann_lectivo + "&codigo_docente=" + codigo_docente +  "&codigo_asignatura=" + codigo_asignatura +		      
+          "&codigo_modalidad=" + codigo_modalidad + "&codigo_gst=" + codigo_gst + "&accion=" + accion + "&id=" +  Math.random(),              
+    success: function(response){		      
+        // Validar mensaje de error		      
+        if(response.respuesta === false){		      
+          if(response.mensaje === "No Existe"){              
+              toastr.info("Registros No Encontrados.");              
+              $('#listaCD').empty();              
+              $('#listaCD').append(response.contenido);              
+          }              
+        }		      
+        else if(response.respuesta === true && response.mensaje === 'Si Existe')		      
+          {              
+          $('#listaCD').empty();              
+          $('#listaCD').append(response.contenido);              
+          toastr.success("Registro Encontrado.");              
+          }                                                      
+    },		      
+    error:function(){		      
+      toastr.error(":(");                                    
+    }		      
+});
 }
