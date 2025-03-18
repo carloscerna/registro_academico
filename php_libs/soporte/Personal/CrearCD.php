@@ -192,7 +192,7 @@ if($errorDbConexion == false)
 											  .'<td class=centerTXT>'.$nombre_gst
 											  .'<td>'.$nombre_asignatura
 											  //.'<td class = centerTXT><a data-accion=EditarCD class="btn btn-xs btn-primary" href='.$listadoCD['id_carga_docente'].'>Editar</a>'
-											  .'<td><a data-accion=eliminarCD class="btn btn-xs btn-warning" href='.$listadoCD['id_carga_docente'].'>Eliminar</a>'
+											  .'<td><a data-accion=eliminarCD class="btn btn-xs btn-warning" href='.$listadoCD['id_carga_docente'].'><i class="fad fa-trash"></i></a>'
 											  ;
 											  // Aumentar el valor
 											  $num++;

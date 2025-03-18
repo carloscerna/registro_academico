@@ -94,13 +94,13 @@
     </div>
     <div class="container h-100 py-2" id="CargaAcademicaContenedor">
       <ul class="nav nav-tabs border-0" id="myTab" role="tablist">
-        <li class="nav-item">
+        <li class="nav-item" role="presentation">
             <a class="nav-link active border border-primary border-bottom-0" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Encargado de Grado o Imparte Asignatura</a>
         </li>
-        <li class="nav-item">
+        <li class="nav-item" role="presentation">
             <a class="nav-link border border-warning border-bottom-0" id="asignar-tab" data-toggle="tab" href="#asignar" role="tab" aria-controls="asignar" aria-selected="false">Asignar Carga Académica</a>
         </li>
-        <li class="nav-item">
+        <li class="nav-item" role="presentation">
             <a class="nav-link border border-warning border-bottom-0" id="crear-tab" data-toggle="tab" href="#crear" role="tab" aria-controls="crear" aria-selected="false">Crear Hoja de Cálculo</a>
         </li>
       </ul>
@@ -109,64 +109,56 @@
         <!-- *********ENCARTGADO DE GRADO O IMPARTE ASIGNATURA********************************************************************************************************** -->
         <!-- ******************************************************************************************************************* -->
         <div class="tab-pane h-100 p-2 active border border-primary" id="home" role="tabpanel" aria-labelledby="home-tab">
-         <!-- Horizontal Form -->
-          <div class="card card-info">
-            <div class="card-header">
-              <h3 class="card-title">Formulario - </h3>
+          <div class="card col-12 mx-auto p-2" id="EncargadoGrado">
+            <div class="card-header bg-info">
+                Encargado de Grado
             </div>
-           <!-- /.card-header -->
-           <!-- form start -->
-           <form class="form-horizontal" action="" method="post" id="formCAa" name="formCAa" role="form">
-              <!--- VARLOS DEL ACCION. -->
-                  <input type="hidden" id="accion" name="accion" value="" />
-                  <input type="hidden" id="id_eg" name="id_eg" value="" />
-                  <input type="hidden" id="id_cd" name="id_cd" value="" />
-              <!--- incio del card. -->
-             <div class="card-body">
-               <div class="form-group row">
-                 <label for="lstCodigoModalidad" class="col-sm-2 col-form-label">Modalidad</label>
-                 <div class="col-sm-10">
-                   <select id="lstCodigoModalidad" name="lstCodigoModalidad" class="custom-select" required="required"></select>
-                 </div>
-               </div>
-               <div class="form-group row">
-                 <label for="lstCodigoGSTEG" class="col-sm-2 col-form-label">Grado-Sección-Turno</label>
-                 <div class="col-sm-10">
-                   <select type="lstCodigoGSTEG" class="custom-select" id="lstCodigoGSTEG"></select>
-                 </div>
-               </div>                 
-               <!-- checkbox -->
-                   <div class="form-group">
-                     <div class="form-check">
-                       <input class="form-check-input" type="checkbox" checked value="yes" id="EG1">
-                       <label class="form-check-label">Encargado de Grado</label>
-                     </div>
-                     <div class="form-check">
-                       <input class="form-check-input" type="checkbox" value="yes" id="IA1">
-                       <label class="form-check-label">Imparte Asignatura en Otros Grados.</label>
-                     </div>
-                   </div>
-             </div>
-             <!-- /.card-body -->
-             <div class="card-footer d-flex justify-content-center mx-auto">
-                    <div class="form-group row">
-                        <button type="button" class="btn btn-primary" id = "goBuscarEG">
-                         <span class="fas fa-search"></span> Buscar
-                        </button>
-                        <button type="button" class="btn btn-danger" id = "goAgregarEG">
-                         <span class="fas fa-save"></span> Guardar
-                        </button>
+            <div class="card-body">
+                <h5 class="card-title">Personal Docente</h5>
+                <p class="card-text">Encargados de grado.</p>
+                <form class="form-horizontal" action="" method="post" id="formCAa" name="formCAa" role="form">
+                    <div class="mb-3">
+                      <label for="lstCodigoModalidad" class="col-sm-2 col-form-label">Modalidad</label>
+                      <div class="col-sm-10">
+                        <select id="lstCodigoModalidad" name="lstCodigoModalidad" class="custom-select" required="required"></select>
+                      </div>
                     </div>
-             </div>
-             <!-- /.card-footer -->
-           </form>
-         </div>
+                    <div class="mb-3">
+                      <label for="lstCodigoGSTEG" class="col-sm-2 col-form-label">Grado-Sección-Turno</label>
+                      <div class="col-sm-10">
+                        <select type="lstCodigoGSTEG" class="custom-select" id="lstCodigoGSTEG"></select>
+                      </div>
+                    </div>
+                    <!-- checkbox -->
+                    <div class="form-group">
+                      <div class="form-check">
+                        <input class="form-check-input" type="checkbox" checked value="yes" id="EG1">
+                        <label class="form-check-label">Encargado de Grado</label>
+                      </div>
+                      <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="yes" id="IA1">
+                        <label class="form-check-label">Imparte Asignatura en Otros Grados.</label>
+                      </div>
+                    </div>
+                      <button type="button" class="btn btn-primary" id = "goBuscarEG">
+                       <span class="fas fa-search"></span>
+                      </button>
+                      <button type="button" class="btn btn-danger" id = "goAgregarEG">
+                       <span class="fas fa-save"></span>
+                      </button>
+                </form>
+            </div>
+            <div class="card-footer text-muted bg-dark">
+                Personal Docente
+            </div>
+        </div>
+        
          <!-- /.card -->
            <div class="modal-body row">
             <div class="col-12">     
              <form name="formCD" id="formCD" role="form" class="form-inline">     
              <table class="table table-striped table-sm" id="listadoUsers">     
-                <thead>     
+                <thead class="table-dark">     
                   <tr>     
                     <th>N°</th>     
                     <th>Id_EG</th>     
@@ -190,44 +182,48 @@
         <!-- ******************************************************************************************************************* -->
         <div class="tab-pane h-100 p-3 border border-warning" id="asignar" role="tabpanel" aria-labelledby="asignar-tab">
          <!-- Horizontal Form -->
-          <div class="card card-info">
-            <div class="card-header">
-              <h3 class="card-title">Formulario - Carga Académica</h3>
+          <div class="card col-12 mx-auto p-2" id="CargaAcademica">
+            <div class="card-header bg-info">
+              Carga Académica
             </div>
            <!-- /.card-header -->
            <!-- form start -->
            <form class="form-horizontal" action="" method="post" id="formCDa" name="formCDa" role="form">
               <!--- incio del card. -->
              <div class="card-body">
-               <div class="form-group row">
+              <h5 class="card-title">Personal Docente</h5>
+              <p class="card-text">Asignar Asignaturas.</p>
+
+               <div class="mb-3">
                  <label for="lstCodigoModalidadCD" class="col-sm-2 col-form-label">Modalidad</label>
                  <div class="col-sm-10">
                    <select id="lstCodigoModalidadCD" name="lstCodigoModalidadCD" class="custom-select" required="required"></select>
                  </div>
                </div>
-               <div class="form-group row">
+               <div class="mb-3">
                  <label for="lstCodigoGSTCD" class="col-sm-2 col-form-label">Grado-Sección-Turno</label>
                  <div class="col-sm-10">
                    <select type="lstCodigoGSTCD" class="custom-select" id="lstCodigoGSTCD"></select>
                  </div>
                </div>
-               <div class="form-group row">
+               <div class="mb-3">
                  <label for="lstCodigoAsignaturaCD" class="col-sm-2 col-form-label">Asignatura</label>
                  <div class="col-sm-10">
                    <select type="lstCodigoAsignaturaCD" class="custom-select" id="lstCodigoAsignaturaCD"></select>
                  </div>
                </div>
+               <div class="mb-3">
+                <button type="button" class="btn btn-primary" id = "goBuscarCD">
+                  <span class="fas fa-search"></span>
+                </button>
+                <button type="button" class="btn btn-danger" id = "goAgregarCD">
+                  <span class="fas fa-save"></span>
+                </button>
+               </div>
              </div>
              <!-- /.card-body -->
-             <div class="card-footer d-flex justify-content-center">
-                    <div class="form-group row">
-                        <button type="button" class="btn btn-primary" id = "goBuscarCD">
-                         <span class="fas fa-search"></span>
-                        </button>
-                        <button type="button" class="btn btn-danger" id = "goAgregarCD">
-                         <span class="fas fa-save"></span>
-                        </button>
-                    </div>
+             <div class="card-footer text-muted bg-dark">
+                Personal Docente
              </div>
              <!-- /.card-footer -->
            </form>
@@ -235,9 +231,9 @@
          <!-- /.card -->
            <div class="modal-body row">
             <div class="col-12">     
-             <form name="formCD" id="formCD" role="form" class="form-inline">     
-             <table class="table table-striped table-sm" id="listadoUsers">     
-                <thead>     
+             <form name="formCD" id="formCargaAcademica" role="form" class="form-inline">     
+             <table class="table table-striped table-sm" id="listadoCargaAcademica">     
+                <thead class="table-dark">     
                   <tr>     
                     <th>N°</th>     
                     <th>Id_CD</th>     

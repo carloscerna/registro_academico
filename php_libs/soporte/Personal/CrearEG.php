@@ -168,7 +168,7 @@ if($errorDbConexion == false)
 											  .'<td class=centerTXT>'.$si_encargado
 											  .'<td class=centerTXT>'.$si_imparte_asignatura
 											  //.'<td class = centerTXT><a data-accion=EditarEG class="btn btn-xs btn-success" href='.$listadoEG['id_encargado_grado'].'><span class="glyphicon glyphicon-edit"></span> Editar</a>'
-											  .'<td><a data-accion=eliminarEG class="btn btn-xs btn-warning" href='.$listadoEG['id_encargado_grado'].'><span class="glyphicon glyphicon-trash"></span> Eliminar</a>'
+											  .'<td><a data-accion=eliminarEG class="btn btn-xs btn-warning" href='.$listadoEG['id_encargado_grado'].'><i class="fad fa-trash"></i></a>'
 											  ;
 											  // Aumentar el valor
 											  $num++;

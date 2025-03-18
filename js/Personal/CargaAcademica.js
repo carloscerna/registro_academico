@@ -111,7 +111,7 @@ $('#goBuscarEG').on('click',function(){
       cache: false,		      
       type: "POST",		      
       dataType: "json",		      
-      url:"php_libs/soporte/CrearEG.php",		      
+      url:"php_libs/soporte/Personal/CrearEG.php",		      
       data: "&codigo_annlectivo=" + codigo_ann_lectivo + "&codigo_docente=" + codigo_docente + "&accion=" + accion + "&id=" +  Math.random(),		      
       success: function(response){		      
       	// Validar mensaje de error		      
@@ -169,7 +169,7 @@ $('#goAgregarEG').on('click',function(){
       cache: false,		      
       type: "POST",		      
       dataType: "json",		      
-      url:"php_libs/soporte/CrearEG.php",		      
+      url:"php_libs/soporte/Personal/CrearEG.php",		      
       data: "&encargado_grado=" + eg1 + "&imparte_asignatura=" + ia1 +  "&codigo_annlectivo=" + codigo_ann_lectivo + "&codigo_docente=" + codigo_docente +  		      
             "&codigo_modalidad=" + codigo_modalidad + "&codigo_gst=" + codigo_gst + "&accion=" + accion + "&id=" +  Math.random(),              
       success: function(response){		      
@@ -219,7 +219,7 @@ $('#goEliminarEG').on('click',function(){
 		cache: false,     
 		type: "POST",     
 		dataType: "json",     
-        url:"php_libs/soporte/CrearEG.php",           
+        url:"php_libs/soporte/Personal/CrearEG.php",           
 		data:"accion=" + Accion_Editar_Eliminar + "&id_eg=" + IdEG + "&id=" + Math.random(),     
 		success: function(response){     
 		    // Validar mensaje de error     
@@ -321,7 +321,7 @@ $.ajax({
     cache: false,
     type: "POST",
     dataType: "json",
-    url:"php_libs/soporte/CrearCD.php",
+    url:"php_libs/soporte/Personal/CrearCD.php",
     data: "&codigo_annlectivo=" + codigo_ann_lectivo + "&codigo_docente=" + codigo_docente +  "&codigo_asignatura=" + codigo_asignatura +
                                         "&codigo_modalidad=" + codigo_modalidad + "&codigo_gst=" + codigo_gst + "&accion=" + accion + "&id=" +  Math.random(),
     success: function(response){
@@ -370,7 +370,7 @@ $('#goEliminarCD').on('click',function(){
 		cache: false,     
 		type: "POST",     
 		dataType: "json",     
-        url:"php_libs/soporte/CrearCD.php",           
+        url:"php_libs/soporte/Personal/CrearCD.php",           
 		data:"accion=" + Accion_Editar_Eliminar + "&id_cd=" + IdCD + "&id=" + Math.random(),     
 		success: function(response){     
 		    // Validar mensaje de error     
@@ -426,7 +426,7 @@ $('#goCrearHC').on('click',function(){
                 cache: false,		        
                 type: "POST",		        
                 dataType: "json",		        
-                url:"php_libs/soporte/CrearHCPendientes.php",		        
+                url:"php_libs/soporte/Personal/CrearHCPendientes.php",		        
                 data: "&codigo_annlectivo=" + codigo_annlectivo + "&codigo_docente=" + codigo_personal + "&t1=" + trimestre_1 + "&t2=" + trimestre_2 + "&t3=" + trimestre_3 + "&t4=" + trimestre_4 + "&id=" +  Math.random(),		        
                 success: function(response){		        
                     // Validar mensaje de error		        
@@ -467,7 +467,7 @@ $('#goCrearHC').on('click',function(){
                 cache: false,		        
                 type: "POST",		        
                 dataType: "json",		        
-                url:"php_libs/soporte/CrearHC.php",		        
+                url:"php_libs/soporte/Personal/CrearHC.php",		        
                 data: "&codigo_annlectivo=" + codigo_annlectivo + "&codigo_docente=" + codigo_personal + "&t1=" + trimestre_1 + "&t2=" + trimestre_2 + "&t3=" + trimestre_3 + "&t4=" + trimestre_4 + "&id=" +  Math.random(),		        
                 success: function(response){		        
                     // Validar mensaje de error		        
@@ -521,7 +521,7 @@ function BuscarCargarAcademica() {
     cache: false,		      
     type: "POST",		      
     dataType: "json",		      
-    url:"php_libs/soporte/CrearCD.php",		      
+    url:"php_libs/soporte/Personal/CrearCD.php",		      
     data: "&codigo_annlectivo=" + codigo_ann_lectivo + "&codigo_docente=" + codigo_docente +  "&codigo_asignatura=" + codigo_asignatura +		      
           "&codigo_modalidad=" + codigo_modalidad + "&codigo_gst=" + codigo_gst + "&accion=" + accion + "&id=" +  Math.random(),              
     success: function(response){		      
