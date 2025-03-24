@@ -147,11 +147,12 @@ else{
 	$mensajeError = 'No se puede establecer conexi�n con la base de datos';}
 
 // Armamos array para convertir a JSON
-$salidaJson = array("respuesta" => $respuestaOK,
-		"mensaje" => $mensajeError,
-        "contenido" => $contenidoOK,
-        "titulo_tabla" => $titulo_tabla
-    );
+$salidaJson = [
+	"respuesta" => $respuestaOK,
+	"mensaje" => $mensajeError,
+	"contenido" => $contenidoOK,
+	"titulo_tabla" => $titulo_tabla
+];
 
 echo json_encode($salidaJson);
 
@@ -198,4 +199,3 @@ function Promedio(){
     }
     echo "nota institucional está vacía: " . $ni;
 }
-?>

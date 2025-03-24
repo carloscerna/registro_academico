@@ -20,7 +20,7 @@ if($errorDbConexion == false){
 		switch ($_POST['accion']) {
 			case 'BuscarUser':
 				// Armar Colores
-				$statusTipo = array ("01" => "btn-success", "02" => "btn-warning", "03" => "btn-danger");
+				$statusTipo = ["01" => "btn-success", "02" => "btn-warning", "03" => "btn-danger"];
 				// Armamos el query.
 				$codigo_annlectivo = trim($_POST['lstannlectivo']);
 				$codigo_modalidad = trim($_POST['lstmodalidad']);
@@ -97,7 +97,9 @@ if($errorDbConexion == false){
 else{
 	$mensajeError = 'No se puede establecer conexión con la base de datos';}
 // Armamos array para convertir a JSON
-$salidaJson = array("respuesta" => $respuestaOK,
-		"mensaje" => $mensajeError,
-		"contenido" => $contenidoOK);
+$salidaJson = [
+	"respuesta" => $respuestaOK,
+	"mensaje" => $mensajeError,
+	"contenido" => $contenidoOK
+];
 echo json_encode($salidaJson);

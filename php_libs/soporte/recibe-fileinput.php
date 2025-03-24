@@ -94,4 +94,3 @@ if ($estado_proceso === true) {
 // **********************************************************************
 // Devolvemos el array asociativo en formato JSON como respuesta
 echo json_encode($respuestas);
-?>

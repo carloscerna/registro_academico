@@ -32,4 +32,3 @@ foreach ($_FILES as $key) //Iteramos el arreglo de archivos
 		}
 }
 echo $mensage;// Regresamos los mensajes generados al cliente
-?>

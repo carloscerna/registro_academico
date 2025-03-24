@@ -5,17 +5,12 @@
 $enviado = 'Enviado: ' . date("Y-m-d H:i:s") . "\n";
   $subject = "Este es el asunto del mensaje - ";
   $message = 'Este es el mensaje a enviar.';
-         
-  // Cargando la librería de PHPMailer
+//Load Composer's autoloader
+  require "$path_root/registro_academico/vendor/autoload.php";
+// Cargando la librería de PHPMailer
   use PHPMailer\PHPMailer\PHPMailer;
   use PHPMailer\PHPMailer\Exception;
-  
-//Load Composer's autoloader
-require "$path_root/registro_academico/vendore/autoload.php";
-  //require "$path_root/registro_academico/php_libs/PHPMailer/src/Exception.php";
-  //require "$path_root/registro_academico/php_libs/PHPMailer/src/PHPMailer.php";
-  //require "$path_root/registro_academico/php_libs/PHPMailer/src/SMTP.php";
-
+//  
   $mail = new PHPMailer(true);                              // Pasar `true` habilita excepciones
   try {
       //Configuraciones de servidor
