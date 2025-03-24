@@ -269,4 +269,3 @@ function FancyTable($header)
                 $pdf->Cell(array_sum($w),0,'','T');     
 // Salida del pdf.
     $pdf->Output();
-?>

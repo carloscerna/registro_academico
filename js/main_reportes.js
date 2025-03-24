@@ -109,7 +109,7 @@ $('body').on('click','#listaUsuariosOK a',function (e){
 ////////////////////////////////////////////////////
 if (lstlist_nominas == 'orden' && $(this).attr('data-accion') == 'listados_01') {
         // construir la variable con el url.
-        varenviar = "/registro_academico/php_libs/reportes/nomina.php?todos="+reporte_ok;
+        varenviar = "/registro_academico/php_libs/reportes/Estudiante/Nomina.php?todos="+reporte_ok;
         // Ejecutar la función
         AbrirVentana(varenviar);
 }
@@ -123,7 +123,7 @@ if (lstlist_nominas == 'libro_registro' && $(this).attr('data-accion') == 'lista
 
 if (lstlist_nominas == 'control_actividades' && $(this).attr('data-accion') == 'listados_01') {
         // construir la variable con el url.
-        varenviar = "/registro_academico/php_libs/reportes/control_de_actividades.php?todos="+reporte_ok;
+        varenviar = "/registro_academico/php_libs/reportes/Estudiante/ControlActividades.php?todos="+reporte_ok;
         // Ejecutar la función
         AbrirVentana(varenviar);
 }
@@ -310,7 +310,7 @@ if (lstlist_nominas == 'cuadro_notas' && $(this).attr('data-accion') == 'listado
 }                        
 if (lstlist_nominas == 'telefono_alumno' && $(this).attr('data-accion') == 'listados_01') {
         // VARIABLE PARA LA URL(INFORME)
-        $url_ruta = "php_libs/reportes/telefono_alumno.php";
+        $url_ruta = "php_libs/reportes/Estudiante/Telefono.php";
         // Ajax.
         if(chkCrearArchivoPdf == "si")
                 {
@@ -335,7 +335,7 @@ if (lstlist_nominas == 'telefono_alumno' && $(this).attr('data-accion') == 'list
                                 });
                 }else if(chkCrearArchivoPdf == "no"){
                         // construir la variable con el url.
-                                varenviar = "/registro_academico/php_libs/reportes/telefono_alumno.php?todos="+reporte_ok+"&chkCrearArchivoPdf="+chkCrearArchivoPdf;
+                                varenviar = "/registro_academico/php_libs/reportes/Estudiante/Telefono.php?todos="+reporte_ok+"&chkCrearArchivoPdf="+chkCrearArchivoPdf;
                         // Ejecutar la función
                                 AbrirVentana(varenviar);
                 }

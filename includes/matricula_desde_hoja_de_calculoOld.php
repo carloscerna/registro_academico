@@ -5,7 +5,7 @@ $mensajeError = "";
 header ('Content-type: text/html; charset=utf-8');
 // ruta de los archivos con su carpeta
     $path_root=trim($_SERVER['DOCUMENT_ROOT']);
-// Incluimos el archivo de funciones y conexión a la base de datos
+// Incluimos el archivo de funciones y conexiï¿½n a la base de datos
 include($path_root."/registro_web/includes/mainFunctions_conexion.php");
 include($path_root."/registro_web/includes/funciones.php");
     set_time_limit(0);
@@ -15,7 +15,7 @@ include($path_root."/registro_web/includes/funciones.php");
 // $ruta = $path_root.'/sgp_web/formatos_hoja_de_calculo/prestamos.xls';
 	$ruta = $path_root.'/registro_web/formatos_hoja_de_calculo/matricula-10498/nominas/2 A.xlsx';
   //$trimestre = trim($_REQUEST["periodo_"]);
-// variable de la conexión dbf.
+// variable de la conexiï¿½n dbf.
     $db_link = $dblink;
 // Inicializando el array
 $datos=array(); $fila_array = 0;
@@ -31,7 +31,7 @@ $datos=array(); $fila_array = 0;
     //echo date('H:i:s') . " Set Time Zone"."<br />";
     //date_default_timezone_set('America/El_Salvador');
 // set codings.
-    $objPHPExcel->_defaultEncoding = 'ISO-8859-1';
+    //$objPHPExcel->_defaultEncoding = 'ISO-8859-1';
 // Set default font
     //echo date('H:i:s') . " Set default font"."<br />";
     $objPHPExcel->getDefaultStyle()->getFont()->setName('Arial');
@@ -42,7 +42,7 @@ $datos=array(); $fila_array = 0;
 	 $fila = 9;
     $objPHPExcel = $objReader->load($origen);
 
-// Número de hoja.
+// Nï¿½mero de hoja.
    $numero_de_hoja = 0;
 	$numero = 5;	
 // 	Recorre el numero de hojas que contenga el libro
@@ -94,14 +94,14 @@ $datos=array(); $fila_array = 0;
             
                         // Ejecutamos el query
                         $resultadoQuery = $dblink -> query($query);
-                        // Obtenemos el id de user para edición
+                        // Obtenemos el id de user para ediciï¿½n
                         $query_ultimo = "SELECT id_alumno from alumno ORDER BY id_alumno DESC LIMIT 1 OFFSET 0";
                         // Ejecutamos el Query.
                         $consulta = $dblink -> query($query_ultimo);
                         // Recorremos la consulta para el ultimo id y posteriormente guardarlo en alumno_encargado.
                         while($listado = $consulta -> fetch(PDO::FETCH_BOTH))
                         {
-                           // obtenemos el último código asignado.
+                           // obtenemos el ï¿½ltimo cï¿½digo asignado.
                            $codigo_alumno = $listado['id_alumno'];
                         }
                         // Agregar valores para el encargado.
@@ -166,7 +166,7 @@ $datos=array(); $fila_array = 0;
                         $respuestaOK = false;
                      }
                      else{
-                        // Extraer el código estatus u otros datos.
+                        // Extraer el cï¿½digo estatus u otros datos.
                         while($listado = $consulta -> fetch(PDO::FETCH_BOTH))
                            {
                               $codigo_estatus = $listado['codigo_estatus'];
@@ -183,7 +183,7 @@ $datos=array(); $fila_array = 0;
                               while($row = $result_consulta -> fetch(PDO::FETCH_BOTH))
                                  {$fila_alumno = $row{0}; $fila_matricula = $row{1};}
                             
-                        // Actualizar la tabla alumno_matricula con codigos de bachillerato, grado, seccion, año lectivo y año lectivo.
+                        // Actualizar la tabla alumno_matricula con codigos de bachillerato, grado, seccion, aï¿½o lectivo y aï¿½o lectivo.
                            $query_update_matricula = "UPDATE alumno_matricula SET codigo_bach_o_ciclo = '$codigo_modalidad',
                               codigo_grado = '$codigo_grado',
                               codigo_seccion = '$codigo_seccion',

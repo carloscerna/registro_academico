@@ -78,7 +78,7 @@ function Header()
         $this->SetFont('Arial','B',13);
         //Título
         $this->RotatedText(35,10,convertirtexto($_SESSION['institucion']),0);
-        $this->RotatedText(35,15,'Control de Actividades',0,1,'L');
+        $this->RotatedText(35,15,'Control de Actividades',0);
         
         $this->SetFont('Arial','',9);
         // Imprimir Modalidad y Asignatura.
@@ -130,7 +130,7 @@ function Header()
         $this->SetFont('Arial','B',13);
         //Título
         $this->RotatedText(25,10,convertirtexto($_SESSION['institucion']),0);
-        $this->RotatedText(25,15,'Control de Actividades',0,1,'L');
+        $this->RotatedText(25,15,'Control de Actividades',0);
         
         $this->SetFont('Arial','',9);
         // Imprimir Modalidad y Asignatura.
@@ -222,17 +222,17 @@ function FancyTable($header)
     $pdf->SetFont('Arial','',9);
     $pdf->AddPage();
     // variables y consulta a la tabla.
-      consultas(4,0,$codigo_all,'','','',$db_link,'');
-
-    $w=array(5,12,68,9); //determina el ancho de las columnas
-    
+        consultas(4,0,$codigo_all,'','','',$db_link,'');
+        $w=array(5,12,68,9); //determina el ancho de las columnas
     // colores del fondo, texto, línea.
     $pdf->SetFillColor(224,235,255);
     $pdf->SetTextColor(0);
     // Variables a utilizar
-    $fill = false; $i=1; $pagina_impar = false;
+    $fill = false; $i=0; $pagina_impar = false;
         while($row = $result -> fetch(PDO::FETCH_BOTH))
             {       
+                // numero
+                $i++;
                 // variables
                 $codigo_nie = trim($row['codigo_nie']);                           
                 $apellido_alumno = trim($row['apellido_alumno']);                        
@@ -250,38 +250,37 @@ function FancyTable($header)
                 // Salto de L{inea}
                     $pdf->Ln();
                     $fill=!$fill;
-                    $i=$i+1;
                                 // Contabiliza el total de lineas para otra página o continuar en la misma.    
-                if($i==26){
+                if($i==25){
                     $pagina_impar = true;
                     $pdf->Cell(array_sum($w)+(9*10),0,'','T');
                     $pdf->SetMargins(10, 10, 5);
                     $pdf->AddPage();
             }
             }
-            ///////////////////////////////////////////////////////////////////////////////////////
             // rellenar con las lineas que faltan y colocar total de puntos y promedio.
-            //////////////////////////////////////////////////////////////////////////////////////
-          	$numero = $i;
+            $numero = $i;
+            $numero++;
+            if($i>26){
                 $linea_faltante =  50 - $numero;
-                $numero_p = $numero - 1;               
                 for($i=0;$i<=$linea_faltante;$i++)
                   {
                       $pdf->Cell($w[0],7,$numero++,'LR',0,'C',$fill);  // N| de Orden.
                       $pdf->Cell($w[1],7,'','LR',0,'l',$fill);  // nombre del alumno.
                       $pdf->Cell($w[2],7,'','LR',0,'l',$fill);  // nombre del alumno.
-																				
-			            for($j=0;$j<=10;$j++)											
-                  		$pdf->Cell($w[3],7,'','LR',0,'C',$fill);    // lineas de ancho 7.
-											
+                                                                                
+                        for($j=0;$j<=10;$j++)											
+                          $pdf->Cell($w[3],7,'','LR',0,'C',$fill);    // lineas de ancho 7.
+                                            
                       $pdf->Ln();   
                       $fill=!$fill;
                       // Salto de Línea.
-                		if($numero == 26){
-		                   $pdf->Cell(array_sum($w)+9*10,0,'','B');
-    			            $pdf->AddPage();
+                        if($numero == 26){
+                           $pdf->Cell(array_sum($w)+9*10,0,'','B');
+                            $pdf->AddPage();
                           }
-                  }
+                  }       
+            }//////////////////////////////////////////////////////////////////////////////////////
 // Cierre de la Línea Final.        
    $pdf->Cell(array_sum($w)+(9*10),0,'','T');
 // Salida del pdf.
