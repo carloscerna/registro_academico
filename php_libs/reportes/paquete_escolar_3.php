@@ -59,7 +59,8 @@ function Header()
       $this->SetXY(5,5);
       $this->Cell(280,4,mb_convert_encoding("RECEPCIÓN DE BIENES POR PARTE DE LOS PADRES, MADRES, RESPONSABLES DE ESTUDIANTES","ISO-8859-1","UTF-8"),0,1,"C",false);
       $this->Cell(280,4,mb_convert_encoding("(EDUCACIÓN INICIAL Y PARVULARIA A 6.º GRADO) Y ESTUDIANTES DE TERCER CICLO Y EDUCACIÓN MEDIA","ISO-8859-1","UTF-8"),0,1,"C",false);
-      $this->Cell(280,4,mb_convert_encoding("PROGRAMA DE DOTACIÓN DE UNIFORMES, ZAPATOS Y ÚTILES ESCOLARES AÑO " . $nombre_ann_lectivo,"ISO-8859-1","UTF-8"),0,0,"C",false);
+      $this->Cell(280,4,mb_convert_encoding("PROGRAMA DE DOTACIÓN DE UNIFORMES, ZAPATOS Y ÚTILES ESCOLARES AÑO ___________","ISO-8859-1","UTF-8"),0,1,"C",false);
+      //$this->Cell(280,4,mb_convert_encoding("PROGRAMA DE DOTACIÓN DE UNIFORMES, ZAPATOS Y ÚTILES ESCOLARES AÑO " . $nombre_ann_lectivo,"ISO-8859-1","UTF-8"),0,0,"C",false);
     }
     
     $this->SetFont('Arial','',10);
@@ -73,7 +74,8 @@ function Header()
     if($rubro == "Sin Texto"){
       $this->RotatedText(40,20,"_____________________________",0);
     }else{
-      $this->RotatedText(40,20,$rubro,0);
+      $this->RotatedText(40,20,"_____________________________",0);
+      //$this->RotatedText(40,20,$rubro,0);
     }
     
     if($chkfechaPaquete == "yes"){

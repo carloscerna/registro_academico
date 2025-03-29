@@ -1,0 +1,185 @@
+{# Heredando la plantilla principal #}
+
+{% extends 'default_layout.html' %}
+
+{% block extraCSS %}
+<style>
+            body {
+                font-family: Arial, sans-serif;
+                margin: 20px;
+            }
+    
+            h1 {
+                text-align: center;
+            }
+    
+            #lista-contenido {
+                list-style-type: none;
+                padding: 0;
+            }
+    
+            #lista-contenido li {
+                margin: 5px 0;
+            }
+    
+            a {
+                text-decoration: none;
+                color: #007BFF;
+                cursor: pointer;
+            }
+    
+            a:hover {
+                text-decoration: underline;
+            }
+    
+            .navegacion {
+                margin-bottom: 20px;
+            }
+    
+            .navegacion a {
+                font-weight: bold;
+                color: #FF5733;
+            }
+            .fa-file-pdf {
+                color: red;
+            }
+            
+            .fa-file-word {
+                color: blue;
+            }
+            
+            .fa-file-excel {
+                color: green;
+            }
+            
+            .fa-file-image {
+                color: orange;
+            }
+</style>
+{% endblock %}
+
+{% block javascripts %}
+<script>
+function obtenerIcono(formato) {
+    switch (formato.toLowerCase()) {
+        case 'pdf':
+            return '<i class="fad fa-file-pdf"></i>';
+            //return '📄'; // Puedes reemplazar con `<i class="fas fa-file-pdf"></i>` usando Font Awesome
+        case 'doc':
+        case 'docx':
+            return '📝'; // Para documentos Word
+        case 'xls':
+            return '<i class="fad fa-file-excel"></i>';
+        case 'xlsx':
+            return '<i class="fad fa-file-excel"></i>';
+            //return '📊'; // Para hojas de cálculo Excel
+        case 'png':
+        case 'jpg':
+        case 'jpeg':
+        case 'gif':
+            return '🖼️'; // Para imágenes
+        case 'zip':
+        case 'rar':
+            return '📦'; // Para archivos comprimidos
+        default:
+            return '<i class="fad fa-folder fa-lg" style="--fa-primary-color: #eefd21; --fa-secondary-color: #e5ff00;"></i>' ;
+            // return '📁'; // Genérico o carpetas
+    }
+}
+</script>
+<script>  
+        // Variables globales para controlar la navegación
+        let historial = ["C:/TempSistemaRegistro/Carpetas/10391"];
+
+        // Función para cargar el contenido de una carpeta
+        function cargarContenido(ruta = "C:/TempSistemaRegistro/Carpetas/10391") {
+            $.ajax({
+                url: 'php_libs/soporte/Archivos/ListarTemp.php',
+                method: 'GET',
+                data: { ruta: ruta },
+                dataType: 'json',
+                success: function(respuesta) {
+                    const lista = $('#lista-contenido');
+                    lista.empty(); // Limpiar la lista existente
+
+                    if (ruta !== historial[historial.length - 1]) {
+                        historial.push(ruta); // Agrega la ruta al historial si es nueva
+                        console.log('Historial actualizado:', historial); // Depuración
+                    }
+
+                    respuesta.forEach(function(elemento) {
+                        if (elemento.tipo === 'Carpeta') {
+                            lista.append(`<li>
+                                📁 <a href="#" class="carpeta" data-ruta="${elemento.ruta}">${elemento.nombre}</a>
+                            </li>`);
+                        } else {
+                            const icono = obtenerIcono(elemento.formato); // Obtener el ícono según el formato
+                            lista.append(`<li>${icono} ${elemento.nombre} (${elemento.formato.toUpperCase()})</li>`);
+                        }
+                    });
+
+                    // Agregar evento de clic a las carpetas
+                    $('.carpeta').on('click', function(e) {
+                        e.preventDefault();
+                        const nuevaRuta = $(this).data('ruta');
+                        cargarContenido(nuevaRuta); // Cargar la nueva carpeta
+                    });
+                },
+                error: function() {
+                    alert('Hubo un problema al cargar el contenido.');
+                }
+            });
+        }
+
+        $(document).ready(function() {
+        // Función para regresar a la carpeta anterior
+        $('#btnAtras').on('click', function() {
+            console.log('Botón atrás presionado'); // Depuración
+            if (historial.length > 1) {
+                historial.pop(); // Elimina la carpeta actual del historial
+                const rutaAnterior = historial[historial.length - 1]; // Obtén la carpeta anterior
+                cargarContenido(rutaAnterior); // Carga la carpeta anterior
+            } else {
+                alert('No hay carpetas anteriores para regresar.');
+            }
+        });
+    });
+
+    function normalizarRuta(ruta) {
+        return ruta.replace(/\\/g, '/');
+    }
+
+    // Cargar la carpeta inicial al cargar la página
+        $(document).ready(function() {
+            cargarContenido();
+        });
+</script>
+{% endblock %}
+
+{% block contenidos %}
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper fondoBody">
+    <!-- Content Header (Page header) 
+    Se elimino content-header section solo se va dejar Main Content -->
+    
+  <!-- Main content -->
+    <section class="content">
+        <div class="container">
+            <h1>Explorador de la Carpeta</h1>
+            <div class="navegacion">
+                <button id="btnAtras" name="btaTras" title="Atras" class="form-control">⏪ Regresar</button>
+            </div>
+            
+        
+            <ul id="lista-contenido">
+                <!-- Aquí se mostrarán carpetas y archivos -->
+            </ul>
+    
+        </div>
+    </section>  
+</div> <!-- /.content-Wrapper, Contains page content. -->
+{% endblock %}
+
+{% block loginUser %}
+<!--	{% include 'layout-login-user.html' %} -->
+{% endblock %}
