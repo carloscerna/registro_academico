@@ -4,6 +4,68 @@
 
 {% block extraCSS %}
 <style>
+    #lista-contenido li {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    #lista-contenido li .ruta {
+        flex: 1; /* La columna de la ruta ocupa todo el espacio disponible */
+        text-align: left; /* Asegura que el texto e íconos estén alineados a la izquierda */
+        display: flex; /* Si los íconos y nombres están desalineados */
+        align-items: center; /* Centra verticalmente íconos y nombres */
+        gap: 10px; /* Añade espacio entre íconos y nombres */
+    }
+    
+    #lista-contenido li .boton {
+        flex: 0; /* La columna del botón ocupa solo lo necesario */
+        text-align: right;
+    }
+/* ESTILO DEL FLEXBOX */ 
+.flex-lista {
+    display: flex;
+    flex-wrap: wrap; /* Permitir que los elementos pasen a la siguiente fila */
+    gap: 10px; /* Espaciado entre los elementos */
+    list-style-type: none;
+    padding: 0;
+}
+
+.flex-lista li {
+    flex: 1 1 calc(50% - 10px); /* Cada elemento ocupa el 50% menos el espacio del gap */
+    background-color: #f9f9f9;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box; /* Asegura que el padding no afecte el ancho */
+}
+
+/* MEJORA DE ICONOS Y BOTONES. */
+.flex-lista li, .grid-lista li {
+    display: flex;
+    justify-content: flex-start; /* Ícono a la izquierda, botón a la derecha */
+    align-items: center; /* Centrar verticalmente */
+    gap: 20px;
+}
+
+.flex-lista li button, .grid-lista li button {
+    margin-left: 10px; /* Espaciado del botón respecto al texto */
+}
+    /* ESTILO PARA LOS BOTONES */
+    .btn-descargar {
+        padding: 5px 10px;
+        background-color: #28a745;
+        color: white;
+        border: none;
+        border-radius: 3px;
+        cursor: pointer;
+        margin-left: 10px;
+    }
+    
+    .btn-descargar:hover {
+        background-color: #218838;
+    }
+    /* ESTLO PARA LA PAGINA Y LOS ELEMENTOS*/
             body {
                 font-family: Arial, sans-serif;
                 margin: 20px;
@@ -110,11 +172,23 @@ function obtenerIcono(formato) {
                     respuesta.forEach(function(elemento) {
                         if (elemento.tipo === 'Carpeta') {
                             lista.append(`<li>
-                                📁 <a href="#" class="carpeta" data-ruta="${elemento.ruta}">${elemento.nombre}</a>
+                                <div class="ruta">
+                                    📁 <a href="#" class="carpeta" data-ruta="${elemento.ruta}">${elemento.nombre}</a>
+                                </div>
+                                <div class="boton">
+                                    <!-- Ningún botón en las carpetas, pero la estructura se conserva -->
+                                </div>
                             </li>`);
                         } else {
                             const icono = obtenerIcono(elemento.formato); // Obtener el ícono según el formato
-                            lista.append(`<li>${icono} ${elemento.nombre} (${elemento.formato.toUpperCase()})</li>`);
+                            lista.append(`<li>
+                                <div class="ruta">
+                                    ${icono} ${elemento.nombre} (${elemento.formato.toUpperCase()})
+                                </div>
+                                <div class="boton">
+                                    <button class="btn-descargar" data-archivo="${elemento.ruta}">Descargar</button>
+                                </div>
+                            </li>`);
                         }
                     });
 
@@ -132,18 +206,27 @@ function obtenerIcono(formato) {
         }
 
         $(document).ready(function() {
-        // Función para regresar a la carpeta anterior
-        $('#btnAtras').on('click', function() {
-            console.log('Botón atrás presionado'); // Depuración
-            if (historial.length > 1) {
-                historial.pop(); // Elimina la carpeta actual del historial
-                const rutaAnterior = historial[historial.length - 1]; // Obtén la carpeta anterior
-                cargarContenido(rutaAnterior); // Carga la carpeta anterior
-            } else {
-                alert('No hay carpetas anteriores para regresar.');
-            }
+            // Función para regresar a la carpeta anterior
+            $('#btnAtras').on('click', function() {
+                console.log('Botón atrás presionado'); // Depuración
+                if (historial.length > 1) {
+                    historial.pop(); // Elimina la carpeta actual del historial
+                    const rutaAnterior = historial[historial.length - 1]; // Obtén la carpeta anterior
+                    cargarContenido(rutaAnterior); // Carga la carpeta anterior
+                } else {
+                    alert('No hay carpetas anteriores para regresar.');
+                }
+            });
         });
-    });
+        //
+        // Evento para descargar archivos
+        $(document).ready(function() {
+            $(document).on('click', '.btn-descargar', function(e) {
+                e.preventDefault();
+                const archivo = $(this).data('archivo');
+                window.location.href = `php_libs/soporte/Archivos/descargar.php?archivo=${encodeURIComponent(archivo)}`;
+            });
+        });
 
     function normalizarRuta(ruta) {
         return ruta.replace(/\\/g, '/');
@@ -171,7 +254,7 @@ function obtenerIcono(formato) {
             </div>
             
         
-            <ul id="lista-contenido">
+            <ul id="lista-contenido" class="flex-lista">
                 <!-- Aquí se mostrarán carpetas y archivos -->
             </ul>
     

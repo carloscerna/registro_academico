@@ -30,7 +30,8 @@ foreach ($contenido as $elemento) {
         $resultados[] = [
             'nombre' => $elemento,
             'tipo' => 'Archivo',
-            'formato' => $extension
+            'formato' => $extension,
+            'ruta' => $rutaCompleta // Asegúrate de incluir esta clave
         ];
     }
 }
