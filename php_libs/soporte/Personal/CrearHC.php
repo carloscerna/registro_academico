@@ -61,7 +61,7 @@ include($path_root."/registro_academico/includes/funciones_2.php");
 // Leemos un archivo Excel 2007 y verificar si la carpeta o directorio existe.
 		$objReader = \PhpOffice\PhpSpreadsheet\IOFactory::createReader("Xlsx");
 		$origen = $path_root."/registro_academico/formatos_hoja_de_calculo/";
-		$nombre_de_hoja_de_calculo = "Control de Actividades Ver.2025.xlsx";
+		$nombre_de_hoja_de_calculo = "Control de Actividades Ver.2019.xlsx";
 		
 		// Grabar la Nota según sean las condiciones.
 						if($trimestre_1 == "yes"){

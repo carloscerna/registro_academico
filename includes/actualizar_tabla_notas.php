@@ -9,7 +9,7 @@ ini_set("display_error", true);
 // variables/conexion.
     $host = 'localhost';
     $port = 5432;
-    $database = 'registro_academico_10391';
+    $database = 'registro_academico_14753';
     $username = 'postgres';
     $password = 'Orellana';
 //Construimos el DSN//
@@ -30,7 +30,7 @@ $codigo_asignatura_inicio = 01;
 $codigo_asignatura_fin = 255;
 //$codigo_asignatura_array = array("01","02","03","04","05","08","234","236","237","238","239","240"); // Educación Básica de 1.º a 6.º.
 $codigo_asignatura_array = array(); // Educación Básica de 1.º a 6.º.
-$todos='206P2502';
+$todos='09122501'; // 1010012504
 $codigo_bachillerato = substr($todos,0,2);
 $codigo_grado = substr($todos,2,2);
 $codigo_annlectivo = substr($todos,4,2);

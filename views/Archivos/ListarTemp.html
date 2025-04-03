@@ -151,10 +151,10 @@ function obtenerIcono(formato) {
 </script>
 <script>  
         // Variables globales para controlar la navegación
-        let historial = ["C:/TempSistemaRegistro/Carpetas/10391"];
+        let historial = ["C:/TempSistemaRegistro/Carpetas"];
 
         // Función para cargar el contenido de una carpeta
-        function cargarContenido(ruta = "C:/TempSistemaRegistro/Carpetas/10391") {
+        function cargarContenido(ruta = "C:/TempSistemaRegistro/Carpetas") {
             $.ajax({
                 url: 'php_libs/soporte/Archivos/ListarTemp.php',
                 method: 'GET',
