@@ -39,4 +39,3 @@ $datos=array(); $fila_array = 0;
         }
 // Enviando la matriz con Json.
 echo json_encode($datos);
-?>

@@ -46,7 +46,7 @@ $('#formExportarNotas').validate({
 					cache: false,
 					type: "POST",
 					dataType: "json",
-					url:"php_libs/soporte/ExportarCalificaciones.php",
+					url:"php_libs/soporte/ExportarCalificacionesTodos.php",
 					data: str + "&id=" + Math.random() + "&TodasLasAsignaturas=" + TodasLasAsignaturas + "&Exportar=" + DatosExportar,
 						success: function(response){
 								// Validar mensaje de error
