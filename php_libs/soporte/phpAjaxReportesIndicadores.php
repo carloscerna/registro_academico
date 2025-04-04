@@ -31,7 +31,7 @@ if($errorDbConexion == false){
 		switch ($_POST['accion']) {
 			case 'BuscarUser':
 				// Armar Colores
-				$statusTipo = array ("01" => "btn-success", "02" => "btn-warning", "03" => "btn-danger");
+				$statusTipo = ["01" => "btn-success", "02" => "btn-warning", "03" => "btn-danger"];
 				// Armamos el query.
 				$codigo_annlectivo = trim($_POST['lstannlectivo']);
 
@@ -59,4 +59,3 @@ $salidaJson = array("respuesta" => $respuestaOK,
 		"contenido" => $contenidoOK);
 
 echo json_encode($salidaJson);
-?>

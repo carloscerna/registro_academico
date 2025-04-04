@@ -29,40 +29,10 @@ small.required {
     <!-- JS para esta página. -->
     <script type="text/JavaScript" src="js/Estudiantes/EditarNuevoEstudiante.js"></script>
     <script type="text/JavaScript" src="js/Estudiantes/EditarNuevoEstudiantePortafolio.js"></script>
-    <script type="text/javascript" src="js/Estudiantes/CargarDatosEstudiantes.js"></script>
+    <script type="text/javascript" src="js/Estudiantes/CargarDatosEstudiantes.js"></script> 
     <script type="text/JavaScript" src="js/calcular_edad.js"></script>
     <script type="text/javascript" src="js/jquery-mask/jquery.maskedinput.js"></script>
-
-
 <script>
-$(document).ready(function() { 
-  // Datatoggle
-    $('[data-toggle="tooltip"]').tooltip();
- 	// colocar la misma dirección en la del encargado.
-    $("#direccion_alumno").keyup(function () {
-              var value = $(this).val();
-              $("#direccionp").val(value);
-              $("#direccionm").val(value);
-              $("#direcciono").val(value);
-          });
-// Jquery-mask - entrado de datos.
-  jQuery(function($){
-     // Form Users Agregar.
-     $("#dui").mask("99999999-9");
-     //
-      $("#telresidencia").mask("9999-9999");
-      $("#telcelular").mask("9999-9999");
-      //
-      $("#duip").mask("99999999-9");
-      $("#telefonop").mask("9999-9999");
-      //
-      $("#duim").mask("99999999-9");
-      $("#telefonom").mask("9999-9999");
-      //
-      $("#duio").mask("99999999-9");
-      $("#telefonoo").mask("9999-9999");
-  });   
-	});
   /* SCRIPT PARA SUBIR LA FOTO.*/
 $(document).ready(function() {
   $('#fileup').change(function(){
@@ -112,9 +82,54 @@ $(document).ready(function() {
         });
 		return false;
     }
+// VALIDAR LOS ENTER DEL FORMULARIO.
+  $('form').keypress(function(e){   
+    if(e == 13){
+      return false;
+    }
+  });
+
+  $('input').keypress(function(e){
+    if(e.which == 13){
+      return false;
+    }
+  });
+  // Datatoggle
+  $('[data-toggle="tooltip"]').tooltip();
+
+}); // final del $(document).ready();
+
+$(document).ready(function() {
+  // colocar la misma dirección en la del encargado.
+  $("#direccion_alumno").keyup(function () {
+    var value = $(this).val();
+    $("#direccionp").val(value);
+    $("#direccionm").val(value);
+    $("#direcciono").val(value);
+});  
 });
-/* SCRIPT PARA SUBIR LA IMAGEN DE LA PARTIDA DE NACIMIENTO.*/
-$('#fileupPN').change(function(){
+
+$(document).ready(function() {
+// Jquery-mask - entrado de datos.
+jQuery(function($){
+  // Form Users Agregar.
+    $("#dui").mask("99999999-9");
+  //
+   $("#telresidencia").mask("9999-9999");
+   $("#telcelular").mask("9999-9999");
+   //
+   $("#duip").mask("99999999-9");
+   $("#telefonop").mask("9999-9999");
+   //
+   $("#duim").mask("99999999-9");
+   $("#telefonom").mask("9999-9999");
+   //
+   $("#duio").mask("99999999-9");
+   $("#telefonoo").mask("9999-9999");
+});
+});
+  /* SCRIPT PARA SUBIR LA IMAGEN DE LA PARTIDA DE NACIMIENTO.*/
+  $('#fileupPN').change(function(){
   //here we take the file extension and set an array of valid extensions
       var res=$('#fileupPN').val();
       var arr = res.split("\\");
@@ -180,23 +195,7 @@ $('#fileupPN').change(function(){
       }
   });
 });
-</script>
-<script language="javascript">
-	// VALIDAR LOS ENTER EN EL FORMULARIO.
-$(document).ready(function() {
-  $('form').keypress(function(e){   
-    if(e == 13){
-      return false;
-    }
-  });
 
-  $('input').keypress(function(e){
-    if(e.which == 13){
-      return false;
-    }
-  });
-
-});
 </script>
 {% endblock %}
 
@@ -239,7 +238,7 @@ $(document).ready(function() {
                     <button type="button" id="goBuscar" aria-label="goBuscar" class="btn btn-secondary mb-0 mx-sm-1" tabindex="-1" data-toggle="tooltip" data-placement="bottom" title="Buscar">
                       <i class="fal fa-search"></i>
                     </button>
-                    <button type="button" id="goImprimirPortada" aria-label="goImprimirPortada" class="btn btn-light mb-0 mx-sm-1" tabindex="-1" data-toggle="tooltip" data-placement="bottom" title="Imprimir Portada">
+                    <button type="button" id="goImprimirPortada" aria-label="goImprimirPortada" class="btn btn-light mb-0 mx-sm-1" tabindex="-1" data-toggle="tooltip" data-placement="bottom" title="Portada">
                       <i class="fad fa-print"></i>
                     </button>
                     <button type="button" id="goImprimirPN" aria-label="goImprimirPN" class="btn btn-light mb-0 mx-sm-1" tabindex="-1" data-toggle="tooltip" data-placement="bottom" title="Imprimir PN">
@@ -345,14 +344,18 @@ $(document).ready(function() {
                                         </div>
                                         <!-- FECHA DE NACIMIENTO Y EDAD-->
                                         <div class="form-group row">
-                                          <label class="col-sm-4 col-form-label form-control-label">Fecha de Nacimiento</label>
+                                          <label class="col-sm-4 col-form-label form-control-label">Fecha de Nacimiento*</label>
                                           <div class="input-group col-sm-8">
                                             <div class="input-group-prepend">
                                               <span class="input-group-text text-bold bg-gradient-gray"><i class="far fa-calendar-day"></i></span>
                                             </div>
-                                            <input class="form-control" type="date" id="txtfechanacimiento" name="fechanacimiento" onblur="calcular_edad(this.value);" aria-label="FechaNacimiento">
-                                            <div><label for="lbl_edad_y_mes" class="control-label"></label></div>
+                                            <input class="form-control" type="date" id="txtfechanacimiento" name="fechanacimiento" onfocus="desplegarcalendario()" onblur="calcular_edad(this.value);" aria-label="FechaNacimiento">
+                                            <div>
+                                              <label for="lbl_edad_y_mes" class="control-label"></label>
+                                              <p id="resultado"></p>
+                                            </div>
                                           </div>
+
                                           <label class="col-sm-4 col-form-label form-control-label">Edad</label>
                                           <div class="input-group col-sm-8">
                                             <div class="input-group-prepend">
@@ -447,7 +450,30 @@ $(document).ready(function() {
                                               </div>
                                               <input type="text" name= "libro_pn" id="libro_pn" value = "0" class="form-control" aria-label="LibroPN">
                                             </div>
+                                              <!-- PESTAÑA DATOS PERSONALES - INPUT Departamento, Municipio y Distrito.-->
+                                              <label class="col-sm-4 col-form-label form-control-label">Departamento</label>
+                                              <div class="input-group col-sm-8">
+                                                <div class="input-group-prepend">
+                                                  <span class="input-group-text text-bold bg-gradient-gray"><i class="fad fa-home"></i></span>
+                                                </div>
+                                                <select id="lstDepartamentoPN" name="lstDepartamentoPN" class="custom-select" aria-label="LstDepartamentoPn"></select>
+                                              </div>
+                                                <label class="col-sm-4 col-form-label form-control-label">Municipio</label>
+                                                <div class="input-group col-sm-8">
+                                                  <div class="input-group-prepend">
+                                                    <span class="input-group-text text-bold bg-gradient-gray"><i class="fad fa-home"></i></span>
+                                                  </div>
+                                                  <select id="lstMunicipioPN" name="lstMunicipioPN" class="custom-select" aria-label="LstMunicipioPn"></select>
+                                                </div>
+                                                <label class="col-sm-4 col-form-label form-control-label">Distrito</label>
+                                                <div class="input-group col-sm-8">
+                                                  <div class="input-group-prepend">
+                                                    <span class="input-group-text text-bold bg-gradient-gray"><i class="fad fa-home"></i></span>
+                                                  </div>
+                                                  <select id="lstDistritoPN" name="lstDistritoPN" class="custom-select" aria-label="LstDistritoPn"></select>
+                                                </div>
                                           </div>
+
                                 </fieldset>
                                 <!-- INICIO DEL FORMULARIO -->
                             </div>
@@ -499,7 +525,8 @@ $(document).ready(function() {
                                       <div class="card-body">
                                         <form method="post" action="#" enctype="multipart/form-data">
                                           <img class="card-img-top-PN img-fluid" id="ImagenPN" src="#" aria-label="CardImgPN">
-                                          <iframe id="iframePDFPn" frameborder="0" scrolling="no" width="100%" height="250px" src="#" title="Mi Pdf"></iframe>
+                                          <embed id="iframePDFPn" frameborder="0" scrolling="no" width="100%" height="250px" src="../registro_academico/img/EnBlanco.pdf" title="Mi Pdf">
+
                                         </form>
                                       </div>
                                       <div class="card-footer bg-gradient-info">
@@ -642,7 +669,7 @@ $(document).ready(function() {
                                           <div class="input-group-prepend">
                                             <span class="input-group-text text-bold bg-gradient-gray"><i class="fad fa-home"></i></span>
                                           </div>
-                                          <select id="lstZonaResidencia" name="lstzonaresidencia" class="custom-select" aria-label="LstZonaResidencia"></select>
+                                          <select id="lstZonaResidencia" name="lstZonaResidencia" class="custom-select" aria-label="LstZonaResidencia"></select>
                                         </div>
                                       <!-- PESTAÑA DATOS PERSONALES - Tipo de vivienda del Estudiante.-->
                                       <label class="col-sm-8 col-form-label form-control-label">¿Tipo de Vivienda del Estudiante?</label>
@@ -658,14 +685,21 @@ $(document).ready(function() {
                                         <div class="input-group-prepend">
                                           <span class="input-group-text text-bold bg-gradient-gray"><i class="fad fa-home"></i></span>
                                         </div>
-                                        <select id="lstDepartamento" name="lstdepartamento" class="custom-select" aria-label="LstDepartamento"></select>
+                                        <select id="lstDepartamento" name="lstDepartamento" class="custom-select" aria-label="LstDepartamento"></select>
                                       </div>
                                         <label class="col-sm-4 col-form-label form-control-label">Municipio</label>
                                         <div class="input-group col-sm-8">
                                           <div class="input-group-prepend">
                                             <span class="input-group-text text-bold bg-gradient-gray"><i class="fad fa-home"></i></span>
                                           </div>
-                                          <select id="lstMunicipio" name="lstmunicipio" class="custom-select" aria-label="LstMunicipio"></select>
+                                          <select id="lstMunicipio" name="lstMunicipio" class="custom-select" aria-label="LstMunicipio"></select>
+                                        </div>
+                                        <label class="col-sm-4 col-form-label form-control-label">Distrito</label>
+                                        <div class="input-group col-sm-8">
+                                          <div class="input-group-prepend">
+                                            <span class="input-group-text text-bold bg-gradient-gray"><i class="fad fa-home"></i></span>
+                                          </div>
+                                          <select id="lstDistrito" name="lstDistrito" class="custom-select" aria-label="LstDistrito"></select>
                                         </div>
 
                                       <!-- PESTAÑA DATOS PERSONALES - Cantón y Caserio-->
@@ -759,77 +793,123 @@ $(document).ready(function() {
                                 <!-- FECHA NACIMIENTO, NACIONALIDAD, ESTADO FAMILIAR, ZONA, DEPARTAMENTO, MUNICIPIO -->
                                   <div class="form-group row">
                                     <label class="col-lg-3 col-form-label form-control-label" for="TxtFechaNacimientoP">Fecha Nacimiento</label>
-                                      <div class="col-lg-9">
+                                    <div class="input-group col-lg-9">
+                                      <div class="input-group-prepend">
+                                        <span class="input-group-text text-bold bg-gradient-gray"><i class="far fa-calendar-day"></i></span>
+                                      </div>
                                         <input class="form-control" type="date" id="txtfechanacimientop" name="txtfechanacimientop" aria-label="TxtFechaNacimientoP">
                                       </div>
                                   </div>
                                   <div class="form-group row">
                                     <label class="col-lg-3 col-form-label form-control-label" for="lstnacionalidadp">Nacionalidad</label>
-                                      <div class="col-lg-9">
+                                    <div class="input-group col-lg-9">
+                                      <div class="input-group-prepend">
+                                        <span class="input-group-text text-bold bg-gradient-gray"><i class="fab fa-font-awesome-flag"></i></span>
+                                      </div>
                                         <select id="lstNacionalidadP" name="lstNacionalidadP" class="custom-select" aria-label="lstnacionalidadp"></select>							
                                       </div>
                                   </div>
                                   <div class="form-group row">
-                                    <label class="col-lg-3 col-form-label form-control-label">Estado Familiar</label>
-                                    <div class="col-lg-9">
+                                    <label class="col-lg-3 col-form-label form-control-label">Tipo Parentesco</label>
+                                    <div class="input-group col-lg-9">
+                                      <div class="input-group-prepend">
+                                        <span class="input-group-text text-bold bg-gradient-gray"><i class="fad fa-restroom"></i></span>
+                                      </div>
                                       <select id="lstEstadoFamiliarP" name="lstEstadoFamiliarP" class="custom-select" aria-label="LstEstadoFamiliarP"></select>							
                                     </div>
                                   </div>
                                   <div class="form-group row">
                                     <label class="col-lg-3 col-form-label form-control-label">Zona</label>
-                                    <div class="col-lg-9">
+                                    <div class="input-group col-lg-9">
+                                      <div class="input-group-prepend">
+                                        <span class="input-group-text text-bold bg-gradient-gray"><i class="fad fa-home"></i></span>
+                                      </div>
                                       <select id="lstZonaResidenciaP" name="lstZonaResidenciaP" class="custom-select" aria-label="LstZonaResidenciaP"></select>	
                                     </div>
                                   </div>
                                   <div class="form-group row">
                                     <label class="col-lg-3 col-form-label form-control-label">Departamento</label>
-                                    <div class="col-lg-9">
+                                    <div class="input-group col-lg-9">
+                                      <div class="input-group-prepend">
+                                        <span class="input-group-text text-bold bg-gradient-gray"><i class="fad fa-home"></i></span>
+                                      </div>
                                       <select id="lstDepartamentoP" name="lstDepartamentoP" class="custom-select" aria-label="LstDepartamentoP"></select>
                                     </div>
                                   </div>
                                   <div class="form-group row">
                                     <label class="col-lg-3 col-form-label form-control-label">Municipio</label>
-                                    <div class="col-lg-9">
+                                    <div class="input-group col-lg-9">
+                                      <div class="input-group-prepend">
+                                        <span class="input-group-text text-bold bg-gradient-gray"><i class="fad fa-home"></i></span>
+                                      </div>
                                       <select id="lstMunicipioP" name="lstMunicipioP" class="custom-select" aria-label="LstMunicipioP"></select>
                                     </div>
                                   </div>
+                                  <div class="form-group row">
+                                    <label class="col-lg-3 col-form-label form-control-label">Distrito</label>
+                                    <div class="input-group col-lg-9">
+                                      <div class="input-group-prepend">
+                                        <span class="input-group-text text-bold bg-gradient-gray"><i class="fad fa-home"></i></span>
+                                      </div>
+                                      <select id="lstDistritoP" name="lstDistritoP" class="custom-select" aria-label="LstDistritoP"></select>
+                                    </div>
+                                  </div>
+                                  
                                 </div> <!-- FIN DEL PRIMER bloque.-->
                                 <!-- inicia segundo bloque.-->
                                 <div class="col-md-6">
                               <!-- NOMBRES, LUGAR DE TRABAJO, PROFESION U OFICIO, DUI, TELEFONO , DIRECCIÓN -->
                                 <div class="form-group row">
                                   <label class="col-lg-3 col-form-label form-control-label" for="NombreP">Nombres</label>
-                                    <div class="col-lg-9">
+                                  <div class="input-group col-lg-9">
+                                    <div class="input-group-prepend">
+                                      <span class="input-group-text text-bold bg-gradient-gray"><i class="fad fa-user"></i></span>
+                                    </div>
                                       <input class="form-control" name = "txtnombrep" id = "nombrep" type="text" onchange="conMayusculas(this);" aria-label="NombreP">
                                     </div>
                                   </div>
                                   <div class="form-group row">
                                   <label class="col-lg-3 col-form-label form-control-label" for="LugarP">Lugar de Trabajo</label>
-                                    <div class="col-lg-9">
+                                  <div class="input-group col-lg-9">
+                                    <div class="input-group-prepend">
+                                      <span class="input-group-text text-bold bg-gradient-gray"><i class="fad fa-home"></i></span>
+                                    </div>
                                       <input class="form-control" name = "txtlugarp" id = "lugarp" type= "text" onchange="conMayusculas(this);" aria-label="LugarP">
                                     </div>
                                   </div>                        
                                   <div class="form-group row">
                                   <label class="col-lg-3 col-form-label form-control-label" for="TxtPop">Profesión u Oficio</label>
-                                    <div class="col-lg-9">
+                                  <div class="input-group col-lg-9">
+                                    <div class="input-group-prepend">
+                                      <span class="input-group-text text-bold bg-gradient-gray"><i class="fad fa-user-tie"></i></span>
+                                    </div>
                                       <input class="form-control" name="txtpop" id ="pop" type="text" onchange="conMayusculas(this);" aria-label="TxtPop">								
                                     </div>
                                   </div>                        
                                   <div class="form-group row">
                                   <label class="col-lg-3 col-form-label form-control-label">N.º DUI</label>
-                                    <div class="col-lg-9">
+                                  <div class="input-group col-lg-9">
+                                    <div class="input-group-prepend">
+                                      <span class="input-group-text text-bold bg-gradient-gray"><i class="fad fa-hashtag"></i></span>
+                                    </div>
                                       <input class="form-control" name="txtduip" id="duip" type="text" aria-label="TxtDuiP">
                                     </div>
                                   </div>
                                   <div class="form-group row">
                                   <label class="col-lg-3 col-form-label form-control-label">Teléfono</label>
-                                    <div class="col-lg-9">
+                                  <div class="input-group col-lg-9">
+                                    <div class="input-group-prepend">
+                                      <span class="input-group-text text-bold bg-gradient-gray"><i class="fad fa-hashtag"></i></span>
+                                    </div>
                                       <input class="form-control" name="txttelefonop" id="telefonop" type="text" aria-label="TelefonoP">
                                     </div>
                                   </div>
                                   <div class="form-group row">
                                     <label class="col-lg-3 col-form-label form-control-label" for="TxtDireccionP">Dirección</label>
-                                      <div class="col-lg-9">
+                                    <div class="input-group col-lg-9">
+                                      <div class="input-group-prepend">
+                                        <span class="input-group-text text-bold bg-gradient-gray"><i class="fad fa-home"></i></span>
+                                      </div>
                                         <textarea class="form-control" name="txtdireccionp" id="direccionp" aria-label="TxtDireccionP"></textarea>
                                       </div>
                                   </div>                        
@@ -853,43 +933,70 @@ $(document).ready(function() {
                                 <!-- FECHA NACIMIENTO, NACIONALIDAD, ESTADO FAMILIAR, ZONA, DEPARTAMENTO, MUNICIPIO -->
                                   <div class="form-group row">
                                     <label class="col-lg-3 col-form-label form-control-label" for="txtfechanacimientom">Fecha Nacimiento</label>
-                                    <div class="col-lg-9">
+                                    <div class="input-group col-lg-9">
+                                      <div class="input-group-prepend">
+                                        <span class="input-group-text text-bold bg-gradient-gray"><i class="far fa-calendar-day"></i></span>
+                                      </div>
                                       <input class="form-control" type="date" id="txtfechanacimientom" name="txtfechanacimientom" aria-labelledby="txtfechanacimientom">
                                     </div>
                                   </div>
                                   
                                   <div class="form-group row">
                                     <label class="col-lg-3 col-form-label form-control-label" for="nacionalidad">Nacionalidad</label>
-                                    <div class="col-lg-9">
+                                    <div class="input-group col-lg-9">
+                                      <div class="input-group-prepend">
+                                        <span class="input-group-text text-bold bg-gradient-gray"><i class="fab fa-font-awesome-flag"></i></span>
+                                      </div>
                                       <select id="lstNacionalidadM" name="lstNacionalidadM" class="custom-select" aria-label="nacionalidad"></select>							
                                     </div>
                                   </div>
                                   
                                   <div class="form-group row">
-                                    <label class="col-lg-3 col-form-label form-control-label" for="lsTEstadofmiliarm">Estado Familiar</label>
-                                    <div class="col-lg-9">
+                                    <label class="col-lg-3 col-form-label form-control-label">Tipo Parentesco</label>
+                                    <div class="input-group col-lg-9">
+                                      <div class="input-group-prepend">
+                                        <span class="input-group-text text-bold bg-gradient-gray"><i class="fad fa-restroom"></i></span>
+                                      </div>
                                       <select id="lstEstadoFamiliarM" name="lstEstadoFamiliarM" class="custom-select" aria-label="lstEstadosFamiliarM"></select>							
                                     </div>
                                   </div>
                                   
                                   <div class="form-group row">
                                     <label class="col-lg-3 col-form-label form-control-label">Zona</label>
-                                    <div class="col-lg-9">
+                                    <div class="input-group col-lg-9">
+                                      <div class="input-group-prepend">
+                                        <span class="input-group-text text-bold bg-gradient-gray"><i class="fad fa-home"></i></span>
+                                      </div>
                                       <select id="lstZonaResidenciaM" name="lstZonaResidenciaM" class="custom-select" aria-label="lstzonaResidenciaM"></select>	
                                     </div>
                                   </div>
                                   
                                   <div class="form-group row">
                                     <label class="col-lg-3 col-form-label form-control-label">Departamento</label>
-                                    <div class="col-lg-9">
+                                    <div class="input-group col-lg-9">
+                                      <div class="input-group-prepend">
+                                        <span class="input-group-text text-bold bg-gradient-gray"><i class="fad fa-home"></i></span>
+                                      </div>
                                       <select id="lstDepartamentoM" name="lstDepartamentoM" class="custom-select" aria-label="lstDepartamentoM"></select>
                                     </div>
                                   </div>
                                   
                                   <div class="form-group row">
                                     <label class="col-lg-3 col-form-label form-control-label">Municipio</label>
-                                    <div class="col-lg-9">
+                                    <div class="input-group col-lg-9">
+                                      <div class="input-group-prepend">
+                                        <span class="input-group-text text-bold bg-gradient-gray"><i class="fad fa-home"></i></span>
+                                      </div>
                                       <select id="lstMunicipioM" name="lstMunicipioM" class="custom-select" aria-label="lstMunicipioM"></select>
+                                    </div>
+                                  </div>
+                                  <div class="form-group row">
+                                    <label class="col-lg-3 col-form-label form-control-label">Distrito</label>
+                                    <div class="input-group col-lg-9">
+                                      <div class="input-group-prepend">
+                                        <span class="input-group-text text-bold bg-gradient-gray"><i class="fad fa-home"></i></span>
+                                      </div>
+                                      <select id="lstDistritoM" name="lstDistritoM" class="custom-select" aria-label="LstDistritoP"></select>
                                     </div>
                                   </div>
                                 </div> <!-- FIN DEL PRIMER bloque.-->
@@ -898,37 +1005,55 @@ $(document).ready(function() {
                               <!-- NOMBRES, LUGAR DE TRABAJO, PROFESION U OFICIO, DUI, TELEFONO , DIRECCIÓN -->
                                 <div class="form-group row">
                                 <label class="col-lg-3 col-form-label form-control-label">Nombres</label>
-                                  <div class="col-lg-9">
+                                <div class="input-group col-lg-9">
+                                  <div class="input-group-prepend">
+                                    <span class="input-group-text text-bold bg-gradient-gray"><i class="fad fa-user"></i></span>
+                                  </div>
                                     <input class="form-control" name = "txtnombrem" id = "nombrem" type="text" onchange="conMayusculas(this);" aria-label="txtnombrem">
                                   </div>
                                 </div>
                                 <div class="form-group row">
                                 <label class="col-lg-3 col-form-label form-control-label">Lugar de Trabajo</label>
-                                  <div class="col-lg-9">
+                                <div class="input-group col-lg-9">
+                                  <div class="input-group-prepend">
+                                    <span class="input-group-text text-bold bg-gradient-gray"><i class="fad fa-home"></i></span>
+                                  </div>
                                     <input class="form-control" name = "txtlugarm" id = "lugarm" type= "text" onchange="conMayusculas(this);" aria-label="lugarm">
                                   </div>
                                 </div>                        
                                 <div class="form-group row">
                                 <label class="col-lg-3 col-form-label form-control-label">Profesión u Oficio</label>
-                                  <div class="col-lg-9">
+                                <div class="input-group col-lg-9">
+                                  <div class="input-group-prepend">
+                                    <span class="input-group-text text-bold bg-gradient-gray"><i class="fad fa-user-tie"></i></span>
+                                  </div>
                                     <input class="form-control" name="txtpom" id ="pom" type="text" onchange="conMayusculas(this);" aria-label="pom">								
                                   </div>
                                 </div>                        
                                 <div class="form-group row">
                                 <label class="col-lg-3 col-form-label form-control-label">N.º DUI</label>
-                                  <div class="col-lg-9">
+                                <div class="input-group col-lg-9">
+                                  <div class="input-group-prepend">
+                                    <span class="input-group-text text-bold bg-gradient-gray"><i class="fad fa-hashtag"></i></span>
+                                  </div>
                                     <input class="form-control" name="txtduim" id="duim" type="text" aria-label="duim">
                                   </div>
                                 </div>
                                 <div class="form-group row">
                                 <label class="col-lg-3 col-form-label form-control-label">Teléfono</label>
-                                  <div class="col-lg-9">
+                                <div class="input-group col-lg-9">
+                                  <div class="input-group-prepend">
+                                    <span class="input-group-text text-bold bg-gradient-gray"><i class="fad fa-hashtag"></i></span>
+                                  </div>
                                     <input class="form-control" name="txttelefonom" id="telefonom" type="text" aria-label="telefonom">
                                   </div>
                                 </div>
                                 <div class="form-group row">
                                 <label class="col-lg-3 col-form-label form-control-label">Dirección</label>
-                                  <div class="col-lg-9">
+                                <div class="input-group col-lg-9">
+                                  <div class="input-group-prepend">
+                                    <span class="input-group-text text-bold bg-gradient-gray"><i class="fad fa-home"></i></span>
+                                  </div>
                                     <textarea class="form-control" name="txtdireccionm" id="direccionm" aria-label="direccionm"></textarea>
                                   </div>
                                 </div>                        
@@ -954,43 +1079,71 @@ $(document).ready(function() {
                                 <!-- FECHA NACIMIENTO, NACIONALIDAD, ESTADO FAMILIAR, ZONA, DEPARTAMENTO, MUNICIPIO -->
                                   <div class="form-group row">
                                     <label class="col-lg-3 col-form-label form-control-label">Fecha Nacimiento</label>
-                                    <div class="col-lg-9">
+                                    <div class="input-group col-lg-9">
+                                      <div class="input-group-prepend">
+                                        <span class="input-group-text text-bold bg-gradient-gray"><i class="far fa-calendar-day"></i></span>
+                                      </div>
                                       <input class="form-control" type="date" id="txtfechanacimientoo" name="txtfechanacimientoo" aria-label="txtfechanacimientoo">
                                     </div>
                                   </div>
                                   
                                   <div class="form-group row">
                                     <label class="col-lg-3 col-form-label form-control-label">Nacionalidad</label>
-                                    <div class="col-lg-9">
+                                    <div class="input-group col-lg-9">
+                                      <div class="input-group-prepend">
+                                        <span class="input-group-text text-bold bg-gradient-gray"><i class="fab fa-font-awesome-flag"></i></span>
+                                      </div>
                                       <select id="lstNacionalidadO" name="lstNacionalidadO" class="custom-select" aria-label="lstNacionalidadO"></select>							
                                     </div>
                                   </div>
                                   
                                   <div class="form-group row">
-                                    <label class="col-lg-3 col-form-label form-control-label">Estado Familiar</label>
-                                    <div class="col-lg-9">
+                                    <label class="col-lg-3 col-form-label form-control-label">Tipo Parentesco</label>
+                                    <div class="input-group col-lg-9">
+                                      <div class="input-group-prepend">
+                                        <span class="input-group-text text-bold bg-gradient-gray"><i class="fad fa-restroom"></i></span>
+                                      </div>
                                       <select id="lstEstadoFamiliarO" name="lstEstadoFamiliarO" class="custom-select" aria-label="lstEstadoFamiliarO"></select>							
                                     </div>
                                   </div>
                                   
                                   <div class="form-group row">
                                     <label class="col-lg-3 col-form-label form-control-label">Zona</label>
-                                    <div class="col-lg-9">
+                                    <div class="input-group col-lg-9">
+                                      <div class="input-group-prepend">
+                                        <span class="input-group-text text-bold bg-gradient-gray"><i class="fad fa-home"></i></span>
+                                      </div>
                                       <select id="lstZonaResidenciaO" name="lstZonaResidenciaO" class="custom-select" aria-label="lstZonaResidenciaO"></select>	
                                     </div>
                                   </div>
                                   
                                   <div class="form-group row">
                                     <label class="col-lg-3 col-form-label form-control-label">Departamento</label>
-                                    <div class="col-lg-9">
+                                    <div class="input-group col-lg-9">
+                                      <div class="input-group-prepend">
+                                        <span class="input-group-text text-bold bg-gradient-gray"><i class="fad fa-home"></i></span>
+                                      </div>
                                       <select id="lstDepartamentoO" name="lstDepartamentoO" class="custom-select" aria-label="lstDepartamentoO"></select>
                                     </div>
                                   </div>
                                   
                                   <div class="form-group row">
                                     <label class="col-lg-3 col-form-label form-control-label">Municipio</label>
-                                    <div class="col-lg-9">
+                                    <div class="input-group col-lg-9">
+                                      <div class="input-group-prepend">
+                                        <span class="input-group-text text-bold bg-gradient-gray"><i class="fad fa-home"></i></span>
+                                      </div>
                                       <select id="lstMunicipioO" name="lstMunicipioO" class="custom-select" aria-label="lstMunicipioO"></select>
+                                    </div>
+                                  </div>
+
+                                  <div class="form-group row">
+                                    <label class="col-lg-3 col-form-label form-control-label">Distrito</label>
+                                    <div class="input-group col-lg-9">
+                                      <div class="input-group-prepend">
+                                        <span class="input-group-text text-bold bg-gradient-gray"><i class="fad fa-home"></i></span>
+                                      </div>
+                                      <select id="lstDistritoO" name="lstDistritoO" class="custom-select" aria-label="LstDistritoO"></select>
                                     </div>
                                   </div>
                                 </div> <!-- FIN DEL PRIMER bloque.-->
@@ -999,37 +1152,55 @@ $(document).ready(function() {
                                   <!-- NOMBRES, LUGAR DE TRABAJO, PROFESION U OFICIO, DUI, TELEFONO , DIRECCIÓN -->
                                   <div class="form-group row">
                                     <label class="col-lg-3 col-form-label form-control-label">Nombres</label>
-                                    <div class="col-lg-9">
+                                    <div class="input-group col-lg-9">
+                                      <div class="input-group-prepend">
+                                        <span class="input-group-text text-bold bg-gradient-gray"><i class="fad fa-user"></i></span>
+                                      </div>
                                       <input class="form-control" name = "txtnombreo" id = "nombreo" type="text" onchange="conMayusculas(this);" aria-label="nombreo">
                                     </div>
                                   </div>
                                   <div class="form-group row">
                                     <label class="col-lg-3 col-form-label form-control-label">Lugar de Trabajo</label>
-                                    <div class="col-lg-9">
+                                    <div class="input-group col-lg-9">
+                                      <div class="input-group-prepend">
+                                        <span class="input-group-text text-bold bg-gradient-gray"><i class="fad fa-home"></i></span>
+                                      </div>
                                       <input class="form-control" name = "txtlugaro" id = "lugaro" type= "text" onchange="conMayusculas(this);" aria-label="lugaro">
                                     </div>
                                   </div>                        
                                   <div class="form-group row">
                                     <label class="col-lg-3 col-form-label form-control-label">Profesión u Oficio</label>
-                                    <div class="col-lg-9">
+                                    <div class="input-group col-lg-9">
+                                      <div class="input-group-prepend">
+                                        <span class="input-group-text text-bold bg-gradient-gray"><i class="fad fa-user-tie"></i></span>
+                                      </div>
                                       <input class="form-control" name="txtpoo" id ="poo" type="text" onchange="conMayusculas(this);" aria-label="poo">								
                                     </div>
                                   </div>                        
                                   <div class="form-group row">
                                     <label class="col-lg-3 col-form-label form-control-label">N.º DUI</label>
-                                    <div class="col-lg-9">
+                                    <div class="input-group col-lg-9">
+                                      <div class="input-group-prepend">
+                                        <span class="input-group-text text-bold bg-gradient-gray"><i class="fad fa-hashtag"></i></span>
+                                      </div>
                                       <input class="form-control" name="txtduio" id="duio" type="text" aria-label="duio">
                                     </div>
                                   </div>
                                   <div class="form-group row">
                                     <label class="col-lg-3 col-form-label form-control-label">Teléfono</label>
-                                    <div class="col-lg-9">
+                                    <div class="input-group col-lg-9">
+                                      <div class="input-group-prepend">
+                                        <span class="input-group-text text-bold bg-gradient-gray"><i class="fad fa-hashtag"></i></span>
+                                      </div>
                                       <input class="form-control" name="txttelefonoo" id="telefonoo" type="text" aria-label="telefonoo">
                                     </div>
                                   </div>
                                   <div class="form-group row">
                                     <label class="col-lg-3 col-form-label form-control-label">Dirección</label>
-                                    <div class="col-lg-9">
+                                    <div class="input-group col-lg-9">
+                                      <div class="input-group-prepend">
+                                        <span class="input-group-text text-bold bg-gradient-gray"><i class="fad fa-home"></i></span>
+                                      </div>
                                       <textarea class="form-control" name="txtdirecciono" id="direcciono" aria-label="direcciono"></textarea>
                                     </div>
                                   </div>                        
@@ -1113,6 +1284,7 @@ $(document).ready(function() {
                                   <th>Id</th>
                                   <th>Código</th>
                                   <th>Ingreso</th>
+                                  <th>Retirado</th>
                                   <th>Descripción</th>
                                 </tr>
                               </thead>
@@ -1282,7 +1454,7 @@ $(document).ready(function() {
                                               <div class="card-body">
                                                 <form method="post" action="#" enctype="multipart/form-data">
                                                   <img class="card-img-top-Portafolio img-fluid" id="ImagenPortafolio" src="#" alt="ImgPortafolio">
-                                                  <iframe id="iframePDF" frameborder="0" scrolling="no" width="100%" height="250px" src="#" title="Mi Pdf"></iframe>
+                                                  <iframe id="iframePDF" frameborder="0" scrolling="no" width="100%" height="250px" src="../registro_academico/img/EnBlanco.pdf" title="Mi Pdf"></iframe>
                                                 </form>
                                               </div>
                                               <div class="card-footer text-center bg-gradient-navy">

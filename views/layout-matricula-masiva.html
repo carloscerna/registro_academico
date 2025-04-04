@@ -173,59 +173,62 @@
           <!-- left column -->
           <div class="col">
             <!-- general form elements -->
-            <div class="card card-primary mx-auto">
-              <div class="card-header">
-                <h3 class="card-title">Seleccione.</h3>
-                <div class="card-tools">
-                  <!-- Buttons, labels, and many other things can be placed here! -->
-                  <!-- Here is a label for example -->
-                  <form  action="" method="post" name="formBuscar" id="formBuscar" role="form">
-                        <!-- Contextual button for informational alert messages -->
-                        <button type="button" class="btn btn-success btn-md" data-toggle="tooltip" data-placement="top" title="Importar Matricula" id = "goMatriculaImportar">
-                          <span class="fas fa-file-upload"></span>
-                        </button>
-                  </form>
+              <div class="card card-primary mx-auto">
+                <div class="card-header">
+                  <h3 class="card-title">Seleccione.</h3>
+                  <div class="card-tools">
+                    <!-- Buttons, labels, and many other things can be placed here! -->
+                    <!-- Here is a label for example -->
+                    <form  action="" method="post" name="formBuscar" id="formBuscar" role="form">
+                          <!-- Contextual button for informational alert messages -->
+                          <button type="button" class="btn btn-success btn-md" data-toggle="tooltip" data-placement="top" title="Importar Matricula" id = "goMatriculaImportar">
+                            <span class="fas fa-file-upload"></span>
+                          </button>
+                    </form>
+                  </div>
                 </div>
-              </div>
-              <!-- /.card-header -->
-              <!-- card body - form start -->
-              <div class="card-body">
+                <!-- /.card-header -->
+                <!-- card body - form start -->
                 <form action="" method="post" name="form" id="form" class="form-horizontal">
-                  <input type="hidden" id="accion_buscar" name="accion_buscar" value = "BuscarLista" class="{required:true}">
-                  <!-- / AÑO LECTIVO -->
-                    <div class="form-group row">
-                      <label class="col-sm-4 col-form-label" for="lstannlectivo">Año Lectivo</label>
-                      <div class="col-sm-6">
-                        <select id="lstannlectivo" name="lstannlectivo" autofocus class="custom-select" required="required"></select>
+                  <div class="card-body">
+                    <div class="row">
+                      <div class="col">
+                        <input type="hidden" id="accion_buscar" name="accion_buscar" value = "BuscarLista" class="{required:true}">
+                        <!-- / AÑO LECTIVO -->
+                          <div class="form-group row">
+                            <label class="col-sm-4 col-form-label" for="lstannlectivo">Año Lectivo</label>
+                            <div class="col-sm-6">
+                              <select id="lstannlectivo" name="lstannlectivo" autofocus class="custom-select" required="required"></select>
+                            </div>
+                          </div>
+                          <!-- / MODALIDAD -->
+                          <div class="form-group row">
+                            <label class="col-sm-4 col-form-label" for="lstmodalidad">Modalidad</label>
+                            <div class="col-sm-6">
+                              <select id="lstmodalidad" name="lstmodalidad" class="custom-select"></select>
+                            </div>
+                          </div>
+                          <!-- / GRADO, SECCION Y TURNO -->
+                          <div class="form-group row">
+                            <label class="col-sm-4 col-form-label" for="lstgradoseccion">Grado - Sección - turno</label>
+                            <div class="col-sm-6">
+                              <select id="lstgradoseccion" name="lstgradoseccion" class="custom-select"></select>
+                            </div>
+                          </div>
+                    </div>
+                      <!-- /.card-body -->
+                      <div class="card-footer d-flex justify-content-center">
+                          <button type="submit" class="btn btn-primary" id = "goBuscar" title="Buscar">
+                            <span class="fas fa-search"></span>
+                          </button>
+                          <button type="button" class="btn btn-danger" id = "goCancelar" title="Cancelar">
+                            <span class="fas fa-window-close"></span>
+                          </button>
+                      </div>
+                <!-- /.card -->
                       </div>
                     </div>
-                    <!-- / MODALIDAD -->
-                    <div class="form-group row">
-                      <label class="col-sm-4 col-form-label" for="lstmodalidad">Modalidad</label>
-                      <div class="col-sm-6">
-                        <select id="lstmodalidad" name="lstmodalidad" class="custom-select"></select>
-                      </div>
-                    </div>
-                    <!-- / GRADO, SECCION Y TURNO -->
-                    <div class="form-group row">
-                      <label class="col-sm-4 col-form-label" for="lstgradoseccion">Grado - Sección - turno</label>
-                      <div class="col-sm-6">
-                        <select id="lstgradoseccion" name="lstgradoseccion" class="custom-select"></select>
-                      </div>
-                    </div>
-              </div>
-                <!-- /.card-body -->
-                <div class="card-footer d-flex justify-content-center">
-                    <button type="submit" class="btn btn-primary" id = "goBuscar">
-                      <span class="fas fa-search"></span> Buscar Registros
-                    </button>
-                    <button type="button" class="btn btn-danger" id = "goCancelar">
-                      <span class="fas fa-window-close"></span> Cancelar
-                    </button>
-                </div>
-            </div>
-                </form>
-            <!-- /.card -->
+                  </form>
           </div> <!--/.col (left) -->
         </div>
           <!-- right column -->

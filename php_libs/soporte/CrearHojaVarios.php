@@ -47,10 +47,10 @@ require $path_root."/registro_academico/vendor/autoload.php";
        $objPHPExcel->setActiveSheetIndex($numero_de_hoja);
 	
 		//	BUCLE QUE RECORRE TODA LA CUADRICULA DE LA HOJA DE CALCULO.
-		while($objPHPExcel->getActiveSheet()->getCell("B".$fila)->getValue() != "")
+		while($objPHPExcel->getActiveSheet()->getCell("A".$fila)->getValue() != "")
 		  {
 			 //  DATOS GENERALES.
-			 $nie = $objPHPExcel->getActiveSheet()->getCell("B".$fila)->getValue();
+			 $nie = $objPHPExcel->getActiveSheet()->getCell("A".$fila)->getValue();
 			 //$descripcion = $objPHPExcel->getActiveSheet()->getCell("B".$fila)->getValue();
 			// $codigo_departamento = $objPHPExcel->getActiveSheet()->getCell("C".$fila)->getValue();
 
@@ -73,7 +73,7 @@ require $path_root."/registro_academico/vendor/autoload.php";
                 INNER JOIN catalogo_familiar cat_f ON cat_f.codigo = ae.codigo_familiar
                 INNER JOIN catalogo_genero cat_g ON cat_g.codigo = ae.codigo_genero
                 INNER JOIN catalogo_genero cat_gs ON cat_gs.codigo = a.codigo_genero
-                    where a.codigo_nie = '$nie' and am.codigo_ann_lectivo = '23'";
+                    where am.codigo_ann_lectivo = '25'";
 		// ejecutar la consulta.
 				$consulta = $dblink -> query($query);
                 while($listado = $consulta -> fetch(PDO::FETCH_BOTH))
@@ -151,4 +151,3 @@ require $path_root."/registro_academico/vendor/autoload.php";
     // Grabar el archivo.
     $objWriter = new Xlsx($objPHPExcel);
     $objWriter->save($origen.$nombre_archivo);
-?>

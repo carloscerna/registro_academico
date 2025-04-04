@@ -23,14 +23,15 @@ function CrearDirectorios($ruta_url,$nombre_ann_lectivo,$codigo_modalidad,$codig
 		2 - Cuadro Calificaciones.
 		3 - Exportar Calificaciones - Siges
 		4 - Boleta de Calificaciones.
-		5 - 
+		5 - Cuadros de Registro de Evaluación.
 	*/
 	$DestinoArchivo = "";
 	$nombre_directorios = array("$TempSistema/$CarpetaArchivo/$codigo_institucion/",
 						"$TempSistema/$CarpetaArchivo/$codigo_institucion/Nominas/",
 						"$TempSistema/$CarpetaArchivo/$codigo_institucion/Cuadros_Calificaciones/",
 						"$TempSistema/$CarpetaArchivo/$codigo_institucion/Exportar_Calificaciones_SIGES/",
-						"$TempSistema/$CarpetaArchivo/$codigo_institucion/Boleta Calificaciones/");
+						"$TempSistema/$CarpetaArchivo/$codigo_institucion/Boleta Calificaciones/",
+						"$TempSistema/$CarpetaArchivo/$codigo_institucion/Cuadros de Registro de Evaluacion/",);
 	$nombre_modalidad = array("Educacion Inicial/","Parvularia/","Educacion_Basica/","Educacion_Basica_Tercer_Ciclo/","Educacion_Media_General/","Educacion_Media_Tecnico/");
 	$nombre_modalidad_escribir = "";
 	$nombre_ann_lectivo = $nombre_ann_lectivo . "/";
@@ -98,13 +99,20 @@ function CrearDirectorios($ruta_url,$nombre_ann_lectivo,$codigo_modalidad,$codig
 						chmod ( $nombre_directorios[2].$nombre_modalidad_escribir,07777);
 							mkdir ( $nombre_directorios[2].$nombre_modalidad_escribir.$nombre_ann_lectivo);
 							chmod ( $nombre_directorios[2].$nombre_modalidad_escribir.$nombre_ann_lectivo,07777);
-				// Para Exportar Notas SIRAI
+				// Para Exportar Notas SIGES
 					mkdir ( $nombre_directorios[3]);
 					chmod( $nombre_directorios[3],07777);
 						mkdir ( $nombre_directorios[3].$nombre_modalidad_escribir);
 						chmod ( $nombre_directorios[3].$nombre_modalidad_escribir,07777);
 							mkdir ( $nombre_directorios[3].$nombre_modalidad_escribir.$nombre_ann_lectivo);
 							chmod ( $nombre_directorios[3].$nombre_modalidad_escribir.$nombre_ann_lectivo,07777);
+				// Para cuadros de registro de evaluacion.
+				mkdir ( $nombre_directorios[4]);
+				chmod( $nombre_directorios[4],07777);
+					mkdir ( $nombre_directorios[4].$nombre_modalidad_escribir);
+					chmod ( $nombre_directorios[4].$nombre_modalidad_escribir,07777);
+						mkdir ( $nombre_directorios[4].$nombre_modalidad_escribir.$nombre_ann_lectivo);
+						chmod ( $nombre_directorios[4].$nombre_modalidad_escribir.$nombre_ann_lectivo,07777);
 		}
 		// proceso para las nòminas.
 		if($codigo_destino === 1){
@@ -211,7 +219,32 @@ if($codigo_destino === 4){
 						chmod ( $nombre_directorios[4].$nombre_modalidad_escribir.$nombre_ann_lectivo,07777);
 		}
 }	
-	// Cóndicionar la ruta del archivos destino.
+// En el caso que es CUADRO DE REGISTRO DE EVALUACION, se crean los directorios o carpetas respectivas.
+if($codigo_destino === 5){
+	// proceso para el control de actividades..
+	if(!file_exists( $nombre_directorios[5])){
+			// Para Nóminas. Escolanadamente.
+				mkdir ( $nombre_directorios[5]);
+				chmod ( $nombre_directorios[5],07777);
+					mkdir ( $nombre_directorios[5].$nombre_modalidad_escribir);
+					chmod ( $nombre_directorios[5].$nombre_modalidad_escribir,07777);
+						mkdir ( $nombre_directorios[5].$nombre_modalidad_escribir.$nombre_ann_lectivo);
+						chmod ( $nombre_directorios[5].$nombre_modalidad_escribir.$nombre_ann_lectivo,07777);
+		}
+	if(!file_exists( $nombre_directorios[5].$nombre_modalidad_escribir)){
+			// Para Nóminas. Escolanadamente.
+					mkdir ( $nombre_directorios[5].$nombre_modalidad_escribir);
+					chmod ( $nombre_directorios[5].$nombre_modalidad_escribir,07777);
+						mkdir ( $nombre_directorios[5].$nombre_modalidad_escribir.$nombre_ann_lectivo);
+						chmod ( $nombre_directorios[5].$nombre_modalidad_escribir.$nombre_ann_lectivo,07777);
+		}
+	if(!file_exists( $nombre_directorios[5].$nombre_modalidad_escribir.$nombre_ann_lectivo)){
+			// Para Nóminas. Escolanadamente.
+						mkdir ( $nombre_directorios[5].$nombre_modalidad_escribir.$nombre_ann_lectivo);
+						chmod ( $nombre_directorios[5].$nombre_modalidad_escribir.$nombre_ann_lectivo,07777);
+		}
+}
+// Cóndicionar la ruta del archivos destino.
 	switch($codigo_destino)
 	{
 		case 1: // Nóminas
@@ -226,8 +259,10 @@ if($codigo_destino === 4){
 		case 4: // BOLETA DE CALIFICACIONES.
 			$DestinoArchivo =  $nombre_directorios[4].$nombre_modalidad_escribir.$nombre_ann_lectivo;
 			break;
+		case 5: // CUADRO DE REGISTRO DE EVALUACION.
+			$DestinoArchivo =  $nombre_directorios[5].$nombre_modalidad_escribir.$nombre_ann_lectivo;
+			break;
 	}
-	
 	return $DestinoArchivo;
 }
 
@@ -585,41 +620,62 @@ function genera_bach()
 				$sobreedad_escala = 4;
 			}
 		}
-		
 		return $sobreedad_escala;
 	}
 /////////////////////////////////////////////////////////////////////////////////////////
 //				**	verificar la nota mayor, la final o recuperación.
 /////////////////////////////////////////////////////////////////////////////////////////
-	function verificar_nota($nota_final, $recuperacion)
+	function verificar_nota($nota_final, $nota_r_1, $nota_r_2)
 	{
-		$nota = 0;
-		
-		if($nota_final < 5 && $recuperacion != 0){
-			// calcular la nota entre dos.
-			$nota = round(($nota_final+$recuperacion)/2,0);}
-			
-			// no calcular la nota entre dos.
-			//$nota = number_format($recuperacion,0);}
+		$nota = intval($nota_final);
+		$nota_promedio_final = intval($nota_final);
+		//////////////////////////////////////////////////////////////////////////////////////
+		//	Fórmula.
+		//////////////////////////////////////////////////////////////////////////////////////
+		if($nota_r_2 == 0){
+			if($nota_r_1 == 0){
 
-		else{
-			$nota = number_format($nota_final,0);}
-		
-		return $nota;
+			}else{
+				$nota_promedio_final = round(($nota_final + $nota_r_1) / 2,0);	
+			}
+		}else{
+			$nota_promedio_final = round(($nota_final + $nota_r_2) / 2,0);
+		}
+			$nota = $nota_promedio_final;
+				return $nota;
 	}
 // verificar para media
-	function verificar_nota_media($nota_final, $recuperacion)
+	function verificar_nota_media($nota_final, $nota_r_1, $nota_r_2)
 	{
-		$nota = 0;
-		
-		if($nota_final < 6 && $recuperacion != 0){
-			// calcular la nota entre dos.
-		$nota = round(($nota_final+$recuperacion)/2,0);}
-		else{
-			$nota = number_format($nota_final,0);}
-		
-		return $nota;
+		$nota = intval($nota_final);
+		$nota_promedio_final = intval($nota_final);
+		//////////////////////////////////////////////////////////////////////////////////////
+		//	Fórmula.
+		//////////////////////////////////////////////////////////////////////////////////////
+		if($nota_r_2 == 0){
+			if($nota_r_1 == 0){
+
+			}else{
+				$nota_promedio_final = round(($nota_final + $nota_r_1) / 2,0);	
+			}
+		}else{
+			$nota_promedio_final = round(($nota_final + $nota_r_2) / 2,0);
+		}
+			$nota = $nota_promedio_final;
+				return $nota;
 	}
+// verificar para media bachillerato contable.
+function verificar_nota_media_contable($nota_final, $recuperacion)
+{
+	$nota = 0;
+	
+	if($nota_final < 3 && $recuperacion != 0){
+		// calcular la nota entre dos.
+		$nota = round(($nota_final+$recuperacion)/2,0);}
+	else{
+		$nota = number_format($nota_final,0);}
+	return $nota;
+}
 /////////////////////////////////////////////////////////////////////////////////////////
 //				**	cambiar el Del por del ó De por de.
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -882,6 +938,23 @@ function contar_promovidos_media($x1, $x2, $nota_e){
 			return ;
 }
 ////////////////////////////////////////////////////
+//contar promovidos masculino MEDIA tecnico modular
+////////////////////////////////////////////////////
+
+function contar_promovidos_media_modular($x1, $x2, $nota_e){
+	global $contar_p_m, $contar_r_m, $contar_p_f, $contar_r_f, $si_aprobado, $no_aprobado;;
+	//
+		if($x1 == 'm' && $x2 >= 3){$contar_p_m++;}
+		if($x1 == 'm' && $x2 < 3){$contar_r_m++;}
+	//
+		if($x1 == 'f' && $x2 >= 3){$contar_p_f++;}
+		if($x1 == 'f' && $x2 < 3){$contar_r_f++;}
+	//	
+		if($x2 >= $nota_e){$si_aprobado++;}
+		if($x2 < $nota_e){$no_aprobado++;}
+			return ;
+}
+////////////////////////////////////////////////////
 //Aprobados o Reprobados
 ////////////////////////////////////////////////////
 function cambiar_aprobado_reprobado_m($ap_re){
@@ -897,7 +970,7 @@ function cambiar_aprobado_reprobado_media_contable($ap_re,$nombre_area){
 	if($nombre_area == "TéCNICA" || $nombre_area == "Técnica"){
 		$calificacion_maxima = 4;
 	}else{
-		$calificacion_maxima = 6;
+		$calificacion_maxima = 5;
 	}
 		if($ap_re !=0){
 			if($ap_re >= $calificacion_maxima){$ap_res = "A";}else{$ap_res = "R";}}
@@ -1025,5 +1098,3 @@ function fechaYMD()
     
     return $fecha;
 }*/
-
-?>

@@ -23,4 +23,3 @@ $root = '';
         "codigo_institucion" => $_SESSION['codigo_institucion']
     ));
 }
-?>

@@ -3,14 +3,47 @@
 {% extends 'default_layout.html' %}
 
 {% block extraCSS %}
-
+<style>
+  #tabstabla {
+    display: none;
+  }
+  #asistencia {
+    display: none;
+  }
+  #paquete {
+    display: none;
+  }
+  #pre-matricula {
+    display: none;
+  }
+  #boleta {
+    display: none;
+  }
+  #trimestre {
+    display: none;
+  }
+  #nota-paes {
+    display: none;
+  }
+  #nota-asignatura {
+    display: none;
+  }
+  #nota-paes {
+    display: none;
+  }
+  #certificado-printer {
+    display: none;
+  }
+  #carnet-estudiantil {
+    display: none;
+  }
+</style>
 {% endblock %}
 
 {% block javascripts %}
-
-    <!-- Cargar el JS que gestiona, consultas e insercion de datos, junto con phpAjax...-->    
+  <!-- Cargar el JS que gestiona, consultas e insercion de datos, junto con phpAjax...-->    
     <script type="text/JavaScript" src="js/main_reportes.js"></script>
-<!-- DEINIR EL AJAX START- STOP Y ERROR -->
+  <!-- DEINIR EL AJAX START- STOP Y ERROR -->
   <script>
     $(document).ready(function () { 
       /*$(document).ajaxStart(function () {
@@ -240,9 +273,7 @@
           <div class="col-md-3">
             <!-- general form elements -->
             <div class="card card-primary">
-              <div class="card-header">
-                <h3 class="card-title">Seleccione</h3>
-              </div>
+              <div class="card-header">Seleccione.</div>
               <!-- /.card-header -->
               <!-- form start -->
               <form role="form" action="" method="post" name="formEmpleados" id="formEmpleados">
@@ -250,11 +281,12 @@
                    <input type="hidden" id="accion_buscar" name="accion_buscar" value = "BuscarUser" class="{required:true}">
                 </fieldset>
                 <div class="card-body">
-                  <div class="form-group">
+                  <h3 class="card-title">Por Ciclo</h3>
+                  <div class="mb-3">
                     <label for="ann_lectivo">Año Lectivo</label>
                     <select id="lstannlectivo" name="lstannlectivo" autofocus class="custom-select" aria-label="lstannlectivo"></select>
                   </div>
-                  <div class="form-group">
+                  <div class="mb-3">
                     <label for="modalidad">Modalidad</label>
                     <select id="lstmodalidad" name="lstmodalidad" class="custom-select" disabled="disabled" aria-label="lstmodalidad"></select>
                   </div>
@@ -273,53 +305,53 @@
           </div> <!--/.col (left) -->
           <!-- right column -->
           <div class="col-md-9">
-           <div class="card card-secondary" id="tabstabla" style="display: none">
-              <div class="card-header">
-                <h3 class="card-title"><label for="LblSeleccione">Seleccione para Imprimir...</label></h3>
+           <div class="card card-secondary" id="tabstabla">
+              <div class="card-header text-white">
+                <h3 class="card-title text-white"><label for="LblSeleccione">Seleccione para Imprimir...</label></h3>
               </div>
               <!-- /.card-header -->
               <div class="card-body p-0">
                 <table class="table table-striped table-sm">
                   <thead>
                     <tr>
-                      <th style="width: 5px">#</th>
-                      <th style="width: 25px">Grado/Sección</th>
-                      <th style="width: 35px">Nóminas</th>
-                      <th style="width: 35px">Notas y Promedios</th>
+                      <th>#</th>
+                      <th>Grado, Sección, Tunno, Nombre del Docente.</th>
+                      <th>Nóminas</th>
+                      <th>Notas y Promedios</th>
                     </tr>
                     <tr>
-                     <td style="width: 5px"></td>
-                     <td style="width: 25px"></td>
-                     <td style="width: 35px">
+                     <td></td>
+                     <td></td>
+                     <td>
                        <select class="custom-select" name="lstlist" id="lstlist">
-                            <option value="orden" selected>Por Orden Alfabético
-                            <option value="libro_registro">Por Orden Alfabético (Libro Registro)
-                            <option value="nomina_estadistica">Por Orden Alfabético (Para Estadística)
-                            <option value="control_actividades">Control de Actividades
-                            <option value="asistencia">Asistencia
-                            <option value="asistencia-cuadros">Asistencia X 30 Cuadros
-                            <option value="genero">Por Género
-                            <option value="para_firmas">Para Firmas
-                            <option value="para_sae_nie">Para Firmas 2
-                            <option value="para_siges">Para SIGES
-                            <option value=para_firmas_retiro_documentos>Para Firmas (Retiro de Documentos)
-                            <option value=boleta_de_datos>Boleta de Captura de Datos
-                            <option value=datos_matricula>Datos de Matricula
-                            <option value=informe_hogar>Hogar
-                            <option value=informe_hogar_no_encuesta>Hogar No Encuesta
-                            <option value=informe_hogar_individual>Hogar - Individual
-                            <option value=cuadro_notas>Cuadro de Notas
-                            <option value=telefono_alumno>Teléfono alumnos(as)
-                            <option value=paquete_escolar_02>Paquete Escolar
-                            <option value=ficha_alumno_listado>Ficha Alumnos(a)
-                            <option value=pre-matricula>Pre-Matricula
-                            <option value=carnet-estudiantil>Carnet Estudiantil
-                            <option value="hoja-de-calculo">Hoja de Cálculo
-                            <option value="cuadro-de-notas-hoja-de-calculo">Cuatro de Notas (Hoja de Cálculo)
-                            <option value="hoja-de-calculo-caracterizacion">Caracterización (Hoja de Cálculo)
-                              <option value="cuadro-de-promocion">Cuadro de Promoción (Hoja de Cálculo)
+                            <option value="orden" selected>Por Orden Alfabético</option>
+                            <!-- <option value="libro_registro">Por Orden Alfabético (Libro Registro)</option> -->
+                            <!-- <option value="nomina_estadistica">Por Orden Alfabético (Para Estadística)</option> -->
+                            <option value="control_actividades">Control de Actividades</option>
+                            <option value="asistencia">Asistencia</option>
+                            <option value="asistencia-cuadros">Asistencia X 30 Cuadros</option>
+                            <!-- <option value="genero">Por Género</option> -->
+                            <!-- <option value="para_firmas">Para Firmas</option> -->
+                            <option value="para_sae_nie">Para Firmas</option>
+                            <!-- <option value="para_siges">Para SIGES</option> -->
+                            <!-- <option value="para_firmas_retiro_documentos">Para Firmas (Retiro de Documentos)</option> -->
+                            <!-- <option value="boleta_de_datos">Boleta de Captura de Datos</option> -->
+                            <option value="datos_matricula">Datos de Matricula</option>
+                            <!-- <option value="informe_hogar">Hogar</option> -->
+                            <!-- <option value="informe_hogar_no_encuesta">Hogar No Encuesta</option> -->
+                            <!-- <option value="informe_hogar_individual">Hogar - Individual</option>-->
+                            <option value="cuadro_notas">Cuadro de Notas</option>
+                            <option value="telefono_alumno">Teléfono alumnos(as)</option>
+                            <option value="paquete_escolar_02">Paquete Escolar</option>
+                            <!-- <option value="ficha_alumno_listado">Ficha Alumnos(a)</option> -->
+                            <!-- <option value="pre-matricula">Pre-Matricula</option> -->
+                            <option value="carnet-estudiantil">Carnet Estudiantil</option>
+                            <option value="hoja-de-calculo">Hoja de Cálculo (Nómina)</option>
+                            <option value="cuadro-de-notas-hoja-de-calculo">Cuatro de Notas (Hoja de Cálculo)</option>
+                            <option value="hoja-de-calculo-caracterizacion">Caracterización (Hoja de Cálculo)</option>
+                            <option value="cuadro-de-promocion">Cuadro de Promoción (Hoja de Cálculo)</option>
                        </select>
-                        <div id="asistencia" style="display: none;">
+                        <div id="asistencia">
                             <!-- SELECT MES -->
                             <div class="form-group">
                               <label for="Mes">Mes</label>
@@ -340,23 +372,23 @@
                             </div>
                         </div>
                              <!--  OPCIONES PARA LOS PAQUETES ESCOLARES -->
-                           <div id="paquete" style="display: none;">
+                           <div id="paquete">
                             <div class="row">
                              <label>RUBRO:</label>
-                                <select class='custom-select' name=lstRubro id=lstRubro>
-                                 <option value='01' selected>Paquete de Útiles Escolares</option>
-                                 <option value='02'>Adquisión de Zapatos Escolares</option>
-                                 <option value='03'>Confección de Primer Uniforme</option>
-                                 <option value='04'>Confección de Segundo Uniforme</option>
-                                  <option value='05'>Familias</option>
-                                    <option value='06'>Libro de ESMATE</option>
-                                      <option value='07'>Libro de Lenguaje</option>
-                                        <option value='08'>Sin Texto</option>
+                                <select class="custom-select" name="lstRubro" id="lstRubro">
+                                  <option value="01" selected>Paquete de Útiles Escolares</option>
+                                  <option value="02">Adquisión de Zapatos Escolares</option>
+                                  <option value="03">Confección de Primer Uniforme</option>
+                                  <option value="04">Confección de Segundo Uniforme</option>
+                                  <option value="05">Familias</option>
+                                  <option value="06">Libro de ESMATE</option>
+                                  <option value="07">Libro de Lenguaje</option>
+                                  <option value="08">Sin Texto</option>
                                 </select>
                             </div>
                             <div class="row">
                              <label>FECHA:</label>
-                                 <input type= date name="FechaPaquete" id="FechaPaquete" class="form-control">
+                                 <input type="date" name="FechaPaquete" id="FechaPaquete" class="form-control">
                             </div>
                            <div class="form-check">
                              <input type="checkbox" class="form-check-input" id="chkfechaPaquete" name="chkfechaPaquete">
@@ -369,40 +401,40 @@
                                               
                            <div class="row">
                              <label>Género</label>
-                               <select class='custom-select' name=lstMF id=lstMF>
-                                    <option value='m' selected>Masculino</option>
-                                    <option value='f'>Femenino</option>
-                                    <option value='a'>Ambos</option>
+                               <select class="custom-select" name="lstMF" id="lstMF">
+                                    <option value="m" selected>Masculino</option>
+                                    <option value="f">Femenino</option>
+                                    <option value="a">Ambos</option>
                                 </select>
                             </div>
                            </div>
                            <!--  ********************************************* -->
                            
                                  <!--  OPCIONES PARA EL CARNET ESTUDIANTIL -->
-                           <div id="carnet-estudiantil" style="display: none;">
-                             <div class='row'>
-                               <div class='col-xs-12'>
-                                 <div class='form-group'>
-                              <select class='custom-select' name=lstcarnet id=lstcarnet>
-                                 <option value=carnet_frente selected>Frente</option>
-                                 <option value=carnet_vuelto>Vuelto</option>
+                           <div id="carnet-estudiantil">
+                             <div class="row">
+                               <div class="col-xs-12">
+                                 <div class="form-group">
+                              <select class="custom-select" name="lstcarnet" id="lstcarnet">
+                                 <option value="carnet_frente" selected>Frente</option>
+                                 <option value="carnet_vuelto">Vuelto</option>
                               </select>
-                              <label class='checkbox-inline'><input class='form-control' name = chkfirma id = chkfirma type = checkbox>Firma</label>
-                              <label class='checkbox-inline'><input class='form-control' name = chksello id = chksello type = checkbox>Sello</label>
+                              <label class="checkbox-inline"><input class="form-control" name = "chkfirma" id = "chkfirma" type = "checkbox">Firma</label>
+                              <label class="checkbox-inline"><input class="form-control" name = "chksello" id = "chksello" type = "checkbox">Sello</label>
                                  </div>
                                </div>
                              </div>
                            </div>
                            <!--  ********************************************* -->
                         <!-- opciones para la PRE-MATRICULA aprobados o reprobados. -->
-                           <div id="pre-matricula" style="display: none;">
-                             <div class='row'>
-                               <div class='col-xs-12'>
-                                 <div class='form-group'>
+                           <div id="pre-matricula">
+                             <div class="row">
+                               <div class="col-xs-12">
+                                 <div class="form-group">
                                   <label>Pre-matricula Resultado: </label>
-                                   <select class='custom-select' name=lstpre id=lstpre>
-                                     <option value=Aprobados selected>Aprobados</option>
-                                     <option value=Reprobados>Reprobados</option>
+                                   <select class="custom-select" name="lstpre" id="lstpre">
+                                     <option value="Aprobados" selected>Aprobados</option>
+                                     <option value="Reprobados">Reprobados</option>
                                    </select>
                                  </div>
                                </div>
@@ -412,22 +444,22 @@
                        <td style="width: 35px">
                         <div class="row">
                          <div class="col-6">
-                             <select class='custom-select' name=lstnotas id=lstnotas>
-                                <option value=boleta_notas selected>Boleta de Notas</option>
-                                <option value=por_trimestre>Por Trimestre o Período</option>
-                                <option value=por_asignatura>Por Asignatura</option>
-                                <option value=todos_trimestre>Todos los Trimestres</option>
-                                <option value=aprobados_reprobados>Aprobados - Reprobados</option>
-                                <option value=nota_paes>Nota PAES</option>
-                                <option value=cuadro_promocion>Cuadro de Promoción</option>
-                                <option value=certificados>Certificados</option>
+                             <select class="custom-select" name="lstnotas" id="lstnotas">
+                                <option value="boleta_notas" selected>Boleta de Notas</option>
+                                <option value="por_trimestre">Por Trimestre o Período</option>
+                                <option value="por_asignatura">Por Asignatura</option>
+                                <option value="todos_trimestre">Todos los Trimestres</option>
+                                <option value="aprobados_reprobados">Aprobados - Reprobados</option>
+                                <option value="nota_paes">Nota PAES</option>
+                                <option value="cuadro_promocion">Cuadro de Registro de Evaluación</option>
+                                <option value="certificados">Certificados</option>
                              </select>
                          </div>
                          
                              <!--CONDICIONES DE LAS NOTAS  PARA LOS DIFERENTES REPORTES. -->
                              <div class="col-6">
                                 <!-- FIRMA, SELLO Y FOTO -->
-                                <div id="boleta" style="display: block;">
+                                <div id="boleta">
                                        <!-- checkbox -->
                                         <div class="form-group">
                                           <div class="custom-control custom-checkbox">
@@ -449,40 +481,40 @@
                                         </div>
                                 </div>
                                 <!-- POR TRIMESTRE O PERIODO -->
-                                <div id="trimestre" style="display: none;">
-                                     <div class='form-group'>
-                                      <select class='custom-select' name=lsttrimestres id=lsttrimestres>
-                                         <option value=nota_p_p_1 selected>Trimestre/Período 1</option>
-                                         <option value=nota_p_p_2>Trimestre/Período 2</option>
-                                         <option value=nota_p_p_3>Trimestre/Período 3</option>
-                                         <option value=nota_p_p_4>Período 4</option>
-                                         <option value=nota_final>Nota Final</option>
+                                <div id="trimestre">
+                                     <div class="form-group">
+                                      <select class="custom-select" name="lsttrimestres" id="lsttrimestres">
+                                         <option value="nota_p_p_1" selected>Trimestre/Período 1</option>
+                                         <option value="nota_p_p_2">Trimestre/Período 2</option>
+                                         <option value="nota_p_p_3">Trimestre/Período 3</option>
+                                         <option value="nota_p_p_4">Período 4</option>
+                                         <option value="nota_final">Nota Final</option>
                                       </select>
                                  </div>
                                 </div>
                                 <!-- NOTA PAES -->
-                                 <div id="nota-paes" style="display: none;">
-                                       <div class='form-group'>
-                                        <select class='custom-select' name=lstpaes id=lstpaes>
-                                           <option value=nota_paes_listado selected>Listado</option>
-                                           <option value=nota_paes_constancias>Constancias</option>
+                                 <div id="nota-paes">
+                                       <div class="form-group">
+                                        <select class="custom-select" name="lstpaes" id="lstpaes">
+                                           <option value="nota_paes_listado" selected>Listado</option>
+                                           <option value="nota_paes_constancias">Constancias</option>
                                         </select>
                                    </div>
                                  </div>
                                  <!-- POR ASIGNATURA -->
-                                 <div id="nota-asignatura" style="display: none;">
-                                       <div class='form-group'>
-                                         <select class='custom-select' name=lstasignatura id=lstasignatura>
+                                 <div id="nota-asignatura">
+                                       <div class="form-group">
+                                         <select class="custom-select" name="lstasignatura" id="lstasignatura">
                                              <!-- CONTENIDO SEGUN EL GRADO. -->             
                                          </select>
                                        </div>
                                  </div>
                                  <!-- POR CERTIFICADO -->
-                                 <div id="certificado-printer" style="display: none;">
-                                      <div class='form-group'>
-                                       <select class='custom-select' name=lstcertificado_printer id=lstcertificado_printer>
-                                          <option value=0 selected>Printer 0</option>
-                                          <option value=1>Printer 1</option>
+                                 <div id="certificado-printer">
+                                      <div class="form-group">
+                                       <select class="custom-select" name="lstcertificado_printer" id="lstcertificado_printer">
+                                          <option value="0" selected>Printer 0</option>
+                                          <option value="1">Printer 1</option>
                                        </select>
                                       </div>
                                 </div>

@@ -70,8 +70,8 @@ function num2letras($num, $fem = false, $dec = false) {
    $matmil[16] = 'millones de billones de trillones';
 
    $num = trim((string)@$num);
-   if ($num[0] == '-') {
-      $neg = 'menos ';
+   if($num[0] == "-") {
+      $neg = "menos ";
       $num = substr($num, 1);
    }else
       $neg = '';

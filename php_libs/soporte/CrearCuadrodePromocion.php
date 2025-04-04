@@ -166,4 +166,3 @@ $salidaJson = array("respuesta" => $respuestaOK,
 		"contenido" => $contenidoOK);
 
 echo json_encode($salidaJson);	
-?>

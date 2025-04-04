@@ -31,4 +31,3 @@ $_SESSION['Id_A'] = $_REQUEST['id'];
         "valor_c_grado_seccion_turno" => $_SESSION['s_codigo_grado_seccion_turno']
     ));
 }
-?>

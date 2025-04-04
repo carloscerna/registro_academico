@@ -72,6 +72,7 @@ $('body').on('click','#listaUsuariosOK a',function (e){
 // Ajax hide. y controlar que informe se va a presentar.
         var ann_lectivo = $('#lstannlectivo').val();
         var varbach = $('#lstmodalidad').val();
+        var LstNombreModalidad = $('#lstmodalidad option:selected').text();
         var lstlist_nominas = $("#lstlist option:selected").val();
 
         var lstlist_fechames = $("#lstFechaMes option:selected").val();
@@ -108,7 +109,7 @@ $('body').on('click','#listaUsuariosOK a',function (e){
 ////////////////////////////////////////////////////
 if (lstlist_nominas == 'orden' && $(this).attr('data-accion') == 'listados_01') {
         // construir la variable con el url.
-        varenviar = "/registro_academico/php_libs/reportes/nomina.php?todos="+reporte_ok;
+        varenviar = "/registro_academico/php_libs/reportes/Estudiante/Nomina.php?todos="+reporte_ok;
         // Ejecutar la función
         AbrirVentana(varenviar);
 }
@@ -122,7 +123,7 @@ if (lstlist_nominas == 'libro_registro' && $(this).attr('data-accion') == 'lista
 
 if (lstlist_nominas == 'control_actividades' && $(this).attr('data-accion') == 'listados_01') {
         // construir la variable con el url.
-        varenviar = "/registro_academico/php_libs/reportes/control_de_actividades.php?todos="+reporte_ok;
+        varenviar = "/registro_academico/php_libs/reportes/Estudiante/ControlActividades.php?todos="+reporte_ok;
         // Ejecutar la función
         AbrirVentana(varenviar);
 }
@@ -309,7 +310,7 @@ if (lstlist_nominas == 'cuadro_notas' && $(this).attr('data-accion') == 'listado
 }                        
 if (lstlist_nominas == 'telefono_alumno' && $(this).attr('data-accion') == 'listados_01') {
         // VARIABLE PARA LA URL(INFORME)
-        $url_ruta = "php_libs/reportes/telefono_alumno.php";
+        $url_ruta = "php_libs/reportes/Estudiante/Telefono.php";
         // Ajax.
         if(chkCrearArchivoPdf == "si")
                 {
@@ -334,7 +335,7 @@ if (lstlist_nominas == 'telefono_alumno' && $(this).attr('data-accion') == 'list
                                 });
                 }else if(chkCrearArchivoPdf == "no"){
                         // construir la variable con el url.
-                                varenviar = "/registro_academico/php_libs/reportes/telefono_alumno.php?todos="+reporte_ok+"&chkCrearArchivoPdf="+chkCrearArchivoPdf;
+                                varenviar = "/registro_academico/php_libs/reportes/Estudiante/Telefono.php?todos="+reporte_ok+"&chkCrearArchivoPdf="+chkCrearArchivoPdf;
                         // Ejecutar la función
                                 AbrirVentana(varenviar);
                 }
@@ -412,30 +413,43 @@ if (lstlist_nominas == 'hoja-de-calculo' && $(this).attr('data-accion') == 'list
         //AbrirVentana(varenviar);
 }
 if (lstlist_nominas == 'cuadro-de-promocion' && $(this).attr('data-accion') == 'listados_01') {
+        // crear variable para el nivel o modalidad.
+        $url_ = "php_libs/soporte/CrearCuadrodePromocion.php";                
+                switch(LstNombreModalidad)
+                {
+                        case "Educación Básica - Estándar de Desarrollo":
+                                $url_ = "php_libs/soporte/CrearCuadroRegistroEvaluacionEstandarBasicaParvularia.php";
+                        break;
+                        case "Educación Parvularia - Estándar de Desarrollo":
+                                $url_ = "php_libs/soporte/CrearCuadroRegistroEvaluacionEstandarBasicaParvularia.php";
+                        break;
+                        case "Educación Básica - Segundo y Tercer Grado Focalizado":
+                                $url_ = "php_libs/soporte/CrearCuadroRegistroEvaluacionEstandarBasicaParvularia.php";
+                        break;
+                        default:
+                                $url_ = "php_libs/soporte/CrearCuadrodePromocion.php";                
+                        break;
+                }
         $.ajax({
                 cache: false,
                 type: "POST",
                 dataType: "json",
-                //url:"php_libs/soporte/CrearNominas.php",
-                url:"php_libs/soporte/CrearCuadrodePromocion.php",
+                url: $url_,
                 data: "todos="+ reporte_ok + "&id=" + Math.random(),
                 success: function(response){
                         // Validar mensaje de error
                         if(response.respuesta === false){
-                                toastr["error"](response.mensaje, "Sistema");
+                                toastr.error(response.mensaje, "Sistema de Registro Académico");
                         }
                         else{
-                                toastr["info"](response.contenido, "Sistema");}
+                                toastr.options.showEasing = 'swing';
+                                toastr.options.hideEasing = 'linear';
+                                toastr.info(response.contenido, "Sistema de Registro Académico");}
                 },
                 error:function(){
                         error_();
                 }
                 });
-        
-        // construir la variable con el url.
-        //varenviar = "/registro_academico/php_libs/soporte/CrearNominas.php?todos="+reporte_ok;
-        // Ejecutar la función
-        //AbrirVentana(varenviar);
 }
 if (lstlist_nominas == 'hoja-de-calculo-caracterizacion' && $(this).attr('data-accion') == 'listados_01') {
         $.ajax({
@@ -509,40 +523,49 @@ if (lstlist_nominas == 'cuadro-de-notas-hoja-de-calculo' && $(this).attr('data-a
 // bloque para los diferentes informes de notas.
 ////////////////////////////////////////////////////
 if (lstlist_notas == 'boleta_notas' && $(this).attr('data-accion') == 'listados_02') {
+        
         parvularia_seccion = reporte_ok.substring(2,2);
         // Verificar si el Parvularia... primeros grados y segundo y tercero focalizado.
-        if(varbach >= '13' && varbach <= '14' || varbach == '17' || varbach == '16'){
-                $url_ruta = "php_libs/reportes/boleta_de_calificacion_parvularia.php";
+        if(varbach >= '13' && varbach <= '14' || varbach == '17' || varbach == '16' || varbach == '18' || varbach == '20'){
+                switch (varbach) {
+                        case '16':
+                                $url_ruta = "php_libs/reportes/Boletas Calificaciones/Segundo y Tercer grado Focalizado.php";
+                                break;
+                
+                        default:
+                                $url_ruta = "php_libs/reportes/Boletas Calificaciones/Parvularia y Primeros grados.php";
+                }
+                
         }
         // EDUCACIÓN BASICA - BOLETA DE CALIFICACIÓN EDUCACIÓN BÁSICA Y MEDIA.
-        if(varbach >= '03' && varbach <='12' || varbach == '15'){
+        if(varbach >= '03' && varbach <='12' || varbach == '15' || varbach == '17' || varbach == '19' || varbach == '21'){
                 // VARIABLE PARA LA URL(INFORME)
                 $url_ruta = "php_libs/reportes/boleta_de_notas.php";
         }
                 if(chkCrearArchivoPdf == "si")
                 {
-                        $.ajax({
-                                beforeSend: function(){
-                                        $('#myModal').modal('show');
-                                },
-                                cache: false,
-                                type: "POST",
-                                dataType: "json",
-                                url: $url_ruta,
-                                data: "todos="+ reporte_ok + "&id=" + Math.random()+"&chksello="+chksello+"&chkfirma="+chkfirma+"&txtcodmatricula="+txtcodigomatricula+"&txtidalumno="+id_alumno+"&chkfoto="+chkfoto+"&chkCrearArchivoPdf="+chkCrearArchivoPdf+"&print_uno="+print_uno,
-                                success: function(response){
-                                        // Validar mensaje de error
-                                        if(response.respuesta === false){
-                                        toastr["error"](response.mensaje, "Sistema");
-                                        }
-                                        else{
-                                        toastr["info"](response.mensaje, "Sistema");
-                                        }
-                                },
-                                error:function(){
-                                        toastr["error"](response.mensaje, "Sistema");
+                $.ajax({
+                        beforeSend: function(){
+                                $('#myModal').modal('show');
+                        },
+                        cache: false,
+                        type: "POST",
+                        dataType: "json",
+                        url: $url_ruta,
+                        data: "todos="+ reporte_ok + "&id=" + Math.random()+"&chksello="+chksello+"&chkfirma="+chkfirma+"&txtcodmatricula="+txtcodigomatricula+"&txtidalumno="+id_alumno+"&chkfoto="+chkfoto+"&chkCrearArchivoPdf="+chkCrearArchivoPdf+"&print_uno="+print_uno,
+                        success: function(response){
+                                // Validar mensaje de error
+                                if(response.respuesta === false){
+                                toastr["error"](response.mensaje, "Sistema");
                                 }
-                                });
+                                else{
+                                toastr["info"](response.mensaje, "Sistema");
+                                }
+                        },
+                        error:function(){
+                                toastr["error"](response.mensaje, "Sistema");
+                        }
+                        });
                 }else if(chkCrearArchivoPdf == "no"){
                         // construir la variable con el url.
                                 varenviar = "/registro_academico/"+$url_ruta+"?todos="+reporte_ok+"&chksello="+chksello+"&chkfirma="+chkfirma+"&txtcodmatricula="+txtcodigomatricula+"&txtidalumno="+id_alumno+"&chkfoto="+chkfoto+"&chkCrearArchivoPdf="+chkCrearArchivoPdf+"&print_uno="+print_uno;
@@ -639,15 +662,21 @@ if (lstlist_notas == 'cuadro_promocion' && $(this).attr('data-accion') == 'lista
                 }else if(varbach == '09'){
                         varenviar = "/registro_academico/php_libs/reportes/cuadro_de_promocion_tecnico_tercero.php?todos="+reporte_ok;
                 }                
-        }else if(ann_lectivo >= "21"){
-                if(varbach >= '03' && varbach <= '05'){
-                        varenviar = "/registro_academico/php_libs/reportes/cuadro_de_promocion_2022.php?todos="+reporte_ok;
-                }else if(varbach == '06'){
-                        varenviar = "/registro_academico/php_libs/reportes/cuadro_de_promocion_general.php?todos="+reporte_ok;
-                }else if(varbach == '07'){
-                        varenviar = "/registro_academico/php_libs/reportes/cuadro_de_promocion_tecnico.php?todos="+reporte_ok;
-                }else if(varbach == '09'){
-                        varenviar = "/registro_academico/php_libs/reportes/cuadro_de_promocion_tecnico_tercero.php?todos="+reporte_ok;
+        }else if(ann_lectivo >= "21"){  // LOS CUADROS DE REGISTRO DE EVALUACION. 
+                if(varbach >= '03' && varbach <= '05'){ // EDUCACIÓN BÁSICA.
+                        varenviar = "/registro_academico/php_libs/reportes/Cuadros de Registro/Basica II y III Ciclo.php?todos="+reporte_ok;
+                }else if(varbach == '06'){ // EDUCACIÓN MEDIA - BACHILLERATO GENERAL.
+                        varenviar = "/registro_academico/php_libs/reportes/Cuadros de Registro/General I y II año.php?todos="+reporte_ok;
+                }else if(varbach == '07'){ // EDUCACIÓN MEDIA - BACHILLERATO TECNICO.
+                        varenviar = "/registro_academico/php_libs/reportes/Cuadros de Registro/Tecnico II año.php?todos="+reporte_ok;
+                }else if(varbach == '09'){ // EDUCACIÓN MEDIA - BACHILLERATO TECNICO VOCACIONAL COMERCIAL.
+                        varenviar = "/registro_academico/php_libs/reportes/Cuadros de Registro/Tecnico III año.php?todos="+reporte_ok;
+                }else if(varbach == '10'){ // EDUCACIÓN BASICA - III CICLO.
+                        varenviar = "/registro_academico/php_libs/reportes/Cuadros de Registro/Basica II y III Ciclo Nocturna.php?todos="+reporte_ok;
+                }else if(varbach == '11'){ // EDUCACIÓN MEDIA - BACHILLERATO GENERAL NOCTURNA.
+                        varenviar = "/registro_academico/php_libs/reportes/Cuadros de Registro/General I y II año Nocturna.php?todos="+reporte_ok;
+                }else if(varbach == '15'){ // EDUCACIÓN MEDIA - BACHILLERATO TECNICO VOCACIONAL AUXILIAR CONTABLE.
+                        varenviar = "/registro_academico/php_libs/reportes/Cuadros de Registro/Tecnico I y II año Modular.php?todos="+reporte_ok;
                 }   
         }else{
                 varenviar = "/registro_academico/php_libs/reportes/cuadro_de_promocion_2015.php?todos="+reporte_ok;
@@ -683,6 +712,6 @@ function ok_(){
 }
 			
 function error_(){
-        toastr.warning("Registros no Encontrados."); 
+        toastr.error("Revisar la información."); 
 	return false; 
 }

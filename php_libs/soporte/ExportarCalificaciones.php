@@ -26,6 +26,10 @@
       $nombre_modalidad = $Exportar->NombreNivel;
       $NombreGrado = explode("-", $NombreGrado);
       $nombre_grado = trim($NombreGrado[0]);
+      // Focalizado.
+        if($nombre_grado == "Segundo grado" || $nombre_grado == "Tercer grado"){
+          $nombre_grado = trim($NombreGrado[0]) . " " . trim($NombreGrado[1]);
+        }
     $codigo_all = $_REQUEST["lstmodalidad"] . substr($_REQUEST["lstgradoseccion"],0,4) . $_REQUEST["lstannlectivo"];
     $periodo = $_REQUEST["lstperiodo"];
     $codigo_asignatura = substr($_REQUEST["lstasignatura"],0,3);
@@ -59,18 +63,47 @@
       $codigo_seccion = substr($codigo_all,4,2);
       $codigo_annlectivo = substr($codigo_all,6,2);
 // Evaluador nota para basica y parvularia, Extraer el nombre del grado
-      if($codigo_modalidad >= '03' and $codigo_modalidad <="12"){
-          if($periodo == "Periodo 1"){$nota_p_p = "nota_p_p_1";}
-          if($periodo == "Periodo 2"){$nota_p_p = "nota_p_p_2";}
-          if($periodo == "Periodo 3"){$nota_p_p = "nota_p_p_3";}
-          if($periodo == "Periodo 4"){$nota_p_p = "nota_p_p_4";}
-          if($periodo == "Periodo 5"){$nota_p_p = "nota_p_p_5";}
-      }else{
-          if($periodo == "Periodo 1"){$nota_p_p = "indicador_p_p_1";}
-          if($periodo == "Periodo 2"){$nota_p_p = "indicador_p_p_2";}
-          if($periodo == "Periodo 3"){$nota_p_p = "indicador_p_p_3";}        
-          if($periodo == "Alertas"){$nota_p_p = "alertas";}
-      }
+        switch ($codigo_modalidad) {
+          case ($codigo_modalidad >= '03' and $codigo_modalidad <= '05'): // educación basica y III Ciclo.
+            if($periodo == "Periodo 1"){$nota_p_p = "nota_p_p_1";}
+            if($periodo == "Periodo 2"){$nota_p_p = "nota_p_p_2";}
+            if($periodo == "Periodo 3"){$nota_p_p = "nota_p_p_3";}        
+              break;
+          case ($codigo_modalidad >= '06' and $codigo_modalidad <= '09'): // Edcuación Media Jornada Completa.
+            if($periodo == "Periodo 1"){$nota_p_p = "nota_p_p_1";}
+            if($periodo == "Periodo 2"){$nota_p_p = "nota_p_p_2";}
+            if($periodo == "Periodo 3"){$nota_p_p = "nota_p_p_3";}
+            if($periodo == "Periodo 4"){$nota_p_p = "nota_p_p_4";}
+              break;
+          case ($codigo_modalidad >= '10' and $codigo_modalidad <= '12'): // educación media y III ciclo nocturna.
+            if($periodo == "Periodo 1"){$nota_p_p = "nota_p_p_1";}
+            if($periodo == "Periodo 2"){$nota_p_p = "nota_p_p_2";}
+            if($periodo == "Periodo 3"){$nota_p_p = "nota_p_p_3";}
+            if($periodo == "Periodo 4"){$nota_p_p = "nota_p_p_4";}
+            if($periodo == "Periodo 5"){$nota_p_p = "nota_p_p_5";}
+              break;
+          case ($codigo_modalidad >= '13' and $codigo_modalidad <= '14'): // Educación Parvularia Estándar de desarrollo
+            if($periodo == "Periodo 1"){$nota_p_p = "indicador_p_p_1";}
+            if($periodo == "Periodo 2"){$nota_p_p = "indicador_p_p_2";}
+            if($periodo == "Periodo 3"){$nota_p_p = "indicador_p_p_3";}        
+            if($periodo == "Alertas"){$nota_p_p = "alertas";}
+              break;
+          case ($codigo_modalidad == '16'): // Educación Básica Segundo y Tercer grado Focalizado.
+            if($periodo == "Periodo 1"){$nota_p_p = "indicador_p_p_1";}
+            if($periodo == "Periodo 2"){$nota_p_p = "indicador_p_p_2";}
+            if($periodo == "Periodo 3"){$nota_p_p = "indicador_p_p_3";}        
+              break;
+          case ($codigo_modalidad == '15'): // Educación Media Bachillerato Tecnico Vocacion Administrativo Contable.
+            if($periodo == "Periodo 1"){$nota_p_p = "nota_p_p_1";}
+            if($periodo == "Periodo 2"){$nota_p_p = "nota_p_p_2";}
+            if($periodo == "Periodo 3"){$nota_p_p = "nota_p_p_3";}
+            if($periodo == "Periodo 4"){$nota_p_p = "nota_p_p_4";}
+              break;
+          default:
+            if($periodo == "Periodo 1"){$nota_p_p = "nota_p_p_1";}
+            if($periodo == "Periodo 2"){$nota_p_p = "nota_p_p_2";}
+            if($periodo == "Periodo 3"){$nota_p_p = "nota_p_p_3";}
+        }
 //
 //  EVALUAR SI SON TODAS LAS ASIGNATURAS O SOLO UNA.
 //
@@ -129,8 +162,11 @@
             // AREA DIMENSION ES IGUAL A NINGUNO
             if(trim($nombre_area_subdimension_t[$i]) == 'Ninguno' && trim($nombre_area_dimension_t[$i]) != 'Ninguno'){
               $NombreAsignatura = $nombre_area_dimension_t[$i] . '-' . trim($nombre_asignatura_t[$i]); 
-            }        
-
+            }  
+            // PARA SEGUNDOS Y TECEROS FOCALIZADOS.
+            if($codigo_grado == "17" || $codigo_grado == "18"){
+              $NombreAsignatura = trim($nombre_asignatura_t[$i]); 
+            }      
         // lo asigna para poder realizar la busqueda.
           $codigo_asignatura = $codigo_asignatura_t[$i];
         // CONSULTA PARA OBTENER LAS NOTAS DE LOS PERIODOS.
@@ -143,7 +179,12 @@
         {
           $nombre_completo = (trim($listado['apellido_alumno']));
           $codigo_area = trim($listado['codigo_area']);
-          $nota_p_p_ = $listado[$nota_p_p];
+          // verificar si es BTC ADministrativo Contable, porque obtendremos el promedio final.
+            if($codigo_area == "03" and $codigo_modalidad == "15"){
+              $nota_p_p_ = $listado["nota_final"];
+            }else{
+              $nota_p_p_ = $listado[$nota_p_p];
+            }
           $codigo_cc = (trim($listado['codigo_cc']));         // Variable para saber si la asignatura es de concepto o de calificación.
           $fila_excel++; $valor_uno = 1;  // inremento del valor de la fila para excel.
             ConceptoCalificacion($codigo_cc);         // Evaluar si la asignatura es de CONCEPTO O CALIFICACIÓN.
@@ -161,8 +202,13 @@ else
         while($listado = $result -> fetch(PDO::FETCH_BOTH))
             {
               $nombre_completo = (trim($listado['apellido_alumno']));               
-              $nota_p_p_ = $listado[$nota_p_p];
               $codigo_area = trim($listado['codigo_area']);
+              // verificar si es BTC ADministrativo Contable, porque obtendremos el promedio final.
+              if($codigo_area == "03" and $codigo_modalidad == "15"){
+                $nota_p_p_ = $listado["nota_final"];
+              }else{
+                $nota_p_p_ = $listado[$nota_p_p];
+              }
               $codigo_cc = (trim($listado['codigo_cc']));               // Variable para saber si la asignatura es de concepto o de calificación.
               $fila_excel++; $valor_uno = 1; // inremento del valor de la fila para excel.
               ConceptoCalificacion($codigo_cc);         // Evaluar si la asignatura es de CONCEPTO O CALIFICACIÓN.
@@ -181,7 +227,7 @@ else
 //  FUNCIONES
 //
 function ConceptoCalificacion($codigo_cc){
-  global $nota_p_p_, $objPHPExcel, $fila_excel, $valor_uno, $nota_concepto;
+  global $nota_p_p_, $objPHPExcel, $fila_excel, $valor_uno, $nota_concepto, $codigo_grado;
     switch ($codigo_cc)
     {
       case "01":  // calificación
@@ -204,7 +250,11 @@ function ConceptoCalificacion($codigo_cc){
           break;
       case "03":  // Indicador
         if(empty($nota_p_p_)){
-          $objPHPExcel->getActiveSheet()->SetCellValue("B".$fila_excel, "NE"); 
+          if($codigo_grado == "17" || $codigo_grado == "18"){
+            $objPHPExcel->getActiveSheet()->SetCellValue("B".$fila_excel, "No lo hace"); 
+          }else{
+            $objPHPExcel->getActiveSheet()->SetCellValue("B".$fila_excel, "NE"); 
+          }
         }else{
           $objPHPExcel->getActiveSheet()->SetCellValue("B".$fila_excel, $nota_p_p_);                       
         }
@@ -350,4 +400,3 @@ function BuscarPorCodigoTabla($codigo_asignatura){
   // ejecutar la consulta. PARA MOSTRAR LOS RESULTADOS EN PANTALLA.
       $result = $db_link -> query($query);
 }
-?>

@@ -1,0 +1,117 @@
+{# Heredando la plantilla principal #}
+
+{% extends 'default_layout.html' %}
+
+{% block extraCSS %}
+<style>
+    .calculator-container {
+        max-width: 500px;
+        margin: 50px auto;
+        padding: 25px;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        background: white;
+    }
+    .result-box {
+        margin-top: 20px;
+        padding: 15px;
+        border-radius: 8px;
+        background: #f1f8ff;
+    }
+</style>
+{% endblock %}
+
+{% block javascripts %}
+<script>
+    function calcularEdad() {
+        // Obtener fechas
+        const fechaNacimiento = new Date(document.getElementById("fechaNacimiento").value);
+        const fechaActual = new Date(document.getElementById("fechaActual").value);
+
+        // Validar fechas
+        if (isNaN(fechaNacimiento)) {
+            mostrarError("⚠️ Ingresa una fecha de nacimiento válida.");
+            return;
+        }
+        if (isNaN(fechaActual)) {
+            mostrarError("⚠️ Ingresa una fecha actual válida.");
+            return;
+        }
+        if (fechaNacimiento > fechaActual) {
+            mostrarError("❌ La fecha de nacimiento no puede ser mayor a la actual.");
+            return;
+        }
+
+        // Calcular diferencia
+        let años = fechaActual.getFullYear() - fechaNacimiento.getFullYear();
+        let meses = fechaActual.getMonth() - fechaNacimiento.getMonth();
+        let días = fechaActual.getDate() - fechaNacimiento.getDate();
+
+        // Ajustar meses y días negativos
+        if (días < 0) {
+            meses--;
+            días += new Date(
+                fechaActual.getFullYear(),
+                fechaActual.getMonth(),
+                0
+            ).getDate();
+        }
+        if (meses < 0) {
+            años--;
+            meses += 12;
+        }
+
+        // Mostrar resultado
+        document.getElementById("edadResultado").innerHTML = `
+            ${años} años, ${meses} meses y ${días} días
+        `;
+        document.getElementById("resultado").style.display = "block";
+    }
+
+    function mostrarError(mensaje) {
+        document.getElementById("edadResultado").innerHTML = mensaje;
+        document.getElementById("resultado").style.display = "block";
+    }
+</script>
+{% endblock %}
+
+{% block contenidos %}
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper fondoBody">
+    <!-- Content Header (Page header) 
+    Se elimino content-header section solo se va dejar Main Content -->
+    
+  <!-- Main content -->
+    <section class="content">
+        <div class="container">
+            <div class="calculator-container">
+                <h1 class="text-center mb-4">Calculadora de Edad</h1>
+                <p class="text-muted text-center mb-4">Ingresa tu fecha de nacimiento y la fecha actual para calcular tu edad.</p>
+                
+                <div class="mb-3">
+                    <label for="fechaNacimiento" class="form-label">Fecha de Nacimiento:</label>
+                    <input type="date" class="form-control" id="fechaNacimiento" required>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="fechaActual" class="form-label">Fecha Actual:</label>
+                    <input type="date" class="form-control" id="fechaActual" required>
+                </div>
+                
+                <button class="btn btn-primary w-100 mb-3" onclick="calcularEdad()">
+                    Calcular Edad
+                </button>
+                
+                <div id="resultado" class="result-box text-center" style="display: none;">
+                    <h4 class="mb-3">📅 Tu edad es:</h4>
+                    <div id="edadResultado" class="fs-4 fw-bold text-primary"></div>
+                </div>
+            </div>
+        </div>
+    </section>  
+</div> <!-- /.content-Wrapper, Contains page content. -->
+{% endblock %}
+
+{% block loginUser %}
+<!--	{% include 'layout-login-user.html' %} -->
+{% endblock %}

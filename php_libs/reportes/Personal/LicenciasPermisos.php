@@ -196,9 +196,9 @@ function Footer(){
     $this->SetXY(40,200);
     $this->Cell(20,6,'Subdirector(a)',0,1,'C');
 	    //Firma Director.
-		if ($nombre_turno == 'Matutino') {
-			$img = $_SERVER['DOCUMENT_ROOT'].'/registro_academico/img/subdirectora.png';
-			$this->Image($img,30,180,45,20);		}
+		//if ($nombre_turno == 'Matutino') {
+		//	$img = $_SERVER['DOCUMENT_ROOT'].'/registro_academico/img/subdirectora.png';
+		//	$this->Image($img,30,180,45,20);		}
 
 			
         //Nombre Director

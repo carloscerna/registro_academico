@@ -115,13 +115,13 @@ if($errorDbConexion == false){
 											$_SESSION['codigo'] = trim($userData['codigo_institucion']);
 											$_SESSION['telefono'] = trim($userData['telefono_uno']);
 											$_SESSION['codigo_municipio'] = trim($userData['codigo_municipio']);
-											$_SESSION['nombre_municipio'] = utf8_encode(trim($userData['nombre_municipio']));
+											$_SESSION['nombre_municipio'] = convertirtexto(trim($userData['nombre_municipio']));
 											$_SESSION['codigo_departamento'] = trim($userData['codigo_departamento']);
-											$_SESSION['nombre_departamento'] = utf8_encode(trim($userData['nombre_departamento']));
+											$_SESSION['nombre_departamento'] = convertirtexto(trim($userData['nombre_departamento']));
 											$_SESSION['nombre_director'] = (trim($userData['nombre_completo']));
 											$_SESSION['numero_acuerdo'] = trim($userData['numero_acuerdo']);
 											$_SESSION['se_extiende'] = trim($userData['se_extiende_la_presente']);
-											$_SESSION['dia_entrega'] = utf8_decode(trim($userData['dia_entrega']));
+											$_SESSION['dia_entrega'] = convertirtexto(trim($userData['dia_entrega']));
 											$_SESSION['logo_uno'] = trim($userData['logo_uno']);
 											$_SESSION['logo_dos'] = trim($userData['logo_dos']);
 											$_SESSION['imagen_firma'] = trim($userData['imagen_firma']);

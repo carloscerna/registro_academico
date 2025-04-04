@@ -120,6 +120,14 @@ if($errorDbConexion == false){
 					// Ejectuamos query.
 						$consulta_nota_final = $dblink -> query($query_nota_final);
 					}
+					if ($codigo_modalidad == '15' || $codigo_modalidad == '009'){
+						$query_nota_final = "UPDATE nota SET
+							nota_final = (select round((nota_p_p_1 + nota_p_p_2 + nota_p_p_3 + nota_p_p_4)/4,0) as promedio
+								from nota WHERE codigo_alumno = '$codigo_alumno' and codigo_matricula = '$codigo_matricula' and codigo_asignatura = '$codigo_asig')
+							    	WHERE codigo_alumno = '$codigo_alumno' and codigo_matricula = '$codigo_matricula' and codigo_asignatura = '$codigo_asig'";
+					// Ejectuamos query.
+						$consulta_nota_final = $dblink -> query($query_nota_final);
+					}
 				}
 					
 				$respuestaOK = true;
@@ -139,11 +147,12 @@ else{
 	$mensajeError = 'No se puede establecer conexi�n con la base de datos';}
 
 // Armamos array para convertir a JSON
-$salidaJson = array("respuesta" => $respuestaOK,
-		"mensaje" => $mensajeError,
-        "contenido" => $contenidoOK,
-        "titulo_tabla" => $titulo_tabla
-    );
+$salidaJson = [
+	"respuesta" => $respuestaOK,
+	"mensaje" => $mensajeError,
+	"contenido" => $contenidoOK,
+	"titulo_tabla" => $titulo_tabla
+];
 
 echo json_encode($salidaJson);
 
@@ -190,4 +199,3 @@ function Promedio(){
     }
     echo "nota institucional está vacía: " . $ni;
 }
-?>

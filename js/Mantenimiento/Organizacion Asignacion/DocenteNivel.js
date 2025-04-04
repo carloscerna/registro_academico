@@ -224,10 +224,9 @@ $(function(){
                                 success: function(response) {                     
                                         if (response.respuesta === true) {                     		
                                             toastr["info"]('Registros Eliminados', "Sistema");
-                                            // Asignamos valor a la variable acción
+                                                // Llamar al archivo php para hacer la consulta y presentar los datos.
                                                 $('#accion_dn').val('BuscarDN');
                                                 accion = 'BuscarDN';
-                                                // Llamar al archivo php para hacer la consulta y presentar los datos.
                                                 $.post("php_libs/soporte/Mantenimiento/Organizacion Asignacion/phpAjaxOrganizacionAsignacion.php",  {accion: accion, codigo_annlectivo: codigo_annlectivo, codigo_modalidad: codigo_modalidad},
                                                     function(response) {
                                                         if (response.respuesta === true) {

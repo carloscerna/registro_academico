@@ -1,0 +1,23 @@
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+th, td {
+    border: 1px solid #b886f1;
+    padding: 10px;
+    text-align: left;
+}
+th {
+    background-color: #4CAF50; /* Cambia a un color notable */
+    background: #4CAF50;
+    background-position: #4CAF50;
+    color: white; /* Color del texto */
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+.table-container {
+    height: 300px; /* Ajusta la altura según sea necesario */
+    overflow-y: auto;
+}

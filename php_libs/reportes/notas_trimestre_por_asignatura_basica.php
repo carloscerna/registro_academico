@@ -19,16 +19,16 @@
 //  imprimir datos del bachillerato.
      while($row = $result_encabezado -> fetch(PDO::FETCH_BOTH))
             {
-            $print_bachillerato = utf8_decode('Modalidad: '.trim($row['nombre_bachillerato']));
+            $print_bachillerato = convertirtexto('Modalidad: '.trim($row['nombre_bachillerato']));
             $codigo_bachillerato = trim($row['codigo_bachillerato']);
-            $print_grado = utf8_decode('Grado:     '.trim($row['nombre_grado']));
-            $print_seccion = utf8_decode('Sección:  '.trim($row['nombre_seccion']));
-            $print_ann_lectivo = utf8_decode('Año Lectivo: '.trim($row['nombre_ann_lectivo']));
-            $print_periodo = utf8_decode('Período: _____');
+            $print_grado = convertirtexto('Grado:     '.trim($row['nombre_grado']));
+            $print_seccion = convertirtexto('Sección:  '.trim($row['nombre_seccion']));
+            $print_ann_lectivo = convertirtexto('Año Lectivo: '.trim($row['nombre_ann_lectivo']));
+            $print_periodo = convertirtexto('Período: _____');
 
-            $nombre_grado = utf8_decode(trim($row['nombre_grado']));
-            $nombre_seccion =  utf8_decode(trim($row['nombre_seccion']));
-            //$nombre_asignatura = utf8_decode((trim($row['n_asignatura'])));
+            $nombre_grado = convertirtexto(trim($row['nombre_grado']));
+            $nombre_seccion =  convertirtexto(trim($row['nombre_seccion']));
+            //$nombre_asignatura = convertirtexto((trim($row['n_asignatura'])));
 	    break;
             }
 
@@ -37,7 +37,7 @@
 //  imprimir datos del bachillerato.
         while($row = $result -> fetch(PDO::FETCH_BOTH))
             {
-            $nombre_asignatura = utf8_decode(trim($row['n_asignatura']));
+            $nombre_asignatura = convertirtexto(trim($row['n_asignatura']));
 	    break;
             }
 // Obtener el Encargado de Grado.
@@ -73,8 +73,8 @@ function Header()
         //Arial bold 15
         $this->SetFont('Arial','B',13);
         //Título
-        $this->RotatedText(35,10,utf8_decode($_SESSION['institucion']),0);
-        $this->RotatedText(35,15,'Notas - Por Asignatura - Trimestre',0,1,'L');
+        $this->RotatedText(35,10,convertirtexto($_SESSION['institucion']),0);
+        $this->RotatedText(35,15,'Notas - Por Asignatura - Trimestre',0);
         
         $this->SetFont('Arial','',9);
         // Imprimir Modalidad y Asignatura.
@@ -126,9 +126,9 @@ function Header()
 		$x=$this->GetX();
 		$this->SetXY($x,$y);
 		$this->SetFont('Arial','B',8);
-		//OTro arreglo pero con el contenido utf8_decode es para que escriba bien los acentos. 
-		$this->Row(array(utf8_decode($contenido_encabezado[0]),utf8_decode($contenido_encabezado[1]),utf8_decode($contenido_encabezado[2]),utf8_decode($contenido_encabezado[3]),utf8_decode($contenido_encabezado[4]),utf8_decode($contenido_encabezado[5])
-						 ,utf8_decode($contenido_encabezado[6]),utf8_decode($contenido_encabezado[7]),utf8_decode($contenido_encabezado[8]),utf8_decode($contenido_encabezado[9])));
+		//OTro arreglo pero con el contenido convertirtexto es para que escriba bien los acentos. 
+		$this->Row(array(convertirtexto($contenido_encabezado[0]),convertirtexto($contenido_encabezado[1]),convertirtexto($contenido_encabezado[2]),convertirtexto($contenido_encabezado[3]),convertirtexto($contenido_encabezado[4]),convertirtexto($contenido_encabezado[5])
+						 ,convertirtexto($contenido_encabezado[6]),convertirtexto($contenido_encabezado[7]),convertirtexto($contenido_encabezado[8]),convertirtexto($contenido_encabezado[9])));
 		//Restauración de colores y fuentes
 		$this->SetFillColor(255);
 		$this->SetTextColor(0);
@@ -194,7 +194,7 @@ function FancyTable($header)
 						$pdf->SetFont('Arial','',9);
 						$pdf->Cell($w[0],$h[0],$numero_linea,0,0,'C',$fill);
 						$pdf->SetFont('Arial','',9);
-						$pdf->Cell($w[1],$h[0],utf8_decode(trim($row['apellido_alumno'])),0,0,'L',$fill);   // Nombre + apellido_materno + apellido_paterno
+						$pdf->Cell($w[1],$h[0],convertirtexto(trim($row['apellido_alumno'])),0,0,'L',$fill);   // Nombre + apellido_materno + apellido_paterno
 						$pdf->SetFont('Arial','',11);
 						if(trim($row['nota_p_p_1']) <> 0){$pdf->Cell($w[2],$h[0],trim($row['nota_p_p_1']),0,0,'C',$fill);}else{$pdf->Cell($w[2],$h[0],'',0,0,'C',$fill);}
 						if(trim($row['nota_p_p_2']) <> 0){$pdf->Cell($w[3],$h[0],trim($row['nota_p_p_2']),0,0,'C',$fill);}else{$pdf->Cell($w[3],$h[0],'',0,0,'C',$fill);}
@@ -209,10 +209,10 @@ function FancyTable($header)
 						if(trim($row['recuperacion']) <> 0){$pdf->Cell($w[7],$h[0],trim($row['recuperacion']),0,0,'C',$fill);}else{$pdf->Cell($w[7],$h[0],'',0,0,'C',$fill);}
                         if(trim($row['nota_recuperacion_2']) <> 0){$pdf->Cell($w[7],$h[0],trim($row['nota_recuperacion_2']),0,0,'C',$fill);}else{$pdf->Cell($w[7],$h[0],'',0,0,'C',$fill);}
                         // calculo de la calificacion
-						if(verificar_nota($row['nota_final'],$row['recuperacion'] != 0)){
-                            $nota_ = verificar_nota($row['nota_final'],$row['recuperacion']);
+						if(verificar_nota($row['nota_final'],$row['recuperacion'], $row['nota_recuperacion_2'] != 0,)){
+                            $nota_ = verificar_nota($row['nota_final'],$row['recuperacion'], $row['nota_recuperacion_2']);
                                 if($nota_ < 5){
-                                    $nota_ = verificar_nota($row['nota_final'],$row['nota_recuperacion_2']);
+                                    $nota_ = verificar_nota($row['nota_final'],$row['recuperacion'],$row['nota_recuperacion_2']);
                                 }
                             $pdf->Cell($w[8],$h[0],$nota_,0,0,'C',$fill);
                         }else{

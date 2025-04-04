@@ -2,23 +2,23 @@
 // ruta de los archivos con su carpeta
     $path_root=trim($_SERVER['DOCUMENT_ROOT']);
 // archivos que se incluyen.
-    include($path_root."/registro_academico/includes/funciones.php");
-	include($path_root."/registro_academico/includes/funciones_2.php");
-    include($path_root."/registro_academico/includes/consultas.php");
-    include($path_root."/registro_academico/includes/mainFunctions_conexion.php");
+  include($path_root."/registro_academico/includes/funciones.php");
+  include($path_root."/registro_academico/includes/funciones_2.php");
+  include($path_root."/registro_academico/includes/consultas.php");
+  include($path_root."/registro_academico/includes/mainFunctions_conexion.php");
 // variables y consulta a la tabla.
   $codigo_all = $_REQUEST["todos"];
   $db_link = $dblink;
 // Inicializamos variables de mensajes y JSON
-$respuestaOK = true;
-$mensajeError = "No se puede ejecutar la aplicación";
-$contenidoOK = "";
+  $respuestaOK = true;
+  $mensajeError = "No se puede ejecutar la aplicación";
+  $contenidoOK = "";
 // Información Académica.
-       $codigo_bachillerato = substr($codigo_all,0,2);
-       $codigo_modalidad = substr($codigo_all,0,2);
-       $codigo_grado = substr($codigo_all,2,2);
-       $codigo_seccion = substr($codigo_all,4,2);
-       $codigo_annlectivo = substr($codigo_all,6,2);
+  $codigo_bachillerato = substr($codigo_all,0,2);
+  $codigo_modalidad = substr($codigo_all,0,2);
+  $codigo_grado = substr($codigo_all,2,2);
+  $codigo_seccion = substr($codigo_all,4,2);
+  $codigo_annlectivo = substr($codigo_all,6,2);
 // buscar la consulta y la ejecuta.
   consultas(9,0,$codigo_all,'','','',$db_link,'');
 // Proceso de la creaciòn de la Hoja de cálculo.
@@ -37,10 +37,11 @@ $contenidoOK = "";
             }
               if($codigo_grado == "17" || $codigo_grado == "18"){
                 $n_hoja = 0;	// variable para el activesheet.
+              }else if($codigo_grado == "4P" || $codigo_grado == "5P" || $codigo_grado == "6P"){
+                $n_hoja = 1;	// variable para el activesheet.
               }else{
-                $n_hoja = 3;	// variable para el activesheet.
+                $n_hoja = 2;	// variable para el activesheet.
               }
-    
     consultas(4,0,$codigo_all,'','','',$db_link,'');
 // call the autoload
     require $path_root."/registro_academico/vendor/autoload.php";

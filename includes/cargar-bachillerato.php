@@ -23,7 +23,7 @@ else{
  $query = "SELECT organnciclo.codigo_ann_lectivo, organnciclo.codigo_bachillerato, bach.nombre as nombre_bachillerato
 		from organizar_ann_lectivo_ciclos organnciclo
 		INNER JOIN bachillerato_ciclo bach ON bach.codigo = organnciclo.codigo_bachillerato
-		where organnciclo.codigo_ann_lectivo = '".$_POST["annlectivo"]."' ORDER BY codigo";	
+		where organnciclo.codigo_ann_lectivo = '".$_POST["annlectivo"]."' ORDER BY organnciclo.ordenar";	
 }
 // Ejecutamos el Query.
    $consulta = $dblink -> query($query);

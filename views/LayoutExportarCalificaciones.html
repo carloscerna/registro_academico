@@ -96,14 +96,28 @@
       }
 
       // Condiciones para Educación Media..
-      if (bach >= '06'){
+      if (bach >= '06' && bach <= '09'){
           milstperiodo.append('<option value="Periodo 1">Período 1</option>');
           milstperiodo.append('<option value="Periodo 2">Período 2</option>');
           milstperiodo.append('<option value="Periodo 3">Período 3</option>');
           milstperiodo.append('<option value="Periodo 4">Período 4</option>');
           milstperiodo.append('<option value="Periodo 5">Período 5</option>');
           milstperiodo.append('<option value="Recuperacion">Recuperación</option>');
-      }			 
+      }
+      // Condiciones para Educación Básica segundo y tercer grado focalizado.
+        if (bach == '16'){
+              milstperiodo.append('<option value="Periodo 1">Trimestre 1</option>');
+              milstperiodo.append('<option value="Periodo 2">Trimestre 2</option>');
+              milstperiodo.append('<option value="Periodo 3">Trimestre 3</option>');
+          }			 
+      // Condiciones para Educación básica estándar de desarrollo
+      if (bach == '15'){
+        milstperiodo.append('<option value="Periodo 1">Período 1</option>');
+        milstperiodo.append('<option value="Periodo 2">Período 2</option>');
+        milstperiodo.append('<option value="Periodo 3">Período 3</option>');
+        milstperiodo.append('<option value="Periodo 4">Período 4</option>');
+        milstperiodo.append('<option value="Recuperacion">Recuperación</option>');
+      }   
     }, "json");
       // seleccionar la asignatura.
       var miselect_2=$("#lstasignatura");
@@ -158,17 +172,50 @@
               milstperiodo.append('<option value="Periodo 3">Trimestre 3</option>');
               milstperiodo.append('<option value="Recuperacion">Recuperación</option>');		
         }
-
         // Condiciones para Educación Media..
-        if (bach >= '06'){
+        if (bach >= '06' && bach <='09'){
               milstperiodo.append('<option value="Periodo 1">Período 1</option>');
               milstperiodo.append('<option value="Periodo 2">Período 2</option>');
               milstperiodo.append('<option value="Periodo 3">Período 3</option>');
               milstperiodo.append('<option value="Periodo 4">Período 4</option>');
-              milstperiodo.append('<option value="Periodo 5">Período 5</option>');
               milstperiodo.append('<option value="Recuperacion">Recuperación</option>');
         }
-        
+        // Condiciones para Educación Media..
+        if (bach >= '10' && bach <='12'){
+          milstperiodo.append('<option value="Periodo 1">Período 1</option>');
+          milstperiodo.append('<option value="Periodo 2">Período 2</option>');
+          milstperiodo.append('<option value="Periodo 3">Período 3</option>');
+          milstperiodo.append('<option value="Periodo 4">Período 4</option>');
+          milstperiodo.append('<option value="Periodo 5">Período 5</option>');
+          milstperiodo.append('<option value="Recuperacion">Recuperación</option>');
+    }
+        // Condiciones para Educación parvularia estándar de desarrollo
+          if (bach == '13'){
+            milstperiodo.append('<option value="Periodo 1">Trimestre 1</option>');
+            milstperiodo.append('<option value="Periodo 2">Trimestre 2</option>');
+            milstperiodo.append('<option value="Periodo 3">Trimestre 3</option>');
+            milstperiodo.append('<option value="Alertas">Alertas</option>');		
+          }        
+        // Condiciones para Educación básica estándar de desarrollo
+        if (bach == '14'){
+          milstperiodo.append('<option value="Periodo 1">Trimestre 1</option>');
+          milstperiodo.append('<option value="Periodo 2">Trimestre 2</option>');
+          milstperiodo.append('<option value="Periodo 3">Trimestre 3</option>');
+        }        
+        // Condiciones para Educación básica estándar de desarrollo
+        if (bach == '16'){
+          milstperiodo.append('<option value="Periodo 1">Trimestre 1</option>');
+          milstperiodo.append('<option value="Periodo 2">Trimestre 2</option>');
+          milstperiodo.append('<option value="Periodo 3">Trimestre 3</option>');
+        }        
+                // Condiciones para Educación básica estándar de desarrollo
+                if (bach == '15'){
+                  milstperiodo.append('<option value="Periodo 1">Período 1</option>');
+                  milstperiodo.append('<option value="Periodo 2">Período 2</option>');
+                  milstperiodo.append('<option value="Periodo 3">Período 3</option>');
+                  milstperiodo.append('<option value="Periodo 4">Período 4</option>');
+                  milstperiodo.append('<option value="Recuperacion">Recuperación</option>');
+                }        
               // Verificar la variables grado seccion.
               if(grado.substring(0,2) == '11')
                 {

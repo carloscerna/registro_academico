@@ -77,7 +77,7 @@ if($errorDbConexion == false){
                                 .'<td>'.$id_alumno
 								.'<td>'.$nie
 								.'<td>'.$apellido_alumno
-								."<td><div class='d-flex justify-content-end'><input type=checkbox name=matricula class='form-control'></div>"
+								."<td><div class='d-flex justify-content-center'><input type=checkbox name=matricula class='form-check-input'></div>"
 								;
 					}	// Recorrido de la Tabla.
 					$mensajeError = "Si Registro";
@@ -143,7 +143,7 @@ if($errorDbConexion == false){
                         // Ejecutamos el Query.
                             $result_consulta = $dblink -> query($query_consulta_matricula);
                                 while($row = $result_consulta -> fetch(PDO::FETCH_BOTH))
-                                    {$fila_alumno = $row{0}; $fila_matricula = $row{1};}
+                                    {$fila_alumno = $row["codigo_alumno"]; $fila_matricula = $row["id_alumno_matricula"];}
                         // Actualizar la tabla alumno_matricula con codigos de bachillerato, grado, seccion, año lectivo y año lectivo.
                             $query_update_matricula = "UPDATE alumno_matricula SET codigo_bach_o_ciclo = '$codigo_modalidad',
                                 codigo_grado = '$codigo_grado',
@@ -159,13 +159,13 @@ if($errorDbConexion == false){
                             $query_consulta = "SELECT codigo_bach_o_ciclo from alumno_matricula where codigo_alumno = ".$codigo_alumnos." ORDER BY id_alumno_matricula DESC LIMIT 1 OFFSET 0";
                             $result_consulta = $dblink -> query($query_consulta);
                                 while($row = $result_consulta -> fetch(PDO::FETCH_BOTH))
-                                    {$fila_codigo_bachillerato = $row{0};}
+                                    {$fila_codigo_bachillerato = $row["codigo_bach_o_ciclo"];}
                         // Consultar a la tabla codigo asignatura, para generar el codigo individual de cada una de ellas segun el ciclo o bachillerato.
                             $query_consulta_asignatura = "SELECT codigo_asignatura FROM a_a_a_bach_o_ciclo WHERE codigo_bach_o_ciclo = '".$fila_codigo_bachillerato."' and codigo_ann_lectivo = '".$codigo_annlectivo."' and codigo_grado = '".$codigo_grado."' ORDER BY codigo_asignatura ASC";
                                 $result_consulta = $dblink -> query($query_consulta_asignatura);
                                     while($row = $result_consulta -> fetch(PDO::FETCH_BOTH))
                                     {
-                                        $fila_codigo_asignatura = $row{0};      
+                                        $fila_codigo_asignatura = $row["codigo_asignatura"];      
                                         $query_insert = "INSERT INTO nota (codigo_asignatura, codigo_alumno, codigo_matricula) VALUES ('$fila_codigo_asignatura',$fila_alumno,$fila_matricula)";
                                         $result_consulta_insert_notas = $dblink -> query($query_insert);
                                     }
