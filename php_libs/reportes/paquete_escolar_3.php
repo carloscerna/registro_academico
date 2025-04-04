@@ -57,7 +57,7 @@ function Header()
     }else{
       //$this->RotatedText(75,15,mb_convert_encoding('PROGRAMA DE DOTACIÓN DE PAQUETES ESCOLARES AÑO '.$nombre_ann_lectivo),0);
       $this->SetXY(5,5);
-      $this->Cell(280,4,mb_convert_encoding("RECEPCIÓN DE BIENES POR PARTE DE LOS PADRES, MADRES, RESPONSABLES DE ESTUDIANTES","ISO-8859-1","UTF-8"),0,1,"C",false);
+      $this->Cell(280,4,mb_convert_encoding("FORMULARIO DE RECEPCIÓN DE BIENES POR PARTE DE LOS PADRES, MADRES, RESPONSABLES DE ESTUDIANTES","ISO-8859-1","UTF-8"),0,1,"C",false);
       $this->Cell(280,4,mb_convert_encoding("(EDUCACIÓN INICIAL Y PARVULARIA A 6.º GRADO) Y ESTUDIANTES DE TERCER CICLO Y EDUCACIÓN MEDIA","ISO-8859-1","UTF-8"),0,1,"C",false);
       $this->Cell(280,4,mb_convert_encoding("PROGRAMA DE DOTACIÓN DE UNIFORMES, ZAPATOS Y ÚTILES ESCOLARES AÑO " . $nombre_ann_lectivo,"ISO-8859-1","UTF-8"),0,0,"C",false);
     }
@@ -109,9 +109,9 @@ function Header()
     // Fijamos la posición de X y Y.
     $this->SetY(37);
     $this->SetX(10);
-    $texto_1 = mb_convert_encoding("El padre, madre, estudiante o responsable del estudiane quién suscribe, garantiza que: a) los bienes serán exclusivamente para uso del estudiante al que está destinado, b) serán utilizados para asistir y permanecer en el Centro Educativo durante el año lectivo (Art. 56 de la Constitución de la República y Art. 87 de la LEPINA):","ISO-8859-1","UTF-8");
+    $texto_1 = mb_convert_encoding("El padre, madre, estudiante o responsable del estudiane quién suscribe, garantiza que: a) los bienes serán exclusivamente para uso del estudiante al que está destinado, b) serán utilizados para asistir y permanecer en el Centro Educativo durante el año lectivo (Art. 56 de la Constitución de la República)","ISO-8859-1","UTF-8");
     $this->MultiCell1(253,4,$texto_1,0,'J',0,3);
-
+      $this->ln();
     //$this->RotatedText(10,35,mb_convert_encoding($texto_1),0);
 }
 
@@ -179,9 +179,9 @@ function FancyTable($header)
    // }
       //$rubros = m$rubro,"ISO-8859-1","UTF-8");
     if($rubro === mb_convert_encoding("Paquete de Útiles Escolares","ISO-8859-1","UTF-8") || $rubro === "" || $rubro === "Familias" || $rubro === "Libro de ESMATE" || $rubro === "Libro de Lenguaje" || $rubro === "Sin Texto"){
-       $header=array('Nº','NOMBRE DEL ESTUDIANTE','Género','CICLO',"NOMBRE DEL PADRE/MADRE/ RESPONSABLE O ESTUDIANTE",'NIE DE CADA ESTUDIANTE','No. DUI o NIE QUIEN RECIBE','FIRMA');  
+       $header=array('Nº','NOMBRE DEL ESTUDIANTE','Género','CICLO',"NOMBRE DEL PADRE/MADRE/ RESPONSABLE O ESTUDIANTE",'NIE DE CADA ESTUDIANTE','No. DUI o NIE QUIEN RECIBE','FIRMA DE QUIEN RECIBE');  
     }else{
-      $header=array('Nº','NOMBRE DEL ESTUDIANTE','Género','TALLA','NOMBRE DEL PADRE/MADRE/ RESPONSABLE O ESTUDIANTE','NIE DE CADA ESTUDIANTE','No. DUI o NIE QUIEN RECIBE','FIRMA');
+      $header=array('Nº','NOMBRE DEL ESTUDIANTE','Género','TALLA','NOMBRE DEL PADRE/MADRE/ RESPONSABLE O ESTUDIANTE','NIE DE CADA ESTUDIANTE','No. DUI o NIE QUIEN RECIBE','FIRMA DE QUIEN RECIBE');
     }
     
     $pdf->AliasNbPages();
