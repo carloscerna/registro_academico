@@ -74,8 +74,8 @@ function Header()
     if($rubro == "Sin Texto"){
       $this->RotatedText(40,20,"_____________________________",0);
     }else{
-      $this->RotatedText(40,20,"_____________________________",0);
-      //$this->RotatedText(40,20,$rubro,0);
+      //$this->RotatedText(40,20,"_____________________________",0);
+      $this->RotatedText(40,20,$rubro,0);
     }
     
     if($chkfechaPaquete == "yes"){
@@ -203,8 +203,8 @@ function FancyTable($header)
     // 0 - NUMERO.
     // 1 - NOMBRE DLE ESTUDIANTE.
     // 2 - GENERO
-    $alto = array(9); // alto de cada fila.
-    $fill=false; $i=1; $m = 0; $f = 0; $suma = 0; $incremento_fila = 15;
+    $alto = array(14.5); // alto de cada fila.
+    $fill=false; $i=1; $m = 0; $f = 0; $suma = 0; $incremento_fila = 10;
     while($row = $result -> fetch(PDO::FETCH_BOTH))// buscar la consulta y la ejecuta.
         {
             $pdf->Cell($w[0],$alto[0],$i,1,0,'C',$fill);       // núermo correlativo
@@ -236,7 +236,7 @@ function FancyTable($header)
                 if($i >= $incremento_fila){
                  $pdf->Cell(array_sum($w),0,'','T');  $pdf->AddPage();
                    // Incrementar el valor de la fila.
-                    $incremento_fila = $incremento_fila + 15;
+                    $incremento_fila = $incremento_fila + 10;
                     // Fijamos la posición de X y Y.
                         $pdf->SetY(50);
                         $pdf->SetX(10);
@@ -250,10 +250,11 @@ function FancyTable($header)
             // rellenar con las lineas que faltan y colocar total de puntos y promedio.
             //////////////////////////////////////////////////////////////////////////////////////
           	$numero = $i;
-            if($i <= 15){$linea_faltante =  15 - $numero;}
-            if($i > 15){$linea_faltante =  30 - $numero;}
-            if($i > 30){$linea_faltante =  45 - $numero;}
-            if($i > 45){$linea_faltante =  60 - $numero;}
+            if($i <= 10){$linea_faltante =  10 - $numero;}
+            if($i > 10){$linea_faltante =  20 - $numero;}
+            if($i > 20){$linea_faltante =  30 - $numero;}
+            if($i > 30){$linea_faltante =  40 - $numero;}
+            if($i > 40){$linea_faltante =  50 - $numero;}
                 
                 $numero_p = $numero - 1;               
                 for($i=0;$i<=$linea_faltante;$i++)

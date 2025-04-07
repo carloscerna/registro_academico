@@ -10,6 +10,8 @@
     header("Content-Type: text/html; charset='UTF-8'");     // cambiar a utf-8.
     date_default_timezone_set('America/El_Salvador');  // Establecer formato para la fecha.
     setlocale(LC_TIME, 'spanish');
+  // Obtener fecha y hora actual en el nuevo formato
+    $fechaHoraActual = date('d/m/Y h:i:s A'); // Formato dd/mm/yyyy y hora en 12 horas con AM/PM
 // Variables y $_REQUEST(), $_POST();
     $db_link = $dblink;
     $respuestaOK = false;
@@ -120,7 +122,7 @@
     // agregar CONSULTA PARA EDUCACIÒN PARVULARIA Y BASICA DE ESTANDAR DESARROLLO.
    $query_todas  = "SELECT a.codigo_nie, btrim(a.apellido_paterno || CAST(' ' AS VARCHAR) || a.apellido_materno || CAST(', ' AS VARCHAR) || a.nombre_completo) as apellido_alumno,
     a.nombre_completo, btrim(a.apellido_paterno || CAST(' ' AS VARCHAR) || a.apellido_materno) as apellidos_alumno, a.fecha_nacimiento,
-    am.codigo_bach_o_ciclo, am.pn, bach.nombre as nombre_bachillerato, am.codigo_ann_lectivo, ann.nombre as nombre_ann_lectivo, am.codigo_grado, 
+    am.codigo_bach_o_ciclo as codigo_bachillerato, am.pn, bach.nombre as nombre_bachillerato, am.codigo_ann_lectivo, ann.nombre as nombre_ann_lectivo, am.codigo_grado, 
     gan.nombre as nombre_grado, am.codigo_seccion, am.retirado, 
     asig.codigo_area, asig.nombre as nombre_asignatura,
     sec.nombre as nombre_seccion, ae.codigo_alumno, id_alumno, n.codigo_alumno, n.codigo_asignatura, asig.nombre AS n_asignatura, asig.codigo_cc, 
@@ -147,6 +149,7 @@
             while($row = $result_asignatura -> fetch(PDO::FETCH_BOTH))
               {
                   $nombre_asignatura = trim($row['nombre_asignatura']);
+                  $nombre_bachillerato = trim($row['nombre_bachillerato']);
                   $nombre_asignatura = str_replace(['“','”','`','´','','.', '\\', '/', '*',' " ',':',","], ' ', $nombre_asignatura);
                   $nombre_asignatura_t[] = trim($nombre_asignatura);
                   $codigo_asignatura_t[] = trim($row['codigo_asignatura']);
@@ -165,21 +168,21 @@
                   $stmt->bindParam(':codigo_bachillerato', $codigo_bachillerato, PDO::PARAM_STR);
                   $stmt->execute();
              
-                  // Encabezado en la primera fila (opcional)
-                  $objPHPExcel->getActiveSheet()->setCellValue('A1', 'Asignaturas'); // Encabezado general en A1
+                  // // Encabezado en la primera fila (opcional)
+                  // $objPHPExcel->getActiveSheet()->setCellValue('A1', 'Asignaturas'); // Encabezado general en A1
               
-                  // Escribir nombres de asignaturas en columnas de la misma fila
-                  $columna = 'B'; // Comienza en la columna B
-                  $fila = 1; // Mantén los valores en la misma fila (fila 1)
-                  while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                    $nombreAsignatura = mb_strtoupper($row['nombre_asignatura'], 'UTF-8');
-                      $objPHPExcel->getActiveSheet()->setCellValue("{$columna}{$fila}", $nombreAsignatura); // Escribir en columnas B, C, D...
-                      $columna++; // Cambia a la siguiente columna
-                  }
-                      // Ajustar automáticamente el ancho de las columnas
-                        foreach ($objPHPExcel->getActiveSheet()->getColumnIterator() as $column) {
-                            $objPHPExcel->getActiveSheet()->getColumnDimension($column->getColumnIndex())->setAutoSize(true); // Ajustar ancho
-                        }
+                  // // Escribir nombres de asignaturas en columnas de la misma fila
+                  // $columna = 'B'; // Comienza en la columna B
+                  // $fila = 1; // Mantén los valores en la misma fila (fila 1)
+                  // while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                  //   $nombreAsignatura = mb_strtoupper($row['nombre_asignatura'], 'UTF-8');
+                  //     $objPHPExcel->getActiveSheet()->setCellValue("{$columna}{$fila}", $nombreAsignatura); // Escribir en columnas B, C, D...
+                  //     $columna++; // Cambia a la siguiente columna
+                  // }
+                  //     // Ajustar automáticamente el ancho de las columnas
+                  //       foreach ($objPHPExcel->getActiveSheet()->getColumnIterator() as $column) {
+                  //           $objPHPExcel->getActiveSheet()->getColumnDimension($column->getColumnIndex())->setAutoSize(true); // Ajustar ancho
+                  //       }
                   
   }else{
         // CONSULTA PARA OBTENER LAS NOTAS DE LOS PERIODOS.
@@ -197,6 +200,13 @@
     // Obtener nombres de asignaturas para los encabezados dinámicos
     $asignaturas = [];
     foreach ($datos as $fila) {
+      $codigo_bachillerato_actual = trim($fila['codigo_bachillerato']);
+      $codigo_area_actual = trim($fila['codigo_area']);
+        // Verificar si cumple las condiciones de exclusión
+        if ($codigo_bachillerato_actual === '15' && $codigo_area_actual === '03') {
+          continue; // Saltar esta asignatura y no procesarla
+      }
+      //
         if (!in_array($fila['nombre_asignatura'], $asignaturas)) {
             $asignaturas[] = $fila['nombre_asignatura'];
         }
@@ -207,38 +217,56 @@
         $sheet->setCellValue("$col" . '1', mb_strtoupper($asignatura, 'UTF-8'));
         $col++;
     }
+
+    // PARA LAS CALIFICACIONES
     $datos_agrupados = [];
 
     foreach ($datos as $fila) {
-        $nie = $fila['codigo_nie'];
+        $nie = trim($fila['codigo_nie']);
         $asignatura = $fila['nombre_asignatura'];
         $nota = $fila['nota_p_p_1'];
         $codigo_cc = trim($fila['codigo_cc']);
         $indicador = $fila['indicador_p_p_1'];
-    
+        $codigo_bachillerato_actual = trim($fila['codigo_bachillerato']);
+        $codigo_area_actual = trim($fila['codigo_area']);
+
+    // Evitar que los datos se procesen si codigo_bachillerato es 10 y codigo_area es "03"
+    if ($codigo_bachillerato_actual === "15" && $codigo_area_actual === "03") {
+      continue; // Saltar esta fila y no procesarla
+    } // condicion para el bachillerato tecnido vocacional administrativo.
+
+  // Aplicar lógica según codigo_cc
         // Determinar el valor correcto para la columna codigo_cc
         if ($codigo_cc === "02") {
-            if ($nota >= 9) {
+          if (is_null($nota) || $nota <= 0 || $nota == "") {
+                $nota_formateada = "B"; // Si la calificación está vacía, asignar 1
+            }elseif ($nota >= 9) {
                 $nota_formateada = "E";
             } elseif ($nota >= 7) {
                 $nota_formateada = "MB";
-            } elseif ($nota >= 5) {
-                $nota_formateada = "B";
             } else {
-                $nota_formateada = ""; // Vacío para notas menores a 5
+                $nota_formateada = "B";
             }
         } elseif ($codigo_cc === "03") {
             $nota_formateada = $indicador; // Usar el valor de indicador
-        } else {
-            $nota_formateada = $nota; // Mantener nota original si es Calificación
-        }
-    
+        } elseif ($codigo_cc === "01") { // Calificación
+          if (is_null($nota) || $nota <= 0) { // Vacío o igual a 0
+              $nota_formateada = "1"; // Asignar 1
+          } elseif ($nota > 0 && $nota <= 0.99) { // Entre 0 y 0.99
+              $nota_formateada = "1"; // Mantener tal como está
+          } else {
+              $nota_formateada = $nota; // Para otros valores
+          }
+      }  
         // Agrupar los datos correctamente
         if (!isset($datos_agrupados[$nie])) {
-            $datos_agrupados[$nie] = ['codigo_nie' => $nie];
+          $datos_agrupados[$nie] = []; // Inicializar agrupación
+
+//            $datos_agrupados[$nie] = ['codigo_nie' => $nie];
         }
         $datos_agrupados[$nie][$asignatura] = $nota_formateada;
     }
+  
     //var_dump($datos_agrupados);
     // **Rellenar datos en filas**
     $fila = 2;
@@ -344,63 +372,54 @@ function ExcelInicial(){
       }
 }
 // ESCRIBE EL NOMBRE DEL ARCHIVO.
-function NombreArchivoExcel(){
-  global $objPHPExcel, $codigo_bachillerato, $nombre_annlectivo, $path_root, $nombre_modalidad, $nombre_grado, $nombre_seccion, $periodo,
-          $DestinoArchivo, $nota_p_p_, $codigo_area, $NombreAsignatura, $contenidoOK, $num, $salidaJson, $num;
-    $num++; // incremento de la fila ( nombre asignatura.)
-    $objWriter = new Xlsx($objPHPExcel);  //Grabar el archivo en formato CVS    
-    $codigo_modalidad = $codigo_bachillerato; // Verificar si Existe el directorio archivos.
-    $nombre_ann_lectivo = $nombre_annlectivo;
-    $codigo_destino = 3; // Tipo de Carpeta a Grabar.
-    $longitudNombreArchivo = 240;
-      CrearDirectorios($path_root,$nombre_ann_lectivo,$codigo_modalidad,$codigo_destino,$periodo); // Crear Carpeta.                  
-  // Unir Modalidad - Grado y Sección.
-    //$nombre_directorio_mgs = replace_3(trim($nombre_modalidad."-" . $nombre_grado));
-    $nombre_directorio_mgs = replace_3(trim($nombre_grado));
-  // Con el nombre de la modalidad - grado - sección.
-    if(!file_exists($DestinoArchivo . $nombre_directorio_mgs)){
-          mkdir ($DestinoArchivo . $nombre_directorio_mgs); // Para Nóminas. Escolanadamente. PERIODO
-          chmod ($DestinoArchivo . $nombre_directorio_mgs,07777);
+function NombreArchivoExcel($objPHPExcel, $codigo_bachillerato, $nombre_annlectivo, $path_root, $nombre_modalidad, $nombre_grado, $periodo, $DestinoArchivo) {
+  $fechaHoraActual = date('d-m-Y_h-i-s_A'); // Formato dd-mm-yyyy y hora 12 horas
+  $num = 1; // Incremento de fila inicial
+  $codigo_destino = 3; // Tipo de carpeta
+
+  try {
+      // Crear directorio para guardar el archivo
+      CrearDirectorios($path_root, $nombre_annlectivo, $codigo_bachillerato, $codigo_destino, $periodo);
+
+      // Verificar si el directorio existe y tiene permisos de escritura
+      if (!file_exists($DestinoArchivo)) {
+          mkdir($DestinoArchivo, 0777, true); // Crear directorio con permisos
       }
-    if($nota_p_p_ == "Alertas" && $codigo_area == '09'){             // Destino Archivo.
-      $nombre_archivo = htmlspecialchars($NombreAsignatura);                 // Nombre del Archivo.
-      $URLNombreArchivo = $DestinoArchivo.$nombre_directorio_mgs."/".$nombre_archivo;
-        if(strlen($URLNombreArchivo) >= 220){ // VALIDAMOS PARA QUE NO EXCEDA DE 250 CARACTERES.
-          $URLNombreArchivo = substr($URLNombreArchivo,0,$longitudNombreArchivo) . ".xlsx";
-        }else{
-          $URLNombreArchivo = substr($URLNombreArchivo,0,$longitudNombreArchivo) . ".xlsx";
-        }
-      $objWriter->save($URLNombreArchivo);  // Guardar el archivo.
-      // GUARDAR PARA LA VARIABLE CONTENIDOOK
-      $contenidoOK .= "<tr>                 
-        <td>$num
-        <td>$nombre_archivo
-      ";
-    }else{
-      $nombre_archivo = htmlspecialchars($nombre_grado);                 // Nombre del Archivo.
-      $URLNombreArchivo = $DestinoArchivo.$nombre_directorio_mgs."/".$nombre_archivo;
-        if(strlen($URLNombreArchivo) >= 220){ // VALIDAMOS PARA QUE NO EXCEDA DE 250 CARACTERES.
-          $URLNombreArchivo = substr($URLNombreArchivo,0,$longitudNombreArchivo) . ".xlsx";
-        }else{
-          $URLNombreArchivo = substr($URLNombreArchivo,0,$longitudNombreArchivo) . ".xlsx";
-        }
-        
-      $objWriter->save($URLNombreArchivo);  // Guardar el archivo.
-      // GUARDAR PARA LA VARIABLE CONTENIDOOK
-      $contenidoOK .= "<tr>                 
-        <td>$num
-        <td>$nombre_archivo
-      ";
-    }              
-      $respuestaOK = true;
-      $mensajeError = "¡¡¡ :) Archivo Creado con Éxito :) !!!";
-    // Armamos array para convertir a JSON
-      $salidaJson = array(
-        "respuesta" => $respuestaOK,
-        "mensaje" => $mensajeError,
-        "contenido" => $contenidoOK
-      );  
-}
+
+      // Limpiar el nombre del archivo
+      $nombreArchivo = htmlspecialchars($nombre_grado) . " " . $nombre_modalidad . " " . $fechaHoraActual;
+      $nombreArchivo = str_replace(['/', ':'], '-', $nombreArchivo); // Reemplazar caracteres inválidos
+
+      // Definir ruta completa del archivo
+      $URLNombreArchivo = $DestinoArchivo . "/" . $nombreArchivo . ".xlsx";
+
+      // Borrar archivos y subcarpetas anteriores
+      borrarContenidoDirectorio($DestinoArchivo);
+
+      // Guardar el archivo Excel
+      $objWriter = new Xlsx($objPHPExcel);
+      $objWriter->save($URLNombreArchivo);
+
+      // Preparar respuesta
+      $contenidoOK = "<tr><td>$num</td><td>$nombreArchivo</td></tr>";
+      $salidaJson = [
+          "respuesta" => true,
+          "mensaje" => "¡¡¡ :) Archivo Creado con Éxito :) !!!",
+          "contenido" => $contenidoOK
+      ];
+
+      return $salidaJson;
+
+  } catch (Exception $e) {
+      // Manejo de errores
+      return [
+          "respuesta" => false,
+          "mensaje" => "Error al crear archivo: " . $e->getMessage(),
+          "contenido" => null
+      ];
+  }
+}         
+
 // CONSULTA SOBRE LA TABLA SOLO POR UNA ASIGNATURA.
 function BuscarPorCodigoTabla($codigo_asignatura){
   global $codigo_annlectivo, $codigo_bachillerato, $codigo_all, $codigo_asignatura, $codigo_grado, $db_link, $result;
@@ -429,4 +448,24 @@ function BuscarPorCodigoTabla($codigo_asignatura){
             ORDER BY apellido_alumno, n.codigo_asignatura ASC";
   // ejecutar la consulta. PARA MOSTRAR LOS RESULTADOS EN PANTALLA.
       $result = $db_link -> query($query);
+}
+// BORRAR CARPETAS Y ARCHIVOS.
+function borrarContenidoDirectorio($directorio) {
+  // Verificar si el directorio existe
+  if (is_dir($directorio)) {
+      // Recorrer todos los archivos y subcarpetas en el directorio
+      foreach (scandir($directorio) as $elemento) {
+          if ($elemento !== '.' && $elemento !== '..') {
+              $rutaElemento = $directorio . '/' . $elemento;
+
+              // Si es una carpeta, llamar a la función de forma recursiva
+              if (is_dir($rutaElemento)) {
+                  borrarContenidoDirectorio($rutaElemento);
+                  rmdir($rutaElemento); // Eliminar la carpeta después de borrar su contenido
+              } elseif (is_file($rutaElemento)) {
+                  unlink($rutaElemento); // Eliminar el archivo
+              }
+          }
+      }
+  }
 }
