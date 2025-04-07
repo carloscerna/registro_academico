@@ -118,7 +118,7 @@
 //
   if($todasLasAsignaturas == "yes"){
     // agregar CONSULTA PARA EDUCACIÒN PARVULARIA Y BASICA DE ESTANDAR DESARROLLO.
-       $query_todas  = "SELECT a.codigo_nie, btrim(a.apellido_paterno || CAST(' ' AS VARCHAR) || a.apellido_materno || CAST(', ' AS VARCHAR) || a.nombre_completo) as apellido_alumno,
+   $query_todas  = "SELECT a.codigo_nie, btrim(a.apellido_paterno || CAST(' ' AS VARCHAR) || a.apellido_materno || CAST(', ' AS VARCHAR) || a.nombre_completo) as apellido_alumno,
     a.nombre_completo, btrim(a.apellido_paterno || CAST(' ' AS VARCHAR) || a.apellido_materno) as apellidos_alumno, a.fecha_nacimiento,
     am.codigo_bach_o_ciclo, am.pn, bach.nombre as nombre_bachillerato, am.codigo_ann_lectivo, ann.nombre as nombre_ann_lectivo, am.codigo_grado, 
     gan.nombre as nombre_grado, am.codigo_seccion, am.retirado, 
@@ -142,6 +142,8 @@
             ORDER BY apellido_alumno, n.codigo_asignatura ASC";
           //
           $result_asignatura = $db_link -> query($query_todas);
+          $datos = $result_asignatura->fetchAll(PDO::FETCH_ASSOC);
+
             while($row = $result_asignatura -> fetch(PDO::FETCH_BOTH))
               {
                   $nombre_asignatura = trim($row['nombre_asignatura']);
@@ -178,7 +180,7 @@
                         foreach ($objPHPExcel->getActiveSheet()->getColumnIterator() as $column) {
                             $objPHPExcel->getActiveSheet()->getColumnDimension($column->getColumnIndex())->setAutoSize(true); // Ajustar ancho
                         }
-                  NombreArchivoExcel();        // Nombre dle archivo con los diferentes datos de estudiantes, calificaciones, etc.
+                  
   }else{
         // CONSULTA PARA OBTENER LAS NOTAS DE LOS PERIODOS.
           BuscarPorCodigoTabla($codigo_asignatura);
@@ -188,102 +190,76 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
   if($todasLasAsignaturas == "yes")
   {    
+    $sheet = $objPHPExcel->getActiveSheet();
+    
+    // **Encabezados**
+    $sheet->setCellValue('A1', 'Código NIE'); // Columna A
+    // Obtener nombres de asignaturas para los encabezados dinámicos
+    $asignaturas = [];
+    foreach ($datos as $fila) {
+        if (!in_array($fila['nombre_asignatura'], $asignaturas)) {
+            $asignaturas[] = $fila['nombre_asignatura'];
+        }
+    }
+    // Coloca los nombres de asignaturas como encabezados (B, C, D...)
+    $col = 'B';
+    foreach ($asignaturas as $asignatura) {
+        $sheet->setCellValue("$col" . '1', mb_strtoupper($asignatura, 'UTF-8'));
+        $col++;
+    }
+    $datos_agrupados = [];
 
-
-
-
-
-
-
-/*
-
-    for ($i=0;$i<count($codigo_asignatura_t);$i++)        //// REPETIR EL PROCESO DEPENDE DE LAS ASIGNATURAS SELECCIONADAS.
-      {
-        // Nombre Original de la variables $NombreAsignatura.
-            $NombreAsignatura = $nombre_area_dimension_t[$i] . '-' . $nombre_area_subdimension_t[$i] . '-' . trim($nombre_asignatura_t[$i]);         
-        // RECORRE LA MATRIZ CON LOS CODIGOS Y NOMBRES DE LAS ASIGNATURAS.
-            /// 
-            if(trim($nombre_area_subdimension_t[$i]) == 'Ninguno'){
-              $NombreAsignatura = $nombre_area_dimension_t[$i] . '-' . $nombre_area_subdimension_t[$i] . '-' . trim($nombre_asignatura_t[$i]); 
+    foreach ($datos as $fila) {
+        $nie = $fila['codigo_nie'];
+        $asignatura = $fila['nombre_asignatura'];
+        $nota = $fila['nota_p_p_1'];
+        $codigo_cc = trim($fila['codigo_cc']);
+        $indicador = $fila['indicador_p_p_1'];
+    
+        // Determinar el valor correcto para la columna codigo_cc
+        if ($codigo_cc === "02") {
+            if ($nota >= 9) {
+                $nota_formateada = "E";
+            } elseif ($nota >= 7) {
+                $nota_formateada = "MB";
+            } elseif ($nota >= 5) {
+                $nota_formateada = "B";
+            } else {
+                $nota_formateada = ""; // Vacío para notas menores a 5
             }
-        /// CONDICIONASL PARA AREA_SUBDIMENSION y AREA DIMENSION ES IGUAL A NINGUNO.
-            if(trim($nombre_area_subdimension_t[$i]) == 'Ninguno' && trim($nombre_area_dimension_t[$i]) == 'Ninguno'){
-              $NombreAsignatura = $nombre_area[$i] . "-" . trim($nombre_asignatura_t[$i]);
-            }
-            // AREA DIMENSION ES IGUAL A NINGUNO
-            if(trim($nombre_area_subdimension_t[$i]) == 'Ninguno' && trim($nombre_area_dimension_t[$i]) != 'Ninguno'){
-              $NombreAsignatura = $nombre_area_dimension_t[$i] . '-' . trim($nombre_asignatura_t[$i]); 
-            }  
-            // PARA SEGUNDOS Y TECEROS FOCALIZADOS.
-            if($codigo_grado == "17" || $codigo_grado == "18"){
-              $NombreAsignatura = trim($nombre_asignatura_t[$i]); 
-            }      
-        // lo asigna para poder realizar la busqueda.
-          $codigo_asignatura = $codigo_asignatura_t[$i];
-        // CONSULTA PARA OBTENER LAS NOTAS DE LOS PERIODOS.
-          BuscarPorCodigoTabla($codigo_asignatura);
-        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        // CUANDO SE HA SELECCIONADO PARA TODAS LAS ASIGNATURA
-        $filaAsignatura = 1;
-            $objPHPExcel->getActiveSheet()->SetCellValue($columnaAsignaturas[$i].$filaAsignatura, $NombreAsignatura[$i]);
-        $num = 0; $fila_excel = 1; $conteoAsignaturas = 0;
-        while($listado = $result -> fetch(PDO::FETCH_BOTH))
-        {
-          $nombre_completo = (trim($listado['apellido_alumno']));
-          $codigo_area = trim($listado['codigo_area']);
-          // verificar si es BTC ADministrativo Contable, porque obtendremos el promedio final.
-            if($codigo_area == "03" and $codigo_modalidad == "15"){
-              $nota_p_p_ = $listado["nota_final"];
-            }else{
-              $nota_p_p_ = $listado[$nota_p_p];
-            }
-          $codigo_cc = (trim($listado['codigo_cc']));         // Variable para saber si la asignatura es de concepto o de calificación.
-          if($total_asignaturas == $conteoAsignaturas){
-            $fila_excel++; $valor_uno = 1; $conteoAsignaturas = 0;// inremento del valor de la fila para excel.
-          }else{
-            $conteoAsignaturas++;
-          }
-            ConceptoCalificacion($codigo_cc);         // Evaluar si la asignatura es de CONCEPTO O CALIFICACIÓN.
-            EscribirExcel();  // Escribe en los encabezados.
-        } // WHILE QUE RECORRE LA BASE DE DATOS.
+        } elseif ($codigo_cc === "03") {
+            $nota_formateada = $indicador; // Usar el valor de indicador
+        } else {
+            $nota_formateada = $nota; // Mantener nota original si es Calificación
+        }
+    
+        // Agrupar los datos correctamente
+        if (!isset($datos_agrupados[$nie])) {
+            $datos_agrupados[$nie] = ['codigo_nie' => $nie];
+        }
+        $datos_agrupados[$nie][$asignatura] = $nota_formateada;
+    }
+    //var_dump($datos_agrupados);
+    // **Rellenar datos en filas**
+    $fila = 2;
+    foreach ($datos_agrupados as $nie => $datosAlumno) {
+        $sheet->setCellValue("A$fila", $nie); // Código NIE en columna A
+        
+        // Colocar notas en columnas según asignatura
+        foreach ($asignaturas as $index => $asignatura) {
+            $columna = chr(ord('B') + $index);
+            $nota = isset($datosAlumno[$asignatura]) ? $datosAlumno[$asignatura] : ""; // Nota o vacío
+            $sheet->setCellValue("$columna$fila", $nota);
+        }
 
-    }  // LINEA DEL FOR QUE RECORRE LA MATRIZ DE VARIAS ASIGNATURAS.
+        $fila++; // Avanzar a la siguiente fila
+    }
+    // **Ajuste automático del ancho de columnas**
+    foreach ($sheet->getColumnIterator() as $column) {
+        $sheet->getColumnDimension($column->getColumnIndex())->setAutoSize(true);
+    }
     NombreArchivoExcel();        // Nombre dle archivo con los diferentes datos de estudiantes, calificaciones, etc.
-
-    */
   } // LINEA DEL ELSE PARA TODAS LAS ASIGNATURAS
-   
-else
-{
-  //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  // CUANDO SOLO SE HA SELECCIONADO PARA UNA SOLA ASIGNATURA
-  //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-      $num = 0; $fila_excel = 1; $conteoAsignaturas = 1;
-        while($listado = $result -> fetch(PDO::FETCH_BOTH))
-            {
-              $nombre_completo = (trim($listado['apellido_alumno']));               
-              $codigo_area = trim($listado['codigo_area']);
-              for ($ia=0; $ia < $total_asignaturas; $ia++) { 
-                # code...
-              }
-              // verificar si es BTC ADministrativo Contable, porque obtendremos el promedio final.
-              if($codigo_area == "03" and $codigo_modalidad == "15"){
-                $nota_p_p_ = $listado["nota_final"];
-              }else{
-                $nota_p_p_ = $listado[$nota_p_p];
-              }
-              $codigo_cc = (trim($listado['codigo_cc']));               // Variable para saber si la asignatura es de concepto o de calificación.
-              if($total_asignaturas == $conteoAsignaturas){
-                $fila_excel++; $valor_uno = 1; $conteoAsignaturas = 1;// inremento del valor de la fila para excel.
-              }else{
-                $conteoAsignaturas++;
-              }
-              
-              ConceptoCalificacion($codigo_cc);         // Evaluar si la asignatura es de CONCEPTO O CALIFICACIÓN.
-              EscribirExcel();  // Escribe en los encabezados.
-            }
-            NombreArchivoExcel();        // Nombre dle archivo con los diferentes datos de estudiantes, calificaciones, etc.
-} // ELSE PARA UNA SOLA ASIGNATURA.
 ///
 ///
 //}  /// FIRN DEL FOR QUE CONTIENE EL NUMERO DE ASIGNATURAS SELECCIONADAS.
@@ -295,7 +271,8 @@ else
 //  FUNCIONES
 //
 function ConceptoCalificacion($codigo_cc){
-    global $nota_p_p_, $objPHPExcel, $fila_excel, $valor_uno, $nota_concepto, $codigo_grado, $conteoAsignaturas, $columnaAsignaturas;
+    global $nota_p_p_, $objPHPExcel, $fila_excel, $valor_uno, $nota_concepto, $codigo_grado, $conteoAsignaturas, $columnaAsignaturas, $nota;
+    $nota_p_p = $nota;
     switch ($codigo_cc)
     {
       case "01":  // calificación
@@ -348,14 +325,6 @@ function EscribirExcel(){
 // Escribimos en la hoja en la celda NIE, CALIFICACION, FECHA, OBSERVACIÓN Y CODIGO ASIGNATURA
 function ExcelInicial(){
   global $objPHPExcel, $columnID;
- /*    $objPHPExcel->getActiveSheet()->SetCellValue('A1', 'NIE');
-    $objPHPExcel->getActiveSheet()->SetCellValue('B1', 'Calificacion');
-    $objPHPExcel->getActiveSheet()->SetCellValue('C1', 'Fecha');
-    $objPHPExcel->getActiveSheet()->SetCellValue('D1', 'Observacion');
-    $objPHPExcel->getActiveSheet()->SetCellValue('E1', 'Asignatura');
-    $objPHPExcel->getActiveSheet()->SetCellValue('F1', 'Nombre del Alumno');
-    $objPHPExcel->getActiveSheet()->SetCellValue('G1', 'Grado');
-    $objPHPExcel->getActiveSheet()->SetCellValue('H1', 'Sección'); */
     // AJUSTAR AUTOMATICAMENTE EL ANCHO DE LAS COLUMNAS.
     foreach(range('A','B') as $columnID) {
       $objPHPExcel->getActiveSheet()->getColumnDimension($columnID)

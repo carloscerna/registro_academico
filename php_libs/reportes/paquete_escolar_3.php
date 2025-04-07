@@ -59,8 +59,8 @@ function Header()
       $this->SetXY(5,5);
       $this->Cell(280,4,mb_convert_encoding("FORMULARIO DE RECEPCIÓN DE BIENES POR PARTE DE LOS PADRES, MADRES, RESPONSABLES DE ESTUDIANTES","ISO-8859-1","UTF-8"),0,1,"C",false);
       $this->Cell(280,4,mb_convert_encoding("(EDUCACIÓN INICIAL Y PARVULARIA A 6.º GRADO) Y ESTUDIANTES DE TERCER CICLO Y EDUCACIÓN MEDIA","ISO-8859-1","UTF-8"),0,1,"C",false);
-      $this->Cell(280,4,mb_convert_encoding("PROGRAMA DE DOTACIÓN DE UNIFORMES, ZAPATOS Y ÚTILES ESCOLARES AÑO ___________","ISO-8859-1","UTF-8"),0,1,"C",false);
-      //$this->Cell(280,4,mb_convert_encoding("PROGRAMA DE DOTACIÓN DE UNIFORMES, ZAPATOS Y ÚTILES ESCOLARES AÑO " . $nombre_ann_lectivo,"ISO-8859-1","UTF-8"),0,0,"C",false);
+      //$this->Cell(280,4,mb_convert_encoding("PROGRAMA DE DOTACIÓN DE UNIFORMES, ZAPATOS Y ÚTILES ESCOLARES AÑO ___________","ISO-8859-1","UTF-8"),0,1,"C",false);
+      $this->Cell(280,4,mb_convert_encoding("PROGRAMA DE DOTACIÓN DE UNIFORMES, ZAPATOS Y ÚTILES ESCOLARES AÑO " . $nombre_ann_lectivo,"ISO-8859-1","UTF-8"),0,0,"C",false);
     }
     
     $this->SetFont('Arial','',10);
@@ -90,29 +90,31 @@ function Header()
     // segunda columna de datos, DEPARTAMENTO, MUNICIPIO, GRADO, SECCION.
     $this->RotatedText(200,20,'DEPARTAMENTO: ',0);
     $this->RotatedText(200,25,'MUNICIPIO: ',0);
-    $this->RotatedText(200,30,'GRADO: ',0);       
-    $this->RotatedText(200,35,mb_convert_encoding('SECCIÓN: ',"ISO-8859-1","UTF-8"),0);
+    $this->RotatedText(200,30,'DISTRITO: ',0);
+    $this->RotatedText(200,35,'GRADO: ',0);       
+    $this->RotatedText(200,40,mb_convert_encoding('SECCIÓN: ',"ISO-8859-1","UTF-8"),0);
     
     $this->SetFont('Arial','B',9);
     $this->RotatedText(232,20,$_SESSION['nombre_departamento'],0);
-    $this->RotatedText(232,25,$_SESSION['nombre_municipio'],0);
+    $this->RotatedText(232,25,'Santa Ana Centro',0);
+    $this->RotatedText(232,30,$_SESSION['nombre_municipio'],0);
     // VERIFDICAR EL NOMBRE DEL GRADO PARA LA HOJA.
     if($codigo_grado == '4P' or $codigo_grado == '5P' or $codigo_grado == '6P'){
-      $this->RotatedText(232,30,mb_convert_encoding($nombre_grado,"ISO-8859-1","UTF-8"),0);  
+      $this->RotatedText(232,35,mb_convert_encoding($nombre_grado,"ISO-8859-1","UTF-8"),0);  
     }else if($codigo_grado >= '01' and $codigo_grado <='09'){
-      $this->RotatedText(232,30,mb_convert_encoding($nombre_grado,"ISO-8859-1","UTF-8"),0);  
+      $this->RotatedText(232,35,mb_convert_encoding($nombre_grado,"ISO-8859-1","UTF-8"),0);  
     }else{
-      $this->RotatedText(232,30,mb_convert_encoding($nombre_grado,"ISO-8859-1","UTF-8") . " - " . $porciones[1],0);     
+      $this->RotatedText(232,35,mb_convert_encoding($nombre_grado,"ISO-8859-1","UTF-8") . " - " . $porciones[1],0);     
       }
     // Nombre de la sección.
-    $this->RotatedText(232,35,$nombre_seccion,0);
+    $this->RotatedText(232,40,$nombre_seccion,0);
     $this->SetFont('Arial','',10);
     // Texto de Ley.
     // Fijamos la posición de X y Y.
-    $this->SetY(37);
+    $this->SetY(40);
     $this->SetX(10);
     $texto_1 = mb_convert_encoding("El padre, madre, estudiante o responsable del estudiane quién suscribe, garantiza que: a) los bienes serán exclusivamente para uso del estudiante al que está destinado, b) serán utilizados para asistir y permanecer en el Centro Educativo durante el año lectivo (Art. 56 de la Constitución de la República)","ISO-8859-1","UTF-8");
-    $this->MultiCell1(253,4,$texto_1,0,'J',0,3);
+    $this->MultiCell1(253,4,$texto_1,0,'J',0,2);
       $this->ln();
     //$this->RotatedText(10,35,mb_convert_encoding($texto_1),0);
 }
@@ -165,6 +167,7 @@ function FancyTable($header)
     $this->SetFont('');
     //Datos
     $fill=false;
+    
 }
 }
 //************************************************************************************************************************
@@ -193,7 +196,7 @@ function FancyTable($header)
 // Cargar el encabezao de la tabla.
     $pdf->FancyTable($header); // Solo carge el encabezado de la tabla porque medaba error el cargas los datos desde la consulta.
 // Fijamos la posición de X y Y.
-  $pdf->SetY(56);
+  $pdf->SetY(59);
   $pdf->SetX(10);
 //  mostrar los valores de la consulta
     $w=array(5,75,6,6,15,70,20,20,40); //determina el ancho de las columnas
