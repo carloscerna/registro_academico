@@ -20,6 +20,7 @@
     $observaciones = "";
     $URLNombreArchivo = "";
     $todasLasAsignaturas = "no";
+    $DestinoArchivok = "";
     $todasLasAsignaturas  = $_REQUEST["TodasLasAsignaturas"];
     $Exportar  = json_decode($_REQUEST["Exportar"]);
       $NombreAsignatura = $Exportar->NombreAsignatura;
@@ -37,7 +38,6 @@
     $periodo = $_REQUEST["lstperiodo"];
     $codigo_asignatura = substr($_REQUEST["lstasignatura"],0,3);
     $fecha = $_REQUEST["txtfecha"];
-    $columnaAsignaturas = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'];
     // buscar la consulta y la ejecuta.
   consulta_contar(1,0,$codigo_all,'','','',$db_link,'');
   // EJECUTAR CONDICIONES PARA EL NOMBRE DEL NIVEL Y EL N�MERO DE ASIGNATURAS.
@@ -65,8 +65,6 @@
     $objPHPExcel = $objReader->load($origen."Formato - Importar Notas SIGES.xlsx");
 // Indicamos que se pare en la hoja uno del libro
     $objPHPExcel->setActiveSheetIndex(0);
-// Escribimos en la hoja en la celda NIE, CALIFICACION, FECHA, OBSERVACIÓN Y CODIGO ASIGNATURA
-    ExcelInicial();
 // Información Académica.
       $codigo_bachillerato = substr($codigo_all,0,2);
       $codigo_modalidad = substr($codigo_all,0,2);
@@ -119,76 +117,51 @@
 //  EVALUAR SI SON TODAS LAS ASIGNATURAS O SOLO UNA.
 //
   if($todasLasAsignaturas == "yes"){
-    // agregar CONSULTA PARA EDUCACIÒN PARVULARIA Y BASICA DE ESTANDAR DESARROLLO.
-   $query_todas  = "SELECT a.codigo_nie, btrim(a.apellido_paterno || CAST(' ' AS VARCHAR) || a.apellido_materno || CAST(', ' AS VARCHAR) || a.nombre_completo) as apellido_alumno,
-    a.nombre_completo, btrim(a.apellido_paterno || CAST(' ' AS VARCHAR) || a.apellido_materno) as apellidos_alumno, a.fecha_nacimiento,
-    am.codigo_bach_o_ciclo as codigo_bachillerato, am.pn, bach.nombre as nombre_bachillerato, am.codigo_ann_lectivo, ann.nombre as nombre_ann_lectivo, am.codigo_grado, 
-    gan.nombre as nombre_grado, am.codigo_seccion, am.retirado, 
-    asig.codigo_area, asig.nombre as nombre_asignatura,
-    sec.nombre as nombre_seccion, ae.codigo_alumno, id_alumno, n.codigo_alumno, n.codigo_asignatura, asig.nombre AS n_asignatura, asig.codigo_cc, 
-    n.nota_p_p_1, n.nota_p_p_2, n.nota_p_p_3, n.nota_p_p_4, n.nota_p_p_5, n.alertas, n.nota_final, n.recuperacion,
-    round((n.nota_p_p_1+n.nota_p_p_2+n.nota_p_p_3),1) as total_puntos_basica, round((n.nota_p_p_1+n.nota_p_p_2+n.nota_p_p_3+n.nota_p_p_4),1) as total_puntos_media, 
-    aaa.codigo_sirai, aaa.codigo_asignatura, n.indicador_p_p_1, n.indicador_p_p_2, n.indicador_p_p_3, n.indicador_final, n.alertas
-      FROM alumno a
-        INNER JOIN alumno_encargado ae ON a.id_alumno = ae.codigo_alumno and ae.encargado = 't'
-        INNER JOIN alumno_matricula am ON a.id_alumno = am.codigo_alumno and am.retirado = 'f' 
-        INNER JOIN bachillerato_ciclo bach ON bach.codigo = am.codigo_bach_o_ciclo
-        INNER JOIN grado_ano gan ON gan.codigo = am.codigo_grado
-        INNER JOIN seccion sec ON sec.codigo = am.codigo_seccion
-        INNER JOIN ann_lectivo ann ON ann.codigo = am.codigo_ann_lectivo
-        INNER JOIN nota n ON n.codigo_alumno = a.id_alumno and am.id_alumno_matricula = n.codigo_matricula
-        INNER JOIN a_a_a_bach_o_ciclo aaa ON aaa.codigo_asignatura = n.codigo_asignatura and aaa.codigo_ann_lectivo = '$codigo_annlectivo' and 
-                    aaa.codigo_bach_o_ciclo = '$codigo_bachillerato' and aaa.codigo_grado = '$codigo_grado'
-        INNER JOIN asignatura asig ON asig.codigo = n.codigo_asignatura
-          WHERE btrim(am.codigo_bach_o_ciclo || am.codigo_grado || am.codigo_seccion || am.codigo_ann_lectivo) = '$codigo_all'
-            ORDER BY apellido_alumno, n.codigo_asignatura ASC";
-          //
+    // CONSULTA DE LAS ASIGNTURAS, CALIFICACIONES U OTROS.
+    $query_todas = "SELECT 
+    a.codigo_nie, 
+    TRIM(a.apellido_paterno || ' ' || a.apellido_materno || ', ' || a.nombre_completo) AS apellido_alumno,
+    a.nombre_completo,
+    TRIM(a.apellido_paterno || ' ' || a.apellido_materno) AS apellidos_alumno,
+    a.fecha_nacimiento,
+    am.codigo_bach_o_ciclo AS codigo_bachillerato,
+    bach.nombre AS nombre_bachillerato,
+    am.codigo_ann_lectivo, 
+    ann.nombre AS nombre_ann_lectivo,
+    am.codigo_grado,  
+    gan.nombre AS nombre_grado,
+    am.codigo_seccion,
+    sec.nombre AS nombre_seccion,
+    am.retirado,
+    asig.codigo_area, 
+    asig.nombre AS nombre_asignatura,
+    asig.codigo_cc,
+    n.codigo_asignatura,
+    n.nota_p_p_1, n.nota_p_p_2, n.nota_p_p_3, n.nota_p_p_4, n.nota_p_p_5,
+    n.indicador_p_p_1, n.indicador_p_p_2, n.indicador_p_p_3, n.indicador_final,
+    ROUND((n.nota_p_p_1 + n.nota_p_p_2 + n.nota_p_p_3),1) AS total_puntos_basica,
+    ROUND((n.nota_p_p_1 + n.nota_p_p_2 + n.nota_p_p_3 + n.nota_p_p_4),1) AS total_puntos_media
+    FROM alumno a
+    INNER JOIN alumno_encargado ae ON a.id_alumno = ae.codigo_alumno AND ae.encargado = 't'
+    INNER JOIN alumno_matricula am ON a.id_alumno = am.codigo_alumno AND am.retirado = 'f' 
+    INNER JOIN bachillerato_ciclo bach ON bach.codigo = am.codigo_bach_o_ciclo
+    INNER JOIN grado_ano gan ON gan.codigo = am.codigo_grado
+    INNER JOIN seccion sec ON sec.codigo = am.codigo_seccion
+    INNER JOIN ann_lectivo ann ON ann.codigo = am.codigo_ann_lectivo
+    INNER JOIN nota n ON n.codigo_alumno = a.id_alumno AND am.id_alumno_matricula = n.codigo_matricula
+    INNER JOIN asignatura asig ON asig.codigo = n.codigo_asignatura
+    INNER JOIN a_a_a_bach_o_ciclo aaa 
+        ON aaa.codigo_asignatura = n.codigo_asignatura 
+        AND aaa.codigo_ann_lectivo = '$codigo_annlectivo' 
+        AND aaa.codigo_bach_o_ciclo = '$codigo_bachillerato' 
+        AND aaa.codigo_grado = '$codigo_grado'
+    WHERE btrim(am.codigo_bach_o_ciclo || am.codigo_grado || am.codigo_seccion || am.codigo_ann_lectivo) = '$codigo_all'
+    ORDER BY apellido_alumno, n.codigo_asignatura ASC";
+    //AND NOT (am.codigo_bach_o_ciclo = '10' AND asig.codigo_area = '03') -- Filtramos datos no requeridos
+    // crear $datos.
           $result_asignatura = $db_link -> query($query_todas);
           $datos = $result_asignatura->fetchAll(PDO::FETCH_ASSOC);
-
-            while($row = $result_asignatura -> fetch(PDO::FETCH_BOTH))
-              {
-                  $nombre_asignatura = trim($row['nombre_asignatura']);
-                  $nombre_bachillerato = trim($row['nombre_bachillerato']);
-                  $nombre_asignatura = str_replace(['“','”','`','´','','.', '\\', '/', '*',' " ',':',","], ' ', $nombre_asignatura);
-                  $nombre_asignatura_t[] = trim($nombre_asignatura);
-                  $codigo_asignatura_t[] = trim($row['codigo_asignatura']);
-                  $numeroNie[] = trim($row["codigo_nie"]);
-              }
-
-                  // Consulta
-                  $codigo_bachillerato = $codigoModalidadGradoAnnLectivo; // Define tu variable
-                    $query = "SELECT aaa.codigo_asignatura, aaa.orden, asig.nombre as nombre_asignatura, asig.codigo_servicio_educativo
-                            FROM a_a_a_bach_o_ciclo aaa 
-                            INNER JOIN asignatura asig ON asig.codigo = aaa.codigo_asignatura 
-                            WHERE btrim(aaa.codigo_bach_o_ciclo || aaa.codigo_grado || codigo_ann_lectivo) = :codigo_bachillerato
-                            ORDER BY aaa.orden";
-              
-                  $stmt = $db_link->prepare($query);
-                  $stmt->bindParam(':codigo_bachillerato', $codigo_bachillerato, PDO::PARAM_STR);
-                  $stmt->execute();
-             
-                  // // Encabezado en la primera fila (opcional)
-                  // $objPHPExcel->getActiveSheet()->setCellValue('A1', 'Asignaturas'); // Encabezado general en A1
-              
-                  // // Escribir nombres de asignaturas en columnas de la misma fila
-                  // $columna = 'B'; // Comienza en la columna B
-                  // $fila = 1; // Mantén los valores en la misma fila (fila 1)
-                  // while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                  //   $nombreAsignatura = mb_strtoupper($row['nombre_asignatura'], 'UTF-8');
-                  //     $objPHPExcel->getActiveSheet()->setCellValue("{$columna}{$fila}", $nombreAsignatura); // Escribir en columnas B, C, D...
-                  //     $columna++; // Cambia a la siguiente columna
-                  // }
-                  //     // Ajustar automáticamente el ancho de las columnas
-                  //       foreach ($objPHPExcel->getActiveSheet()->getColumnIterator() as $column) {
-                  //           $objPHPExcel->getActiveSheet()->getColumnDimension($column->getColumnIndex())->setAutoSize(true); // Ajustar ancho
-                  //       }
-                  
-  }else{
-        // CONSULTA PARA OBTENER LAS NOTAS DE LOS PERIODOS.
-          BuscarPorCodigoTabla($codigo_asignatura);
-  }
-////////////////////////////////////////////////////////////////////////////////////////////////////
+  }////////////////////////////////////////////////////////////////////////////////////////////////////
 // RECORRER LA TABLA Y GUARDAR LOS DATOS.
 ////////////////////////////////////////////////////////////////////////////////////////////////////
   if($todasLasAsignaturas == "yes")
@@ -337,42 +310,10 @@ function ConceptoCalificacion($codigo_cc){
         echo "";
     }
 }
-//Escribir en Excel.
-function EscribirExcel(){
-  global $objPHPExcel, $fila_excel, $listado, $total_asignaturas, $conteoAsignaturas;
-    $filaAsignatura = 1;
-    $numeroNie = trim($listado["codigo_nie"]);
-    $nombreAsignatura = trim($listado["n_asignatura"]);
-
-    //Escribimos en la hoja en la celda e3. NIE, CALFICIACION, FECHA, OBSERVACION, ASIGNATURA.
-    if($conteoAsignaturas == 1){
-        
-        $objPHPExcel->getActiveSheet()->SetCellValue("A".$fila_excel + 1, $numeroNie);
-    }
-}
-// Escribimos en la hoja en la celda NIE, CALIFICACION, FECHA, OBSERVACIÓN Y CODIGO ASIGNATURA
-function ExcelInicial(){
-  global $objPHPExcel, $columnID;
-    // AJUSTAR AUTOMATICAMENTE EL ANCHO DE LAS COLUMNAS.
-    foreach(range('A','B') as $columnID) {
-      $objPHPExcel->getActiveSheet()->getColumnDimension($columnID)
-          ->setAutoSize(true);
-      }
-    foreach(range('C','D') as $columnID) {
-      $objPHPExcel->getActiveSheet()->getColumnDimension($columnID)
-          ->setAutoSize(true);
-      }
-      foreach(range('E','F') as $columnID) {
-      $objPHPExcel->getActiveSheet()->getColumnDimension($columnID)
-          ->setAutoSize(true);
-      }   
-      foreach(range('G','H') as $columnID) {
-      $objPHPExcel->getActiveSheet()->getColumnDimension($columnID)
-          ->setAutoSize(true);
-      }
-}
 // ESCRIBE EL NOMBRE DEL ARCHIVO.
-function NombreArchivoExcel($objPHPExcel, $codigo_bachillerato, $nombre_annlectivo, $path_root, $nombre_modalidad, $nombre_grado, $periodo, $DestinoArchivo) {
+function NombreArchivoExcel() {
+  global $objPHPExcel, $codigo_bachillerato, $nombre_annlectivo, $path_root, $nombre_modalidad, $nombre_grado, $periodo, $DestinoArchivo, $salidaJson,
+      $contenidoOK;
   $fechaHoraActual = date('d-m-Y_h-i-s_A'); // Formato dd-mm-yyyy y hora 12 horas
   $num = 1; // Incremento de fila inicial
   $codigo_destino = 3; // Tipo de carpeta
@@ -387,21 +328,45 @@ function NombreArchivoExcel($objPHPExcel, $codigo_bachillerato, $nombre_annlecti
       }
 
       // Limpiar el nombre del archivo
-      $nombreArchivo = htmlspecialchars($nombre_grado) . " " . $nombre_modalidad . " " . $fechaHoraActual;
+      $nombreArchivo = htmlspecialchars($nombre_grado) . " - " . $nombre_modalidad;
       $nombreArchivo = str_replace(['/', ':'], '-', $nombreArchivo); // Reemplazar caracteres inválidos
 
       // Definir ruta completa del archivo
       $URLNombreArchivo = $DestinoArchivo . "/" . $nombreArchivo . ".xlsx";
 
       // Borrar archivos y subcarpetas anteriores
-      borrarContenidoDirectorio($DestinoArchivo);
+     // borrarContenidoDirectorio($DestinoArchivo);
 
       // Guardar el archivo Excel
       $objWriter = new Xlsx($objPHPExcel);
       $objWriter->save($URLNombreArchivo);
+// Definir el ícono de Excel con Font Awesome
+$iconoExcel = '<i class="fas fa-file-excel" style="color: green;"></i>';
 
-      // Preparar respuesta
-      $contenidoOK = "<tr><td>$num</td><td>$nombreArchivo</td></tr>";
+// Obtener el tamaño del archivo en KB o MB
+$tamanoArchivo = filesize($URLNombreArchivo); // Tamaño en bytes
+$tamanoKB = round($tamanoArchivo / 1024, 2); // Convertimos a KB
+$tamanoMB = round($tamanoKB / 1024, 2); // Convertimos a MB si es mayor a 1024 KB
+$tamanoFinal = $tamanoKB < 1024 ? "$tamanoKB KB" : "$tamanoMB MB"; // Mostrar en KB o MB
+
+// Construir la tabla en PHP
+$contenidoOK = "<table border='1' style='width: 100%; border-collapse: collapse; text-align: center;'>
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Archivo</th>
+            <th>Tamaño</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>$num</td>
+            <td>$iconoExcel <strong>$nombreArchivo.xlsx</strong></td>
+            <td>$tamanoFinal</td>
+        </tr>
+    </tbody>
+</table>";
+      // salida Json
       $salidaJson = [
           "respuesta" => true,
           "mensaje" => "¡¡¡ :) Archivo Creado con Éxito :) !!!",
@@ -419,36 +384,6 @@ function NombreArchivoExcel($objPHPExcel, $codigo_bachillerato, $nombre_annlecti
       ];
   }
 }         
-
-// CONSULTA SOBRE LA TABLA SOLO POR UNA ASIGNATURA.
-function BuscarPorCodigoTabla($codigo_asignatura){
-  global $codigo_annlectivo, $codigo_bachillerato, $codigo_all, $codigo_asignatura, $codigo_grado, $db_link, $result;
-  // Armar query y ejecutarlo. para consultar la tabla por codigo asignatura.
-    $query = "SELECT a.codigo_nie, btrim(a.apellido_paterno || CAST(' ' AS VARCHAR) || a.apellido_materno || CAST(', ' AS VARCHAR) || a.nombre_completo) as apellido_alumno,
-    a.nombre_completo, btrim(a.apellido_paterno || CAST(' ' AS VARCHAR) || a.apellido_materno) as apellidos_alumno, a.fecha_nacimiento,
-    am.codigo_bach_o_ciclo, am.pn, bach.nombre as nombre_bachillerato, am.codigo_ann_lectivo, ann.nombre as nombre_ann_lectivo, am.codigo_grado, 
-    gan.nombre as nombre_grado, am.codigo_seccion, am.retirado, 
-    asig.codigo_area,
-    sec.nombre as nombre_seccion, ae.codigo_alumno, id_alumno, n.codigo_alumno, n.codigo_asignatura, asig.nombre AS n_asignatura, asig.codigo_cc, 
-    n.nota_p_p_1, n.nota_p_p_2, n.nota_p_p_3, n.nota_p_p_4, n.nota_p_p_5, n.alertas, n.nota_final, n.recuperacion,
-    round((n.nota_p_p_1+n.nota_p_p_2+n.nota_p_p_3),1) as total_puntos_basica, round((n.nota_p_p_1+n.nota_p_p_2+n.nota_p_p_3+n.nota_p_p_4),1) as total_puntos_media, 
-    aaa.codigo_sirai, aaa.codigo_asignatura, n.indicador_p_p_1, n.indicador_p_p_2, n.indicador_p_p_3, n.indicador_final, n.alertas
-      FROM alumno a
-        INNER JOIN alumno_encargado ae ON a.id_alumno = ae.codigo_alumno and ae.encargado = 't'
-        INNER JOIN alumno_matricula am ON a.id_alumno = am.codigo_alumno and am.retirado = 'f' 
-        INNER JOIN bachillerato_ciclo bach ON bach.codigo = am.codigo_bach_o_ciclo
-        INNER JOIN grado_ano gan ON gan.codigo = am.codigo_grado
-        INNER JOIN seccion sec ON sec.codigo = am.codigo_seccion
-        INNER JOIN ann_lectivo ann ON ann.codigo = am.codigo_ann_lectivo
-        INNER JOIN nota n ON n.codigo_alumno = a.id_alumno and am.id_alumno_matricula = n.codigo_matricula
-        INNER JOIN a_a_a_bach_o_ciclo aaa ON aaa.codigo_asignatura = n.codigo_asignatura and aaa.codigo_ann_lectivo = '$codigo_annlectivo' and 
-                    aaa.codigo_bach_o_ciclo = '$codigo_bachillerato' and aaa.codigo_grado = '$codigo_grado'
-        INNER JOIN asignatura asig ON asig.codigo = n.codigo_asignatura
-          WHERE btrim(am.codigo_bach_o_ciclo || am.codigo_grado || am.codigo_seccion || am.codigo_ann_lectivo) = '$codigo_all'
-            ORDER BY apellido_alumno, n.codigo_asignatura ASC";
-  // ejecutar la consulta. PARA MOSTRAR LOS RESULTADOS EN PANTALLA.
-      $result = $db_link -> query($query);
-}
 // BORRAR CARPETAS Y ARCHIVOS.
 function borrarContenidoDirectorio($directorio) {
   // Verificar si el directorio existe
