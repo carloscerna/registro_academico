@@ -10,60 +10,63 @@
   <script type="text/JavaScript" src="js/ExportarCalificaciones.js"></script>
   <script type="text/JavaScript" src="js/default.js"></script>
   <script>
-    ///////////////////////////////////////////////////////////////////////////////
-    // CONFIGURACIÓND E LA FECHA, Y PASAR A CIERTOS OBJETOS.
-    ///////////////////////////////////////////////////////////////////////////////
-      $(document).ready(function () {
-        // Escribir la fecha actual.
-            var now = new Date();                
-            var day = ("0" + now.getDate()).slice(-2);
-            var month = ("0" + (now.getMonth() + 1)).slice(-2);
-            var today = now.getFullYear()+"-"+(month)+"-"+(day) ;
-        //  pasar el valor de la fechas a los diferentes objetos.
-            $('#txtfecha').val(today);
-      });
-  </script>
+    document.addEventListener("DOMContentLoaded", () => {
+        // Obtener fecha actual
+        const now = new Date();
+        const day = String(now.getDate()).padStart(2, '0');
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const today = `${now.getFullYear()}-${month}-${day}`;
+    
+        // Asignar la fecha al input
+        document.getElementById('txtfecha').value = today;
+    });
+    </script>
 <!-- cargar datos del nombre del archivo. -->
   <script language="javascript">
-    // Carga la INformación de Tabla Año Lectivo.
-      $(document).ready(function()
-      {
-          var ver_ann_lectivo = "si";
-          var miselect=$("#lstannlectivo");
-          /* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
-          miselect.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
-          
-          $.post("includes/cargar-ann-lectivo.php",{verificar_ann_lectivo: ver_ann_lectivo},
-            function(data) {
-              miselect.empty();
-              miselect.append('<option value="">Seleccionar...</option>');
-              for (var i=0; i<data.length; i++) {
-                miselect.append('<option value="' + data[i].codigo + '">' + data[i].nombre + '</option>');
-              }
-          }, "json");
+    $(document).ready(function () {
+      var ver_ann_lectivo = "si";
+      var $select = $("#lstannlectivo");
+  
+      // Mostrar mensaje de carga en el select
+      $select.html('<option value="">Cargando...</option>');
+  
+      // Solicitar datos con AJAX
+      $.ajax({
+          url: "includes/cargar-ann-lectivo.php",
+          type: "POST",
+          data: { verificar_ann_lectivo: ver_ann_lectivo },
+          dataType: "json"
+      })
+      .done(function (data) {
+          $select.empty().append('<option value="">Seleccionar...</option>');
+          $select.append(data.map(item => `<option value="${item.codigo}">${item.nombre}</option>`));
+      })
+      .fail(function () {
+          $select.empty().append('<option value="">Error al cargar datos</option>');
       });
+  });
     // Información del año lectivo y modalidad.
       $(document).ready(function()
       {
-    // Parametros para el año lectivo.
-    $("#lstannlectivo").change(function () {
-      $('#listaNotasExportarOK').empty(); // Limpiar Tabla.
-      var miselect=$("#lstmodalidad");
-      /* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
-        miselect.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
-        
-        $("#lstannlectivo option:selected").each(function () {
-          codigo_annlectivo = $("#lstannlectivo").val();
-          $.post("includes/cargar-bachillerato.php", { annlectivo: codigo_annlectivo },
-                function(data){
-            miselect.empty();
-            miselect.append('<option value="">Seleccionar...</option>');
-            for (var i=0; i<data.length; i++) {
-              miselect.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');
-            }
-        }, "json");			
-        });
-    });
+        // Parametros para el año lectivo.
+        $("#lstannlectivo").change(function () {
+          $('#listaNotasExportarOK').empty(); // Limpiar Tabla.
+          var miselect=$("#lstmodalidad");
+          /* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
+            miselect.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
+            
+            $("#lstannlectivo option:selected").each(function () {
+              codigo_annlectivo = $("#lstannlectivo").val();
+              $.post("includes/cargar-bachillerato.php", { annlectivo: codigo_annlectivo },
+                    function(data){
+                miselect.empty();
+                miselect.append('<option value="">Seleccionar...</option>');
+                for (var i=0; i<data.length; i++) {
+                  miselect.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');
+                }
+            }, "json");			
+            });
+      });
     // Parametros para el grado y sección, al seleccionar el bachillerato.
     $("#lstmodalidad").change(function () {
       var miselect=$("#lstgradoseccion");
@@ -233,136 +236,118 @@
     })
   </script>
 {% endblock %}
-
 {% block contenidos %}
-<!-- Content Wrapper. Contains page content -->
-  <div class="content-wrapper">
-    <!-- Content Header (Page header) -->
+<!-- Content Wrapper -->
+<div class="content-wrapper">
     <section class="content-header">
-      <div class="container-fluid">
-        <div class="row mb-1">
-          <div class="col-sm-6">
-            <h4></h4>
-          </div>
-          <div class="col-sm-6">
-            <ol class="breadcrumb float-sm-right">
-              <li class="breadcrumb-item"><a href="index.php">Home</a></li>
-              <li class="breadcrumb-item active">Exportar Calificaciones</li>
-            </ol>
-          </div>
+        <div class="container">
+            <div class="row mb-1">
+                <div class="col-sm-6">
+                    <h4>Exportar Calificaciones</h4>
+                </div>
+                <div class="col-sm-6 text-end">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="index.php">Home</a></li>
+                        <li class="breadcrumb-item active">Exportar Calificaciones</li>
+                    </ol>
+                </div>
+            </div>
         </div>
-      </div><!-- /.container-fluid -->
     </section>
+
     <!-- Main content -->
     <section class="content">
-      <div class="container-fluid">
-        <div class="row">
-          <!-- left column -->
-          <div class="col">
-            <!-- general form elements -->
-            <div class="card">
-              <div class="card-header bg-gradient-navy">
-                <h3 class="card-title"><i class="fad fa-download"></i> Exportar Calificaciones</h3>
-              </div>
-              <!-- /.card-header -->
-              <!-- card body - form start -->
-              <div class="card-body">
-                <form action="" method="post" name="formExportarNotas" id="formExportarNotas" class="form-horizontal">
-                    <input type="hidden" id="accion_buscar" name="accion_buscar" value = "BuscarNotas" class="{required:true}">
-                    <!-- / AÑO LECTIVO -->
-                    <div class="form-group row">
-                      <label class="col-sm-4 col-form-label" for="lstannlectivo">Año Lectivo</label>
-                      <div class="col-sm-6">
-                        <select id="lstannlectivo" name="lstannlectivo" autofocus class="custom-select" required="required"></select>
-                      </div>
-                    </div>
-                    <!-- / MODALIDAD -->
-                    <div class="form-group row">
-                      <label class="col-sm-4 col-form-label" for="lstmodalidad">Nivel</label>
-                      <div class="col-sm-6">
-                        <select id="lstmodalidad" name="lstmodalidad" class="custom-select"></select>
-                      </div>
-                    </div>
-                    <!-- / GRADO, SECCION Y TURNO -->
-                    <div class="form-group row">
-                      <label class="col-sm-4 col-form-label" for="lstgradoseccion">Grado - Sección - turno</label>
-                      <div class="col-sm-6">
-                        <select id="lstgradoseccion" name="lstgradoseccion" class="custom-select"></select>
-                      </div>
-                    </div>
-                    <!-- / Asignatura -->
-                    <div class="form-group row">
-                      <label class="col-sm-4 col-form-label" for="lstasignatura">Asignatura</label>
-                      <div class="col-sm-6">
-                        <select id="lstasignatura" name="lstasignatura" class="custom-select"></select>
-                      </div>
-                    </div>
-                    <!-- / PRIODO O TRIMESTRE. -->
-                    <div class="form-group row">
-                      <label class="col-sm-4 col-form-label" for="lstperiodo">Período</label>
-                      <div class="col-sm-6">
-                        <select id="lstperiodo" name="lstperiodo" class="custom-select"></select>
-                      </div>
-                    </div>
-                    <!-- / FECHA. -->
-                    <div class="form-group row">
-                      <label class="col-sm-4 col-form-label" for="lstperiodo">Fecha</label>
-                      <div class="col-sm-6">
-                        <input type="date" id="txtfecha" name="txtfecha" class="form-control" aria-label="Fecha">
-                      </div>
-                    </div>
-                    <!-- / CHECK SELECCIONAR TODAS LAS ASIGNATURAS.. -->
-                    <div class="form-group">
-                        <div class="custom-control custom-checkbox">
-                          <input class="custom-control-input" type="checkbox" id="TodasLasAsignaturas" name="TodasLasAsignaturas">
-                          <label for="TodasLasAsignaturas" class="custom-control-label">Crear - Todas Las Asignaturas.</label>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-primary text-white">
+                            <h3 class="card-title"><i class="fas fa-download"></i> Exportar Calificaciones</h3>
+                        </div>
+                        <div class="card-body">
+                            <form method="post" id="formExportarNotas">
+                                <input type="hidden" id="accion_buscar" name="accion_buscar" value="BuscarNotas">
+
+                                <!-- Año Lectivo -->
+                                <div class="mb-3">
+                                    <label for="lstannlectivo" class="form-label">Año Lectivo</label>
+                                    <select id="lstannlectivo" name="lstannlectivo" class="form-select" required></select>
+                                </div>
+
+                                <!-- Nivel -->
+                                <div class="mb-3">
+                                    <label for="lstmodalidad" class="form-label">Nivel</label>
+                                    <select id="lstmodalidad" name="lstmodalidad" class="form-select"></select>
+                                </div>
+
+                                <!-- Grado - Sección - Turno -->
+                                <div class="mb-3">
+                                    <label for="lstgradoseccion" class="form-label">Grado - Sección - Turno</label>
+                                    <select id="lstgradoseccion" name="lstgradoseccion" class="form-select"></select>
+                                </div>
+
+                                <!-- Asignatura -->
+                                <div class="mb-3">
+                                    <label for="lstasignatura" class="form-label">Asignatura</label>
+                                    <select id="lstasignatura" name="lstasignatura" class="form-select"></select>
+                                </div>
+
+                                <!-- Período -->
+                                <div class="mb-3">
+                                    <label for="lstperiodo" class="form-label">Período</label>
+                                    <select id="lstperiodo" name="lstperiodo" class="form-select"></select>
+                                </div>
+
+                                <!-- Fecha -->
+                                <div class="mb-3">
+                                    <label for="txtfecha" class="form-label">Fecha</label>
+                                    <input type="date" id="txtfecha" name="txtfecha" class="form-control">
+                                </div>
+
+                                <!-- Seleccionar Todas Las Asignaturas -->
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="checkbox" id="TodasLasAsignaturas" name="TodasLasAsignaturas">
+                                    <label for="TodasLasAsignaturas" class="form-check-label">Crear - Todas Las Asignaturas</label>
+                                </div>
+
+                                <!-- Botón de Exportar -->
+                                <div class="d-flex justify-content-center">
+                                    <button type="submit" class="btn btn-success btn-lg w-100" id="goNotasExportar">
+                                        <i class="fas fa-file-excel"></i> Exportar <i class="fas fa-arrow-alt-to-bottom"></i>
+                                    </button>
+                                </div>
+                            </form>
                         </div>
                     </div>
-                    <!-- /.card-body -->
-                    <div class="card-footer d-flex justify-content-center">
-                      <div class="form-group row">
-                        <button type="submit" class="btn btn-primary" id = "goNotasExportar">
-                          <i class="fad fa-file-excel"></i> Exportar <i class="fas fa-arrow-alt-to-bottom"></i>
-                          </button>
-                      </div>
-                    </div>
-                </form>
-              </div> <!-- /.card -->
-            </div> <!--/.col (left) -->
-            <!-- right column - INFORMACIÓN DEL RESULTADO DE LA EXPORTACIÓN DE ARCHIVO.-->
-            <div class="row">
-              <div class="col">
-                <div class="card card-secondary w-100 mx-auto" id="tabstabla">
-                  <div class="card-header">
-                    <h3 class="card-title"><label for="Componente"></label>Componente del Plan de Estudio</h3>
-                  </div>
-                  <!-- /.card-header -->
-                    <div class="card-body p-0">
-                      <table class="table table-striped table-sm" id="tablaNotasExportar">
-                        <thead>
-                          <tr>
-                            <th>#</th>
-                            <th>Descripción</th>
-                          </tr>                    
-                        </thead>
-                        <tbody id="listaNotasExportarOK"></tbody>
-                      </table>
-                    </div><!-- /.card-body -->
-                  <!-- /.card-footer -->
-                    <div class="card-footer">
-                      
+                </div>
+            </div>
+
+            <!-- Tabla de resultados -->
+            <div class="row mt-4">
+                <div class="col-lg-12">
+                    <div class="card card-secondary shadow-sm">
+                        <div class="card-header">
+                            <h3 class="card-title">Componente del Plan de Estudio</h3>
+                        </div>
+                        <div class="card-body p-0">
+                            <table class="table table-hover table-bordered" id="tablaNotasExportar">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Descripción</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="listaNotasExportarOK"></tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
-              <!-- /.card -->
-              </div><!-- /.col rigth -->
-            </div> <!-- CLASS ROW PARA LA INFORMACIÓN DE EXPORTAR ARCHIVO. -->
-          </div>
+            </div>
         </div>
-      </div>
     </section>
-  </div> <!-- /.Content Wrapper. Caontains page content -->
-<!-- Loading Screen -->
-  {% include 'loading-screen.html' %}
+</div>
+
+{% include 'loading-screen.html' %}
 {% endblock %}
 
 {% block menu %}
