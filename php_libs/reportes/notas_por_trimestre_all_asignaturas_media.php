@@ -18,17 +18,17 @@
 //  imprimir datos del bachillerato.
      while($row = $result -> fetch(PDO::FETCH_BOTH))
             {
-            $print_bachillerato = utf8_decode(trim($row['nombre_bachillerato']));
-            $print_grado = utf8_decode(trim($row['nombre_grado']));
-            $print_seccion = utf8_decode(trim($row['nombre_seccion']));
-            $print_ann_lectivo = utf8_decode(trim($row['nombre_ann_lectivo']));
+            $print_bachillerato = convertirtexto(trim($row['nombre_bachillerato']));
+            $print_grado = convertirtexto(trim($row['nombre_grado']));
+            $print_seccion = convertirtexto(trim($row['nombre_seccion']));
+            $print_ann_lectivo = convertirtexto(trim($row['nombre_ann_lectivo']));
 	    
 	        $print_codigo_bachillerato = trim($row['codigo_bach_o_ciclo']);
             $print_codigo_grado = trim($row['codigo_grado']);
             $codigo_seccion = trim($row['codigo_seccion']);
             $codigo_ann_lectivo = trim($row['codigo_ann_lectivo']);
 
-            $data[$j] = substr(utf8_decode(trim($row['n_asignatura'])),0,20);
+            $data[$j] = substr(convertirtexto(trim($row['n_asignatura'])),0,20);
             $j++;
             }
 //  variable para cambiar e imprimir las demás asignaturas.
@@ -114,7 +114,7 @@ function Header()
     //Movernos a la derecha
     //$this->Cell(20);
     //Título
-    $this->Cell(300,7,utf8_decode($_SESSION['institucion']),0,1,'C');
+    $this->Cell(300,7,convertirtexto($_SESSION['institucion']),0,1,'C');
     $this->Cell(300,7,'INFORME DE NOTAS POR PERIODO TODAS LAS ASIGNATURAS',0,1,'C');
     $this->Line(0,20,320,20);
 }
@@ -128,7 +128,7 @@ function Footer()
     $this->SetFont('Arial','I',8);
     //Número de página
     $this->SetY(-10);
-    $this->Cell(0,6,utf8_decode(('Página ')).$this->PageNo().'/{nb}',0,0,'C');
+    $this->Cell(0,6,convertirtexto(('Página ')).$this->PageNo().'/{nb}',0,0,'C');
 }
 
 //********************************************************************************************************************************
@@ -142,7 +142,7 @@ function cuadro($data)
 // segunda PARTE DEL RECTANGULO. numero de orden
     $this->Rect(6,35,5,20);
     $this->SetFont('Arial','',9); // I : Italica; U: Normal;
-    $this->RotatedText(10,54,utf8_decode('N° de Orden'),90);
+    $this->RotatedText(10,54,convertirtexto('N° de Orden'),90);
 // tercera PARTE DEL RECTANGULO.   nombre del alumno
     $this->Rect(11,35,80,20);
     $this->SetFont('Arial','',12); // I : Italica; U: Normal;
@@ -204,7 +204,7 @@ function cuadro($data)
         $this->SetFont('Arial','',10); // I : Italica; U: Normal;
         $this->Rect($x1+$mover_x,$y1,$x2,5);
         $this->SetXY($x1+$mover_x,$y1);
-        $this->Cell(30,5,utf8_decode('Período'),0,2,'L');
+        $this->Cell(30,5,convertirtexto('Período'),0,2,'L');
         
         $mover_x = $mover_x + 36;
     }
@@ -258,8 +258,8 @@ function cuadro($data)
              $pdf->SetY(22);
              $pdf->Cell(110,$w2[0],'Modalidad: '.$pdf->SetFont('Arial','B',10).$print_bachillerato.$pdf->SetFont(''),0,1,'L');
              $pdf->Cell(100,$w2[0],'Grado: '.$pdf->SetFont('Arial','B',10).$print_grado.$pdf->SetFont('Arial','',10),0,0,'L');
-             $pdf->Cell(100,$w2[0],utf8_decode('Sección: ').$print_seccion,0,0,'L');
-             $pdf->Cell(30,$w2[0],utf8_decode('Año Lectivo: ').$print_ann_lectivo,0,0,'L');
+             $pdf->Cell(100,$w2[0],convertirtexto('Sección: ').$print_seccion,0,0,'L');
+             $pdf->Cell(30,$w2[0],convertirtexto('Año Lectivo: ').$print_ann_lectivo,0,0,'L');
             $pdf->ln();
 
 //  imprime el encabezado.
@@ -284,7 +284,7 @@ function cuadro($data)
                 if ($i == 1){
                     $pdf->SetFont('Arial','',9); // I : Italica; U: Normal;
                     $pdf->Cell($w[0],$w2[0],$numero_linea,0,0,'C',$fill);
-                    $pdf->Cell($w[1],$w2[0],utf8_decode(trim($row['apellido_alumno'])),0,0,'L',$fill);   // Nombre + apellido_materno + apellido_paterno
+                    $pdf->Cell($w[1],$w2[0],convertirtexto(trim($row['apellido_alumno'])),0,0,'L',$fill);   // Nombre + apellido_materno + apellido_paterno
                     $pdf->SetFont('Arial','',7); // I : Italica; U: Normal;
                     if($row['nota_p_p_1'] == 0){$pdf->Cell($w[2],$w2[0],'',0,0,0,'C',$fill);}else{$pdf->Cell($w[2],$w2[0],number_format(trim($row['nota_p_p_1']),1),0,0,'C',$fill);}
                     if($row['nota_p_p_2'] == 0){$pdf->Cell($w[2],$w2[0],'',0,0,0,'C',$fill);}else{$pdf->Cell($w[2],$w2[0],number_format(trim($row['nota_p_p_2']),1),0,0,'C',$fill);}
@@ -369,8 +369,8 @@ $cambiar_asignaturas = 1;
              $pdf->SetY(22);
              $pdf->Cell(110,$w2[0],'Modalidad: '.$pdf->SetFont('Arial','B',10).$print_bachillerato.$pdf->SetFont(''),0,1,'L');
              $pdf->Cell(100,$w2[0],'Grado: '.$pdf->SetFont('Arial','B',10).$print_grado.$pdf->SetFont('Arial','',10),0,0,'L');
-             $pdf->Cell(100,$w2[0],utf8_decode('Sección: ').$print_seccion,0,0,'L');
-             $pdf->Cell(30,$w2[0],utf8_decode('Año Lectivo: ').$print_ann_lectivo,0,0,'L');
+             $pdf->Cell(100,$w2[0],convertirtexto('Sección: ').$print_seccion,0,0,'L');
+             $pdf->Cell(30,$w2[0],convertirtexto('Año Lectivo: ').$print_ann_lectivo,0,0,'L');
             $pdf->ln();
 
 //  imprime el encabezado.
@@ -395,7 +395,7 @@ $cambiar_asignaturas = 1;
                 if ($i == 7){
                     $pdf->SetFont('Arial','',9); // I : Italica; U: Normal;
                     $pdf->Cell($w[0],$w2[0],$numero_linea,0,0,'C',$fill);
-                    $pdf->Cell($w[1],$w2[0],utf8_decode(trim($row['apellido_alumno'])),0,0,'L',$fill);   // Nombre + apellido_materno + apellido_paterno
+                    $pdf->Cell($w[1],$w2[0],convertirtexto(trim($row['apellido_alumno'])),0,0,'L',$fill);   // Nombre + apellido_materno + apellido_paterno
                     $pdf->SetFont('Arial','',7); // I : Italica; U: Normal;
                     if($row['nota_p_p_1'] == 0){$pdf->Cell($w[2],$w2[0],'',0,0,0,'C',$fill);}else{$pdf->Cell($w[2],$w2[0],number_format(trim($row['nota_p_p_1']),1),0,0,'C',$fill);}
                     if($row['nota_p_p_2'] == 0){$pdf->Cell($w[2],$w2[0],'',0,0,0,'C',$fill);}else{$pdf->Cell($w[2],$w2[0],number_format(trim($row['nota_p_p_2']),1),0,0,'C',$fill);}

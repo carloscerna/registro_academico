@@ -635,16 +635,29 @@ if (lstlist_notas == 'aprobados_reprobados' && $(this).attr('data-accion') == 'l
 }
 
         if (lstlist_notas == 'por_asignatura' && $(this).attr('data-accion') == 'listados_02') {
-                if(varbach >= '03' && varbach <= '05'){
-                varenviar = "/registro_academico/php_libs/reportes/notas_trimestre_por_asignatura_basica.php?todos="+reporte_ok+"&lstasignatura="+lstasignatura;
+                let varenviar = "";
+                const asignaturaBasica = "/registro_academico/php_libs/reportes/notas_trimestre_por_asignatura_basica.php?todos=" + reporte_ok + "&lstasignatura=" + lstasignatura;
+                const asignaturaMedia = "/registro_academico/php_libs/reportes/notas_trimestre_por_asignatura_media.php?todos=" + reporte_ok + "&lstasignatura=" + lstasignatura;
+                
+                switch (true) {
+                    case (varbach >= "03" && varbach <= "05"):
+                        varenviar = asignaturaBasica;
+                        break;
+                    case ["06", "07", "08", "09", "10", "15", "11", "21"].includes(varbach):
+                        varenviar = asignaturaMedia;
+                        break;
+                    default:
+                        alert("No hay coincidencias para el valor seleccionado. Por favor, verifica los datos. No." + varbach);
+                        break;
+                }
+                
+                if (varenviar) {
+                    console.log("URL generada:", varenviar);
+                    // Aquí puedes hacer la redirección o cualquier acción con varenviar
+                        // Ejecutar la función
+                                AbrirVentana(varenviar);
                 }
 
-        if(varbach >= '06' && varbach <= '09' || varbach == '15' || varbach == '10')
-        {
-                varenviar = "/registro_academico/php_libs/reportes/notas_trimestre_por_asignatura_media.php?todos="+reporte_ok+"&lstasignatura="+lstasignatura;
-        }
-        // Ejecutar la función
-        AbrirVentana(varenviar);
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////                        
 ////////////////PROCESO PARA CUADRO DE PROMOCION Y CERTIFICADOS//////////////////////////////////////////////////////////////////////////////////////////////////////

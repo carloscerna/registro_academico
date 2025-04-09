@@ -19,14 +19,14 @@
 //  imprimir datos del bachillerato.
      while($row = $result_encabezado -> fetch(PDO::FETCH_BOTH))
             {
-            $print_bachillerato = utf8_decode('Modalidad: '.trim($row['nombre_bachillerato']));
+            $print_bachillerato = convertirtexto('Modalidad: '.trim($row['nombre_bachillerato']));
             $codigo_bachillerato = trim($row['codigo_bachillerato']);
-            $print_grado = utf8_decode('Grado:     '.trim($row['nombre_grado']));
-            $nombre_grado = utf8_decode(trim($row['nombre_grado']));
-            $print_seccion = utf8_decode('Sección:  '.trim($row['nombre_seccion']));
-            $nombre_seccion = utf8_decode(trim($row['nombre_seccion']));
-            $print_ann_lectivo = utf8_decode('Año Lectivo: '.trim($row['nombre_ann_lectivo']));
-            $codigo_grado = utf8_decode(trim($row['codigo_grado']));
+            $print_grado = convertirtexto('Grado:     '.trim($row['nombre_grado']));
+            $nombre_grado = convertirtexto(trim($row['nombre_grado']));
+            $print_seccion = convertirtexto('Sección:  '.trim($row['nombre_seccion']));
+            $nombre_seccion = convertirtexto(trim($row['nombre_seccion']));
+            $print_ann_lectivo = convertirtexto('Año Lectivo: '.trim($row['nombre_ann_lectivo']));
+            $codigo_grado = convertirtexto(trim($row['codigo_grado']));
 	    break;
             }
 
@@ -35,28 +35,51 @@
 //  imprimir datos del bachillerato.
         while($row = $result -> fetch(PDO::FETCH_BOTH))
             {
-            $nombre_asignatura = utf8_decode(trim($row['n_asignatura']));
+            $nombre_asignatura = convertirtexto(trim($row['n_asignatura']));
 	    break;
             }
-// Obtener el Encargado de Grado.
-    $query_encargado = "SELECT cd.id_carga_docente, btrim(p.nombres || CAST(' ' AS VARCHAR) || p.apellidos) as nombre_docente, cd.codigo_docente, bach.nombre, gann.nombre, sec.nombre, ann.nombre
-								FROM carga_docente cd
-						INNER JOIN personal p ON (cd.codigo_docente)::int = p.id_personal
-						INNER JOIN bachillerato_ciclo bach ON cd.codigo_bachillerato = bach.codigo
-						INNER JOIN ann_lectivo ann ON cd.codigo_ann_lectivo = ann.codigo
-						INNER JOIN grado_ano gann ON cd.codigo_grado = gann.codigo
-						INNER JOIN seccion sec ON cd.codigo_seccion = sec.codigo
-							WHERE btrim(cd.codigo_bachillerato || cd.codigo_grado || cd.codigo_seccion || cd.codigo_ann_lectivo || cd.codigo_turno) = '$codigo_all' and cd.codigo_asignatura = '$cod_por_asignatura' ORDER BY nombre_docente";
-// Eejcutar Consulta
-	$result_encargado = $db_link -> query($query_encargado) or die("Consulta Fallida - Encargado"); 
-//  Nombre del Encargado.
-    $nombre_encargado = '';
-    //  imprimir datos del bachillerato.
-     while($rows_encargado = $result_encargado -> fetch(PDO::FETCH_BOTH))
-            {
-				$nombre_encargado = cambiar_de_del(trim($rows_encargado['nombre_docente']));
-				$codigo_docente = trim($rows_encargado['codigo_docente']);
-				  break;
+            try {
+                // Consulta para obtener el Encargado de Grado
+                $query_encargado = "
+                    SELECT 
+                        cd.id_carga_docente, 
+                        TRIM(p.nombres || ' ' || p.apellidos) AS nombre_docente, 
+                        cd.codigo_docente, 
+                        bach.nombre AS bach_nombre, 
+                        gann.nombre AS grado_nombre, 
+                        sec.nombre AS seccion_nombre, 
+                        ann.nombre AS ann_nombre
+                    FROM carga_docente cd
+                    INNER JOIN personal p ON cd.codigo_docente::int = p.id_personal
+                    INNER JOIN bachillerato_ciclo bach ON cd.codigo_bachillerato = bach.codigo
+                    INNER JOIN ann_lectivo ann ON cd.codigo_ann_lectivo = ann.codigo
+                    INNER JOIN grado_ano gann ON cd.codigo_grado = gann.codigo
+                    INNER JOIN seccion sec ON cd.codigo_seccion = sec.codigo
+                    WHERE TRIM(cd.codigo_bachillerato || cd.codigo_grado || cd.codigo_seccion || cd.codigo_ann_lectivo || cd.codigo_turno) = :codigo_all
+                      AND cd.codigo_asignatura = :cod_por_asignatura
+                    ORDER BY nombre_docente";
+                
+                // Preparar y ejecutar la consulta usando parámetros vinculados
+                $stmt = $db_link->prepare($query_encargado);
+                $stmt->execute([
+                    ':codigo_all'         => $codigo_all,
+                    ':cod_por_asignatura'  => $cod_por_asignatura
+                ]);
+                
+                // Se asume que solo se necesita el primer resultado
+                if ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                    $nombre_encargado = cambiar_de_del(trim($row['nombre_docente']));
+                    $codigo_docente  = trim($row['codigo_docente']);
+                } else {
+                    // Manejo del caso en que no se encuentre ningún registro
+                    $nombre_encargado = '';
+                    $codigo_docente  = '';
+                    // Se podría registrar un log o definir otro comportamiento según el contexto.
+                }
+                
+            } catch (PDOException $e) {
+                error_log("Consulta Fallida - Encargado: " . $e->getMessage());
+                die("Consulta Fallida - Encargado");
             }
 class PDF extends FPDF
 {
@@ -71,8 +94,8 @@ function Header()
         //Arial bold 15
         $this->SetFont('Arial','B',13);
         //Título
-        $this->RotatedText(35,10,utf8_decode($_SESSION['institucion']),0);
-        $this->RotatedText(35,15,utf8_decode('Notas - Por Asignatura - Todos Los Períodos'),0,1,'L');
+        $this->RotatedText(35,10,convertirtexto($_SESSION['institucion']),0);
+        $this->RotatedText(35,15,convertirtexto('Notas - Por Asignatura - Todos Los Períodos'),0);
         
         $this->SetFont('Arial','',9);
         // Imprimir Modalidad y Asignatura.
@@ -139,10 +162,10 @@ function Header()
 		$x=$this->GetX();
 		$this->SetXY($x,$y);
 		$this->SetFont('Arial','B',8);
-		//OTro arreglo pero con el contenido utf8_decode es para que escriba bien los acentos. 
-		$this->Row(array(utf8_decode($contenido_encabezado[0]),utf8_decode($contenido_encabezado[1]),utf8_decode($contenido_encabezado[2]),utf8_decode($contenido_encabezado[3]),utf8_decode($contenido_encabezado[4]),utf8_decode($contenido_encabezado[5])
-						 ,utf8_decode($contenido_encabezado[6]),utf8_decode($contenido_encabezado[7]),utf8_decode($contenido_encabezado[8]),utf8_decode($contenido_encabezado[9]),utf8_decode($contenido_encabezado[10]),utf8_decode($contenido_encabezado[11]),
-                            utf8_decode($contenido_encabezado[12])));
+		//OTro arreglo pero con el contenido convertirtexto es para que escriba bien los acentos. 
+		$this->Row(array(convertirtexto($contenido_encabezado[0]),convertirtexto($contenido_encabezado[1]),convertirtexto($contenido_encabezado[2]),convertirtexto($contenido_encabezado[3]),convertirtexto($contenido_encabezado[4]),convertirtexto($contenido_encabezado[5])
+						 ,convertirtexto($contenido_encabezado[6]),convertirtexto($contenido_encabezado[7]),convertirtexto($contenido_encabezado[8]),convertirtexto($contenido_encabezado[9]),convertirtexto($contenido_encabezado[10]),convertirtexto($contenido_encabezado[11]),
+                            convertirtexto($contenido_encabezado[12])));
 		//Restauración de colores y fuentes
 		$this->SetFillColor(255);
 		$this->SetTextColor(0);
@@ -198,17 +221,17 @@ function FancyTable($header)
     // colores del fondo, texto, línea.
     $pdf->SetFillColor(224,235,255);
     $pdf->SetTextColor(0);
-    $numero_linea = 1; $fill=false; $porcentaje_institucional = 0;
+    $numero_linea = 1; $fill=false; $porcentaje_institucional = 0; $incremento_fila = 30; $i = 1;
        consultas(7,0,$codigo_all,$cod_por_asignatura,'','',$db_link,'');
         while($row = $result -> fetch(PDO::FETCH_BOTH))
         {
             // >Impresión de los promedios para las asignaturas.
             $pdf->SetX(5);
 				$pdf->SetFont('Arial','',9);
-                $pdf->Cell($w[0],$h[0],$numero_linea,0,0,'C',$fill);
+                $pdf->Cell($w[0],$h[0],$i,0,0,'C',$fill);
                 $pdf->SetFont('Arial','',9);
                 $pdf->Cell($w[1],$h[0],(trim($row['codigo_nie'])),0,0,'L',$fill);   // CODIGO NIE
-				$pdf->Cell($w[2],$h[0],utf8_decode(trim($row['apellido_alumno'])),0,0,'L',$fill);   // Nombre + apellido_materno + apellido_paterno
+				$pdf->Cell($w[2],$h[0],convertirtexto(trim($row['apellido_alumno'])),0,0,'L',$fill);   // Nombre + apellido_materno + apellido_paterno
                 if(trim($row['nota_p_p_1']) == 0){$pdf->Cell($w[3],$h[0],'',0,0,'C',$fill);}else{$pdf->Cell($w[3],$h[0],trim($row['nota_p_p_1']),0,0,'C',$fill);}
                 if(trim($row['nota_p_p_2']) == 0){$pdf->Cell($w[4],$h[0],'',0,0,'C',$fill);}else{$pdf->Cell($w[4],$h[0],trim($row['nota_p_p_2']),0,0,'C',$fill);}
                 if(trim($row['nota_p_p_3']) == 0){$pdf->Cell($w[5],$h[0],'',0,0,'C',$fill);}else{$pdf->Cell($w[5],$h[0],trim($row['nota_p_p_3']),0,0,'C',$fill);}
@@ -238,20 +261,21 @@ function FancyTable($header)
                 $pdf->SetFont('Arial','',10);
                   $pdf->Cell($w[11],$h[0],$porcentaje_institucional,0,0,'C',$fill);
                 $pdf->Ln();
-                 // Controlar el Salto de Página..
-                if($numero_linea == 30 || $numero_linea == 60 || $numero_linea == 90)
-                {
-					$numero_linea++;;
-                    $pdf->AddPage();
-					$pdf->SetXY(5,55);
-                }else{
-                    $numero_linea++;
-                    $fill=!$fill;
-                }
+                if($i >= $incremento_fila){
+                    $pdf->Cell(array_sum($w),0,'','T');  $pdf->AddPage();
+                      // Incrementar el valor de la fila.
+                       $incremento_fila = $incremento_fila + 30;
+                       // Fijamos la posición de X y Y.
+                           $pdf->SetY(55);
+                           $pdf->SetX(10);
+                           $pdf->FancyTable($header);}  
+               
+               // cambiamos el fondo de la lineas e incrementamos $i=fila.
+                 $fill=!$fill;
+                 $i=$i+1;
         }
         $modo = 'I'; // Envia al navegador (I), Descarga el archivo (D), Guardar el fichero en un local(F).
         $print_nombre = "Calificaciones - " . $nombre_grado . "-" . $nombre_asignatura . "-" . $nombre_seccion . '.pdf';
         
         //$print_nombre = $path_root . '/registro_academico/temp/' . trim($nombre_completo_alumno) . ' ' . trim($print_grado) . ' ' . trim($print_seccion) . '.pdf';
         $pdf->Output($print_nombre,$modo);
-?>

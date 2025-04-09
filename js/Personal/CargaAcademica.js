@@ -266,25 +266,33 @@ $('#goCerrarEG').on('click',function(){
 			}, "json");			
 	    });
 	});
-// Parametros para la asignatura.
-	    $("#lstCodigoGSTCD").change(function () {
-		      var miselect=$("#lstCodigoAsignaturaCD");
-		      	/* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
-			miselect.find('option').remove().end().append('<option value="">Cargando...</op.tion>').val('');
-			
-			 $("#lstCodigoGSTCD option:selected").each(function () {
-					 elegido=$(this).val();
-					 bach=$("#lstCodigoModalidadCD").val();
-					 ann=$("#lstannlectivo").val();
-					 $.post("includes/cargar-asignatura.php", { elegido: elegido, annlectivo: ann, modalidad: bach },
-					 function(data){
-					  miselect.empty();
-					    for (var j=0; j<data.length; j++) {
-						miselect.append('<option value="' + data[j].codigo_asignatura + '">' + data[j].nombre_asignatura + '</option>');
-					    }
-				 }, "json");			
-		 });
-	    });
+
+    $("#lstCodigoGSTCD").change(function () {
+        const miselect = $("#lstCodigoAsignaturaCD");
+    
+        // Vaciar el select y agregar opción de carga
+        miselect.empty().append('<option value="">Cargando...</option>');
+    
+        const elegido = $("#lstCodigoGSTCD").val();
+        const bach = $("#lstCodigoModalidadCD").val();
+        const ann = $("#lstannlectivo").val();
+    
+        $.post("includes/cargar-asignatura.php", { elegido, annlectivo: ann, modalidad: bach })
+            .done(function (data) {
+                // Convertimos data en un array si no lo es
+                const asignaturas = Array.isArray(data) ? data : Object.values(data);
+    
+                miselect.empty();
+                asignaturas.forEach(item => {
+                    miselect.append(`<option value="${item.codigo}">${item.descripcion}</option>`);
+                });
+            })
+            .fail(function () {
+                miselect.empty().append('<option value="">Error al cargar</option>');
+            });
+    });
+/*
+
 /************************************************************************************************
 //      GO BUSCAR CARGA DOCENTE (ACADEMICA)
 /*************************************************************************************************/

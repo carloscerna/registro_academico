@@ -132,5 +132,7 @@ while ($listado = $consulta->fetch(PDO::FETCH_ASSOC)) {
     ];
 }
 
-// **Envío de la respuesta en formato JSON**
+// **Enviar la respuesta como JSON**
+header('Content-Type: application/json');
 echo json_encode($datos);
+exit;
