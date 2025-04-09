@@ -32,8 +32,8 @@ require $path_root."/registro_academico/vendor/autoload.php";
 // Leemos un archivo Excel 2007
     $objReader = \PhpOffice\PhpSpreadsheet\IOFactory::createReader("Xlsx");
     $origen = strval($path_root) ."/registro_academico/formatos_hoja_de_calculo/";
-    $nombre_archivo = "COMPUTADORAS-CE10391-06092024.xlsx";
-    $objPHPExcel = $objReader->load(strval($origen) ."COMPUTADORAS-CE10391-06092024.xlsx");
+    $nombre_archivo = "CE-10391-TABLET-PARVULARIA.xlsx";
+    $objPHPExcel = $objReader->load(strval($origen) ."CE-10391-TABLET-PARVULARIA.xlsx");
     //$nombre_archivo = "CE-COMPUTADORA.xlsx";
     //$objPHPExcel = $objReader->load($origen."CE-COMPUTADORA.xlsx");
 // Leemos un archivo Excel 2007
@@ -47,10 +47,10 @@ require $path_root."/registro_academico/vendor/autoload.php";
        $objPHPExcel->setActiveSheetIndex($numero_de_hoja);
 	
 		//	BUCLE QUE RECORRE TODA LA CUADRICULA DE LA HOJA DE CALCULO.
-		while($objPHPExcel->getActiveSheet()->getCell("Q". strval($fila))->getValue() != "")
+		while($objPHPExcel->getActiveSheet()->getCell("E". strval($fila))->getValue() != "")
 		  {
 			 //  DATOS GENERALES.
-			 $nie = $objPHPExcel->getActiveSheet()->getCell("Q". strval($fila))->getValue();
+			 $nie = $objPHPExcel->getActiveSheet()->getCell("E". strval($fila))->getValue();
 			 //$descripcion = $objPHPExcel->getActiveSheet()->getCell("B".$fila)->getValue();
 			// $codigo_departamento = $objPHPExcel->getActiveSheet()->getCell("C".$fila)->getValue();
 
@@ -65,7 +65,7 @@ require $path_root."/registro_academico/vendor/autoload.php";
                 INNER JOIN seccion sec ON sec.codigo = am.codigo_seccion
                 INNER JOIN ann_lectivo ann ON ann.codigo = am.codigo_ann_lectivo
                 INNER JOIN turno tur ON tur.codigo = am.codigo_turno
-                    where a.codigo_nie = '$nie' and am.codigo_ann_lectivo = '24'";
+                    where a.codigo_nie = '$nie' and am.codigo_ann_lectivo = $codigo_ann_lectivo";
 		// ejecutar la consulta.
 				$consulta = $dblink -> query($query);
                 while($listado = $consulta -> fetch(PDO::FETCH_BOTH))
@@ -83,10 +83,10 @@ require $path_root."/registro_academico/vendor/autoload.php";
                     }else{
                         $retirado = "No";
                     }
-                    $objPHPExcel->getActiveSheet()->SetCellValue("AF".$fila_excel, TRIM($listado['nombre_grado']));
-                    $objPHPExcel->getActiveSheet()->SetCellValue("AG".$fila_excel, TRIM($listado['nombre_seccion']));
-                    $objPHPExcel->getActiveSheet()->SetCellValue("AH".$fila_excel, $retirado);
-                    $objPHPExcel->getActiveSheet()->SetCellValue("AI".$fila_excel, $nombre_turno);
+                    $objPHPExcel->getActiveSheet()->SetCellValue("Q".$fila_excel, TRIM($listado['nombre_grado']));
+                    $objPHPExcel->getActiveSheet()->SetCellValue("R".$fila_excel, TRIM($listado['nombre_seccion']));
+                    $objPHPExcel->getActiveSheet()->SetCellValue("S".$fila_excel, $retirado);
+                    $objPHPExcel->getActiveSheet()->SetCellValue("T".$fila_excel, $nombre_turno);
                     //$objPHPExcel->getActiveSheet()->SetCellValue("AF".$fila_excel, '2023');
                     //$objPHPExcel->getActiveSheet()->SetCellValue("V".$fila_excel, TRIM($listado['nombre_grado']));
                     //$objPHPExcel->getActiveSheet()->SetCellValue("W".$fila_excel, TRIM($listado['nombre_seccion']));

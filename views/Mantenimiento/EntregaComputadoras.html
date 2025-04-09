@@ -1,0 +1,50 @@
+{# Heredando la plantilla principal #}
+
+{% extends 'default_layout.html' %}
+
+{% block extraCSS %}
+
+{% endblock %}
+
+{% block javascripts %}
+
+{% endblock %}
+
+{% block contenidos %}
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper fondoBody">
+    <!-- Content Header (Page header) 
+    Se elimino content-header section solo se va dejar Main Content -->
+    
+  <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <!DOCTYPE html>
+                <h1 class="mt-5">Subir Archivo Excel</h1>
+                <form action="process_excel.php" method="post" enctype="multipart/form-data">
+                  <div class="form-group">
+                    <label for="excelFile">Archivo Excel</label>
+                    <input type="file" class="form-control" name="excelFile" id="excelFile" required>
+                  </div>
+                  <div class="form-group">
+                    <label for="readColumn">Columna para lectura (Ej: A)</label>
+                    <input type="text" class="form-control" name="readColumn" id="readColumn" placeholder="A" required>
+                  </div>
+                  <div class="form-group">
+                    <label for="startColumn">Columna para iniciar escritura (Ej: B)</label>
+                    <input type="text" class="form-control" name="startColumn" id="startColumn" placeholder="B" required>
+                  </div>
+                  <div class="form-group">
+                    <label for="startRow">Fila para iniciar escritura (Ej: 2)</label>
+                    <input type="number" class="form-control" name="startRow" id="startRow" placeholder="2" required>
+                  </div>
+                  <button type="submit" class="btn btn-primary">Subir y Procesar</button>
+                </form>
+              </div>
+    </section>  
+</div> <!-- /.content-Wrapper, Contains page content. -->
+{% endblock %}
+
+{% block loginUser %}
+<!--	{% include 'layout-login-user.html' %} -->
+{% endblock %}

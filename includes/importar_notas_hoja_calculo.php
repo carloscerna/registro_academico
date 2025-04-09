@@ -64,7 +64,7 @@ include($path_root."/registro_academico/includes/mainFunctions_conexion.php");
    $codigo_asignatura = trim($objPHPExcel->getActiveSheet()->getCell("D7")->getValue());
    $codigo_bachillerato = $objPHPExcel->getActiveSheet()->getCell("D3")->getValue();
    $codigo_grado_ = $objPHPExcel->getActiveSheet()->getCell("D5")->getValue();
-   $codigo_grado = trim(str_ireplace("'","",$codigo_grado_));
+   $codigo_grado = trim(str_replace("'","",$codigo_grado_));
    $codigo_docente = $objPHPExcel->getActiveSheet()->getCell("F2")->getValue();
    $fila = 13; $num = 1;
 //	Variable para las actividades, nota promedio Y observaciones.
@@ -147,7 +147,7 @@ include($path_root."/registro_academico/includes/mainFunctions_conexion.php");
 				  $query_aspectos_2 = "UPDATE nota SET ".$nota_p_p." = ".$nota_aspecto_2." WHERE codigo_alumno = ".$codigo_interno." and codigo_matricula = '".$codigo_matricula."' and codigo_asignatura = ".$codigo_a_aspecto_2;
 				  $query_aspectos_3 = "UPDATE nota SET ".$nota_p_p." = ".$nota_aspecto_3." WHERE codigo_alumno = ".$codigo_interno." and codigo_matricula = '".$codigo_matricula."' and codigo_asignatura = ".$codigo_a_aspecto_3;
 				  $query_aspectos_4 = "UPDATE nota SET ".$nota_p_p." = ".$nota_aspecto_4." WHERE codigo_alumno = ".$codigo_interno." and codigo_matricula = '".$codigo_matricula."' and codigo_asignatura = ".$codigo_a_aspecto_4;
-				  $query_aspectos_5 = "UPDATE nota SET ".$nota_p_p." = ".$nota_aspecto_5." WHERE codigo_alumno = ".$codigo_interno." and codigo_matricula = '".$codigo_matricula."' and codigo_asignatura = ".$codigo_a_aspecto_5;
+				  //$query_aspectos_5 = "UPDATE nota SET ".$nota_p_p." = ".$nota_aspecto_5." WHERE codigo_alumno = ".$codigo_interno." and codigo_matricula = '".$codigo_matricula."' and codigo_asignatura = ".$codigo_a_aspecto_5;
 				  
 				  //$query_observacion = "UPDATE nota SET $observacion = '$observacion_1' WHERE codigo_alumno = $codigo_interno and codigo_matricula = $codigo_matricula";
 				  // ejecutar la consulta.
@@ -155,7 +155,7 @@ include($path_root."/registro_academico/includes/mainFunctions_conexion.php");
 					   $result = $db_link -> query($query_aspectos_2);
 					   $result = $db_link -> query($query_aspectos_3);
 					   $result = $db_link -> query($query_aspectos_4);
-					   $result = $db_link -> query($query_aspectos_5);
+					   //$result = $db_link -> query($query_aspectos_5);
 					// Query cuando son notas num�ricas.
 						$query_nota_final_aspectos_1 = "UPDATE nota SET
 							nota_final = (select round((nota_p_p_1 + nota_p_p_2 + nota_p_p_3)/3,0) as promedio
@@ -176,17 +176,17 @@ include($path_root."/registro_academico/includes/mainFunctions_conexion.php");
 							nota_final = (select round((nota_p_p_1 + nota_p_p_2 + nota_p_p_3)/3,0) as promedio
 							from nota WHERE codigo_alumno = '$codigo_interno' and codigo_matricula = '$codigo_matricula' and codigo_asignatura = $codigo_a_aspecto_4)
 							                WHERE codigo_alumno = '$codigo_interno' and codigo_matricula = '$codigo_matricula' and codigo_asignatura = $codigo_a_aspecto_4";												 
-					// Query cuando son notas num�ricas.
+					/*/ Query cuando son notas num�ricas.
 						$query_nota_final_aspectos_5 = "UPDATE nota SET
 							nota_final = (select round((nota_p_p_1 + nota_p_p_2 + nota_p_p_3)/3,0) as promedio
 							from nota WHERE codigo_alumno = '$codigo_interno' and codigo_matricula = '$codigo_matricula' and codigo_asignatura = $codigo_a_aspecto_5)
-							                WHERE codigo_alumno = '$codigo_interno' and codigo_matricula = '$codigo_matricula' and codigo_asignatura = $codigo_a_aspecto_5";												 
+							                WHERE codigo_alumno = '$codigo_interno' and codigo_matricula = '$codigo_matricula' and codigo_asignatura = $codigo_a_aspecto_5";												 */
 					// ejecutamos el query de la nota final. 
 					 $result = $db_link -> query($query_nota_final_aspectos_1);
 					 $result = $db_link -> query($query_nota_final_aspectos_2);
 					 $result = $db_link -> query($query_nota_final_aspectos_3);
 					 $result = $db_link -> query($query_nota_final_aspectos_4);
-					 $result = $db_link -> query($query_nota_final_aspectos_5);
+					 //$result = $db_link -> query($query_nota_final_aspectos_5);
 					  //$result = $db_link -> query($query_observacion);
 				}
 					  // INCREMENTAR I PARA LA COLUMNA de excel.
