@@ -341,13 +341,14 @@ function FancyTable($header)
 			//consultas(4,0,$codigo_all,'','','',$db_link,'');
 			// Ejecutar la consulta
 			$query = "SELECT 
+				btrim(a.apellido_paterno || CAST(' ' AS VARCHAR) || a.apellido_materno || CAST(', ' AS VARCHAR) || a.nombre_completo) as apellido_alumno,
 				a.id_alumno AS codigo_alumno, 
 				am.id_alumno_matricula AS codigo_matricula
 			FROM alumno AS a
 			INNER JOIN alumno_encargado AS ae ON a.id_alumno = ae.codigo_alumno AND ae.encargado = 't'
 			INNER JOIN alumno_matricula AS am ON a.id_alumno = am.codigo_alumno AND am.retirado = 'f'
 			WHERE TRIM(am.codigo_bach_o_ciclo || am.codigo_grado || am.codigo_seccion || am.codigo_ann_lectivo || am.codigo_turno) = :codigo_bachillerato
-			ORDER BY a.id_alumno ASC";
+			ORDER BY apellido_alumno ASC";
 
 			$stmt = $db_link->prepare($query);
 			$stmt->bindParam(':codigo_bachillerato', $codigo_all);

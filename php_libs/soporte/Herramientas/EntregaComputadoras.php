@@ -8,6 +8,20 @@ include($path_root."/registro_academico/includes/mainFunctions_conexion.php");
 // Cargar el autoload de Composer para PhpSpreadsheet
 require $path_root."/registro_academico/vendor/autoload.php";
 //
+// Ruta absoluta donde deseas guardar el archivo modificado
+$targetDirectory = 'C:/TempSistemaRegistro';
+
+// Verificar si el directorio existe, si no, crearlo
+if (!is_dir($targetDirectory)) {
+    mkdir($targetDirectory, 0777, true); // Crear el directorio con permisos de escritura
+}
+
+// Nombre del archivo modificado
+$outputFileName = 'archivo_modificado.xlsx';
+
+// Ruta completa para guardar el archivo
+$outputFilePath = $targetDirectory . '/' . $outputFileName;
+//
 ini_set('display_errors', 0);
 error_reporting(E_ALL);
 //
@@ -116,6 +130,18 @@ $outputFile = 'archivo_modificado.xlsx';
 
 try {
     $writer->save($outputFile);
+    //
+    // Verificar si el archivo original existe antes de copiarlo
+        if (file_exists($outputFile)) {
+            if (copy($outputFile, $outputFilePath)) {
+                echo "El archivo se copió exitosamente a: $outputFilePath";
+            } else {
+                echo "Error al copiar el archivo.";
+            }
+        } else {
+            echo "El archivo original no existe: $outputFile";
+        }
+    //
     echo json_encode([
         'status' => 'success',
         'message' => "Se procesaron $procesados registros.",

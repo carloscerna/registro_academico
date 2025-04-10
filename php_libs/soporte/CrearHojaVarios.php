@@ -122,8 +122,8 @@ require $path_root."/registro_academico/vendor/autoload.php";
                     $result_d_m = $dblink -> query($query_d_m);
                     while($row_d_m = $result_d_m -> fetch(PDO::FETCH_BOTH))
                     {
-                        $departamento_nacimiento = utf8_encode(strtolower(trim($row_d_m["nombre_departamento"])));
-                        $municipio_nacimiento = utf8_encode(strtolower(trim($row_d_m["nombre_municipio"])));
+                        $departamento_nacimiento = convertirtexto(strtolower(trim($row_d_m["nombre_departamento"])));
+                        $municipio_nacimiento = convertirtexto(strtolower(trim($row_d_m["nombre_municipio"])));
                     }    
                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                     $objPHPExcel->getActiveSheet()->SetCellValue("O".$fila_excel, TRIM($listado['nombre_grado']));
