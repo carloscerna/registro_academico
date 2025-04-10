@@ -118,7 +118,8 @@ try {
     $writer->save($outputFile);
     echo json_encode([
         'status' => 'success',
-        'message' => "Se procesaron $procesados registros. El archivo se ha guardado como \"$outputFile\"."
+        'message' => "Se procesaron $procesados registros.",
+        'download_url' => $outputFile  // URL para descargar el archivo generado
     ]);
 } catch (Exception $e) {
     echo json_encode(['status' => 'error', 'message' => 'Error al guardar el archivo: ' . $e->getMessage()]);
