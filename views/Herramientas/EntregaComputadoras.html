@@ -63,7 +63,7 @@
         
         success: function(response){
           if(response.status === "success"){
-            $("#result").html("<div class='alert alert-success'>" + response.message + "</div>");            
+            $("#result").html("<div class='alert alert-success'>" + response.message + response.download_url + "</div>");            
           } else {
             $("#result").html("<div class='alert alert-danger'>" + response.message + "</div>");
           }

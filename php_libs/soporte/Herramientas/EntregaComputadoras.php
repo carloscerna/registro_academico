@@ -8,17 +8,15 @@ include($path_root."/registro_academico/includes/mainFunctions_conexion.php");
 // Cargar el autoload de Composer para PhpSpreadsheet
 require $path_root."/registro_academico/vendor/autoload.php";
 //
+$CodigoInstitucion = $_SESSION["codigo_institucion"];
 // Ruta absoluta donde deseas guardar el archivo modificado
-$targetDirectory = 'C:/TempSistemaRegistro';
-
+$targetDirectory = "C:/TempSistemaRegistro/Carpetas/$CodigoInstitucion";
 // Verificar si el directorio existe, si no, crearlo
 if (!is_dir($targetDirectory)) {
     mkdir($targetDirectory, 0777, true); // Crear el directorio con permisos de escritura
 }
-
 // Nombre del archivo modificado
-$outputFileName = 'archivo_modificado.xlsx';
-
+$outputFileName = 'EntregaComputadoras.xlsx';
 // Ruta completa para guardar el archivo
 $outputFilePath = $targetDirectory . '/' . $outputFileName;
 //
@@ -27,7 +25,7 @@ error_reporting(E_ALL);
 //
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
-
+use PhpOffice\PhpSpreadsheet\Style\Fill;
 // Validar la subida del archivo Excel
 if (!isset($_FILES['excelFile'])) {
     echo json_encode(['status' => 'error', 'message' => 'No se envió ningún archivo.']);
@@ -54,16 +52,13 @@ try {
     echo json_encode(['status' => 'error', 'message' => 'Error cargando el archivo: ' . $e->getMessage()]);
     exit;
 }
-
 // Recuperar parámetros enviados desde el formulario
 $readColumn  = strtoupper(trim($_POST['readColumn']));   // Columna donde se encuentran los NIE, p. ej. "A"
 $nieStartRow = intval($_POST['nieStartRow']);             // Fila de inicio para leer el listado de NIE
 $startColumn = strtoupper(trim($_POST['startColumn']));    // Columna donde escribir resultados, p. ej. "B"
 $codigo_ann_lectivo = $_POST['codigo_ann_lectivo'] ?? 0;
-
 // Obtener la hoja activa
 $worksheet = $spreadsheet->getActiveSheet();
-
 // Consulta: se extraerán nombre_grado y nombre_seccion para un NIE dado
 $query = "SELECT 
             a.codigo_nie, 
@@ -84,10 +79,8 @@ $query = "SELECT
           INNER JOIN turno tur ON tur.codigo = am.codigo_turno
           WHERE a.codigo_nie = :nie 
           AND am.codigo_ann_lectivo = :codigo_ann_lectivo";
-
 // Convertir la columna de escritura a índice numérico para facilitar la asignación
 $startIndex = Coordinate::columnIndexFromString($startColumn);
-
 // Iterar sobre las filas del listado de NIE
 $currentRow = $nieStartRow;
 $procesados = 0;
@@ -98,14 +91,12 @@ while ( true ) {
     if (empty($nie)) {
         break;
     }
-    
     // Preparar y ejecutar la consulta para el NIE actual
     $stmt = $dblink->prepare($query);
     $stmt->bindValue(':nie', $nie);
     $stmt->bindValue(':codigo_ann_lectivo', $codigo_ann_lectivo);
     $stmt->execute();
     $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
-    
     // Definir las celdas para escribir los resultados en la misma fila
     $cellGrado   = Coordinate::stringFromColumnIndex($startIndex)     . $currentRow;
     $cellSeccion = Coordinate::stringFromColumnIndex($startIndex + 1) . $currentRow;
@@ -114,19 +105,48 @@ while ( true ) {
         // Escribimos los datos obtenidos
         $worksheet->setCellValue($cellGrado, $resultado['nombre_grado']);
         $worksheet->setCellValue($cellSeccion, $resultado['nombre_seccion']);
+        $styleFound = [
+            'font' => [
+                'bold' => true,  // Letras en negrita
+                // Puedes agregar color al texto si lo requieres, por ejemplo:
+                //'color' => ['argb' => 'FF000000'], // negro
+            ],
+            'fill' => [
+                'fillType' => Fill::FILL_SOLID,
+                'startColor' => [
+                    'argb' => 'FF00FF00' // Fondo verde (código: FF00FF00)
+                ],
+            ]
+        ];
+        $worksheet->getStyle($cellGrado)->applyFromArray($styleFound);
+        $worksheet->getStyle($cellSeccion)->applyFromArray($styleFound);
+
     } else {
         // Si no se encontró el registro, se puede escribir una marca o dejar vacío
         $worksheet->setCellValue($cellGrado, "No encontrado");
         $worksheet->setCellValue($cellSeccion, "No encontrado");
+        $styleNotFound = [
+            'font' => [
+                'color' => ['argb' => 'FFFF0000'] // Letras rojas (código: FFFF0000)
+            ],
+            'fill' => [
+                'fillType' => Fill::FILL_SOLID,
+                'startColor' => [
+                    'argb' => 'FFFF0000' // Fondo rojo
+                ]
+            ]
+        ];
+        $worksheet->getStyle($cellGrado)->applyFromArray($styleNotFound);
+        $worksheet->getStyle($cellSeccion)->applyFromArray($styleNotFound);
+
     }
     
     $procesados++;
     $currentRow++;
 }
-
 // Guardar el archivo Excel modificado
 $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
-$outputFile = 'archivo_modificado.xlsx';
+$outputFile = 'EntregaComputadoras.xlsx';
 
 try {
     $writer->save($outputFile);
@@ -134,18 +154,18 @@ try {
     // Verificar si el archivo original existe antes de copiarlo
         if (file_exists($outputFile)) {
             if (copy($outputFile, $outputFilePath)) {
-                echo "El archivo se copió exitosamente a: $outputFilePath";
+                //echo "El archivo se copió exitosamente a: $outputFilePath";
             } else {
-                echo "Error al copiar el archivo.";
+               // echo "Error al copiar el archivo.";
             }
         } else {
-            echo "El archivo original no existe: $outputFile";
+           // echo "El archivo original no existe: $outputFile";
         }
     //
     echo json_encode([
         'status' => 'success',
         'message' => "Se procesaron $procesados registros.",
-        'download_url' => $outputFile  // URL para descargar el archivo generado
+        'download_url' => $outputFilePath  // URL para descargar el archivo generado
     ]);
 } catch (Exception $e) {
     echo json_encode(['status' => 'error', 'message' => 'Error al guardar el archivo: ' . $e->getMessage()]);
