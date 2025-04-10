@@ -109,6 +109,7 @@ if ($_SESSION['codigo_perfil'] == '06') {
               INNER JOIN asignatura asi ON asi.codigo = aaa.codigo_asignatura
               WHERE aaa.codigo_bach_o_ciclo = :modalidad
               AND aaa.codigo_ann_lectivo = :annlectivo
+              and aaa.codigo_grado = :codigo_grado
               ORDER BY aaa.codigo_asignatura";
 }
 
@@ -116,7 +117,7 @@ if ($_SESSION['codigo_perfil'] == '06') {
 $consulta = $dblink->prepare($query);
 
 // **Vincular parámetros de manera segura**
-//$consulta->bindParam(':elegido', $_POST["elegido"], PDO::PARAM_STR);
+$consulta->bindParam(':codigo_grado', $codigo_grado, PDO::PARAM_STR);
 $consulta->bindParam(':modalidad', $_POST["modalidad"], PDO::PARAM_STR);
 $consulta->bindParam(':annlectivo', $_POST["annlectivo"], PDO::PARAM_STR);
 //$consulta->bindParam(':codigo_docente', $_SESSION['codigo_personal'], PDO::PARAM_STR);
