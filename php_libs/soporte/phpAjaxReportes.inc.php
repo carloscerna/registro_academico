@@ -5,6 +5,7 @@ header("Content-Type: text/html;charset=iso-8859-1");
 	$respuestaOK = false;
 	$mensajeError = "No se puede ejecutar la aplicación";
 	$contenidoOK = "";
+	$codigo_grado = "";
 // ruta de los archivos con su carpeta
     $path_root=trim($_SERVER['DOCUMENT_ROOT']);
 // Incluimos el archivo de funciones y conexión a la base de datos
@@ -45,6 +46,7 @@ if($errorDbConexion == false){
 				// Ejecutamos el Query.
 				$consulta = $dblink -> query($query);
 				//
+				
 				if($consulta -> rowCount() != 0){
 					$respuestaOK = true;
 					$num = 0;
@@ -73,8 +75,22 @@ if($errorDbConexion == false){
 							.'<td style="width: 35px"><a data-accion=listados_01 class="btn btn-md btn-secondary data-toggle="tooltip" data-placement="top" title="Ver o Imprimir" href='.$todos.'><span class="fas fa-print"></span></a>'.'</td>'
 							.'<td style="width: 35px"><a data-accion=listados_02 class="btn btn-md btn-secondary data-toggle="tooltip" data-placement="top" title="Ver o Imprimir" href='.$todos.'><span class="fas fa-print"></span></a>'.'</td>'
 							.'</tr>';
+					// matriz para los grados.
+					$datosGrados[] = [
+						"codigo" => trim($listado['codigo_grado']),
+						"descripcion" => trim($listado['nombre_grado'])
+						];
 					}
 					$mensajeError = $nombre_bachillerato;
+					// quitar datos duplicados de la matriz $datosGrados[]
+					// Filtrar duplicados con un array asociativo
+						$uniqueData = [];
+						foreach ($datosGrados as $item) {
+							$uniqueData[$item['codigo']] = $item; // Sobreescribe duplicados
+						}
+					// Convertir el array asociativo de nuevo a un array indexado
+					$filteredData = array_values($uniqueData);
+
 				}
 				else{
 					$respuestaOK = true;
@@ -100,6 +116,7 @@ else{
 $salidaJson = [
 	"respuesta" => $respuestaOK,
 	"mensaje" => $mensajeError,
-	"contenido" => $contenidoOK
+	"contenido" => $contenidoOK,
+	"codigoGrado" => $filteredData
 ];
 echo json_encode($salidaJson);

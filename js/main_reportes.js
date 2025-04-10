@@ -50,6 +50,17 @@ messages: {
                         // si es exitosa la operación
                                 $('#listaUsuariosOK').empty();
                                 $('#listaUsuariosOK').append(response.contenido);
+                                let select = $("#lstcodigoGrado"); // Referencia al <select>
+
+                                // Vaciar opciones antes de llenarlas
+                                select.empty();
+                                select.append('<option value="">Selecciona un grado</option>');
+
+                                // Recorrer el JSON y agregar opciones al select
+                                response.codigoGrado.forEach(function(item) {
+                                        select.append(`<option value="${item.codigo}">${item.descripcion}</option>`);
+                                });
+
                         //	LblPortafolio.
                                 $("label[for='LblSeleccione']").text(response.mensaje);
                                 toastr["info"](response.mensaje, "Sistema");
@@ -657,8 +668,7 @@ if (lstlist_notas == 'aprobados_reprobados' && $(this).attr('data-accion') == 'l
                         // Ejecutar la función
                                 AbrirVentana(varenviar);
                 }
-
-}
+        }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////                        
 ////////////////PROCESO PARA CUADRO DE PROMOCION Y CERTIFICADOS//////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

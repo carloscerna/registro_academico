@@ -131,21 +131,7 @@
 				    $('#certificados').hide();
 				    break;
 				case "por_asignatura":
-				// Cargar valores para la el select lstasignatura
-				    var miselect=$("#lstasignatura");
-				    var annlectivo=$("#lstannlectivo").val();
-				    var modalidad=$("#lstmodalidad").val();
-				    
-					/* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
-					miselect.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
-						
-					$.post("includes/cargar-asignatura.php",  { annlectivo: annlectivo, modalidad: modalidad},
-						function(data) {
-							miselect.empty();
-							for (var i=0; i<data.length; i++) {
-								miselect.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');
-							}
-					}, "json");
+	
 					
 				    $('#nota-asignatura').show();
 				    $('#trimestre').hide();
@@ -197,6 +183,30 @@
 					    
 		    });
 		});
+//
+// Información del año lectivo y modalidad.
+$(document).ready(function()
+{
+// Parametros para el lstmuncipio.
+$("#lstcodigoGrado").change(function () {
+			// Cargar valores para la el select lstasignatura
+      var miselect=$("#lstasignatura");
+      var annlectivo=$("#lstannlectivo").val();
+      var modalidad=$("#lstmodalidad").val();
+      var codigoGrado=$("#lstcodigoGrado").val();
+      
+    /* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
+    miselect.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
+      
+    $.post("includes/cargar-asignatura.php",  {elegido: codigoGrado, annlectivo: annlectivo, modalidad: modalidad},
+      function(data) {
+        miselect.empty();
+        for (var i=0; i<data.length; i++) {
+          miselect.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');
+        }
+    }, "json");
+	});
+});
 
 	// Carga la INformación de Tabla Año Lectivo.
 	$(document).ready(function()
@@ -213,7 +223,6 @@
 						miselect.append('<option value="' + data[i].codigo + '">' + data[i].nombre + '</option>');
 					}
 			}, "json");
-   
 	});
 
 	// Información del año lectivo y modalidad.
@@ -503,6 +512,7 @@
                                  </div>
                                  <!-- POR ASIGNATURA -->
                                  <div id="nota-asignatura">
+                                  <select class="custom-select" name="lstcodigoGrado" id="lstcodigoGrado"></select>
                                        <div class="form-group">
                                          <select class="custom-select" name="lstasignatura" id="lstasignatura">
                                              <!-- CONTENIDO SEGUN EL GRADO. -->             
