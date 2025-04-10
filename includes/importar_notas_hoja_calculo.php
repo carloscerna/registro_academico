@@ -418,6 +418,23 @@ while($objPHPExcel->getActiveSheet()->getCell("E".$fila)->getValue() != "")
 							// Ejectuamos query.
 								$consulta_nota_final = $dblink -> query($query_nota_final);
 							}
+						//
+						if ($codigo_bachillerato == "'10'" && $codigo_grado == "11"){
+							print $query_nota_final = "UPDATE nota SET
+								nota_final = (select round((nota_p_p_1 + nota_p_p_2 + nota_p_p_3 + nota_p_p_4)/4,1) as promedio
+								from nota WHERE codigo_alumno = '$codigo_interno' and codigo_matricula = '$codigo_matricula' and codigo_asignatura = $codigo_asignatura)
+												WHERE codigo_alumno = '$codigo_interno' and codigo_matricula = '$codigo_matricula' and codigo_asignatura = $codigo_asignatura";
+						// Ejectuamos query.
+							$consulta_nota_final = $dblink -> query($query_nota_final);
+						}
+						if ($codigo_bachillerato == "'10'" && $codigo_grado == "10"){
+							print $query_nota_final = "UPDATE nota SET
+								nota_final = (select round((nota_p_p_1 + nota_p_p_2 + nota_p_p_3 + nota_p_p_4)/4,1) as promedio
+								from nota WHERE codigo_alumno = '$codigo_interno' and codigo_matricula = '$codigo_matricula' and codigo_asignatura = $codigo_asignatura)
+												WHERE codigo_alumno = '$codigo_interno' and codigo_matricula = '$codigo_matricula' and codigo_asignatura = $codigo_asignatura";
+						// Ejectuamos query.
+							$consulta_nota_final = $dblink -> query($query_nota_final);
+						}
 			}
 	}	// IF QUE CONDICIONA SI LAS ASIGNATURAS NO ESTAN EN CERO.
           // INCREMENTAR I PARA LA COLUMNA de excel.
