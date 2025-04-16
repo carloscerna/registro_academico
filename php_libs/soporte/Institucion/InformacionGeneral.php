@@ -62,7 +62,8 @@ switch ($action) {
         // Obtener la ruta física raíz
         $path_root = trim($_SERVER['DOCUMENT_ROOT']);  // Ejemplo: "C:/wamp64/www"
         // Define la carpeta dentro de tu proyecto donde deseas guardar las imágenes
-        $uploadsDir = "/registro_academico/img"; // Asegúrate de incluir la barra inicial
+        $uploadsDir = "/registro_academico/img/"; // Asegúrate de incluir la barra inicial
+        $uploadDir = "/registro_academico/img/"; // Asegúrate de incluir la barra inicial
         // Ruta completa donde guardar la imagen
         $destino = $path_root . $uploadsDir;
 
@@ -70,18 +71,77 @@ switch ($action) {
         if (!is_dir($destino)) {
             mkdir($destino, 0777, true);
         }
+        function processFileUpload($fileField, $uploadDir, $path_root) {
+            if (isset($_FILES[$fileField]) && $_FILES[$fileField]['name'] != "") {
+                // Generamos un nombre único concatenando un ID y el nombre original
+                $filename = uniqid() . "_" . basename($_FILES[$fileField]['name']);
+                // Concatenamos la ruta física: DOCUMENT_ROOT + carpeta de uploads
+                $targetFile = $path_root . $uploadDir . $filename;
+                
+                // Si el directorio no existe, lo creamos (recuerda que $uploadDir debe incluir la barra inicial)
+                if (!is_dir($path_root . $uploadDir)) {
+                    mkdir($path_root . $uploadDir, 0777, true);
+                }
+                
+                if (move_uploaded_file($_FILES[$fileField]["tmp_name"], $targetFile)) {
+                    // Devuelve la ruta relativa sin la ruta física (por ejemplo, "uploads/123456_logo_uno.jpg")
+                    // Si deseas no incluir el prefijo de carpeta del proyecto, debes ajustarlo.
+                    //return trim($uploadDir, "/") . "/" . $filename;
+                    return "/". $filename;
+                }
+            }
+            return "";
+        }
+        // Procesar cada imagen
+            $logo_uno = processFileUpload("logo_uno", $uploadDir, $path_root);
+            $logo_dos = processFileUpload("logo_dos", $uploadDir, $path_root);
+            $logo_tres = processFileUpload("logo_tres", $uploadDir, $path_root);
+            $imagen_firma_director = processFileUpload("imagen_firma_director", $uploadDir, $path_root);
+            $imagen_sello_director = processFileUpload("imagen_sello_director", $uploadDir, $path_root);
 
-        // // Función auxiliar para el proceso de subida
-        // function processFileUpload($fileField, $uploadPath) {
-        //     if(isset($_FILES[$fileField]) && $_FILES[$fileField]['name'] != ""){
-        //         $filename = basename($_FILES[$fileField]['name']);
-        //         $targetFile = $uploadPath . uniqid() . "_" . $filename;
-        //         if(move_uploaded_file($_FILES[$fileField]["tmp_name"], $targetFile)){
-        //             return $targetFile;
-        //         }
-        //     }
-        //     return "";
-        // }
+        /*
+            // Supongamos que estás procesando el campo "imagen_firma_director"
+            if(isset($_FILES["logo_uno"]) && $_FILES["logo_uno"]["name"] != ""){
+                // Genera un nombre único (puedes agregar más lógica si lo necesitas)
+                $fileName = uniqid() . "_" . basename($_FILES["logo_uno"]["name"]);
+                // Ruta destino completa
+                $targetPath = $destino . $fileName;
+                
+                if(move_uploaded_file($_FILES["logo_uno"]["tmp_name"], $targetPath)){
+                    // Almacena solamente la parte relativa
+                    $relativePath_logo_uno = "/" . $fileName;
+                }
+            } else {
+                $relativePath_logo_uno = "";
+            }
+            // Supongamos que estás procesando el campo "imagen_firma_director"
+            if(isset($_FILES["logo_dos"]) && $_FILES["logo_dos"]["name"] != ""){
+                // Genera un nombre único (puedes agregar más lógica si lo necesitas)
+                $fileName = uniqid() . "_" . basename($_FILES["logo_dos"]["name"]);
+                // Ruta destino completa
+                $targetPath = $destino . $fileName;
+                
+                if(move_uploaded_file($_FILES["logo_dos"]["tmp_name"], $targetPath)){
+                    // Almacena solamente la parte relativa
+                    $relativePath_logo_dos = "/" . $fileName;
+                }
+            } else {
+                $relativePath_logo_dos = "";
+            }
+            // Supongamos que estás procesando el campo "imagen_firma_director"
+            if(isset($_FILES["logo_tres"]) && $_FILES["logo_tres"]["name"] != ""){
+                // Genera un nombre único (puedes agregar más lógica si lo necesitas)
+                $fileName = uniqid() . "_" . basename($_FILES["logo_tres"]["name"]);
+                // Ruta destino completa
+                $targetPath = $destino . $fileName;
+                
+                if(move_uploaded_file($_FILES["logo_tres"]["tmp_name"], $targetPath)){
+                    // Almacena solamente la parte relativa
+                    $relativePath_logo_tres = "/" . $fileName;
+                }
+            } else {
+                $relativePath_logo_tres = "";
+            }
             // Supongamos que estás procesando el campo "imagen_firma_director"
             if(isset($_FILES["imagen_firma_director"]) && $_FILES["imagen_firma_director"]["name"] != ""){
                 // Genera un nombre único (puedes agregar más lógica si lo necesitas)
@@ -96,13 +156,21 @@ switch ($action) {
             } else {
                 $relativePath_firma = "";
             }
+            // Supongamos que estás procesando el campo "imagen_firma_director"
+            if(isset($_FILES["imagen_sello_director"]) && $_FILES["imagen_sello_director"]["name"] != ""){
+                // Genera un nombre único (puedes agregar más lógica si lo necesitas)
+                $fileName = uniqid() . "_" . basename($_FILES["imagen_sello_director"]["name"]);
+                // Ruta destino completa
+                $targetPath = $destino . $fileName;
+                
+                if(move_uploaded_file($_FILES["imagen_sello_director"]["tmp_name"], $targetPath)){
+                    // Almacena solamente la parte relativa
+                    $relativePath_sello = "/" . $fileName;
+                }
+            } else {
+                $relativePath_sello = "";
+            }*/
         // Procesar cada archivo
-        //$logo_uno = processFileUpload("logo_uno", $uploadPath);
-      //  $logo_dos = processFileUpload("logo_dos", $uploadPath);
-     //  $logo_tres = processFileUpload("logo_tres", $uploadPath);
-       // $imagen_firma_director = processFileUpload("imagen_firma_director", $uploadPath);
-     //   $imagen_sello_director = processFileUpload("imagen_sello_director", $uploadPath);
-
         $codigo_encargado_registro = $_POST['codigo_encargado_registro'] ?? null;
         $codigo_turno              = $_POST['codigo_turno'] ?? null;
         $codigo_sector             = $_POST['codigo_sector'] ?? null;
@@ -151,16 +219,22 @@ switch ($action) {
             $stmt->bindParam(":codigo_municipio", $codigo_municipio);
             $stmt->bindParam(":codigo_departamento", $codigo_departamento);
             $stmt->bindParam(":telefono", $telefono);
-            $stmt->bindParam(":logo_uno", $logo_uno);
-            $stmt->bindParam(":logo_dos", $logo_dos);
-            $stmt->bindParam(":logo_tres", $logo_tres);
+            //$stmt->bindParam(":logo_uno", $relativePath_logo_uno);
+            //$stmt->bindParam(":logo_dos", $relativePath_logo_dos);
+            //$stmt->bindParam(":logo_tres", $relativePath_logo_tres);
             $stmt->bindParam(":codigo_encargado_registro", $codigo_encargado_registro);
             $stmt->bindParam(":codigo_turno", $codigo_turno);
             $stmt->bindParam(":codigo_sector", $codigo_sector);
             $stmt->bindParam(":numero_acuerdo", $numero_acuerdo);
             $stmt->bindParam(":nombre_base_datos", $nombre_base_datos);
-            $stmt->bindParam(":imagen_firma_director", $relativePath_firma);
+            $stmt->bindParam(":logo_uno", $logo_uno);
+            $stmt->bindParam(":logo_dos", $logo_dos);
+            $stmt->bindParam(":logo_tres", $logo_tres);
+            $stmt->bindParam(":imagen_firma_director", $imagen_firma_director);
             $stmt->bindParam(":imagen_sello_director", $imagen_sello_director);
+
+           // $stmt->bindParam(":imagen_firma_director", $relativePath_firma);
+           // $stmt->bindParam(":imagen_sello_director", $relativePath_sello);
 
             if ($stmt->execute()) {
                 echo json_encode([
@@ -198,12 +272,7 @@ switch ($action) {
             $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? "https://" : "http://";
             $host = $_SERVER['HTTP_HOST'];
             // Asegúrate de que el $uploadsDir concuerde con el que usaste al guardar (sin DOCUMENT_ROOT)
-            $baseURL = $protocol . $host . "/registro_academico/img"; 
-            
-            if (!empty($data['imagen_firma_director'])) {
-                $data['imagen_firma_director'] = $baseURL . $data['imagen_firma_director'];
-            }
-              
+            $baseURL = $protocol . $host . "/registro_academico/img";              
               // Si existen imágenes, convierte la ruta relativa a absoluta
               if (!empty($data['logo_uno'])) {
                   $data['logo_uno'] = $baseURL . $data['logo_uno'];
@@ -218,7 +287,10 @@ switch ($action) {
               if (!empty($data['imagen_sello_director'])) {
                   $data['imagen_sello_director'] = $baseURL . $data['imagen_sello_director'];
               }
-
+              if (!empty($data['imagen_firma_director'])) {
+                $data['imagen_firma_director'] = $baseURL . $data['imagen_firma_director'];
+            }
+            //
             if ($data) {
                 echo json_encode([
                     "response" => true,

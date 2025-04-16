@@ -137,19 +137,33 @@ function editarRegistro(id) {
           
           if(response.data.logo_uno){
             $("#preview_logo_uno").attr("src", response.data.logo_uno).show();
+          }else {
+            $("#preview_logo_uno").hide();
           }
+        
           if(response.data.logo_dos){
             $("#preview_logo_dos").attr("src", response.data.logo_dos).show();
-          }
+          }else {
+            $("#preview_logo_dos").hide();
+        }
           if(response.data.logo_tres){
             $("#preview_logo_tres").attr("src", response.data.logo_tres).show();
           }
+          else {
+            $("#preview_logo_tres").hide();
+        }
           if(response.data.imagen_firma_director){
             $("#preview_firma_director").attr("src", response.data.imagen_firma_director).show();
-          }
+          }else {
+            $("#preview_firma_director").hide();
+        }
+        
           if(response.data.imagen_sello_director){
             $("#preview_sello_director").attr("src", response.data.imagen_sello_director).show();
-          }
+          }else {
+            $("#preview_sello_director").hide();
+        }
+        
 
           $("#id_institucion").val(response.data.id_institucion);
 
