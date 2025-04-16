@@ -1,0 +1,220 @@
+{# Heredando la plantilla principal #}
+
+{% extends 'default_layout.html' %}
+
+{% block extraCSS %}
+<style>
+  .modal.fade .modal-dialog {
+    transform: translateY(-30px);
+    opacity: 0;
+    transition: all 0.3s ease-in-out;
+  }
+  
+  .modal.show .modal-dialog {
+    transform: translateY(0);
+    opacity: 1;
+  }
+</style>
+
+{% endblock %}
+
+{% block javascripts %}
+ <!-- JS para esta página. -->
+ <script type="text/JavaScript" src="js/Institucion/InformacionGeneral.js"></script>
+ <script type="text/JavaScript">       // Activar los Toottip de los botones y input. "title"
+   $(document).ready(function () { 
+     $('[data-toggle="tooltip"]').tooltip();
+   })
+ </script>
+ <script type="text/JavaScript">   // Permite la busqueda con o sin tildes.
+   (function(){
+       function removeAccents ( data ) {
+           if ( data.normalize ) {
+             /*Utilice la API I18n si está disponible para dividir caracteres y acentos, luego elimine
+             los acentos al por mayor. Tenga en cuenta que utilizamos los datos originales, así como
+             el nuevo para permitir la búsqueda de cualquiera de las dos formas.*/
+               return data +' '+ data
+                   .normalize('NFD')
+                   .replace(/[\u0300-\u036f]/g, '');
+           }
+           return data;
+       }
+       var searchType = jQuery.fn.DataTable.ext.type.search;
+       searchType.string = function ( data ) {
+           return ! data ?
+               '' :
+               typeof data === 'string' ?
+                   removeAccents( data ) :
+                   data;
+       };
+       searchType.html = function ( data ) {
+           return ! data ?
+               '' :
+               typeof data === 'string' ?
+                   removeAccents( data.replace( /<.*?>/g, '' ) ) :
+                   data;
+       };
+       }());
+
+        
+       </script>
+{% endblock %}
+
+{% block contenidos %}
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper fondoBody">
+    <!-- Content Header (Page header) 
+    Se elimino content-header section solo se va dejar Main Content -->
+    
+  <!-- Main content -->
+    <section class="content">
+      <div class="container mt-4">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h4>Listado de Instituciones</h4>
+                <!-- Botón para nuevo registro -->
+                <button type="button" class="btn btn-success" id="btnNuevoRegistro" data-bs-toggle="modal" data-bs-target="#modalRegistro">
+                  Nuevo registro
+                </button>
+
+            </div>
+            <div class="card-body">
+                <table id="instituciones" class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Código Institución</th>
+                            <th>Nombre Institución</th>
+                            <th>Teléfono</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="dataInstituciones">
+                        <!-- Aquí se cargarán los registros vía AJAX -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    </section>  
+</div> <!-- /.content-Wrapper, Contains page content. -->
+ <!-- Modal para registrar/editar -->
+ <div class="modal fade" id="modalRegistro" tabindex="-1" aria-labelledby="modalRegistroLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg"> <!-- Modal grande para mayor espacio -->
+    <div class="modal-content">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title" id="modalRegistroLabel">
+          <i class="fas fa-building"></i> Registro de Institución
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <!-- Formulario con enctype para subir archivos -->
+        <form id="formInstitucion" enctype="multipart/form-data" novalidate>
+          <input type="hidden" id="id_institucion" name="id_institucion">
+
+          <div class="row">
+            <!-- Columna Izquierda -->
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="codigo_institucion" class="form-label">Código Institución</label>
+                <input type="text" class="form-control" id="codigo_institucion" name="codigo_institucion" required maxlength="10">
+              </div>
+              <div class="mb-3">
+                <label for="nombre_institucion" class="form-label">Nombre Institución</label>
+                <input type="text" class="form-control" id="nombre_institucion" name="nombre_institucion" required maxlength="60">
+              </div>
+              <div class="mb-3">
+                <label for="nombre_director" class="form-label">Nombre del Director</label>
+                <input type="text" class="form-control" id="nombre_director" name="nombre_director" required maxlength="50">
+              </div>
+              <div class="mb-3">
+                <label for="telefono" class="form-label">Teléfono</label>
+                <input type="text" class="form-control" id="telefono" name="telefono" required pattern="\d{9}">
+                <small class="text-muted">Debe ser un número de 9 dígitos</small>
+              </div>
+              <div class="mb-3">
+                <label for="codigo_municipio" class="form-label">Código Municipio</label>
+                <input type="text" class="form-control" id="codigo_municipio" name="codigo_municipio" required maxlength="2">
+              </div>
+              <div class="mb-3">
+                <label for="codigo_departamento" class="form-label">Código Departamento</label>
+                <input type="text" class="form-control" id="codigo_departamento" name="codigo_departamento" required maxlength="2">
+              </div>
+              <div class="mb-3">
+                <label for="direccion_institucion" class="form-label">Dirección</label>
+                <textarea class="form-control" id="direccion_institucion" name="direccion_institucion" maxlength="200"></textarea>
+              </div>
+            </div>
+            <!-- Columna Derecha -->
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="codigo_encargado_registro" class="form-label">Código Encargado Registro</label>
+                <input type="text" class="form-control" id="codigo_encargado_registro" name="codigo_encargado_registro" required maxlength="10">
+              </div>
+              <div class="mb-3">
+                <label for="codigo_turno" class="form-label">Código Turno</label>
+                <input type="text" class="form-control" id="codigo_turno" name="codigo_turno" required maxlength="10">
+              </div>
+              <div class="mb-3">
+                <label for="codigo_sector" class="form-label">Código Sector</label>
+                <input type="text" class="form-control" id="codigo_sector" name="codigo_sector" required maxlength="15">
+              </div>
+              <div class="mb-3">
+                <label for="numero_acuerdo" class="form-label">Número Acuerdo</label>
+                <input type="text" class="form-control" id="numero_acuerdo" name="numero_acuerdo" maxlength="50">
+              </div>
+              <div class="mb-3">
+                <label for="nombre_base_datos" class="form-label">Nombre Base de Datos</label>
+                <input type="text" class="form-control" id="nombre_base_datos" name="nombre_base_datos" required maxlength="60">
+              </div>
+              <!-- Subida de logos -->
+              <div class="mb-3">
+                <label for="logo_uno" class="form-label">Logo 1</label>
+                <input type="file" class="form-control" id="logo_uno" name="logo_uno" accept="image/png, image/jpeg">
+                <img id="preview_logo_uno" src="" class="img-fluid mt-2" style="max-width: 150px; display: none;">
+              </div>
+              <div class="mb-3">
+                <label for="logo_dos" class="form-label">Logo 2</label>
+                <input type="file" class="form-control" id="logo_dos" name="logo_dos" accept="image/png, image/jpeg">
+                <img id="preview_logo_dos" src="" class="img-fluid mt-2" style="max-width: 150px; display: none;">
+              </div>
+              <div class="mb-3">
+                <label for="logo_tres" class="form-label">Logo 3</label>
+                <input type="file" class="form-control" id="logo_tres" name="logo_tres" accept="image/png, image/jpeg">
+                <img id="preview_logo_tres" src="" class="img-fluid mt-2" style="max-width: 150px; display: none;">
+              </div>
+              <!-- Subida de imagen firma y sello del director -->
+              <div class="mb-3">
+                <label for="imagen_firma_director" class="form-label">Firma del Director</label>
+                <div class="input-group">
+                  <input type="file" class="form-control" id="imagen_firma_director" name="imagen_firma_director" accept="image/png, image/jpeg">
+                  <button class="btn btn-outline-secondary" type="button" onclick="resetInput('imagen_firma_director', 'preview_firma_director')">Eliminar</button>
+                </div>
+                <img id="preview_firma_director" src="" class="img-fluid mt-2" style="max-width: 150px; display: none;">
+              </div>
+              <div class="mb-3">
+                <label for="imagen_sello_director" class="form-label">Sello del Director</label>
+                <div class="input-group">
+                  <input type="file" class="form-control" id="imagen_sello_director" name="imagen_sello_director" accept="image/png, image/jpeg">
+                  <button class="btn btn-outline-secondary" type="button" onclick="resetInput('imagen_sello_director', 'preview_sello_director')">Eliminar</button>
+                </div>
+                <img id="preview_sello_director" src="" class="img-fluid mt-2" style="max-width: 150px; display: none;">
+              </div>
+            </div>
+          </div>
+          <div class="text-end">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+            <button type="submit" class="btn btn-primary">Guardar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+{% endblock %}
+
+{% block loginUser %}
+<!--	{% include 'layout-login-user.html' %} -->
+{% endblock %}
