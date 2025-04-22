@@ -1,0 +1,113 @@
+{# Heredando la plantilla principal #}
+
+{% extends 'default_layout.html' %}
+
+{% block extraCSS %}
+
+{% endblock %}
+
+{% block javascripts %}
+<script src="js/Catalogo/area.js"></script>
+<script src="js/Catalogo/dimension.js"></script>
+{% endblock %}
+
+{% block contenidos %}
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper fondoBody">
+    <!-- Content Header (Page header) 
+    Se elimino content-header section solo se va dejar Main Content -->
+    
+  <!-- Main content -->
+    <section class="content">
+        <h2 class="mb-4">Gestión de Áreas Asignaturas</h2>
+
+        <!-- Card Formulario -->
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-primary text-white">
+                <strong>Formulario Área Asignatura</strong>
+            </div>
+            <div class="card-body">
+                <form id="formAreaAsignatura">
+                    <input type="hidden" id="id_area_asignatura" name="id_area_asignatura">
+                    <div class="mb-3">
+                        <label for="codigo" class="form-label">Código</label>
+                        <input type="text" class="form-control" id="codigo" name="codigo" readonly placeholder="Se asignará automáticamente">
+                    </div>
+                    <div class="mb-3">
+                        <label for="descripcion" class="form-label">Descripción</label>
+                        <input type="text" class="form-control" id="descripcion" name="descripcion" required>
+                    </div>
+                    <button type="submit" class="btn btn-success">Guardar</button>
+                    <button type="button" class="btn btn-secondary" onclick="limpiarFormulario()">Cancelar</button>
+                </form>
+            </div>
+        </div>
+    
+        <!-- Card Tabla -->
+        <div class="card shadow-sm">
+            <div class="card-header bg-secondary text-white">
+                <strong>Listado de Áreas Asignaturas</strong>
+            </div>
+            <div class="card-body">
+                <table id="tablaAreas" class="display table table-bordered table-hover" style="width:100%">
+                    <thead class="table-light">
+                        <tr>
+                            <th>ID</th>
+                            <th>Código</th>
+                            <th>Descripción</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+    
+    </section>  
+</div> <!-- /.content-Wrapper, Contains page content. -->
+
+<!-- Modal Área Dimensión -->
+<div class="modal fade" id="modalDimension" tabindex="-1" aria-labelledby="modalDimensionLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header bg-primary text-white">
+          <h5 class="modal-title" id="modalDimensionLabel">Gestión de Área Dimensión</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body">
+          <form id="formDimension">
+            <input type="hidden" id="id_" name="id_">
+            <input type="text" id="codigo_area" name="codigo_area">
+            <div class="mb-3">
+              <label for="codigo_dim" class="form-label">Código</label>
+              <input type="text" class="form-control" id="codigo_dim" name="codigo" readonly>
+            </div>
+            <div class="mb-3">
+              <label for="descripcion_dim" class="form-label">Descripción</label>
+              <input type="text" class="form-control" id="descripcion_dim" name="descripcion" required>
+            </div>
+            <button type="submit" class="btn btn-success">Guardar</button>
+            <button type="button" class="btn btn-secondary" onclick="limpiarDimension()">Cancelar</button>
+          </form>
+  
+          <hr>
+  
+          <table id="tablaDimension" class="display table table-bordered table-hover" style="width:100%">
+            <thead class="table-light">
+              <tr>
+                <th>ID</th>
+                <th>Código</th>
+                <th>Descripción</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+{% endblock %}
+
+{% block loginUser %}
+<!--	{% include 'layout-login-user.html' %} -->
+{% endblock %}
