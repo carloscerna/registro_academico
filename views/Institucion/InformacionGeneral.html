@@ -16,6 +16,7 @@
   }
 </style>
 
+
 {% endblock %}
 
 {% block javascripts %}
@@ -55,8 +56,6 @@
                    data;
        };
        }());
-
-        
        </script>
 {% endblock %}
 
@@ -98,7 +97,7 @@
     </section>  
 </div> <!-- /.content-Wrapper, Contains page content. -->
  <!-- Modal para registrar/editar -->
- <div class="modal fade" id="modalRegistro" tabindex="-1" aria-labelledby="modalRegistroLabel" aria-hidden="true">
+ <div class="modal fade" id="modalRegistro" tabindex="-1" aria-labelledby="modalRegistroLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
   <div class="modal-dialog modal-lg"> <!-- Modal grande para mayor espacio -->
     <div class="modal-content">
       <div class="modal-header bg-primary text-white">
@@ -125,7 +124,7 @@
               </div>
               <div class="mb-3">
                 <label for="nombre_director" class="form-label">Nombre del Director</label>
-                <input type="text" class="form-control" id="nombre_director" name="nombre_director" required maxlength="50">
+                <select id="nombre_director" name="nombre_director" class="form-select select2"></select>
               </div>
               <div class="mb-3">
                 <label for="telefono" class="form-label">Teléfono</label>
@@ -147,9 +146,12 @@
             </div>
             <!-- Columna Derecha -->
             <div class="col-md-6">
+              <!-- Nuestro select para el personal (codigo_encargado_registro) -->
               <div class="mb-3">
-                <label for="codigo_encargado_registro" class="form-label">Código Encargado Registro</label>
-                <input type="text" class="form-control" id="codigo_encargado_registro" name="codigo_encargado_registro" required maxlength="10">
+                <label for="codigo_encargado_registro" class="form-label">Encargado de Registro</label>
+                <select id="codigo_encargado_registro" name="codigo_encargado_registro" class="form-select select2">
+                  <!-- Las opciones se cargarán vía AJAX -->
+                </select>
               </div>
               <div class="mb-3">
                 <label for="codigo_turno" class="form-label">Código Turno</label>
@@ -171,17 +173,17 @@
               <div class="mb-3">
                 <label for="logo_uno" class="form-label">Logo 1</label>
                 <input type="file" class="form-control" id="logo_uno" name="logo_uno" accept="image/png, image/jpeg">
-                <img id="preview_logo_uno" src="" class="img-fluid mt-2" style="max-width: 150px; display: none;">
+                <img id="preview_logo_uno" src="#" class="img-fluid mt-2" style="max-width: 150px; display: none;">
               </div>
               <div class="mb-3">
                 <label for="logo_dos" class="form-label">Logo 2</label>
                 <input type="file" class="form-control" id="logo_dos" name="logo_dos" accept="image/png, image/jpeg">
-                <img id="preview_logo_dos" src="" class="img-fluid mt-2" style="max-width: 150px; display: none;">
+                <img id="preview_logo_dos" src="#" class="img-fluid mt-2" style="max-width: 150px; display: none;">
               </div>
               <div class="mb-3">
                 <label for="logo_tres" class="form-label">Logo 3</label>
                 <input type="file" class="form-control" id="logo_tres" name="logo_tres" accept="image/png, image/jpeg">
-                <img id="preview_logo_tres" src="" class="img-fluid mt-2" style="max-width: 150px; display: none;">
+                <img id="preview_logo_tres" src="#" class="img-fluid mt-2" style="max-width: 150px; display: none;">
               </div>
               <!-- Subida de imagen firma y sello del director -->
               <div class="mb-3">
@@ -190,7 +192,7 @@
                   <input type="file" class="form-control" id="imagen_firma_director" name="imagen_firma_director" accept="image/png, image/jpeg">
                   <button class="btn btn-outline-secondary" type="button" onclick="resetInput('imagen_firma_director', 'preview_firma_director')">Eliminar</button>
                 </div>
-                <img id="preview_firma_director" src="" class="img-fluid mt-2" style="max-width: 150px; display: none;">
+                <img id="preview_firma_director" src="#" class="img-fluid mt-2" style="max-width: 150px; display: none;">
               </div>
               <div class="mb-3">
                 <label for="imagen_sello_director" class="form-label">Sello del Director</label>

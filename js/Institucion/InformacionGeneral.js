@@ -1,7 +1,18 @@
+// variables globales
+let CodigoPersonal = "";
 $(function(){ // iNICIO DEL fUNCTION.
   $(document).ready(function () {
     cargarRegistros();
-  });
+    $('#nombre_director').select2({
+      theme: 'bootstrap-5',
+      width: 'resolve' // Asegura que Select2 se ajuste automáticamente al contenedor
+    });
+    $('#codigo_encargado_registro').select2({
+      theme: 'bootstrap-5',
+      width: 'resolve' // Asegura que Select2 se ajuste automáticamente al contenedor
+    });
+    });
+    
  // Función para mostrar vista previa de imagen
  function mostrarVistaPrevia(input, idPreview) {
   const file = input.files[0];
@@ -44,11 +55,24 @@ $("#btnNuevoRegistro").on("click", function(){
   $("img[id^='preview_']").attr("src", "").hide();
 });
 
-//
-$('#modalRegistro').on('hidden.bs.modal', function () {
-  // Remover el foco del botón de cierre si está presente
-  $('.btn-close').blur();
-});
+
+ 
+  // Llamarla al abrir el modal
+  $('#modalRegistro').on('show.bs.modal', function(e) {
+    $('#nombre_director').select2({
+      dropdownParent: $('#modalRegistro'),
+      minimumResultsForSearch: 0,
+      width: "100%"
+    });
+    $('#codigo_encargado_registro').select2({
+      dropdownParent: $('#modalRegistro'),
+      minimumResultsForSearch: 0,
+      width: "100%"
+    });
+    cargarListaPersonal();
+    listaPersonal(CodigoPersonal);
+  });
+  
 // GUARDAR O ACTUALIZAR REGISTRO.
 $("#formInstitucion").submit(function (event) {
   event.preventDefault();
@@ -82,9 +106,8 @@ $("#formInstitucion").submit(function (event) {
   });
 });
 
-
-
 }); // FIN DEL FUNCTION.
+
 
 // CARGAR DATOS
 function cargarRegistros() {
@@ -112,6 +135,8 @@ function cargarRegistros() {
 }
 // EDITAR REGISTRO CARGAR DATOS AL MODAL.
 function editarRegistro(id) {
+    // Primero cargamos los selects
+    listaPersonal().then(() => {
   $.ajax({
       url: "php_libs/soporte/institucion/informaciongeneral.php",
       type: "POST",
@@ -120,7 +145,9 @@ function editarRegistro(id) {
       success: function (response) {
           if (response.response) {
               // Asignar todos los campos recibidos al formulario
-          $("#nombre_director").val(response.data.nombre_director);
+              $("#nombre_director").val(response.data.nombre_director).trigger("change");
+              
+          //$("#nombre_director").val(response.data.nombre_director);
           $("#codigo_institucion").val(response.data.codigo_institucion);
           $("#nombre_institucion").val(response.data.nombre_institucion);
           $("#direccion_institucion").val(response.data.direccion_institucion);
@@ -133,6 +160,7 @@ function editarRegistro(id) {
           $("#codigo_sector").val(response.data.codigo_sector);
           $("#numero_acuerdo").val(response.data.numero_acuerdo);
           $("#nombre_base_datos").val(response.data.nombre_base_datos);
+          $("#id_institucion").val(response.data.id_institucion);
           // Para logos y otras imágenes: se muestra la vista previa si existe el archivo
           
           if(response.data.logo_uno){
@@ -163,9 +191,6 @@ function editarRegistro(id) {
           }else {
             $("#preview_sello_director").hide();
         }
-        
-
-          $("#id_institucion").val(response.data.id_institucion);
 
               $("#modalRegistro").modal("show");
           } else {
@@ -175,6 +200,7 @@ function editarRegistro(id) {
       error: function () {
           Swal.fire("Error", "Error al obtener los datos para editar", "error");
       }
+    });
   });
 }
 // EOMINAR REGISTROS
@@ -206,5 +232,51 @@ function eliminarRegistro(id) {
               }
           });
       }
+  });
+}
+function cargarListaPersonal() {
+  $.ajax({
+    url: 'php_libs/soporte/institucion/informacionGeneral.php?action=listarPersonal',
+    type: 'POST',
+    dataType: 'json',
+    success: function(data) {
+      var select = $("#codigo_encargado_registro");
+      select.empty();
+      select.append('<option value="">Seleccione un director</option>');
+      $.each(data.results, function (i, item) {
+        select.append('<option value="' + item.id + '">' + item.text + '</option>');
+      });
+    }
+  });
+  
+  
+}
+
+
+function listaPersonal(CodigoPersonal) {
+  return new Promise((resolve, reject) => {
+    var miselect = $("#nombre_director");
+
+    // Limpiar el select y mostrar "Cargando..."
+    miselect.empty().append('<option value="">Cargando...</option>').val('');
+
+    // Petición al servidor
+    $.post("php_libs/soporte/institucion/informacionGeneral.php?action=listarPersonal", function(data) {
+      console.log("Datos recibidos:", data); // 👈 para verificar qué llega
+
+      // Limpiar y agregar opción por defecto
+      miselect.empty().append('<option value="">Seleccione el personal...</option>');
+
+      // Recorrer los datos y agregarlos al select
+      for (var i = 0; i < data.results.length; i++) {
+        var selected = (CodigoPersonal == data.results[i].id) ? 'selected' : '';
+        miselect.append('<option value="' + data.results[i].id + '" ' + selected + '>' + data.results[i].text + '</option>');
+      }
+
+    }, "json").fail(function(xhr, status, error) {
+      console.error("Error al cargar personal:", status, error);
+      console.log(xhr.responseText);
+      miselect.empty().append('<option value="">Error al cargar datos</option>');
+    });
   });
 }
