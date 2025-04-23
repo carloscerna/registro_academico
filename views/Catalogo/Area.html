@@ -9,6 +9,7 @@
 {% block javascripts %}
 <script src="js/Catalogo/area.js"></script>
 <script src="js/Catalogo/dimension.js"></script>
+<script src="js/Catalogo/subdimension.js"></script>
 {% endblock %}
 
 {% block contenidos %}
@@ -106,6 +107,52 @@
     </div>
   </div>
   
+  <!-- Botón para abrir el modal -->
+<button class="btn btn-secondary" onclick="abrirSubdimension(codigo_area, codigo_dimension)">Subdimensiones</button>
+
+<!-- Modal -->
+<div class="modal fade" id="modalSubdimension" tabindex="-1" role="dialog" aria-labelledby="modalSubLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Catálogo de Subdimensiones</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        <form id="formSubdimension">
+          <input type="hidden" name="id_" id="id_sub">
+          <input type="hidden" name="codigo_area" id="codigo_area_sub">
+          <input type="hidden" name="codigo_dimension" id="codigo_dimension_sub">
+
+          <div class="form-group mb-3">
+            <label for="codigo_sub">Código</label>
+            <input type="text" class="form-control" id="codigo_sub" name="codigo" readonly>
+          </div>
+          <div class="form-group mb-3">
+            <label for="descripcion_sub">Descripción</label>
+            <input type="text" class="form-control" id="descripcion_sub" name="descripcion">
+          </div>
+
+          <button type="button" class="btn btn-primary" onclick="guardarSubdimension()">Guardar</button>
+        </form>
+
+        <hr>
+        <table id="tablaSubdimension" class="table table-bordered table-striped" style="width:100%">
+          <thead>
+            <tr>
+              <th>Código</th>
+              <th>Descripción</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+
+      </div>
+    </div>
+  </div>
+</div>
+
 {% endblock %}
 
 {% block loginUser %}

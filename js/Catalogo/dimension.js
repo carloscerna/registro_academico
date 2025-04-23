@@ -23,8 +23,9 @@ function abrirDimension(codigo_area) {
                 data: null,
                 render: function(data) {
                     return `
-                        <button class="btn btn-sm btn-warning" onclick="obtenerDimension(${data.id_})">Editar</button>
-                        <button class="btn btn-sm btn-danger" onclick="eliminarDimension(${data.id_})">Eliminar</button>
+                    <button class="btn btn-sm btn-info" onclick="editarDimension(${data.id_}, '${data.descripcion}')">Editar</button>
+                    <button class="btn btn-sm btn-danger" onclick="eliminarDimension(${data.id_})">Eliminar</button>
+                    <button class="btn btn-sm btn-secondary" onclick="abrirSubdimension('${data.codigo_area}', '${data.codigo}')">Subdimensiones</button>
                     `;
                 }
             }

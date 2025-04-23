@@ -33,7 +33,7 @@ function siguienteCodigo($pdo, $codigo_area) {
     try {
         switch ($accion) {
             case 'listar':
-                $stmt = $pdo->prepare("SELECT * FROM catalogo_area_dimension WHERE codigo_area=? ORDER BY id_ ASC");
+                $stmt = $pdo->prepare("SELECT id_, codigo, descripcion, codigo_area FROM catalogo_area_dimension WHERE codigo_area = ?");
                 $stmt->execute([$_POST['codigo_area']]);
                 $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 echo json_encode(['data' => $data]);
