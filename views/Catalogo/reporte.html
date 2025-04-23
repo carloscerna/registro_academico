@@ -1,0 +1,102 @@
+{# Heredando la plantilla principal #}
+
+{% extends 'default_layout.html' %}
+
+{% block extraCSS %}
+
+{% endblock %}
+
+{% block javascripts %}
+<script>
+    let tabla;
+          
+    function cargarAreas() {
+      $.getJSON('php_libs/reportes/Catalogo/reporte.php', function(data) {
+        data.forEach(area => {
+          $('#filtroArea').append(`<option value="${area.codigo}">${area.codigo} - ${area.descripcion}</option>`);
+        });
+      });
+    }
+    
+    function cargarTabla(codigo_area = '') {
+      if (tabla) {
+        tabla.destroy();
+        $('#tablaReporte tbody').empty();
+      }
+    
+      tabla = $('#tablaReporte').DataTable({
+        ajax: {
+          url: 'php_libs/reportes/Catalogo/reporte.php',
+          type: 'POST',
+          data: { codigo_area }
+        },
+        columns: [
+          { data: 'area' },
+          { data: 'dimension' },
+          { data: 'subdimension' }
+        ],
+        dom: 'Bfrtip',
+        buttons: ['excelHtml5', 'pdfHtml5', 'print'],
+        language: {
+          url: "//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json"
+        }
+      });
+    }
+    
+    $(document).ready(function () {
+      cargarAreas();
+      cargarTabla();
+    
+      $('#filtroArea').on('change', function () {
+        const codigo = $(this).val();
+        cargarTabla(codigo);
+      });
+    });
+    
+    </script>
+{% endblock %}
+
+{% block contenidos %}
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper fondoBody">
+    <!-- Content Header (Page header) 
+    Se elimino content-header section solo se va dejar Main Content -->
+    
+  <!-- Main content -->
+    <section class="content">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+              <h5 class="mb-0">Reporte Jerárquico de Áreas</h5>
+            </div>
+            <div class="card-body">
+              <div class="mb-4">
+                <label for="filtroArea" class="form-label">Filtrar por Área:</label>
+                <select id="filtroArea" class="form-select w-auto">
+                  <option value="">-- Todas las áreas --</option>
+                </select>
+              </div>
+        
+              <div class="table-responsive">
+                <table id="tablaReporte" class="table table-striped table-bordered w-100">
+                  <thead class="table-light">
+                    <tr>
+                      <th>Área</th>
+                      <th>Dimensión</th>
+                      <th>Subdimensión</th>
+                    </tr>
+                  </thead>
+                  <tbody></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+    
+    </section>  
+</div> <!-- /.content-Wrapper, Contains page content. -->
+
+
+{% endblock %}
+
+{% block loginUser %}
+<!--	{% include 'layout-login-user.html' %} -->
+{% endblock %}
