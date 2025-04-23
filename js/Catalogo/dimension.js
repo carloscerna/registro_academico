@@ -2,8 +2,8 @@ let tablaDimension;
 
 function abrirDimension(codigo_area) {
     $('#codigo_area').val(codigo_area);
-    $('#codigo_dim').val('');
-    $('#descripcion_dim').val('');
+    limpiarDimension();
+    cargarSiguienteCodigo(codigo_area);
     $('#modalDimension').modal('show');
 
     // Cargar el DataTable
@@ -32,20 +32,55 @@ function abrirDimension(codigo_area) {
     });
 }
 
+function guardarDimension() {
+    const descripcion = $('#descripcion_dim').val().trim();
+    const codigo_area = $('#codigo_area').val();
 
-
-$('#formDimension').submit(function(e) {
-    e.preventDefault();
-    $.post('php_libs/soporte/catalogo/dimension.php', $(this).serialize() + '&accion=guardar', function(res) {
-        tablaDimension.ajax.reload();
-        limpiarDimension();
+    if (!descripcion) {
         Swal.fire({
-            icon: 'success',
-            title: 'Éxito',
-            text: 'Registro guardado correctamente'
+            icon: 'warning',
+            title: 'Campo vacío',
+            text: 'Por favor complete la descripción.'
         });
-    }, 'json');
-});
+        return;
+    }
+
+    $.ajax({
+        url: 'php_libs/soporte/catalogo/dimension.php',
+        type: 'POST',
+        data: $('#formDimension').serialize() + '&accion=guardar',
+        dataType: 'json',
+        success: function(res) {
+            if (res.status === 'success') {
+                tablaDimension.ajax.reload();
+                limpiarDimension();
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Guardado',
+                    text: 'Registro guardado correctamente.'
+                });
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: res.message || 'No se pudo guardar el registro.'
+                });
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error('Error AJAX:', error);
+            console.error('Respuesta:', xhr.responseText);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error del servidor',
+                html: `<pre>${xhr.responseText}</pre>`
+            });
+        }
+    });
+}
+
+
+
 function obtenerDimension(id) {
     $.post('php_libs/soporte/catalogo/dimension.php', {id_: id, accion: 'obtener'}, function(data) {
         $('#id_').val(data.id_);
@@ -75,6 +110,12 @@ function eliminarDimension(id) {
             }, 'json');
         }
     });
+}
+
+function cargarSiguienteCodigo(codigo_area) {
+    $.post('php_libs/soporte/catalogo/dimension.php', {accion: 'siguiente_codigo', codigo_area}, function(res) {
+        $('#codigo_dim').val(res.codigo);
+    }, 'json');
 }
 
 

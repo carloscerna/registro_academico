@@ -76,7 +76,7 @@
         <div class="modal-body">
           <form id="formDimension">
             <input type="hidden" id="id_" name="id_">
-            <input type="text" id="codigo_area" name="codigo_area">
+            <input type="hidden" id="codigo_area" name="codigo_area">
             <div class="mb-3">
               <label for="codigo_dim" class="form-label">Código</label>
               <input type="text" class="form-control" id="codigo_dim" name="codigo" readonly>
@@ -85,7 +85,7 @@
               <label for="descripcion_dim" class="form-label">Descripción</label>
               <input type="text" class="form-control" id="descripcion_dim" name="descripcion" required>
             </div>
-            <button type="submit" class="btn btn-success">Guardar</button>
+            <button type="button" class="btn btn-primary" onclick="guardarDimension()">Guardar</button>
             <button type="button" class="btn btn-secondary" onclick="limpiarDimension()">Cancelar</button>
           </form>
   
