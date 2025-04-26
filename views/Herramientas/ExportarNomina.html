@@ -1,0 +1,87 @@
+{# Heredando la plantilla principal #}
+
+{% extends 'default_layout.html' %}
+
+{% block extraCSS %}
+
+{% endblock %}
+
+{% block javascripts %}
+<!-- Requiere jQuery y SweetAlert2 -->
+<script src="js/Herramientas/ExportarNomina.js"></script>
+
+{% endblock %}
+
+{% block contenidos %}
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+    <!-- Content Header (Page header) 
+    Se elimino content-header section solo se va dejar Main Content -->
+    
+  <!-- Main content -->
+    <section class="content">
+        <div class="container py-4">
+            <h3 class="mb-4 text-primary">Importación de Notas</h3>
+          
+            <!-- Card 1: Selecciones -->
+            <div class="card mb-4">
+              <div class="card-header bg-primary text-white">Paso 1: Seleccionar Información Académica</div>
+              <div class="card-body">
+                <div class="row g-3">
+                  <div class="col-md-4">
+                    <label for="ann_lectivo" class="form-label">Año Lectivo</label>
+                    <select id="ann_lectivo" class="form-select"></select>
+                  </div>
+                  <div class="col-md-4">
+                    <label for="bachillerato" class="form-label">Bachillerato</label>
+                    <select id="bachillerato" class="form-select"></select>
+                  </div>
+                  <div class="col-md-4">
+                    <label for="grado" class="form-label">Grado / Sección / Turno</label>
+                    <select id="grado" class="form-select"></select>
+                  </div>
+                </div>
+              </div>
+            </div>
+          
+            <!-- Card 2: Subida de archivo -->
+            <div class="card mb-4">
+              <div class="card-header bg-success text-white">Paso 2: Subir Archivo Excel</div>
+              <div class="card-body">
+                <div class="row g-3">
+                  <div class="col-md-6">
+                    <input type="file" id="archivo_excel" class="form-control" accept=".xlsx, .xls" title="File">
+                  </div>
+                  <div class="col-md-6">
+                    <button id="procesar_btn" class="btn btn-success w-100">Procesar Excel</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          
+            <!-- Card 3: Resultado -->
+            <div class="card">
+              <div class="card-header bg-secondary text-white">Paso 3: Resultado</div>
+              <div class="card-body">
+                <table class="table table-bordered table-striped">
+                  <thead>
+                    <tr>
+                      <th>Código NIE</th>
+                      <th>Nombre del Alumno</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tabla_resultado">
+                    <!-- Datos generados aquí -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+                        
+    </section>  
+</div> <!-- /.content-Wrapper, Contains page content. -->
+{% endblock %}
+
+{% block loginUser %}
+<!--	{% include 'layout-login-user.html' %} -->
+{% endblock %}
