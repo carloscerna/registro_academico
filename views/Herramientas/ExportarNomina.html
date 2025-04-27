@@ -21,7 +21,7 @@
   <!-- Main content -->
     <section class="content">
         <div class="container py-4">
-            <h3 class="mb-4 text-primary">Importación de Notas</h3>
+            <h3 class="mb-4 text-primary">Nómina Excel a Exportar</h3>
           
             <!-- Card 1: Selecciones -->
             <div class="card mb-4">
@@ -45,32 +45,34 @@
             </div>
           
             <!-- Card 2: Subida de archivo -->
-            <div class="card mb-4">
-              <div class="card-header bg-success text-white">Paso 2: Subir Archivo Excel</div>
-              <div class="card-body">
-                <div class="row g-3">
-                  <div class="col-md-6">
-                    <input type="file" id="archivo_excel" class="form-control" accept=".xlsx, .xls" title="File">
-                  </div>
-                  <div class="col-md-6">
-                    <button id="procesar_btn" class="btn btn-success w-100">Procesar Excel</button>
+            <form id="formExcel" enctype="multipart/form-data">
+              <div class="card mb-4">
+                <div class="card-header bg-success text-white">Paso 2: Subir Archivo Excel</div>
+                <div class="card-body">
+                  <div class="row g-3">
+                    <div class="col-md-6">
+                      <input type="file" name="excelFile" id="excelFile" class="form-control" accept=".xlsx, .xls" title="File">
+                    </div>
+                    <div class="col-md-6">
+                      <input type="hidden" name="accion" value="procesar_excel">
+                      <button type="submit" class="btn btn-success">Procesar Excel</button>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          
+            </form>
             <!-- Card 3: Resultado -->
             <div class="card">
               <div class="card-header bg-secondary text-white">Paso 3: Resultado</div>
               <div class="card-body">
-                <table class="table table-bordered table-striped">
+                <table id="tablaNomina" class="table table-bordered table-striped">
                   <thead>
                     <tr>
                       <th>Código NIE</th>
                       <th>Nombre del Alumno</th>
                     </tr>
                   </thead>
-                  <tbody id="tabla_resultado">
+                  <tbody>
                     <!-- Datos generados aquí -->
                   </tbody>
                 </table>
