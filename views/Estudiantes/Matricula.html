@@ -7,6 +7,81 @@
 <script type="text/JavaScript" src="js/main_matricula_masiva.js"></script>
 <script type="text/JavaScript" src="js/default.js"></script>
 <script type="text/JavaScript" src="js/Estudiantes/BuscarMatriculaEstudiantes.js"></script>
+<!-- cargar datos del nombre del archivo. -->
+<script>
+  $(document).ready(function() {
+  
+    // Función para cargar Año Lectivo
+    function cargarAnnLectivo() {
+      const $annLectivo = $("#lstannlectivo");
+  
+      $annLectivo.html('<option value="">Cargando...</option>');
+  
+      $.post("includes/cargar-ann-lectivo.php", function(data) {
+        $annLectivo.empty().append('<option value="">Seleccionar...</option>');
+        $.each(data, function(i, item) {
+          $annLectivo.append(`<option value="${item.codigo}">${item.nombre}</option>`);
+        });
+      }, "json");
+    }
+  
+    // Función para cargar Modalidad basado en Año Lectivo
+    function cargarModalidad(annlectivo) {
+      const $modalidad = $("#lstmodalidad");
+  
+      $modalidad.html('<option value="">Cargando...</option>');
+  
+      $.post("includes/cargar-bachillerato.php", { annlectivo: annlectivo }, function(data) {
+        $modalidad.empty().append('<option value="">Seleccionar...</option>');
+        $.each(data, function(i, item) {
+          $modalidad.append(`<option value="${item.codigo}">${item.descripcion}</option>`);
+        });
+      }, "json");
+    }
+  
+    // Función para cargar Grado - Sección - Turno basado en Modalidad
+    function cargarGradoSeccion(modalidad, annlectivo) {
+      const $gradoSeccion = $("#lstgradoseccion");
+  
+      $gradoSeccion.html('<option value="">Cargando...</option>');
+  
+      $.post("includes/cargar-grado-seccion.php", { elegido: modalidad, ann: annlectivo }, function(data) {
+        $gradoSeccion.empty().append('<option value="">Seleccionar...</option>');
+        $.each(data, function(i, item) {
+          $gradoSeccion.append(`<option value="${item.codigo_grado}${item.codigo_seccion}${item.codigo_turno}">
+            ${item.descripcion_grado} ${item.descripcion_seccion} - ${item.descripcion_turno}
+          </option>`);
+        });
+      }, "json");
+    }
+  
+    // Cargar Año Lectivo al cargar la página
+    cargarAnnLectivo();
+  
+    // Evento: cambiar Año Lectivo -> cargar Modalidades
+    $("#lstannlectivo").change(function() {
+      const annlectivo = $(this).val();
+      if (annlectivo) {
+        cargarModalidad(annlectivo);
+        $("#lstgradoseccion").empty().append('<option value="">Seleccionar...</option>'); // Resetea grado-sección
+      } else {
+        $("#lstmodalidad, #lstgradoseccion").empty().append('<option value="">Seleccionar...</option>');
+      }
+    });
+  
+    // Evento: cambiar Modalidad -> cargar Grado/Sección/Turno
+    $("#lstmodalidad").change(function() {
+      const modalidad = $(this).val();
+      const annlectivo = $("#lstannlectivo").val();
+      if (modalidad && annlectivo) {
+        cargarGradoSeccion(modalidad, annlectivo);
+      } else {
+        $("#lstgradoseccion").empty().append('<option value="">Seleccionar...</option>');
+      }
+    });
+  
+  });
+  </script>
 {% endblock %}
 
 {% block contenidos %}
@@ -64,31 +139,6 @@
         </div>
       </div>
 
-      <!-- Resultados -->
-      <div class="row" id="Resultados" style="display: none;">
-        <div class="col">
-          <div class="card card-info mx-auto">
-            <div class="card-header">
-              <h3 class="card-title">Listado de Alumnos</h3>
-            </div>
-            <div class="card-body">
-              <table id="tablaAlumnos" class="table table-bordered table-striped" style="width:100%">
-                <thead>
-                  <tr>
-                    <th>#</th>
-                    <th>ID Alumno</th>
-                    <th>NIE</th>
-                    <th>Nombre Completo</th>
-                    <th><input type="checkbox" id="selectAllAlumnos"></th>
-                  </tr>
-                </thead>
-                <tbody></tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
-
       <!-- Formulario Destino -->
       <div class="row" id="Destino" style="display: none;">
         <div class="col-md-8 mx-auto">
@@ -132,6 +182,30 @@
         </div>
       </div>
 
+      <!-- Resultados -->
+      <div class="row" id="Resultados" style="display: none;">
+        <div class="col">
+          <div class="card card-info mx-auto">
+            <div class="card-header">
+              <h3 class="card-title">Listado de Alumnos</h3>
+            </div>
+            <div class="card-body">
+              <table id="tablaAlumnos" class="table table-bordered table-striped" style="width:100%">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>ID Alumno</th>
+                    <th>NIE</th>
+                    <th>Nombre Completo</th>
+                    <th><input type="checkbox" id="selectAllAlumnos"></th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </section>
 </div>

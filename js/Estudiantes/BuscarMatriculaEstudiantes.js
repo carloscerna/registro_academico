@@ -92,6 +92,7 @@ $(document).ready(function () {
     });
 
     $("#Resultados").show();
+    $("#Destino").show();
   });
 
   // Cancelar: ocultar tabla y destruir DataTable
@@ -125,6 +126,7 @@ $(document).ready(function () {
       const lstannlectivoD = $('#lstannlectivoD').val();
       const lstmodalidadD = $('#lstmodalidadD').val();
       const lstgradoseccionD = $('#lstgradoseccionD').val();
+
       let codigo_alumno_ = [], chkmatricula_ = [], fila = 0;
 
       if (!lstannlectivoD || !lstmodalidadD || !lstgradoseccionD) {
@@ -134,13 +136,24 @@ $(document).ready(function () {
         return;
       }
 
-      $("#tablaLista tbody tr").each(function () {
-        const codigo_alumno = $(this).find('td').eq(1).html();
-        const chkMatricula = $(this).find('td').eq(4).find('input[type="checkbox"]').is(':checked');
-        codigo_alumno_[fila] = codigo_alumno;
-        chkmatricula_[fila] = chkMatricula;
+
+      $('#tablaAlumnos').DataTable().rows().every(function () {
+        const $row = $(this.node());
+        const codigo_alumno = $row.find('td').eq(1).text();
+        const chkMatricula = $row.find('td').eq(4).find('input[type="checkbox"]').is(':checked');
+      
+        codigo_alumno_.push(codigo_alumno);
+        chkmatricula_.push(chkMatricula);
         fila++;
       });
+      
+
+      const haySeleccionados = chkmatricula_.some(val => val === true);
+      if (!haySeleccionados) {
+        toastr.warning("Debe seleccionar al menos un estudiante.");
+        return;
+      }
+      
 
       Pace.start();
 
@@ -159,11 +172,11 @@ $(document).ready(function () {
           lstgradoseccion: lstgradoseccionD
         },
         success: function (response) {
-          if (response.respuesta) {
-            toastr.success(response.contenido);
-          } else {
-            toastr.error(response.contenido);
-          }
+          Swal.fire({
+            icon: response.respuesta ? 'success' : 'info',
+            title: response.respuesta ? '¡Guardado exitosamente!' : 'Matrícula incompleta',
+            html: '<b>Resultado:</b><br>' + response.contenido
+          });
         }
       });
     });
