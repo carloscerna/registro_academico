@@ -24,6 +24,7 @@ $codigo_grado = substr($gradoSeccion, 0, 2);
 $codigo_seccion = substr($gradoSeccion, 2, 2);
 $codigo_turno = substr($gradoSeccion, 4, 2);
 
+
 $matriculados = 0;
 $ya_existian = 0;
 
@@ -38,9 +39,12 @@ foreach ($alumnos as $a) {
     $stmt->execute([$nie]);
 
     if ($stmt->rowCount() === 0) {
-        $insertAlumno = $dblink->prepare("INSERT INTO alumno (codigo_nie, apellido_paterno, apellido_materno, nombre_completo) VALUES (?, ?, ?, ?)");
+       // $insertAlumno = $dblink->prepare("INSERT INTO alumno (codigo_nie, apellido_paterno, apellido_materno, nombre_completo) VALUES (?, ?, ?, ?) RETURNING id_alumno");
+       // $insertAlumno->execute([$nie, $apellido_paterno, $apellido_materno, $nombre_completo]);
+        //$idAlumno = $dblink->lastInsertId();
+        $insertAlumno = $dblink->prepare("INSERT INTO alumno (codigo_nie, apellido_paterno, apellido_materno, nombre_completo) VALUES (?, ?, ?, ?) RETURNING id_alumno");
         $insertAlumno->execute([$nie, $apellido_paterno, $apellido_materno, $nombre_completo]);
-        $idAlumno = $dblink->lastInsertId();
+        $idAlumno = $stmt->fetch(PDO::FETCH_ASSOC)['id_alumno'];
     } else {
         $fila = $stmt->fetch(PDO::FETCH_ASSOC);
         $idAlumno = $fila['id_alumno'];
@@ -58,9 +62,21 @@ foreach ($alumnos as $a) {
     // Insertar matrícula
     $dblink->beginTransaction();
     try {
-        $stmt_insert_m = $dblink->prepare("INSERT INTO alumno_matricula (codigo_alumno) VALUES (?)");
-        $stmt_insert_m->execute([$idAlumno]);
-        $id_matricula = $dblink->lastInsertId();
+        try {
+            // Preparar la consulta con RETURNING para obtener el ID generado
+            $stmt = $dblink->prepare("INSERT INTO alumno_matricula (codigo_alumno) VALUES (?) RETURNING id_alumno_matricula");
+            
+            // Ejecutar la consulta y obtener el ID generado
+            $stmt->execute([$idAlumno]);
+            $id_matricula = $stmt->fetch(PDO::FETCH_ASSOC)['id_alumno_matricula'];
+        
+            echo "Matrícula creada con éxito. ID generado: " . $id_matricula;
+        } catch (Exception $e) {
+            echo "Error al insertar la matrícula: " . $e->getMessage();
+        }
+//        $stmt_insert_m = $dblink->prepare("INSERT INTO alumno_matricula (codigo_alumno) VALUES (?)");
+  //      $stmt_insert_m->execute([$idAlumno]);
+    //    $id_matricula = $dblink->lastInsertId();
 
         $stmt_update_m = $dblink->prepare("UPDATE alumno_matricula SET codigo_bach_o_ciclo = ?, codigo_grado = ?, codigo_seccion = ?, codigo_turno = ?, codigo_ann_lectivo = ?, certificado = true, pn = true WHERE id_alumno_matricula = ?");
         $stmt_update_m->execute([$modalidad, $codigo_grado, $codigo_seccion, $codigo_turno, $annLectivo, $id_matricula]);

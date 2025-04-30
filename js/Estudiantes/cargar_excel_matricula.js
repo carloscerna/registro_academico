@@ -116,7 +116,8 @@ $(document).ready(function () {
           const nombre_completo = $(this).find("td").eq(4).text().trim();
           const encontrado = $(this).hasClass("bg-warning");
       
-          if (encontrado && codigo_nie !== "") {
+          // if (encontrado && codigo_nie !== "") {
+          if (codigo_nie !== "") {
             alumnos.push({
               codigo_nie,
               apellido_paterno,
