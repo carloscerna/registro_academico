@@ -7,6 +7,7 @@
 <script type="text/JavaScript" src="js/main_matricula_masiva.js"></script>
 <script type="text/JavaScript" src="js/default.js"></script>
 <script type="text/JavaScript" src="js/Estudiantes/BuscarMatriculaEstudiantes.js"></script>
+<script type="text/JavaScript" src="js/Estudiantes/cargar_excel_matricula.js"></script>
 <!-- cargar datos del nombre del archivo. -->
 <script>
   $(document).ready(function() {
@@ -206,6 +207,70 @@
           </div>
         </div>
       </div>
+
+      <!-- Modal: Importar Matrícula desde Excel -->
+<div class="modal fade" id="modalImportarExcel" tabindex="-1" role="dialog" aria-labelledby="modalImportarExcelLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header bg-success text-white">
+        <h5 class="modal-title" id="modalImportarExcelLabel">Importar Matrícula desde Excel</h5>
+        <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form id="formImportarExcel" enctype="multipart/form-data">
+          <div class="form-group">
+            <label for="archivoExcel">Archivo Excel (.xlsx o .xls)</label>
+            <div class="custom-file">
+              <input type="file" class="custom-file-input" id="archivoExcel" name="archivoExcel" accept=".xlsx,.xls" required>
+              <label class="custom-file-label" for="archivoExcel">Seleccionar archivo...</label>
+            </div>
+          </div>
+          
+          <div class="form-row">
+            <div class="form-group col-md-4">
+              <label for="filaInicio">Fila de Inicio</label>
+              <input type="number" class="form-control" id="filaInicio" name="filaInicio" value="2" min="1" required>
+            </div>
+            <div class="form-group col-md-4">
+              <label for="colNIE">Columna del NIE (ej. A, B, C)</label>
+              <input type="text" class="form-control" id="colNIE" name="colNIE" value="A" required>
+            </div>
+            <div class="form-group col-md-4">
+              <label for="colNombre">Columna del Nombre (ej. B, C)</label>
+              <input type="text" class="form-control" id="colNombre" name="colNombre" value="B" required>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-success btn-block">Procesar Excel</button>
+        </form>
+        <hr>
+        <div class="table-responsive">
+          <table class="table table-bordered table-sm" id="tablaVistaExcel">
+            <thead class="thead-light">
+              <tr>
+                <th>#</th>
+                <th>NIE</th>
+                <th>Apellido Paterno</th>
+                <th>Apellido Materno</th>
+                <th>Nombre</th>
+                <th>Encontrado</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+          <div class="text-center mt-3">
+            <button id="btnGuardarMatriculaExcel" class="btn btn-primary">
+              <i class="fas fa-save"></i> Guardar Matrícula desde Excel
+            </button>
+          </div>
+          
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
     </div>
   </section>
 </div>
