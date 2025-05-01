@@ -2,6 +2,7 @@ $(document).ready(function () {
     // Mostrar el modal
     $("#goMatriculaImportar").click(function () {
       $("#modalImportarExcel").modal("show");
+        $("#tablaVistaExcel tbody").empty(); // limpia la tabla
     });
   
 
