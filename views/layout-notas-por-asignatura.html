@@ -7,6 +7,8 @@
 {% endblock %}
 
 {% block javascripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     <script type="text/JavaScript" src="js/main_notas_por_asignatura.js"></script>
     <script type="text/JavaScript" src="js/default.js"></script>
     <!-- JQUERY NUMERIC . -->
@@ -170,6 +172,225 @@
      configureLoadingScreen(screen);
    })
  </script>
+
+ <script>
+  $(document).ready(function () { 
+    document.getElementById('toggleGrafica').addEventListener('click', function () {
+      const grafica = document.getElementById('graficaRangos');
+      if (grafica.style.display === 'none') {
+          grafica.style.display = 'block';
+          this.textContent = 'Ocultar Gráfica';
+      } else {
+          grafica.style.display = 'none';
+          this.textContent = 'Mostrar Gráfica';
+      }
+  });
+  
+    $('#btnRangoCalificaciones').on('click', function () {
+      const annLectivo = $('#lstannlectivo').val();
+      const modalidad = $('#lstmodalidad').val();
+      const gradoSeccion = $('#lstgradoseccion').val();
+      const periodo = $('#lstperiodo').val();
+  
+      $.ajax({
+          url: 'php_libs/soporte/rango_calificaciones.php',
+          type: 'POST',
+          dataType: 'json',
+          data: {
+              annLectivo: annLectivo,
+              modalidad: modalidad,
+              gradoSeccion: gradoSeccion,
+              periodo: periodo
+          },
+          beforeSend: function () {
+              // Opcional: mostrar spinner o desactivar botón
+              console.log('Enviando datos...');
+          },
+          success: function (response) {
+              console.log('Respuesta AJAX:', response);
+  
+              if (response.error) {
+                  Swal.fire({
+                      icon: 'error',
+                      title: 'Error en la consulta',
+                      text: response.error,
+                      footer: `<pre style="text-align:left;">Campo: ${response.campo_periodo || ''}\nCódigo ALL: ${response.codigo_all || ''}</pre>`
+                  });
+                  return;
+              }
+  
+              if (Array.isArray(response) && response.length > 0) {
+                  // Limpiar tabla previa
+                  $('#tablaRango tbody').empty();
+  
+                  // Rellenar la tabla
+                  response.forEach(item => {
+                      $('#tablaRango tbody').append(`
+                          <tr>
+                              <td>${item.nombre_asignatura}</td>
+                              <td>${item.menor_5}</td>
+                              <td>${item.entre_5_7}</td>
+                              <td>${item.mayor_7}</td>
+                          </tr>
+                      `);
+                  });
+  
+                  // Mostrar modal
+                  $('#modalRangoCalificaciones').modal('show');
+                  $('#graficaRangos').hide();
+                  $('#toggleGrafica').text('Mostrar Gráfica');
+                            // Texto de los selects
+                            const textoAnio = $('#lstannlectivo option:selected').text();
+                            const textoModalidad = $('#lstmodalidad option:selected').text();
+                            const textoGrado = $('#lstgradoseccion option:selected').text();
+                            const textoPeriodo = $('#lstperiodo option:selected').text();
+                            const titulo = `Rangos de Calificaciones - ${textoAnio} - ${textoModalidad} - ${textoGrado} - ${textoPeriodo}`;  
+                  // Inicializar DataTable si no lo has hecho
+                  if (!$.fn.DataTable.isDataTable('#tablaRango')) {
+
+
+                            // Verifica si la tabla ya fue inicializada
+                            if ($.fn.DataTable.isDataTable('#tablaRango')) {
+                                $('#tablaRango').DataTable().clear().destroy();
+                            }
+
+                            // Re-inicializar DataTable con botones
+                            $('#tablaRango').DataTable({
+                                dom: 'Bfrtip',
+                                buttons: [
+                                    {
+                                        extend: 'excelHtml5',
+                                        title: titulo,
+                                        text: 'Exportar a Excel'
+                                    },
+                                    {
+                                        extend: 'pdfHtml5',
+                                        title: titulo,
+                                        text: 'Exportar a PDF',
+                                        orientation: 'landscape',
+                                        pageSize: 'A4'
+                                    },
+                                    {
+                                        extend: 'print',
+                                        title: titulo,
+                                        text: 'Imprimir'
+                                    }
+                                ],
+                                language: {
+                                    url: 'php_libs/idioma/es_es.json'
+                                }
+                            });
+
+                  }
+                        $('#resumenFiltros').html(`
+                        Año Lectivo: ${textoAnio} |
+                        Modalidad: ${textoModalidad} |
+                        Grado/Sección: ${textoGrado} |
+                        Período: ${textoPeriodo}
+                    `);
+             // Obtener datos del response
+const nombresAsignaturas = [];
+const menores5 = [];
+const entre5y7 = [];
+const mayores7 = [];
+
+response.forEach(row => {
+  const total = parseInt(row.menor_5) + parseInt(row.entre_5_7) + parseInt(row.mayor_7);
+  nombresAsignaturas.push(row.nombre_asignatura);
+
+  if (total > 0) {
+      menores5.push(((row.menor_5 / total) * 100).toFixed(1));
+      entre5y7.push(((row.entre_5_7 / total) * 100).toFixed(1));
+      mayores7.push(((row.mayor_7 / total) * 100).toFixed(1));
+  } else {
+      menores5.push(0);
+      entre5y7.push(0);
+      mayores7.push(0);
+  }
+});
+
+// Si ya hay una gráfica previa, destruirla antes de crear una nueva
+if (window.graficoRangos) {
+    window.graficoRangos.destroy();
+}
+
+// Crear gráfica de barras agrupadas
+const ctx = document.getElementById('graficaRangos').getContext('2d');
+window.graficoRangos = new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: nombresAsignaturas,
+        datasets: [
+            {
+                label: '< 5',
+                data: menores5,
+                backgroundColor: 'rgba(255, 99, 132, 0.6)'
+            },
+            {
+                label: '5 - 6.99',
+                data: entre5y7,
+                backgroundColor: 'rgba(255, 206, 86, 0.6)'
+            },
+            {
+                label: '≥ 7',
+                data: mayores7,
+                backgroundColor: 'rgba(75, 192, 192, 0.6)'
+            }
+        ]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: {
+                position: 'top'
+            },
+            title: {
+                display: true,
+                text: `Rangos de Calificaciones - ${textoPeriodo}`
+            }
+        },
+        scales: {
+            x: {
+                ticks: {
+                    autoSkip: false,
+                    maxRotation: 45,
+                    minRotation: 45
+                }
+            },
+            y: {
+              beginAtZero: true,
+              title: {
+                  display: true,
+                  text: 'Porcentaje (%)'
+              },
+              max: 100
+          }
+          
+        }
+    }
+});
+ 
+              } else {
+                  Swal.fire({
+                      icon: 'info',
+                      title: 'Sin resultados',
+                      text: 'No se encontraron datos para los filtros seleccionados.'
+                  });
+              }
+          },
+          error: function (xhr, status, error) {
+              console.error('Error AJAX:', xhr.responseText);
+              Swal.fire({
+                  icon: 'error',
+                  title: 'Error AJAX',
+                  text: `Estado: ${status}, Error: ${error}`
+              });
+          }
+      });
+  });
+  
+  });
+ </script>
 {% endblock %}
 
 {% block contenidos %}
@@ -243,6 +464,7 @@
                         <select id="lstperiodo" name="lstperiodo" class="custom-select"></select>
                       </div>
                     </div>
+
               </div>
                 <!-- /.card-body -->
                 <div class="card-footer d-flex justify-content-center">
@@ -261,8 +483,17 @@
                         <span class="fas fa-print"></span> Ver o Imprimir Notas
                         </button>
                     </div>
+                    <!-- ... tus selects lstannlectivo, lstmodalidad, etc. ... -->
                 </div>
+                
             </div>
+            <!-- Aquí colocas el botón -->
+<div class="mt-4 text-end">
+  <button type="button" class="btn btn-info" id="btnRangoCalificaciones">
+    <i class="bi bi-bar-chart-line"></i> Rango Calificaciones
+  </button>
+</div>
+
                 </form>
             <!-- /.card -->
           </div> <!--/.col (left) -->
@@ -304,7 +535,43 @@
           </div> <!-- CLASS ROW PARA EL INGRESO DE NOTAS. -->
     </section>
   </div> <!-- /.Content Wrapper. Caontains page content -->			
+<!-- Modal Bootstrap -->
+<div class="modal fade" id="modalRangoCalificaciones" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title">Rango de Calificaciones por Asignatura</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
 
+      </div>
+      <div id="resumenFiltros" class="mb-3 fw-bold text-secondary">
+        <!-- Se llenará por JavaScript -->
+    </div>
+    <button id="toggleGrafica" class="btn btn-secondary btn-sm mb-2">
+      Mostrar Gráfica
+  </button>
+  
+      <div class="modal-body">
+        <table id="tablaRango" class="table table-striped">
+          <thead class="table-dark">
+            <tr>
+              <th>Asignatura</th>
+              <th>&lt; 5</th>
+              <th>≥ 5 y &lt; 7</th>
+              <th>≥ 7</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+        <canvas id="graficaRangos" height="120" style="display: none;"></canvas>
+
+
+      </div>
+    </div>
+  </div>
+</div>
+
+  
   <!-- Loading Screen -->
   {% include 'loading-screen.html' %}
 {% endblock %}
