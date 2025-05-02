@@ -1,0 +1,89 @@
+{# Heredando la plantilla principal #}
+
+{% extends 'default_layout.html' %}
+
+{% block extraCSS %}
+
+{% endblock %}
+
+{% block javascripts %}
+<script src="js/Catalogo/Periodos.js"></script>
+{% endblock %}
+
+{% block contenidos %}
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper fondoBody">
+    <!-- Content Header (Page header) 
+    Se elimino content-header section solo se va dejar Main Content -->
+    
+  <!-- Main content -->
+    <section class="content">
+        <!-- catalogo_periodos.html -->
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">Gestión de Períodos por Modalidad</h5>
+        </div>
+        <div class="card-body">
+            <form id="formCatalogoPeriodos">
+                <input type="hidden" name="id" id="id">
+                <div class="row">
+                    <div class="col-md-3">
+                        <label for="codigo_modalidad">Modalidad</label>
+                        <select class="form-control" id="codigo_modalidad" name="codigo_modalidad" required></select>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="cantidad_periodos">Cantidad de Períodos</label>
+                        <input type="number" class="form-control" id="cantidad_periodos" name="cantidad_periodos" min="1" max="5" required>
+                    </div>
+                    <div class="col-md-2">
+                        <label for="ponderacion_a1">% A1</label>
+                        <input type="number" class="form-control" id="ponderacion_a1" name="ponderacion_a1" step="0.01" required>
+                    </div>
+                    <div class="col-md-2">
+                        <label for="ponderacion_a2">% A2</label>
+                        <input type="number" class="form-control" id="ponderacion_a2" name="ponderacion_a2" step="0.01" required>
+                    </div>
+                    <div class="col-md-2">
+                        <label for="ponderacion_po">% PO</label>
+                        <input type="number" class="form-control" id="ponderacion_po" name="ponderacion_po" step="0.01" required>
+                    </div>
+                </div>
+                <div class="mt-3 text-end">
+                    <button type="submit" class="btn btn-success">Guardar</button>
+                    <button type="reset" class="btn btn-secondary" id="btnLimpiar">Limpiar</button>
+                </div>
+            </form>
+
+            <hr>
+
+            <table id="tablaPeriodos" class="table table-bordered table-striped">
+                <thead class="table-light">
+                    <tr>
+                        <th>ID</th>
+                        <th>Modalidad</th>
+                        <th>Cant. Períodos</th>
+                        <th>A1 %</th>
+                        <th>A2 %</th>
+                        <th>PO %</th>
+                        <th>Fecha</th>
+                        <th>Opciones</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+
+    
+    </section>  
+</div> <!-- /.content-Wrapper, Contains page content. -->
+
+{% endblock %}
+
+{% block loginUser %}
+<!--	{% include 'layout-login-user.html' %} -->
+{% endblock %}

@@ -9,387 +9,23 @@
 {% block javascripts %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-    <script type="text/JavaScript" src="js/main_notas_por_asignatura.js"></script>
-    <script type="text/JavaScript" src="js/default.js"></script>
+    <script type="text/JavaScript" src="js/Calificaciones/porAsignatura.js"></script>
+    <script type="text/JavaScript" src="js/Calificaciones/cargarValidaciones.js"></script>
+    <script type="text/JavaScript" src="js/Calificaciones/cargarDatosPorAsignatura.js"></script>
+    <script type="text/JavaScript" src="js/Calificaciones/rangoPorAsignatura.js"></script>
+
     <!-- JQUERY NUMERIC . -->
     <script type="text/javascript">
     	function validarCualquierNumero(){
     		$(".decimal-1-places").numeric({negative: false, decimalPlaces: 1});
       }
     </script>
-<!-- cargar datos del nombre del archivo. -->
-<script language="javascript">
-// Carga la INformación de Tabla Año Lectivo.
-	$(document).ready(function()
-	{
-      var ver_ann_lectivo = "si";
-			var miselect=$("#lstannlectivo");
-			/* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
-			miselect.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
-			
-			$.post("includes/cargar-ann-lectivo.php",{verificar_ann_lectivo: ver_ann_lectivo},
-				function(data) {
-					miselect.empty();
-					miselect.append('<option value="">Seleccionar...</option>');
-					for (var i=0; i<data.length; i++) {
-						miselect.append('<option value="' + data[i].codigo + '">' + data[i].nombre + '</option>');
-					}
-			}, "json");
-	});
-
-	// Información del año lectivo y modalidad.
-    $(document).ready(function()
-    {
-	
-	// Parametros para el año lectivo.
-	$("#lstannlectivo").change(function () {
-	    	    var miselect=$("#lstmodalidad");
-		    /* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
-			miselect.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
-			
-   		$("#lstannlectivo option:selected").each(function () {
-				elegido=$(this).val();
-				annlectivo=$("#lstannlectivo").val();
-				$.post("includes/cargar-bachillerato.php", { annlectivo: annlectivo },
-				       function(data){
-					miselect.empty();
-					miselect.append('<option value="">Seleccionar...</option>');
-					for (var i=0; i<data.length; i++) {
-						miselect.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');
-					}
-			}, "json");			
-	    });
-	});
-		
-	    // Parametros para el grado y sección, al seleccionar el bachillerato.
-	    $("#lstmodalidad").change(function () {
-				var miselect=$("#lstgradoseccion");
-				var lblturno=$("#lblturno");
-		    /* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
-			miselect.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
-			
-   		$("#lstmodalidad option:selected").each(function () {
-				lblturno.empty();
-				elegido=$(this).val();
-				ann=$("#lstannlectivo").val();
-				$.post("includes/cargar-grado-seccion.php", { elegido: elegido, ann: ann },
-				       function(data){
-					miselect.empty();
-					miselect.append('<option value="">Seleccionar...</option>');
-					for (var i=0; i<data.length; i++) {
-						miselect.append('<option value="' + data[i].codigo_grado + data[i].codigo_seccion + data[i].codigo_turno + '">' + data[i].descripcion_grado + ' ' + data[i].descripcion_seccion + ' - ' + data[i].descripcion_turno + '</option>');
-					}
-		 // Cambiar los valores del Select de Periodo O Trimestre.
-			 bach=$("#lstmodalidad").val();
-			 var milstperiodo=$("#lstperiodo");
-			 milstperiodo.empty();
-			 //alert(bach);
-			 // Condiciones para Educación Básica y Tercer Ciclo.
-			 if (bach >= '03' && bach <='05'){
-						milstperiodo.append('<option value="Periodo 1">Trimestre 1</option>');
-						milstperiodo.append('<option value="Periodo 2">Trimestre 2</option>');
-						milstperiodo.append('<option value="Periodo 3">Trimestre 3</option>');
-						milstperiodo.append('<option value="Recuperacion">Recuperación</option>');		
-			 }
-
-			 // Condiciones para Educación Media..
-			 if (bach >= '06'){
-						milstperiodo.append('<option value="Periodo 1">Período 1</option>');
-						milstperiodo.append('<option value="Periodo 2">Período 2</option>');
-						milstperiodo.append('<option value="Periodo 3">Período 3</option>');
-						milstperiodo.append('<option value="Periodo 4">Período 4</option>');
-						milstperiodo.append('<option value="Recuperacion">Recuperación</option>');
-			 }			 
-			}, "json");
-				// seleccionar la asignatura.
-				var miselect_2=$("#lstasignatura");
-				  elegido = $("#lstgradoseccion").val();
-				  bach=$("#lstmodalidad").val();
-				  ann=$("#lstannlectivo").val();				
-				$.post("includes/cargar-asignatura.php", { elegido: elegido, annlectivo: ann, modalidad: bach },
-					 function(data){
-					  miselect_2.empty();
-					    for (var j=0; j<data.length; j++) {
-						miselect_2.append('<option value="' + data[j].codigo + '">' + data[j].descripcion + '</option>');
-					    }	
-				 }, "json");			
-		});
-	    });
-	    // Parametros para la asignatura.
-	    $("#lstgradoseccion").change(function () {
-		      var miselect=$("#lstasignatura");
-		      	/* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
-			miselect.find('option').remove().end().append('<option value="">Cargando...</op.tion>').val('');
-			
-			 $("#lstgradoseccion option:selected").each(function () {
-					 elegido=$(this).val();
-					 bach=$("#lstmodalidad").val();
-					 ann=$("#lstannlectivo").val();
-					 $.post("includes/cargar-asignatura.php", { elegido: elegido, annlectivo: ann, modalidad: bach },
-					 function(data){
-					  miselect.empty();
-					    for (var j=0; j<data.length; j++) {
-						miselect.append('<option value="' + data[j].codigo + '">' + data[j].descripcion + '</option>');
-					    }
-				 }, "json");
-					 		 // Cambiar los valores del Select de Periodo O Trimestre.
-				bach=$("#lstmodalidad").val();
-				var milstperiodo=$("#lstperiodo");
-				var grado = $('#lstgradoseccion').val();
-				milstperiodo.empty();
-			 //alert(bach);
-			 // Condiciones para Educación Básica y Tercer Ciclo.
-			 if (bach >= '03' && bach <='05'){
-						milstperiodo.append('<option value="Periodo 1">Trimestre 1</option>');
-						milstperiodo.append('<option value="Periodo 2">Trimestre 2</option>');
-						milstperiodo.append('<option value="Periodo 3">Trimestre 3</option>');
-						milstperiodo.append('<option value="Recuperacion">Recuperación</option>');		
-			 }
-
-			 // Condiciones para Educación Media..
-			 if (bach >= '06'){
-						milstperiodo.append('<option value="Periodo 1">Período 1</option>');
-						milstperiodo.append('<option value="Periodo 2">Período 2</option>');
-						milstperiodo.append('<option value="Periodo 3">Período 3</option>');
-						milstperiodo.append('<option value="Periodo 4">Período 4</option>');
-						milstperiodo.append('<option value="Recuperacion">Recuperación</option>');
-			 }
-			 
-						// Verificar la variables grado seccion.
-						if(grado.substring(0,2) == '11')
-							{
-								milstperiodo.append('<option value="Nota PAES">Nota PAES</option>');
-							}					 
-		 });
-	    });
-});
-</script>
-
 <!-- DEINIR EL AJAX START- STOP Y ERROR -->
 <script>
   $(document).ready(function () { 
    var screen = $('#loading-screen');
      configureLoadingScreen(screen);
    })
- </script>
-
- <script>
-  $(document).ready(function () { 
-    document.getElementById('toggleGrafica').addEventListener('click', function () {
-      const grafica = document.getElementById('graficaRangos');
-      if (grafica.style.display === 'none') {
-          grafica.style.display = 'block';
-          this.textContent = 'Ocultar Gráfica';
-      } else {
-          grafica.style.display = 'none';
-          this.textContent = 'Mostrar Gráfica';
-      }
-  });
-  
-    $('#btnRangoCalificaciones').on('click', function () {
-      const annLectivo = $('#lstannlectivo').val();
-      const modalidad = $('#lstmodalidad').val();
-      const gradoSeccion = $('#lstgradoseccion').val();
-      const periodo = $('#lstperiodo').val();
-  
-      $.ajax({
-          url: 'php_libs/soporte/rango_calificaciones.php',
-          type: 'POST',
-          dataType: 'json',
-          data: {
-              annLectivo: annLectivo,
-              modalidad: modalidad,
-              gradoSeccion: gradoSeccion,
-              periodo: periodo
-          },
-          beforeSend: function () {
-              // Opcional: mostrar spinner o desactivar botón
-              console.log('Enviando datos...');
-          },
-          success: function (response) {
-              console.log('Respuesta AJAX:', response);
-  
-              if (response.error) {
-                  Swal.fire({
-                      icon: 'error',
-                      title: 'Error en la consulta',
-                      text: response.error,
-                      footer: `<pre style="text-align:left;">Campo: ${response.campo_periodo || ''}\nCódigo ALL: ${response.codigo_all || ''}</pre>`
-                  });
-                  return;
-              }
-  
-              if (Array.isArray(response) && response.length > 0) {
-                  // Limpiar tabla previa
-                  $('#tablaRango tbody').empty();
-  
-                  // Rellenar la tabla
-                  response.forEach(item => {
-                      $('#tablaRango tbody').append(`
-                          <tr>
-                              <td>${item.nombre_asignatura}</td>
-                              <td>${item.menor_5}</td>
-                              <td>${item.entre_5_7}</td>
-                              <td>${item.mayor_7}</td>
-                          </tr>
-                      `);
-                  });
-  
-                  // Mostrar modal
-                  $('#modalRangoCalificaciones').modal('show');
-                  $('#graficaRangos').hide();
-                  $('#toggleGrafica').text('Mostrar Gráfica');
-                            // Texto de los selects
-                            const textoAnio = $('#lstannlectivo option:selected').text();
-                            const textoModalidad = $('#lstmodalidad option:selected').text();
-                            const textoGrado = $('#lstgradoseccion option:selected').text();
-                            const textoPeriodo = $('#lstperiodo option:selected').text();
-                            const titulo = `Rangos de Calificaciones - ${textoAnio} - ${textoModalidad} - ${textoGrado} - ${textoPeriodo}`;  
-                  // Inicializar DataTable si no lo has hecho
-                  if (!$.fn.DataTable.isDataTable('#tablaRango')) {
-
-
-                            // Verifica si la tabla ya fue inicializada
-                            if ($.fn.DataTable.isDataTable('#tablaRango')) {
-                                $('#tablaRango').DataTable().clear().destroy();
-                            }
-
-                            // Re-inicializar DataTable con botones
-                            $('#tablaRango').DataTable({
-                                dom: 'Bfrtip',
-                                buttons: [
-                                    {
-                                        extend: 'excelHtml5',
-                                        title: titulo,
-                                        text: 'Exportar a Excel'
-                                    },
-                                    {
-                                        extend: 'pdfHtml5',
-                                        title: titulo,
-                                        text: 'Exportar a PDF',
-                                        orientation: 'landscape',
-                                        pageSize: 'A4'
-                                    },
-                                    {
-                                        extend: 'print',
-                                        title: titulo,
-                                        text: 'Imprimir'
-                                    }
-                                ],
-                                language: {
-                                    url: 'php_libs/idioma/es_es.json'
-                                }
-                            });
-
-                  }
-                        $('#resumenFiltros').html(`
-                        Año Lectivo: ${textoAnio} |
-                        Modalidad: ${textoModalidad} |
-                        Grado/Sección: ${textoGrado} |
-                        Período: ${textoPeriodo}
-                    `);
-             // Obtener datos del response
-const nombresAsignaturas = [];
-const menores5 = [];
-const entre5y7 = [];
-const mayores7 = [];
-
-response.forEach(row => {
-  const total = parseInt(row.menor_5) + parseInt(row.entre_5_7) + parseInt(row.mayor_7);
-  nombresAsignaturas.push(row.nombre_asignatura);
-
-  if (total > 0) {
-      menores5.push(((row.menor_5 / total) * 100).toFixed(1));
-      entre5y7.push(((row.entre_5_7 / total) * 100).toFixed(1));
-      mayores7.push(((row.mayor_7 / total) * 100).toFixed(1));
-  } else {
-      menores5.push(0);
-      entre5y7.push(0);
-      mayores7.push(0);
-  }
-});
-
-// Si ya hay una gráfica previa, destruirla antes de crear una nueva
-if (window.graficoRangos) {
-    window.graficoRangos.destroy();
-}
-
-// Crear gráfica de barras agrupadas
-const ctx = document.getElementById('graficaRangos').getContext('2d');
-window.graficoRangos = new Chart(ctx, {
-    type: 'bar',
-    data: {
-        labels: nombresAsignaturas,
-        datasets: [
-            {
-                label: '< 5',
-                data: menores5,
-                backgroundColor: 'rgba(255, 99, 132, 0.6)'
-            },
-            {
-                label: '5 - 6.99',
-                data: entre5y7,
-                backgroundColor: 'rgba(255, 206, 86, 0.6)'
-            },
-            {
-                label: '≥ 7',
-                data: mayores7,
-                backgroundColor: 'rgba(75, 192, 192, 0.6)'
-            }
-        ]
-    },
-    options: {
-        responsive: true,
-        plugins: {
-            legend: {
-                position: 'top'
-            },
-            title: {
-                display: true,
-                text: `Rangos de Calificaciones - ${textoPeriodo}`
-            }
-        },
-        scales: {
-            x: {
-                ticks: {
-                    autoSkip: false,
-                    maxRotation: 45,
-                    minRotation: 45
-                }
-            },
-            y: {
-              beginAtZero: true,
-              title: {
-                  display: true,
-                  text: 'Porcentaje (%)'
-              },
-              max: 100
-          }
-          
-        }
-    }
-});
- 
-              } else {
-                  Swal.fire({
-                      icon: 'info',
-                      title: 'Sin resultados',
-                      text: 'No se encontraron datos para los filtros seleccionados.'
-                  });
-              }
-          },
-          error: function (xhr, status, error) {
-              console.error('Error AJAX:', xhr.responseText);
-              Swal.fire({
-                  icon: 'error',
-                  title: 'Error AJAX',
-                  text: `Estado: ${status}, Error: ${error}`
-              });
-          }
-      });
-  });
-  
-  });
  </script>
 {% endblock %}
 
@@ -487,17 +123,15 @@ window.graficoRangos = new Chart(ctx, {
                 </div>
                 
             </div>
-            <!-- Aquí colocas el botón -->
-<div class="mt-4 text-end">
-  <button type="button" class="btn btn-info" id="btnRangoCalificaciones">
-    <i class="bi bi-bar-chart-line"></i> Rango Calificaciones
-  </button>
-</div>
 
                 </form>
             <!-- /.card -->
           </div> <!--/.col (left) -->
         </div>
+        <!-- Botón para lanzar el proceso -->
+<button id="btnRangoCalificaciones" class="btn btn-primary">
+  <i class="fa fa-chart-bar"></i> Rangos Calificaciones
+</button>
           <!-- right column -->
           <div class="row">
             <div class="col">
@@ -536,44 +170,15 @@ window.graficoRangos = new Chart(ctx, {
     </section>
   </div> <!-- /.Content Wrapper. Caontains page content -->			
 <!-- Modal Bootstrap -->
-<div class="modal fade" id="modalRangoCalificaciones" tabindex="-1">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-      <div class="modal-header bg-primary text-white">
-        <h5 class="modal-title">Rango de Calificaciones por Asignatura</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-
-      </div>
-      <div id="resumenFiltros" class="mb-3 fw-bold text-secondary">
-        <!-- Se llenará por JavaScript -->
-    </div>
-    <button id="toggleGrafica" class="btn btn-secondary btn-sm mb-2">
-      Mostrar Gráfica
-  </button>
-  
-      <div class="modal-body">
-        <table id="tablaRango" class="table table-striped">
-          <thead class="table-dark">
-            <tr>
-              <th>Asignatura</th>
-              <th>&lt; 5</th>
-              <th>≥ 5 y &lt; 7</th>
-              <th>≥ 7</th>
-            </tr>
-          </thead>
-          <tbody></tbody>
-        </table>
-        <canvas id="graficaRangos" height="120" style="display: none;"></canvas>
 
 
-      </div>
-    </div>
-  </div>
-</div>
+
 
   
   <!-- Loading Screen -->
   {% include 'loading-screen.html' %}
+  <!-- Ventana Modal Rango Calificaciones. -->
+  {% include 'VentanaModalRangoCalificaciones.html' %}
 {% endblock %}
 
 {% block menu %}

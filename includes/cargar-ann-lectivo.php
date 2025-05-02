@@ -4,6 +4,7 @@
 	$verificar_ann_lectivo = "no";
 // Incluimos el archivo de funciones y conexión a la base de datos
 include($path_root."/registro_academico/includes/mainFunctions_conexion.php");
+include($path_root."/registro_academico/includes/funciones.php");
 // armando el Query.
 if(isset($_POST["verificar_ann_lectivo"])){
 	$verificar_ann_lectivo = $_POST["verificar_ann_lectivo"];
@@ -25,9 +26,8 @@ $datos=array(); $fila_array = 0;
 	 $codigo = trim($listado['codigo']); $descripcion = $listado['nombre'];
 	 // Rellenando la array.
          $datos[$fila_array]["codigo"] = $codigo;
-	 $datos[$fila_array]["nombre"] = utf8_encode($descripcion);
+	 $datos[$fila_array]["nombre"] = convertirTexto($descripcion);
 	   $fila_array++;
         }
 // Enviando la matriz con Json.
 echo json_encode($datos);	
-?>
