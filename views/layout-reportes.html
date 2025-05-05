@@ -43,6 +43,7 @@
 {% block javascripts %}
   <!-- Cargar el JS que gestiona, consultas e insercion de datos, junto con phpAjax...-->    
     <script type="text/JavaScript" src="js/main_reportes.js"></script>
+    <script src="js/utilidades.js"></script>
   <!-- DEINIR EL AJAX START- STOP Y ERROR -->
   <script>
     $(document).ready(function () { 
@@ -185,10 +186,9 @@
 		});
 //
 // Información del año lectivo y modalidad.
-$(document).ready(function()
-{
-// Parametros para el lstmuncipio.
-$("#lstcodigoGrado").change(function () {
+$(document).ready(function(){
+  // Parametros para el lstmuncipio.
+  $("#lstcodigoGrado").change(function () {
 			// Cargar valores para la el select lstasignatura
       var miselect=$("#lstasignatura");
       var annlectivo=$("#lstannlectivo").val();
@@ -206,50 +206,18 @@ $("#lstcodigoGrado").change(function () {
         }
     }, "json");
 	});
+
+
+    // Cargar Año Lectivo primero
+    cargarOpciones("#lstannlectivo", "includes/cargar-ann-lectivo.php");
+
+    // Cuando el usuario seleccione un Año Lectivo, se carga la Modalidad
+    $("#lstannlectivo").change(function() {
+        let idAnnLectivo = $(this).val();
+        cargarOpcionesDependiente("#lstmodalidad", "includes/cargar-bachillerato.php", { annlectivo: idAnnLectivo });
+    });
 });
 
-	// Carga la INformación de Tabla Año Lectivo.
-	$(document).ready(function()
-	{
-			var miselect=$("#lstannlectivo");
-			/* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
-			miselect.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
-			
-			$.post("includes/cargar-ann-lectivo.php",
-				function(data) {
-					miselect.empty();
-					miselect.append("<option value=''>Seleccionar...</option>");
-					for (var i=0; i<data.length; i++) {
-						miselect.append('<option value="' + data[i].codigo + '">' + data[i].nombre + '</option>');
-					}
-			}, "json");
-	});
-
-	// Información del año lectivo y modalidad.
-	$(document).ready(function()
-	{
-	// Parametros para el lstmuncipio.
-	$("#lstannlectivo").change(function () {
-  		        // ACTIVAR SELECT DEL AÑO LECTIVO
-							$('#lstmodalidad').prop('disabled',false);
-       var miselect=$("#lstmodalidad");
-		    /* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
-         miselect.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
-			
-   		$("#lstannlectivo option:selected").each(function () {
-         elegido=$(this).val();
-         annlectivo=$("#lstannlectivo").val();
-         $.post("includes/cargar-bachillerato.php", { annlectivo: annlectivo },
-				       function(data){
-             miselect.empty();
-             miselect.append("<option value=''>Seleccionar...</option>");
-             for (var i=0; i<data.length; i++) {
-              miselect.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');
-             }
-          }, "json");			
-	    });
-	});
-	});
  </script>
  
 {% endblock %}
@@ -297,7 +265,7 @@ $("#lstcodigoGrado").change(function () {
                   </div>
                   <div class="mb-3">
                     <label for="modalidad">Modalidad</label>
-                    <select id="lstmodalidad" name="lstmodalidad" class="custom-select" disabled="disabled" aria-label="lstmodalidad"></select>
+                    <select id="lstmodalidad" name="lstmodalidad" class="custom-select" aria-label="lstmodalidad"></select>
                   </div>
                 </div>
                 <!-- /.card-body -->

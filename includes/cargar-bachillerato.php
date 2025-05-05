@@ -18,20 +18,20 @@ try {
     
     // Definir la consulta según el perfil del usuario
     $query = "";
-    if ($codigoPerfil == '06') {
+    if ($codigoPerfil == '06') {    // Docente
         $query = "SELECT DISTINCT eg.codigo_ann_lectivo, eg.codigo_bachillerato as codigo, bach.nombre AS nombre
                   FROM encargado_grado eg
                   INNER JOIN bachillerato_ciclo bach ON bach.codigo = eg.codigo_bachillerato
                   WHERE eg.codigo_ann_lectivo = :annLectivo 
                   AND eg.codigo_docente = :codigoPersonal
                   ORDER BY eg.codigo_bachillerato";
-    } elseif ($codigoPerfil == '04' || $codigoPerfil == '05') {
+    } elseif ($codigoPerfil == '04' || $codigoPerfil == '05') { // Registro Académico Básica y Media.
         $query = "SELECT DISTINCT orgpd.codigo_ann_lectivo, orgpd.codigo_bachillerato as codigo, bach.nombre AS nombre
                   FROM organizar_planta_docente_ciclos orgpd
                   INNER JOIN bachillerato_ciclo bach ON bach.codigo = orgpd.codigo_bachillerato
                   WHERE orgpd.codigo_ann_lectivo = :annLectivo 
                   ORDER BY orgpd.codigo_bachillerato";
-    } elseif ($codigoPerfil == '01') {
+    } elseif ($codigoPerfil == '01') {  // Administrador
         $query = "SELECT organnciclo.codigo_ann_lectivo, organnciclo.codigo_bachillerato as codigo, bach.nombre AS nombre
                   FROM organizar_ann_lectivo_ciclos organnciclo
                   INNER JOIN bachillerato_ciclo bach ON bach.codigo = organnciclo.codigo_bachillerato
@@ -41,19 +41,15 @@ try {
         echo json_encode(["error" => "Perfil no autorizado: " . $codigoPerfil . "Código Personal: " . $codigoPersonal]);
         exit;
     }
-
     // Preparar la consulta con PDO
     $stmt = $pdo->prepare($query);
     $stmt->bindParam(':annLectivo', $annLectivo, PDO::PARAM_INT);
-    
     // Vincular parámetro si aplica
     if ($codigoPerfil == '06' || $codigoPerfil == '05') {
         $stmt->bindParam(':codigoPersonal', $codigoPersonal, PDO::PARAM_INT);
     }
-
     $stmt->execute();
     $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
     // Enviar los datos en formato JSON
     echo json_encode($result);
 } catch (Exception $e) {

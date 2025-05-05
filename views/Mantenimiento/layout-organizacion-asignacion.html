@@ -19,76 +19,37 @@
   {% endblock %}
 
 {% block javascripts %}
-<script type="text/JavaScript">
-  $(document).ready(function () { 
-    $('[data-toggle="tooltip"]').tooltip();
-  })
-</script>
 <script type="text/JavaScript" src="js/Mantenimiento/Organizacion Asignacion/Horarios Periodos.js"></script>
 <script type="text/JavaScript" src="js/Mantenimiento/Organizacion Asignacion/Nivel.js"></script>
 <script type="text/JavaScript" src="js/Mantenimiento/Organizacion Asignacion/GradoSeccionTurno.js"></script>
 <script type="text/JavaScript" src="js/Mantenimiento/Organizacion Asignacion/DocenteNivel.js"></script>
 <script type="text/JavaScript" src="js/Mantenimiento/Organizacion Asignacion/AsignarAsignaturaGrados.js"></script>
+<script src="js/utilidades.js"></script>
 <!-- DEINIR EL AJAX START- STOP Y ERROR -->
 <script>
   $(document).ready(function () { 
     var screen = $('#loading-screen');
       configureLoadingScreen(screen);
   })
-</script>
-<!-- DEFINIR PARA SERVICIO EDUCATIVO CARGAR DATOS-->
-<script>
-	// Carga la INformación de Tabla Año Lectivo.
-	$(document).ready(function()
-	{
-			var miselect=$("#lstAnnLectivoHorarios");
-			/* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
-			miselect.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
-			
-			$.post("includes/cargar-ann-lectivo.php",
-				function(data) {
-					miselect.empty();
-					miselect.append("<option value='00'>Seleccionar...</option>");
-					for (var i=0; i<data.length; i++) {
-						miselect.append('<option value="' + data[i].codigo + '">' + data[i].nombre + '</option>');
-					}
-			}, "json");
-   	// Información del año lectivo y modalidad.
-	$(document).ready(function()
-	{
-    // Parametros para el lstmuncipio.
-    $("#lstAnnLectivoHorarios").change(function ()
-    {
-          // ACTIVAR SELECT DEL AÑO LECTIVO
-        $('#lstModalidadHorarios').prop('disabled',false);
-          var miselect=$("#lstModalidadHorarios");
-            /* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
-            miselect.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
-          
-          $("#lstAnnLectivoHorarios option:selected").each(function () {
-            elegido=$(this).val();
-                annlectivo=$("#lstAnnLectivoHorarios").val();
-                $.post("includes/cargar-bachillerato.php", { annlectivo: annlectivo },
-                function(data){
-                        miselect.empty();
-                        miselect.append("<option value='00'>Seleccionar...</option>");
-                        for (var i=0; i<data.length; i++) {
-                        miselect.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');
-                        }
-              }, "json");			
-          });
-    });
-	});
 
-	});
-</script>
-<script>
   $(document).ready(function () { 
         $('#lstDocenteNivel').select2({
           theme: 'bootstrap-5',
           width: 'resolve' // Asegura que Select2 se ajuste automáticamente al contenedor
         });
-});
+  });
+  $(document).ready(function () { 
+    $('[data-toggle="tooltip"]').tooltip();
+  })
+  $(document).ready(function () { 
+    // Cargar Año Lectivo primero
+      cargarOpciones("#lstAnnLectivoHorarios", "includes/cargar-ann-lectivo.php");
+    // Cuando el usuario seleccione un Año Lectivo, se carga la Modalidad
+      $("#lstAnnLectivoHorarios").change(function() {
+        let idAnnLectivo = $(this).val();
+        cargarOpcionesDependiente("#lstModalidadHorarios", "includes/cargar-bachillerato.php", { annlectivo: idAnnLectivo });
+      });        
+  })
 </script>
 
 {% endblock %}
