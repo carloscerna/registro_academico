@@ -1,0 +1,86 @@
+{# Heredando la plantilla principal #}
+
+{% extends 'default_layout.html' %}
+
+{% block extraCSS %}
+{% endblock %}
+
+{% block javascripts %}
+<script type="text/JavaScript" src="js/Calificaciones/cargarDatosPorAsignatura.js"></script>
+{% endblock %}
+
+{% block contenidos %}
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+    <div class="container mt-4">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h4 class="text-center">Calificaciones por Asignatura</h4>
+            </div>
+            <div class="card-body">
+                <form id="formCalificaciones">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="lstannlectivo" class="form-label">Año Lectivo</label>
+                            <select id="lstannlectivo" class="form-select"></select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="lstmodalidad" class="form-label">Modalidad</label>
+                            <select id="lstmodalidad" class="form-select"></select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="lstgradoseccion" class="form-label">Grado/Sección/Turno</label>
+                            <select id="lstgradoseccion" class="form-select"></select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="lstasignatura" class="form-label">Asignatura</label>
+                            <select id="lstasignatura" class="form-select"></select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="lstperiodo" class="form-label">Período</label>
+                            <select id="lstperiodo" class="form-select"></select>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Buscar Calificaciones</button>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Card para la tabla -->
+        <div class="card mt-4">
+            <div class="card-header bg-success text-white">
+                <h4 class="text-center">Lista de Calificaciones</h4>
+            </div>
+            <div class="card-body">
+                <table class="table table-striped" id="tablaCalificaciones">
+                    <thead>
+                        <tr>
+                            <th>Estudiante</th>
+                            <th>Asignatura</th>
+                            <th>Nota</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+
+{% endblock %}
+
+{% block menu %}
+<!-- plantilla que contiene el menú principal. -->
+		{% include 'layout-menu.html' %}
+{% endblock %}
+
+{% block loginUser %}
+<!--	{% include 'layout-login-user.html' %} -->
+{% endblock %}

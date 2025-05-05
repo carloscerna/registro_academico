@@ -1,112 +1,159 @@
 $(document).ready(function () {
-    // Inicializar DataTable
     let tabla = $('#tablaPeriodos').DataTable({
         ajax: {
             url: 'php_libs/soporte/Catalogo/Periodos.php',
             type: 'POST',
-            data: { accion: 'listar' },
+            data: { action: 'listar' },
             dataSrc: ''
         },
         columns: [
             { data: 'id' },
-            { data: 'nombre_modalidad' },
+            { data: 'modalidad' },
             { data: 'cantidad_periodos' },
-            { data: 'ponderacion_a1' },
-            { data: 'ponderacion_a2' },
-            { data: 'ponderacion_po' },
-            { data: 'fecha_creacion' },
+            { data: 'a1' },
+            { data: 'a2' },
+            { data: 'po' },
             {
                 data: null,
                 render: function (data) {
                     return `
-                        <button class="btn btn-sm btn-primary btnEditar" data-id="${data.id}">Editar</button>
+                        <button class="btn btn-sm btn-warning btnEditar" data-id="${data.id}">Editar</button>
                         <button class="btn btn-sm btn-danger btnEliminar" data-id="${data.id}">Eliminar</button>
                     `;
                 }
             }
-        ],
-        language: {
-            url: 'php_libs/idioma/es_es.json'
-        }
+        ]
     });
 
-    // Cargar modalidades en el select
-    function cargarModalidades() {
-        $.post('includes/cargar-bachillerato.php', { codigo_ann_lectivo: '2024' }, function (data) {
-            let opciones = '<option value="">Seleccione</option>';
-            data.forEach(m => {
-                opciones += `<option value="${m.codigo_bachillerato}">${m.nombre_bachillerato}</option>`;
-            });
-            $('#codigo_modalidad').html(opciones);
-        }, 'json');
-    }
+    let modal = new bootstrap.Modal(document.getElementById('modalPeriodo'));
+    let form = $('#formPeriodo')[0];
 
-    cargarModalidades();
-
-    // Guardar o actualizar
-    $('#formCatalogoPeriodos').submit(function (e) {
-        e.preventDefault();
-
-        const datos = $(this).serialize() + '&accion=guardar';
-
-        $.post('includes/catalogo_periodos_crud.php', datos, function (res) {
-            if (res.success) {
-                Swal.fire('Éxito', res.message, 'success');
-                tabla.ajax.reload();
-                $('#formCatalogoPeriodos')[0].reset();
-                $('#id').val('');
-            } else {
-                Swal.fire('Error', res.message, 'error');
-            }
-        }, 'json');
-    });
-
-    // Botón limpiar
-    $('#btnLimpiar').click(function () {
-        $('#formCatalogoPeriodos')[0].reset();
+    $('#btnAgregar').click(() => {
+        form.reset();
         $('#id').val('');
+        modal.show();
     });
+
+    $(document).ready(function() {
+        // Cargar modalidades al abrir el modal
+        $('#modalPeriodo').on('show.bs.modal', function() {
+            $.ajax({
+                url: 'includes/cargar-bachillerato.php',
+                method: 'GET',
+                success: function(data) {
+                    $('#lstmodalidad').html(data);  // Poner las opciones en el select
+                }
+            });
+        });
+    
+        // Validar el formulario al enviarlo
+        $('#formPeriodo').on('submit', function(event) {
+            event.preventDefault(); // Evitar la recarga de la página
+    
+            let a1 = parseFloat($('#a1').val());
+            let a2 = parseFloat($('#a2').val());
+            let po = parseFloat($('#po').val());
+    
+            // Validación de los porcentajes
+            if (a1 < 0 || a1 > 35 || a2 < 0 || a2 > 35 || po < 0 || po > 30) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Los porcentajes no son válidos. A1 debe ser ≤ 35%, A2 ≤ 35% y PO ≤ 30%.'
+                });
+                return;
+            }
+    
+            // Validar la suma de los porcentajes
+            if ((a1 + a2 + po) > 100) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'La suma de A1, A2 y PO no puede ser mayor que 100%.'
+                });
+                return;
+            }
+    
+            // Enviar formulario si la validación es correcta
+            $.ajax({
+                url: 'php_libs/soporte/Catalogo/Periodos.php',
+                method: 'POST',
+                data: $(this).serialize() + '&action=guardar',
+                success: function(response) {
+                    let res = JSON.parse(response);
+                    if (res.status === 'success') {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Éxito',
+                            text: res.message
+                        }).then(function() {
+                            $('#modalPeriodo').modal('hide');  // Cerrar el modal
+                            // Actualizar solo la tabla DataTables
+                            $('#dataTable').DataTable().ajax.reload();
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: res.message
+                        });
+                    }
+                },
+                error: function() {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Hubo un error al guardar los datos.'
+                    });
+                }
+            });
+        });
+    });
+    
 
     // Editar
-    $('#tablaPeriodos tbody').on('click', '.btnEditar', function () {
+    $('#tablaPeriodos').on('click', '.btnEditar', function () {
         const id = $(this).data('id');
 
-        $.post('includes/catalogo_periodos_crud.php', { accion: 'obtener', id }, function (res) {
-            if (res.success) {
-                const d = res.data;
-                $('#id').val(d.id);
-                $('#codigo_modalidad').val(d.codigo_modalidad);
-                $('#cantidad_periodos').val(d.cantidad_periodos);
-                $('#ponderacion_a1').val(d.ponderacion_a1);
-                $('#ponderacion_a2').val(d.ponderacion_a2);
-                $('#ponderacion_po').val(d.ponderacion_po);
-                $('html, body').animate({ scrollTop: 0 }, 300);
+        $.post('php_libs/soporte/Catalogo/Periodos.php', { action: 'obtener', id }, function (response) {
+            const data = JSON.parse(response);
+            if (data.success) {
+                const p = data.data;
+                $('#id').val(p.id);
+                $('#modalidad').val(p.modalidad);
+                $('#cantidad_periodos').val(p.cantidad_periodos);
+                $('#a1').val(p.a1);
+                $('#a2').val(p.a2);
+                $('#po').val(p.po);
+                modal.show();
             } else {
-                Swal.fire('Error', res.message, 'error');
+                Swal.fire('Error', data.message, 'error');
             }
-        }, 'json');
+        });
     });
 
     // Eliminar
-    $('#tablaPeriodos tbody').on('click', '.btnEliminar', function () {
+    $('#tablaPeriodos').on('click', '.btnEliminar', function () {
         const id = $(this).data('id');
 
         Swal.fire({
-            title: '¿Eliminar registro?',
+            title: '¿Eliminar?',
             text: 'Esta acción no se puede deshacer',
             icon: 'warning',
             showCancelButton: true,
-            confirmButtonText: 'Sí, eliminar'
-        }).then((result) => {
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'Cancelar'
+        }).then(result => {
             if (result.isConfirmed) {
-                $.post('includes/catalogo_periodos_crud.php', { accion: 'eliminar', id }, function (res) {
+                $.post('php_libs/soporte/Catalogo/Periodos.php', { action: 'eliminar', id }, function (response) {
+                    const res = JSON.parse(response);
                     if (res.success) {
                         Swal.fire('Eliminado', res.message, 'success');
                         tabla.ajax.reload();
                     } else {
                         Swal.fire('Error', res.message, 'error');
                     }
-                }, 'json');
+                });
             }
         });
     });
