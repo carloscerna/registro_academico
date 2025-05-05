@@ -41,17 +41,30 @@ try {
         echo json_encode(["error" => "Perfil no autorizado: " . $codigoPerfil . "Código Personal: " . $codigoPersonal]);
         exit;
     }
-    // Preparar la consulta con PDO
-    $stmt = $pdo->prepare($query);
-    $stmt->bindParam(':annLectivo', $annLectivo, PDO::PARAM_INT);
-    // Vincular parámetro si aplica
-    if ($codigoPerfil == '06' || $codigoPerfil == '05') {
-        $stmt->bindParam(':codigoPersonal', $codigoPersonal, PDO::PARAM_INT);
-    }
-    $stmt->execute();
-    $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    // Enviar los datos en formato JSON
-    echo json_encode($result);
+    // Evaluar cuando necesito solo los niveles existentes.
+    if($annLectivo == '0'){
+        $query = "SELECT codigo, nombre FROM bachillerato_ciclo where codigo_estatus = '01'";
+        // Preparar la consulta con PDO
+        $stmt = $pdo->prepare($query);
+        //
+        $stmt->execute();
+        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        // Enviar los datos en formato JSON
+        echo json_encode($result);
+    }else{
+        // Preparar la consulta con PDO
+        $stmt = $pdo->prepare($query);
+        $stmt->bindParam(':annLectivo', $annLectivo, PDO::PARAM_INT);
+        // Vincular parámetro si aplica
+        if ($codigoPerfil == '06' || $codigoPerfil == '05') {
+            $stmt->bindParam(':codigoPersonal', $codigoPersonal, PDO::PARAM_INT);
+        }
+        $stmt->execute();
+        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        // Enviar los datos en formato JSON
+        echo json_encode($result);
+        }
+
 } catch (Exception $e) {
     echo json_encode(["error" => "Error al obtener los datos: " . $e->getMessage()]);
 }

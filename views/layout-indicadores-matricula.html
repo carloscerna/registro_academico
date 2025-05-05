@@ -9,69 +9,11 @@
 {% block javascripts %}
     <script type="text/JavaScript" src="js/main_indicadores_matricula.js"></script>
     <script type="text/JavaScript" src="js/default.js"></script>
+    <script type="text/JavaScript" src="js/Utilidades/cargarDatosSelect.js"></script>
+    <script type="text/JavaScript" src="js/Utilidades/utilidadesSelect.js"></script>
 <!-- cargar datos del nombre del archivo. -->
 <script language="javascript">
-// Carga la INformación de Tabla Año Lectivo.
-	$(document).ready(function()
-	{
-      var ver_ann_lectivo = "si";
-			var miselect=$("#lstannlectivo");
-			/* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
-			miselect.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
-			
-			$.post("includes/cargar-ann-lectivo.php",{verificar_ann_lectivo: ver_ann_lectivo},
-				function(data) {
-					miselect.empty();
-					miselect.append('<option value="">Seleccionar...</option>');
-					for (var i=0; i<data.length; i++) {
-						miselect.append('<option value="' + data[i].codigo + '">' + data[i].nombre + '</option>');
-					}
-			}, "json");
-	});
 
-	// Información del año lectivo y modalidad.
-    $(document).ready(function()
-    {
-	// Parametros para el año lectivo.
-	$("#lstannlectivo").change(function () {
-	    	    var miselect=$("#lstmodalidad");
-		    /* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
-			miselect.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
-			
-   		$("#lstannlectivo option:selected").each(function () {
-				elegido=$(this).val();
-				annlectivo=$("#lstannlectivo").val();
-				$.post("includes/cargar-bachillerato.php", { annlectivo: annlectivo },
-				       function(data){
-					miselect.empty();
-					miselect.append('<option value="">Seleccionar...</option>');
-					for (var i=0; i<data.length; i++) {
-						miselect.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');
-					}
-			}, "json");			
-	    });
-	});
-	    // Parametros para el grado y sección, al seleccionar el bachillerato.
-	    $("#lstmodalidad").change(function () {
-				var miselect=$("#lstgradoseccion");
-				var lblturno=$("#lblturno");
-		    /* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
-          miselect.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
-            $("#lstmodalidad option:selected").each(function () {
-              lblturno.empty();
-              elegido=$(this).val();
-              ann=$("#lstannlectivo").val();
-              $.post("includes/cargar-grado-seccion.php", { elegido: elegido, ann: ann },
-                     function(data){
-                      miselect.empty();
-                      miselect.append('<option value="">Seleccionar...</option>');
-                      for (var i=0; i<data.length; i++) {
-                        miselect.append('<option value="' + data[i].codigo_grado + data[i].codigo_seccion + data[i].codigo_turno + '">' + data[i].descripcion_grado + ' ' + data[i].descripcion_seccion + ' - ' + data[i].descripcion_turno + '</option>');
-                      }			 		 
-                }, "json");
-           });
-	  });
-});
 </script>
 <!-- DEINIR EL AJAX START- STOP Y ERROR -->
 <script>
