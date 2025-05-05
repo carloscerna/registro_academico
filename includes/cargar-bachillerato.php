@@ -4,10 +4,64 @@
 // Incluimos el archivo de funciones y conexión a la base de datos
  include($path_root."/registro_academico/includes/mainFunctions_conexion.php");
 // armando el Query.
+$pdo=$dblink;
+try {
+    // Verificar si se recibió el año lectivo
+    if (!isset($_REQUEST['annlectivo'])) {
+        echo json_encode(["error" => "Año lectivo no proporcionado"]);
+        exit;
+    }
 
+    $annLectivo = $_REQUEST['annlectivo'];
+    $codigoPerfil = $_SESSION['codigo_perfil'];
+    $codigoPersonal = $_SESSION['codigo_personal'];
+    
+    // Definir la consulta según el perfil del usuario
+    $query = "";
+    if ($codigoPerfil == '06') {
+        $query = "SELECT DISTINCT eg.codigo_ann_lectivo, eg.codigo_bachillerato as codigo, bach.nombre AS nombre
+                  FROM encargado_grado eg
+                  INNER JOIN bachillerato_ciclo bach ON bach.codigo = eg.codigo_bachillerato
+                  WHERE eg.codigo_ann_lectivo = :annLectivo 
+                  AND eg.codigo_docente = :codigoPersonal
+                  ORDER BY eg.codigo_bachillerato";
+    } elseif ($codigoPerfil == '04' || $codigoPerfil == '05') {
+        $query = "SELECT DISTINCT orgpd.codigo_ann_lectivo, orgpd.codigo_bachillerato as codigo, bach.nombre AS nombre
+                  FROM organizar_planta_docente_ciclos orgpd
+                  INNER JOIN bachillerato_ciclo bach ON bach.codigo = orgpd.codigo_bachillerato
+                  WHERE orgpd.codigo_ann_lectivo = :annLectivo 
+                  ORDER BY orgpd.codigo_bachillerato";
+    } elseif ($codigoPerfil == '01') {
+        $query = "SELECT organnciclo.codigo_ann_lectivo, organnciclo.codigo_bachillerato as codigo, bach.nombre AS nombre
+                  FROM organizar_ann_lectivo_ciclos organnciclo
+                  INNER JOIN bachillerato_ciclo bach ON bach.codigo = organnciclo.codigo_bachillerato
+                  WHERE organnciclo.codigo_ann_lectivo = :annLectivo
+                  ORDER BY organnciclo.ordenar";
+    } else {
+        echo json_encode(["error" => "Perfil no autorizado: " . $codigoPerfil . "Código Personal: " . $codigoPersonal]);
+        exit;
+    }
 
+    // Preparar la consulta con PDO
+    $stmt = $pdo->prepare($query);
+    $stmt->bindParam(':annLectivo', $annLectivo, PDO::PARAM_INT);
+    
+    // Vincular parámetro si aplica
+    if ($codigoPerfil == '06' || $codigoPerfil == '05') {
+        $stmt->bindParam(':codigoPersonal', $codigoPersonal, PDO::PARAM_INT);
+    }
+
+    $stmt->execute();
+    $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    // Enviar los datos en formato JSON
+    echo json_encode($result);
+} catch (Exception $e) {
+    echo json_encode(["error" => "Error al obtener los datos: " . $e->getMessage()]);
+}
+/*
 if(isset($_POST["annlectivo"])){
-// VALIDAR SI ES UN DOCENTE O ES EL ADMINISTRADOR.
+// VALIDAR SI ES UN DOCENTE
 if($_SESSION['codigo_perfil'] == '06'){
 	// ir a la tabla carga docente.
 	 $query = "SELECT DISTINCT eg.codigo_ann_lectivo, eg.codigo_bachillerato, bach.nombre as nombre_bachillerato
@@ -15,14 +69,14 @@ if($_SESSION['codigo_perfil'] == '06'){
 			INNER JOIN bachillerato_ciclo bach ON bach.codigo = eg.codigo_bachillerato
 			where eg.codigo_ann_lectivo = '".$_POST["annlectivo"]. "' and eg.codigo_docente = '".$_SESSION['codigo_personal']."' ORDER BY eg.codigo_bachillerato";
 	}
-	// VALIDAR CÓDIGO DEL PERFIL REGISTRO ACADÉMICO MEDIA.
-	if($_SESSION['codigo_perfil'] == ''){
+	// VALIDAR CÓDIGO DEL PERFIL REGISTRO ACADÉMICO MEDIA o BASICA.
+	if($_SESSION['codigo_perfil'] == '05' || $_SESSION['codigo_perfil'] == '06'){
 	 $query = "SELECT DISTINCT orgpd.codigo_ann_lectivo, orgpd.codigo_bachillerato, bach.nombre as nombre_bachillerato
 			from organizar_planta_docente_ciclos orgpd
 			INNER JOIN bachillerato_ciclo bach ON bach.codigo = orgpd.codigo_bachillerato
 			where orgpd.codigo_ann_lectivo = '".$_POST["annlectivo"]. "' and orgpd.codigo_docente = '".$_SESSION['codigo_personal']."' ORDER BY orgpd.codigo_bachillerato";
 	}
-	else{
+	if($_SESSION['codigo_perfil'] == '01'){
 	 $query = "SELECT organnciclo.codigo_ann_lectivo, organnciclo.codigo_bachillerato, bach.nombre as nombre_bachillerato
 			from organizar_ann_lectivo_ciclos organnciclo
 			INNER JOIN bachillerato_ciclo bach ON bach.codigo = organnciclo.codigo_bachillerato
@@ -58,4 +112,4 @@ while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
 
 // Devolver las opciones como respuesta
 echo $options;
-}
+}*/

@@ -6,7 +6,7 @@ $(document).ready(function() {
     // Cuando el usuario seleccione un Año Lectivo, se carga la Modalidad
     $("#lstannlectivo").change(function() {
         let idAnnLectivo = $(this).val();
-        cargarDatosDependiente("#lstmodalidad", "includes/cargar-bachillerato.php", { ann_lectivo: idAnnLectivo });
+        cargarDatosDependiente("#lstmodalidad", "includes/cargar-bachillerato.php", { annlectivo: idAnnLectivo });
     });
 
     // Cuando el usuario seleccione una Modalidad, se carga Grado/Sección/Turno
