@@ -23,9 +23,9 @@ $(document).ready(function() {
         cargarOpcionesMultiples("#lstasignatura", "includes/cargar-asignatura.php", { codigo_grado_seccion_turno: idGradoSeccion, annlectivo: idAnnLectivo, modalidad: idModalidad});
     });
     // continua para 
-    $("#lstasignatura").change(function() {
-        let idAsignatura = $(this).val();
-        cargarOpcionesDependiente("#lstperiodo", "includes/cargar-periodo.php", { asignatura: idAsignatura });
-    });
+        $("#lstasignatura").change(function() {
+            let idModalidad = $("#lstmodalidad").val();
+            cargarPeriodosPorModalidad("#lstperiodo", idModalidad);
+        });
 
 });

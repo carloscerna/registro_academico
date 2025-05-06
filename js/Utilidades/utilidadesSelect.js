@@ -52,3 +52,30 @@ function cargarOpcionesMultiples(selector, url, parametros) {
         }
     });
 }
+// 📌 Función para cargar el número de períodos según la modalidad
+function cargarPeriodosPorModalidad(selector, idModalidad) {
+    $.ajax({
+        url: "includes/cargar-periodos-cantidad.php",
+        type: "GET",
+        data: { modalidad: idModalidad },
+        dataType: "json",
+        success: function(data) {
+            $(selector).empty().append('<option value="">Seleccione...</option>');
+
+            if (data.cantidad_periodos) {
+                for (let i = 1; i <= data.cantidad_periodos; i++) {
+                    $(selector).append('<option value="'+i+'">Período ' + i + '</option>');
+                }
+                 // 📌 Agregar opciones de recuperación
+                 $(selector).append('<option value="nr1">Recuperación 1</option>');
+                 $(selector).append('<option value="nr2">Recuperación 2</option>');
+ 
+            } else {
+                $(selector).append('<option value="">No hay períodos registrados</option>');
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error("Error al obtener cantidad de períodos: " + error);
+        }
+    });
+}

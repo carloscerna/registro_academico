@@ -25,7 +25,19 @@ try {
         $codigoModalidad = $_POST['lstmodalidad'];
         $cantidadPeriodos = $_POST['cantidad_periodos'];
 
-        $query = "INSERT INTO catalogo_periodo (codigo_modalidad, cantidad_periodos) VALUES (:codigoModalidad, :cantidadPeriodos)";
+          // 📌 Validar si ya existe el código de modalidad en la tabla
+        $queryValidacion = "SELECT COUNT(*) FROM catalogo_periodos WHERE codigo_modalidad = :codigoModalidad";
+        $stmtValidacion = $pdo->prepare($queryValidacion);
+        $stmtValidacion->bindParam(':codigoModalidad', $codigoModalidad, PDO::PARAM_INT);
+        $stmtValidacion->execute();
+        $existe = $stmtValidacion->fetchColumn();
+
+        if ($existe > 0) {
+            echo json_encode(["error" => "Ya existe un período registrado para esta modalidad"]);
+            exit;
+        }
+
+        $query = "INSERT INTO catalogo_periodos (codigo_modalidad, cantidad_periodos) VALUES (:codigoModalidad, :cantidadPeriodos)";
         $stmt = $pdo->prepare($query);
         $stmt->bindParam(':codigoModalidad', $codigoModalidad, PDO::PARAM_INT);
         $stmt->bindParam(':cantidadPeriodos', $cantidadPeriodos, PDO::PARAM_INT);
@@ -45,7 +57,7 @@ try {
         $codigoModalidad = $_POST['lstmodalidad'];
         $cantidadPeriodos = $_POST['cantidad_periodos'];
 
-        $query = "UPDATE catalogo_periodo SET codigo_modalidad = :codigoModalidad, cantidad_periodos = :cantidadPeriodos WHERE id = :idPeriodo";
+        $query = "UPDATE catalogo_periodos SET codigo_modalidad = :codigoModalidad, cantidad_periodos = :cantidadPeriodos WHERE id = :idPeriodo";
         $stmt = $pdo->prepare($query);
         $stmt->bindParam(':idPeriodo', $idPeriodo, PDO::PARAM_INT);
         $stmt->bindParam(':codigoModalidad', $codigoModalidad, PDO::PARAM_INT);
@@ -57,7 +69,12 @@ try {
 
     // 📌 Listar períodos
     elseif ($action === "listar") {
-        $query = "SELECT id, codigo_modalidad, cantidad_periodos FROM catalogo_periodo ORDER BY id";
+        $query = "SELECT cp.id, cp.codigo_modalidad, cp.cantidad_periodos, TRIM(bc.nombre) AS nombre_modalidad
+        FROM catalogo_periodos cp
+        INNER JOIN bachillerato_ciclo bc ON cp.codigo_modalidad = bc.codigo
+        ORDER BY cp.id;
+        ";
+
         $stmt = $pdo->query($query);
         $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
         echo json_encode($result);
@@ -71,7 +88,7 @@ try {
         }
 
         $idPeriodo = $_POST['id'];
-        $query = "DELETE FROM catalogo_periodo WHERE id = :idPeriodo";
+        $query = "DELETE FROM catalogo_periodos WHERE id = :idPeriodo";
         $stmt = $pdo->prepare($query);
         $stmt->bindParam(':idPeriodo', $idPeriodo, PDO::PARAM_INT);
         $stmt->execute();

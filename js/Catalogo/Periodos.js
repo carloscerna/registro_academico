@@ -1,5 +1,5 @@
 $(document).ready(function() {
-    cargarOpciones("#lstmodalidad", "includes/cargar-bachillerato.php",{annlectivo: "0"}); // Ahora carga Bachillerato
+    cargarOpcionesDependiente("#lstmodalidad", "includes/cargar-bachillerato.php",{annlectivo: "0"}); // Ahora carga Bachillerato
     cargarPeriodos(); // Cargar lista de períodos
 
     $("#formPeriodo").submit(function(event) {
@@ -41,8 +41,8 @@ $(document).ready(function() {
                 let tbody = $("#tablaPeriodos tbody").empty();
                 $.each(data, function(index, item) {
                     tbody.append(
-                        "<tr><td>" + item.id + "</td><td>" + item.lstmodalidad + "</td><td>" + item.cantidad_periodos + "</td>" +
-                        "<td><button class='btn btn-primary editar' data-id='" + item.id + "' data-modalidad='" + item.lstmodalidad + 
+                        "<tr><td>" + item.id + "</td><td>" + item.codigo_modalidad +  "</td><td>" + item.nombre_modalidad + "</td><td>" + item.cantidad_periodos + "</td>" +
+                        "<td><button class='btn btn-primary editar' data-id='" + item.id + "' data-modalidad='" + item.codigo_modalidad + 
                         "' data-periodos='" + item.cantidad_periodos + "'>Editar</button> " +
                         "<button class='btn btn-danger eliminar' data-id='" + item.id + "'>Eliminar</button></td></tr>"
                     );
