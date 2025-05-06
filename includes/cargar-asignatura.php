@@ -36,7 +36,7 @@ try {
     } elseif (in_array($codigoPerfil, ['04', '05', '01'])) { // Registro Académico Básica y Media
         $query = "SELECT DISTINCT ON (aaa.codigo_asignatura) 
                         aaa.codigo_asignatura as codigo, 
-                        aaa.codigo_grado || '-' || aaa.codigo_sirai AS codigo,
+                        aaa.codigo_grado || '-' || aaa.codigo_sirai AS codigo_sirai,
                         asi.nombre AS nombre
                   FROM a_a_a_bach_o_ciclo aaa
                   INNER JOIN asignatura asi ON asi.codigo = aaa.codigo_asignatura
