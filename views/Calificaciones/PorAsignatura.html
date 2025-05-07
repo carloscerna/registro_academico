@@ -17,67 +17,60 @@
 <div class="content-wrapper">
     <div class="container mt-4">
         <div class="card">
-            <div class="card-header bg-primary text-white">
-                <h4 class="text-center">Calificaciones por Asignatura</h4>
-            </div>
+            <div class="card-header bg-primary text-white">Calificaciones por Asignatura</div>
             <div class="card-body">
-                <form id="formCalificaciones">
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label for="lstannlectivo" class="form-label">Año Lectivo:</label>
+                <form id="formFiltros">
+                    <div class="row mb-3">
+                        <div class="col">
+                            <label>Año Lectivo</label>
                             <select id="lstannlectivo" class="form-select"></select>
                         </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="lstmodalidad" class="form-label">Modalidad</label>
+                        <div class="col">
+                            <label>Modalidad</label>
                             <select id="lstmodalidad" class="form-select"></select>
                         </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label for="lstgradoseccion" class="form-label">Grado/Sección/Turno</label>
-                            <select id="lstgradoseccion" class="form-select"></select>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="lstasignatura" class="form-label">Asignatura</label>
-                            <select id="lstasignatura" class="form-select"></select>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label for="lstperiodo" class="form-label">Período</label>
+                        <div class="col">
+                            <label>Período</label>
                             <select id="lstperiodo" class="form-select"></select>
                         </div>
                     </div>
-                    <button type="submit" class="btn btn-primary">Buscar Calificaciones</button>
+                    <div class="row mb-3">
+                        <div class="col">
+                            <label>Grado/Sección</label>
+                            <select id="lstgradoseccion" class="form-select"></select>
+                        </div>
+                        <div class="col">
+                            <label>Asignatura</label>
+                            <select id="lstasignatura" class="form-select"></select>
+                        </div>
+                        <div class="col">
+                            <button type="button" class="btn btn-success mt-4" id="btnBuscar">Buscar</button>
+                        </div>
+                    </div>
                 </form>
-            </div>
-        </div>
-        
-        <!-- Card para la tabla -->
-        <div class="card mt-4">
-            <div class="card-header bg-success text-white">
-                <h4 class="text-center">Lista de Calificaciones</h4>
-            </div>
-            <div class="card-body">
-                <table class="table table-striped" id="tablaNomina">
+    
+                <table id="tablaNotas" class="table table-bordered table-striped">
                     <thead>
                         <tr>
-                            <th></th>
-                            <th></th>
+                            <th>id_notas</th>
                             <th>Código NIE</th>
-                            <th>Nombre Estudiante</th>
-                            <th>Nota A1</th>
-                            <th>Nota A2</th>
-                            <th>Nota A3</th>
-                            <th>Recuperación</th>
+                            <th>Estudiante</th>
+                            <th>A1</th>
+                            <th>A2</th>
+                            <th>A3</th>
+                            <th>Recup.</th>
                             <th>Nota PP</th>
+                            <th style="display:none">codigo_cc</th>
                         </tr>
                     </thead>
                     <tbody></tbody>
                 </table>
+    
+                <button class="btn btn-primary" id="btnGuardar">Guardar Notas</button>
             </div>
         </div>
     </div>
+    
 
 
 </div>
