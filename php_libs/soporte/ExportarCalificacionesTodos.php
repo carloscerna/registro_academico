@@ -202,6 +202,7 @@
         $indicador = $fila['indicador_p_p_1'];
         $codigo_bachillerato_actual = trim($fila['codigo_bachillerato']);
         $codigo_area_actual = trim($fila['codigo_area']);
+        $nombreSeccion = trim($fila['nombre_seccion']);
 
     // Evitar que los datos se procesen si codigo_bachillerato es 10 y codigo_area es "03"
     if ($codigo_bachillerato_actual === "15" && $codigo_area_actual === "03") {
@@ -312,7 +313,7 @@ function ConceptoCalificacion($codigo_cc){
 }
 // ESCRIBE EL NOMBRE DEL ARCHIVO.
 function NombreArchivoExcel() {
-  global $objPHPExcel, $codigo_bachillerato, $nombre_annlectivo, $path_root, $nombre_modalidad, $nombre_grado, $periodo, $DestinoArchivo, $salidaJson,
+  global $objPHPExcel, $codigo_bachillerato, $nombre_annlectivo, $path_root, $nombre_modalidad, $nombre_grado, $nombreSeccion, $periodo, $DestinoArchivo, $salidaJson,
       $contenidoOK;
   $fechaHoraActual = date('d-m-Y_h-i-s_A'); // Formato dd-mm-yyyy y hora 12 horas
   $num = 1; // Incremento de fila inicial
@@ -328,11 +329,11 @@ function NombreArchivoExcel() {
       }
 
       // Limpiar el nombre del archivo
-      $nombreArchivo = htmlspecialchars($nombre_grado) . " - " . $nombre_modalidad;
+      $nombreArchivo = htmlspecialchars($nombre_grado) . " " . $nombreSeccion  . " - " . $nombre_modalidad;
       $nombreArchivo = str_replace(['/', ':'], '-', $nombreArchivo); // Reemplazar caracteres inválidos
 
       // Definir ruta completa del archivo
-      $URLNombreArchivo = $DestinoArchivo . "/" . $nombreArchivo . ".xlsx";
+      $URLNombreArchivo = $DestinoArchivo . "/" . trim($nombreArchivo) . ".xlsx";
 
       // Borrar archivos y subcarpetas anteriores
      // borrarContenidoDirectorio($DestinoArchivo);
