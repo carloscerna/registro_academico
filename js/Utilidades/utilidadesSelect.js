@@ -61,6 +61,8 @@ function cargarPeriodosPorModalidad(selector, idModalidad) {
         dataType: "json",
         success: function(data) {
             $(selector).empty().append('<option value="">Seleccione...</option>');
+            // Pasar el valor de calificación Mínima.
+            $("#calificacionMinima").val(data.calificacion_minima);
 
             if (data.cantidad_periodos) {
                 for (let i = 1; i <= data.cantidad_periodos; i++) {

@@ -21,16 +21,16 @@ $contenidoOK = "";
 $response = [];
 
 try {
-    $accion = $_POST['action'] ?? '';
+    $accion = $_POST['accion'] ?? '';
 
     if ($accion === 'buscarNotas') {
         // Construcción de códigos desde el formulario
-        $codigo_all = $_POST["codigo_modalidad"] . substr($_POST["codigo_grado_seccion"], 0, 4) . $_POST["codigo_ann_lectivo"];
+        $codigo_all = $_POST["modalidad"] . substr($_POST["gradoseccion"], 0, 4) . $_POST["annlectivo"];
         $codigo_bachillerato = substr($codigo_all, 0, 2);
 		$codigo_grado = substr($codigo_all, 2, 2);
         $codigo_seccion = substr($codigo_all, 4, 2);
         $codigo_annlectivo = substr($codigo_all, 6, 2);
-        $codigo_asignatura = trim($_POST["codigo_asignatura"]);
+        $codigo_asignatura = trim($_POST["asignatura"]);
         $periodo = $_POST["periodo"];
 
         $sql = "

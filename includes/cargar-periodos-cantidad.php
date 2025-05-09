@@ -13,7 +13,7 @@ try {
 
     $modalidad = $_GET["modalidad"];
 
-    $query = "SELECT cantidad_periodos FROM catalogo_periodos WHERE codigo_modalidad = :modalidad LIMIT 1";
+    $query = "SELECT cantidad_periodos, calificacion_minima FROM catalogo_periodos WHERE codigo_modalidad = :modalidad LIMIT 1";
     $stmt = $pdo->prepare($query);
     $stmt->bindParam(':modalidad', $modalidad, PDO::PARAM_INT);
     $stmt->execute();

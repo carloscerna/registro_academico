@@ -3,6 +3,13 @@
 {% extends 'default_layout.html' %}
 
 {% block extraCSS %}
+<style>
+    #tablaNotas {
+        width: 100% !important;
+    }
+</style>
+
+
 {% endblock %}
 
 {% block javascripts %}
@@ -22,26 +29,30 @@
                 <form id="formFiltros">
                     <div class="row mb-3">
                         <div class="col">
+                            <label>Calificación Mínima</label>
+                            <input type="number" name="calificacionMinima" id="calificacionMinima" title="Calificación Mínima">
+                        </div>
+                        <div class="col">
                             <label>Año Lectivo</label>
-                            <select id="lstannlectivo" class="form-select"></select>
+                            <select id="lstannlectivo" class="form-select" name="lstannlectivo" title="Año Lectivo"></select>
                         </div>
                         <div class="col">
                             <label>Modalidad</label>
-                            <select id="lstmodalidad" class="form-select"></select>
+                            <select id="lstmodalidad" class="form-select" name="lstmodalidad" title="Modalidad"></select>
                         </div>
                         <div class="col">
                             <label>Período</label>
-                            <select id="lstperiodo" class="form-select"></select>
+                            <select id="lstperiodo" class="form-select" name="lstperiodo" title="Período"></select>
                         </div>
                     </div>
                     <div class="row mb-3">
                         <div class="col">
                             <label>Grado/Sección</label>
-                            <select id="lstgradoseccion" class="form-select"></select>
+                            <select id="lstgradoseccion" class="form-select" name="lstgradoseccion" title="Grado/Sección/Turno"></select>
                         </div>
                         <div class="col">
                             <label>Asignatura</label>
-                            <select id="lstasignatura" class="form-select"></select>
+                            <select id="lstasignatura" class="form-select" name="lstasignatura" title="Asignatura"></select>
                         </div>
                         <div class="col">
                             <button type="button" class="btn btn-success mt-4" id="btnBuscar">Buscar</button>
