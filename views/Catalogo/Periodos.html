@@ -22,19 +22,26 @@
                   </div>
                   <div class="card-body">
                       <form id="formPeriodo">
+                        <input type="hidden" id="action" value="guardar" title="action">
+                        <input type="hidden" name="idPeriodo" id="idPeriodo" title="IdPeriodo.">
                           <div class="mb-3">
-                              <label for="lstmodalidad" class="form-label">Modalidad</label>
+                              <label for="lstmodalidad" class="form-label" aria-label="Default select example">Modalidad</label>
                               <select id="lstmodalidad" class="form-select"></select>
                           </div>
                           <div class="mb-3">
                               <label for="cantidad_periodos" class="form-label">Cantidad de Períodos</label>
                               <input type="number" id="cantidad_periodos" class="form-control" min="3" max="5" required>
                           </div>
+                          <div class="mb-3">
+                            <label for="calificacion_minima" class="form-label">Calificación Mínima</label>
+                            <input type="number" id="calificacion_minima" class="form-control" required>
+                        </div>
                           <button type="submit" class="btn btn-success">Guardar</button>
+                          <button type="button" class="btn btn-secondary" id="btnCancelar">Cancelar</button>
                       </form>
                   </div>
               </div>
-      
+
               <div class="card mt-4">
                   <div class="card-header bg-success text-white">
                       <h4 class="text-center">Listado de Períodos</h4>
@@ -43,11 +50,12 @@
                       <table class="table table-striped" id="tablaPeriodos">
                           <thead>
                               <tr>
-                                  <th>ID</th>
-                                  <th>Código</th>
-                                  <th>Nombre</th>
-                                  <th>Cantidad de Períodos</th>
-                                  <th>Acciones</th>
+                                <th scope="col">ID</th>
+                                <th scope="col">Código</th>
+                                <th scope="col">Nombre</th>
+                                <th scope="col">Cantidad de Períodos</th>
+                                <th scope="col">Calificación Mínima</th>
+                                <th scope="col">Acciones</th>
                               </tr>
                           </thead>
                           <tbody></tbody>
