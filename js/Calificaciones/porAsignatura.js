@@ -23,7 +23,12 @@ $(document).ready(function () {
     });
 
     $('#btnGuardar').on('click', function () {
-        guardarNotas();
+        $('#btnGuardar').html('<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Guardando...');
+        $('#btnGuardar').prop('disabled', true);
+            guardarNotas();
+        $('#btnGuardar').html('<i class="bi bi-save me-2"></i> Guardar Notas');
+        $('#btnGuardar').prop('disabled', false);
+            
     });
 });
 
@@ -124,8 +129,8 @@ function construirTabla() {
                 }
             }
         ],
+        data: dataNotas,
         scrollY: '400px',
-        scrollCollapse: true,
         paging: false,
         searching: false,
         info: false,
@@ -176,7 +181,7 @@ function recalcularNotasIniciales() {
         
             nota_pp = Math.round(nota_pp * 10) / 10;
             fila.pp = nota_pp;
-            $(`input[data-row="${row}"][data-campo="pp"]`).val(nota_pp);
+            //$(`input[data-row="${row}"][data-campo="pp"]`).val(nota_pp);
         
             // 🛠️ Activar/desactivar input de recuperación
             const inputR = $(`input[data-row="${row}"][data-campo="r"]`);
@@ -281,16 +286,20 @@ $(document).on('input', '.campoNota', function () {
         }
         
     // Activar/desactivar nota_r correctamente
-    const inputRecup = $(`input[data-row="${row}"][data-campo="r"]`);
-    const r_actual = parseFloat(inputRecup.val()) || 0;
+        const inputRecup = $(`input[data-row="${row}"][data-campo="r"]`);
+        const r_actual = parseFloat(inputRecup.val()) || 0;
 
-    if (nota_pp >= califMinima && r_actual === 0) {
-        inputRecup.prop('readonly', true).attr('tabindex', '-1').val('');
-        fila.r = '';
-    } else {
-        inputRecup.prop('readonly', false).removeAttr('tabindex');
-    }
-  
+        if (nota_pp >= califMinima && r_actual === 0) {
+            inputRecup.prop('readonly', true).attr('tabindex', '-1').val('');
+            fila.r = '';
+        } else {
+            inputRecup.prop('readonly', false).removeAttr('tabindex');
+        }
+              // Actualizar resultado visual
+              const resultado = nota_pp >= califMinima ? 'Aprobado' : 'Reprobado';
+              const clase = resultado === 'Aprobado' ? 'text-success fw-bold' : 'text-danger fw-bold';
+              const celda = tablaNotas.cell(row, getColIndex('RESULTADO')).node();
+              $(celda).html(`<span class="${clase}">${resultado}</span>`);
     }
     
     // solo par el c´ldigo = '01' recalcula automáticamente    
