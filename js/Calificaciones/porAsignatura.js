@@ -124,6 +124,8 @@ function construirTabla() {
                 }
             }
         ],
+        scrollY: '400px',
+        scrollCollapse: true,
         paging: false,
         searching: false,
         info: false,
@@ -165,24 +167,38 @@ function recalcularNotasIniciales() {
         if (fila.codigo_cc === '01') {
             const { a1, a2, a3, r } = obtenerValoresFilaDOM(row);
             let nota_pp = (a1 * 0.35) + (a2 * 0.35) + (a3 * 0.30);
+        
             if (r >= 0.1 && r <= 10) {
                 nota_pp = (a1 < a2)
                     ? (r * 0.35) + (a2 * 0.35) + (a3 * 0.30)
                     : (a1 * 0.35) + (r * 0.35) + (a3 * 0.30);
             }
+        
             nota_pp = Math.round(nota_pp * 10) / 10;
             fila.pp = nota_pp;
-            $('input[data-row="' + row + '"][data-campo="pp"]').val(nota_pp);
-
-            const notaPP = parseFloat(fila.pp) || 0;
-            const resultado = notaPP >= califMinima ? 'Aprobado' : 'Reprobado';
+            $(`input[data-row="${row}"][data-campo="pp"]`).val(nota_pp);
+        
+            // 🛠️ Activar/desactivar input de recuperación
+            const inputR = $(`input[data-row="${row}"][data-campo="r"]`);
+            const r_actual = parseFloat(inputR.val()) || 0;
+        
+            if (nota_pp >= califMinima && r_actual === 0) {
+                inputR.prop('readonly', true).attr('tabindex', '-1').val('');
+                fila.r = '';
+            } else {
+                inputR.prop('readonly', false).removeAttr('tabindex');
+            }
+        
+            // Actualizar resultado visual
+            const resultado = nota_pp >= califMinima ? 'Aprobado' : 'Reprobado';
             const clase = resultado === 'Aprobado' ? 'text-success fw-bold' : 'text-danger fw-bold';
             const celda = tablaNotas.cell(row, getColIndex('RESULTADO')).node();
-            $(celda).html('<span class="' + clase + '">' + resultado + '</span>');
+            $(celda).html(`<span class="${clase}">${resultado}</span>`);
         }
+        
 
         if (fila.codigo_cc === '02') {
-            const notaPP = parseFloat(fila.pp) || 0;
+            const notaPP = parseFloat(fila.nota_pp) || 0;
             const resultado = notaPP >= califMinima ? 'Aprobado' : 'Reprobado';
             const clase = resultado === 'Aprobado' ? 'text-success fw-bold' : 'text-danger fw-bold';
             const celda = tablaNotas.cell(row, getColIndex('RESULTADO')).node();
@@ -190,7 +206,7 @@ function recalcularNotasIniciales() {
         }
         
         if (fila.codigo_cc === '04') {
-            const nota_pp = parseFloat(fila.pp) || 0;
+            const notaPP = parseFloat(fila.nota_pp) || 0;
             const resultado = nota_pp >= 3 ? 'Aprobado' : 'Reprobado';
             const clase = resultado === 'Aprobado' ? 'text-success fw-bold' : 'text-danger fw-bold';
             const celda = tablaNotas.cell(row, getColIndex('RESULTADO')).node();
@@ -199,42 +215,6 @@ function recalcularNotasIniciales() {
         
     });
 }
-    
-/*
-    dataNotas.forEach((fila, row) => {
-        const codigo = fila.codigo_cc;
-
-        if (fila.codigo_cc !== '01') return;
-
-        const { a1, a2, a3, r } = obtenerValoresFilaDOM(row);
-        let nota_pp = (a1 * 0.35) + (a2 * 0.35) + (a3 * 0.30);
-
-        if (r >= 0.1 && r <= 10) {
-            nota_pp = (a1 < a2)
-                ? (r * 0.35) + (a2 * 0.35) + (a3 * 0.30)
-                : (a1 * 0.35) + (r * 0.35) + (a3 * 0.30);
-        }
-
-        nota_pp = Math.round(nota_pp * 10) / 10;
-        fila.pp = nota_pp;
-        $(`input[data-row="${row}"][data-campo="pp"]`).val(nota_pp);
-
-        const inputR = $(`input[data-row="${row}"][data-campo="r"]`);
-        if (nota_pp < califMinima) {
-            inputR.prop('readonly', false).removeAttr('tabindex');
-        } else if (!inputR.val() || parseFloat(inputR.val()) === 0) {
-            inputR.prop('readonly', true).attr('tabindex', '-1').val('');
-            fila.r = '';
-        }
-
-        // Actualizar visual del resultado al cargar
-            const resultado = fila.pp >= califMinima ? 'Aprobado' : 'Reprobado';
-            const clase = resultado === 'Aprobado' ? 'text-success fw-bold' : 'text-danger fw-bold';
-            const celda = tablaNotas.cell(row, getColIndex('RESULTADO')).node();
-            $(celda).html(`<span class="${clase}">${resultado}</span>`);
-
-    });*/
-
 
 $(document).on('input', '.campoNota', function () {
     const input = $(this);
@@ -300,22 +280,19 @@ $(document).on('input', '.campoNota', function () {
             $(`input[data-row="${row}"][data-campo="pp"]`).val(nota_pp);
         }
         
+    // Activar/desactivar nota_r correctamente
+    const inputRecup = $(`input[data-row="${row}"][data-campo="r"]`);
+    const r_actual = parseFloat(inputRecup.val()) || 0;
 
-        // Activar o desactivar nota_r con lógica correcta
-        const inputRecup = $(`input[data-row="${row}"][data-campo="r"]`);
-
-        if (nota_pp >= califMinima && !usoRecuperacion) {
-            inputRecup.prop('readonly', true).attr('tabindex', '-1').val('');
-            fila.r = '';
-        } else {
-            inputRecup.prop('readonly', false).removeAttr('tabindex');
-        }
-            // Actualizar columna Resultado manualmente SIN redibujar
-                const resultado = nota_pp >= califMinima ? 'Aprobado' : 'Reprobado';
-                const clase = resultado === 'Aprobado' ? 'text-success fw-bold' : 'text-danger fw-bold';
-                const celda = tablaNotas.cell(row, getColIndex('RESULTADO')).node();
-                $(celda).html(`<span class="${clase}">${resultado}</span>`);
+    if (nota_pp >= califMinima && r_actual === 0) {
+        inputRecup.prop('readonly', true).attr('tabindex', '-1').val('');
+        fila.r = '';
+    } else {
+        inputRecup.prop('readonly', false).removeAttr('tabindex');
     }
+  
+    }
+    
     // solo par el c´ldigo = '01' recalcula automáticamente    
     if (campo === 'pp' && ['02'].includes(fila.codigo_cc)) {
         if (isNaN(valor) || valor < 0.1 || valor > 10) {
@@ -344,7 +321,7 @@ $(document).on('input', '.campoNota', function () {
     
         fila.pp = valor;
     
-        const resultado = valor >= 3 ? 'Aprobado' : 'Reprobado';
+        const resultado = valor >= 4 ? 'Aprobado' : 'Reprobado';
         const clase = resultado === 'Aprobado' ? 'text-success fw-bold' : 'text-danger fw-bold';
         const celda = tablaNotas.cell(row, getColIndex('RESULTADO')).node();
         $(celda).html(`<span class="${clase}">${resultado}</span>`);
@@ -367,8 +344,17 @@ function guardarNotas() {
             accion: 'guardarNotas',
             periodo: periodo,
             codigo_modalidad: codigoModalidad,
-            notas: dataNotas
+            notas: dataNotas.map(nota => ({
+                id_notas: nota.id_notas,
+                nota_a1: parseFloat(nota.a1) || 0,
+                nota_a2: parseFloat(nota.a2) || 0,
+                nota_a3: parseFloat(nota.a3) || 0,
+                nota_r:  parseFloat(nota.r)  || 0,
+                nota_pp: parseFloat(nota.pp) || 0,
+                codigo_cc: nota.codigo_cc
+            }))
         },
+        
         success: function (res) {
             if (res.success) {
                 Swal.fire('Éxito', res.mensaje ?? 'Notas guardadas correctamente.', 'success');

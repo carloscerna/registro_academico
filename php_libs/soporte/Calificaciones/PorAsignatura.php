@@ -84,41 +84,74 @@ try {
         exit;
     }
 
-    if ($accion === 'guardarNotas') {
-        $notas = $_POST['notas'] ?? [];
-        $periodo = $_POST['periodo'];
-
-        $pdo->beginTransaction();
-
-        $sql = "
-            UPDATE nota
-            SET 
-                nota_a1_$periodo = :a1,
-                nota_a2_$periodo = :a2,
-                nota_a3_$periodo = :a3,
-                nota_r_$periodo  = :r,
-                nota_p_p_$periodo = :pp
-            WHERE id_notas = :id
-        ";
-        $stmt = $pdo->prepare($sql);
-
+    elseif ($accion === "guardarNotas") {
+        $notas = $_POST["notas"] ?? [];
+        $periodo = $_POST["periodo"];
+        $codigo_modalidad = $_POST["codigo_modalidad"];
+    
+        // Obtener cantidad de períodos
+        $query = "SELECT cantidad_periodos FROM catalogo_periodos WHERE codigo_modalidad = :codigo_modalidad LIMIT 1";
+        $stmt = $pdo->prepare($query);
+        $stmt->bindParam(":codigo_modalidad", $codigo_modalidad);
+        $stmt->execute();
+        $cantidad_periodos = $stmt->fetchColumn();
+    
         foreach ($notas as $nota) {
-            $stmt->execute([
-                ':a1' => $nota['a1'],
-                ':a2' => $nota['a2'],
-                ':a3' => $nota['a3'],
-                ':r'  => $nota['r'],
-                ':pp' => $nota['pp'],
-                ':id' => $nota['id_notas']
-            ]);
+            $id = $nota["id_notas"];
+            $codigo_cc = $nota["codigo_cc"];
+    
+            $a1 = isset($nota["nota_a1"]) && is_numeric($nota["nota_a1"]) ? floatval($nota["nota_a1"]) : 0;
+            $a2 = isset($nota["nota_a2"]) && is_numeric($nota["nota_a2"]) ? floatval($nota["nota_a2"]) : 0;
+            $a3 = isset($nota["nota_a3"]) && is_numeric($nota["nota_a3"]) ? floatval($nota["nota_a3"]) : 0;
+            $r  = isset($nota["nota_r"])  && is_numeric($nota["nota_r"])  ? floatval($nota["nota_r"])  : 0;
+            $pp = isset($nota["nota_pp"]) && is_numeric($nota["nota_pp"]) ? floatval($nota["nota_pp"]) : 0;
+            
+            // Actualizar campos dinámicos según período
+            $campos = [
+                "nota_a1_$periodo"   => $a1,
+                "nota_a2_$periodo"   => $a2,
+                "nota_a3_$periodo"   => $a3,
+                "nota_r_$periodo"    => $r,
+                "nota_p_p_$periodo"  => $pp
+            ];
+    
+            foreach ($campos as $campo => $valor) {
+                $query = "UPDATE nota SET $campo = :valor WHERE id_notas = :id";
+                $stmt = $pdo->prepare($query);
+                $stmt->bindParam(":valor", $valor);
+                $stmt->bindParam(":id", $id, PDO::PARAM_INT);
+                $stmt->execute();
+            }
+    
+            // Calcular nota_final
+            if ($codigo_cc === '04') {
+                $nota_final = $pp; // Solo se usa nota_p_p_1
+            } else {
+                // Calcular promedio entre todos los períodos
+                $sumQuery = "SELECT ";
+                $sumaPartes = [];
+                for ($i = 1; $i <= $cantidad_periodos; $i++) {
+                    $sumaPartes[] = "COALESCE(nota_p_p_$i, 0)";
+                }
+                $sumQuery .= implode(" + ", $sumaPartes) . " AS suma FROM nota WHERE id_notas = :id";
+                $stmt = $pdo->prepare($sumQuery);
+                $stmt->bindParam(":id", $id, PDO::PARAM_INT);
+                $stmt->execute();
+                $suma = $stmt->fetchColumn();
+                $nota_final = round($suma / $cantidad_periodos, 0);
+            }
+    
+            $query = "UPDATE nota SET nota_final = :nota_final WHERE id_notas = :id";
+            $stmt = $pdo->prepare($query);
+            $stmt->bindParam(":nota_final", $nota_final);
+            $stmt->bindParam(":id", $id, PDO::PARAM_INT);
+            $stmt->execute();
         }
-
-        $pdo->commit();
-        echo json_encode(['success' => true, 'mensaje' => 'Notas actualizadas con éxito.']);
-        exit;
+    
+        echo json_encode(["success" => true, "mensaje" => "Notas actualizadas correctamente."]);
+    }else{
+        echo json_encode(['success' => false, 'mensaje' => 'Acción no reconocida.']);
     }
-
-    echo json_encode(['success' => false, 'mensaje' => 'Acción no reconocida.']);
 } catch (Exception $e) {
     if ($pdo->inTransaction()) {
         $pdo->rollBack();

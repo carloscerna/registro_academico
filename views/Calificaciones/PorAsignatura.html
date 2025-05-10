@@ -28,10 +28,7 @@
             <div class="card-body">
                 <form id="formFiltros">
                     <div class="row mb-3">
-                        <div class="col">
-                            <label>Calificación Mínima</label>
-                            <input type="number" name="calificacionMinima" id="calificacionMinima" title="Calificación Mínima">
-                        </div>
+                            <input type="hidden" name="calificacionMinima" id="calificacionMinima" title="Calificación Mínima">
                         <div class="col">
                             <label>Año Lectivo</label>
                             <select id="lstannlectivo" class="form-select" name="lstannlectivo" title="Año Lectivo"></select>
@@ -56,31 +53,29 @@
                         </div>
                     </div>
                 </form>
-    
-                <table id="tablaNotas" class="table table-bordered table-striped">
-                    <thead>
-                        <tr>
-                            <th>id_notas</th>
-                            <th>Código NIE</th>
-                            <th>Estudiante</th>
-                            <th>A1</th>
-                            <th>A2</th>
-                            <th>A3</th>
-                            <th>Recup.</th>
-                            <th>Nota PP</th>
-                            <th>RESULTADO</th>
-                            <th style="display:none">codigo_cc</th>
-                        </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
-    
-                <button class="btn btn-primary" id="btnGuardar">Guardar Notas</button>
+                <div class="table-responsive" style="max-height: 450px; overflow-y: auto;">
+                    <table id="tablaNotas" class="table table-bordered table-striped">
+                        <thead>
+                            <tr>
+                                <th scope="col">id_notas</th>
+                                <th scope="col">Código NIE</th>
+                                <th scope="col">Estudiante</th>
+                                <th scope="col">A1</th>
+                                <th scope="col">A2</th>
+                                <th scope="col">A3</th>
+                                <th scope="col">Recup.</th>
+                                <th scope="col">Nota PP</th>
+                                <th scope="col">RESULTADO</th>
+                                <th scope="col" col="scope" style="display:none">codigo_cc</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+                <button type="button" class="btn btn-primary" id="btnGuardar">Guardar Notas</button>
             </div>
         </div>
     </div>
-    
-
 
 </div>
 
