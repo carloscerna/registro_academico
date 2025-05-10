@@ -26,7 +26,7 @@ $(document).ready(function () {
         $('#btnGuardar').html('<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Guardando...');
         $('#btnGuardar').prop('disabled', true);
             guardarNotas();
-        $('#btnGuardar').html('<i class="bi bi-save me-2"></i> Guardar Notas');
+        $('#btnGuardar').html('<i class="bi bi-save me-2"></i> Guardar Calificaciones');
         $('#btnGuardar').prop('disabled', false);
             
     });
