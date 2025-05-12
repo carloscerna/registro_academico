@@ -49,7 +49,7 @@ if ($cantidad_periodos > 0) {
             "n.nota_a2_$i AS a2_$i",
             "n.nota_a3_$i AS a3_$i",
             "n.nota_r_$i AS r_$i",
-            "n.nota_p_p_$i AS pp_$i"
+            "ROUND(n.nota_p_p_$i, 1) AS pp_$i" // ✅ Redondear a 1 decimal
         ]);
     }
 }
@@ -57,7 +57,7 @@ if ($cantidad_periodos > 0) {
 $select_columns = array_merge($select_columns, [
     "n.recuperacion",
     "n.nota_recuperacion_2",
-    "n.nota_final"
+    "ROUND(n.nota_final, 0) AS nota_final" // ✅ Redondear a entero
 ]);
 
 $sql = "
@@ -89,7 +89,7 @@ $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
 $calificacion_minima = $_GET['calificacionMinima'] ?? 6; // Valor por defecto 6
 
 // Crear el objeto PDF
-$pdf = new FPDF('L'); // ✅ 'L' para landscape (horizontal)
+$pdf = new FPDF('L', 'mm', array(215.9, 330.2)); // ✅ 'P' para Portrait, 'mm' para milímetros, array con las dimensiones
 $pdf->AddPage();
 $pdf->SetFont('Arial', 'B', 8); // ✅ Tamaño de fuente 8
 
@@ -124,23 +124,35 @@ if (!empty($data)) {
 $pdf->Ln();
 
 // Encabezados de la tabla (dinámicos)
-$pdf->Cell(8, 8, 'N.º', 1); // ✅ Columna N.º
+$pdf->Cell(8, 8, '', 1); // ✅ Columna N.º
+$pdf->Cell(15, 8, '', 1);
+$pdf->Cell(55, 8, '', 1);
+if ($cantidad_periodos > 0) {
+    for ($i = 1; $i <= $cantidad_periodos; $i++) {
+        $pdf->Cell(40, 8, convertirTexto("Periodo ") . $i, 1, 0, 'C'); // ✅ Encabezado de período
+        //$pdf->Cell(8, 8, "", 0);
+    }
+}
+$pdf->Cell(30, 8, "", 0);
+$pdf->Ln();
+
+$pdf->Cell(8, 8, convertirTexto('N.º'), 1); // ✅ Columna N.º
 $pdf->Cell(15, 8, 'NIE', 1);
 $pdf->Cell(55, 8, 'Estudiante', 1);
 if ($cantidad_periodos > 0) {
     for ($i = 1; $i <= $cantidad_periodos; $i++) {
         $pdf->Cell(8, 8, "A1", 1);
         $pdf->Cell(8, 8, "A2", 1);
-        $pdf->Cell(8, 8, "A3", 1);
+        $pdf->Cell(8, 8, "PO", 1);
         $pdf->Cell(8, 8, "R", 1);
         $pdf->SetFillColor(200, 200, 200);
-        $pdf->Cell(10, 8, "N PP", 1, 0, 'C', 1); // Sombreado en encabezado
+        $pdf->Cell(8, 8, "N PP", 1, 0, 'C', 1); // Sombreado en encabezado
         $pdf->SetFillColor(255, 255, 255);
     }
 }
-$pdf->Cell(10, 8, "R1", 1); // ✅ R1
-$pdf->Cell(10, 8, "R2", 1); // ✅ R2
-$pdf->Cell(10, 8, "NF", 1); // ✅ NF
+$pdf->Cell(8, 8, "R1", 1); // ✅ R1
+$pdf->Cell(8, 8, "R2", 1); // ✅ R2
+$pdf->Cell(8, 8, "NF", 1); // ✅ NF
 $pdf->Ln();
 
 // Datos de la tabla (dinámicos)
@@ -181,7 +193,7 @@ foreach ($data as $row) {
                 $pdf->SetTextColor(255, 0, 0); // Rojo
             }
             $nota_pp = ($row["pp_$i"] == 0) ? '' : $row["pp_$i"];
-            $pdf->Cell(10, 6, $nota_pp, 1, 0, "C", 1);
+            $pdf->Cell(8, 6, $nota_pp, 1, 0, "C", 1);
             $pdf->SetTextColor(0, 0, 0); // Restablecer color
             $pdf->SetFillColor(255, 255, 255);
 
@@ -200,9 +212,18 @@ foreach ($data as $row) {
     $r1 = ($row["recuperacion"] == 0) ? '' : $row["recuperacion"];
     $r2 = ($row["nota_recuperacion_2"] == 0) ? '' : $row["nota_recuperacion_2"];
 
-    $pdf->Cell(10, 6, $r1, 1);
-    $pdf->Cell(10, 6, $r2, 1);
-    $pdf->Cell(10, 6, $row["nota_final"], 1);
+    $pdf->Cell(8, 6, $r1, 1);
+    $pdf->Cell(8, 6, $r2, 1);
+
+    // Formatear y colorear nota final
+    $pdf->SetFont('Arial', 'B', 8);
+    if ($row["nota_final"] < $calificacion_minima) {
+        $pdf->SetTextColor(255, 0, 0); // Rojo
+    }
+    $nota_final = ($row["nota_final"] == 0) ? '' : $row["nota_final"];
+    $pdf->Cell(8, 6, $nota_final, 1, 0, "C");
+    $pdf->SetTextColor(0, 0, 0); // Restablecer color
+    $pdf->SetFont('Arial', '', 8);
 
     // Actualizar resumen de Nota Final
     $genero = ($row['codigo_genero'] == '01') ? 'M' : 'F';
@@ -220,42 +241,61 @@ foreach ($data as $row) {
 
 $pdf->Ln(5);
 
-// Resumen de Aprobados y Reprobados por Período
+// Resumen de Aprobados y Reprobados
 if ($cantidad_periodos > 0) {
     $pdf->SetFont('Arial', 'B', 8);
     $pdf->Cell(0, 4, convertirTexto('Resumen de Aprobados y Reprobados por Período:'), 0, 1, 'L');
     $pdf->Ln(2);
 
+    // Definir el ancho de cada tabla de resumen
+    $table_width = 70; // Ajusta este valor según tus necesidades para 4 columnas
+    $x_start = 10; // Posición inicial X para la primera tabla
+    $y = $pdf->GetY(); // Obtener la posición Y actual
+
     for ($i = 1; $i <= $cantidad_periodos; $i++) {
+        // Calcular la posición X para cada tabla
+        $x = $x_start + (($i - 1) % 4) * ($table_width + 5); // 5 es el espacio entre las tablas
+        $pdf->SetXY($x, $y);
+
         $pdf->SetFont('Arial', 'B', 8);
-        $pdf->Cell(0, 4, convertirTexto('Período ') . $i . ':', 0, 1, 'L');
+        $pdf->Cell($table_width, 4, convertirTexto('Período ') . $i . ':', 0, 1, 'L');
         $pdf->SetFont('Arial', '', 8);
 
-        $pdf->Cell(20, 4, convertirTexto('Género'), 1);
-        $pdf->Cell(20, 4, 'Aprobados', 1);
-        $pdf->Cell(20, 4, 'Reprobados', 1);
-        $pdf->Cell(20, 4, 'Total', 1);
+        $pdf->SetX($x);
+        $pdf->Cell($table_width / 4, 4, convertirTexto('Género'), 1);
+        $pdf->Cell($table_width / 4, 4, 'Aprobados', 1, 0, 'C'); // Centrar texto
+        $pdf->Cell($table_width / 4, 4, 'Reprobados', 1, 0, 'C'); // Centrar texto
+        $pdf->Cell($table_width / 4, 4, 'Total', 1, 0, 'C'); // Centrar texto
         $pdf->Ln();
 
-        $pdf->Cell(20, 4, 'Masculino', 1);
-        $pdf->Cell(20, 4, $resumen[$i]['M']['aprobados'], 1);
-        $pdf->Cell(20, 4, $resumen[$i]['M']['reprobados'], 1);
-        $pdf->Cell(20, 4, $resumen[$i]['M']['aprobados'] + $resumen[$i]['M']['reprobados'], 1);
+        $pdf->SetX($x);
+        $pdf->Cell($table_width / 4, 4, 'Masculino', 1);
+        $pdf->Cell($table_width / 4, 4, $resumen[$i]['M']['aprobados'], 1, 0, 'C'); // Centrar valor
+        $pdf->Cell($table_width / 4, 4, $resumen[$i]['M']['reprobados'], 1, 0, 'C'); // Centrar valor
+        $pdf->Cell($table_width / 4, 4, $resumen[$i]['M']['aprobados'] + $resumen[$i]['M']['reprobados'], 1, 0, 'C'); // Centrar valor
         $pdf->Ln();
 
-        $pdf->Cell(20, 4, 'Femenino', 1);
-        $pdf->Cell(20, 4, $resumen[$i]['F']['aprobados'], 1);
-        $pdf->Cell(20, 4, $resumen[$i]['F']['reprobados'], 1);
-        $pdf->Cell(20, 4, $resumen[$i]['F']['aprobados'] + $resumen[$i]['F']['reprobados'], 1);
+        $pdf->SetX($x);
+        $pdf->Cell($table_width / 4, 4, 'Femenino', 1);
+        $pdf->Cell($table_width / 4, 4, $resumen[$i]['F']['aprobados'], 1, 0, 'C'); // Centrar valor
+        $pdf->Cell($table_width / 4, 4, $resumen[$i]['F']['reprobados'], 1, 0, 'C'); // Centrar valor
+        $pdf->Cell($table_width / 4, 4, $resumen[$i]['F']['aprobados'] + $resumen[$i]['F']['reprobados'], 1, 0, 'C'); // Centrar valor
         $pdf->Ln();
 
+        $pdf->SetX($x);
         $pdf->SetFont('Arial', 'B', 8);
-        $pdf->Cell(20, 4, 'Total', 1);
-        $pdf->Cell(20, 4, $resumen[$i]['total']['aprobados'], 1);
-        $pdf->Cell(20, 4, $resumen[$i]['total']['reprobados'], 1);
-        $pdf->Cell(20, 4, $resumen[$i]['total']['aprobados'] + $resumen[$i]['total']['reprobados'], 1);
+        $pdf->Cell($table_width / 4, 4, 'Total', 1);
+        $pdf->Cell($table_width / 4, 4, $resumen[$i]['total']['aprobados'], 1, 0, 'C'); // Centrar total
+        $pdf->Cell($table_width / 4, 4, $resumen[$i]['total']['reprobados'], 1, 0, 'C'); // Centrar total
+        $pdf->Cell($table_width / 4, 4, $resumen[$i]['total']['aprobados'] + $resumen[$i]['total']['reprobados'], 1, 0, 'C'); // Centrar total
         $pdf->Ln();
         $pdf->Ln(2);
+
+        // Si hemos impreso 4 columnas, saltar a la siguiente línea y actualizar la posición Y
+        if ($i % 4 == 0) {
+            $pdf->Ln(5);
+            $y = $pdf->GetY(); // Actualizar la posición Y para la siguiente fila
+        }
     }
 }
 
@@ -266,29 +306,30 @@ $pdf->Ln(2);
 
 $pdf->SetFont('Arial', '', 8);
 $pdf->Cell(20, 4, convertirTexto('Género'), 1);
-$pdf->Cell(20, 4, 'Aprobados', 1);
-$pdf->Cell(20, 4, 'Reprobados', 1);
-$pdf->Cell(20, 4, 'Total', 1);
+$pdf->Cell(20, 4, 'Aprobados', 1, 0, 'C'); // Centrar total
+$pdf->Cell(20, 4, 'Reprobados', 1, 0, 'C'); // Centrar total
+$pdf->Cell(20, 4, 'Total', 1, 0, 'C'); // Centrar total
 $pdf->Ln();
 
 $pdf->Cell(20, 4, 'Masculino', 1);
-$pdf->Cell(20, 4, $resumen['NF']['M']['aprobados'], 1);
-$pdf->Cell(20, 4, $resumen['NF']['M']['reprobados'], 1);
-$pdf->Cell(20, 4, $resumen['NF']['M']['aprobados'] + $resumen['NF']['M']['reprobados'], 1);
+$pdf->Cell(20, 4, $resumen['NF']['M']['aprobados'], 1, 0, 'C'); // Centrar total
+$pdf->Cell(20, 4, $resumen['NF']['M']['reprobados'], 1, 0, 'C'); // Centrar total
+$pdf->Cell(20, 4, $resumen['NF']['M']['aprobados'] + $resumen['NF']['M']['reprobados'], 1, 0, 'C'); // Centrar total
 $pdf->Ln();
 
 $pdf->Cell(20, 4, 'Femenino', 1);
-$pdf->Cell(20, 4, $resumen['NF']['F']['aprobados'], 1);
-$pdf->Cell(20, 4, $resumen['NF']['F']['reprobados'], 1);
-$pdf->Cell(20, 4, $resumen['NF']['F']['aprobados'] + $resumen['NF']['F']['reprobados'], 1);
+$pdf->Cell(20, 4, $resumen['NF']['F']['aprobados'], 1, 0, 'C'); // Centrar total
+$pdf->Cell(20, 4, $resumen['NF']['F']['reprobados'], 1, 0, 'C'); // Centrar total
+$pdf->Cell(20, 4, $resumen['NF']['F']['aprobados'] + $resumen['NF']['F']['reprobados'], 1, 0, 'C'); // Centrar total
 $pdf->Ln();
 
 $pdf->SetFont('Arial', 'B', 8);
 $pdf->Cell(20, 4, 'Total', 1);
-$pdf->Cell(20, 4, $resumen['NF']['total']['aprobados'], 1);
-$pdf->Cell(20, 4, $resumen['NF']['total']['reprobados'], 1);
-$pdf->Cell(20, 4, $resumen['NF']['total']['aprobados'] + $resumen['NF']['total']['reprobados'], 1);
+$pdf->Cell(20, 4, $resumen['NF']['total']['aprobados'], 1, 0, 'C'); // Centrar total
+$pdf->Cell(20, 4, $resumen['NF']['total']['reprobados'], 1, 0, 'C'); // Centrar total
+$pdf->Cell(20, 4, $resumen['NF']['total']['aprobados'] + $resumen['NF']['total']['reprobados'], 1, 0, 'C'); // Centrar total
 $pdf->Ln();
+
 
 // Salida del PDF (lo muestra en el navegador)
 $pdf->Output('informe_asignatura.pdf', 'I');

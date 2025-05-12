@@ -376,6 +376,8 @@ function guardarNotas() {
         return;
     }
 
+    sincronizarDatosDesdeDOM(); // 🟢 Aquí se asegura que todo esté actualizado
+    
     $.ajax({
         url: 'php_libs/soporte/Calificaciones/PorAsignatura.php',
         type: 'POST',
@@ -409,4 +411,12 @@ function guardarNotas() {
     });
 }
 
-
+function sincronizarDatosDesdeDOM() {
+    dataNotas.forEach((fila, row) => {
+        fila.a1 = parseFloat($(`input[data-row="${row}"][data-campo="a1"]`).val()) || 0;
+        fila.a2 = parseFloat($(`input[data-row="${row}"][data-campo="a2"]`).val()) || 0;
+        fila.a3 = parseFloat($(`input[data-row="${row}"][data-campo="a3"]`).val()) || 0;
+        fila.r  = parseFloat($(`input[data-row="${row}"][data-campo="r"]`).val())  || 0;
+        fila.pp = parseFloat($(`input[data-row="${row}"][data-campo="pp"]`).val()) || 0;
+    });
+}

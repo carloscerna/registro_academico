@@ -14,7 +14,7 @@ var condicion = 0;
 
 //
 //
-
+/*
 $(document).ready(function()
 {
 	if($("#accion").val() == "AgregarNuevoEstudiante"){
@@ -25,7 +25,7 @@ $(document).ready(function()
 			var ver_ann_lectivo = "si";
 			
 			var miselect=$("#lstannlectivo");		
-			/* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */		
+			/* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... 		
 			miselect.find('option').remove().end().append('<option value="">Cargando...</option>').val('');		
 			$.post("includes/cargar-ann-lectivo.php",{verificar_ann_lectivo: ver_ann_lectivo},		
 				function(data) {
@@ -45,6 +45,8 @@ $(document).ready(function()
 			}, "json");
 	}
 });
+*/
+/*
 $(document).ready(function()
 {
 	if($("#accion").val() == "AgregarNuevoEstudiante"){
@@ -54,7 +56,7 @@ $(document).ready(function()
 			var html_gst = $("#valor_gst").val();
 			// MODALIDAD.
 			var miselect_modalidad=$("#lstmodalidad");		
-			/* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */		
+			/* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... 		
 			miselect_modalidad.find('option').remove().end().append('<option value="">Cargando...</option>').val('');		
 			 $.post("includes/cargar-bachillerato.php", { annlectivo: $.trim(html_ann) },
 				function(data) {
@@ -73,7 +75,8 @@ $(document).ready(function()
 			}, "json");
 	}
 });
-
+*/
+/*
 $(document).ready(function()
 {
 	if($("#accion").val() == "AgregarNuevoEstudiante"){
@@ -83,7 +86,7 @@ $(document).ready(function()
 			var html_gst = $("#valor_gst").val();
 			// GRADO, SECCIÓN Y TURNO..
 			var miselect_gst=$("#lstgradoseccion");		
-			/* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */		
+			/* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... 		
 			miselect_gst.find('option').remove().end().append('<option value="">Cargando...</option>').val('');		
 			 $.post("includes/cargar-grado-seccion.php", { elegido: $.trim(html_modalidad), ann: $.trim(html_ann)},
 				function(data) {
@@ -102,15 +105,16 @@ $(document).ready(function()
 			}, "json");			
 	}
 }); 
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////*////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // EN EL CASO QUE SOLO SE HA EDITAR.
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////        				
+/*
 $(document).ready(function()
 {
 	if($("#accion").val() != "AgregarNuevoEstudiante"){
 		var miselect=$("#lstannlectivo");		
 		var ver_ann_lectivo = "si";
-		/* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */		
+		/* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... 		
 		miselect.find('option').remove().end().append('<option value="">Cargando...</option>').val('');		
 		$.post("includes/cargar-ann-lectivo.php",{verificar_ann_lectivo: ver_ann_lectivo},		
 			function(data) {
@@ -125,7 +129,7 @@ $(document).ready(function()
    // Parametros para el año lectivo.
    $("#lstannlectivo").change(function () {
     var miselect=$("#lstmodalidad");
-        /* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
+        /* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... 
         miselect.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
           $("#lstannlectivo option:selected").each(function () {
             elegido=$(this).val();
@@ -144,7 +148,7 @@ $(document).ready(function()
       $("#lstmodalidad").change(function () {
        var miselect=$("#lstgradoseccion");
        var lblturno=$("#lblturno");
-       /* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
+       /* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... 
         miselect.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
         $("#lstmodalidad option:selected").each(function () {
          lblturno.empty();
@@ -161,6 +165,7 @@ $(document).ready(function()
         });
 	    });
 });
+*/
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////        
 // FUNCION PARA LLAMAR A LAS DIFENTES TABLAS CON SUS RESPECTIVOS DATOS PARA RELLENAR LOS SELECT.

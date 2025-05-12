@@ -98,6 +98,20 @@ $(function(){ // INICIO DEL FUNCTION.
 				//
 				$("#CargarArchivoFotoPN").css("display","none");
 				$("#fileupPN").attr("disabled",true);		// Botón Subir Imagen Portafolio
+				// VALIDAR EL CHECKBOX MATRICUAL.
+				document.getElementById("chkCrearMatricula").addEventListener("change", function () {
+					let selects = document.querySelectorAll("lstannlectivo, #lstmodalidad, #lstgradoseccion");
+					console.log($("#accion").val());
+					if (this.checked) {
+						selects.forEach(select => {
+							select.required = true;
+						});
+					} else {
+						selects.forEach(select => {
+							select.required = false;
+						});
+					}
+				});
 			}				
 		});
 	//////////////////////////////////////////////////////////////////////////////////
@@ -611,9 +625,9 @@ $(function(){ // INICIO DEL FUNCTION.
 			rules:{
 					txtnombres: {required: true, minlength: 4},
 					apellido_materno: {required: true, minlength: 2},
-					lstannlectivo: {required: true},
-					lstmodalidad: {required: true},
-					lstgradoseccion: {required: true},
+					//lstannlectivo: {required: true},
+					//lstmodalidad: {required: true},
+					//lstgradoseccion: {required: true},
 					fechanacimiento: {required: true},
 					},
 			errorElement: "em",
