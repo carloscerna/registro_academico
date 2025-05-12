@@ -61,6 +61,37 @@ $(document).ready(function () {
     
         window.open(url, '_blank');
     });
+    // Informe por Nivel.
+    $('#btnGenerarInformePorNivel').on('click', function() {
+        let modalidad = $('#lstmodalidad').val();
+        let nombre_modalidad = $('#lstmodalidad option:selected').text();
+        let gradoseccion = $('#lstgradoseccion').val();
+        let nombre_grado = $('#lstgradoseccion option:selected').text();
+        let annlectivo = $('#lstannlectivo').val();
+        let nombre_annlectivo = $('#lstannlectivo option:selected').text();
+        let asignatura = $('#lstasignatura').val();
+        let periodo = $('#lstperiodo').val();
+        let calificacionMinima = $('#calificacionMinima').val();
+    
+        //  ✅ Validación de datos
+        if (!modalidad || !gradoseccion || !annlectivo || !asignatura || !periodo) {
+            Swal.fire('Error', 'Por favor, complete todos los campos antes de generar el informe.', 'warning');
+            return;
+        }
+    
+        //  ✅ URL completa y correcta
+        let url = '/registro_academico/php_libs/reportes/Estudiante/informePorModalidad.php?modalidad=' + modalidad +
+                  '&nombre_modalidad=' + encodeURIComponent(nombre_modalidad) +
+                  '&gradoseccion=' + gradoseccion +
+                  '&nombre_grado=' + encodeURIComponent(nombre_grado) +
+                  '&annlectivo=' + annlectivo +
+                  '&nombre_annlectivo=' + encodeURIComponent(nombre_annlectivo) +
+                  '&asignatura=' + asignatura +
+                  '&calificacionMinima=' + calificacionMinima +
+                  '&periodo=' + periodo;
+    
+        window.open(url, '_blank');
+    });
 });
 
 function formularioCompleto() {
@@ -377,7 +408,7 @@ function guardarNotas() {
     }
 
     sincronizarDatosDesdeDOM(); // 🟢 Aquí se asegura que todo esté actualizado
-    
+
     $.ajax({
         url: 'php_libs/soporte/Calificaciones/PorAsignatura.php',
         type: 'POST',
