@@ -148,7 +148,8 @@
 		INNER JOIN grado_ano gann ON eg.codigo_grado = gann.codigo 
 		INNER JOIN seccion sec ON eg.codigo_seccion = sec.codigo 
 		INNER JOIN turno tur ON eg.codigo_turno = tur.codigo
-			WHERE btrim(bach.codigo || gann.codigo || sec.codigo || ann.codigo || tur.codigo) = '$codigo_all' and eg.encargado = 't' ORDER BY p.nombres";
+			WHERE btrim(bach.codigo || gann.codigo || sec.codigo || ann.codigo || tur.codigo) = '$codigo_all' and eg.encargado = 't' 
+			ORDER BY p.nombres";
 				$result_encargado = $db_link -> query($query_encargado);
 //  Nombre del Encargado.
 	$nombre_encargado = '';
