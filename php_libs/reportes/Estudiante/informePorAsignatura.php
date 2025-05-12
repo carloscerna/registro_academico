@@ -1,5 +1,5 @@
 <?php
-// ruta de los archivos con su carpeta
+//// ruta de los archivos con su carpeta
 $path_root=trim($_SERVER['DOCUMENT_ROOT']);
 // Incluir la librería FPDF
 require_once $_SERVER['DOCUMENT_ROOT'] . "/registro_academico/php_libs/fpdf/fpdf.php";
