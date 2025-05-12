@@ -40,6 +40,7 @@ $(document).ready(function () {
         let nombre_annlectivo = $('#lstannlectivo option:selected').text();
         let asignatura = $('#lstasignatura').val();
         let periodo = $('#lstperiodo').val();
+        let calificacionMinima = $('#calificacionMinima').val();
     
         //  ✅ Validación de datos
         if (!modalidad || !gradoseccion || !annlectivo || !asignatura || !periodo) {
@@ -55,6 +56,7 @@ $(document).ready(function () {
                   '&annlectivo=' + annlectivo +
                   '&nombre_annlectivo=' + encodeURIComponent(nombre_annlectivo) +
                   '&asignatura=' + asignatura +
+                  '&calificacionMinima=' + calificacionMinima +
                   '&periodo=' + periodo;
     
         window.open(url, '_blank');
