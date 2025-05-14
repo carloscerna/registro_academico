@@ -18,40 +18,24 @@ $(function(){
 //
     $(document).ready(function () {
         var miselect=$("#lstAnnLectivoSeGST");
-        /* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
-        miselect.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
-        
-        $.post("includes/cargar-ann-lectivo.php",
-            function(data) {
-                miselect.empty();
-                miselect.append("<option value='00'>Seleccionar...</option>");
-                for (var i=0; i<data.length; i++) {
-                    miselect.append('<option value="' + data[i].codigo + '">' + data[i].nombre + '</option>');
-                }
-        }, "json");
+        // Cargar Año Lectivo primero
+            cargarOpciones(miselect, "includes/cargar-ann-lectivo.php");
         //
         // CUANDO EL VALOR DE ANNLECTIVO CAMBIA.
         //
-        $("#lstAnnLectivoSeGST").change(function ()
-        {
-            // LISTADO DE LAS MODALIDES
-            var miselect2=$("#lstModalidadSeGST");
-            /* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
-                miselect2.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
-            //        
-                $("#lstAnnLectivoSeGST option:selected").each(function () {
-                    elegido=$(this).val();
-                        annlectivo=$("#lstAnnLectivoSeGST").val();
-                        $.post("includes/cargar-bachillerato.php", { annlectivo: annlectivo },
-                        function(data){
-                                miselect2.empty();
-                                miselect2.append("<option value='00'>Seleccionar...</option>");
-                                for (var i=0; i<data.length; i++) {
-                                miselect2.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');
-                                }
-                    }, "json");		
-                });
+        var miselect2=$("#lstModalidadSeGST");
+            // Cuando el usuario seleccione un Año Lectivo, se carga la Modalidad
+            $(miselect).change(function() {
+                let idAnnLectivo = $(this).val();
+                cargarOpcionesDependiente(miselect2, "includes/cargar-bachillerato.php", { annlectivo: idAnnLectivo });
+            });
+    // Cuando el usuario seleccione una Modalidad, cargamos Grado-Sección-Turno con dos variables
+        $(miselect2).change(function() {
+            let idAnnLectivo = $(miselect).val();  // Año Lectivo seleccionado
+            let idModalidad = $(this).val();  // Modalidad seleccionada
+            cargarOpcionesMultiples("#lstgradoseccion", "includes/cargar-grado-seccion.php", { annlectivo: idAnnLectivo, modalidad: idModalidad });
         });
+
         // CUANDO EL VALOR DE NIVEL O MODALIDAD CAMBIE.
         $("#lstModalidadSeGST").change(function () {
             $("#lstModalidadSeGST option:selected").each(function () {
