@@ -1,0 +1,128 @@
+{# Heredando la plantilla principal #}
+
+{% extends 'default_layout.html' %}
+
+{% block extraCSS %}
+
+{% endblock %}
+
+{% block javascripts %}
+ <script>
+     $(document).ready(function(){
+            // Obtener lista de bases de datos
+            $.ajax({
+                url: "php_libs/soporte/BackupYRestore/list_databases.php",
+                type: "GET",
+                success: function(response){
+                    $("#databaseList").html(response);
+                }
+            });
+
+            // Seleccionar carpeta de respaldo
+$("#selectFolder").click(function(){
+    $.ajax({
+        url: "php_libs/soporte/BackupYRestore/select_folder.php",
+        type: "GET",
+        success: function(response){
+            if (response.includes("Error")) {
+                Swal.fire("Error", "No se pudo seleccionar la carpeta.", "error");
+            } else {
+                $("#backupPath").val(response);
+            }
+        }
+    });
+});
+
+            // Respaldar
+            $("#backupBtn").click(function(){
+                var dbName = $("#databaseList").val();
+                var backupPath = $("#backupPath").val();
+
+                if (dbName === "" || backupPath === "") {
+                    Swal.fire("Error", "Debe seleccionar una base de datos y una ubicación para el respaldo.", "error");
+                    return;
+                }
+
+                $.ajax({
+                    url: "php_libs/soporte/BackupYRestore/backup.php",
+                    type: "POST",
+                    data: { dbName: dbName, backupPath: backupPath },
+                    success: function(response){
+                        Swal.fire("Éxito", response, "success");
+                    }
+                });
+            });
+
+            // Restaurar
+            $("#restoreBtn").click(function(){
+                var newDbName = $("#newDbName").val();
+                var backupPath = $("#backupPath").val();
+
+                if (newDbName === "" || backupPath === "") {
+                    Swal.fire("Error", "Debe ingresar el nuevo nombre de la base y la ubicación del respaldo.", "error");
+                    return;
+                }
+
+                $.ajax({
+                    url: "php_libs/soporte/BackupYRestore/restore.php",
+                    type: "POST",
+                    data: { newDbName: newDbName, backupPath: backupPath },
+                    success: function(response){
+                        Swal.fire("Éxito", response, "success");
+                    }
+                });
+            });
+        });
+
+    </script>
+{% endblock %}
+
+{% block contenidos %}
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper fondoBody">
+    <!-- Content Header (Page header) 
+    Se elimino content-header section solo se va dejar Main Content -->
+
+  <!-- Main content -->
+    <section class="content">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white text-center">
+                <h4>Respaldo y Restauración de PostgreSQL</h4>
+            </div>
+                <div class="card-body">
+                <div class="mb-3">
+                    <label class="form-label">Bases de datos existentes:</label>
+                    <select id="databaseList" class="form-select"></select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Nuevo nombre de la base:</label>
+                    <input type="text" id="newDbName" class="form-control" placeholder="Ejemplo: nueva_base">
+                </div>
+
+<div class="mb-3">
+    <label class="form-label">Seleccionar carpeta de respaldo:</label>
+    <div class="input-group">
+        <input type="text" id="backupPath" class="form-control" value = "D:\respaldo" placeholder="Ruta de respaldo..." readonly>
+        <button id="selectFolder" class="btn btn-secondary">Seleccionar Carpeta</button>
+    </div>
+</div>
+
+                <div class="text-center">
+                    <button id="backupBtn" class="btn btn-primary">Respaldar Ahora</button>
+                    <button id="restoreBtn" class="btn btn-success">Restaurar Ahora</button>
+                </div>
+            </div>
+        </div>
+    </section>
+</div> <!-- /.content-Wrapper, Contains page content. -->
+{% endblock %}
+
+{% block menu %}
+<!-- plantilla que contiene el menú principal. -->
+		{% include 'layout-menu.html' %}
+{% endblock %}
+
+{% block loginUser %}
+<!--	{% include 'layout-login-user.html' %} -->
+{% endblock %}
