@@ -17,17 +17,20 @@ $codigo_all = $mod . $codigo_grado . $codigo_seccion . $ann;
 
 // Selección del campo de nota según el periodo
 switch ($periodo) {
-    case 'Periodo 1':
+    case '1':
         $campo_periodo = 'nota_p_p_1';
         break;
-    case 'Periodo 2':
+    case '2':
         $campo_periodo = 'nota_p_p_2';
         break;
-    case 'Periodo 3':
+    case '3':
         $campo_periodo = 'nota_p_p_3';
         break;
-    case 'Periodo 4':
+    case '4':
         $campo_periodo = 'nota_p_p_4';
+        break;
+    case '5':
+        $campo_periodo = 'nota_p_p_5';
         break;
     default:
         echo json_encode(['error' => 'Periodo no válido: ' . $periodo]);
