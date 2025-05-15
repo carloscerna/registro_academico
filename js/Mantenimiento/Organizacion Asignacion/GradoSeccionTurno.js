@@ -17,23 +17,23 @@ $(function(){
 //  OPCIONES PARA EL TAB NAV
 //
     $(document).ready(function () {
-        var miselect=$("#lstAnnLectivoSeGST");
+        var miselect88=$("#lstAnnLectivoSeGST");
         // Cargar Año Lectivo primero
-            cargarOpciones(miselect, "includes/cargar-ann-lectivo.php");
+            cargarOpciones(miselect88, "includes/cargar-ann-lectivo.php");
         //
         // CUANDO EL VALOR DE ANNLECTIVO CAMBIA.
         //
         var miselect2=$("#lstModalidadSeGST");
             // Cuando el usuario seleccione un Año Lectivo, se carga la Modalidad
-            $(miselect).change(function() {
+            $(miselect88).change(function() {
                 let idAnnLectivo = $(this).val();
                 cargarOpcionesDependiente(miselect2, "includes/cargar-bachillerato.php", { annlectivo: idAnnLectivo });
             });
     // Cuando el usuario seleccione una Modalidad, cargamos Grado-Sección-Turno con dos variables
         $(miselect2).change(function() {
-            let idAnnLectivo = $(miselect).val();  // Año Lectivo seleccionado
+            let idAnnLectivo = $(miselect88).val();  // Año Lectivo seleccionado
             let idModalidad = $(this).val();  // Modalidad seleccionada
-            cargarOpcionesMultiples("#lstgradoseccion", "includes/cargar-grado-seccion.php", { annlectivo: idAnnLectivo, modalidad: idModalidad });
+            cargarOpcionesMultiples("#lstSeGST", "includes/cargar-grado-seccion.php", { annlectivo: idAnnLectivo, modalidad: idModalidad });
         });
 
         // CUANDO EL VALOR DE NIVEL O MODALIDAD CAMBIE.

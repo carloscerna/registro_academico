@@ -13,7 +13,7 @@ try {
     }
 
     $annLectivo = $_REQUEST['annlectivo'];
-    $codigoPerfil = $_SESSION['codigo_perfil'];
+   $codigoPerfil = $_SESSION['codigo_perfil'];
     $codigoPersonal = $_SESSION['codigo_personal'];
     
     // Definir la consulta según el perfil del usuario
@@ -26,11 +26,11 @@ try {
                   AND eg.codigo_docente = :codigoPersonal
                   ORDER BY eg.codigo_bachillerato";
     } elseif ($codigoPerfil == '04' || $codigoPerfil == '05') { // Registro Académico Básica y Media.
-        $query = "SELECT DISTINCT orgpd.codigo_ann_lectivo, orgpd.codigo_bachillerato as codigo, bach.nombre AS nombre
-                  FROM organizar_planta_docente_ciclos orgpd
-                  INNER JOIN bachillerato_ciclo bach ON bach.codigo = orgpd.codigo_bachillerato
-                  WHERE orgpd.codigo_ann_lectivo = :annLectivo 
-                  ORDER BY orgpd.codigo_bachillerato";
+        $query = "SELECT organnciclo.codigo_ann_lectivo, organnciclo.codigo_bachillerato as codigo, bach.nombre AS nombre
+                  FROM organizar_ann_lectivo_ciclos organnciclo
+                  INNER JOIN bachillerato_ciclo bach ON bach.codigo = organnciclo.codigo_bachillerato
+                  WHERE organnciclo.codigo_ann_lectivo = :annLectivo
+                  ORDER BY organnciclo.ordenar";
     } elseif ($codigoPerfil == '01') {  // Administrador
         $query = "SELECT organnciclo.codigo_ann_lectivo, organnciclo.codigo_bachillerato as codigo, bach.nombre AS nombre
                   FROM organizar_ann_lectivo_ciclos organnciclo

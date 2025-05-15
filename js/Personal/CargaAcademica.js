@@ -75,9 +75,15 @@ $(function(){
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // RELLENAR DATOS DE TAB-1, ENCARGADO DE GRADO O IMPARTE ASIGNATURA EN GRADO.
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	$("#lstCodigoModalidad").change(function () {
+$("#lstCodigoModalidad").change(function () {
+    var miselect=$("#lstCodigoGSTEG");
+    let idModalidad = $(this).val();
+    let idAnnLectivo = $("#lstannlectivo").val()
+    cargarOpcionesMultiples(miselect, "includes/cargar-grado-seccion.php", { annlectivo: idAnnLectivo, modalidad: idModalidad });
+});
+/*	$("#lstCodigoModalidad").change(function () {
 	    	    var miselect=$("#lstCodigoGSTEG");
-		    /* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
+		    /* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... 
 			miselect.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
 			
    		$("#lstCodigoModalidad option:selected").each(function () {
@@ -92,7 +98,7 @@ $(function(){
 					}
 			}, "json");			
 	    });
-	});
+	});*/
 //////////////////////////////////////////////////////////////////////////////////
 // BUSCAR ENCARGADO DE GRADO O IMPARTE ASIGNTURA EN OTROS GRADOS.
 ////////////////////////////////////////////////////////////////////////////////////
