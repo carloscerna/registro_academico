@@ -8,10 +8,7 @@ include($path_root . "/registro_academico/includes/funciones.php");
 include($_SERVER['DOCUMENT_ROOT'] . "/registro_academico/includes/mainFunctions_conexion.php");
 // cambiar a utf-8.
 header("Content-Type: text/html; charset=UTF-8");
-// 1. Incluir pChart (asegúrate de instalarla y configurar autoloading)
-include($path_root."/registro_academico/php_libs/pChart/pChart/class/pData.class.php");
-include($path_root."/registro_academico/php_libs/pChart/pChart/class/pDraw.class.php");
-include($path_root."/registro_academico/php_libs/pChart/pChart/class/pImage.class.php");
+
 
 $pdo = $dblink;
 
@@ -401,7 +398,7 @@ $pdf->Ln(10);
 $pdf->SetFont('Arial', 'B', 8);
 $pdf->Cell(80, 6, 'Top 5 Mejores Calificaciones:', 0, 1, 'L');
 
-$pdf->Cell(10, 6, 'N°', 1, 0, 'C');
+$pdf->Cell(10, 6, convertirTexto('N°'), 1, 0, 'C');
 $pdf->Cell(30, 6, 'NIE', 1, 0, 'C');
 $pdf->Cell(80, 6, 'Nombre del Estudiante', 1, 0, 'C');
 $pdf->Cell(30, 6, 'TP', 1, 1, 'C');
@@ -411,6 +408,47 @@ foreach ($ranking as $index => $student) {
     $pdf->Cell(30, 6, $student['codigo_nie'], 1, 0, 'C');
     $pdf->Cell(80, 6, convertirTexto($student['nombre_estudiante']), 1, 0, 'L');
     $pdf->Cell(30, 6, $student['total_puntos'], 1, 1, 'C');
+}
+
+
+// ---- EJEMPLO DE USO DE LA FUNCIÓN ----
+$rutaImagenGrafico = $path_root . "/registro_academico/img/grafico_nombres_multilinea.png";
+$configGrafico = [
+    'width' => 700,
+    'height' => 500, // Podría necesitar más altura por las etiquetas en dos líneas
+    'title' => convertirTexto('Ranking Estudiantil Detallado (Nombres en 2 Líneas)'),
+    'maxItems' => 5,
+    // 'fontPath' => '/ruta/a/tu/fuente/arial.ttf', // ¡ALTAMENTE RECOMENDADO!
+    'padding' => ['top' => 60, 'right' => 30, 'bottom' => 120, 'left' => 50], // ¡MUY IMPORTANTE: Aumentar 'bottom' para múltiples líneas!
+    'fontSize' => 11,
+    'xAxisLabelFontSizeOffset' => -2, // ej. 11-2 = 9pt para nombres
+    'xAxisLabelAngle' => 0,           // Mantener en 0 para múltiples líneas
+    'xAxisLabelsMaxLines' => 2,       // Mostrar hasta 2 líneas
+    'xAxisLabelsCharsPerLine' => 18,  // Caracteres aprox. antes de cortar para la siguiente línea
+    'xAxisLabelLineSpacing' => 3,     // Espacio extra entre líneas de un mismo nombre
+    'xAxisLabelMarginTop' => 8,       // Espacio entre el eje y la primera línea del nombre
+];
+
+// Generar el gráfico
+if (isset($ranking, $path_root) && generarGraficoRankingEstudiantes($ranking, $rutaImagenGrafico, $configGrafico)) {
+    //echo "Gráfico generado exitosamente en: " . $rutaImagenGrafico . "\n";
+
+    // ---- Insertar gráfico en el PDF debajo de la tabla ----
+    // Asumimos que $pdf es un objeto de tu librería PDF (FPDF, TCPDF, etc.)
+    // y $convertirTexto es una función que tienes definida.
+    
+    $pdf->Ln(10);
+    // Ajusta las coordenadas y dimensiones según necesites
+    // Las coordenadas (30, 120) y dimensiones (150,100) del código original podrían necesitar ajuste
+    // si el tamaño del gráfico generado (500x350) es muy diferente o si la página PDF tiene otras dimensiones.
+    // Aquí (150,100) en $pdf->Image es el tamaño de la imagen en el PDF, no el tamaño original del archivo.
+    $pdf->Image($rutaImagenGrafico, 60, $pdf->GetY() + 5, 150); // Ancho 150, alto se calculará automáticamente para mantener proporción
+    $pdf->Ln(5); // Espacio después del gráfico
+    // El título del gráfico ahora puede coincidir con el título generado en la imagen.
+    $pdf->Cell(0, 6, convertirTexto($configGrafico['title'] . ':'), 0, 1, 'L');
+} else {
+    //echo "Hubo un error al generar el gráfico.\n";
+    // Aquí podrías tener lógica para no intentar insertar la imagen en el PDF si falló
 }
 
 
@@ -458,37 +496,6 @@ foreach ($asignaturas as $asig) {
     $pdf->Cell(30, 6, trim(convertirTexto($asig['nombre_cc'])), 1, 1, 'C');
 }
 
-
-// 2. Preparar los datos para el gráfico
-$data = new pData();
-$nombres = [];
-$puntos = [];
-foreach ($ranking as $student) {
-    $nombres[] = $student['nombre_estudiante'];
-    $puntos[] = $student['total_puntos'];
-}
-$data->addPoints($puntos, "Puntos");
-$data->addPoints($nombres, "Nombres");
-$data->setSerieDescription("Puntos", "Puntos");
-$data->setSerieDescription("Nombres", "Nombres");
-$data->setAbscissa("Nombres");
-
-// 3. Crear el gráfico
-$grafico = new pImage(700, 230, $data);
-$grafico->setGraphArea(50, 30, 680, 200);
-$grafico->drawScale();
-$grafico->drawBarChart();
-
-// 4. Guardar el gráfico como imagen
-$grafico_path = "top_5_grafico.png";
-$grafico->Render($grafico_path);
-
-// 5. Insertar la imagen en el PDF
-$pdf->Image($grafico_path, 10, $pdf->GetY(), 200);
-
-// 6. Eliminar la imagen (opcional)
-unlink($grafico_path);
-
 // ---- FINALIZAR PDF ----
 $pdf->Output("I", "informe.pdf");
 
@@ -498,4 +505,227 @@ function convertirTextos($texto)
     $texto = mb_strtolower($texto, "ISO-8859-1"); // Convierte todo a minúsculas
     $texto = mb_strtoupper(mb_substr($texto, 0, 1, "ISO-8859-1"), "ISO-8859-1") . mb_substr($texto, 1, null, "ISO-8859-1");
     return $texto;
+}
+
+
+
+/**
+ * Genera un gráfico de barras para el ranking de estudiantes y lo guarda como imagen.
+ *
+ * @param array $rankingData Array con los datos de los estudiantes. Cada elemento debe tener 'nombre_estudiante' y 'total_puntos'.
+ * @param string $outputPath Ruta completa donde se guardará la imagen PNG.
+ * @param array $config Configuraciones opcionales para el gráfico (ancho, alto, colores, etc.).
+ * @return bool True si la imagen se generó correctamente, False en caso contrario.
+ */
+function generarGraficoRankingEstudiantes(array $rankingData, string $outputPath, array $config = []): bool
+{
+    // --- 1. Configuración y Valores por Defecto ---
+    $defaults = [
+        'width' => 400,
+        'height' => 300,
+        'title' => 'Ranking de Estudiantes',
+        'maxItems' => null,
+        'colors' => [ /* ... (colores como antes) ... */ 
+            'background' => [255, 255, 255], 'text' => [0, 0, 0], 
+            'axis' => [150, 150, 150], 'valueOnBar' => [0, 0, 0],
+        ],
+        'barColors' => [ /* ... (colores de barra como antes) ... */ 
+            [52, 152, 219], [231, 76, 60], [46, 204, 113],
+            [241, 196, 15], [155, 89, 182], [26, 188, 156]
+        ],
+        'padding' => ['top' => 40, 'right' => 30, 'bottom' => 60, 'left' => 60],
+        'barSpacing' => 20,
+        'fontPath' => null,
+        'fontSize' => 10,
+        'showValuesOnBars' => true,
+        'valueOnBarFontSizeOffset' => -2,
+        'valueOnBarMarginBottom' => 5,
+        'xAxisLabelFontSizeOffset' => -3,
+        'xAxisLabelAngle' => 0,      // Para múltiples líneas, es mejor mantenerlo en 0
+        'xAxisLabelMarginTop' => 5,
+        'xAxisLabelsMaxLines' => 1,         // NUEVO: Máximo de líneas para etiquetas eje X
+        'xAxisLabelsCharsPerLine' => 15,    // NUEVO: Caracteres aprox. por línea para wordwrap
+        'xAxisLabelLineSpacing' => 2,       // NUEVO: Espaciado vertical entre líneas de una etiqueta
+    ];
+
+    $cfg = array_replace_recursive($defaults, $config);
+
+    // IMPORTANTE: Si usas múltiples líneas, asegúrate que padding['bottom'] sea suficiente.
+    // La lógica automática de ajuste de padding para texto angulado se omite para simplificar.
+    // Debes configurarlo manualmente.
+
+    // --- 2. Preparación de Datos --- (Sin cambios)
+    // ... (código de preparación de datos) ...
+    if (empty($rankingData)) { error_log("generarGraficoRankingEstudiantes: No hay datos."); return false; }
+    if ($cfg['maxItems'] !== null && count($rankingData) > $cfg['maxItems']) {
+        $rankingData = array_slice($rankingData, 0, $cfg['maxItems']);
+    }
+    if (empty($rankingData)) { error_log("generarGraficoRankingEstudiantes: No hay datos después de maxItems."); return false; }
+    $points = array_column($rankingData, 'total_puntos');
+    if(empty($points)) { error_log("generarGraficoRankingEstudiantes: No se encontraron 'total_puntos'."); return false; }
+    $maxValue = max($points);
+    if ($maxValue == 0) $maxValue = 1;
+    $numBars = count($rankingData);
+
+
+    // --- 3. Creación de la Imagen --- (Sin cambios)
+    // ... (código de creación de imagen y colores base) ...
+    $image = imagecreatetruecolor($cfg['width'], $cfg['height']);
+    if (!$image) { error_log("generarGraficoRankingEstudiantes: Falló imagecreatetruecolor."); return false; }
+    $colorBackground = imagecolorallocate($image, ...$cfg['colors']['background']);
+    $colorText = imagecolorallocate($image, ...$cfg['colors']['text']);
+    $colorAxis = imagecolorallocate($image, ...$cfg['colors']['axis']);
+    $colorValueOnBar = imagecolorallocate($image, ...$cfg['colors']['valueOnBar']);
+    imagefill($image, 0, 0, $colorBackground);
+
+
+    // --- 4. Área de Dibujo y Cálculo de Barras --- (Sin cambios significativos, yBase y drawableHeight dependen de padding)
+    // ... (código de área de dibujo y cálculo de barras) ...
+    $drawableWidth = $cfg['width'] - $cfg['padding']['left'] - $cfg['padding']['right'];
+    $drawableHeight = $cfg['height'] - $cfg['padding']['top'] - $cfg['padding']['bottom'];
+    if ($numBars > 0) {
+        $totalSpacing = ($numBars - 1) * $cfg['barSpacing'];
+        $barWidth = ($drawableWidth - $totalSpacing) / $numBars;
+        if ($barWidth < 5) $barWidth = 5;
+    } else { $barWidth = $drawableWidth; }
+    $xOffset = $cfg['padding']['left'];
+    $yBase = $cfg['height'] - $cfg['padding']['bottom'];
+    imageline($image, $cfg['padding']['left'], $yBase, $cfg['width'] - $cfg['padding']['right'], $yBase, $colorAxis);
+    imageline($image, $cfg['padding']['left'], $cfg['padding']['top'], $cfg['padding']['left'], $yBase, $colorAxis);
+
+
+    // --- 5. Dibujar Título del Gráfico --- (Sin cambios)
+    // ... (código del título) ...
+    if (!empty($cfg['title'])) {
+        $titleFontSize = $cfg['fontSize'] + 2;
+        if ($cfg['fontPath'] && file_exists($cfg['fontPath'])) {
+            $titleBox = imagettfbbox($titleFontSize, 0, $cfg['fontPath'], $cfg['title']);
+            $titleWidth = $titleBox[2] - $titleBox[0];
+            imagettftext($image, $titleFontSize, 0, (int)(($cfg['width'] - $titleWidth) / 2), $cfg['padding']['top'] - 15, $colorText, $cfg['fontPath'], $cfg['title']);
+        } else {
+            $titleWidth = imagefontwidth(5) * strlen($cfg['title']);
+            imagestring($image, 5, (int)(($cfg['width'] - $titleWidth) / 2), $cfg['padding']['top'] - 25, $cfg['title'], $colorText);
+        }
+    }
+
+    // --- 6. Dibujar Barras, Etiquetas y Valores ---
+    $valueOnBarActualFontSize = $cfg['fontSize'] + $cfg['valueOnBarFontSizeOffset'];
+    if ($cfg['fontPath'] && $valueOnBarActualFontSize < 6) $valueOnBarActualFontSize = 6;
+    elseif (!$cfg['fontPath'] && $valueOnBarActualFontSize < 1) $valueOnBarActualFontSize = 1;
+
+    $xAxisLabelActualFontSize = $cfg['fontSize'] + $cfg['xAxisLabelFontSizeOffset'];
+    $gdLabelFontSize = 3; // Para imagestring
+    if ($cfg['fontPath'] && file_exists($cfg['fontPath'])) {
+        if ($xAxisLabelActualFontSize < 6) $xAxisLabelActualFontSize = 6;
+    } else {
+        if ($xAxisLabelActualFontSize < 1) $xAxisLabelActualFontSize = 1;
+        // Mapeo simple a tamaños de GD (1-5)
+        if ($xAxisLabelActualFontSize <= 7) $gdLabelFontSize = 1;
+        elseif ($xAxisLabelActualFontSize <= 9) $gdLabelFontSize = 2;
+        elseif ($xAxisLabelActualFontSize <= 11) $gdLabelFontSize = 3;
+        else $gdLabelFontSize = 4;
+    }
+
+
+    foreach ($rankingData as $index => $student) {
+        // ... (Dibujo de la barra como antes) ...
+        $currentBarColorComponents = $cfg['barColors'][$index % count($cfg['barColors'])];
+        $barColor = imagecolorallocate($image, ...$currentBarColorComponents);
+        $barHeight = ($student['total_puntos'] / $maxValue) * $drawableHeight;
+        $barHeight = max(0, $barHeight);
+        $x1 = $xOffset + ($index * ($barWidth + $cfg['barSpacing']));
+        $y1 = $yBase - $barHeight;
+        $x2 = $x1 + $barWidth;
+        $y2 = $yBase -1;
+        imagefilledrectangle($image, (int)$x1, (int)$y1, (int)$x2, (int)$y2, $barColor);
+
+
+        // --- MODIFICADO: Etiquetas del Eje X (Nombres de Estudiantes en múltiples líneas) ---
+        $studentName = convertirTexto($student['nombre_estudiante']);
+        
+        $nameLines = [$studentName]; // Por defecto, una sola línea
+        if ($cfg['xAxisLabelsMaxLines'] > 1 && $cfg['xAxisLabelAngle'] == 0) { // Multi-línea funciona mejor horizontal
+            $wrappedName = wordwrap($studentName, $cfg['xAxisLabelsCharsPerLine'], "\n", true);
+            $tempLines = explode("\n", $wrappedName);
+            $nameLines = array_slice($tempLines, 0, $cfg['xAxisLabelsMaxLines']);
+        } elseif ($cfg['xAxisLabelsMaxLines'] > 1 && $cfg['xAxisLabelAngle'] != 0) {
+            // Opcional: advertir que la combinación no es idealmente soportada
+            error_log("Advertencia: Las etiquetas del eje X en múltiples líneas con ángulo pueden no mostrarse correctamente.");
+        }
+
+        // Posición Y inicial para la primera línea de la etiqueta
+        $currentLineTextY = $yBase + $cfg['xAxisLabelMarginTop'];
+
+        foreach ($nameLines as $lineIndex => $lineText) {
+            if (empty(trim($lineText))) continue; // Omitir líneas vacías
+
+            if ($cfg['fontPath'] && file_exists($cfg['fontPath'])) { // Fuente TTF
+                // La posición Y para imagettftext es la línea base de la fuente
+                $lineBaselineY = $currentLineTextY + $xAxisLabelActualFontSize; 
+                if ($lineIndex > 0) { // Para la segunda línea y subsecuentes
+                    // Añadir altura de fuente anterior y espaciado
+                    $lineBaselineY += ($lineIndex * ($xAxisLabelActualFontSize + $cfg['xAxisLabelLineSpacing']));
+                }
+                
+                $textBox = imagettfbbox($xAxisLabelActualFontSize, $cfg['xAxisLabelAngle'], $cfg['fontPath'], $lineText);
+                $textLineWidth = abs($textBox[2] - $textBox[0]);
+                
+                // Para texto angulado, la X es el inicio. Para horizontal, se centra.
+                $lineTextX = ($cfg['xAxisLabelAngle'] == 0) ? 
+                             ($x1 + ($barWidth - $textLineWidth) / 2) : 
+                             $x1; // Simplificado para texto angulado
+
+                imagettftext(
+                    $image, $xAxisLabelActualFontSize, $cfg['xAxisLabelAngle'],
+                    (int)$lineTextX, (int)$lineBaselineY,
+                    $colorText, $cfg['fontPath'], $lineText
+                );
+            } else { // Fuente GD (el ángulo se ignora para múltiples líneas)
+                $gdFontLineHeight = imagefontheight($gdLabelFontSize);
+                // La posición Y para imagestring es la esquina superior del texto
+                $lineTopY = $currentLineTextY;
+                if ($lineIndex > 0) {
+                    $lineTopY += ($lineIndex * ($gdFontLineHeight + $cfg['xAxisLabelLineSpacing']));
+                }
+
+                $textLineWidth = imagefontwidth($gdLabelFontSize) * strlen($lineText);
+                $lineTextX = $x1 + ($barWidth - $textLineWidth) / 2;
+
+                imagestring(
+                    $image, $gdLabelFontSize,
+                    (int)$lineTextX, (int)$lineTopY,
+                    $lineText, $colorText
+                );
+            }
+        }
+
+
+        // --- Mostrar valores encima de las barras (sin cambios significativos) ---
+        if ($cfg['showValuesOnBars']) {
+            // ... (código para valores sobre las barras como antes) ...
+            $valueString = (string)$student['total_puntos'];
+            $textYPosValue = $y1 - $cfg['valueOnBarMarginBottom'];
+            if ($textYPosValue < $cfg['padding']['top'] + $valueOnBarActualFontSize) { // Evitar que se salga por arriba
+                $textYPosValue = $cfg['padding']['top'] + $valueOnBarActualFontSize;
+                 // Podrías optar por dibujar dentro de la barra si está muy alta
+            }
+
+            if ($cfg['fontPath'] && file_exists($cfg['fontPath'])) {
+                $valueBox = imagettfbbox($valueOnBarActualFontSize, 0, $cfg['fontPath'], $valueString);
+                $valueWidth = $valueBox[2] - $valueBox[0];
+                imagettftext( $image, $valueOnBarActualFontSize, 0, (int)($x1 + ($barWidth - $valueWidth) / 2), (int)$textYPosValue, $colorValueOnBar, $cfg['fontPath'], $valueString );
+            } else {
+                $gdValueFontSize = 2; /* ... mapeo de tamaño ... */
+                $valueWidth = imagefontwidth($gdValueFontSize) * strlen($valueString);
+                imagestring( $image, $gdValueFontSize, (int)($x1 + ($barWidth - $valueWidth) / 2), (int)($textYPosValue - $valueOnBarActualFontSize), $valueString, $colorValueOnBar );
+            }
+        }
+    }
+
+    // --- 7. Guardar Imagen y Limpiar --- (Sin cambios)
+    // ... (código para guardar y destruir imagen) ...
+    $success = imagepng($image, $outputPath);
+    imagedestroy($image);
+    if (!$success) { error_log("generarGraficoRankingEstudiantes: Falló imagepng en {$outputPath}."); }
+    return $success;
 }
