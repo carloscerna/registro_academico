@@ -8,79 +8,21 @@
 <script type="text/JavaScript" src="js/default.js"></script>
 <script type="text/JavaScript" src="js/Estudiantes/BuscarMatriculaEstudiantes.js"></script>
 <script type="text/JavaScript" src="js/Estudiantes/cargar_excel_matricula.js"></script>
+<script type="text/JavaScript" src="js/Utilidades/cargarDatosSelect.js"></script>
+<script type="text/JavaScript" src="js/Utilidades/utilidadesSelect.js"></script>
 <!-- cargar datos del nombre del archivo. -->
 <script>
   $(document).ready(function() {
-  
-    // Función para cargar Año Lectivo
-    function cargarAnnLectivo() {
-      const $annLectivo = $("#lstannlectivo");
-  
-      $annLectivo.html('<option value="">Cargando...</option>');
-  
-      $.post("includes/cargar-ann-lectivo.php", function(data) {
-        $annLectivo.empty().append('<option value="">Seleccionar...</option>');
-        $.each(data, function(i, item) {
-          $annLectivo.append(`<option value="${item.codigo}">${item.nombre}</option>`);
-        });
-      }, "json");
-    }
-  
-    // Función para cargar Modalidad basado en Año Lectivo
-    function cargarModalidad(annlectivo) {
-      const $modalidad = $("#lstmodalidad");
-  
-      $modalidad.html('<option value="">Cargando...</option>');
-  
-      $.post("includes/cargar-bachillerato.php", { annlectivo: annlectivo }, function(data) {
-        $modalidad.empty().append('<option value="">Seleccionar...</option>');
-        $.each(data, function(i, item) {
-          $modalidad.append(`<option value="${item.codigo}">${item.descripcion}</option>`);
-        });
-      }, "json");
-    }
-  
-    // Función para cargar Grado - Sección - Turno basado en Modalidad
-    function cargarGradoSeccion(modalidad, annlectivo) {
-      const $gradoSeccion = $("#lstgradoseccion");
-  
-      $gradoSeccion.html('<option value="">Cargando...</option>');
-  
-      $.post("includes/cargar-grado-seccion.php", { elegido: modalidad, ann: annlectivo }, function(data) {
-        $gradoSeccion.empty().append('<option value="">Seleccionar...</option>');
-        $.each(data, function(i, item) {
-          $gradoSeccion.append(`<option value="${item.codigo_grado}${item.codigo_seccion}${item.codigo_turno}">
-            ${item.descripcion_grado} ${item.descripcion_seccion} - ${item.descripcion_turno}
-          </option>`);
-        });
-      }, "json");
-    }
-  
-    // Cargar Año Lectivo al cargar la página
-    cargarAnnLectivo();
-  
-    // Evento: cambiar Año Lectivo -> cargar Modalidades
-    $("#lstannlectivo").change(function() {
-      const annlectivo = $(this).val();
-      if (annlectivo) {
-        cargarModalidad(annlectivo);
-        $("#lstgradoseccion").empty().append('<option value="">Seleccionar...</option>'); // Resetea grado-sección
-      } else {
-        $("#lstmodalidad, #lstgradoseccion").empty().append('<option value="">Seleccionar...</option>');
-      }
+        $("#lstannlectivoD").change(function() {
+        let idAnnLectivo = $(this).val();
+        cargarOpcionesDependiente("#lstmodalidadD", "includes/cargar-bachillerato.php", { annlectivo: idAnnLectivo });
     });
-  
-    // Evento: cambiar Modalidad -> cargar Grado/Sección/Turno
-    $("#lstmodalidad").change(function() {
-      const modalidad = $(this).val();
-      const annlectivo = $("#lstannlectivo").val();
-      if (modalidad && annlectivo) {
-        cargarGradoSeccion(modalidad, annlectivo);
-      } else {
-        $("#lstgradoseccion").empty().append('<option value="">Seleccionar...</option>');
-      }
+        // Cuando el usuario seleccione una Modalidad, cargamos Grado-Sección-Turno con dos variables
+    $("#lstmodalidadD").change(function() {
+        let idAnnLectivo = $("#lstannlectivoD").val();  // Año Lectivo seleccionado
+        let idModalidad = $(this).val();  // Modalidad seleccionada
+        cargarOpcionesMultiples("#lstgradoseccionD", "includes/cargar-grado-seccion.php", { annlectivo: idAnnLectivo, modalidad: idModalidad });
     });
-  
   });
   </script>
 {% endblock %}
