@@ -1,0 +1,220 @@
+{# Heredando la plantilla principal #}
+
+{% extends 'default_layout.html' %}
+
+{% block extraCSS %}
+ <style>
+        .swal2-container {
+            z-index: 2000 !important; /* Asegura que SweetAlert esté por encima de otros elementos */
+        }
+    </style>
+{% endblock %}
+
+{% block javascripts %}
+<script>
+        $(document).ready(function() {
+            let editingUserId = null; // Variable para rastrear el ID del usuario en edición
+
+            // Función para cargar la lista de usuarios
+            function loadUsers() {
+                $.ajax({
+                    url: 'php_libs/soporte/Usuarios/obtener_usuarios.php',
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(data) {
+                        $('#userList').empty();
+                        $.each(data, function(index, user) {
+                            $('#userList').append(`
+                                <tr>
+                                    <td>${user.id_usuario}</td>
+                                    <td>${user.nombre}</td>
+                                    <td>${user.descripcion}</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-primary edit-btn" data-id="${user.id_usuario}">Editar</button>
+                                        <button class="btn btn-sm btn-danger delete-btn" data-id="${user.id_usuario}">Eliminar</button>
+                                    </td>
+                                </tr>
+                            `);
+                        });
+                    },
+                    error: function(xhr, status, error) {
+                        Swal.fire('Error', 'Error al cargar los usuarios: ' + error, 'error');
+                    }
+                });
+            }
+
+            // Función para cargar los perfiles en el select
+            function loadProfiles() {
+                $.ajax({
+                    url: 'php_libs/soporte/Usuarios/obtener_perfiles.php',
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(data) {
+                        $.each(data, function(index, perfil) {
+                            $('#id_perfil').append(`<option value="${perfil.codigo_perfil}">${perfil.descripcion_perfil}</option>`);
+                        });
+                    },
+                    error: function(xhr, status, error) {
+                        Swal.fire('Error', 'Error al cargar los perfiles: ' + error, 'error');
+                    }
+                });
+            }
+
+            // Cargar usuarios y perfiles al cargar la página
+            loadUsers();
+            loadProfiles();
+
+            // Evento para el botón de editar
+            $(document).on('click', '.edit-btn', function() {
+                editingUserId = $(this).data('id');
+                $.ajax({
+                    url: 'php_libs/soporte/Usuarios/obtener_usuario.php',
+                    type: 'GET',
+                    dataType: 'json',
+                    data: { id: editingUserId },
+                    success: function(user) {
+                        $('#id_usuario').val(user.id_usuario_bigint);
+                        $('#nombre_usuario').val(user.nombre);
+                        $('#id_perfil').val(user.codigo_perfil);
+                        $('#password').val(''); // Limpiar el campo de contraseña en edición
+                        $('#cancelEdit').show();
+                    },
+                    error: function(xhr, status, error) {
+                        Swal.fire('Error', 'Error al cargar el usuario para editar: ' + error, 'error');
+                    }
+                });
+            });
+
+            // Evento para el botón de cancelar edición
+            $('#cancelEdit').on('click', function() {
+                editingUserId = null;
+                $('#userForm')[0].reset();
+                $('#cancelEdit').hide();
+            });
+
+            // Evento para el formulario de guardar usuario
+            $('#userForm').submit(function(event) {
+                event.preventDefault();
+                let url = editingUserId ? 'php_libs/soporte/Usuarios/editar_usuario.php' : 'php_libs/soporte/Usuarios/crear_usuario.php';
+                let data = {
+                    id_usuario: $('#id_usuario').val(),
+                    nombre_usuario: $('#nombre_usuario').val(),
+                    password: $('#password').val(),
+                    id_perfil: $('#id_perfil').val()
+                };
+
+                $.ajax({
+                    url: url,
+                    type: 'POST',
+                    dataType: 'json',
+                    data: data,
+                    success: function(response) {
+                        if (response.success) {
+                            Swal.fire('Éxito', response.message, 'success').then(() => {
+                                loadUsers();
+                                $('#userForm')[0].reset();
+                                $('#cancelEdit').hide();
+                                editingUserId = null;
+                            });
+                        } else {
+                            Swal.fire('Error', response.message, 'error');
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        Swal.fire('Error', 'Error en la solicitud: ' + error, 'error');
+                    }
+                });
+            });
+
+            // Evento para el botón de eliminar usuario
+            $(document).on('click', '.delete-btn', function() {
+                const userId = $(this).data('id');
+                Swal.fire({
+                    title: '¿Estás seguro?',
+                    text: "No podrás revertir esto.",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Sí, eliminar!',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: 'php_libs/soporte/Usuarios/eliminar_usuario.php',
+                            type: 'POST',
+                            dataType: 'json',
+                            data: { id: userId },
+                            success: function(response) {
+                                if (response.success) {
+                                    Swal.fire('Éxito', response.message, 'success');
+                                    loadUsers();
+                                } else {
+                                    Swal.fire('Error', response.message, 'error');
+                                }
+                            },
+                            error: function(xhr, status, error) {
+                                Swal.fire('Error', 'Error al eliminar el usuario: ' + error, 'error');
+                            }
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+{% endblock %}
+
+{% block contenidos %}
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper fondoBody">
+    <!-- Content Header (Page header) 
+    Se elimino content-header section solo se va dejar Main Content -->
+
+  <!-- Main content -->
+    <section class="content">
+ <div class="container mt-5">
+        <h1>Gestión de Usuarios y Permisos</h1>
+
+        <form id="userForm">
+            <input type="hidden" id="id_usuario"> <div class="mb-3">
+                <label for="nombre_usuario" class="form-label">Nombre de Usuario:</label>
+                <input type="text" class="form-control" id="nombre_usuario" required>
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">Contraseña:</label>
+                <input type="password" class="form-control" id="password">
+                <small class="form-text text-muted">Dejar en blanco para mantener la contraseña actual.</small>
+            </div>
+            <div class="mb-3">
+                <label for="id_perfil" class="form-label">Perfil:</label>
+                <select class="form-select" id="id_perfil" required>
+                    <option value="">Seleccionar Perfil</option>
+                    </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Guardar Usuario</button>
+            <button type="button" class="btn btn-secondary" id="cancelEdit" style="display:none;">Cancelar Edición</button>
+        </form>
+
+        <hr class="my-4">
+
+        <h2>Lista de Usuarios</h2>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th scope="col">ID</th>
+                    <th scope="col">Nombre de Usuario</th>
+                    <th scope="col">Perfil</th>
+                    <th scope="col">Acciones</th>
+                </tr>
+            </thead>
+            <tbody id="userList">
+                </tbody>
+        </table>
+    </div>
+    </section>
+</div> <!-- /.content-Wrapper, Contains page content. -->
+{% endblock %}
+
+{% block loginUser %}
+<!--	{% include 'layout-login-user.html' %} -->
+{% endblock %}

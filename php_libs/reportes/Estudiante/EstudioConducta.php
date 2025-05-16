@@ -2,9 +2,9 @@
 // ruta de los archivos con su carpeta
     $path_root=trim($_SERVER['DOCUMENT_ROOT']);
 // archivos que se incluyen.
+    include($path_root."/registro_academico/includes/mainFunctions_conexion.php");
     include($path_root."/registro_academico/includes/funciones.php");
     include($path_root."/registro_academico/includes/consultas.php");
-    include($path_root."/registro_academico/includes/mainFunctions_conexion.php");
     include($path_root."/registro_academico/includes/DeNumero_a_Letras.php");
 // Llamar a la libreria fpdf
     include($path_root."/registro_academico/php_libs/fpdf/fpdf.php");
