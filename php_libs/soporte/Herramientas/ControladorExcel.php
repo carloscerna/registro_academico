@@ -84,6 +84,7 @@ try {
                         // Cargar el archivo Excel
                         $spreadsheet = IOFactory::load($archivo);
                         $sheet = $spreadsheet->getActiveSheet();
+                       // $sheet = $spreadsheet->setActiveSheetIndex(0);
                 
                         // Insertar dos columnas al principio (A y B)
                         $sheet->insertNewColumnBefore('A', 1);
@@ -163,133 +164,151 @@ try {
                                 $sheet->getStyle("A{$i}:B{$i}")->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID);
                                 $sheet->getStyle("A{$i}:B{$i}")->getFill()->getStartColor()->setRGB($colorFondo);
                             }
-
-
-                            // … despues de cargar $sheet y calcular $ultimaFila …
-                            
-                            // 1. Captura el objeto de validación de C2
-                            /** @var DataValidation $dv */
-                            /** @var DataValidation $dvOriginal */
-
-                            // 1. Calcula la última fila de datos basándote en la columna B
-                            $ultimaFila = $sheet->getHighestDataRow('B');
-                            
-                            // 2. Calcula la última columna con datos en la hoja
-                            $ultimaColumnaLetra = $sheet->getHighestDataColumn();              // ej. "AR"
-                            $ultimaColumnaIndex = Coordinate::columnIndexFromString($ultimaColumnaLetra); // ej. 44
-                            
-                            // 3. Genera el array de letras desde la C (índice 3) hasta esa última
-                            $columnas = [];
-                            for ($colIndex = 3; $colIndex <= $ultimaColumnaIndex; $colIndex++) {
-                                $columnas[] = Coordinate::stringFromColumnIndex($colIndex);
-                            }
-                            
-                            // 4. Recorre cada columna y clona la validación de la fila 2
-                            foreach ($columnas as $col) {
-                                /** @var DataValidation $dvOriginal */
-                                $dvOriginal = $sheet->getCell("{$col}2")->getDataValidation();
-                                if (!($dvOriginal instanceof DataValidation)) {
-                                    continue; // si en esa columna no hay validación en la fila 2, saltamos
-                                }
-                            
-                                // 5. Aplica la validación a cada celda desde la fila 3 hasta $ultimaFila
-                                for ($fila = 3; $fila <= $ultimaFila; $fila++) {
-                                    $newDv = clone $dvOriginal;
-                                    $newDv->setSqref("{$col}{$fila}");
-                                    $sheet->getCell("{$col}{$fila}")->setDataValidation($newDv);
-                                }
-                            }
-
-                            // RELLENAR CONTENIDO EN LA HOJA 2.
-                            // define aquí los dos colores que quieras alternar
-                            $coloresBloque = ['FFFFFF', 'D9E1F2']; // blanco / celeste claro
-                            // asumimos que $spreadsheet ya está cargado
-                            $sheet1 = $spreadsheet->getSheetByName('Hoja1');
-                            $sheet2 = $spreadsheet->getSheetByName('Hoja2');
-                            
-                            // 1) Calculamos la última columna con datos en Hoja1
-                            $ultimaColLetra = $sheet1->getHighestDataColumn();
-                            $ultimaColIndex = Coordinate::columnIndexFromString($ultimaColLetra);
-                            
-                            // 2) Preparamos la fila inicial en Hoja2 y el tamaño del bloque
-                            $fila2     = 2;    // empezamos en la fila 2
-                            $blockSize = 4;    // cada indicador ocupa 4 filas, pero escribe sólo en la 1ª
-                            $colorIndex = 0; // indice para alternar el color
-                            
-                            // 3) Recorremos todas las columnas desde C hasta la última
-                            for ($col = Coordinate::columnIndexFromString('C'); $col <= $ultimaColIndex; $col++) {
-                                $colLetra  = Coordinate::stringFromColumnIndex($col);
-                                $indicador = $sheet1->getCell($colLetra . '1')->getValue();
-                            
-                                // 3a) escribimos el indicador SOLO en la primera fila del bloque
-                                $sheet2->setCellValue("C{$fila2}", $indicador);
-                            // 3b) Aplicar el color de fondo a TODO el bloque de 4 filas, columnas A–C
-                                $start = $fila2;
-                                $end   = $fila2 + $blockSize - 1;
-                                $color = $coloresBloque[$colorIndex % count($coloresBloque)];
-                                $rango = "C{$start}:C{$end}";
-                                $sheet2->mergeCells($rango);
-                            
-                                // 3) centrar texto en el rango combinado
-                                $sheet2
-                                    ->getStyle($rango)
-                                    ->getAlignment()
-                                    ->setVertical(Alignment::VERTICAL_CENTER)
-                                     ->setHorizontal(Alignment::HORIZONTAL_CENTER);
+                            switch ($grado) {
+                                case $grado == '4P' || $grado == '5P' || $grado == '6P' || $grado == '01':
+                                    // … despues de cargar $sheet y calcular $ultimaFila …
                                     
-                                $sheet2->getStyle("A{$start}:C{$end}")->applyFromArray([
-                                    'fill' => [
-                                        'fillType'   => Fill::FILL_SOLID,
-                                        'startColor' => ['rgb' => $color],
-                                    ],
-                                ]);
+                                    // 1. Captura el objeto de validación de C2
+                                    /** @var DataValidation $dv */
+                                    /** @var DataValidation $dvOriginal */
 
-                                // 3c) Prepara el índice para el siguiente bloque
-                                $colorIndex++;
+                                    // 1. Calcula la última fila de datos basándote en la columna B
+                                    $ultimaFila = $sheet->getHighestDataRow('B');
+                                    
+                                    // 2. Calcula la última columna con datos en la hoja
+                                    $ultimaColumnaLetra = $sheet->getHighestDataColumn();              // ej. "AR"
+                                    $ultimaColumnaIndex = Coordinate::columnIndexFromString($ultimaColumnaLetra); // ej. 44
+                                    
+                                    // 3. Genera el array de letras desde la C (índice 3) hasta esa última
+                                    $columnas = [];
+                                    for ($colIndex = 3; $colIndex <= $ultimaColumnaIndex; $colIndex++) {
+                                        $columnas[] = Coordinate::stringFromColumnIndex($colIndex);
+                                    }
+                                    
+                                    // 4. Recorre cada columna y clona la validación de la fila 2
+                                    foreach ($columnas as $col) {
+                                        /** @var DataValidation $dvOriginal */
+                                        $dvOriginal = $sheet->getCell("{$col}2")->getDataValidation();
+                                        if (!($dvOriginal instanceof DataValidation)) {
+                                            continue; // si en esa columna no hay validación en la fila 2, saltamos
+                                        }
+                                    
+                                        // 5. Aplica la validación a cada celda desde la fila 3 hasta $ultimaFila
+                                        for ($fila = 3; $fila <= $ultimaFila; $fila++) {
+                                            $newDv = clone $dvOriginal;
+                                            $newDv->setSqref("{$col}{$fila}");
+                                            $sheet->getCell("{$col}{$fila}")->setDataValidation($newDv);
+                                        }
+                                    }
+                                        // RELLENAR CONTENIDO EN LA HOJA 2.
+                                        // define aquí los dos colores que quieras alternar
+                                        $coloresBloque = ['FFFFFF', 'D9E1F2']; // blanco / celeste claro
+                                        // asumimos que $spreadsheet ya está cargado
+                                        $sheet1 = $spreadsheet->getSheetByName('Hoja1');
+                                        $sheet2 = $spreadsheet->getSheetByName('Hoja2');
+                                        
+                                        // 1) Calculamos la última columna con datos en Hoja1
+                                        $ultimaColLetra = $sheet1->getHighestDataColumn();
+                                        $ultimaColIndex = Coordinate::columnIndexFromString($ultimaColLetra);
+                                        
+                                        // 2) Preparamos la fila inicial en Hoja2 y el tamaño del bloque
+                                        $fila2     = 2;    // empezamos en la fila 2
+                                        $blockSize = 4;    // cada indicador ocupa 4 filas, pero escribe sólo en la 1ª
+                                        $colorIndex = 0; // indice para alternar el color
+                                        
+                                        // 3) Recorremos todas las columnas desde C hasta la última
+                                        for ($col = Coordinate::columnIndexFromString('C'); $col <= $ultimaColIndex; $col++) {
+                                            $colLetra  = Coordinate::stringFromColumnIndex($col);
+                                            $indicador = $sheet1->getCell($colLetra . '1')->getValue();
+                                        
+                                            // 3a) escribimos el indicador SOLO en la primera fila del bloque
+                                            $sheet2->setCellValue("C{$fila2}", $indicador);
+                                        // 3b) Aplicar el color de fondo a TODO el bloque de 4 filas, columnas A–C
+                                            $start = $fila2;
+                                            $end   = $fila2 + $blockSize - 1;
+                                            $color = $coloresBloque[$colorIndex % count($coloresBloque)];
+                                            $rango = "C{$start}:C{$end}";
+                                            $sheet2->mergeCells($rango);
+                                        
+                                            // 3) centrar texto en el rango combinado
+                                            $sheet2
+                                                ->getStyle($rango)
+                                                ->getAlignment()
+                                                ->setVertical(Alignment::VERTICAL_CENTER)
+                                                ->setHorizontal(Alignment::HORIZONTAL_CENTER);
+                                                
+                                            $sheet2->getStyle("A{$start}:C{$end}")->applyFromArray([
+                                                'fill' => [
+                                                    'fillType'   => Fill::FILL_SOLID,
+                                                    'startColor' => ['rgb' => $color],
+                                                ],
+                                            ]);
 
-                                // 3d) Avanza el puntero de fila
-                                $fila2 += $blockSize;
+                                            // 3c) Prepara el índice para el siguiente bloque
+                                            $colorIndex++;
+
+                                            // 3d) Avanza el puntero de fila
+                                            $fila2 += $blockSize;
+                                        }
+                                        
+                                        // 4) Ajustamos anchos de columna en Hoja2
+                                            // Ajustar anchos de columnas
+                                            $sheet2->getColumnDimension('A')->setWidth(10);
+                                            $sheet2->getColumnDimension('B')->setWidth(70);
+                                            $sheet2->getColumnDimension('C')->setWidth(50);
+
+                                            // Ajustar alto de fila por defecto
+                                            $sheet2->getDefaultRowDimension()->setRowHeight(35);
+
+                                            // Ajustar texto (wrap) en A, B y C
+                                            $sheet2
+                                                ->getStyle('A:C')
+                                                ->getAlignment()
+                                                ->setWrapText(true);
+                                        // 1) Configurar orientación vertical (portrait)
+                                        $sheet2->getPageSetup()
+                                            ->setOrientation(PageSetup::ORIENTATION_LANDSCAPE)
+                                            ->setPaperSize(PageSetup::PAPERSIZE_LETTER);
+
+                                        // 2) Márgenes estrechos (medidos en pulgadas)
+                                        $margins = $sheet2->getPageMargins();
+                                        $margins->setTop(0.25)    // margen superior
+                                                ->setBottom(0.25) // margen inferior
+                                                ->setLeft(0.25)   // margen izquierdo
+                                                ->setRight(0.25)  // margen derecho
+                                                ->setHeader(0.1)  // margen cabecera
+                                                ->setFooter(0.1); // margen pie
+                                        // Guardar archivo procesado
+                                            // 7) Guardar Excel
+                                            $ruta = 'temp_excel_' . '.xlsx';
+                                            (new Xlsx($spreadsheet))->save($ruta);
+                                            // 8) Leer "nómina" desde Hoja1 columna B (fila2..última)
+                                            $ultFilaNom = $sheet1->getHighestDataRow('B');
+                                            $dataNom = [];
+                                            for ($r = 2; $r <= $ultFilaNom; $r++) {
+                                                $nie  = $sheet1->getCell("A{$r}")->getValue();
+                                                $name = $sheet1->getCell("B{$r}")->getValue(); // o la columna que sea
+                                                $dataNom[] = ['nie'=>$nie,'nombre'=>$name];
+                                            }   
+                                    break;
+                                    default:
+                                    $sheet1 = $spreadsheet->getSheetByName('Hoja1'); 
+                                     // 8) Leer "nómina" desde Hoja1 columna B (fila2..última)
+                                     $ultFilaNom = $sheet1->getHighestDataRow('B');
+                                     $dataNom = [];
+                                     for ($r = 2; $r <= $ultFilaNom; $r++) {
+                                         $nie  = $sheet1->getCell("A{$r}")->getValue();
+                                         $name = $sheet1->getCell("B{$r}")->getValue(); // o la columna que sea
+                                         $dataNom[] = ['nie'=>$nie,'nombre'=>$name];
+                                     }   
+                                        // 7) Guardar Excel
+                                        $ruta = 'temp_excel_' . '.xlsx';
+                                        (new Xlsx($spreadsheet))->save($ruta);
+                                        $dataNom[] = ['nie'=>$nie,'nombre'=>$name];
+                                        break;
                             }
                             
-                            // 4) Ajustamos anchos de columna en Hoja2
-                                // Ajustar anchos de columnas
-                                $sheet2->getColumnDimension('A')->setWidth(10);
-                                $sheet2->getColumnDimension('B')->setWidth(70);
-                                $sheet2->getColumnDimension('C')->setWidth(50);
-
-                                // Ajustar alto de fila por defecto
-                                $sheet2->getDefaultRowDimension()->setRowHeight(35);
-
-                                // Ajustar texto (wrap) en A, B y C
-                                $sheet2
-                                    ->getStyle('A:C')
-                                    ->getAlignment()
-                                    ->setWrapText(true);
-                            // 1) Configurar orientación vertical (portrait)
-                            $sheet2->getPageSetup()
-                                ->setOrientation(PageSetup::ORIENTATION_LANDSCAPE)
-                                ->setPaperSize(PageSetup::PAPERSIZE_LETTER);
-
-                            // 2) Márgenes estrechos (medidos en pulgadas)
-                            $margins = $sheet2->getPageMargins();
-                            $margins->setTop(0.25)    // margen superior
-                                    ->setBottom(0.25) // margen inferior
-                                    ->setLeft(0.25)   // margen izquierdo
-                                    ->setRight(0.25)  // margen derecho
-                                    ->setHeader(0.1)  // margen cabecera
-                                    ->setFooter(0.1); // margen pie
-                        // Guardar archivo procesado
-                                // 7) Guardar Excel
-                        $ruta = 'temp_excel_' . '.xlsx';
-                        (new Xlsx($spreadsheet))->save($ruta);
-                        // 8) Leer "nómina" desde Hoja1 columna B (fila2..última)
-                        $ultFilaNom = $sheet1->getHighestDataRow('B');
-                        $dataNom = [];
-                        for ($r = 2; $r <= $ultFilaNom; $r++) {
-                            $nie  = $sheet1->getCell("A{$r}")->getValue();
-                            $name = $sheet1->getCell("B{$r}")->getValue(); // o la columna que sea
-                            $dataNom[] = ['nie'=>$nie,'nombre'=>$name];
-                        }    
+                         
                         // DESPUES DE GUARDAR EL ARCHIVO.
                         
                             // 1. Iniciar sesión y obtener código de institución
