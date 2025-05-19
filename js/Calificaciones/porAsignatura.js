@@ -9,6 +9,17 @@ $(document).ready(function () {
     });
 
     $('#lstperiodo').on('change', function () {
+        const valor = $(this).val();
+    
+        if (valor === 'Recuperación 1' || valor === 'Recuperación 2') {
+            mostrarModalRecuperacion();
+        } else if (formularioCompleto()) {
+            Swal.fire({ title: 'Cargando notas...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+            cargarNotas();
+        }
+    });
+/*    
+    $('#lstperiodo').on('change', function () {
         if (formularioCompleto()) {
             Swal.fire({
                 title: 'Cargando notas...',
@@ -21,7 +32,7 @@ $(document).ready(function () {
             });
         }
     });
-
+*/
     $('#btnGuardar').on('click', function () {
         $('#btnGuardar').html('<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Guardando...');
         $('#btnGuardar').prop('disabled', true);
@@ -450,4 +461,35 @@ function sincronizarDatosDesdeDOM() {
         fila.r  = parseFloat($(`input[data-row="${row}"][data-campo="r"]`).val())  || 0;
         fila.pp = parseFloat($(`input[data-row="${row}"][data-campo="pp"]`).val()) || 0;
     });
+}
+
+function mostrarModalRecuperacion() {
+    const califMinima = parseFloat($('#calificacionMinima').val()) || 6;
+    const alumnosConRecuperacion = dataNotas.filter(fila => parseFloat(fila.nota_final) < califMinima);
+
+    const tablaBody = $('#tablaRecuperacion tbody');
+    tablaBody.empty();
+
+    if (!alumnosConRecuperacion.length) {
+        tablaBody.append('<tr><td colspan="6" class="text-center">Todos los estudiantes están aprobados.</td></tr>');
+    } else {
+        alumnosConRecuperacion.forEach((alumno, i) => {
+            const resultado = alumno.nota_final >= califMinima ? 'Aprobado' : 'Reprobado';
+            const clase = resultado === 'Aprobado' ? 'text-success' : 'text-danger';
+
+            tablaBody.append(`
+                <tr>
+                    <td>${i + 1}</td>
+                    <td>${alumno.nombre_completo}</td>
+                    <td>${(alumno.recup_1 ?? 0).toFixed(1)}</td>
+                    <td>${(alumno.recup_2 ?? 0).toFixed(1)}</td>
+                    <td>${(alumno.nota_final ?? 0).toFixed(1)}</td>
+                    <td class="${clase} fw-bold">${resultado}</td>
+                </tr>
+            `);
+        });
+    }
+
+    const modal = new bootstrap.Modal(document.getElementById('modalRecuperacion'));
+    modal.show();
 }
