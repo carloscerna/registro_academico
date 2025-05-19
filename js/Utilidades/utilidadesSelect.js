@@ -69,8 +69,8 @@ function cargarPeriodosPorModalidad(selector, idModalidad) {
                     $(selector).append('<option value="'+i+'">Período ' + i + '</option>');
                 }
                  // 📌 Agregar opciones de recuperación
-                 $(selector).append('<option value="nr1">Recuperación 1</option>');
-                 $(selector).append('<option value="nr2">Recuperación 2</option>');
+                 $(selector).append('<option value="Recuperación">Recuperación 1 y 2</option>');
+                 ///$(selector).append('<option value="Recuperación 2">Recuperación 2</option>');
  
             } else {
                 $(selector).append('<option value="">No hay períodos registrados</option>');

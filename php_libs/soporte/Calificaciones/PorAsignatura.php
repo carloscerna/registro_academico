@@ -149,7 +149,61 @@ try {
         }
     
         echo json_encode(["success" => true, "mensaje" => "Notas actualizadas correctamente."]);
-    }else{
+    }
+    elseif ($accion === "buscarNotasRecuperacion") {
+        // Construcción de códigos desde el formulario
+        $codigo_all = $_POST["modalidad"] . substr($_POST["gradoseccion"], 0, 4) . $_POST["annlectivo"];
+        $codigo_bachillerato = substr($codigo_all, 0, 2);
+		$codigo_grado = substr($codigo_all, 2, 2);
+        $codigo_seccion = substr($codigo_all, 4, 2);
+        $codigo_annlectivo = substr($codigo_all, 6, 2);
+        $codigo_asignatura = trim($_POST["asignatura"]);
+
+        $sql = "
+            SELECT 
+                n.id_notas,
+                a.codigo_nie, 
+                TRIM(CONCAT_WS(' ', a.apellido_paterno, a.apellido_materno, ', ', a.nombre_completo)) AS nombre_estudiante, 
+                asig.nombre AS nombre_asignatura, asig.codigo_cc,
+                n.recuperacion, n.nota_recuperacion_2, n.nota_final
+            FROM alumno a  
+            INNER JOIN alumno_matricula am ON a.id_alumno = am.codigo_alumno AND am.retirado = 'f'
+            INNER JOIN nota n ON n.codigo_alumno = a.id_alumno AND am.id_alumno_matricula = n.codigo_matricula
+            INNER JOIN asignatura asig ON asig.codigo = n.codigo_asignatura
+            WHERE am.codigo_bach_o_ciclo = :codigo_bachillerato  
+            AND am.codigo_grado = :codigo_grado 
+            AND am.codigo_seccion = :codigo_seccion 
+            AND am.codigo_ann_lectivo = :codigo_annlectivo
+            AND n.codigo_asignatura = :codigo_asignatura 
+            ORDER BY nombre_estudiante ASC
+        ";
+
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([
+            ':codigo_bachillerato' => $codigo_bachillerato,
+            ':codigo_grado' => $codigo_grado,
+            ':codigo_seccion' => $codigo_seccion,
+            ':codigo_annlectivo' => $codigo_annlectivo,
+            ':codigo_asignatura' => $codigo_asignatura
+        ]);
+
+        $data = [];
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $data[] = [
+                'id_notas' => $row['id_notas'],
+                'codigo_nie' => trim($row['codigo_nie']),
+                'nombre_completo' => $row['nombre_estudiante'],
+                'nota_recuperacion' => $row["recuperacion"],
+                'nota_recuperacion_2' => $row["nota_recuperacion_2"],
+                'nota_final' => $row["nota_final"],
+				'codigo_cc' => trim($row['codigo_cc'])
+            ];
+        }
+
+        echo json_encode(['success' => true, 'data' => $data]);
+        exit;
+    }
+    else{
         echo json_encode(['success' => false, 'mensaje' => 'Acción no reconocida.']);
     }
 } catch (Exception $e) {
