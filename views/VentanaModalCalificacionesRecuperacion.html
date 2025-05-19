@@ -1,26 +1,30 @@
-<div class="modal fade" id="modalRecuperacion" role="dialog" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="modalRecuperacionLabel" aria-hidden="true">
+<div class="modal fade" id="modalRecuperacion" tabindex="-1" aria-labelledby="modalRecuperacionLabel" aria-hidden="true">
   <div class="modal-dialog modal-xl modal-dialog-scrollable">
     <div class="modal-content">
       <div class="modal-header bg-warning">
         <h5 class="modal-title" id="modalRecuperacionLabel">Notas de Recuperación</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar" title="Cerrar"></button>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
       </div>
-        <div class="modal-body">
-          <table class="table table-bordered table-hover" id="tablaRecuperacion">
-            <thead class="table-light">
-              <tr>
-                <th scope="col">N.º</th>
-                <th scope="col">Nombre del Estudiante</th>
-                <th scope="col">NOTA R1</th>
-                <th scope="col">NOTA R2</th>
-                <th scope="col">NF</th>
-                <th scope="col">Resultado</th>
-              </tr>
-            </thead>
-            <tbody></tbody>
-          </table>
+      <div class="modal-body">
+        <table class="table table-bordered" id="tablaRecuperacion">
+          <thead>
+            <tr>
+              <th scope="col">N.º</th>
+              <th scope="col">Nombre del Estudiante</th>
+              <th scope="col">Nota R1</th>
+              <th scope="col">Nota R2</th>
+              <th scope="col">Nota Final</th>
+              <th scope="col">Resultado</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+        <div class="d-flex justify-content-end">
+          <button id="btnGuardarRecuperacion" class="btn btn-success mt-3">
+            <i class="bi bi-save me-2"></i>Guardar Recuperación
+          </button>
         </div>
       </div>
     </div>
   </div>
-  
+</div>

@@ -464,38 +464,154 @@ function cargarNotasRecuperacion() {
             asignatura: $('#lstasignatura').val()
         },
         success: function (response) {
-            // Limpiar tabla anterior
-            if (tablaNotas) tablaNotas.clear().draw();
-            const alumnos = (response.data ?? []).filter(alumno => parseFloat(alumno.nota_final) < califMinima);
-            //
+            const alumnos = response.data ?? [];
             const tbody = $('#tablaRecuperacion tbody');
             tbody.empty();
 
-            if (alumnos.length === 0) {
-                tbody.append('<tr><td colspan="6" class="text-center">Todos los estudiantes están aprobados.</td></tr>');
-            } else {
-                alumnos.forEach((alumno, i) => {
-                    const resultado = alumno.nota_final >= califMinima ? 'Aprobado' : 'Reprobado';
-                    const clase = resultado === 'Aprobado' ? 'text-success fw-bold' : 'text-danger fw-bold';
+            window.recuperacionData = alumnos.map((alumno, i) => {
+                const nf = parseFloat(alumno.nota_final) || 0;
+                return {
+                    ...alumno,
+                    index: i,
+                    recuperacion: parseFloat(alumno.recuperacion) || 0,
+                    nota_recuperacion_2: parseFloat(alumno.nota_recuperacion_2) || 0,
+                    nota_final_original: nf,
+                    nota_final: nf // este se recalcula
+                };
+            });
 
-                    tbody.append(`
-                        <tr>
-                            <td>${i + 1}</td>
-                            <td>${alumno.nombre_completo}</td>
-                            <td>${(alumno.recuperacion ?? 0)}</td>
-                            <td>${(alumno.nota_recuperacion_2 ?? 0)}</td>
-                            <td>${(alumno.nota_final ?? 0)}</td>
-                            <td class="${clase}">${resultado}</td>
-                        </tr>
-                    `);
+
+            if (recuperacionData.length === 0) {
+                tbody.append('<tr><td colspan="6" class="text-center">No hay estudiantes con recuperación.</td></tr>');
+            } else {
+                recuperacionData.forEach((alumno, i) => {
+                    const r1 = alumno.recuperacion.toFixed(1);
+                    const r2 = alumno.nota_recuperacion_2.toFixed(1);
+                    const nf = alumno.nota_final.toFixed(1);
+
+                    const r2_disabled = 'readonly tabindex="-1"';
+                    const claseFinal = alumno.nota_final >= califMinima ? 'text-success fw-bold' : 'text-danger fw-bold';
+                    //
+                        tbody.append(`
+                            <tr data-index="${i}">
+                                <td>${i + 1}</td>
+                                <td>${alumno.nombre_completo}</td>
+                                <td><input type="number" step="0.1" min="0" max="10"
+                                    class="form-control form-control-sm inputRecuperacion"
+                                    data-tipo="r1" data-index="${i}" value="${r1}"></td>
+                                <td><input type="number" step="0.1" min="0" max="10"
+                                    class="form-control form-control-sm inputRecuperacion"
+                                    data-tipo="r2" data-index="${i}" value="${r2}" ${r2_disabled}></td>
+                                <td class="notaFinal">${nf}</td>
+                                <td class="resultado ${nf >= califMinima ? 'text-success fw-bold' : 'text-danger fw-bold'}">
+                                    ${nf >= califMinima ? 'Aprobado' : 'Reprobado'}
+                                </td>
+                            </tr>
+                        `);
                 });
             }
 
-            const modal = new bootstrap.Modal(document.getElementById('modalRecuperacion'));
-            modal.show();
+            new bootstrap.Modal(document.getElementById('modalRecuperacion')).show();
         },
         error: function () {
             Swal.fire('Error', 'No se pudieron cargar las notas de recuperación.', 'error');
         }
     });
 }
+
+$(document).on('input', '.inputRecuperacion', function () {
+    const index = $(this).data('index');
+    const tipo = $(this).data('tipo');
+    const input = $(this);
+    const valor = parseFloat(input.val());
+    const califMinima = parseFloat($('#calificacionMinima').val()) || 6;
+
+    const alumno = recuperacionData[index];
+    const fila = $(`tr[data-index="${index}"]`);
+    const inputR2 = fila.find(`input[data-tipo="r2"]`);
+
+    // Validar valor numérico entre 0 y 10
+    if (isNaN(valor) || valor < 0 || valor > 10) {
+        input.addClass('is-invalid');
+        return;
+    } else {
+        input.removeClass('is-invalid');
+    }
+
+    // Asignar el valor al dato correspondiente
+    if (tipo === 'r1') alumno.recuperacion = valor;
+    if (tipo === 'r2') alumno.nota_recuperacion_2 = valor;
+
+    const original = alumno.nota_final_original;
+    let nuevaFinal = original;
+
+    // Evaluar con R1 SIEMPRE
+    const r1 = alumno.recuperacion;
+    const calcR1 = (original + r1) / 2;
+
+    if (calcR1 >= califMinima) {
+        nuevaFinal = calcR1;
+        alumno.nota_recuperacion_2 = 0;
+        inputR2.val('').prop('readonly', true).attr('tabindex', '-1');
+    } else {
+        // R1 no alcanzó → habilitar R2
+        inputR2.prop('readonly', false).removeAttr('tabindex');
+
+        const r2 = alumno.nota_recuperacion_2;
+        const calcR2 = (original + r2) / 2;
+
+        if (!isNaN(r2) && r2 >= 0 && r2 <= 10 && calcR2 >= califMinima) {
+            nuevaFinal = calcR2;
+        } else {
+            nuevaFinal = original;
+        }
+    }
+
+    // Guardar y actualizar
+    alumno.nota_final = Math.round(nuevaFinal * 10) / 10;
+
+    fila.find('.notaFinal').text(alumno.nota_final.toFixed(1));
+    fila.find('.resultado')
+        .text(alumno.nota_final >= califMinima ? 'Aprobado' : 'Reprobado')
+        .removeClass('text-success text-danger')
+        .addClass(alumno.nota_final >= califMinima ? 'text-success fw-bold' : 'text-danger fw-bold');
+});
+$(document).on('click', '#btnCerrarRecuperacion', function () {
+    $('#modalRecuperacion').modal('hide');
+    $('#tablaRecuperacion tbody').empty();
+});
+
+$('#btnGuardarRecuperacion').on('click', function () {
+    if (!recuperacionData || !recuperacionData.length) {
+        Swal.fire('Atención', 'No hay datos de recuperación para guardar.', 'warning');
+        return;
+    }
+
+    const datosAGuardar = recuperacionData.map(alumno => ({
+        id_alumno: alumno.id_alumno,
+        recuperacion: parseFloat(alumno.recuperacion) || 0,
+        nota_recuperacion_2: parseFloat(alumno.nota_recuperacion_2) || 0,
+        nota_final: parseFloat(alumno.nota_final) || 0
+    }));
+
+    $.ajax({
+        url: 'php_libs/soporte/Calificaciones/PorAsignatura.php',
+        type: 'POST',
+        dataType: 'json',
+        data: {
+            accion: 'GuardarNotaRecuperacion',
+            datos: datosAGuardar
+        },
+        success: function (res) {
+            if (res.success) {
+                Swal.fire('Éxito', res.mensaje ?? 'Notas de recuperación guardadas correctamente.', 'success');
+                $('#modalRecuperacion').modal('hide'); // o Bootstrap.Modal.dismiss si estás usando 5+
+            } else {
+                Swal.fire('Error', res.mensaje ?? 'Hubo un problema al guardar.', 'error');
+            }
+        },
+        error: function () {
+            Swal.fire('Error', 'No se pudo comunicar con el servidor.', 'error');
+        }
+    });
+});
