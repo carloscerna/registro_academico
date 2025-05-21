@@ -203,6 +203,46 @@ try {
         echo json_encode(['success' => true, 'data' => $data]);
         exit;
     }
+    elseif($accion === "GuardarNotaRecuperacion"){
+        try {
+            $datos = $_POST['datos'];
+
+            $pdo->beginTransaction(); // 🔒 Transacción
+
+            $query = "
+                UPDATE nota
+                SET 
+                    recuperacion = :recuperacion,
+                    nota_recuperacion_2 = :nota_recuperacion_2,
+                    nota_final = :nota_final
+                WHERE id_notas = :id_notas
+            ";
+            $stmt = $pdo->prepare($query);
+
+            foreach ($datos as $fila) {
+                $stmt->execute([
+                    ':recuperacion' => $fila['recuperacion'] ?? 0,
+                    ':nota_recuperacion_2' => $fila['nota_recuperacion_2'] ?? 0,
+                    ':nota_final' => $fila['nota_final'] ?? 0,
+                    ':id_notas' => $fila['id_notas']
+                ]);
+            }
+
+            $pdo->commit();
+
+            echo json_encode([
+                'success' => true,
+                'mensaje' => 'Notas de recuperación actualizadas correctamente.'
+            ]);
+        } catch (PDOException $e) {
+            $pdo->rollBack();
+            echo json_encode([
+                'success' => false,
+                'mensaje' => 'Error al guardar: ' . $e->getMessage()
+            ]);
+        }
+        exit;
+    }
     else{
         echo json_encode(['success' => false, 'mensaje' => 'Acción no reconocida.']);
     }
