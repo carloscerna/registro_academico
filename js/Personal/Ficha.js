@@ -5,7 +5,7 @@ var tabla = "";
 //	ARMAR ITEM DE MENU DEPENDIENDO DEL CODIGO DEL USUARIO.
 	// GESTION PERSONAL
 	var defaultContentMenu = '<div class="dropdown">'
-			+'<button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown"><i class="fas fa-wrench"></i></button>'
+			+'<button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-bs-toggle="dropdown"><i class="fas fa-wrench"></i></button>'
 			+'<div class="dropdown-menu">'
 				+'<a class="editar dropdown-item" href="#"><i class="fas fa-edit"></i> Editar</a>'
 				+'<a class="eliminar dropdown-item" href="#"><i class="fas fa-trash-alt"> Eliminar</i></a>'

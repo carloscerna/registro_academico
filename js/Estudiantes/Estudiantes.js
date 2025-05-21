@@ -3,7 +3,7 @@ var id_ = 0;
 var NIE = 0;
 var tabla = "";
 var menu_group = '<div class="dropdown">'+
-					'<button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown">...'+
+					'<button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-bs-toggle="dropdown">...'+
 					'</button>'+
 						'<div class="dropdown-menu">'+
 							'<a class="editar dropdown-item fal fa-user-edit" href="#"> Editar'+
