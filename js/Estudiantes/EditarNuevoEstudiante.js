@@ -323,7 +323,7 @@ $(function(){ // INICIO DEL FUNCTION.
 		buscartodos = "BuscarTodos";
 	// Menu contextual"
 		menuContextual = 	'<div class="dropdown">' +
-								'<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">...</button>' +
+								'<button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown">...</button>' +
 								'<div class="dropdown-menu">' +
 									' <a class="imprimir-notas dropdown-item" href="#">Boleta de Calificación</a>' + 
 									' <a class="imprimir-constancia-conducta dropdown-item" href="#">Constancia</a>' + 
