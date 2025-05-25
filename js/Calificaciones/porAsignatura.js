@@ -117,7 +117,6 @@ $('#btnGuardarRecuperacion').on('click', function () {
         success: function (res) {
             if (res.success) {
                 Swal.fire('Éxito', res.mensaje ?? 'Notas de recuperación guardadas correctamente.', 'success');
-                $('#modalRecuperacion').modal('hide'); // o Bootstrap.Modal.dismiss si estás usando 5+
             } else {
                 Swal.fire('Error', res.mensaje ?? 'Hubo un problema al guardar.', 'error');
             }
@@ -490,7 +489,7 @@ function sincronizarDatosDesdeDOM() {
 
 function cargarNotasRecuperacion() {
     const califMinima = parseFloat($('#calificacionMinima').val()) || 6;
-
+    if (tablaNotas) tablaNotas.clear().draw();
     $.ajax({
         url: 'php_libs/soporte/Calificaciones/PorAsignatura.php',
         method: 'POST',
@@ -536,8 +535,15 @@ function cargarNotasRecuperacion() {
                 tbody.append('<tr><td colspan="6" class="text-center text-muted">Todos los estudiantes están aprobados. 🎉</td></tr>');
             } else {
                 alumnos.forEach((alumno, i) => {
-                    const resultado = alumno.nota_final >= califMinima ? 'Aprobado' : 'Reprobado';
-                    const clase = resultado === 'Aprobado' ? 'text-success fw-bold' : 'text-danger fw-bold';
+                    const nf = parseFloat(alumno.nota_final) || 0;
+                    const r1 = parseFloat(alumno.nota_recuperacion) || 0;
+                    const r2 = parseFloat(alumno.nota_recuperacion_2) || 0;
+
+                    const resultado = nf >= califMinima ? 'Aprobado' : 'Reprobado';
+                    const clase = nf >= califMinima ? 'text-success fw-bold' : 'text-danger fw-bold';
+
+                    // Activar R2 si nota_final < califMinima o r2 > 0, y r1 > 0
+                    let activarR2 = (r2 > 0 || nf < califMinima) && r1 > 0;
 
                     tbody.append(`
                         <tr data-index="${i}">
@@ -545,14 +551,14 @@ function cargarNotasRecuperacion() {
                             <td>${alumno.nombre_completo}</td>
                             <td>
                                 <input type="number" step="0.1" class="form-control form-control-sm inputRecuperacion"
-                                    data-index="${i}" data-tipo="r1" value="${alumno.nota_recuperacion ?? ''}">
+                                    data-index="${i}" data-tipo="r1" value="${r1 > 0 ? r1 : ''}">
                             </td>
                             <td>
                                 <input type="number" step="0.1" class="form-control form-control-sm inputRecuperacion"
-                                    data-index="${i}" data-tipo="r2" value="${alumno.nota_recuperacion_2 ?? ''}"
-                                    ${alumno.nota_recuperacion >= califMinima ? 'readonly tabindex="-1"' : ''}>
+                                    data-index="${i}" data-tipo="r2" value="${r2 > 0 ? r2 : ''}"
+                                    ${activarR2 ? '' : 'readonly tabindex="-1"'}>
                             </td>
-                            <td class="notaFinal">${(parseFloat(alumno.nota_final) || 0).toFixed(1)}</td>
+                            <td class="notaFinal">${(nf || 0).toFixed(1)}</td>
                             <td class="resultado ${clase}">${resultado}</td>
                         </tr>
                     `);
@@ -655,6 +661,8 @@ $(document).on('input', '.inputRecuperacion', function () {
 });
 
 function cerrarModalRecuperacion() {
+    document.activeElement?.blur();
+
     // Cerrar el modal manualmente
     const modal = bootstrap.Modal.getInstance(document.getElementById('modalRecuperacion'));
     if (modal) {
