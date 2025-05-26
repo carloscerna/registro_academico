@@ -65,6 +65,19 @@
     .btn-descargar:hover {
         background-color: #218838;
     }
+    .btn-eliminar { /* Nuevo estilo para el botón de eliminar */
+        padding: 5px 10px;
+        background-color: #dc3545; /* Color rojo para eliminar */
+        color: white;
+        border: none;
+        border-radius: 3px;
+        cursor: pointer;
+        margin-left: 10px;
+    }
+
+    .btn-eliminar:hover { /* Efecto hover para el botón de eliminar */
+        background-color: #c82333;
+    }
     /* ESTLO PARA LA PAGINA Y LOS ELEMENTOS*/
             body {
                 font-family: Arial, sans-serif;
@@ -176,6 +189,7 @@ function obtenerIcono(formato) {
                                     📁 <a href="#" class="carpeta" data-ruta="${elemento.ruta}">${elemento.nombre}</a>
                                 </div>
                                 <div class="boton">
+                                    <button class="btn-eliminar" data-ruta-eliminar="${elemento.ruta}">Eliminar</button> </div>
                                     <!-- Ningún botón en las carpetas, pero la estructura se conserva -->
                                 </div>
                             </li>`);
@@ -187,6 +201,7 @@ function obtenerIcono(formato) {
                                 </div>
                                 <div class="boton">
                                     <button class="btn-descargar" data-archivo="${elemento.ruta}">Descargar</button>
+                                    <button class="btn-eliminar" data-ruta-eliminar="${elemento.ruta}">Eliminar</button> </div>
                                 </div>
                             </li>`);
                         }
@@ -227,7 +242,33 @@ function obtenerIcono(formato) {
                 window.location.href = `php_libs/soporte/Archivos/descargar.php?archivo=${encodeURIComponent(archivo)}`;
             });
         });
-
+           // NUEVO: Evento para eliminar archivos/carpetas
+           $(document).on('click', '.btn-eliminar', function(e) {
+            e.preventDefault();
+            const rutaAEliminar = $(this).data('ruta-eliminar');
+            
+            if (confirm(`¿Estás seguro de que quieres eliminar "${rutaAEliminar}"? Esta acción no se puede deshacer.`)) {
+                $.ajax({
+                    url: 'php_libs/soporte/Archivos/BorrarArchivo.php', // Ruta al nuevo script PHP
+                    method: 'POST',
+                    data: { ruta: rutaAEliminar },
+                    dataType: 'json',
+                    success: function(respuesta) {
+                        if (respuesta.success) {
+                            alert(respuesta.message);
+                            cargarContenido(historial[historial.length - 1]); // Recargar el contenido de la carpeta actual
+                        } else {
+                            alert('Error al eliminar: ' + respuesta.message);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        alert('Hubo un problema al comunicarse con el servidor para eliminar: ' + error);
+                        console.error('Error AJAX:', xhr.responseText);
+                    }
+                });
+            }
+        });
+    //
     function normalizarRuta(ruta) {
         return ruta.replace(/\\/g, '/');
     }
@@ -244,7 +285,7 @@ function obtenerIcono(formato) {
 <div class="content-wrapper fondoBody">
     <!-- Content Header (Page header) 
     Se elimino content-header section solo se va dejar Main Content -->
-    
+
   <!-- Main content -->
     <section class="content">
         <div class="container-fluid">
