@@ -89,6 +89,22 @@ $(document).ready(function () {
     
         window.open(url, '_blank');
     });
+
+    $('#btnInformeHorizontalSeccion').on('click', function () {
+        const modalidad = $('#lstmodalidad').val();
+        const gradoseccion = $('#lstgradoseccion').val();
+        const annlectivo = $('#lstannlectivo').val();
+    
+        if (!modalidad || !gradoseccion || !annlectivo) {
+            Swal.fire('Atención', 'Debes seleccionar Año Lectivo, Modalidad y Grado/Sección.', 'warning');
+            return;
+        }
+    
+        const url = `php_libs/reportes/Estudiante/informePorSeccionHorizontal.php?modalidad=${modalidad}&gradoseccion=${gradoseccion}&annlectivo=${annlectivo}`;
+        window.open(url, '_blank');
+    });
+    
+
     $('#btnCerrarRecuperacion').on('click', function () {
     new bootstrap.Modal(document.getElementById('modalRecuperacion')).hide();
     });
