@@ -12,7 +12,7 @@ $(document).ready(function () {
             cargarPeriodosHabilitados();
         } else {
             // Si no hay valores en annlectivo o modalidad, limpiar y deshabilitar lstperiodo
-            $('#lstperiodo').empty().append('<option value="">Seleccione Periodo</option>').prop('disabled', true);
+            $('#lstperiodoC').empty().append('<option value="">Seleccione Periodo</option>').prop('disabled', true);
         }
     });
 
@@ -24,12 +24,12 @@ $(document).ready(function () {
             cargarPeriodosHabilitados();
         } else {
             // Si falta alguna selección, limpiar y deshabilitar lstperiodo
-            $('#lstperiodo').empty().append('<option value="">Seleccione Periodo</option>').prop('disabled', true);
+            $('#lstperiodoC').empty().append('<option value="">Seleccione Periodo</option>').prop('disabled', true);
         }
         if (tablaNotas) tablaNotas.clear().draw();
     });
     // cuando cambia el valor del período.
-    $('#lstperiodo').on('change', function () {
+    $('#lstperiodoC').on('change', function () {
         const valor = $(this).val();
     
         if (valor === 'Recuperación') { // esto servirá para el 1 y 2.
@@ -57,7 +57,7 @@ $(document).ready(function () {
         let annlectivo = $('#lstannlectivo').val();
         let nombre_annlectivo = $('#lstannlectivo option:selected').text();
         let asignatura = $('#lstasignatura').val();
-        let periodo = $('#lstperiodo').val();
+        let periodo = $('#lstperiodoC').val();
         let calificacionMinima = $('#calificacionMinima').val();
     
         //  ✅ Validación de datos
@@ -88,7 +88,7 @@ $(document).ready(function () {
         let annlectivo = $('#lstannlectivo').val();
         let nombre_annlectivo = $('#lstannlectivo option:selected').text();
         let asignatura = $('#lstasignatura').val();
-        let periodo = $('#lstperiodo').val();
+        let periodo = $('#lstperiodoC').val();
         let calificacionMinima = $('#calificacionMinima').val();
     
         //  ✅ Validación de datos
@@ -173,11 +173,11 @@ function formularioCompleto() {
            $('#lstmodalidad').val() &&
            $('#lstgradoseccion').val() &&
            $('#lstasignatura').val() &&
-           $('#lstperiodo').val();
+           $('#lstperiodoC').val();
 }
 
 function cargarNotas() {
-    periodo = $('#lstperiodo').val();
+    periodo = $('#lstperiodoC').val();
     codigoModalidad = $('#lstmodalidad').val();
 
     $.ajax({
@@ -709,7 +709,7 @@ function cerrarModalRecuperacion() {
     }
 
     // Restablecer el select de periodo al primer valor
-    const selectPeriodo = document.getElementById('lstperiodo');
+    const selectPeriodo = document.getElementById('lstperiodoC');
     if (selectPeriodo && selectPeriodo.options.length > 0) {
         selectPeriodo.selectedIndex = 0;
 
@@ -736,14 +736,17 @@ function cargarPeriodosHabilitados() {
                 annlectivo: annlectivo
             },
             success: function (response) {
-                const lstPeriodo = $('#lstperiodo');
+                const lstPeriodo = $('#lstperiodoC');
                 lstPeriodo.empty(); // Limpiar opciones actuales
                 lstPeriodo.append('<option value="">Seleccione Periodo</option>'); // Opción por defecto
 
                 if (response.success && response.data.length > 0) {
                     response.data.forEach(p => {
                         lstPeriodo.append(`<option value="${p.codigo_periodo}">${p.descripcion_periodo}</option>`);
+                        // Pasar el valor de calificación Mínima.
+                            $("#calificacionMinima").val(p.calificacionMinima);
                     });
+
                     // Añadir la opción de Recuperación
                     //lstPeriodo.append('<option value="Recuperación">Recuperación</option>');
                     lstPeriodo.prop('disabled', false); // Habilitar el select
@@ -754,11 +757,11 @@ function cargarPeriodosHabilitados() {
             },
             error: function () {
                 Swal.fire('Error', 'No se pudieron cargar los períodos habilitados.', 'error');
-                $('#lstperiodo').empty().append('<option value="">Error al cargar</option>').prop('disabled', true);
+                $('#lstperiodoC').empty().append('<option value="">Error al cargar</option>').prop('disabled', true);
             }
         });
     } else {
-        // Si no hay modalidad o año lectivo, limpiar y deshabilitar lstperiodo
-        $('#lstperiodo').empty().append('<option value="">Seleccione Periodo</option>').prop('disabled', true);
+        // Si no hay modalidad o año lectivo, limpiar y deshabilitar lstperiodoC
+        $('#lstperiodoC').empty().append('<option value="">Seleccione Periodo</option>').prop('disabled', true);
     }
 }

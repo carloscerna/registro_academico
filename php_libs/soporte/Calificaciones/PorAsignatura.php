@@ -253,9 +253,11 @@ try {
             SELECT
                 pc.id_,
                 pc.codigo_periodo,
-                cp.descripcion
+                cp.descripcion,
+                c.calificacion_minima
             FROM public.periodo_calendario pc
             INNER JOIN public.catalogo_periodo cp ON pc.codigo_periodo = cp.id_
+            INNER JOIN public.catalogo_periodos c ON pc.codigo_modalidad = c.codigo_modalidad
             WHERE pc.codigo_modalidad = :codigo_modalidad
             AND pc.codigo_annlectivo = :codigo_annlectivo
             AND pc.estatus = 't' 
@@ -275,7 +277,8 @@ try {
             $data[] = [
                 'id_' => $row['id_'],
                 'codigo_periodo' => trim($row['codigo_periodo']),
-                'descripcion_periodo' => trim($row['descripcion']) // Incluir la descripción
+                'descripcion_periodo' => trim($row['descripcion']), // Incluir la descripción
+                'calificacionMinima' => trim($row['calificacion_minima']) // Incluir la descripción
             ];
         }
 
