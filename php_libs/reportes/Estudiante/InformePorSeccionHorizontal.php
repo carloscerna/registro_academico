@@ -24,13 +24,20 @@ if ($stmt = $pdo->prepare($sqlPeriodo)) {
 }
 $calif_minima = 6;
 
+
+
 // Clase PDF
 class PDF extends FPDF {
     function Header() {
         $this->SetFont('Arial','B',12);
-        $this->Cell(0,8,convertirtexto('INSTITUCIÓN EDUCATIVA'),0,1,'C');
+        // Header del PDF
+        $img = $_SERVER['DOCUMENT_ROOT'] . '/registro_academico/img/' . $_SESSION['logo_uno']; //Logo
+        $nombre_institucion = convertirtexto($_SESSION['institucion']);
+        $this->  Image($img, 10, 10, 20); // Logo
+        $this->SetXY(30, 10);
+        $this->Cell(0, 6, convertirtexto($nombre_institucion), 0, 1, 'L');
         $this->SetFont('Arial','',10);
-        $this->Cell(0,6,convertirtexto('Informe Académico - Formato Horizontal por Estudiante'),0,1,'C');
+        $this->Cell(0,6,convertirtexto('Informe Académico - por Estudiante'),0,1,'C');
         $this->Ln(4);
     }
     function Footer() {
@@ -122,19 +129,27 @@ foreach ($estudiantes as $est) {
         "Año Lectivo" => $annlectivo
     ]);
 
-    // Consultar notas por alumno
-    $sqlNotas = "SELECT 
-                        asig.nombre AS asignatura,
-                        n.*
-                    FROM alumno a
-                    INNER JOIN alumno_matricula am ON a.id_alumno = am.codigo_alumno AND am.retirado = 'f'
-                    INNER JOIN nota n ON n.codigo_alumno = a.id_alumno AND am.id_alumno_matricula = n.codigo_matricula
-                    INNER JOIN asignatura asig ON asig.codigo = n.codigo_asignatura
-                    WHERE a.id_alumno = :id_alumno
+$sqlNotas = "
+    SELECT 
+        asig.nombre AS asignatura,
+        n.*
+    FROM alumno a
+    INNER JOIN alumno_matricula am 
+        ON a.id_alumno = am.codigo_alumno 
+        AND am.retirado = 'f'
+        AND am.codigo_ann_lectivo = :annlectivo
+    INNER JOIN nota n 
+        ON n.codigo_alumno = a.id_alumno 
+        AND n.codigo_matricula = am.id_alumno_matricula
+    INNER JOIN asignatura asig 
+        ON asig.codigo = n.codigo_asignatura
+    WHERE a.id_alumno = :id_alumno
 ";
-    $sn = $pdo->prepare($sqlNotas);
-    $sn->execute([$est['id_alumno']]);
-    $rows = $sn->fetchAll(PDO::FETCH_ASSOC);
+$rows = $pdo->prepare($sqlNotas);
+$rows->execute([
+    ':id_alumno' => $est['id_alumno'],
+    ':annlectivo' => $annlectivo
+]);
 
     // Preparar estructura por asignatura
     $asignaturas = [];

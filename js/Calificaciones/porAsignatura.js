@@ -4,10 +4,31 @@ let periodo = '';
 let codigoModalidad = '';
 
 $(document).ready(function () {
-    $('#lstannlectivo, #lstmodalidad, #lstgradoseccion, #lstasignatura').on('change', function () {
+// Cuando cualquiera de estos selectores cambie, limpiar la tabla de notas
+    $('#lstannlectivo, #lstmodalidad, #lstgradoseccion').on('change', function () {
         if (tablaNotas) tablaNotas.clear().draw();
+        // Llamar a cargarPeriodosHabilitados cuando cambian annlectivo o modalidad
+        if ($('#lstmodalidad').val() && $('#lstannlectivo').val()) {
+            cargarPeriodosHabilitados();
+        } else {
+            // Si no hay valores en annlectivo o modalidad, limpiar y deshabilitar lstperiodo
+            $('#lstperiodo').empty().append('<option value="">Seleccione Periodo</option>').prop('disabled', true);
+        }
     });
 
+    // Nuevo: Cuando lstasignatura cambie, cargar los períodos habilitados.
+    // También se puede agregar a lstgradoseccion para que los periodos se carguen antes.
+    $('#lstasignatura').on('change', function () {
+        // Asegurarse de que ya se hayan seleccionado annlectivo, modalidad, y gradoseccion
+        if ($('#lstannlectivo').val() && $('#lstmodalidad').val() && $('#lstgradoseccion').val()) {
+            cargarPeriodosHabilitados();
+        } else {
+            // Si falta alguna selección, limpiar y deshabilitar lstperiodo
+            $('#lstperiodo').empty().append('<option value="">Seleccione Periodo</option>').prop('disabled', true);
+        }
+        if (tablaNotas) tablaNotas.clear().draw();
+    });
+    // cuando cambia el valor del período.
     $('#lstperiodo').on('change', function () {
         const valor = $(this).val();
     
@@ -142,6 +163,8 @@ $('#btnGuardarRecuperacion').on('click', function () {
         }
     });
 });
+
+
 
 });
 
@@ -693,5 +716,49 @@ function cerrarModalRecuperacion() {
         // Si querés que dispare automáticamente el evento 'change'
         const event = new Event('change');
         selectPeriodo.dispatchEvent(event);
+    }
+}
+
+// Función para cargar los períodos habilitados
+function cargarPeriodosHabilitados() {
+    const modalidad = $('#lstmodalidad').val();
+    const annlectivo = $('#lstannlectivo').val();
+
+    // Solo si ambos tienen un valor seleccionado
+    if (modalidad && annlectivo) {
+        $.ajax({
+            url: 'php_libs/soporte/Calificaciones/PorAsignatura.php',
+            method: 'POST',
+            dataType: 'json',
+            data: {
+                accion: 'buscarPeriodosHabilitados',
+                modalidad: modalidad,
+                annlectivo: annlectivo
+            },
+            success: function (response) {
+                const lstPeriodo = $('#lstperiodo');
+                lstPeriodo.empty(); // Limpiar opciones actuales
+                lstPeriodo.append('<option value="">Seleccione Periodo</option>'); // Opción por defecto
+
+                if (response.success && response.data.length > 0) {
+                    response.data.forEach(p => {
+                        lstPeriodo.append(`<option value="${p.codigo_periodo}">${p.descripcion_periodo}</option>`);
+                    });
+                    // Añadir la opción de Recuperación
+                    lstPeriodo.append('<option value="Recuperación">Recuperación</option>');
+                    lstPeriodo.prop('disabled', false); // Habilitar el select
+                } else {
+                    lstPeriodo.append('<option value="">No hay periodos disponibles</option>');
+                    lstPeriodo.prop('disabled', true); // Deshabilitar si no hay periodos
+                }
+            },
+            error: function () {
+                Swal.fire('Error', 'No se pudieron cargar los períodos habilitados.', 'error');
+                $('#lstperiodo').empty().append('<option value="">Error al cargar</option>').prop('disabled', true);
+            }
+        });
+    } else {
+        // Si no hay modalidad o año lectivo, limpiar y deshabilitar lstperiodo
+        $('#lstperiodo').empty().append('<option value="">Seleccione Periodo</option>').prop('disabled', true);
     }
 }

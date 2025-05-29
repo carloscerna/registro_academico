@@ -243,6 +243,45 @@ try {
         }
         exit;
     }
+    // NUEVO: Acción para buscar periodos habilitados (AJUSTADO PARA DESCRIPCIÓN Y FECHA)
+    elseif ($accion === 'buscarPeriodosHabilitados') {
+        $codigo_modalidad = $_POST["modalidad"];
+        $codigo_annlectivo = $_POST["annlectivo"];
+        $fecha_actual = date('Y-m-d'); // Obtener la fecha actual del servidor en formato YYYY-MM-DD
+
+        $sql = "
+            SELECT
+                pc.id_,
+                pc.codigo,
+                cp.descripcion_periodo -- Obtener la descripción del período
+            FROM public.periodo_calendario pc
+            INNER JOIN public.catalogo_periodo cp ON pc.codigo = cp.codigo_periodo
+            WHERE pc.codigo_modalidad = :codigo_modalidad
+            AND pc.codigo_annlectivo = :codigo_annlectivo
+            AND pc.estatus = 't' 
+            AND pc.fecha_registro_academico >= :fecha_actual 
+            ORDER BY pc.codigo_periodo ASC
+        ";
+
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([
+            ':codigo_modalidad' => $codigo_modalidad,
+            ':codigo_annlectivo' => $codigo_annlectivo,
+            ':fecha_actual' => $fecha_actual
+        ]);
+
+        $data = [];
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $data[] = [
+                'id_' => $row['id_'],
+                'codigo_periodo' => trim($row['codigo_periodo']),
+                'descripcion_periodo' => trim($row['descripcion_periodo']) // Incluir la descripción
+            ];
+        }
+
+        echo json_encode(['success' => true, 'data' => $data]);
+        exit;
+    }
     else{
         echo json_encode(['success' => false, 'mensaje' => 'Acción no reconocida.']);
     }
