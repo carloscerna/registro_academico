@@ -252,10 +252,10 @@ try {
         $sql = "
             SELECT
                 pc.id_,
-                pc.codigo,
-                cp.descripcion_periodo -- Obtener la descripción del período
+                pc.codigo_periodo,
+                cp.descripcion
             FROM public.periodo_calendario pc
-            INNER JOIN public.catalogo_periodo cp ON pc.codigo = cp.codigo_periodo
+            INNER JOIN public.catalogo_periodo cp ON pc.codigo_periodo = cp.id_
             WHERE pc.codigo_modalidad = :codigo_modalidad
             AND pc.codigo_annlectivo = :codigo_annlectivo
             AND pc.estatus = 't' 
@@ -275,7 +275,7 @@ try {
             $data[] = [
                 'id_' => $row['id_'],
                 'codigo_periodo' => trim($row['codigo_periodo']),
-                'descripcion_periodo' => trim($row['descripcion_periodo']) // Incluir la descripción
+                'descripcion_periodo' => trim($row['descripcion']) // Incluir la descripción
             ];
         }
 

@@ -745,7 +745,7 @@ function cargarPeriodosHabilitados() {
                         lstPeriodo.append(`<option value="${p.codigo_periodo}">${p.descripcion_periodo}</option>`);
                     });
                     // Añadir la opción de Recuperación
-                    lstPeriodo.append('<option value="Recuperación">Recuperación</option>');
+                    //lstPeriodo.append('<option value="Recuperación">Recuperación</option>');
                     lstPeriodo.prop('disabled', false); // Habilitar el select
                 } else {
                     lstPeriodo.append('<option value="">No hay periodos disponibles</option>');
