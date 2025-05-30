@@ -25,13 +25,13 @@ if ($stmt = $pdo->prepare($sqlPeriodo)) {
 $calif_minima = 6;
 
 // Construir codigo_all
-// Adjusting substr length based on common usage of gradoseccion being 6 chars (GGSS TT)
 $codigo_all = $modalidad . substr($gradoseccion, 0, 6) . $annlectivo; 
 
-// Obtener nombre del docente encargado (revisado por el usuario)
+// Obtener nombre del docente encargado
 $query_encargado = "
     SELECT btrim(p.nombres || CAST(' ' AS VARCHAR) || p.apellidos) as nombre_docente,
-           eg.codigo_docente
+           eg.codigo_docente,
+           p.firma AS firma_docente_filename
     FROM encargado_grado eg
     INNER JOIN personal p ON eg.codigo_docente = p.id_personal
     INNER JOIN bachillerato_ciclo bach ON eg.codigo_bachillerato = bach.codigo
@@ -46,13 +46,18 @@ $query_encargado = "
 $stmt_encargado = $pdo->prepare($query_encargado);
 $stmt_encargado->execute([':codigo_all' => $codigo_all]);
 $nombre_encargado = '';
+$firma_docente_filename = '';
 if ($row = $stmt_encargado->fetch(PDO::FETCH_ASSOC)) {
     $nombre_encargado = convertirtexto(trim($row['nombre_docente']));
+    $firma_docente_filename = $row['firma_docente_filename'];
 }
 
 
 // Clase PDF
 class PDF extends FPDF {
+    var $nombre_encargado;
+    var $firma_docente_filename;
+
     function Header() {
         $this->SetFont('Arial','B',12);
         // Header del PDF
@@ -65,51 +70,57 @@ class PDF extends FPDF {
         $this->Cell(0,6,convertirtexto('Informe Académico - por Estudiante'),0,1,'C');
         $this->Ln(4);
     }
-function Footer() {
-    global $registro_docente, $firma, $sello, $codigo_all, $nombre_encargado;
+    function Footer() {
+        global $registro_docente, $firma, $sello; // Remove codigo_all, nombre_encargado as they are now properties
 
-    $nombre_director = cambiar_de_del($_SESSION['nombre_director'] ?? 'Director');
+        $nombre_director = cambiar_de_del($_SESSION['nombre_director'] ?? 'Director');
 
-    // Imágenes firma/sello (si están activadas)
-    if ($firma === 'yes') {
-        $img_firma = $_SERVER['DOCUMENT_ROOT'] . '/registro_academico/img/' . ($_SESSION['imagen_firma'] ?? '');
-    }
-    if ($sello === 'yes') {
+        // Images paths
+        $img_firma_director = $_SERVER['DOCUMENT_ROOT'] . '/registro_academico/img/' . ($_SESSION['imagen_firma'] ?? '');
         $img_sello = $_SERVER['DOCUMENT_ROOT'] . '/registro_academico/img/' . ($_SESSION['imagen_sello'] ?? '');
-    }
+        
+        // Teacher signature path
+        $firma_encargado_path = '';
+        if (!empty($this->firma_docente_filename) && isset($_SESSION['codigo_institucion'])) {
+            $firma_encargado_path = $_SERVER['DOCUMENT_ROOT'] . '/registro_academico/img/firmas/' . $_SESSION['codigo_institucion'] . '/' . $this->firma_docente_filename;
+        }
 
-    $this->SetY(-40); // Subir posición final
-    $this->SetFont('Arial', 'I', 8);
-    
-    // Líneas para firmas
-    $this->Line(10, $this->GetY() + 15, 80, $this->GetY() + 15);    // Encargado
-    $this->Line(120, $this->GetY() + 15, 190, $this->GetY() + 15);  // Director
-    $this->Line(5, $this->GetY() + 35, 203, $this->GetY() + 35);    // Línea final
+        $this->SetY(-40); // Subir posición final
+        $this->SetFont('Arial', 'I', 8);
+        
+        // Líneas para firmas
+        $this->Line(10, $this->GetY() + 15, 80, $this->GetY() + 15);    // Encargado
+        $this->Line(120, $this->GetY() + 15, 190, $this->GetY() + 15);  // Director
+        $this->Line(5, $this->GetY() + 35, 203, $this->GetY() + 35);    // Línea final
 
-    // Docente encargado
-    if (!empty($nombre_encargado)) {
-        $this->SetXY(10, $this->GetY() + 18);
-        $this->Cell(70, 5, convertirTexto($nombre_encargado), 0, 2, 'L');
-        $this->Cell(70, 5, convertirTexto("Docente encargado de la sección"), 0, 0, 'L');
-    } else {
-        $this->SetXY(10, $this->GetY() + 18);
-        $this->Cell(70, 5, convertirTexto($registro_docente ?? ''), 0, 2, 'L');
-        $this->Cell(70, 5, convertirTexto("Encargado Registro Académico"), 0, 0, 'L');
-    }
+        // Docente encargado
+        if (!empty($this->nombre_encargado)) {
+            // Draw signature if exists
+            if (!empty($firma_encargado_path) && file_exists($firma_encargado_path)) {
+                $this->Image($firma_encargado_path, 25, $this->GetY() + 5, 40, 10); // Adjust position and size as needed
+            }
+            $this->SetXY(10, $this->GetY() + 18); // Adjust Y after potential image
+            $this->Cell(70, 5, convertirTexto($this->nombre_encargado), 0, 2, 'L');
+            $this->Cell(70, 5, convertirTexto("Docente encargado de la sección"), 0, 0, 'L');
+        } else {
+            $this->SetXY(10, $this->GetY() + 18);
+            $this->Cell(70, 5, convertirTexto($registro_docente ?? ''), 0, 2, 'L');
+            $this->Cell(70, 5, convertirTexto("Encargado Registro Académico"), 0, 0, 'L');
+        }
 
-    // Firma Director
-    $this->SetXY(120, $this->GetY());
-    $this->Cell(70, 5, convertirTexto($nombre_director), 0, 2, 'C');
-    $this->Cell(70, 5, convertirTexto("Director(a)"), 0, 0, 'C');
+        // Firma Director
+        $this->SetXY(120, $this->GetY());
+        $this->Cell(70, 5, convertirTexto($nombre_director), 0, 2, 'C');
+        $this->Cell(70, 5, convertirTexto("Director(a)"), 0, 0, 'C');
 
-    // Insertar imágenes si están habilitadas
-    if (isset($img_firma) && file_exists($img_firma)) {
-        $this->Image($img_firma, 120, $this->GetY() - 20, 70, 15);
+        // Insertar imágenes si están habilitadas (Director's signature and seal)
+        if ($firma === 'yes' && file_exists($img_firma_director)) {
+            $this->Image($img_firma_director, 120, $this->GetY() - 20, 70, 15);
+        }
+        if ($sello === 'yes' && file_exists($img_sello)) {
+            $this->Image($img_sello, 165, $this->GetY() - 20, 30, 30);
+        }
     }
-    if (isset($img_sello) && file_exists($img_sello)) {
-        $this->Image($img_sello, 165, $this->GetY() - 20, 30, 30);
-    }
-}
 
     // Function to add student data in the specified 2-column, 2-row format
     function addEstudiante($nie, $nombre, $modalidad, $grado_seccion_turno, $ann_lectivo) {
@@ -174,18 +185,24 @@ function Footer() {
             $current_x = $this->GetX();
             $current_y = $this->GetY();
             
-            // Determine the height needed for the MultiCell for the 'Asignatura' name.
-            // Temporarily set X and Y to calculate height without drawing.
-            $this->SetXY($current_x, $current_y);
-            $this->MultiCell($col_asignatura_width,6,convertirtexto($nombre),0,'L',false);
-            $new_y = $this->GetY();
-            $cell_height = $new_y - $current_y;
-            
-            // Now, draw the Asignatura cell and then the rest of the row, all with the calculated height.
-            $this->SetXY($current_x, $current_y); // Reset Y to start of row
+            // Calculate height needed for MultiCell for 'Asignatura' name
+            // Use a temporary FPDF instance or save/restore state to get height without affecting current document
+            $temp_pdf = new FPDF(); // Create a dummy PDF to calculate string height
+            $temp_pdf->AddPage();
+            $temp_pdf->SetFont('Arial','',8); // Match font settings
+            $temp_pdf->MultiCell($col_asignatura_width, 6, convertirtexto($nombre), 0, 'L', false);
+            $text_height = $temp_pdf->GetY(); // Get the calculated height
+            $cell_height = max($text_height, 6); // Ensure a minimum height if text is short
+            $temp_pdf = null; // Destroy temporary object
+
+            // Draw the Asignatura cell (MultiCell)
             $this->MultiCell($col_asignatura_width,$cell_height,convertirtexto($nombre),1,'L');
 
-            // Move cursor to the right of the Asignatura MultiCell, at the original Y position.
+            // Store current X and Y after MultiCell
+            $post_multicell_x = $this->GetX();
+            $post_multicell_y = $this->GetY();
+
+            // Set cursor to the right of the MultiCell, at the original Y position, for the rest of the row
             $this->SetXY($current_x + $col_asignatura_width, $current_y);
             
             for ($p = 0; $p < $cant_periodos; $p++) {
@@ -211,7 +228,8 @@ function Footer() {
             $this->Cell($col_res_width,$cell_height,$res,1,0,'C'); // Use increased width for 'Res.'
             $this->SetTextColor(0,0,0); // Reset color to black
             
-            $this->Ln(); // New line
+            // After drawing all cells for the row, set Y to the new Y position from MultiCell
+            $this->SetY($post_multicell_y); 
         }
     }
 }
@@ -236,20 +254,25 @@ $stmtDesc->execute([$modalidad, $gradoseccion, $gradoseccion, $gradoseccion, $an
 $desc_data = $stmtDesc->fetch(PDO::FETCH_ASSOC);
 
 $nombre_modalidad = $desc_data['nombre_modalidad'] ?? '';
-$nombre_grado_seccion_turno = ($desc_data['nombre_grado'] ?? '') . ' ' . ($desc_data['nombre_seccion'] ?? '') . ' ' . ($desc_data['nombre_turno'] ?? '');
+$nombre_grado = $desc_data['nombre_grado'] ?? '';
+$nombre_seccion = $desc_data['nombre_seccion'] ?? '';
+$nombre_turno = $desc_data['nombre_turno'] ?? '';
+$nombre_grado_seccion_turno = $nombre_grado . ' ' . $nombre_seccion . ' ' . $nombre_turno;
 $nombre_annlectivo = $desc_data['nombre_annlectivo'] ?? '';
 
 
 // Obtener estudiantes
 $sqlEst = "SELECT a.id_alumno, a.codigo_nie,
-        TRIM(CONCAT_WS(', ', a.apellido_paterno, a.apellido_materno, a.nombre_completo)) AS nombre_completo_formato
+        TRIM(a.nombre_completo) AS nombres,
+        TRIM(a.apellido_paterno) AS apellido_paterno,
+        TRIM(a.apellido_materno) AS apellido_materno
         FROM alumno a
         INNER JOIN alumno_matricula am ON am.codigo_alumno = a.id_alumno
         WHERE am.codigo_bach_o_ciclo = ?
         AND CONCAT(am.codigo_grado, am.codigo_seccion, am.codigo_turno) = ?
         AND am.codigo_ann_lectivo = ?
         AND am.retirado = false
-        ORDER BY nombre_completo_formato"; // Order by the new format
+        ORDER BY nombres, apellido_paterno, apellido_materno"; 
 $st = $pdo->prepare($sqlEst);
 $st->execute([$modalidad, $gradoseccion, $annlectivo]);
 $estudiantes = $st->fetchAll(PDO::FETCH_ASSOC);
@@ -257,13 +280,26 @@ $estudiantes = $st->fetchAll(PDO::FETCH_ASSOC);
 // PDF
 $pdf = new PDF("L", "mm", "A4"); // Orientación Horizontal
 
+// Set footer properties
+$pdf->nombre_encargado = $nombre_encargado;
+$pdf->firma_docente_filename = $firma_docente_filename;
+
+// Construct the filename using descriptive names
+$report_filename = "Informe_" . limpiar_cadena($nombre_modalidad) . "_" . limpiar_cadena($nombre_grado) . "_" . limpiar_cadena($nombre_seccion) . "_" . limpiar_cadena($nombre_annlectivo) . ".pdf";
+
 foreach ($estudiantes as $est) {
     $pdf->AddPage();
+
+    // Reconstruct the full name for display: nombre_completo apellido_paterno apellido_materno
+    $full_student_name = trim($est['nombres'] . ' ' . $est['apellido_paterno'] . ' ' . $est['apellido_materno']);
+    $full_student_name = preg_replace('/\s+/', ' ', $full_student_name); // Replace multiple spaces with a single one
+
+
     $pdf->addEstudiante(
         $est['codigo_nie'],
-        $est['nombre_completo_formato'],
-        $nombre_modalidad, // Changed order based on image
-        $nombre_grado_seccion_turno, // Changed order based on image
+        $full_student_name,
+        $nombre_modalidad,
+        $nombre_grado_seccion_turno,
         $nombre_annlectivo
     );
 
@@ -287,7 +323,7 @@ $sqlNotas = "
     INNER JOIN asignatura asig
         ON asig.codigo = n.codigo_asignatura
     WHERE a.id_alumno = :id_alumno
-    ORDER BY n.orden
+    ORDER BY asig.nombre -- Added ORDER BY for consistent subject display
 ";
 $rows = $pdo->prepare($sqlNotas);
 $rows->execute([
@@ -300,24 +336,47 @@ $rows->execute([
     foreach ($rows as $r) {
         $nombreAsignatura = $r['asignatura'] ?? 'Desconocida';
         
-        $asignaturas[$nombreAsignatura] = [];
+        // Initialize the array for the current asignatura if it doesn't exist
+        if (!isset($asignaturas[$nombreAsignatura])) {
+            $asignaturas[$nombreAsignatura] = [];
+        }
 
+        // Loop through all possible periods and add their data
+        // Ensure that the loop only adds data for existing periods based on $cant_periodos
         for ($p = 1; $p <= $cant_periodos; $p++) {
             $asignaturas[$nombreAsignatura][] = [
-                'a1' => $r["nota_a1_$p"],
-                'a2' => $r["nota_a2_$p"],
-                'a3' => $r["nota_a3_$p"],
-                'r' => $r["nota_r_$p"],
-                'pp' => $r["nota_p_p_$p"]
+                'a1' => $r["nota_a1_$p"] ?? null,
+                'a2' => $r["nota_a2_$p"] ?? null,
+                'a3' => $r["nota_a3_$p"] ?? null,
+                'r' => $r["nota_r_$p"] ?? null,
+                'pp' => $r["nota_p_p_$p"] ?? null
             ];
         }
         // Add final notes and recuperations to the first period's data
-        $asignaturas[$nombreAsignatura][0]['r1'] = $r['recuperacion'];
-        $asignaturas[$nombreAsignatura][0]['r2'] = $r['nota_recuperacion_2'];
-        $asignaturas[$nombreAsignatura][0]['nota_final'] = $r['nota_final'];
+        // Ensure index 0 exists before assigning
+        if (isset($asignaturas[$nombreAsignatura][0])) {
+            $asignaturas[$nombreAsignatura][0]['r1'] = $r['recuperacion'];
+            $asignaturas[$nombreAsignatura][0]['r2'] = $r['nota_recuperacion_2'];
+            $asignaturas[$nombreAsignatura][0]['nota_final'] = $r['nota_final'];
+        }
     }
 
     $pdf->addTabla($asignaturas, $cant_periodos, $calif_minima);
 }
 
-$pdf->Output("I", "Informe_Seccion_Horizontal.pdf");
+// Helper function to clean string for filename (remove special chars and accents)
+function limpiar_cadena($cadena) {
+    // Attempt to convert to ASCII, transliterating characters
+    $cadena = iconv('UTF-8', 'ASCII//TRANSLIT', $cadena); 
+    // Remove any characters that are not alphanumeric or underscore
+    $cadena = preg_replace('/[^a-zA-Z0-9\s_.-]/', '', $cadena); 
+    // Replace spaces with underscores
+    $cadena = str_replace(' ', '_', $cadena); 
+    // Remove any multiple underscores
+    $cadena = preg_replace('/_+/', '_', $cadena);
+    // Trim leading/trailing underscores
+    $cadena = trim($cadena, '_');
+    return $cadena;
+}
+
+$pdf->Output("I", $report_filename);

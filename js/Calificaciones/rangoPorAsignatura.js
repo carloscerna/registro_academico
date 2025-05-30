@@ -6,7 +6,7 @@ $(document).ready(function () {
         const annLectivo = $('#lstannlectivo').val();
         const modalidad = $('#lstmodalidad').val();
         const gradoSeccion = $('#lstgradoseccion').val();
-        const periodo = $('#lstperiodo').val();
+        const periodo = $('#lstperiodoC').val();
 
         $.ajax({
             url: 'php_libs/soporte/rango_calificaciones.php',
@@ -31,7 +31,7 @@ $(document).ready(function () {
                     const textoAnio = $('#lstannlectivo option:selected').text();
                     const textoModalidad = $('#lstmodalidad option:selected').text();
                     const textoGrado = $('#lstgradoseccion option:selected').text();
-                    const textoPeriodo = $('#lstperiodo option:selected').text();
+                    const textoPeriodo = $('#lstperiodoC option:selected').text();
                     const titulo = `Rangos de Calificaciones - ${textoAnio} - ${textoModalidad} - ${textoGrado} - ${textoPeriodo}`;
 
                     // Mostrar resumen
