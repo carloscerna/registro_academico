@@ -22,7 +22,7 @@ if ($stmt = $pdo->prepare($sqlPeriodo)) {
     $stmt->execute([$modalidad]);
     $cant_periodos = (int) $stmt->fetchColumn() ?: 3;
 }
-$calif_minima = 6; // Calificación mínima para aprobar
+$calif_minima = 6;
 
 // Construir codigo_all
 $codigo_all = $modalidad . substr($gradoseccion, 0, 6) . $annlectivo; 
@@ -60,86 +60,85 @@ class PDF extends FPDF {
 
     function Header() {
         $this->SetFont('Arial','B',12);
-        // Encabezado del PDF
+        // Header del PDF
         $img = $_SERVER['DOCUMENT_ROOT'] . '/registro_academico/img/' . $_SESSION['logo_uno']; //Logo
         $nombre_institucion = convertirtexto($_SESSION['institucion']);
-        $this->Image($img, 10, 10, 20); // Logo
-
-        // Nombre de la institución
+        $this->  Image($img, 10, 10, 20); // Logo
         $this->SetXY(30, 10);
-        $this->Cell(0, 6, $nombre_institucion, 0, 1, 'L');
-
-        // Título del informe en dos líneas, centrado
-        $this->SetFont('Arial','B',10); // Negrita para el título
-        $this->Cell(0, 5, convertirtexto('INFORME ACADÉMICO - POR ESTUDIANTE'), 0, 1, 'C'); // Primera línea del título
-        $this->Ln(1);
+        $this->Cell(0, 6, convertirtexto($nombre_institucion), 0, 1, 'L');
+        $this->SetFont('Arial','',10);
+        $this->Cell(0,6,convertirtexto('Informe Académico - por Estudiante'),0,1,'C');
+        $this->Ln(4);
     }
     function Footer() {
-        global $registro_docente, $firma, $sello;
+    global $registro_docente, $firma, $sello;
 
-        $nombre_director = cambiar_de_del($_SESSION['nombre_director'] ?? 'Director');
+    $nombre_director = cambiar_de_del($_SESSION['nombre_director'] ?? 'Director');
 
-        // Rutas de imágenes
-        $img_firma_director = $_SERVER['DOCUMENT_ROOT'] . '/registro_academico/img/' . ($_SESSION['imagen_firma'] ?? '');
-        $img_sello = $_SERVER['DOCUMENT_ROOT'] . '/registro_academico/img/' . ($_SESSION['imagen_sello'] ?? '');
+    // Paths
+    $img_firma_director = $_SERVER['DOCUMENT_ROOT'] . '/registro_academico/img/' . ($_SESSION['imagen_firma'] ?? '');
+    $img_sello = $_SERVER['DOCUMENT_ROOT'] . '/registro_academico/img/' . ($_SESSION['imagen_sello'] ?? '');
 
-        $this->SetY(-45); // Posicionar desde abajo
-        $y = $this->GetY();
-
-        // Firmas - líneas horizontales
-        $this->Line(10, $y + 25, 80, $y + 25);   // Línea Docente
-        $this->Line(120, $y + 25, 190, $y + 25); // Línea Director
-        $this->Line(5, $y + 42, 203, $y + 42);   // Línea final horizontal
-
-        // Firma del Docente Encargado
-        if (!empty($this->nombre_encargado)) {
-            if (!empty($firma_encargado_path) && file_exists($firma_encargado_path)) {
-                // Ajustar tamaño de la firma del docente
-                $this->Image($firma_encargado_path, 28, $y + 12, 35, 10); // Reducido de 40x12 a 35x10
-            }
-            $this->SetXY(10, $y + 27);
-            $this->SetFont('Arial', 'I', 7); // Reducido de 8 a 7
-            $this->Cell(70, 5, convertirTexto($this->nombre_encargado), 0, 2, 'L');
-            $this->Cell(70, 5, "Docente encargado de la sección", 0, 0, 'L');
-        } else {
-            $this->SetXY(10, $y + 27);
-            $this->SetFont('Arial', 'I', 7); // Reducido de 8 a 7
-            $this->Cell(70, 5, convertirTexto($registro_docente ?? ''), 0, 2, 'L');
-            $this->Cell(70, 5, "Encargado Registro Académico", 0, 0, 'L');
-        }
-
-        // Firma del Director
-        // Imagen de firma del director
-        if (file_exists($img_firma_director)) {
-            // Ajustar tamaño de la firma del director
-            $this->Image($img_firma_director, 140, $y - 2, 25, 30); // Reducido de 30x36 a 25x30
-        }
-
-        // Imagen del sello
-        if (file_exists($img_sello)) {
-            // Ajustar tamaño del sello
-            $this->Image($img_sello, 175, $y + 5, 20, 20); // Reducido de 25x25 a 20x20
-        }
-
-        // Nombre del director
-        $this->SetXY(120, $y + 27);
-        $this->SetFont('Arial', 'I', 7); // Reducido de 8 a 7
-        $this->Cell(70, 5, convertirTexto($nombre_director), 0, 2, 'C');
-        $this->Cell(70, 5, "Director(a)", 0, 0, 'C');
+    // Firma docente encargado
+    $firma_encargado_path = '';
+    if (!empty($this->firma_docente_filename) && isset($_SESSION['codigo_institucion'])) {
+        $firma_encargado_path = $_SERVER['DOCUMENT_ROOT'] . '/registro_academico/img/firmas/' . $_SESSION['codigo_institucion'] . '/' . $this->firma_docente_filename;
     }
 
+    $this->SetY(-45); // Posicionar desde abajo
+    $y = $this->GetY();
 
-    // Función para añadir datos del estudiante en el formato especificado
+    // Firmas - líneas horizontales
+    $this->Line(10, $y + 25, 80, $y + 25);   // Línea Docente
+    $this->Line(120, $y + 25, 190, $y + 25); // Línea Director
+    $this->Line(5, $y + 42, 203, $y + 42);   // Línea final horizontal
+
+    // Firma del Docente Encargado
+    if (!empty($this->nombre_encargado)) {
+        if (!empty($firma_encargado_path) && file_exists($firma_encargado_path)) {
+            $this->Image($firma_encargado_path, 25, $y + 10, 40, 12);
+        }
+        $this->SetXY(10, $y + 27);
+        $this->SetFont('Arial', 'I', 8);
+        $this->Cell(70, 5, convertirTexto($this->nombre_encargado), 0, 2, 'L');
+        $this->Cell(70, 5, "Docente encargado de la sección", 0, 0, 'L');
+    } else {
+        $this->SetXY(10, $y + 27);
+        $this->SetFont('Arial', 'I', 8);
+        $this->Cell(70, 5, convertirTexto($registro_docente ?? ''), 0, 2, 'L');
+        $this->Cell(70, 5, "Encargado Registro Académico", 0, 0, 'L');
+    }
+
+    // Firma del Director
+    // Imagen de firma del director
+    if (file_exists($img_firma_director)) {
+        $this->Image($img_firma_director, 135, $y - 5, 30, 36); // Firma centrada horizontalmente
+    }
+
+    // Imagen del sello
+    if (file_exists($img_sello)) {
+        $this->Image($img_sello, 170, $y + 2, 25, 25); // Sello ligeramente detrás
+    }
+
+    // Nombre del director
+    $this->SetXY(120, $y + 27);
+    $this->SetFont('Arial', 'I', 8);
+    $this->Cell(70, 5, convertirTexto($nombre_director), 0, 2, 'C');
+    $this->Cell(70, 5, "Director(a)", 0, 0, 'C');
+}
+
+
+    // Function to add student data in the specified 2-column, 2-row format
     function addEstudiante($nie, $nombre, $modalidad, $grado_seccion_turno, $ann_lectivo) {
         $this->SetFont('Arial','',10);
         
-        // Fila 1: NIE y Nombre
+        // Row 1: NIE and Nombre
         $this->Cell(35,6,'NIE:',0,0,'L');
         $this->Cell(60,6,convertirtexto($nie),0,0,'L');
         $this->Cell(35,6,'Nombre:',0,0,'L');
         $this->Cell(100,6,convertirtexto($nombre),0,1,'L'); 
 
-        // Fila 2: Modalidad, Grado/Secc/Turno, Año Lectivo
+        // Row 2: Modalidad, Grado/Secc/Turno, Año Lectivo
         $this->Cell(35,6,'Modalidad:',0,0,'L');
         $this->Cell(60,6,convertirtexto($modalidad),0,0,'L');
         $this->Cell(35,6,'Grado/Secc/Turno:',0,0,'L');
@@ -151,16 +150,15 @@ class PDF extends FPDF {
     }
 
     function addTabla($asignaturas, $cant_periodos, $minima = 6) {
-        // Tamaño de fuente para los encabezados (aumentado a 8pt para mejor legibilidad)
+        // Headers font size (increased to 8pt for better readability)
         $this->SetFont('Arial','B',8); 
-        $this->SetFillColor(230, 230, 230); // Gris claro para la columna PP
+        
+        // Column widths adjustments
+        $col_notas_indiv = 6; // Reduced individual note column width (A1, A2, A3, R, PP, R1, R2, NF)
+        $col_asignatura_width = 80; // Increased width for Asignatura column
+        $col_res_width = 20; // Increased width for 'Res.' column
 
-        // Ajustes de ancho de columna
-        $col_notas_indiv = 6; // Ancho reducido para columnas de notas individuales (A1, A2, A3, R, PP, R1, R2, NF)
-        $col_asignatura_width = 90; // Ancho aumentado para la columna de Asignatura
-        $col_res_width = 20; // Ancho aumentado para la columna 'Res.'
-
-        // Calcular ancho total para posicionamiento dinámico
+        // Calculate total width for dynamic positioning
         $total_period_columns_width = $col_notas_indiv * 5 * $cant_periodos;
         $total_final_columns_width = $col_notas_indiv * 3; // R1, R2, NF
 
@@ -173,27 +171,23 @@ class PDF extends FPDF {
         $this->Cell($col_res_width, 10, 'Res.', 1, 0, 'C'); 
         $this->Ln();
 
-        // Segunda fila de encabezados para componentes individuales del período
-        $this->Cell($col_asignatura_width,5,'',0,0); // Espaciador para la columna Asignatura
+        // Second row of headers for individual period components
+        $this->Cell($col_asignatura_width,5,'',0,0); // Spacer for Asignatura column
         for ($i = 0; $i < $cant_periodos; $i++) {
             foreach (['A1','A2','A3','R','PP'] as $et) {
-                if ($et == 'PP') {
-                    $this->Cell($col_notas_indiv,5,$et,1,0,'C',true); // true para rellenar con color
-                } else {
-                    $this->Cell($col_notas_indiv,5,$et,1,0,'C');
-                }
+                $this->Cell($col_notas_indiv,5,$et,1,0,'C');
             }
         }
         foreach (['R1','R2','NF'] as $et) {
             $this->Cell($col_notas_indiv,5,$et,1,0,'C');
         }
-        $this->Cell($col_res_width, 5, '', 1, 0, 'C'); // Espaciador para la columna Res.
+        $this->Cell($col_res_width, 5, '', 1, 0, 'C'); // Spacer for Res. column
         $this->Ln();
 
-        // Tamaño de fuente para los datos (aumentado a 8pt para mejor legibilidad)
+        // Data font size (increased to 8pt for better readability)
         $this->SetFont('Arial','',8); 
         
-        foreach ($asignaturas as $nombre => $data_asignatura) {
+       foreach ($asignaturas as $nombre => $periodos) {
             $x = $this->GetX();
             $y = $this->GetY();
             
@@ -211,79 +205,67 @@ class PDF extends FPDF {
             // Notas por período
             for ($i = 1; $i <= $cant_periodos; $i++) {
                 foreach (['A1','A2','A3','R','PP'] as $et) {
-                    $nota = $data_asignatura[$i][$et] ?? '';
-                    if ($et == 'PP') {
-                        $this->SetFillColor(230, 230, 230); // Gris claro para la columna PP
-                        $this->Cell($col_notas_indiv, $rowHeight, $nota, 1, 0, 'C', true); // true para rellenar
-                        $this->SetFillColor(255, 255, 255); // Restablecer color de relleno
-                    } else {
-                        $this->Cell($col_notas_indiv, $rowHeight, $nota, 1, 0, 'C');
-                    }
+                    $nota = $periodos[$i][$et] ?? '';
+                    $this->Cell($col_notas_indiv, $rowHeight, $nota, 1, 0, 'C');
                 }
             }
 
             // R1, R2, NF
             foreach (['R1','R2','NF'] as $et) {
-                $nota = $data_asignatura['Final'][$et] ?? '';
+                $nota = $periodos['Final'][$et] ?? '';
                 $this->Cell($col_notas_indiv, $rowHeight, $nota, 1, 0, 'C');
             }
 
             // Resultado
-            $resultado = $data_asignatura['Resultado'] ?? '';
-            if ($resultado == 'Reprobado') {
-                $this->SetTextColor(255, 0, 0); // Rojo
-            } else {
-                $this->SetTextColor(0, 0, 0); // Negro
-            }
+            $resultado = $periodos['Resultado'] ?? '';
             $this->Cell($col_res_width, $rowHeight, $resultado, 1, 0, 'C');
-            $this->SetTextColor(0, 0, 0); // Restablecer color de texto
 
             $this->Ln();
         }
 
     }
     function NbLines($w, $txt) {
-        $cw = &$this->CurrentFont['cw'];
-        if ($w == 0)
-            $w = $this->w - $this->rMargin - $this->x;
-        $wmax = ($w - 2 * $this->cMargin) * 1000 / $this->FontSize;
-        $s = str_replace("\r", '', $txt);
-        $nb = strlen($s);
-        if ($nb > 0 and $s[$nb - 1] == "\n")
-            $nb--;
-        $sep = -1;
-        $i = 0;
-        $j = 0;
-        $l = 0;
-        $nl = 1;
-        while ($i < $nb) {
-            $c = $s[$i];
-            if ($c == "\n") {
-                $i++;
-                $sep = -1;
-                $j = $i;
-                $l = 0;
-                $nl++;
-                continue;
-            }
-            if ($c == ' ')
-                $sep = $i;
-            $l += $cw[$c];
-            if ($l > $wmax) {
-                if ($sep == -1) {
-                    if ($i == $j)
-                        $i++;
-                } else
-                    $i = $sep + 1;
-                $sep = -1;
-                $j = $i;
-                $l = 0;
-                $nl++;
-            } else
-                $i++;
+    $cw = &$this->CurrentFont['cw'];
+    if ($w == 0)
+        $w = $this->w - $this->rMargin - $this->x;
+    $wmax = ($w - 2 * $this->cMargin) * 1000 / $this->FontSize;
+    $s = str_replace("\r", '', $txt);
+    $nb = strlen($s);
+    if ($nb > 0 and $s[$nb - 1] == "\n")
+        $nb--;
+    $sep = -1;
+    $i = 0;
+    $j = 0;
+    $l = 0;
+    $nl = 1;
+    while ($i < $nb) {
+        $c = $s[$i];
+        if ($c == "\n") {
+            $i++;
+            $sep = -1;
+            $j = $i;
+            $l = 0;
+            $nl++;
+            continue;
         }
-        return $nl;
+        if ($c == ' ')
+            $sep = $i;
+        $l += $cw[$c];
+        if ($l > $wmax) {
+            if ($sep == -1) {
+                if ($i == $j)
+                    $i++;
+            } else
+                $i = $sep + 1;
+            $sep = -1;
+            $j = $i;
+            $l = 0;
+            $nl++;
+        } else
+            $i++;
     }
+    return $nl;
+}
 }
 
 // Obtener datos descriptivos de modalidad, grado, sección, turno y año lectivo
@@ -332,19 +314,19 @@ $estudiantes = $st->fetchAll(PDO::FETCH_ASSOC);
 // PDF
 $pdf = new PDF("L", "mm", "A4"); // Orientación Horizontal
 
-// Establecer propiedades del pie de página
+// Set footer properties
 $pdf->nombre_encargado = $nombre_encargado;
 $pdf->firma_docente_filename = $firma_docente_filename;
 
-// Construir el nombre del archivo usando nombres descriptivos
+// Construct the filename using descriptive names
 $report_filename = "Informe_" . limpiar_cadena($nombre_modalidad) . "_" . limpiar_cadena($nombre_grado) . "_" . limpiar_cadena($nombre_seccion) . "_" . limpiar_cadena($nombre_annlectivo) . ".pdf";
 
 foreach ($estudiantes as $est) {
     $pdf->AddPage();
 
-    // Reconstruir el nombre completo para mostrar: nombre_completo apellido_paterno apellido_materno
+    // Reconstruct the full name for display: nombre_completo apellido_paterno apellido_materno
     $full_student_name = trim($est['nombres'] . ' ' . $est['apellido_paterno'] . ' ' . $est['apellido_materno']);
-    $full_student_name = preg_replace('/\s+/', ' ', $full_student_name); // Reemplazar múltiples espacios con uno solo
+    $full_student_name = preg_replace('/\s+/', ' ', $full_student_name); // Replace multiple spaces with a single one
 
 
     $pdf->addEstudiante(
@@ -382,65 +364,51 @@ $rows->execute([
     ':id_alumno' => $est['id_alumno'],
     ':annlectivo' => $annlectivo
 ]);
+
     // Preparar estructura por asignatura
     $asignaturas = [];
     foreach ($rows as $r) {
         $nombreAsignatura = $r['asignatura'] ?? 'Desconocida';
         
-        // Inicializar el array para la asignatura actual si no existe
+        // Initialize the array for the current asignatura if it doesn't exist
         if (!isset($asignaturas[$nombreAsignatura])) {
             $asignaturas[$nombreAsignatura] = [];
         }
 
-        // Recorrer todos los períodos posibles y añadir sus datos
-        // Asegurarse de que el bucle solo añade datos para los períodos existentes según $cant_periodos
+        // Loop through all possible periods and add their data
+        // Ensure that the loop only adds data for existing periods based on $cant_periodos
         for ($p = 1; $p <= $cant_periodos; $p++) {
-            // Asignar datos del período directamente al número del período
-            $asignaturas[$nombreAsignatura][$p] = [
-                'A1' => ($r["nota_a1_$p"] == 0 || $r["nota_a1_$p"] === null) ? '' : number_format($r["nota_a1_$p"], 1),
-                'A2' => ($r["nota_a2_$p"] == 0 || $r["nota_a2_$p"] === null) ? '' : number_format($r["nota_a2_$p"], 1),
-                'A3' => ($r["nota_a3_$p"] == 0 || $r["nota_a3_$p"] === null) ? '' : number_format($r["nota_a3_$p"], 1),
-                'R' => ($r["nota_r_$p"] == 0 || $r["nota_r_$p"] === null) ? '' : number_format($r["nota_r_$p"], 1),
-                'PP' => ($r["nota_p_p_$p"] == 0 || $r["nota_p_p_$p"] === null) ? '' : number_format($r["nota_p_p_$p"], 1)
+            $asignaturas[$nombreAsignatura][] = [
+                'A1' => $r["nota_a1_$p"] ?? null,
+                'A2' => $r["nota_a2_$p"] ?? null,
+                'A3' => $r["nota_a3_$p"] ?? null,
+                'R' => $r["nota_r_$p"] ?? null,
+                'PP' => $r["nota_p_p_$p"] ?? null
             ];
         }
-        // Añadir notas finales y recuperaciones directamente a la clave 'Final' dentro de la asignatura
-        $recuperacion = ($r['recuperacion'] == 0 || $r['recuperacion'] === null) ? '' : number_format($r['recuperacion'], 1);
-        $nota_recuperacion_2 = ($r['nota_recuperacion_2'] == 0 || $r['nota_recuperacion_2'] === null) ? '' : number_format($r['nota_recuperacion_2'], 1);
-        $nota_final = ($r['nota_final'] == 0 || $r['nota_final'] === null) ? '' : (int)round($r['nota_final']); // NF como entero
-
-        $asignaturas[$nombreAsignatura]['Final'] = [
-            'R1' => $recuperacion,
-            'R2' => $nota_recuperacion_2,
-            'NF' => $nota_final
-        ];
-
-        // Calcular el resultado
-        $resultado = '';
-        if ($r['nota_final'] !== null && $r['nota_final'] !== '') { // Solo calcular si nota_final existe y no está en blanco
-            if ($r['nota_final'] < $calif_minima) {
-                $resultado = 'Reprobado';
-            } else {
-                $resultado = 'Aprobado';
-            }
+        // Add final notes and recuperations to the first period's data
+        // Ensure index 0 exists before assigning
+        if (isset($asignaturas[$nombreAsignatura][0])) {
+            $asignaturas[$nombreAsignatura][0]['R1'] = $r['recuperacion'];
+            $asignaturas[$nombreAsignatura][0]['R2'] = $r['nota_recuperacion_2'];
+            $asignaturas[$nombreAsignatura][0]['NF'] = $r['nota_final'];
         }
-        $asignaturas[$nombreAsignatura]['Resultado'] = $resultado;
     }
 
     $pdf->addTabla($asignaturas, $cant_periodos, $calif_minima);
 }
 
-// Función auxiliar para limpiar cadenas para nombres de archivo (eliminar caracteres especiales y acentos)
+// Helper function to clean string for filename (remove special chars and accents)
 function limpiar_cadena($cadena) {
-    // Intentar convertir a ASCII, transliterando caracteres
+    // Attempt to convert to ASCII, transliterating characters
     $cadena = iconv('UTF-8', 'ASCII//TRANSLIT', $cadena); 
-    // Eliminar cualquier carácter que no sea alfanumérico o guion bajo
+    // Remove any characters that are not alphanumeric or underscore
     $cadena = preg_replace('/[^a-zA-Z0-9\s_.-]/', '', $cadena); 
-    // Reemplazar espacios con guiones bajos
+    // Replace spaces with underscores
     $cadena = str_replace(' ', '_', $cadena); 
-    // Eliminar guiones bajos múltiples
+    // Remove any multiple underscores
     $cadena = preg_replace('/_+/', '_', $cadena);
-    // Eliminar guiones bajos al principio/final
+    // Trim leading/trailing underscores
     $cadena = trim($cadena, '_');
     return $cadena;
 }
