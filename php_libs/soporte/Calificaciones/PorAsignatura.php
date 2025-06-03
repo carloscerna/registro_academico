@@ -37,6 +37,7 @@ try {
             SELECT 
                 n.id_notas,
                 a.codigo_nie, 
+                a.id_alumno,
                 TRIM(CONCAT_WS(' ', a.apellido_paterno, a.apellido_materno, ', ', a.nombre_completo)) AS nombre_estudiante, 
                 asig.nombre AS nombre_asignatura, asig.codigo_cc,
                 n.nota_a1_$periodo, 
@@ -76,7 +77,8 @@ try {
                 'nota_a3' => $row["nota_a3_$periodo"],
                 'nota_r'  => $row["nota_r_$periodo"],
                 'nota_pp' => $row["nota_p_p_$periodo"],
-				'codigo_cc' => trim($row['codigo_cc'])
+				'codigo_cc' => trim($row['codigo_cc']),
+                'id_alumno' => $row["id_alumno"],
             ];
         }
 

@@ -14,6 +14,7 @@ $gradoseccion = $_GET['gradoseccion'];
 $annlectivo   = $_GET['annlectivo'];
 $asignatura   = $_GET['asignatura'] ?? null; // opcional
 $periodo      = $_GET['periodo']    ?? null; // opcional
+$id_alumno_individual = $_GET['id_alumno'] ?? null; // Nuevo: ID de alumno individual
 
 // Obtener cantidad de períodos desde catalogo_periodos
 $sqlPeriodo = "SELECT cantidad_periodos FROM catalogo_periodos WHERE codigo_modalidad = ? LIMIT 1";
@@ -69,10 +70,10 @@ class PDF extends FPDF {
         $this->SetXY(30, 10);
         $this->Cell(0, 6, $nombre_institucion, 0, 1, 'L');
 
-        // Título del informe en dos líneas, centrado
+        // Título del informe en una línea, centrado
         $this->SetFont('Arial','B',10); // Negrita para el título
-        $this->Cell(0, 5, convertirtexto('INFORME ACADÉMICO - POR ESTUDIANTE'), 0, 1, 'C'); // Primera línea del título
-        $this->Ln(1);
+        $this->Cell(0, 5, convertirtexto('INFORME ACADÉMICO - POR ESTUDIANTE'), 0, 1, 'C');
+        $this->Ln(1); // Salto de línea más pequeño
     }
     function Footer() {
         global $registro_docente, $firma, $sello;
@@ -99,13 +100,13 @@ class PDF extends FPDF {
             }
             $this->SetXY(10, $y + 27);
             $this->SetFont('Arial', 'I', 7); // Reducido de 8 a 7
-            $this->Cell(70, 5, convertirTexto($this->nombre_encargado), 0, 2, 'L');
-            $this->Cell(70, 5, "Docente encargado de la sección", 0, 0, 'L');
+            $this->Cell(70, 4, ($this->nombre_encargado), 0, 2, 'L'); // Altura de celda 4
+            $this->Cell(70, 4, convertirTexto("Docente encargado de la sección"), 0, 0, 'L'); // Altura de celda 4
         } else {
             $this->SetXY(10, $y + 27);
             $this->SetFont('Arial', 'I', 7); // Reducido de 8 a 7
-            $this->Cell(70, 5, convertirTexto($registro_docente ?? ''), 0, 2, 'L');
-            $this->Cell(70, 5, "Encargado Registro Académico", 0, 0, 'L');
+            $this->Cell(70, 4, ($registro_docente ?? ''), 0, 2, 'L'); // Altura de celda 4
+            $this->Cell(70, 4, convertirTexto("Encargado Registro Académico"), 0, 0, 'L'); // Altura de celda 4
         }
 
         // Firma del Director
@@ -118,36 +119,72 @@ class PDF extends FPDF {
         // Imagen del sello
         if (file_exists($img_sello)) {
             // Ajustar tamaño del sello
-            $this->Image($img_sello, 175, $y + 5, 20, 20); // Reducido de 25x25 a 20x20
+            $this->Image($img_sello, 160, $y + 5, 20, 20); // Reducido de 25x25 a 20x20
         }
 
         // Nombre del director
         $this->SetXY(120, $y + 27);
         $this->SetFont('Arial', 'I', 7); // Reducido de 8 a 7
-        $this->Cell(70, 5, convertirTexto($nombre_director), 0, 2, 'C');
-        $this->Cell(70, 5, "Director(a)", 0, 0, 'C');
+        $this->Cell(70, 4, ($nombre_director), 0, 2, 'C'); // Altura de celda 4
+        $this->Cell(70, 4, "Director(a)", 0, 0, 'C'); // Altura de celda 4
     }
 
 
     // Función para añadir datos del estudiante en el formato especificado
-    function addEstudiante($nie, $nombre, $modalidad, $grado_seccion_turno, $ann_lectivo) {
+    function addEstudiante($nie, $nombre, $modalidad, $grado_seccion_turno, $ann_lectivo, $foto, $codigo_genero) {
         $this->SetFont('Arial','',10);
         
-        // Fila 1: NIE y Nombre
-        $this->Cell(35,6,'NIE:',0,0,'L');
-        $this->Cell(60,6,convertirtexto($nie),0,0,'L');
-        $this->Cell(35,6,'Nombre:',0,0,'L');
-        $this->Cell(100,6,convertirtexto($nombre),0,1,'L'); 
+        // --- Colocación de la Imagen ---
+        $imgWidth = 25;
+        $imgHeight = 30;
+        $imgX = $this->GetPageWidth() - 10 - $imgWidth; // 10mm de margen derecho
+        $imgY = $this->GetY()- 20; // Posición Y actual para el bloque del estudiante
+
+        $photoPath = $_SERVER['DOCUMENT_ROOT'] . '/registro_academico/img/fotos/' . ($_SESSION['codigo_institucion'] ?? '') . '/' . $foto;
+        $avatarPathMale = $_SERVER['DOCUMENT_ROOT'] . '/registro_academico/img/avatar_masculino.png';
+        $avatarPathFemale = $_SERVER['DOCUMENT_ROOT'] . '/registro_academico/img/avatar_femenino.png';
+
+        $displayImgPath = '';
+        if (!empty($foto) && file_exists($photoPath)) {
+            $displayImgPath = $photoPath;
+        } else {
+            if ($codigo_genero == '01') { // Masculino
+                $displayImgPath = $avatarPathMale;
+            } else { // Femenino o cualquier otro caso
+                $displayImgPath = $avatarPathFemale;
+            }
+        }
+
+        // Colocar la imagen
+        if (!empty($displayImgPath) && file_exists($displayImgPath)) {
+            $this->Image($displayImgPath, $imgX, $imgY, $imgWidth, $imgHeight);
+        }
+        // --- Fin Colocación de la Imagen ---
+
+        // --- Colocación del Texto ---
+        // Ajustar celdas de texto para evitar superposición con la imagen
+        // El texto se colocará desde la izquierda, hasta la posición X de la imagen
+        $textBlockWidth = $imgX - $this->GetX() - 5; // Ancho disponible para el texto (5mm de padding)
+        
+        // Fila 1: NIE y Nombre.
+        $this->SetX(30); // Asegurarse de que el texto comienza en la misma línea que la imagen
+        $this->Cell(15,6,'Nombre:',0,0,'L');
+        $this->Cell($textBlockWidth / 2 - 35,6,convertirtexto($nombre),0,0,'L'); // Ancho ajustado para el valor Nombre
+        $this->Cell(10,6,'NIE:',0,0,'L');
+        $this->Cell(30,6,convertirtexto($nie),0,0,'L'); // Ancho ajustado para el valor NIE
+        $this->Cell(25,6,convertirTexto('Año Lectivo:'),0,0,'L');
+        $this->Cell($textBlockWidth / 2 - 25,6,convertirTexto($ann_lectivo),0,1,'L');
 
         // Fila 2: Modalidad, Grado/Secc/Turno, Año Lectivo
-        $this->Cell(35,6,'Modalidad:',0,0,'L');
-        $this->Cell(60,6,convertirtexto($modalidad),0,0,'L');
+        $this->SetX(30); // Asegurarse de que el texto comienza en la misma línea que la imagen
+        $this->Cell(20,6,'Modalidad:',0,0,'L');
+        $this->Cell($textBlockWidth / 2 - 20,6,convertirtexto($modalidad),0,0,'L');
         $this->Cell(35,6,'Grado/Secc/Turno:',0,0,'L');
-        $this->Cell(60,6,convertirtexto($grado_seccion_turno),0,0,'L');
-        $this->Cell(35,6,'Año Lectivo:',0,0,'L');
-        $this->Cell(60,6,convertirtexto($ann_lectivo),0,1,'L');
+        $this->Cell($textBlockWidth / 2 - 35,6,convertirtexto($grado_seccion_turno),0,1,'L');
         
-        $this->Ln(2);
+        // Mover el cursor hacia abajo más allá de la altura de la imagen para asegurar que el siguiente contenido comience debajo de ella
+        $this->SetY(max($this->GetY(), $imgY + $imgHeight + 2)); // 2mm de padding debajo de la imagen
+        $this->Ln(2); // Salto de línea adicional
     }
 
     function addTabla($asignaturas, $cant_periodos, $minima = 6) {
@@ -157,20 +194,20 @@ class PDF extends FPDF {
 
         // Ajustes de ancho de columna
         $col_notas_indiv = 6; // Ancho reducido para columnas de notas individuales (A1, A2, A3, R, PP, R1, R2, NF)
-        $col_asignatura_width = 90; // Ancho aumentado para la columna de Asignatura
+        $col_asignatura_width = 85; // Ancho aumentado para la columna de Asignatura (80 + 5)
         $col_res_width = 20; // Ancho aumentado para la columna 'Res.'
 
         // Calcular ancho total para posicionamiento dinámico
         $total_period_columns_width = $col_notas_indiv * 5 * $cant_periodos;
         $total_final_columns_width = $col_notas_indiv * 3; // R1, R2, NF
 
-        $this->Cell($col_asignatura_width,10,'Asignatura',1,0,'C');
+        $this->Cell($col_asignatura_width,15,'Asignatura',1,0,'C');
 
         for ($p = 1; $p <= $cant_periodos; $p++) {
-            $this->Cell($col_notas_indiv * 5, 5, "PERIODO $p", 1, 0, 'C');
+            $this->Cell($col_notas_indiv * 5, 10, "PERIODO $p", 1, 0, 'C');
         }
         $this->Cell($total_final_columns_width, 10, 'Final', 1, 0, 'C'); 
-        $this->Cell($col_res_width, 10, 'Res.', 1, 0, 'C'); 
+        $this->Cell($col_res_width, 10, 'Res.', 'LRT', 0, 'C'); 
         $this->Ln();
 
         // Segunda fila de encabezados para componentes individuales del período
@@ -187,12 +224,19 @@ class PDF extends FPDF {
         foreach (['R1','R2','NF'] as $et) {
             $this->Cell($col_notas_indiv,5,$et,1,0,'C');
         }
-        $this->Cell($col_res_width, 5, '', 1, 0, 'C'); // Espaciador para la columna Res.
+        $this->Cell($col_res_width, 5, '', 'LRB', 0, 'C'); // Espaciador para la columna Res.
         $this->Ln();
 
         // Tamaño de fuente para los datos (aumentado a 8pt para mejor legibilidad)
         $this->SetFont('Arial','',8); 
         
+        // Determinar la altura base de la fila según el número de asignaturas
+        $num_asignaturas = count($asignaturas);
+        $baseRowHeight = 5; // Altura por defecto
+        if ($num_asignaturas <= 10) {
+            $baseRowHeight = 10; // Duplicar la altura si hay 10 o menos asignaturas
+        }
+
         foreach ($asignaturas as $nombre => $data_asignatura) {
             $x = $this->GetX();
             $y = $this->GetY();
@@ -200,10 +244,10 @@ class PDF extends FPDF {
             // Estimar la altura que ocupará el nombre con MultiCell
             $this->SetFont('Arial','',8);
             $nb = $this->NbLines($col_asignatura_width, convertirtexto($nombre));
-            $rowHeight = 5 * $nb; // Ajusta 5 según la altura de línea deseada
+            $rowHeight = $baseRowHeight * $nb; // Usar la altura base de fila determinada dinámicamente
 
             // Imprimir MultiCell para Asignatura
-            $this->MultiCell($col_asignatura_width, 5, convertirtexto($nombre), 1, 'L');
+            $this->MultiCell($col_asignatura_width, $baseRowHeight, convertirtexto($nombre), 1, 'L'); // Usar $baseRowHeight aquí
 
             // Establecer posición para las demás celdas de la fila
             $this->SetXY($x + $col_asignatura_width, $y);
@@ -309,24 +353,37 @@ $nombre_modalidad = $desc_data['nombre_modalidad'] ?? '';
 $nombre_grado = $desc_data['nombre_grado'] ?? '';
 $nombre_seccion = $desc_data['nombre_seccion'] ?? '';
 $nombre_turno = $desc_data['nombre_turno'] ?? '';
-$nombre_grado_seccion_turno = $nombre_grado . ' ' . $nombre_seccion . ' ' . $nombre_turno;
-$nombre_annlectivo = $desc_data['nombre_annlectivo'] ?? '';
+$nombre_grado_seccion_turno = trim($nombre_grado) . ' ' . trim($nombre_seccion) . ' ' . trim($nombre_turno);
+$nombre_annlectivo = trim($desc_data['nombre_annlectivo']) ?? '';
 
 
-// Obtener estudiantes
-$sqlEst = "SELECT a.id_alumno, a.codigo_nie,
+// Obtener estudiantes (ahora incluyendo foto y codigo_genero)
+$sqlEst = "SELECT a.id_alumno, a.codigo_nie, a.foto, a.codigo_genero,
         TRIM(a.nombre_completo) AS nombres,
         TRIM(a.apellido_paterno) AS apellido_paterno,
         TRIM(a.apellido_materno) AS apellido_materno
         FROM alumno a
         INNER JOIN alumno_matricula am ON am.codigo_alumno = a.id_alumno
-        WHERE am.codigo_bach_o_ciclo = ?
-        AND CONCAT(am.codigo_grado, am.codigo_seccion, am.codigo_turno) = ?
-        AND am.codigo_ann_lectivo = ?
-        AND am.retirado = false
-        ORDER BY nombres, apellido_paterno, apellido_materno"; 
+        WHERE am.codigo_bach_o_ciclo = :modalidad
+        AND CONCAT(am.codigo_grado, am.codigo_seccion, am.codigo_turno) = :gradoseccion
+        AND am.codigo_ann_lectivo = :annlectivo";
+
+// Si se proporciona un ID de alumno, añadirlo a la consulta
+if ($id_alumno_individual !== null) {
+    $sqlEst .= " AND a.id_alumno = :id_alumno_individual";
+}
+$sqlEst .= " AND am.retirado = false ORDER BY nombres, apellido_paterno, apellido_materno"; 
+
 $st = $pdo->prepare($sqlEst);
-$st->execute([$modalidad, $gradoseccion, $annlectivo]);
+$params = [
+    ':modalidad' => $modalidad,
+    ':gradoseccion' => $gradoseccion,
+    ':annlectivo' => $annlectivo
+];
+if ($id_alumno_individual !== null) {
+    $params[':id_alumno_individual'] = $id_alumno_individual;
+}
+$st->execute($params);
 $estudiantes = $st->fetchAll(PDO::FETCH_ASSOC);
 
 // PDF
@@ -352,7 +409,9 @@ foreach ($estudiantes as $est) {
         $full_student_name,
         $nombre_modalidad,
         $nombre_grado_seccion_turno,
-        $nombre_annlectivo
+        $nombre_annlectivo,
+        $est['foto'], // Pasar el nombre del archivo de la foto
+        $est['codigo_genero']  // Pasar el código de género del estudiante
     );
 
 $sqlNotas = "

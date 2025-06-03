@@ -125,6 +125,22 @@ $(document).ready(function () {
         window.open(url, '_blank');
     });
     
+    // NUEVO: Event listener para el botón de informe individual en la tabla
+    $(document).on('click', '.btn-informe-individual', function() {
+        const id_alumno = $(this).data('id-alumno');
+        const modalidad = $('#lstmodalidad').val();
+        const gradoseccion = $('#lstgradoseccion').val();
+        const annlectivo = $('#lstannlectivo').val();
+
+        if (!modalidad || !gradoseccion || !annlectivo || !id_alumno) {
+            Swal.fire('Error', 'Faltan datos para generar el informe individual.', 'warning');
+            return;
+        }
+
+        // Llama al InformePorSeccionHorizontal.php con el id_alumno específico
+        const url = `php_libs/reportes/Estudiante/InformePorSeccionHorizontal.php?modalidad=${modalidad}&gradoseccion=${gradoseccion}&annlectivo=${annlectivo}&id_alumno=${id_alumno}`;
+        window.open(url, '_blank');
+    });
 
     $('#btnCerrarRecuperacion').on('click', function () {
     new bootstrap.Modal(document.getElementById('modalRecuperacion')).hide();
@@ -262,6 +278,14 @@ function construirTabla() {
                     const resultado = nota_pp >= califMinima ? 'Aprobado' : 'Reprobado';
                     const clase = resultado === 'Aprobado' ? 'text-success fw-bold' : 'text-danger fw-bold';
                     return `<span class="${clase}">${resultado}</span>`;
+                }
+            },
+            {
+                data: null, title: 'Acciones',
+                render: (data, type, row) => {
+                    return `<button type="button" class="btn btn-sm btn-primary btn-informe-individual" data-id-alumno="${row.id_alumno}">
+                                <i class="fas fa-file-pdf"></i> 
+                            </button>`;
                 }
             }
         ],

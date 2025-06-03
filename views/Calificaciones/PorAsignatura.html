@@ -29,13 +29,13 @@
             <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
                 Calificaciones por Asignatura
                 <button type="button" id="btnGenerarInforme" class="btn btn-light btn-sm shadow-sm">
-                    <i class="fas fa-file-pdf me-2"></i> Informe Por Asignatura
+                    <i class="fas fa-file-pdf me-2"></i> Por Asignatura
                 </button>
                 <button type="button" id="btnGenerarInformePorNivel" class="btn btn-light btn-sm shadow-sm">
-                    <i class="fas fa-file-pdf me-2"></i> Informe Por Nivel
+                    <i class="fas fa-file-pdf me-2"></i> Por Nivel
                 </button>
                 <button type="button" id="btnInformeHorizontalSeccion" class="btn btn-warning btn-sm shadow-sm ms-2">
-                    <i class="fas fa-file-alt me-2"></i> Informe Horizontal por Sección
+                    <i class="fas fa-file-alt me-2"></i> Por Sección (Boleta de Calificación)
                 </button>
                 {# ---- NUEVO BOTÓN AÑADIDO AQUÍ ---- #}
                     <button type="button" id="btnRangoCalificaciones" class="btn btn-info btn-sm shadow-sm ms-2"> {# ms-2 para un pequeño margen a la izquierda #}
@@ -84,6 +84,7 @@
                                 <th scope="col">Nota PP</th>
                                 <th scope="col">RESULTADO</th>
                                 <th scope="col" col="scope" style="display:none">codigo_cc</th>
+                                <th scope="col" col="scope" style="display:none">id_alumno</th> {# NUEVO CAMPO OCULTO #}
                             </tr>
                         </thead>
                         <tbody></tbody>
