@@ -250,29 +250,54 @@ try {
         $codigo_modalidad = $_POST["modalidad"];
         $codigo_annlectivo = $_POST["annlectivo"];
         $fecha_actual = date('Y-m-d'); // Obtener la fecha actual del servidor en formato YYYY-MM-DD
-
-        $sql = "
-            SELECT
-                pc.id_,
-                pc.codigo_periodo,
-                cp.descripcion,
-                c.calificacion_minima
-            FROM public.periodo_calendario pc
-            INNER JOIN public.catalogo_periodo cp ON pc.codigo_periodo = cp.id_
-            INNER JOIN public.catalogo_periodos c ON pc.codigo_modalidad = c.codigo_modalidad
-            WHERE pc.codigo_modalidad = :codigo_modalidad
-            AND pc.codigo_annlectivo = :codigo_annlectivo
-            AND pc.estatus = 't' 
-            AND pc.fecha_registro_academico >= :fecha_actual 
-            ORDER BY pc.codigo_periodo ASC
-        ";
-
-        $stmt = $pdo->prepare($sql);
-        $stmt->execute([
+        $codigoPerfil = $_SESSION['codigo_perfil'] ?? '';
+        // FILTER POR CODIGO PERFIL PARA DOCENTES, REGISTRO ACADEMICO Y ADMINISTRATIVO
+        if ($codigoPerfil == "01" || $codigoPerfil == "04" || $codigoPerfil == "05") {
+            $sql = "
+                SELECT
+                    pc.id_,
+                    pc.codigo_periodo,
+                    cp.descripcion,
+                    c.calificacion_minima
+                FROM public.periodo_calendario pc
+                INNER JOIN public.catalogo_periodo cp ON pc.codigo_periodo = cp.id_
+                INNER JOIN public.catalogo_periodos c ON pc.codigo_modalidad = c.codigo_modalidad
+                WHERE pc.codigo_modalidad = :codigo_modalidad
+                AND pc.codigo_annlectivo = :codigo_annlectivo
+                AND pc.estatus = 't' 
+                ORDER BY pc.codigo_periodo ASC
+            ";
+                $stmt = $pdo->prepare($sql);
+                $stmt->execute([
+                ':codigo_modalidad' => $codigo_modalidad,
+                ':codigo_annlectivo' => $codigo_annlectivo
+        ]);
+        } else if ($codigoPerfil == "06") {
+            $sql = "
+                SELECT
+                    pc.id_,
+                    pc.codigo_periodo,
+                    cp.descripcion,
+                    c.calificacion_minima
+                FROM public.periodo_calendario pc
+                INNER JOIN public.catalogo_periodo cp ON pc.codigo_periodo = cp.id_
+                INNER JOIN public.catalogo_periodos c ON pc.codigo_modalidad = c.codigo_modalidad
+                WHERE pc.codigo_modalidad = :codigo_modalidad
+                AND pc.codigo_annlectivo = :codigo_annlectivo
+                AND pc.estatus = 't' 
+                AND pc.fecha_registro_academico >= :fecha_actual 
+                ORDER BY pc.codigo_periodo ASC
+            ";
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute([
             ':codigo_modalidad' => $codigo_modalidad,
             ':codigo_annlectivo' => $codigo_annlectivo,
             ':fecha_actual' => $fecha_actual
         ]);
+        }
+        
+
+
 
         $data = [];
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {

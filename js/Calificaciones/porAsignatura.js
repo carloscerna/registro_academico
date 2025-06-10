@@ -92,13 +92,13 @@ $(document).ready(function () {
         let calificacionMinima = $('#calificacionMinima').val();
     
         //  ✅ Validación de datos
-        if (!modalidad || !gradoseccion || !annlectivo || !asignatura || !periodo) {
+        if (!modalidad || !gradoseccion || !annlectivo) {
             Swal.fire('Error', 'Por favor, complete todos los campos antes de generar el informe.', 'warning');
             return;
         }
     
         //  ✅ URL completa y correcta
-        let url = '/registro_academico/php_libs/reportes/Estudiante/informePorModalidad.php?modalidad=' + modalidad +
+        let url = '/registro_academico/php_libs/reportes/Estudiante/informePorModalidad_modificado.php?modalidad=' + modalidad +
                   '&nombre_modalidad=' + encodeURIComponent(nombre_modalidad) +
                   '&gradoseccion=' + gradoseccion +
                   '&nombre_grado=' + encodeURIComponent(nombre_grado) +
