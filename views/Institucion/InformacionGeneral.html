@@ -64,7 +64,6 @@
 <div class="content-wrapper fondoBody">
     <!-- Content Header (Page header) 
     Se elimino content-header section solo se va dejar Main Content -->
-    
   <!-- Main content -->
     <section class="content">
       <div class="container mt-4">
@@ -81,10 +80,11 @@
                 <table id="instituciones" class="table table-striped">
                     <thead>
                         <tr>
-                            <th>Código Institución</th>
-                            <th>Nombre Institución</th>
-                            <th>Teléfono</th>
-                            <th>Acciones</th>
+                            <th scope="col">Id</th>
+                            <th scope="col">Código Institución</th>
+                            <th scope="col">Nombre Institución</th>
+                            <th scope="col">Teléfono</th>
+                            <th scope="col">Acciones</th>
                         </tr>
                     </thead>
                     <tbody id="dataInstituciones">
@@ -94,7 +94,7 @@
             </div>
         </div>
     </div>
-    </section>  
+    </section>
 </div> <!-- /.content-Wrapper, Contains page content. -->
  <!-- Modal para registrar/editar -->
  <div class="modal fade" id="modalRegistro" tabindex="-1" aria-labelledby="modalRegistroLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
@@ -170,38 +170,55 @@
                 <input type="text" class="form-control" id="nombre_base_datos" name="nombre_base_datos" required maxlength="60">
               </div>
               <!-- Subida de logos -->
-              <div class="mb-3">
-                <label for="logo_uno" class="form-label">Logo 1</label>
-                <input type="file" class="form-control" id="logo_uno" name="logo_uno" accept="image/png, image/jpeg">
-                <img id="preview_logo_uno" src="#" class="img-fluid mt-2" style="max-width: 150px; display: none;">
-              </div>
-              <div class="mb-3">
-                <label for="logo_dos" class="form-label">Logo 2</label>
-                <input type="file" class="form-control" id="logo_dos" name="logo_dos" accept="image/png, image/jpeg">
-                <img id="preview_logo_dos" src="#" class="img-fluid mt-2" style="max-width: 150px; display: none;">
-              </div>
-              <div class="mb-3">
-                <label for="logo_tres" class="form-label">Logo 3</label>
-                <input type="file" class="form-control" id="logo_tres" name="logo_tres" accept="image/png, image/jpeg">
-                <img id="preview_logo_tres" src="#" class="img-fluid mt-2" style="max-width: 150px; display: none;">
-              </div>
-              <!-- Subida de imagen firma y sello del director -->
-              <div class="mb-3">
-                <label for="imagen_firma_director" class="form-label">Firma del Director</label>
-                <div class="input-group">
-                  <input type="file" class="form-control" id="imagen_firma_director" name="imagen_firma_director" accept="image/png, image/jpeg">
-                  <button class="btn btn-outline-secondary" type="button" onclick="resetInput('imagen_firma_director', 'preview_firma_director')">Eliminar</button>
+                <div class="mb-3">
+                    <label for="logo_uno" class="form-label">Logo Institución 1</label>
+                    <div class="input-group">
+                        <input type="file" class="form-control" id="logo_uno" name="logo_uno" accept="image/png, image/jpeg">
+                        <button class="btn btn-outline-secondary" type="button" onclick="resetInput('logo_uno', 'preview_logo_uno', 'current_logo_uno_name')">Eliminar</button>
+                    </div>
+                    <img id="preview_logo_uno" src="#" class="img-fluid mt-2" style="max-width: 150px; display: none;">
+                    <span id="current_logo_uno_name" class="form-text text-muted" style="display: none;"></span>
                 </div>
-                <img id="preview_firma_director" src="#" class="img-fluid mt-2" style="max-width: 150px; display: none;">
-              </div>
-              <div class="mb-3">
-                <label for="imagen_sello_director" class="form-label">Sello del Director</label>
-                <div class="input-group">
-                  <input type="file" class="form-control" id="imagen_sello_director" name="imagen_sello_director" accept="image/png, image/jpeg">
-                  <button class="btn btn-outline-secondary" type="button" onclick="resetInput('imagen_sello_director', 'preview_sello_director')">Eliminar</button>
+
+                <div class="mb-3">
+                    <label for="logo_dos" class="form-label">Logo Institución 2</label>
+                    <div class="input-group">
+                        <input type="file" class="form-control" id="logo_dos" name="logo_dos" accept="image/png, image/jpeg">
+                        <button class="btn btn-outline-secondary" type="button" onclick="resetInput('logo_dos', 'preview_logo_dos', 'current_logo_dos_name')">Eliminar</button>
+                    </div>
+                    <img id="preview_logo_dos" src="#" class="img-fluid mt-2" style="max-width: 150px; display: none;">
+                    <span id="current_logo_dos_name" class="form-text text-muted" style="display: none;"></span>
                 </div>
-                <img id="preview_sello_director" src="" class="img-fluid mt-2" style="max-width: 150px; display: none;">
-              </div>
+
+                <div class="mb-3">
+                    <label for="logo_tres" class="form-label">Logo Institución 3</label>
+                    <div class="input-group">
+                        <input type="file" class="form-control" id="logo_tres" name="logo_tres" accept="image/png, image/jpeg">
+                        <button class="btn btn-outline-secondary" type="button" onclick="resetInput('logo_tres', 'preview_logo_tres', 'current_logo_tres_name')">Eliminar</button>
+                    </div>
+                    <img id="preview_logo_tres" src="#" class="img-fluid mt-2" style="max-width: 150px; display: none;">
+                    <span id="current_logo_tres_name" class="form-text text-muted" style="display: none;"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label for="imagen_firma_director" class="form-label">Firma del Director</label>
+                    <div class="input-group">
+                        <input type="file" class="form-control" id="imagen_firma_director" name="imagen_firma_director" accept="image/png, image/jpeg">
+                        <button class="btn btn-outline-secondary" type="button" onclick="resetInput('imagen_firma_director', 'preview_firma_director', 'current_firma_director_name')">Eliminar</button>
+                    </div>
+                    <img id="preview_firma_director" src="#" class="img-fluid mt-2" style="max-width: 150px; display: none;">
+                    <span id="current_firma_director_name" class="form-text text-muted" style="display: none;"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label for="imagen_sello_director" class="form-label">Sello del Director</label>
+                    <div class="input-group">
+                        <input type="file" class="form-control" id="imagen_sello_director" name="imagen_sello_director" accept="image/png, image/jpeg">
+                        <button class="btn btn-outline-secondary" type="button" onclick="resetInput('imagen_sello_director', 'preview_sello_director', 'current_sello_director_name')">Eliminar</button>
+                    </div>
+                    <img id="preview_sello_director" src="" class="img-fluid mt-2" style="max-width: 150px; display: none;">
+                    <span id="current_sello_director_name" class="form-text text-muted" style="display: none;"></span>
+                </div>
             </div>
           </div>
           <div class="text-end">
