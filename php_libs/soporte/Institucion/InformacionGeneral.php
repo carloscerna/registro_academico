@@ -119,7 +119,7 @@ switch ($action) {
     $current_files_db = [];
     if (!empty($id_institucion)) { // Si estamos editando un registro existente
         try {
-            $stmt_get_current_files = $pdo->prepare("SELECT logo_uno, logo_dos, logo_tres, imagen_firma, imagen_sello FROM informacion_institucion WHERE id_institucion = ?");
+            $stmt_get_current_files = $pdo->prepare("SELECT logo_uno, logo_dos, logo_tres, imagen_firma_director, imagen_sello_director FROM informacion_institucion WHERE id_institucion = ?");
             $stmt_get_current_files->execute([$id_institucion]);
             $current_files_db = $stmt_get_current_files->fetch(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
@@ -193,7 +193,7 @@ switch ($action) {
                         codigo_municipio, codigo_departamento, telefono_uno, 
                         nombre_director, encargada_registro_academico, codigo_turno, 
                         codigo_sector, numero_acuerdo, dbname,
-                        logo_uno, logo_dos, logo_tres, imagen_firma, imagen_sello
+                        logo_uno, logo_dos, logo_tres, imagen_firma_director, imagen_sello_director
                     ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             $stmt = $pdo->prepare($sql);
             $stmt->execute([
@@ -224,7 +224,7 @@ switch ($action) {
                         codigo_municipio = ?, codigo_departamento = ?, telefono_uno = ?, 
                         nombre_director = ?, encargada_registro_academico = ?, codigo_turno = ?, 
                         codigo_sector = ?, numero_acuerdo = ?, dbname = ?,
-                        logo_uno = ?, logo_dos = ?, logo_tres = ?, imagen_firma = ?, imagen_sello = ?
+                        logo_uno = ?, logo_dos = ?, logo_tres = ?, imagen_firma_director = ?, imagen_sello_director = ?
                     WHERE id_institucion = ?";
             $stmt = $pdo->prepare($sql);
             $stmt->execute([
