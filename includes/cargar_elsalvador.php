@@ -7,9 +7,12 @@
     header("Content-Type: text/html; charset=UTF-8");    
 // Valores del Post.
     $NumeroCondicion = $_REQUEST["NumeroCondicion"];
-    $codigoDepartamento = $_REQUEST["CodigoDepartamento"];
-    $codigoMunicipio = $_REQUEST["CodigoMunicipio"];
-    $codigoDistrito = $_REQUEST["CodigoDistrito"];
+
+    // Verificar si los índices están definidos antes de usarlos
+    $codigoDepartamento = isset($_REQUEST["CodigoDepartamento"]) ? $_REQUEST["CodigoDepartamento"] : "";
+    $codigoMunicipio = isset($_REQUEST["CodigoMunicipio"]) ? $_REQUEST["CodigoMunicipio"] : "";
+    $codigoDistrito = isset($_REQUEST["CodigoDistrito"]) ? $_REQUEST["CodigoDistrito"] : "";
+
 // consulta PDO.
 try{
     switch ($NumeroCondicion) {

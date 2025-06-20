@@ -4,108 +4,110 @@ let CodigoPersonal = ""; // Considera si esta variable global es realmente neces
 $(function () { // INICIO DEL FUNCTION.
   $(document).ready(function () {
     cargarRegistros();
-
-    // Inicializar Select2 una vez al cargar el documento, sin dropdownParent inicialmente.
-    // Esto maneja la renderización inicial. dropdownParent se establecerá al abrir el modal.
-    $('#nombre_director').select2({
-      theme: 'bootstrap-5',
-      width: 'resolve',
-      minimumResultsForSearch: 0 // Permitir búsqueda incluso con pocos resultados
-    });
-    $('#codigo_encargado_registro').select2({
-      theme: 'bootstrap-5',
-      width: 'resolve',
-      minimumResultsForSearch: 0 // Permitir búsqueda incluso con pocos resultados
-    });
   });
 
   // Función para mostrar vista previa de imagen
-  function mostrarVistaPrevia(input, idPreview) {
+  function mostrarVistaPrevia(input, idPreview, fileNameSpanId) {
     const file = input.files[0];
     if (file) {
       const reader = new FileReader();
       reader.onload = function (e) {
         $(idPreview).attr("src", e.target.result).show();
+        $("#" + fileNameSpanId).text(file.name).hide(); // Ocultar el span si hay un nuevo archivo
       };
       reader.readAsDataURL(file);
     } else {
-      $(idPreview).attr("src", "").hide(); // Ocultar si no se selecciona ningún archivo
+      // Si el input file se limpia, ocultar vista previa y span de nombre
+      $(idPreview).attr("src", "").hide();
+      $("#" + fileNameSpanId).text("").hide();
     }
   }
 
-    // >>>>>> CORRECCIÓN AQUÍ: HACER resetInput GLOBAL <<<<<<
+  // CORRECCIÓN: Hacer resetInput GLOBAL para que pueda ser llamado desde onclick en HTML.
   window.resetInput = function(inputId, previewId, fileNameSpanId) {
     $("#" + inputId).val("");
     $("#" + previewId).attr("src", "").hide();
     $("#" + fileNameSpanId).text("").hide(); // Ocultar el nombre del archivo también
   }
-  // >>>>>> FIN DE CORRECCIÓN <<<<<<
+
   // Eventos para mostrar la vista previa en cada input file
   $("#logo_uno").change(function () {
-    mostrarVistaPrevia(this, "#preview_logo_uno");
+    mostrarVistaPrevia(this, "#preview_logo_uno", "current_logo_uno_name");
   });
   $("#logo_dos").change(function () {
-    mostrarVistaPrevia(this, "#preview_logo_dos");
+    mostrarVistaPrevia(this, "#preview_logo_dos", "current_logo_dos_name");
   });
   $("#logo_tres").change(function () {
-    mostrarVistaPrevia(this, "#preview_logo_tres");
+    mostrarVistaPrevia(this, "#preview_logo_tres", "current_logo_tres_name");
   });
   $("#imagen_firma_director").change(function () {
-    mostrarVistaPrevia(this, "#preview_firma_director");
+    mostrarVistaPrevia(this, "#preview_firma_director", "current_firma_director_name");
   });
   $("#imagen_sello_director").change(function () {
-    mostrarVistaPrevia(this, "#preview_sello_director");
+    mostrarVistaPrevia(this, "#preview_sello_director", "current_sello_director_name");
   });
 
-  // Al hacer clic en "Nuevo registro", reinicia el formulario y oculta las vistas previas y nombres de archivo
-  $("#btnNuevoRegistro").on("click", function () {
-    $("#formInstitucion")[0].reset();
-    $("#id_institucion").val("");
-    $("img[id^='preview_']").attr("src", "").hide();
-    $("span[id^='current_']").text("").hide(); // Ocultar los nombres de archivo actuales
+  // *** CAMBIOS CLAVE PARA SELECT2 EN MODALES (Inic. y Destrucción) ***
 
-    // Resetear los campos Select2 para un nuevo registro
-    $('#nombre_director').val('').trigger('change');
-    $('#codigo_encargado_registro').val('').trigger('change');
-   
+  // Evento para cuando el modal se muestra (antes de que la transición termine)
+  $('#modalRegistro').on('show.bs.modal', function (e) {
+    // (Re)inicializar Select2 con dropdownParent
+    // Esto asegura que Select2 esté fresco y su dropdown aparezca dentro del modal.
+    $('#nombre_director').select2({
+      theme: 'bootstrap-5',
+      width: '100%',
+      minimumResultsForSearch: 0, // Permitir búsqueda incluso con pocos resultados
+      dropdownParent: $('#modalRegistro') // Asegurar que el dropdown está dentro del modal
+    });
+    $('#codigo_encargado_registro').select2({
+      theme: 'bootstrap-5',
+      width: '100%',
+      minimumResultsForSearch: 0, // Permitir búsqueda incluso con pocos resultados
+      dropdownParent: $('#modalRegistro') // Asegurar que el dropdown está dentro del modal
+    });
+
+    // Siempre cargar las opciones de personal cuando el modal se abre
+    cargarPersonalOptions();
+  });
+
+  // Evento para cuando el modal está completamente oculto
+  $('#modalRegistro').on('hidden.bs.modal', function () {
+      // Destruir las instancias de Select2 para evitar conflictos al reabrir el modal
+      if ($('#nombre_director').data('select2')) {
+          $('#nombre_director').select2('destroy');
+      }
+      if ($('#codigo_encargado_registro').data('select2')) {
+          $('#codigo_encargado_registro').select2('destroy');
+      }
+            console.log("Modal completamente oculto. Recargando registros.");
+      cargarRegistros(); // Recargar la tabla SOLO después de que el modal esté completamente oculto
+  });
+  // *** FIN DE CAMBIOS CLAVE PARA SELECT2 EN MODALES ***
+
+  // Evento para el botón "Nuevo Registro"
+  $("#btnNuevoRegistro").click(function () {
+    $("#formInstitucion")[0].reset(); // Limpiar el formulario
+    $("#id_institucion").val(""); // Asegurarse de que el ID esté vacío para una nueva inserción
+
     // Resetear vistas previas y nombres de archivos al abrir para nuevo registro
     resetInput('logo_uno', 'preview_logo_uno', 'current_logo_uno_name');
     resetInput('logo_dos', 'preview_logo_dos', 'current_logo_dos_name');
     resetInput('logo_tres', 'preview_logo_tres', 'current_logo_tres_name');
     resetInput('imagen_firma_director', 'preview_firma_director', 'current_firma_director_name');
     resetInput('imagen_sello_director', 'preview_sello_director', 'current_sello_director_name');
-
-    // Cargar la lista de personal para un nuevo registro
-    cargarPersonalOptions();
+    
+    // Resetear Select2 a su estado por defecto
+    // Es importante que Select2 ya esté inicializado (por el 'show.bs.modal' anterior)
+    $('#nombre_director').val('').trigger('change');
+    $('#codigo_encargado_registro').val('').trigger('change');
   });
 
-  // Llamarla al abrir el modal
-  $('#modalRegistro').on('show.bs.modal', function (e) {
-    // Set dropdownParent cuando se muestra el modal
-    $('#nombre_director').select2({
-      dropdownParent: $('#modalRegistro'),
-      minimumResultsForSearch: 0,
-      width: "100%"
-    });
-    $('#codigo_encargado_registro').select2({
-      dropdownParent: $('#modalRegistro'),
-      minimumResultsForSearch: 0,
-      width: "100%"
-    });
-        // Asegurarse de que las listas de personal se carguen cada vez que se muestre el modal
-      cargarPersonalOptions();
-  });
- // NUEVO: Evento para cuando el modal está completamente oculto
-  $('#modalRegistro').on('hidden.bs.modal', function () {
-      console.log("Modal completamente oculto. Recargando registros.");
-      cargarRegistros(); // Recargar la tabla SOLO después de que el modal esté completamente oculto
-  });
   // GUARDAR O ACTUALIZAR REGISTRO.
   $("#formInstitucion").submit(function (event) {
     event.preventDefault();
     let formData = new FormData(this); // Captura todos los datos y archivos
 
-        // Lógica para añadir los nombres de archivo actuales al formData
+    // Lógica para añadir los nombres de archivo actuales al formData
     // Esto es CRUCIAL para que PHP sepa qué mantener si no se sube un nuevo archivo.
     // Solo si estamos editando un registro existente (id_institucion tiene valor)
     if ($("#id_institucion").val() !== "") {
@@ -129,9 +131,8 @@ $(function () { // INICIO DEL FUNCTION.
       });
     }
 
-
     $.ajax({
-      url: "php_libs/soporte/institucion/informaciongeneral.php?action=procesar",
+      url: "php_libs/soporte/institucion/informacionGeneral.php?action=procesar",
       type: "POST",
       data: formData,
       processData: false, // Necesario para FormData
@@ -139,16 +140,20 @@ $(function () { // INICIO DEL FUNCTION.
       dataType: "json",
       success: function (response) {
         if (response.response) {
-        Swal.fire({
-          title: "Éxito",
-          text: response.message,
-          icon: "success",
-          timer: 2000,
-          showConfirmButton: false
-        }).then(() => { // Usar .then() para asegurar que el modal se cierre y luego se carguen los registros.
-            cargarRegistros(); // <<<--- ESTO ES CRUCIAL
-            $("#modalRegistro").modal("hide"); // Se cierra el modal después del Swal.fire
-        });
+          Swal.fire({
+            title: "Éxito",
+            text: response.message,
+            icon: "success",
+            timer: 2000,
+            showConfirmButton: false
+          }).then(() => {
+            //$("#modalRegistro").modal("hide"); // Dispara el evento 'hidden.bs.modal'
+            // La función cargarRegistros() ahora se llama en el evento 'hidden.bs.modal'
+              // Por si acaso el evento hidden.bs.modal no se dispara (fallback)
+              setTimeout(() => {
+                cargarRegistros();
+              }, 1800);
+          });
         } else {
           Swal.fire("Error", response.message + " - " + response.error, "error");
         }
@@ -159,187 +164,224 @@ $(function () { // INICIO DEL FUNCTION.
     });
   });
 
-}); // FIN DEL FUNCTION.
-
-
-// CARGAR DATOS
-function cargarRegistros() {
-  $.ajax({
-    cache: false,
-    url: "php_libs/soporte/institucion/informaciongeneral.php",
-    type: "POST",
-    dataType: "json",
-    data: {
-      action: "listar"
-    },
-    success: function (response) {
-      if (response.response) {
-        $("#dataInstituciones").html(response.data);
-        if ($.fn.DataTable.isDataTable('#instituciones')) {
-          $('#instituciones').DataTable().destroy();
-        }
-        $('#instituciones').DataTable();
-      } else {
-        Swal.fire("Error", response.message + " - " + response.error, "error");
-      }
-    },
-    error: function (jqXHR, textStatus, errorThrown) {
-      Swal.fire("Error", "Error al cargar los registros: " + textStatus + " - " + errorThrown, "error");
-    }
-  });
-}
-
-// EDITAR REGISTRO CARGAR DATOS AL MODAL.
-function editarRegistro(id) {
-  // Load personal options first, then populate form
-  cargarPersonalOptions().then(() => {
+  // Función para cargar los registros en la tabla
+  function cargarRegistros() {
+    console.log("Cargando registros..."); // Log para depuración
     $.ajax({
       url: "php_libs/soporte/institucion/informacionGeneral.php",
       type: "POST",
-      data: {
-        id: id,
-        action: "obtener"
-      },
+      data: { action: "listar" },
       dataType: "json",
       success: function (response) {
         if (response.response) {
-          // Asignar todos los campos recibidos al formulario
-          $("#id_institucion").val(response.data.id_institucion);
-          $("#codigo_institucion").val(response.data.codigo_institucion);
-          $("#nombre_institucion").val(response.data.nombre_institucion);
-          $("#direccion_institucion").val(response.data.direccion_institucion);
-          $("#codigo_municipio").val(response.data.codigo_municipio);
-          $("#codigo_departamento").val(response.data.codigo_departamento);
-          $("#telefono").val(response.data.telefono_uno);
-
-          $("#codigo_turno").val(response.data.codigo_turno);
-          $("#codigo_sector").val(response.data.codigo_sector);
-          $("#numero_acuerdo").val(response.data.numero_acuerdo);
-          $("#nombre_base_datos").val(response.data.dbname);
-
-          // >>>>>> MODIFICACIÓN CLAVE AQUÍ PARA ARCHIVOS <<<<<<
-          // Para logos y otras imágenes: mostrar preview y el nombre del archivo si existe
-          const imageFields = [
-              { id: 'logo_uno', preview: '#preview_logo_uno', nameSpan: '#current_logo_uno_name', dataField: 'logo_uno' },
-              { id: 'logo_dos', preview: '#preview_logo_dos', nameSpan: '#current_logo_dos_name', dataField: 'logo_dos' },
-              { id: 'logo_tres', preview: '#preview_logo_tres', nameSpan: '#current_logo_tres_name', dataField: 'logo_tres' },
-              { id: 'imagen_firma_director', preview: '#preview_firma_director', nameSpan: '#current_firma_director_name', dataField: 'imagen_firma' },
-              { id: 'imagen_sello_director', preview: '#preview_sello_director', nameSpan: '#current_sello_director_name', dataField: 'imagen_sello' }
-          ];
-
-          imageFields.forEach(field => {
-              if (response.data[field.dataField]) {
-                  $(field.preview).attr("src", response.data[field.dataField]).show();
-                  // Extraer solo el nombre del archivo de la ruta completa (si es una URL)
-                  const fileName = response.data[field.dataField].split('/').pop();
-                  $(field.nameSpan).text(fileName).show();
-              } else {
-                  $(field.preview).hide();
-                  $(field.nameSpan).text("").hide();
-              }
-          });
-          // >>>>>> FIN MODIFICACIÓN CLAVE <<<<<<
-          $("#modalRegistro").modal("show");
-          // *** APLICAR LOS VALORES DE SELECT2 DESPUÉS DE QUE EL MODAL SE MUESTRE COMPLETO ***
-          // Usar un pequeño setTimeout para asegurar que Select2 tenga tiempo de renderizarse
-          // O, aún mejor, usar el evento 'shown.bs.modal'
-          $('#modalRegistro').one('shown.bs.modal', function () { // Usar 'one' para que se dispare una sola vez
-            // Aplicar valor para nombre_director
-            const directorId = response.data.nombre_director; // Suponiendo que `nombre_director` de la DB es el ID
-            if ($('#nombre_director option[value="' + directorId + '"]').length > 0) {
-              $('#nombre_director').val(directorId).trigger('change');
-              console.log("Director ID aplicado:", directorId);
-            } else {
-              console.warn(`ID de director ${directorId} no encontrado en las opciones, limpiando.`);
-              $('#nombre_director').val('').trigger('change');
-            }
-
-            // Aplicar valor para codigo_encargado_registro
-            const encargadoId = String(response.data.encargada_registro_academico).trim(); // Suponiendo que `nombre_director` de la DB es el ID
-            if ($('#codigo_encargado_registro option[value="' + encargadoId + '"]').length > 0) {
-              $('#codigo_encargado_registro').val(encargadoId).trigger('change');
-              console.log("Encargado ID aplicado:", encargadoId);
-            } else {
-              console.warn(`ID de encargado ${encargadoId} no encontrado en las opciones, limpiando.`);
-              $('#codigo_encargado_registro').val('').trigger('change');
-            }
-          });
+          $("#tablaInstitucion tbody").html(response.data); // Asume que response.data contiene el HTML de las filas
         } else {
           Swal.fire("Error", response.message, "error");
+          $("#tablaInstitucion tbody").html("<tr><td colspan='5' class='text-center'>Error al cargar los registros: " + response.message + "</td></tr>");
         }
       },
       error: function (jqXHR, textStatus, errorThrown) {
-        Swal.fire("Error", "Error al obtener los datos para editar: " + textStatus + " - " + errorThrown, "error");
+        Swal.fire("Error", "Error al cargar los registros: " + textStatus + " - " + errorThrown, "error");
+        $("#tablaInstitucion tbody").html("<tr><td colspan='5' class='text-center'>Error de conexión al cargar registros.</td></tr>");
       }
     });
-  });
-}
-// ELIMINAR REGISTROS
-function eliminarRegistro(id) {
-  Swal.fire({
-    title: "¿Eliminar registro?",
-    text: "Esta acción no se puede deshacer",
-    icon: "warning",
-    showCancelButton: true,
-    confirmButtonText: "Sí, eliminar",
-    cancelButtonText: "Cancelar",
-  }).then((result) => {
-    if (result.isConfirmed) {
+  }
+
+  // ELIMINAR REGISTRO.
+  window.eliminarRegistro = function (id) {
+    Swal.fire({
+      title: '¿Está seguro?',
+      text: "¡No podrá revertir esto!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Sí, eliminarlo!'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        $.ajax({
+          url: "php_libs/soporte/institucion/informacionGeneral.php",
+          type: "POST",
+          data: { id: id, action: "eliminar" },
+          dataType: "json",
+          success: function (response) {
+            if (response.response) {
+              Swal.fire(
+                '¡Eliminado!',
+                'El registro ha sido eliminado.',
+                'success'
+              );
+              cargarRegistros();
+            } else {
+              Swal.fire("Error", response.message + " - " + response.error, "error");
+            }
+          },
+          error: function (jqXHR, textStatus, errorThrown) {
+            Swal.fire("Error", "Error al eliminar el registro: " + textStatus + " - " + errorThrown, "error");
+          }
+        });
+      }
+    });
+  };
+
+  // EDITAR REGISTRO CARGAR DATOS AL MODAL.
+  window.editarRegistro = function (id) {
+    // Asegurarse de que las opciones de personal estén cargadas ANTES de intentar establecer el valor.
+    cargarPersonalOptions().then(() => { // La promesa asegura que las opciones ya están en el DOM.
       $.ajax({
-        url: "php_libs/soporte/institucion/informaciongeneral.php",
+        url: "php_libs/soporte/institucion/informacionGeneral.php",
         type: "POST",
         data: {
           id: id,
-          action: "eliminar"
+          action: "obtener"
         },
         dataType: "json",
         success: function (response) {
           if (response.response) {
-            Swal.fire("Eliminado", response.message, "success");
-            //cargarRegistros();
+            $("#id_institucion").val(response.data.id_institucion);
+            $("#codigo_institucion").val(response.data.codigo_institucion);
+            $("#nombre_institucion").val(response.data.nombre_institucion);
+            $("#direccion_institucion").val(response.data.direccion_institucion);
+            $("#codigo_municipio").val(response.data.codigo_municipio);
+            $("#codigo_departamento").val(response.data.codigo_departamento);
+            $("#telefono").val(response.data.telefono_uno);
+
+            // >>>>> INICIO DE CAMBIO: Manejo robusto de IDs de Select2 <<<<<
+            // Asegurarse de que los IDs sean strings válidos o vacíos
+            const valorCrudo = response.data.encargada_registro_academico;
+            const encargadoId = (valorCrudo === null || typeof valorCrudo === 'undefined')
+                ? ''
+                : limpiarTexto(String(valorCrudo));
+            const valorCrudo2 = response.data.nombre_director;
+            const directorId = (valorCrudo2 === null || typeof valorCrudo2 === 'undefined')
+                ? ''
+                : limpiarTexto(String(valorCrudo2));
+//            const directorId = (response.data.nombre_director === null || typeof response.data.nombre_director === 'undefined') ? '' : String(response.data.nombre_director).trim();
+  //          const encargadoId = (response.data.encargada_registro_academico === null || typeof response.data.encargada_registro_encargado_registro === 'undefined') ? '' : String(response.data.encargada_registro_academico).trim();
+            // >>>>> FIN DE CAMBIO <<<<<
+
+            $("#codigo_turno").val(response.data.codigo_turno);
+            $("#codigo_sector").val(response.data.codigo_sector);
+            $("#numero_acuerdo").val(response.data.numero_acuerdo);
+            $("#nombre_base_datos").val(response.data.dbname);
+
+            // Manejo de previsualización y nombres de archivo actuales
+            const imageFields = [
+              { id: 'logo_uno', preview: '#preview_logo_uno', nameSpan: '#current_logo_uno_name', dataField: 'logo_uno' },
+              { id: 'logo_dos', preview: '#preview_logo_dos', nameSpan: '#current_logo_dos_name', dataField: 'logo_dos' },
+              { id: 'logo_tres', preview: '#preview_logo_tres', nameSpan: '#current_logo_tres_name', dataField: 'logo_tres' },
+              { id: 'imagen_firma_director', preview: '#preview_firma_director', nameSpan: '#current_firma_director_name', dataField: 'imagen_firma_director' },
+              { id: 'imagen_sello_director', preview: '#preview_sello_director', nameSpan: '#current_sello_director_name', dataField: 'imagen_sello_director' }
+            ];
+
+            imageFields.forEach(field => {
+              if (response.data[field.dataField]) {
+                const fullPath = response.data[field.dataField];
+                // Asumiendo que la ruta es relativa desde el directorio web (ej: "uploads/imagen.jpg")
+                // Ajusta la ruta base según tu configuración de servidor web
+                const relativeWebPath = '/registro_academico/img/' + fullPath;
+                $(field.preview).attr("src", relativeWebPath).show();
+                
+                // Extraer solo el nombre del archivo de la ruta completa (si es una URL)
+                const fileName = fullPath.split('/').pop();
+                $(field.nameSpan).text(fileName).show(); // Mostrar el nombre del archivo actual
+              } else {
+                $(field.preview).hide();
+                $(field.nameSpan).text("").hide();
+              }
+              // Limpiar el input file cada vez que se abre el modal para edición.
+              // Esto evita que se envíen archivos antiguos si el usuario no selecciona uno nuevo.
+              $("#" + field.id).val(""); 
+            });
+
+            // Mostrar el modal
+            $("#modalRegistro").modal("show");
+
+            // *** ESTABLECER LOS VALORES DE SELECT2 DESPUÉS DE QUE EL MODAL HA SIDO COMPLETAMENTE MOSTRADO ***
+            // Usamos .one() para asegurar que este bloque solo se ejecute una vez por cada llamada a .modal("show")
+            $('#modalRegistro').one('shown.bs.modal', function () {
+              // >>>>> INICIO DE CAMBIO: Lógica mejorada para establecer Select2 y mensajes <<<<<
+              // Aplicar valor para nombre_director
+              if (directorId && $('#nombre_director option[value="' + directorId + '"]').length > 0) {
+                $('#nombre_director').val(directorId).trigger('change');
+                console.log("Director ID aplicado:", directorId);
+              } else {
+                if (directorId) { // Si directorId tiene un valor pero no se encontró en las opciones
+                    console.warn(`ID de director '${directorId}' no encontrado en las opciones, limpiando.`);
+                } else { // Si directorId es vacío o nulo
+                    console.log("ID de director vacío o nulo, limpiando Select2.");
+                }
+                $('#nombre_director').val('').trigger('change'); // Limpiar Select2
+              }
+
+              // Aplicar valor para codigo_encargado_registro
+              if (encargadoId && $('#codigo_encargado_registro option[value="' + encargadoId + '"]').length > 0) {
+                $('#codigo_encargado_registro').val(encargadoId).trigger('change');
+                console.log("Encargado ID aplicado:", encargadoId);
+              } else {
+                if (encargadoId) { // Si encargadoId tiene un valor pero no se encontró en las opciones
+                    console.warn(`ID de encargado '${encargadoId}' no encontrado en las opciones, limpiando.`);
+                } else { // Si encargadoId es vacío o nulo
+                    console.log("ID de encargado vacío o nulo, limpiando Select2.");
+                }
+                $('#codigo_encargado_registro').val('').trigger('change'); // Limpiar Select2
+              }
+              // >>>>> FIN DE CAMBIO <<<<<
+            });
+
           } else {
-            Swal.fire("Error", response.message + " - " + response.error, "error");
+            Swal.fire("Error", response.message, "error");
           }
         },
         error: function (jqXHR, textStatus, errorThrown) {
-          Swal.fire("Error", "Error al eliminar el registro: " + textStatus + " - " + errorThrown, "error");
+          Swal.fire("Error", "Error al obtener los datos para editar: " + textStatus + " - " + errorThrown, "error");
         }
       });
-    }
-  });
-}
-
-// Unified function to load personal options for both selects
-function cargarPersonalOptions() {
-  return new Promise((resolve, reject) => {
-    $.ajax({
-      url: 'php_libs/soporte/institucion/informacionGeneral.php?action=listarPersonal',
-      type: 'POST',
-      dataType: 'json',
-      success: function (data) {
-        if (data.results) {
-          var directorSelect = $("#nombre_director");
-          var encargadoSelect = $("#codigo_encargado_registro");
-
-          directorSelect.empty().append('<option value="">Seleccione el director...</option>');
-          encargadoSelect.empty().append('<option value="">Seleccione el encargado...</option>');
-
-          $.each(data.results, function (i, item) {
-            directorSelect.append('<option value="' + item.id + '">' + item.text + '</option>');
-            encargadoSelect.append('<option value="' + item.id + '">' + item.text + '</option>');
-          });
-          resolve(); // Resolve the promise once data is loaded
-        } else {
-          console.error("Error: 'results' key not found in personal data response.", data);
-          reject("Invalid data format");
-        }
-      },
-      error: function (jqXHR, textStatus, errorThrown) {
-        console.error("Error al cargar personal:", textStatus, errorThrown);
-        $("#nombre_director").empty().append('<option value="">Error al cargar datos</option>');
-        $("#codigo_encargado_registro").empty().append('<option value="">Error al cargar datos</option>');
-        reject(errorThrown);
-      }
+    }).catch(error => { // Manejar errores de la promesa de cargarPersonalOptions
+        console.error("Error al cargar opciones de personal antes de editar:", error);
+        Swal.fire("Error", "No se pudieron cargar las opciones de personal.", "error");
     });
-  });
+  };
+
+  // Función para cargar las opciones de personal para los select2
+  function cargarPersonalOptions() {
+    return new Promise((resolve, reject) => {
+      $.ajax({
+        url: 'php_libs/soporte/institucion/informacionGeneral.php?action=listarPersonal',
+        type: 'POST',
+        dataType: 'json',
+        success: function (data) {
+          if (data.results) {
+            var directorSelect = $("#nombre_director");
+            var encargadoSelect = $("#codigo_encargado_registro");
+
+            directorSelect.empty().append('<option value="">Seleccione el director...</option>');
+            encargadoSelect.empty().append('<option value="">Seleccione el encargado...</option>');
+
+            $.each(data.results, function (i, item) {
+              directorSelect.append('<option value="' + item.id + '">' + item.text + '</option>');
+              encargadoSelect.append('<option value="' + item.id + '">' + item.text + '</option>');
+            });
+            resolve(); // Resolver la promesa una vez que los datos se hayan cargado
+          } else {
+            console.error("Error: la clave 'results' no se encontró en la respuesta de datos personales.", data);
+            reject("Formato de datos inválido");
+          }
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+          console.error("Error al cargar personal:", textStatus, errorThrown);
+          $("#nombre_director").empty().append('<option value="">Error al cargar datos</option>');
+          $("#codigo_encargado_registro").empty().append('<option value="">Error al cargar datos</option>');
+          reject("Error de AJAX al cargar personal");
+        }
+      });
+    });
+  }
+}); // FIN DEL FUNCTION.
+
+  function limpiarTexto(texto) {
+    if (typeof texto !== 'string') return '';
+    
+    // Elimina espacios normales, no separables, BOMs, etc., al principio y final
+    return texto.replace(/^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g, '');
 }

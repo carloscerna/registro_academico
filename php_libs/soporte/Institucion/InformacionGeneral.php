@@ -5,7 +5,7 @@
 // Conexión (se espera que "conexion.php" cree la variable $pdo)
 // ruta de los archivos con su carpeta
     $path_root=trim($_SERVER['DOCUMENT_ROOT']);
-// Incluimos el archivo de funciones y conexión a la base de datos
+// Incluimos el archivo de funciones y conexin a la base de datos
     include($path_root."/registro_academico/includes/mainFunctions_conexion.php");
 // Indicamos que la respuesta es de tipo JSON (excepto en listar, pero la convertiremos a JSON también)
     header('Content-Type: application/json; charset=utf-8');
@@ -22,50 +22,236 @@ if (!isset($_REQUEST['action'])) {
 $action = $_REQUEST["action"];
  
 // pasar la conexion
-$pdo = $dblink; // Asumiendo que $dblink es tu objeto PDO de la conexión
-
+$pdo = $dblink;
 switch ($action) {
   case 'listar':
     // Se consultan los registros y se arma un HTML para la tabla
     $query = $pdo->query("SELECT id_institucion, codigo_institucion, nombre_institucion, telefono_uno FROM informacion_institucion");
     $html = "";
     while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
-        $html .= "<tr>";
-        $html .= "<td>" . htmlspecialchars($row['id_institucion']) . "</td>";
-        $html .= "<td>" . htmlspecialchars($row['codigo_institucion']) . "</td>";
-        $html .= "<td>" . htmlspecialchars($row['nombre_institucion']) . "</td>";
-        $html .= "<td>" . htmlspecialchars($row['telefono_uno']) . "</td>";
-        $html .= "<td class='text-center'>";
-        $html .= "<button type='button' class='btn btn-warning btn-sm' onclick='editarRegistro(" . $row['id_institucion'] . ")' data-bs-toggle='modal' data-bs-target='#modalRegistro'><i class='fad fa-pencil'></i></button> ";
-        $html .= "<button type='button' class='btn btn-danger btn-sm' onclick='eliminarRegistro(" . $row['id_institucion'] . ")'><i class='fad fa-trash'></i></button>";
-        $html .= "</td>";
-        $html .= "</tr>";
+        $html .= "<tr>
+                    <td>{$row['codigo_institucion']}</td>
+                    <td>{$row['nombre_institucion']}</td>
+                    <td>{$row['telefono_uno']}</td>
+                    <td>
+                      <button class='btn btn-warning btn-sm' onclick='editarRegistro({$row["id_institucion"]})'>Editar</button>
+                      <button class='btn btn-danger btn-sm' onclick='eliminarRegistro({$row["id_institucion"]})'>Eliminar</button>
+                    </td>
+                  </tr>";
     }
+
     echo json_encode([
         "response" => true,
-        "message"  => "Registros listados correctamente",
+        "message"  => "Listado obtenido correctamente",
+        "error"    => "",
         "data"     => $html
     ]);
     break;
 
-  case 'obtener':
-    if (isset($_REQUEST['id'])) {
-        try {
-            $stmt = $pdo->prepare("SELECT * FROM informacion_institucion WHERE id_institucion = ?");
-            $stmt->execute([$_REQUEST['id']]);
-            $data = $stmt->fetch(PDO::FETCH_ASSOC);
+  case 'procesar':
+    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        // Recogemos todos los campos (existentes y nuevos)
+        $nombre_director           = $_POST['nombre_director'] ?? null;
+        $codigo_institucion        = $_POST['codigo_institucion'] ?? null;
+        $nombre_institucion        = $_POST['nombre_institucion'] ?? null;
+        $direccion_institucion     = $_POST['direccion_institucion'] ?? null;
+        $codigo_municipio          = $_POST['codigo_municipio'] ?? null;
+        $codigo_departamento       = $_POST['codigo_departamento'] ?? null;
+        $codigo_distrito           = $_POST['codigo_distrito'] ?? null;
+        $telefono                  = $_POST['telefono'] ?? null;
+        // Directorio donde se subirán las imágenes
+        // Obtener la ruta física raíz
+        $path_root = trim($_SERVER['DOCUMENT_ROOT']);  // Ejemplo: "C:/wamp64/www"
+        // Define la carpeta dentro de tu proyecto donde deseas guardar las imágenes
+        $uploadDir = "/registro_academico/img/"; // Asegúrate de incluir la barra inicial
+        // Ruta completa donde guardar la imagen
+        $destino = $path_root . $uploadDir;
 
-            if ($data) {
+        // Asegúrate de que el directorio exista
+        if (!is_dir($destino)) {
+            mkdir($destino, 0777, true);
+        }
+        
+        // Función para procesar la subida de un archivo
+        function processFileUpload($fileField, $uploadDir, $path_root) {
+            if (isset($_FILES[$fileField]) && $_FILES[$fileField]['name'] != "") {
+                // Generamos un nombre único concatenando un ID y el nombre original
+                $filename = basename($_FILES[$fileField]['name']);
+                $uniqueFilename = $filename; // Generar nombre único
+                //$uniqueFilename = uniqid() . '_' . $filename; // Generar nombre único
+                // Concatemos la ruta física: DOCUMENT_ROOT + carpeta de uploads
+                $targetFile = $path_root . $uploadDir . $uniqueFilename;
+                
+                // Si el directorio no existe, lo creamos
+                if (!is_dir($path_root . $uploadDir)) {
+                    mkdir($path_root . $uploadDir, 0777, true);
+                }
+                
+                if (move_uploaded_file($_FILES[$fileField]["tmp_name"], $targetFile)) {
+                    // Devuelve la ruta relativa al directorio raíz del proyecto para guardar en DB
+                    return trim($uploadDir, "/") . "/" . $uniqueFilename; // Guardar como 'registro_academico/img/nombre_unico.jpg'
+                    //return $filename;
+                }
+            }
+            // Si el archivo no se subió o no se seleccionó, verificar si hay un nombre de archivo actual
+            // Esto es para cuando se edita un registro y no se sube un nuevo archivo, se mantiene el existente.
+            if (isset($_POST['current_' . $fileField . '_name']) && !empty($_POST['current_' . $fileField . '_name'])) {
+                // Asumiendo que el "current_logo_uno_name" viene como 'nombre_de_archivo.jpg'
+                // y que en DB se guarda 'img/nombre_de_archivo.jpg'
+                //return "img/" . $_POST['current_' . $fileField . '_name'];
+                    return $_POST['current_' . $fileField . '_name'];
+            }
+            return ""; // Retorna cadena vacía si no hay archivo y no hay nombre actual
+        }
+
+        // Procesar cada imagen
+        $logo_uno = processFileUpload("logo_uno", $uploadDir, $path_root);
+        $logo_dos = processFileUpload("logo_dos", $uploadDir, $path_root);
+        $logo_tres = processFileUpload("logo_tres", $uploadDir, $path_root);
+        $imagen_firma_director = processFileUpload("imagen_firma_director", $uploadDir, $path_root);
+        $imagen_sello_director = processFileUpload("imagen_sello_director", $uploadDir, $path_root);
+
+        // Procesar otros campos
+        $codigo_encargado_registro = $_POST['codigo_encargado_registro'] ?? null;
+        $codigo_turno              = $_POST['codigo_turno'] ?? null;
+        $codigo_sector             = $_POST['codigo_sector'] ?? null;
+        $numero_acuerdo            = $_POST['numero_acuerdo'] ?? null;
+        $nombre_base_datos         = $_POST['nombre_base_datos'] ?? null;
+
+        try {
+            if (isset($_POST["id_institucion"]) && !empty($_POST["id_institucion"])) {
+                // Actualización
+                $sql = "UPDATE informacion_institucion SET 
+                            nombre_director = :nombre_director,
+                            codigo_institucion = :codigo_institucion,
+                            nombre_institucion = :nombre_institucion,
+                            direccion_institucion = :direccion_institucion,
+                            codigo_municipio = :codigo_municipio,
+                            codigo_departamento = :codigo_departamento,
+                            codigo_distrito = :codigo_distrito,
+                            telefono_uno = :telefono,
+                            logo_uno = :logo_uno,
+                            logo_dos = :logo_dos,
+                            logo_tres = :logo_tres,
+                            encargada_registro_academico = :codigo_encargado_registro,
+                            codigo_turno = :codigo_turno,
+                            codigo_sector = :codigo_sector,
+                            numero_acuerdo = :numero_acuerdo,
+                            dbname = :nombre_base_datos,
+                            imagen_firma = :imagen_firma_director,
+                            imagen_sello = :imagen_sello_director
+                        WHERE id_institucion = :id_institucion";
+                $stmt = $pdo->prepare($sql);
+                $stmt->bindParam(":id_institucion", $_POST["id_institucion"]);
+                $operation = "actualizado";
+            } else {
+                // Inserción
+                $sql = "INSERT INTO informacion_institucion 
+                          (nombre_director, codigo_institucion, nombre_institucion, direccion_institucion, codigo_municipio, codigo_departamento, telefono_uno, logo_uno, logo_dos, logo_tres, encargada_registro_academico, codigo_turno, codigo_sector, numero_acuerdo, dbname, imagen_firma, imagen_sello, codigo_distrito)
+                        VALUES 
+                          (:nombre_director, :codigo_institucion, :nombre_institucion, :direccion_institucion, :codigo_municipio, :codigo_departamento, :telefono, :logo_uno, :logo_dos, :logo_tres, :codigo_encargado_registro, :codigo_turno, :codigo_sector, :numero_acuerdo, :nombre_base_datos, :imagen_firma_director, :imagen_sello_director, :codigo_distrito)";
+                $stmt = $pdo->prepare($sql);
+                $operation = "guardado";
+            }
+            // Asignamos los parámetros
+            $stmt->bindParam(":nombre_director", $nombre_director);
+            $stmt->bindParam(":codigo_institucion", $codigo_institucion);
+            $stmt->bindParam(":nombre_institucion", $nombre_institucion);
+            $stmt->bindParam(":direccion_institucion", $direccion_institucion);
+            $stmt->bindParam(":codigo_municipio", $codigo_municipio);
+            $stmt->bindParam(":codigo_departamento", $codigo_departamento);
+            $stmt->bindParam(":codigo_distrito", $codigo_distrito);
+            $stmt->bindParam(":telefono", $telefono);
+            $stmt->bindParam(":codigo_encargado_registro", $codigo_encargado_registro);
+            $stmt->bindParam(":codigo_turno", $codigo_turno);
+            $stmt->bindParam(":codigo_sector", $codigo_sector);
+            $stmt->bindParam(":numero_acuerdo", $numero_acuerdo);
+            $stmt->bindParam(":nombre_base_datos", $nombre_base_datos);
+            // Si $logo_uno es una cadena vacía, PDO insertará NULL si la columna lo permite.
+            // Si ya tiene un valor de archivo, lo usará.
+            $stmt->bindParam(":logo_uno", $logo_uno);
+            $stmt->bindParam(":logo_dos", $logo_dos);
+            $stmt->bindParam(":logo_tres", $logo_tres);
+            $stmt->bindParam(":imagen_firma_director", $imagen_firma_director);
+            $stmt->bindParam(":imagen_sello_director", $imagen_sello_director);
+
+            if ($stmt->execute()) {
                 echo json_encode([
                     "response" => true,
-                    "message"  => "Registro obtenido correctamente",
+                    "message"  => "Registro $operation correctamente",
+                    "error"    => ""
+                ]);
+            } else {
+                echo json_encode([
+                    "response" => false,
+                    "message"  => "Error al procesar el registro",
+                    "error"    => "Error en la consulta"
+                ]);
+            }
+        } catch (PDOException $e) {
+            echo json_encode([
+                "response" => false,
+                "message"  => "Error al procesar el registro",
+                "error"    => $e->getMessage()
+            ]);
+        }
+    }
+    break;
+
+  case 'obtener':
+    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        $id = $_POST["id"];
+        try {
+            $sql = "SELECT * FROM informacion_institucion WHERE id_institucion = :id";
+            $stmt = $pdo->prepare($sql);
+            $stmt->bindParam(":id", $id);
+            $stmt->execute();
+            $data = $stmt->fetch(PDO::FETCH_ASSOC);
+            
+            // Construir la URL base para las imágenes
+            $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? "https://" : "http://";
+            $host = $_SERVER['HTTP_HOST'];
+            $baseWebPath = $protocol . $host . "/registro_academico/img/"; // Ruta base a la raíz de tu proyecto
+
+            if ($data) {
+                // Ajustar las rutas de las imágenes para que sean URLs completas para el frontend
+                // Asumiendo que la DB almacena rutas como 'img/nombre_unico.jpg'
+                if (!empty($data['logo_uno'])) {
+                    $data['logo_uno'] = $baseWebPath . $data['logo_uno'];
+                }
+                if (!empty($data['logo_dos'])) {
+                    $data['logo_dos'] = $baseWebPath . $data['logo_dos'];
+                }
+                if (!empty($data['logo_tres'])) {
+                    $data['logo_tres'] = $baseWebPath . $data['logo_tres'];
+                }
+                
+                // Mapear los nombres de las columnas de la DB a los nombres esperados por JS
+                if (!empty($data['imagen_firma'])) {
+                    $data['imagen_firma_director'] = $baseWebPath . $data['imagen_firma'];
+                } else {
+                    $data['imagen_firma_director'] = null; 
+                }
+                if (!empty($data['imagen_sello'])) {
+                    $data['imagen_sello_director'] = $baseWebPath . $data['imagen_sello'];
+                } else {
+                    $data['imagen_sello_director'] = null;
+                }
+                // Mapear el nombre de la columna de la DB para el encargado
+                $data['codigo_encargado_registro'] = $data['encargada_registro_academico'] ?? null;
+
+
+                echo json_encode([
+                    "response" => true,
+                    "message"  => "Registro obtenido",
+                    "error"    => "",
                     "data"     => $data
                 ]);
             } else {
                 echo json_encode([
                     "response" => false,
                     "message"  => "Registro no encontrado",
-                    "error"    => "ID no válido"
+                    "error"    => ""
                 ]);
             }
         } catch (PDOException $e) {
@@ -75,202 +261,17 @@ switch ($action) {
                 "error"    => $e->getMessage()
             ]);
         }
-    } else {
-        echo json_encode([
-            "response" => false,
-            "message"  => "ID no especificado",
-            "error"    => "Parámetro ID faltante"
-        ]);
-    }
-    break;
-
-  case 'procesar':
-    $id_institucion = $_REQUEST['id_institucion'] ?? ''; // Vacío si es nuevo registro
-
-    // Recuperar otros datos del formulario
-    $codigo_institucion = $_REQUEST['codigo_institucion'];
-    $nombre_institucion = $_REQUEST['nombre_institucion'];
-    $direccion_institucion = $_REQUEST['direccion_institucion'];
-    $codigo_municipio = $_REQUEST['codigo_municipio'];
-    $codigo_departamento = $_REQUEST['codigo_departamento'];
-    $telefono = $_REQUEST['telefono'];
-    $nombre_director = $_REQUEST['nombre_director'];
-    $codigo_encargado_registro = $_REQUEST['codigo_encargado_registro'];
-    $codigo_turno = $_REQUEST['codigo_turno'];
-    $codigo_sector = $_REQUEST['codigo_sector'];
-    $numero_acuerdo = $_REQUEST['numero_acuerdo'];
-    $nombre_base_datos = $_REQUEST['nombre_base_datos'];
-
-    // Directorio de subida (asegúrate de que exista y tenga permisos de escritura)
-    $path_uploads_dir = $path_root . "/registro_academico/img/";
-    // Asegurarse de que el directorio exista
-    if (!is_dir($path_uploads_dir)) {
-        mkdir($path_uploads_dir, 0777, true);
-    }
-
-    // Variables para los nombres de los archivos que se guardarán en la base de datos
-    $logo_uno_path = null;
-    $logo_dos_path = null;
-    $logo_tres_path = null;
-    $firma_director_path = null;
-    $sello_director_path = null;
-
-    // ----- Lógica para manejar archivos al actualizar/insertar -----
-    $current_files_db = [];
-    if (!empty($id_institucion)) { // Si estamos editando un registro existente
-        try {
-            $stmt_get_current_files = $pdo->prepare("SELECT logo_uno, logo_dos, logo_tres, imagen_firma_director, imagen_sello_director FROM informacion_institucion WHERE id_institucion = ?");
-            $stmt_get_current_files->execute([$id_institucion]);
-            $current_files_db = $stmt_get_current_files->fetch(PDO::FETCH_ASSOC);
-        } catch (PDOException $e) {
-            echo json_encode([
-                "response" => false,
-                "message"  => "Error al obtener archivos existentes para actualización",
-                "error"    => $e->getMessage()
-            ]);
-            exit();
-        }
-    }
-
-    // Función auxiliar para procesar cada archivo
-    // $file_input_name: nombre del campo file en el formulario (ej. 'logo_uno')
-    // $current_db_value: la ruta del archivo que ya está en la DB para este campo
-    // $current_post_name: el nombre del campo POST enviado desde JS si el archivo existe pero no se cambió (ej. 'current_logo_uno_name')
-    // $upload_dir: la ruta física del directorio de subidas
-    function handleFileUpload($file_input_name, $current_db_value, $current_post_name, $upload_dir) {
-        // 1. Se subió un nuevo archivo?
-        if (isset($_FILES[$file_input_name]) && $_FILES[$file_input_name]['error'] == UPLOAD_ERR_OK) {
-            $filename = basename($_FILES[$file_input_name]['name']);
-            $target_file = $upload_dir . $filename;
-            if (move_uploaded_file($_FILES[$file_input_name]['tmp_name'], $target_file)) {
-                // Eliminar el archivo antiguo del disco si existía y ahora hay uno nuevo
-                if ($current_db_value && file_exists($upload_dir . basename($current_db_value))) {
-                   // unlink($upload_dir . basename($current_db_value));
-                }
-                return "img/" . $filename; // Retorna la ruta relativa para la DB
-            } else {
-                // Error al mover el nuevo archivo
-                echo json_encode(["response" => false, "message" => "Error al subir archivo: " . $file_input_name, "error" => $_FILES[$file_input_name]['error']]);
-                exit();
-            }
-        } 
-        // 2. No se subió un nuevo archivo, pero estamos en modo edición.
-        //    ¿El JavaScript nos dice que había un archivo existente y no se modificó/eliminó?
-        else {
-            // Verifica si el campo 'current_post_name' fue enviado y tiene un valor (no vacío)
-            // Esto significa que en el JS, el span `current_logo_uno_name` estaba visible y contenía un nombre de archivo.
-            // Es decir, el usuario no cambió ni eliminó el archivo existente.
-            if (isset($_POST[$current_post_name]) && !empty($_POST[$current_post_name])) {
-                // Retornar el valor que ya estaba en la base de datos para este campo.
-                // No se necesita eliminar ni subir nada.
-                return $current_db_value;
-            }
-            // 3. No se subió un nuevo archivo y el JS NO envió el current_post_name con valor,
-            //    o el current_post_name se envió VACÍO (lo que indica que el usuario lo eliminó).
-            else {
-                // Si había un archivo antiguo en la DB y el usuario lo eliminó (o no se envió current_post_name con valor),
-                // borrar el archivo físico y retornar null para la DB.
-                if ($current_db_value && file_exists($upload_dir . basename($current_db_value))) {
-                    //unlink($upload_dir . basename($current_db_value));
-                }
-                return null; // El archivo fue eliminado o nunca existió, se guarda NULL en la DB
-            }
-        }
-    }
-
-    // Procesar cada uno de los campos de archivo
-    $logo_uno_path = handleFileUpload('logo_uno', $current_files_db['logo_uno'] ?? null, 'current_logo_uno_name', $path_uploads_dir);
-    $logo_dos_path = handleFileUpload('logo_dos', $current_files_db['logo_dos'] ?? null, 'current_logo_dos_name', $path_uploads_dir);
-    $logo_tres_path = handleFileUpload('logo_tres', $current_files_db['logo_tres'] ?? null, 'current_logo_tres_name', $path_uploads_dir);
-    $firma_director_path = handleFileUpload('imagen_firma_director', $current_files_db['imagen_firma_director'] ?? null, 'current_imagen_firma_director_name', $path_uploads_dir);
-    $sello_director_path = handleFileUpload('imagen_sello_director', $current_files_db['imagen_sello_director'] ?? null, 'current_imagen_sello_director_name', $path_uploads_dir);
-
-    if (empty($id_institucion)) {
-        // --- INSERCIÓN ---
-        try {
-            $sql = "INSERT INTO informacion_institucion (
-                        codigo_institucion, nombre_institucion, direccion_institucion, 
-                        codigo_municipio, codigo_departamento, telefono_uno, 
-                        nombre_director, encargada_registro_academico, codigo_turno, 
-                        codigo_sector, numero_acuerdo, dbname,
-                        logo_uno, logo_dos, logo_tres, imagen_firma_director, imagen_sello_director
-                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-            $stmt = $pdo->prepare($sql);
-            $stmt->execute([
-                $codigo_institucion, $nombre_institucion, $direccion_institucion,
-                $codigo_municipio, $codigo_departamento, $telefono,
-                $nombre_director, $codigo_encargado_registro, $codigo_turno,
-                $codigo_sector, $numero_acuerdo, $nombre_base_datos,
-                $logo_uno_path, $logo_dos_path, $logo_tres_path, $firma_director_path, $sello_director_path
-            ]);
-
-            echo json_encode([
-                "response" => true,
-                "message"  => "Registro insertado correctamente",
-                "error"    => ""
-            ]);
-        } catch (PDOException $e) {
-            echo json_encode([
-                "response" => false,
-                "message"  => "Error al insertar el registro",
-                "error"    => $e->getMessage()
-            ]);
-        }
-    } else {
-        // --- ACTUALIZACIÓN ---
-        try {
-            $sql = "UPDATE informacion_institucion SET 
-                        codigo_institucion = ?, nombre_institucion = ?, direccion_institucion = ?, 
-                        codigo_municipio = ?, codigo_departamento = ?, telefono_uno = ?, 
-                        nombre_director = ?, encargada_registro_academico = ?, codigo_turno = ?, 
-                        codigo_sector = ?, numero_acuerdo = ?, dbname = ?,
-                        logo_uno = ?, logo_dos = ?, logo_tres = ?, imagen_firma_director = ?, imagen_sello_director = ?
-                    WHERE id_institucion = ?";
-            $stmt = $pdo->prepare($sql);
-            $stmt->execute([
-                $codigo_institucion, $nombre_institucion, $direccion_institucion,
-                $codigo_municipio, $codigo_departamento, $telefono,
-                $nombre_director, $codigo_encargado_registro, $codigo_turno,
-                $codigo_sector, $numero_acuerdo, $nombre_base_datos,
-                $logo_uno_path, $logo_dos_path, $logo_tres_path, $firma_director_path, $sello_director_path, // <--- usar las variables con los paths finales
-                $id_institucion
-            ]);
-
-            echo json_encode([
-                "response" => true,
-                "message"  => "Registro actualizado correctamente",
-                "error"    => ""
-            ]);
-        } catch (PDOException $e) {
-            echo json_encode([
-                "response" => false,
-                "message"  => "Error al actualizar el registro",
-                "error"    => $e->getMessage()
-            ]);
-        }
     }
     break;
 
   case 'eliminar':
-    if (isset($_REQUEST['id'])) {
+    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        $id = $_POST["id"];
         try {
-            // Opcional: Obtener los nombres de archivo para eliminarlos del disco antes de borrar el registro
-            $stmt_get_files = $pdo->prepare("SELECT logo_uno, logo_dos, logo_tres, imagen_firma_director, imagen_sello_director FROM informacion_institucion WHERE id_institucion = ?");
-            $stmt_get_files->execute([$_REQUEST['id']]);
-            $files_to_delete = $stmt_get_files->fetch(PDO::FETCH_ASSOC);
-
-            // Eliminar los archivos del disco
-            $upload_dir = $path_root . "/registro_academico/uploads/";
-            if ($files_to_delete) {
-                foreach ($files_to_delete as $file_path) {
-                    if ($file_path && file_exists($upload_dir . basename($file_path))) {
-                        unlink($upload_dir . basename($file_path));
-                    }
-                }
-            }
-
-            $stmt = $pdo->prepare("DELETE FROM informacion_institucion WHERE id_institucion = ?");
-            if ($stmt->execute([$_REQUEST['id']])) {
+            $sql = "DELETE FROM informacion_institucion WHERE id_institucion = :id";
+            $stmt = $pdo->prepare($sql);
+            $stmt->bindParam(":id", $id);
+            if ($stmt->execute()) {
                 echo json_encode([
                     "response" => true,
                     "message"  => "Registro eliminado correctamente",
@@ -292,7 +293,6 @@ switch ($action) {
         }
     }
     break;
-
     case 'listarPersonal':
         try {
             $stmt = $pdo->query("SELECT id_personal AS id, CONCAT(nombres, ' ', apellidos) AS text FROM personal ORDER BY text");
@@ -307,12 +307,13 @@ switch ($action) {
         }
         break;
     
+    
+   
   default:
     echo json_encode([
         "response" => false,
         "message"  => "Acción no definida",
-        "error"    => "Acción inválida"
+        "error"    => "Parámetro action desconocido"
     ]);
     break;
 }
-?>
