@@ -7,7 +7,7 @@ ini_set("display_error", true);
 // variables/conexion.
     $host = 'localhost';
     $port = 5432;
-    $database = 'registro_academico';
+    $database = 'registro_academico_10391';
     $username = 'postgres';
     $password = 'Orellana';
 //Construimos el DSN//
@@ -24,4 +24,3 @@ try{
      // Variable que indica el status de la conexión a la base de datos
         $errorDbConexion = true;   
     };
-?>

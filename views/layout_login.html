@@ -1,66 +1,83 @@
 {# Heredando la plantilla principal #}
-
-
 {% extends 'default_layout.html' %}
 
 {% block extraCSS %}
 <style>
-      body{
-            background: url(./img/background.jpg) no-repeat center fixed;
-            background-size: cover;
-      }
+    body {
+        background: url(./img/background.jpg) no-repeat center center fixed;
+        background-size: cover;
+        /* Asegúrate de que el body no tenga un background-color que lo cubra si quieres ver la imagen */
+        /* Si quieres un overlay, considera un div adicional o un gradiente en el background */
+    }
+    .login-container {
+        min-height: 100vh; /* Asegura que el contenedor ocupe toda la altura de la ventana */
+    }
+    .login-card {
+        max-width: 450px; /* Ancho máximo para la tarjeta de login */
+        width: 90%; /* Ancho responsivo */
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15); /* Sombra sutil */
+        border-radius: 0.5rem; /* Bordes ligeramente redondeados */
+    }
+    .form-control-icon {
+        position: relative;
+    }
+    .form-control-icon .form-control {
+        padding-left: 2.75rem; /* Espacio para el icono */
+    }
+    .form-control-icon .input-icon {
+        position: absolute;
+        left: 0;
+        top: 0;
+        padding: 0.75rem 1rem;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        pointer-events: none; /* Permite clics a través del icono */
+        color: #6c757d; /* Color del icono */
+        border-top-left-radius: 0.375rem;
+        border-bottom-left-radius: 0.375rem;
+    }
+    /* Estilos para el botón de inicio de sesión */
+    .btn-login {
+        padding: 0.75rem 1.5rem; /* Ajusta el padding para un botón más grande */
+        font-size: 1.1rem; /* Tamaño de fuente más grande */
+    }
 </style>
 {% endblock %}
 
 {% block loginUser %}
-      <div class="container-fluid">
-		<div class="d-flex align-items-center flex-column justify-content-center h-200  text-white" id="header">
-				<div class="border-bottom mb-4 mt-4 pb-2">
-					<div class="alert alert-info" role="alert">
-						<h2>Registro Académico</h2>
-					</div>
-				</div>
-                  <div class="login-box hold-transition">
-			  <!-- /.login-logo -->
-			  <div class="card">
-				<div class="card-body">
-				  <p class="login-box-msg">Iniciar Sesión con tu Cuenta</p>
-                        <!-- FORM LOGIN -->
-				  <form action="" method="post" name="formLogin" id="formLogin">
-					<!-- INPUT OCULTOS -->
-						<input type="hidden" id="accion_buscar" name="accion_buscar" value = "BuscarUser" class="{required:true}">
-							<div class="input-group mb-3">
-							  <div class="input-group-append">
-								<div class="input-group-text">
-								  <span class="fas fa-user"></span>
-								</div>
-							  </div>
-                                            <input type="text" class="form-control" placeholder="Usuario" name="txtnombre" id="txtnombre" pattern="[a-zA-Z0-9]{1,35}" minlength="4" maxlength="20" autofocus="autofocus" required="required">
-							</div>
-							<div class="input-group mb-3">
-							  <div class="input-group-append">
-								<div class="input-group-text">
-								  <span class="fas fa-lock"></span>
-								</div>
-							  </div>
-                                            <input type="password" class="form-control" placeholder="Contraseña" id="txtpassword" name="txtpassword" maxlength="20" required="required">
-							</div>
-							<div class="row">
-                                               <!-- /.col -->
-                                               <div class="col">
-                                                   <button type="submit" class="btn btn-primary float-right">Iniciar Sesión</button>
-                                               </div>
-                                               <!-- /.col -->
-                                          </div>
-				  </form>			
-				</div>
-				<!-- /.login-card-body -->
-			  </div>
-			</div>
-		</div>
-	  </div>
+<div class="container-fluid login-container d-flex justify-content-center align-items-center">
+    <div class="login-card card p-4">
+        <div class="card-body">
+            <div class="text-center mb-4">
+                <div class="alert alert-info border-0 p-3" role="alert"> {# border-0 para quitar borde predeterminado #}
+                    <h2 class="alert-heading mb-0">Registro Académico</h2> {# alert-heading para estilo de título #}
+                </div>
+                <p class="text-muted mt-3 mb-4">Iniciar Sesión con tu Cuenta</p>
+            </div>
+
+            <form action="" method="post" name="formLogin" id="formLogin">
+                <input type="hidden" id="accion_buscar" name="accion_buscar" value="BuscarUser" class="{required:true}">
+
+                <div class="mb-3 form-control-icon">
+                    <span class="input-icon"><i class="fas fa-user"></i></span>
+                    <input type="text" class="form-control" placeholder="Usuario" name="txtnombre" id="txtnombre" pattern="[a-zA-Z0-9]{1,35}" minlength="4" maxlength="20" autofocus="autofocus" required="required">
+                </div>
+
+                <div class="mb-4 form-control-icon">
+                    <span class="input-icon"><i class="fas fa-lock"></i></span>
+                    <input type="password" class="form-control" placeholder="Contraseña" id="txtpassword" name="txtpassword" maxlength="20" required="required">
+                </div>
+
+                <div class="d-grid gap-2"> {# d-grid y gap-2 para que el botón ocupe todo el ancho #}
+                    <button type="submit" class="btn btn-primary btn-login">Iniciar Sesión</button>
+                </div>
+            </form>
+        </div>
+        </div>
+</div>
 {% endblock %}
 
 {% block javascripts %}
-
+{# Aquí puedes añadir scripts específicos para el login si los necesitas, aunque principal_js_login.js ya se carga en default_layout.html #}
 {% endblock %}
