@@ -66,7 +66,9 @@
     <script src="docs/assets/js/adminlte.min.js"></script>
 
     <script src="./js/pace/pace.min.js"></script>
-    <script type="text/JavaScript" src="./js/toastr/toastr.min.js"></script> <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+    <script type="text/JavaScript" src="./js/toastr/toastr.min.js">
+      
+    </script> <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
 
     <script>
       $(document).ready(function(){
@@ -265,9 +267,8 @@
                     </div>
                   </div>
                   <nav class="mt-2" aria-label="Sidebar main navigation">
-                    <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-                      {% include 'layout-menu.html' %}
-                      </ul>
+                  <div id="dynamic-sidebar-menu" class="sidebar-menu">
+                      </div>
                   </nav>
                   </div>
                 </aside>
