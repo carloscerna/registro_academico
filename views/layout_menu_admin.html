@@ -1,0 +1,110 @@
+{# Heredando la plantilla principal #}
+{% extends 'default_layout.html' %}
+
+{% block extraCSS %}
+
+{% endblock %}
+
+{% block contenidos %}
+<div class="content-wrapper">
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1 class="m-0">Gestión de Menú</h1>
+                </div><div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item"><a href="index.php">Inicio</a></li>
+                        <li class="breadcrumb-item active">Gestión de Menú</li>
+                    </ol>
+                </div></div></div></div>
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Elementos del Menú</h3>
+                            <div class="card-tools">
+                                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#menuItemModal" id="btnNewMenuItem">
+                                    <i class="fas fa-plus"></i> Nuevo Elemento
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <table id="menuItemsTable" class="table table-bordered table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Texto</th>
+                                        <th>Icono</th>
+                                        <th>URL</th>
+                                        <th>Padre</th>
+                                        <th>Orden</th>
+                                        <th>Activo</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    </tbody>
+                            </table>
+                        </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+<div class="modal fade" id="menuItemModal" tabindex="-1" role="dialog" aria-labelledby="menuItemModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="menuItemModalLabel"></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="menuItemForm">
+                <div class="modal-body">
+                    <input type="hidden" id="menuItemId" name="id">
+                    <div class="mb-3">
+                        <label for="menuItemText" class="form-label">Texto del Menú</label>
+                        <input type="text" class="form-control" id="menuItemText" name="text" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="menuItemIcon" class="form-label">Clase de Icono (Font Awesome)</label>
+                        <input type="text" class="form-control" id="menuItemIcon" name="icon" required placeholder="Ej: fas fa-home">
+                    </div>
+                    <div class="mb-3">
+                        <label for="menuItemUrl" class="form-label">URL</label>
+                        <input type="text" class="form-control" id="menuItemUrl" name="url" required placeholder="Ej: index.php o #">
+                    </div>
+                    <div class="mb-3">
+                        <label for="menuItemParent" class="form-label">Elemento Padre (Opcional)</label>
+                        <select class="form-select" id="menuItemParent" name="parent_id">
+                            <option value="">-- Sin Padre (Menú Principal) --</option>
+                            </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="menuItemOrder" class="form-label">Orden</label>
+                        <input type="number" class="form-control" id="menuItemOrder" name="order_index" value="0" required>
+                    </div>
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="menuItemIsActive" name="is_active" value="1" checked>
+                        <label class="form-check-label" for="menuItemIsActive">Activo</label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="submit" class="btn btn-primary" id="saveMenuItemBtn">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }} {# Mantiene los scripts del layout padre #}
+    <script type="text/JavaScript" src="js/main_menu_admin.js"></script>
+
+{% endblock %}
