@@ -1,146 +1,152 @@
-$(document).ready(function() {
-    let menuItemsTable; // Variable para la instancia de DataTables
-    let allMenuItems = []; // Para almacenar todos los items y poblar el select de padres
+// Variable global para almacenar el ID del elemento que se está editando (opcional, pero útil)
+let currentEditingItemId = null;
 
-    // Inicializar SweetAlert2 por si no está ya configurado globalmente
-    const Toast = Swal.mixin({
-        toast: true,
-        position: 'top-end',
-        showConfirmButton: false,
-        timer: 3000,
-        timerProgressBar: true,
-        didOpen: (toast) => {
-            toast.addEventListener('mouseenter', Swal.stopTimer)
-            toast.addEventListener('mouseleave', Swal.resumeTimer)
-        }
+// Inicialización de la tabla de DataTables
+let menuItemsTable;
+
+$(document).ready(function() {
+    // Inicializar la tabla al cargar la página
+    initializeDataTable();
+    // Cargar elementos del menú y padres al cargar la página
+    loadMenuItemsAndParents();
+    // Cargar perfiles para la pestaña de permisos
+    loadAllProfiles();
+
+    // Manejar el clic en el botón "Nuevo Elemento"
+    $('#createMenuItemBtn').on('click', function() {
+
+        // Resetear el formulario
+        $('#menuItemForm')[0].reset();
+        $('#menuItemId').val(''); // Limpiar el ID oculto para una nueva entrada
+        currentEditingItemId = null; // Resetear el ID de edición actual (IMPORTANTE)
+
+        $('#menuItemParent').val(''); // Resetear el select de padres
+        $('#menuItemIsActive').prop('checked', true); // Marcar como activo por defecto
+
+        $('#menuItemModalLabel').text('Nuevo Elemento del Menú');
+        $('#permissionsTab').hide(); // Ocultar la pestaña de permisos para nuevos elementos
+        $('#permissionsTabLink').parent().hide(); // Ocultar el enlace de la pestaña
+
+        // Activar la pestaña de Detalles al abrir el modal de creación
+        new bootstrap.Tab(document.getElementById('detailsTabLink')).show();
+
+        // Limpiar las casillas de permisos para un nuevo elemento
+        $('#permissionsCheckboxes input.permission-checkbox').prop('checked', false);
     });
 
-    // Función para cargar los elementos del menú y poblar el select de padres
-    function loadMenuItemsAndParents() {
+    // Manejar el clic en los botones "Editar" de la tabla
+    $('#menuItemsTable tbody').on('click', '.edit-btn', function() {
+        var data = menuItemsTable.row($(this).parents('tr')).data();
+        console.log("DEBUG (Edit Btn Click): Fila seleccionada:", data);
+         // === DEPURACIÓN: Verifica el ID de la fila en la consola ===
+    console.log("DEBUG (Edit Btn Click): Datos de la fila:", data);
+    console.log("DEBUG (Edit Btn Click): ID del elemento a editar:", data.id);
+    // =========================================================
+
+        currentEditingItemId = data.id; // Establecer el ID global
+
+        // Rellenar los campos del formulario
+        $('#menuItemId').val(data.id);
+        $('#menuItemText').val(data.text);
+        $('#menuItemIcon').val(data.icon);
+        $('#menuItemUrl').val(data.url);
+        $('#menuItemParent').val(data.parent_id);
+        $('#menuItemOrder').val(data.order_index);
+        $('#menuItemIsActive').prop('checked', data.is_active == 1);
+
+        // Establecer el título del modal y mostrar la pestaña de permisos
+        $('#menuItemModalLabel').text('Editar Elemento del Menú');
+        $('#permissionsTab').show();
+        $('#permissionsTabLink').parent().show();
+
+        // Cargar permisos para el elemento seleccionado
+        loadPermissions(data.id);
+
+        // Activar la pestaña de Detalles
+        new bootstrap.Tab(document.getElementById('detailsTabLink')).show();
+    });
+
+    // Manejar el envío del formulario (crear/actualizar)
+    $('#menuItemForm').on('submit', function(e) {
+        e.preventDefault();
+        const formData = new FormData();
+
+        // === CAPTURA EL ID DEL ELEMENTO AQUÍ PARA ACCEDER EN EL CALLBACK ===
+        const itemIdToSave = $('#menuItemId').val();
+
+        formData.append('action', itemIdToSave ? 'updateMenuItem' : 'createMenuItem');
+        formData.append('id', itemIdToSave);
+        formData.append('text', $('#menuItemText').val());
+        formData.append('icon', $('#menuItemIcon').val());
+        formData.append('url', $('#menuItemUrl').val());
+        formData.append('parent_id', $('#menuItemParent').val());
+        formData.append('order_index', $('#menuItemOrder').val());
+        formData.append('is_active', $('#menuItemIsActive').is(':checked') ? 1 : 0);
+
+        // Recolectar los IDs de los perfiles seleccionados
+        const selectedProfileIds = [];
+        $('#permissionsCheckboxes input.permission-checkbox:checked').each(function() {
+            selectedProfileIds.push($(this).val());
+        });
+
+        // Añadir cada ID de perfil seleccionado individualmente a FormData
+        // Esto asegura que PHP reciba un array en $_POST['selected_profiles']
+        selectedProfileIds.forEach(profileId => {
+            formData.append('selected_profiles[]', profileId);
+        });
+
+        // Debugging: Imprime el contenido de formData en la consola
+        for (let pair of formData.entries()) {
+            console.log(pair[0] + ': ' + pair[1]);
+        }
+
+        // Realizar la solicitud AJAX
         $.ajax({
-            url: 'php_libs/soporte/menu/phpAjaxMenuItems.inc.php',
-            type: 'GET',
-            data: { action: 'getAllMenuItems' },
+            url: 'php_libs/soporte/menu/phpAjaxMenuItems.inc.php', // El script unificado para ítems y permisos
+            type: 'POST',
+            data: formData,
+            processData: false, // ¡IMPORTANTE! No procesar el FormData
+            contentType: false, // ¡IMPORTANTE! No establecer el tipo de contenido (FormData lo hace automáticamente)
             dataType: 'json',
             success: function(response) {
                 if (response.success) {
-                    allMenuItems = response.data; // Guardar todos los items
-                    populateParentSelect(allMenuItems); // Poblar el select de padres
-                    if (menuItemsTable) {
-                        menuItemsTable.clear().rows.add(allMenuItems).draw(); // Recargar DataTables
-                    } else {
-                        initializeDataTable(allMenuItems); // Inicializar DataTables por primera vez
-                    }
+                    Toast.fire({
+                        icon: 'success',
+                        title: response.message
+                    });
+                    $('#menuItemModal').modal('hide');
+                    loadMenuItemsAndParents(); // Recargar la tabla de elementos del menú
+
+                    // Si necesitas hacer algo con los permisos después de guardar,
+                    // y el backend devuelve el nuevo ID para elementos creados (response.newId),
+                    // puedes usarlo aquí. De lo contrario, loadMenuItemsAndParents()
+                    // debería ser suficiente para refrescar la UI.
+                    // Si la línea 261 era loadPermissions(itemId);, ahora itemIdToSave está disponible.
+                    // Si ya no es necesaria, puedes eliminarla.
                 } else {
                     Toast.fire({
                         icon: 'error',
-                        title: response.message || 'Error al cargar los elementos del menú.'
+                        title: response.message || 'Error desconocido al guardar.'
                     });
-                    console.error("Error al cargar menú:", response.message);
+                    console.error("Error al guardar elemento:", response.message);
                 }
             },
             error: function(jqXHR, textStatus, errorThrown) {
                 Toast.fire({
                     icon: 'error',
-                    title: 'Error de comunicación con el servidor al cargar el menú.'
+                    title: 'Error de comunicación con el servidor al guardar.'
                 });
-                console.error("AJAX Error:", textStatus, errorThrown, jqXHR.responseText);
+                console.error("AJAX Error al guardar:", textStatus, errorThrown, jqXHR.responseText);
             }
         });
-    }
-
-    // Función para poblar el select de "Elemento Padre"
-    function populateParentSelect(items, currentItemId = null) {
-        const $select = $('#menuItemParent');
-        $select.empty();
-        $select.append('<option value="">-- Sin Padre (Menú Principal) --</option>');
-
-        items.forEach(item => {
-            // No permitir que un elemento sea padre de sí mismo
-            // Y no permitir que un elemento sea padre de uno de sus descendientes (simplificado)
-            if (item.id != currentItemId) {
-                $select.append(`<option value="${item.id}">${item.text}</option>`);
-            }
-        });
-    }
-
-    // Función para inicializar DataTables
-    function initializeDataTable(data) {
-        menuItemsTable = $('#menuItemsTable').DataTable({
-            data: data,
-            columns: [
-                { data: 'id' },
-                { data: 'text' },
-                { data: 'icon' },
-                { data: 'url' },
-                {
-                    data: 'parent_id',
-                    render: function(data, type, row) {
-                        if (data) {
-                            const parent = allMenuItems.find(item => item.id == data);
-                            return parent ? parent.text : 'N/A';
-                        }
-                        return 'N/A';
-                    }
-                },
-                { data: 'order_index' },
-                {
-                    data: 'is_active',
-                    render: function(data, type, row) {
-                        return data ? '<span class="badge bg-success">Sí</span>' : '<span class="badge bg-danger">No</span>';
-                    }
-                },
-                {
-                    data: null,
-                    defaultContent: `
-                        <button class="btn btn-sm btn-info edit-btn" data-bs-toggle="modal" data-bs-target="#menuItemModal"><i class="fas fa-edit"></i> Editar</button>
-                        <button class="btn btn-sm btn-danger delete-btn"><i class="fas fa-trash"></i> Eliminar</button>
-                    `,
-                    orderable: false,
-                    searchable: false
-                }
-            ],
-            responsive: true,
-            lengthChange: false,
-            autoWidth: false,
-            buttons: ["copy", "csv", "excel", "pdf", "print", "colvis"]
-        });
-    }
-
-    // Cargar los datos iniciales al cargar la página
-    loadMenuItemsAndParents();
-
-    // Evento para el botón "Nuevo Elemento"
-    $('#btnNewMenuItem').on('click', function() {
-        $('#menuItemModalLabel').text('Nuevo Elemento de Menú');
-        $('#menuItemForm')[0].reset(); // Limpiar el formulario
-        $('#menuItemId').val(''); // Asegurarse de que el ID esté vacío para creación
-        $('#menuItemIsActive').prop('checked', true); // Por defecto activo
-        populateParentSelect(allMenuItems); // Recargar el select de padres
     });
 
-    // Evento para los botones "Editar" (delegado porque los botones se añaden dinámicamente)
-    $('#menuItemsTable tbody').on('click', '.edit-btn', function() {
-        const data = menuItemsTable.row($(this).parents('tr')).data();
-        $('#menuItemModalLabel').text('Editar Elemento de Menú');
-        $('#menuItemId').val(data.id);
-        $('#menuItemText').val(data.text);
-        $('#menuItemIcon').val(data.icon);
-        $('#menuItemUrl').val(data.url);
-        $('#menuItemOrder').val(data.order_index);
-        $('#menuItemIsActive').prop('checked', data.is_active);
-
-        // Poblar el select de padres, excluyendo el propio elemento que se está editando
-        populateParentSelect(allMenuItems, data.id);
-        $('#menuItemParent').val(data.parent_id); // Seleccionar el padre actual
-    });
-
-    // Evento para los botones "Eliminar" (delegado)
+    // Manejar el clic en los botones "Eliminar" de la tabla
     $('#menuItemsTable tbody').on('click', '.delete-btn', function() {
-        const data = menuItemsTable.row($(this).parents('tr')).data();
+        var data = menuItemsTable.row($(this).parents('tr')).data();
         Swal.fire({
             title: '¿Estás seguro?',
-            text: `¡No podrás revertir la eliminación de "${data.text}"!`,
+            text: `¡No podrás revertir esto! Eliminarás "${data.text}".`,
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
@@ -152,15 +158,18 @@ $(document).ready(function() {
                 $.ajax({
                     url: 'php_libs/soporte/menu/phpAjaxMenuItems.inc.php',
                     type: 'POST',
-                    data: { action: 'deleteMenuItem', id: data.id },
                     dataType: 'json',
+                    data: {
+                        action: 'deleteMenuItem',
+                        id: data.id
+                    },
                     success: function(response) {
                         if (response.success) {
                             Toast.fire({
                                 icon: 'success',
                                 title: response.message
                             });
-                            loadMenuItemsAndParents(); // Recargar la tabla y padres
+                            loadMenuItemsAndParents();
                         } else {
                             Toast.fire({
                                 icon: 'error',
@@ -171,76 +180,221 @@ $(document).ready(function() {
                     error: function(jqXHR, textStatus, errorThrown) {
                         Toast.fire({
                             icon: 'error',
-                            title: 'Error de comunicación al eliminar.'
+                            title: 'Error de comunicación con el servidor al eliminar.'
                         });
-                        console.error("AJAX Error:", textStatus, errorThrown, jqXHR.responseText);
+                        console.error("AJAX Error al eliminar:", textStatus, errorThrown);
                     }
                 });
             }
         });
     });
+});
 
-    // Manejar el envío del formulario (Crear/Editar)
-    $('#menuItemForm').on('submit', function(e) {
-        e.preventDefault(); // Evitar el envío normal del formulario
-
-        const formData = new FormData(this);
-        const itemId = $('#menuItemId').val();
-        const action = itemId ? 'updateMenuItem' : 'createMenuItem'; // Determinar si es crear o actualizar
-        formData.append('action', action);
-
-        // Asegurarse de que el checkbox de is_active siempre envíe un valor (0 o 1)
-        if (!$('#menuItemIsActive').is(':checked')) {
-            formData.set('is_active', '0');
-        } else {
-            formData.set('is_active', '1');
-        }
-        
-        // Si parent_id es vacío, enviar como null
-        if (formData.get('parent_id') === '') {
-            formData.set('parent_id', ''); // El backend lo convertirá a null
-        }
-
-        $.ajax({
-            url: 'php_libs/soporte/menu/phpAjaxMenuItems.inc.php',
-            type: 'POST',
-            data: formData,
-            processData: false, // Importante para FormData
-            contentType: false, // Importante para FormData
-            dataType: 'json',
-            success: function(response) {
-                if (response.success) {
-                    Toast.fire({
-                        icon: 'success',
-                        title: response.message
-                    });
-                    $('#menuItemModal').modal('hide'); // Cerrar el modal
-                    loadMenuItemsAndParents(); // Recargar la tabla y padres
-                } else {
-                    Toast.fire({
-                        icon: 'error',
-                        title: response.message || 'Error al guardar el elemento.'
-                    });
+// Función para inicializar o re-inicializar la tabla de DataTables
+function initializeDataTable() {
+    if ($.fn.DataTable.isDataTable('#menuItemsTable')) {
+        menuItemsTable.destroy();
+    }
+    menuItemsTable = $('#menuItemsTable').DataTable({
+        "paging": true,
+        "lengthChange": true,
+        "searching": true,
+        "ordering": true,
+        "info": true,
+        "autoWidth": false,
+        "responsive": true,
+        "language": {
+            "url": "php_libs/idioma/es_es.json"
+        },
+        "ajax": {
+            "url": "php_libs/soporte/menu/phpAjaxMenuItems.inc.php",
+            "type": "POST",
+            "data": { "action": "getAllMenuItems" },
+            "dataSrc": "data"
+        },
+        "columns": [
+            { "data": "id" },          // Columna 0
+            { "data": "text" },        // Columna 1
+            {
+                "data": "icon",
+                "render": function(data, type, row) {
+                    // Asumiendo que 'data' es 'home', 'user', etc.
+                    // y que quieres usar iconos sólidos de Font Awesome 5
+                    if (data) {
+                        // Si los datos incluyen el prefijo (ej. 'fas fa-home'), úsalo directamente
+                        if (data.startsWith('fa-') || data.startsWith('fas fa-') || data.startsWith('far fa-') || data.startsWith('fab fa-')) {
+                            return `<i class="${data}"></i>`;
+                        }
+                        // Si los datos son solo el nombre del icono (ej. 'home'), añade el prefijo 'fas fa-'
+                        return `<i class="fas fa-${data}"></i>`;
+                    }
+                    return ''; // Si no hay icono
+                }
+              },
+            { "data": "url" },         // Columna 3
+            { "data": "parent_id" },   // Columna 4
+            { "data": "order_index" }, // Columna 5
+            { "data": "is_active",     // Columna 6 (con renderizado para checkbox visual)
+              "render": function(data, type, row) {
+                    return data == 1 ? '<i class="fas fa-check-circle text-success"></i> Sí' : '<i class="fas fa-times-circle text-danger"></i> No';
                 }
             },
-            error: function(jqXHR, textStatus, errorThrown) {
+            // Las columnas 'created_at' y 'updated_at' no las incluiremos aquí si no se muestran en la tabla.
+            // Si necesitas mostrarlas, añade: { "data": "created_at" }, { "data": "updated_at" }
+            { "data": null,           // Columna 7: Acciones (botones)
+              "defaultContent": '<div class="btn-group" role="group" aria-label="Acciones">' +
+                                  '<button type="button" class="btn btn-warning btn-sm edit-btn" data-bs-toggle="modal" data-bs-target="#menuItemModal"><i class="fas fa-edit"></i></button>' +
+                                  '<button type="button" class="btn btn-danger btn-sm delete-btn"><i class="fas fa-trash"></i></button>' +
+                                '</div>'
+            }
+        ],
+        "columnDefs": [
+            { "orderable": false, "targets": [7] } // Deshabilita el ordenamiento en la columna de Acciones (índice 7)
+        ]
+    });
+}
+
+// Cargar elementos del menú y poblar la tabla
+function loadMenuItemsAndParents() {
+    $.ajax({
+        url: 'php_libs/soporte/menu/phpAjaxMenuItems.inc.php',
+        type: 'POST',
+        dataType: 'json',
+        data: { action: 'getMenuItemsAndParents' },
+        success: function(response) {
+            const $selectParent = $('#menuItemParent');
+            $selectParent.empty(); // Limpiar opciones existentes
+            $selectParent.append('<option value="">-- Sin Padre --</option>'); // Opción por defecto (para items de nivel superior)
+
+            if (response.success && response.data) {
+                $.each(response.data, function(index, item) {
+                    // Si estamos editando, excluimos el elemento actual de la lista de padres
+                    // para evitar que un elemento sea padre de sí mismo.
+                    if (item.id != currentEditingItemId) {
+                        $selectParent.append($('<option>', {
+                            value: item.id,
+                            text: item.text
+                        }));
+                    }
+                });
+            } else {
+                console.error("Error al cargar elementos del menú para select: " + (response.message || 'Respuesta inesperada del servidor.'));
                 Toast.fire({
                     icon: 'error',
-                    title: 'Error de comunicación al guardar.'
+                    title: response.message || 'Error al cargar elementos del menú.'
                 });
-                console.error("AJAX Error:", textStatus, errorThrown, jqXHR.responseText);
             }
-        });
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+            console.error("Error en la solicitud AJAX para cargar elementos padre:", textStatus, errorThrown, jqXHR.responseText);
+            Toast.fire({
+                icon: 'error',
+                title: 'Error de red o servidor al cargar elementos padre.'
+            });
+        }
+    });
+}
+
+// Función para poblar el select de elementos padres
+function populateParentSelect(menuItems) {
+    const parentSelect = $('#menuItemParent');
+    parentSelect.empty();
+    parentSelect.append($('<option>', {
+        value: '',
+        text: '--- Ninguno (Es un Padre) ---'
+    })); // Opción por defecto
+
+    menuItems.forEach(item => {
+        // No permitir que un elemento sea su propio padre
+        if (item.id !== currentEditingItemId) {
+            parentSelect.append($('<option>', {
+                value: item.id,
+                text: item.text
+            }));
+        }
     });
 
-    // Asegurarse de que el modal se cierre correctamente con Bootstrap 5
-    // Ya no se usa data-dismiss, ahora es data-bs-dismiss
-    // No se necesita JS adicional para cerrar el modal si usas data-bs-dismiss="modal" en los botones.
-    // Si necesitas hacer algo al cerrar el modal:
-    $('#menuItemModal').on('hidden.bs.modal', function () {
-        $('#menuItemForm')[0].reset();
-        $('#menuItemId').val('');
-        $('#menuItemIsActive').prop('checked', true);
-        populateParentSelect(allMenuItems); // Asegurarse de que el select de padres se resetee
+    // Si se está editando un elemento, seleccionar su padre actual
+    if (currentEditingItemId !== null) {
+        const currentItemData = menuItems.find(item => item.id == currentEditingItemId);
+        if (currentItemData && currentItemData.parent_id) {
+            parentSelect.val(currentItemData.parent_id);
+        }
+    }
+}
+
+// Función para cargar todos los perfiles disponibles
+function loadAllProfiles() {
+    $.ajax({
+        url: 'php_libs/soporte/menu/phpAjaxMenuPermissions.inc.php', // Utiliza el script de permisos solo para cargar perfiles
+        type: 'GET',
+        dataType: 'json',
+        data: { action: 'getAllProfiles' },
+        success: function(response) {
+            if (response.success) {
+                const permissionsCheckboxes = $('#permissionsCheckboxes');
+                permissionsCheckboxes.empty(); // Limpiar checkboxes existentes
+
+                response.data.forEach(profile => {
+                    const checkboxHtml = `
+                        <div class="form-check">
+                            <input class="form-check-input permission-checkbox" type="checkbox" value="${profile.codigo_perfil}" id="profileCheck${profile.id_perfil}">
+                            <label class="form-check-label" for="profileCheck${profile.id_perfil}">
+                                ${profile.nombre_perfil} (${profile.codigo_perfil})
+                            </label>
+                        </div>
+                    `;
+                    permissionsCheckboxes.append(checkboxHtml);
+                });
+            } else {
+                Toast.fire({
+                    icon: 'error',
+                    title: response.message || 'Error al cargar perfiles.'
+                });
+            }
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+            Toast.fire({
+                icon: 'error',
+                title: 'Error de comunicación al cargar perfiles.'
+            });
+            console.error("AJAX Error al cargar perfiles:", textStatus, errorThrown);
+        }
     });
-});
+}
+
+// Función para cargar los permisos de un elemento de menú específico
+function loadPermissions(menuItemId) {
+    // Asegurarse de que todas las casillas estén desmarcadas primero
+    $('#permissionsCheckboxes input.permission-checkbox').prop('checked', false);
+
+    $.ajax({
+        url: 'php_libs/soporte/menu/phpAjaxMenuPermissions.inc.php', // Script de permisos
+        type: 'GET',
+        dataType: 'json',
+        data: {
+            action: 'getPermissionsByMenuItem',
+            menu_item_id: menuItemId
+        },
+        success: function(response) {
+            if (response.success) {
+                response.data.forEach(profileId => {
+                    // Marcar las casillas correspondientes a los perfiles asignados
+                    $(`#permissionsCheckboxes input.permission-checkbox[value="${profileId}"]`).prop('checked', true);
+                });
+            } else {
+                Toast.fire({
+                    icon: 'error',
+                    title: response.message || 'Error al cargar permisos del elemento.'
+                });
+            }
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+            Toast.fire({
+                icon: 'error',
+                title: 'Error de comunicación al cargar permisos.'
+            });
+            console.error("AJAX Error al cargar permisos:", textStatus, errorThrown);
+        }
+    });
+}

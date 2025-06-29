@@ -64,6 +64,7 @@
     <script src="./js/plugins/responsive/js/responsive.bootstrap4.min.js"></script>
 
     <script src="docs/assets/js/adminlte.min.js"></script>
+    <script src="./js/loadSideMenu.js"></script>
 
     <script src="./js/pace/pace.min.js"></script>
     <script type="text/JavaScript" src="./js/toastr/toastr.min.js">
@@ -158,6 +159,7 @@
         "showMethod": "fadeIn",
         "hideMethod": "fadeOut"
       }
+      
     </script>
     <script>
       $(document).ready(function(){ //Hacia arriba
@@ -172,7 +174,7 @@
       }
     </script>
     <script type="text/Javascript" src="./js/principal_js_login.js"></script>
-    <script type="text/JavaScript" src="./js/main_menu.js"></script>
+    <!-- <script type="text/JavaScript" src="./js/main_menu.js"></script> -->
 
     <script type="text/Javascript">
       function MostrarMensaje(){
@@ -269,6 +271,7 @@
                   </div>
                   <nav class="mt-2" aria-label="Sidebar main navigation">
                       <div id="dynamic-sidebar-menu" class="sidebar-menu">
+                        {% include 'layout-menu.html' %}
                       </div>
                   </nav>
                   </div>

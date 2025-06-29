@@ -35,42 +35,56 @@ if ($dblink) { // Asegurarse de que la conexión a la base de datos fue exitosa
         // y también los elementos padre para poder construir la estructura jerárquica.
         // Unimos menu_items con profile_menu_permissions para filtrar por perfil.
         // Y luego hacemos un LEFT JOIN para incluir también los padres de los items permitidos.
-        $query = "
-            SELECT DISTINCT
-                mi.id,
-                mi.parent_id,
-                mi.text,
-                mi.icon,
-                mi.url,
-                mi.order_index
-            FROM
-                menu_items mi
-            INNER JOIN
-                profile_menu_permissions pmp ON mi.id = pmp.menu_item_id
-            WHERE
-                pmp.profile_id = :codigo_perfil AND mi.is_active = TRUE
-            
-            UNION -- Usamos UNION para incluir también los elementos padre si no son directamente asignados
-            
-            SELECT DISTINCT
-                p.id,
-                p.parent_id,
-                p.text,
-                p.icon,
-                p.url,
-                p.order_index
-            FROM
-                menu_items mi
-            INNER JOIN
-                profile_menu_permissions pmp ON mi.id = pmp.menu_item_id
-            INNER JOIN
-                menu_items p ON mi.parent_id = p.id -- 'p' es el elemento padre
-            WHERE
-                pmp.profile_id = :codigo_perfil AND p.is_active = TRUE
-            ORDER BY
-                parent_id ASC NULLS FIRST, -- Asegura que los padres se ordenen primero
-                order_index ASC;
-        ";
+
+$query = "
+    WITH RECURSIVE authorized_menu_items AS (
+        -- Caso base: Selecciona todos los elementos directamente vinculados al perfil
+        SELECT
+            mi.id,
+            mi.parent_id,
+            mi.text,
+            mi.icon,
+            mi.url,
+            mi.order_index,
+            mi.is_active -- Asumiendo que esta columna existe
+        FROM
+            public.menu_items mi
+        INNER JOIN
+            public.profile_menu_permissions pmp ON mi.id = pmp.menu_item_id
+        WHERE
+            pmp.profile_id = :codigo_perfil AND mi.is_active = TRUE
+
+        UNION
+
+        -- Paso recursivo: Añade los elementos padre de los elementos autorizados
+        SELECT
+            p.id,
+            p.parent_id,
+            p.text,
+            p.icon,
+            p.url,
+            p.order_index,
+            p.is_active -- Asumiendo que esta columna existe
+        FROM
+            public.menu_items p
+        INNER JOIN
+            authorized_menu_items ami ON p.id = ami.parent_id
+        WHERE
+            p.is_active = TRUE -- Asegura que el padre también esté activo si se desea
+    )
+    SELECT
+        id,
+        parent_id,
+        text,
+        icon,
+        url,
+        order_index
+    FROM
+        authorized_menu_items
+    ORDER BY
+        parent_id ASC NULLS FIRST,
+        order_index ASC;
+";
 
         $stmt = $dblink->prepare($query);
         $stmt->bindParam(':codigo_perfil', $codigo_perfil, PDO::PARAM_STR);
