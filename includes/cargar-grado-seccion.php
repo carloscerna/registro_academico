@@ -14,19 +14,20 @@
 	 $codigoBachillerato = $_REQUEST["modalidad"];
 	 $codigoAnnLectivo = $_REQUEST["annlectivo"];
 	 $codigoPerfil = $_SESSION['codigo_perfil'];
-	 $codigoPersonal = $_SESSION['codigo_personal'];
+	 $codigoPersonal = trim($_SESSION['codigo_personal']);
  
 	 // Determinar la consulta según el perfil
 	 if ($codigoPerfil == '06') {	// Docente.
-		 $query = "SELECT 
+		 $query = "SELECT DISTINCT cd.codigo_grado, cd.codigo_seccion, cd.codigo_turno,
 				CONCAT(cd.codigo_grado,cd.codigo_seccion,cd.codigo_turno) AS codigo,
-				CONCAT(grd.nombre, ' - ', sec.nombre, ' - ', tur.nombre) AS nombre
+				CONCAT(grd.nombre || ' - ' || sec.nombre || ' - ' || tur.nombre) AS nombre
 			FROM carga_docente cd
 			INNER JOIN grado_ano grd ON grd.codigo = cd.codigo_grado
 			INNER JOIN seccion sec ON sec.codigo = cd.codigo_seccion
 			INNER JOIN turno tur ON tur.codigo = cd.codigo_turno
 			WHERE cd.codigo_bachillerato = :codigoBachillerato 
 			AND cd.codigo_ann_lectivo = :codigoAnnLectivo
+			and cd.codigo_docente = :codigoPersonal
 			ORDER BY cd.codigo_grado, cd.codigo_seccion";
 	 } elseif ($codigoPerfil == '04' || $codigoPerfil == '05' || $codigoPerfil == '01') { // Registro Académico Básica y Media.
 			$query = "SELECT 

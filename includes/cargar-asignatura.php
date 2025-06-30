@@ -14,21 +14,21 @@ try {
     $codigoBachillerato = $_REQUEST["modalidad"];
     $codigoAnnLectivo = $_REQUEST["annlectivo"];
     $codigoPerfil = $_SESSION['codigo_perfil'];
-    $codigoPersonal = $_SESSION['codigo_personal'];
-    $codigoGradoSeccionTurno = $_REQUEST["codigo_grado_seccion_turno"];
+    $codigoPersonal = trim($_SESSION['codigo_personal']);
+    $codigoGradoSeccionTurno = trim($_REQUEST["codigo_grado_seccion_turno"]);
     $codigoGrado = substr($codigoGradoSeccionTurno,0,2);
     // Determinar la consulta según el perfil
     if ($codigoPerfil == '06') {
         $query = "SELECT DISTINCT 
                         cd.codigo_bachillerato, cd.codigo_ann_lectivo, 
-                        cd.codigo_grado || '-' || cd.codigo_seccion || '-' || cd.codigo_turno AS codigo,
-                        grd.nombre || ' - ' || tur.nombre AS nombre, 
-                        asi.codigo AS codigo_asignatura, asi.nombre AS nombre_asignatura
+                        cd.codigo_grado || '-' || cd.codigo_seccion || '-' || cd.codigo_turno AS codigo_grado_seccion_turno,
+                        grd.nombre || ' - ' || tur.nombre AS nombre_grado_turno, 
+                        asi.codigo AS codigo, asi.nombre AS nombre
                   FROM carga_docente cd
                   INNER JOIN grado_ano grd ON grd.codigo = cd.codigo_grado
                   INNER JOIN turno tur ON tur.codigo = cd.codigo_turno
                   INNER JOIN asignatura asi ON asi.codigo = cd.codigo_asignatura AND asi.estatus = '1'
-                  WHERE cd.codigo_grado || '-' || cd.codigo_seccion || '-' || cd.codigo_turno = :codigoGradoSeccionTurno
+                  WHERE cd.codigo_grado || cd.codigo_seccion || cd.codigo_turno = :codigoGradoSeccionTurno
                   AND cd.codigo_bachillerato = :codigoBachillerato
                   AND cd.codigo_ann_lectivo = :codigoAnnLectivo
                   AND cd.codigo_docente = :codigoPersonal
