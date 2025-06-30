@@ -26,8 +26,8 @@
                         <div class="card-header">
                             <h3 class="card-title">Elementos del Menú</h3>
                             <div class="card-tools">
-                                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#menuItemModal" id="btnNewMenuItem">
-                                    <i class="fas fa-plus"></i> Nuevo Elemento
+                                <button type="button" class="btn btn-primary" id="createMenuItemBtn" data-bs-toggle="modal" data-bs-target="#menuItemModal">
+                                    <i class="fas fa-plus-circle"></i> Nuevo Elemento
                                 </button>
                             </div>
                         </div>
@@ -35,14 +35,14 @@
                             <table id="menuItemsTable" class="table table-bordered table-striped">
                                 <thead>
                                     <tr>
-                                        <th>ID</th>
-                                        <th>Texto</th>
-                                        <th>Icono</th>
-                                        <th>URL</th>
-                                        <th>Padre</th>
-                                        <th>Orden</th>
-                                        <th>Activo</th>
-                                        <th>Acciones</th>
+                                        <th scope="col" >ID</th>
+                                        <th scope="col">Texto</th>
+                                        <th scope="col">Icono</th>
+                                        <th scope="col">URL</th>
+                                        <th scope="col">Padre</th>
+                                        <th scope="col">Orden</th>
+                                        <th scope="col">Activo</th>
+                                        <th scope="col">Acciones</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -59,7 +59,8 @@
         <div class="modal-dialog modal-lg">
           <div class="modal-content">
             <div class="modal-header">
-              <h5 class="modal-title" id="menuItemModalLabel"></h5>
+              <h5 class="modal-title" id="menuItemModalLabel">...
+              </h5>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">

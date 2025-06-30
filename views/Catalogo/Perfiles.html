@@ -1,0 +1,118 @@
+{# Heredando la plantilla principal #}
+{% extends 'default_layout.html' %}
+
+{% block extraCSS %}
+
+{% endblock %}
+
+{% block contenidos %}
+    <div class="content-wrapper">
+        <div class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <h1 class="m-0">Gestión de Perfiles</h1>
+                    </div><div class="col-sm-6">
+                        <ol class="breadcrumb float-sm-right">
+                            <li class="breadcrumb-item"><a href="index.php">Inicio</a></li>
+                            <li class="breadcrumb-item active">Perfiles</li>
+                        </ol>
+                    </div></div></div></div>
+        <section class="content">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">Listado de Perfiles</h3>
+                                <div class="card-tools">
+                                    <button type="button" class="btn btn-block btn-primary btn-sm" id="createProfileBtn">
+                                        <i class="fas fa-plus-circle"></i> Nuevo Perfil
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <table id="profilesTable" class="table table-bordered table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">ID Perfil</th>
+                                            <th scope="col">Código</th>
+                                            <th scope="col">Descripción</th>
+                                            <th scope="col">Activo</th>
+                                            <th scope="col">Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <th scope="col">ID Perfil</th>
+                                            <th scope="col">Código</th>
+                                            <th scope="col">Descripción</th>
+                                            <th scope="col">Activo</th>
+                                            <th scope="col">Acciones</th>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+    <div class="modal fade" id="profileModal" tabindex="-1" role="dialog" aria-labelledby="profileModalLabel" aria-hidden="false">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="profileModalLabel">Nuevo Perfil</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+
+                    </button>
+                </div>
+                <form id="profileForm">
+                    <div class="modal-body">
+                        <input type="hidden" id="profileId" name="id_perfil"> <div class="form-group">
+                            <label for="profileCodigo">Código</label>
+                            <input type="text" class="form-control" id="profileCodigo" name="codigo" required maxlength="10">
+                        </div>
+                        <div class="form-group">
+                            <label for="profileDescripcion">Descripción</label>
+                            <input type="text" class="form-control" id="profileDescripcion" name="descripcion" required maxlength="100">
+                        </div>
+                        <div class="form-group form-check">
+                            <input type="checkbox" class="form-check-input" id="profileIsActive" name="is_active" checked>
+                            <label class="form-check-label" for="profileIsActive">Activo</label>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Cerrar">Cerrar</button>
+                        <button type="submit" class="btn btn-primary">Guardar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }} {# Mantiene los scripts del layout padre #}
+    <script type="text/JavaScript" src="js/catalogo/Perfiles.js"></script>
+<script>
+    // Este código debe estar en un script que se carga ANTES de cualquier llamada a Toast.fire
+// Puedes ponerlo en default_layout.html (dentro de un <script> o en un archivo JS principal)
+// o al inicio de main_menu_admin.js si es solo para esa página.
+const Toast = Swal.mixin({
+    toast: true,
+    position: 'top-end',
+    showConfirmButton: false,
+    timer: 3000,
+    timerProgressBar: true,
+    didOpen: (toast) => {
+        toast.addEventListener('mouseenter', Swal.stopTimer);
+        toast.addEventListener('mouseleave', Swal.resumeTimer);
+    }
+});
+</script>
+{% endblock %}

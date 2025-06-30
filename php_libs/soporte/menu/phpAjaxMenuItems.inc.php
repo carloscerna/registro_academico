@@ -266,7 +266,7 @@ try {
             case 'getMenuItemsAndParents':
                 try {
                     // Selecciona id y text de todos los elementos para el select de padres
-                    $query = "SELECT id, text FROM public.menu_items ORDER BY text ASC;";
+                    $query = "SELECT id, text FROM public.menu_items WHERE parent_id IS NULL ORDER BY text ASC;";
                     $stmt = $dblink->prepare($query);
                     $stmt->execute();
                     $items = $stmt->fetchAll(PDO::FETCH_ASSOC); // Obtener como arrays asociativos

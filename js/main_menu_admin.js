@@ -12,35 +12,33 @@ $(document).ready(function() {
     // Cargar perfiles para la pestaña de permisos
     loadAllProfiles();
 
-    // Manejar el clic en el botón "Nuevo Elemento"
-    $('#createMenuItemBtn').on('click', function() {
+ // main_menu_admin.js
+// Manejar el clic en el botón "Nuevo Elemento"
+$('#createMenuItemBtn').on('click', function() {
+    // Resetear el formulario
+    $('#menuItemForm')[0].reset();
+    $('#menuItemId').val(''); // Limpiar el ID oculto para una nueva entrada
+    currentEditingItemId = null; // Resetear el ID de edición actual (IMPORTANTE)
 
-        // Resetear el formulario
-        $('#menuItemForm')[0].reset();
-        $('#menuItemId').val(''); // Limpiar el ID oculto para una nueva entrada
-        currentEditingItemId = null; // Resetear el ID de edición actual (IMPORTANTE)
+    // Limpiar y cargar de nuevo el select de padres para asegurar que esté reseteado y actualizado
+    $('#menuItemParent').empty(); // Limpiar todas las opciones
+    loadMenuItemsAndParents(); // Volver a cargar las opciones, lo cual añadirá la opción "-- Sin Padre --" y las demás.
 
-        $('#menuItemParent').val(''); // Resetear el select de padres
-        $('#menuItemIsActive').prop('checked', true); // Marcar como activo por defecto
+    $('#menuItemIsActive').prop('checked', true); // Marcar como activo por defecto
 
-        $('#menuItemModalLabel').text('Nuevo Elemento del Menú');
-        $('#permissionsTab').hide(); // Ocultar la pestaña de permisos para nuevos elementos
-        $('#permissionsTabLink').parent().hide(); // Ocultar el enlace de la pestaña
+    $('#menuItemModalLabel').text('Nuevo Elemento del Menú');
+    $('#permissionsTab').hide(); // Ocultar la pestaña de permisos para nuevos elementos
+    $('#permissionsTabLink').parent().hide(); // Ocultar el enlace de la pestaña
 
-        // Activar la pestaña de Detalles al abrir el modal de creación
-        new bootstrap.Tab(document.getElementById('detailsTabLink')).show();
+    // Activar la pestaña de Detalles al abrir el modal de creación
+    new bootstrap.Tab(document.getElementById('detailsTabLink')).show();
 
-        // Limpiar las casillas de permisos para un nuevo elemento
-        $('#permissionsCheckboxes input.permission-checkbox').prop('checked', false);
-    });
-
+    // Limpiar las casillas de permisos para un nuevo elemento
+    $('#permissionsCheckboxes input.permission-checkbox').prop('checked', false);
+});
     // Manejar el clic en los botones "Editar" de la tabla
     $('#menuItemsTable tbody').on('click', '.edit-btn', function() {
         var data = menuItemsTable.row($(this).parents('tr')).data();
-        console.log("DEBUG (Edit Btn Click): Fila seleccionada:", data);
-         // === DEPURACIÓN: Verifica el ID de la fila en la consola ===
-    console.log("DEBUG (Edit Btn Click): Datos de la fila:", data);
-    console.log("DEBUG (Edit Btn Click): ID del elemento a editar:", data.id);
     // =========================================================
 
         currentEditingItemId = data.id; // Establecer el ID global
@@ -115,7 +113,11 @@ $(document).ready(function() {
                         title: response.message
                     });
                     $('#menuItemModal').modal('hide');
-                    loadMenuItemsAndParents(); // Recargar la tabla de elementos del menú
+                        // === AQUÍ ESTÁ LA LÍNEA CLAVE ===
+                        // Recargar los datos de la tabla de DataTables desde su fuente AJAX
+                        menuItemsTable.ajax.reload(null, false); //
+
+                        loadMenuItemsAndParents(); // Recargar la tabla de elementos del menú
 
                     // Si necesitas hacer algo con los permisos después de guardar,
                     // y el backend devuelve el nuevo ID para elementos creados (response.newId),
