@@ -82,28 +82,28 @@
                     <div class="card-body">
                       <!-- Nav tabs ASIGNATURA, MODALIDAD, GRADO, SECCION Y AÑO LECTIVO-->
                       <nav id="NavServicioEducativo">
-                        <ul class="nav nav-pills mb-3" id="pills-tab" role="list">
+                        <ul class="nav nav-tabs mb-3" id="pills-tab" role="nav">
                           <li class="nav-item">
-                            <a class="nav-link active" id="pills-se-tab" data-toggle="pill" href="#pills-se" role="tab" aria-controls="pills-se" aria-selected="true">Servicios Educativos</a>
+                            <a class="nav-link active" id="pills-se-tab" data-bs-toggle="tab" href="#pills-se" role="tab" aria-controls="pills-se" aria-selected="true">Servicios Educativos</a>
                           </li>
                           <li class="nav-item">
-                            <a class="nav-link" id="pills-home-tab" data-toggle="pill" href="#pills-home" role="tab" aria-controls="pills-home" aria-selected="false">Asignaturas</a>
+                            <a class="nav-link" id="pills-home-tab" data-bs-toggle="tab" href="#pills-home" role="tab" aria-controls="pills-home" aria-selected="false">Asignaturas</a>
                           </li>
                           <li class="nav-item">
-                            <a class="nav-link" id="pills-modalidad-tab" data-toggle="pill" href="#pills-nivel" role="tab" aria-controls="pills-profile" aria-selected="false">Nivel</a>
+                            <a class="nav-link" id="pills-modalidad-tab" data-bs-toggle="tab" href="#pills-nivel" role="tab" aria-controls="pills-profile" aria-selected="false">Nivel</a>
                           </li>
                           <li class="nav-item">
-                            <a class="nav-link" id="pills-grado-tab" data-toggle="pill" href="#pills-grado" role="tab" aria-controls="pills-contact" aria-selected="false">Grado</a>
+                            <a class="nav-link" id="pills-grado-tab" data-bs-toggle="tab" href="#pills-grado" role="tab" aria-controls="pills-contact" aria-selected="false">Grado</a>
                           </li>
                           <li class="nav-item">
-                            <a class="nav-link" id="pills-seccion-tab" data-toggle="pill" href="#pills-seccion" role="tab" aria-controls="pills-contact" aria-selected="false">Sección</a>
+                            <a class="nav-link" id="pills-seccion-tab" data-bs-toggle="tab" href="#pills-seccion" role="tab" aria-controls="pills-contact" aria-selected="false">Sección</a>
                           </li>
                           <li class="nav-item">
-                            <a class="nav-link" id="pills-annlectivo-tab" data-toggle="pill" href="#pills-annlectivo" role="tab" aria-controls="pills-contact" aria-selected="false">Año Lectivo</a>
+                            <a class="nav-link" id="pills-annlectivo-tab" data-bs-toggle="tab" href="#pills-annlectivo" role="tab" aria-controls="pills-contact" aria-selected="false">Año Lectivo</a>
                           </li>
                         </ul>
                       </nav>
-                      
+
                       <div class="tab-content" id="pills-tabContent">
                          <!-- NAV TAB SERVICIOS EDUCATIVOS. *INICIO*-->
                           <div class="tab-pane fade show active" id="pills-se" role="tabpanel" aria-labelledby="pills-se-tab">
@@ -117,7 +117,7 @@
                                   </button>
                                   <button type="button" id="goNuevoSe" aria-label="goNuevoSe" class="btn btn-primary mb-2" tabindex="-1" data-toggle="tooltip" data-placement="top" title="Nuevo">
                                     <i class="far fa-layer-plus"></i>
-                                  </button>                                 
+                                  </button>
                               </form>
                               <div class="alert alert-danger" role="alert" id="AlertSe">
                                 <span id="TextoAlertSe">...</span>
@@ -130,7 +130,7 @@
                                             </div>
                                           </div>
                                             <div class="col">
-                                              <table id="listadoContenidoSE" class="table table-striped table-bordered table-hover table-condensed">
+                                              <table id="listadoContenidoSE" class="table table-striped table-bordered">
                                                 <thead>
                                                   <tr>
                                                     <th><input type="checkbox" name="checkBoxAllSe" id="checkBoxAllSe" data-toggle="tooltip" data-placement="top" title="Marcar/Desmarcar Todo">
@@ -204,14 +204,14 @@
                                               </tr>
                                             </thead>
                                               <tbody id="listaContenidoSE">
-                                            
-                                              </tbody>                            
+
+                                              </tbody>
                                             <tfoot>
                                             </tfoot>
                                         </table>
                                       </div>
                                     </div>
-                                    <!-- TABLA CON LOS DATOS DEL SERVICIO EDUCATIV. --> 
+                                    <!-- TABLA CON LOS DATOS DEL SERVICIO EDUCATIV. -->
                         </div> <!-- NAV TAB ASIGNATURAS FIN*-->
                         <div class="tab-pane fade" id="pills-nivel" role="tabpanel" aria-labelledby="pills-nivel-tab">
                             <!-- NAV TAB MODALIDAD *INICIO*-->
@@ -224,12 +224,12 @@
                                 </button>
                                 <button type="button" id="goNuevoSEModalidad" aria-label="goNuevoSEModalidad" class="btn btn-primary mb-2" tabindex="-1" data-toggle="tooltip" data-placement="top" title="Nuevo">
                                   <i class="far fa-layer-plus"></i>
-                                </button>                                 
+                                </button>
                             </form>
                             <div class="alert alert-danger" role="alert" id="AlertSEModalidad">
                               <span id="TextoAlertModalidad">...</span>
                             </div>
-                                  <!-- TABLA CON LOS DATOS DEL SERVICIO EDUCATIVO. -->  
+                                  <!-- TABLA CON LOS DATOS DEL SERVICIO EDUCATIVO. -->
                                       <div class="modal-body">
                                         <div class="row bg-cyan">
                                           <div class="col">
@@ -254,14 +254,13 @@
                                                 </tr>
                                               </thead>
                                                 <tbody id="listaContenidoSEModalidad">
-                                              
-                                                </tbody>                            
+                                                </tbody>
                                               <tfoot>
                                               </tfoot>
                                           </table>
                                         </div>
                                       </div>
-                                      <!-- TABLA CON LOS DATOS DEL SERVICIO EDUCATIV. --> 
+                                      <!-- TABLA CON LOS DATOS DEL SERVICIO EDUCATIV. -->
                         </div> <!-- NAV TAB MODALIDAD FIN*-->
                         <div class="tab-pane fade" id="pills-grado" role="tabpanel" aria-labelledby="pills-grado-tab">
                               <!-- NAV TAB GRADO *INICIO*-->
@@ -274,16 +273,16 @@
                                   </button>
                                   <button type="button" id="goNuevoSEGrado" aria-label="goNuevoSEGrado" class="btn btn-primary mb-2" tabindex="-1" data-toggle="tooltip" data-placement="top" title="Nuevo">
                                     <i class="far fa-layer-plus"></i>
-                                  </button>                                 
+                                  </button>
                               </form>
                               <div class="alert alert-danger" role="alert" id="AlertSEGrado">
                                 <span id="TextoAlertGrado">...</span>
                               </div>
-                                    <!-- TABLA CON LOS DATOS DEL SERVICIO EDUCATIVO. -->  
+                                    <!-- TABLA CON LOS DATOS DEL SERVICIO EDUCATIVO. -->
                                         <div class="modal-body">
                                           <div class="row bg-cyan">
                                             <div class="col">
-                                              <label for="">Grado </label>
+                                              <label for="Grado">Grado </label>
                                             </div>
                                           </div>
                                             <div class="col">
@@ -303,14 +302,14 @@
                                                   </tr>
                                                 </thead>
                                                   <tbody id="listaContenidoSEGrado">
-                                                
-                                                  </tbody>                            
+
+                                                  </tbody>
                                                 <tfoot>
                                                 </tfoot>
                                             </table>
                                           </div>
                                         </div>
-                                        <!-- TABLA CON LOS DATOS DEL SERVICIO EDUCATIV. --> 
+                                        <!-- TABLA CON LOS DATOS DEL SERVICIO EDUCATIV. -->
                           </div> <!-- NAV TAB GRADO FIN*-->
                         <div class="tab-pane fade" id="pills-seccion" role="tabpanel" aria-labelledby="pills-seccion-tab">
                           <!-- NAV TAB SECCION *INICIO*-->
@@ -323,12 +322,12 @@
                               </button>
                               <button type="button" id="goNuevoSESeccion" aria-label="goNuevoSESeccion" class="btn btn-primary mb-2" tabindex="-1" data-toggle="tooltip" data-placement="top" title="Nuevo">
                                 <i class="far fa-layer-plus"></i>
-                              </button>                                 
+                              </button>
                           </form>
                           <div class="alert alert-danger" role="alert" id="AlertSESeccion">
                             <span id="TextoAlertSeccion">...</span>
                           </div>
-                                <!-- TABLA CON LOS DATOS DEL SERVICIO EDUCATIVO. -->  
+                                <!-- TABLA CON LOS DATOS DEL SERVICIO EDUCATIVO. -->
                                     <div class="modal-body">
                                       <div class="row bg-cyan">
                                         <div class="col">
@@ -352,14 +351,14 @@
                                               </tr>
                                             </thead>
                                               <tbody id="listaContenidoSESeccion">
-                                            
-                                              </tbody>                            
+
+                                              </tbody>
                                             <tfoot>
                                             </tfoot>
                                         </table>
                                       </div>
                                     </div>
-                                    <!-- TABLA CON LOS DATOS DEL SERVICIO EDUCATIV. --> 
+                                    <!-- TABLA CON LOS DATOS DEL SERVICIO EDUCATIV. -->
                         </div> <!-- NAV TAB SECCION FIN*-->
                         <div class="tab-pane fade" id="pills-annlectivo" role="tabpanel" aria-labelledby="pills-annlectivo-tab">
                            <!-- NAV TAB AÑO LECTIVO *INICIO*-->
@@ -372,12 +371,12 @@
                               </button>
                               <button type="button" id="goNuevoSEAnnLectivo" aria-label="goNuevoSEAnnLectivo" class="btn btn-primary mb-2" tabindex="-1" data-toggle="tooltip" data-placement="top" title="Nuevo">
                                 <i class="far fa-layer-plus"></i>
-                              </button>                                 
+                              </button>
                           </form>
                           <div class="alert alert-danger" role="alert" id="AlertSEAnnLectivo">
                             <span id="TextoAlertAnnLectivo">...</span>
                           </div>
-                                <!-- TABLA CON LOS DATOS DEL SERVICIO EDUCATIVO. -->  
+                                <!-- TABLA CON LOS DATOS DEL SERVICIO EDUCATIVO. -->
                                     <div class="modal-body">
                                       <div class="row bg-cyan">
                                         <div class="col">
@@ -403,14 +402,14 @@
                                               </tr>
                                             </thead>
                                               <tbody id="listaContenidoSEAnnLectivo">
-                                            
-                                              </tbody>                            
+
+                                              </tbody>
                                             <tfoot>
                                             </tfoot>
                                         </table>
                                       </div>
                                     </div>
-                                    <!-- TABLA CON LOS DATOS DEL SERVICIO EDUCATIV. --> 
+                                    <!-- TABLA CON LOS DATOS DEL SERVICIO EDUCATIV. -->
                         </div> <!-- NAV TAB AÑO LECTIVO FIN*-->
                       </div>
 

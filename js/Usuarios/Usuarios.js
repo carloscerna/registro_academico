@@ -206,7 +206,7 @@ $(function () {
             username: {
                 required: true,
                 minlength: 4,
-                maxlength: 20
+                maxlength: 100
             },
             password: {
                 required: function() {

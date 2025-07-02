@@ -14,7 +14,7 @@
 					$codigo_docente = $_REQUEST['codigo_docente'];
 					$db_link = $dblink;
 						// armando el Query. PARA LA TABLA HISTORIAL.
-						$query_cd = "SELECT cd.id_carga_docente, cd.codigo_bachillerato, cd.codigo_asignatura, cd.codigo_ann_lectivo, cd.codigo_grado, cd.codigo_seccion, cd.codigo_turno, cd.codigo_docente,
+						$query_cd = "SELECT DISTINCT cd.id_carga_docente, cd.codigo_bachillerato, cd.codigo_asignatura, cd.codigo_ann_lectivo, cd.codigo_grado, cd.codigo_seccion, cd.codigo_turno, cd.codigo_docente,
 											bach.nombre as nombre_bachillerato, grado.nombre as nombre_grado, sec.nombre as nombre_seccion, tur.nombre as nombre_turno,
 											asig.nombre as nombre_asignatura, asig.codigo, ann.nombre as nombre_ann_lectivo
 											from carga_docente cd

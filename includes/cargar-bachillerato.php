@@ -14,17 +14,19 @@ try {
 
     $annLectivo = $_REQUEST['annlectivo'];
    $codigoPerfil = $_SESSION['codigo_perfil'];
-    $codigoPersonal = $_SESSION['codigo_personal'];
+    $codigoPersonal = trim($_SESSION['codigo_personal']);
     
     // Definir la consulta según el perfil del usuario
     $query = "";
     if ($codigoPerfil == '06') {    // Docente
-        $query = "SELECT DISTINCT eg.codigo_ann_lectivo, eg.codigo_bachillerato as codigo, bach.nombre AS nombre
-                  FROM encargado_grado eg
-                  INNER JOIN bachillerato_ciclo bach ON bach.codigo = eg.codigo_bachillerato
-                  WHERE eg.codigo_ann_lectivo = :annLectivo 
-                  AND eg.codigo_docente = :codigoPersonal
-                  ORDER BY eg.codigo_bachillerato";
+        $query = "SELECT DISTINCT 
+                    cd.codigo_bachillerato as codigo, 
+                    bach.nombre AS nombre
+                    FROM carga_docente cd
+                    INNER JOIN bachillerato_ciclo bach ON bach.codigo = cd.codigo_bachillerato
+                    WHERE cd.codigo_ann_lectivo = :annLectivo
+                    AND cd.codigo_docente = :codigoPersonal
+                    ORDER BY cd.codigo_bachillerato";
     } elseif ($codigoPerfil == '04' || $codigoPerfil == '05') { // Registro Académico Básica y Media.
         $query = "SELECT organnciclo.codigo_ann_lectivo, organnciclo.codigo_bachillerato as codigo, bach.nombre AS nombre
                   FROM organizar_ann_lectivo_ciclos organnciclo

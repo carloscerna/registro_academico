@@ -61,7 +61,7 @@ $(document).ready(function () {
         let calificacionMinima = $('#calificacionMinima').val();
     
         //  ✅ Validación de datos
-        if (!modalidad || !gradoseccion || !annlectivo || !asignatura || !periodo) {
+        if (!modalidad || !gradoseccion || !annlectivo || !asignatura) {
             Swal.fire('Error', 'Por favor, complete todos los campos antes de generar el informe.', 'warning');
             return;
         }
