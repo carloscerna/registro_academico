@@ -12,11 +12,11 @@ if(!empty($_SESSION) && $_SESSION['userLogin'] == true){
         "userName" => $_SESSION['userNombre'],
         "userID" => $_SESSION['userID'],
         "dbname" => $_SESSION['dbname'],
-        "codigo_perfil" => $_SESSION['codigo_perfil'],
+        "codigo_perfil" => trim($_SESSION['codigo_perfil']),
         "codigo_personal" => $_SESSION['codigo_personal'],
         "logo_uno" => $_SESSION['logo_uno'],
         "nombre_institucion" => $_SESSION['institucion'],
-        "nombre_personal" => $_SESSION['nombre_personal'],
+        "nombre_personal" => trim($_SESSION['nombre_personal']),
         "nombre_perfil" => $_SESSION['nombre_perfil'],
         "codigo_institucion" => $_SESSION['codigo_institucion']
         ));    

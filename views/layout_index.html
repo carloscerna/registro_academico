@@ -1,4 +1,3 @@
-{# Heredando la plantilla principal #}
 {% extends 'default_layout.html' %}
 
 {% block extraCSS %}
@@ -8,253 +7,607 @@
   }
 </style>
 {% endblock %}
-{% block javascripts %}
-<!-- JS SCRIPT  -->
-  <script type="text/JavaScript" src="js/carga-datos-indicadores-educativos.js"></script>
-  <script type="text/JavaScript" src="js/main_reportes-indicadores.js"></script>
-  <script type="text/JavaScript" src="js/main_graficos_indicadores.js"></script>
-  <script type="text/JavaScript" src="js/main_actualizar_indicadores.js"></script>
-  <!-- CHART JS-->
-  <script type="text/JavaScript" src="js/Chart.js-2.7.0/dist/Chart.bundle.js"></script>
-  <script type="text/JavaScript" src="js/Chart.js-2.7.0/samples/utils.js"></script>
-  <!-- DEINIR EL AJAX START- STOP Y ERROR -->
-  <script>
-    $(document).ready(function () { 
-      /*$(document).ajaxStart(function () {
-          $('#myModal').modal('show');
-      });*/
-      $(document).ajaxStop(function () {
-          $('#myModal').modal('hide');
-      });
-      $(document).ajaxError(function () {
-          $('#myModal').modal('hide');
-      });   
-    });
-  </script>
-<!-- JS SCRIPT  -->
-  {% endblock %}
+
+{% block page_title %}
+    <div class="col-sm-6">
+        <h1 class="m-0">Dashboard</h1>
+    </div>
+{% endblock %}
+
+{% block breadcrumb %}
+    <li class="breadcrumb-item"><a href="#">Inicio</a></li>
+    <li class="breadcrumb-item active">Dashboard</li>
+{% endblock %}
 
 {% block contenidos %}
-<!-- Page header -->
-<!-- Content Wrapper. Contains page content -->
-  <div class="content-wrapper fondoBody">
-    <!-- Content Header (Page header) -->
-    <div class="content-header p-0">
-      <div class="container-fluid">
-        <div class="row mb-2">
-          <div class="col-sm-6">
-            <h4 class="m-0">{{ nombre_institucion }}</h4>
-          </div><!-- /.col -->
-          <div class="col-sm-6">
-            <ol class="breadcrumb float-sm-right">
-              <li class="breadcrumb-item"><a href="index.php">Home</a></li>
-              <li class="breadcrumb-item active">Indicadores</li>
-            </ol>
-          </div><!-- /.col -->
-        </div><!-- /.row -->
-      </div><!-- /.container-fluid -->
-    </div>
-    <!-- /.content-header -->
-    
-  <!-- Main content -->
-    <section class="content">
-      <div class="container-fluid">
-      <!-- SELECCION DEL AÑO LECTIVO -->
-      <form  action="" method="post" name="form" id="form" role="form">
-        <fieldset id="ocultos">
-          <input type="hidden" id="accion" name="accion" value = "BuscarUser" class="{required:true}">
-        </fieldset>
-        <div class="row">
-          <div class="col-12 col-sm-12 col-md-6 col-lg-5 col-xl-5">
-            <!-- / AÑO LECTIVO -->
-            <div class="form-group">
-                <label class="col-sm-4 col-form-label" for="lstannlectivo">Año Lectivo</label>
-                <select id="lstannlectivo" name="lstannlectivo" autofocus class="custom-select" required="required"></select>
-            </div>
-          </div>
-                <!-- / BOTONES -->
-                <div class="col-12 col-sm-12 col-md-6 col-lg-7 col-xl-7 align-content-center">
-                  <div class="btn-group">
-                    <button type="submit" class="btn btn-primary" alt="Buscar" id="goCABuscar" aria-label="goCABuscar" title="Indicadores Educativos">
-                      <i class="fal fa-print"></i>
-                    </button>
-                    <button type="button" class="btn btn-secondary" alt="Memoria Estadística" id="goVerMemoriaEstadistica" aria-label="goVerMemoriaEstadistica" title="Memoria Estadística">
-                      <i class="fal fa-print"></i>
-                    </button>
-                    
-                    <div class="btn-group">
-                      <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown">
-                          Actualizar
-                      </button>
-                      <div class="dropdown-menu">
-                        <button type="button" class="btn btn-sm btn-secondary" id = "goActualizarRepitentes">
-                          <span class="fas fa-sync-alt"></span> Actualizar
-                        </button>
-                        <button type="button" class="btn btn-sm btn-info" id = "goActualizarNuevoIngreso">
-                          <span class="fas fa-sync-alt"></span> Nuevo Ingreso
-                        </button>
-                        <button type="button" class="btn btn-sm btn-info" id = "goActualizarPN">
-                          <span class="fas fa-sync-alt"></span> Partida de Nacimiento
-                        </button>
-                        <button type="button" class="btn btn-sm btn-info" id = "goVerSobreEdad">
-                          <span class="fas fa-sync-alt"></span> Sobreedad
-                        </button>
-                        <button type="button" class="btn btn-sm btn-info" id = "goVerIgualNueveFemenino">
-                          <span class="fas fa-sync-alt"></span> 9 años Sólo Femenino
-                        </button>
-                        <button type="button" class="btn btn-sm btn-info" id = "goVerMayorDiezFemenino">
-                          <span class="fas fa-sync-alt"></span> Mayor 10 años Sólo Femenino
-                        </button>
-                      </div>
-                    </div>
-                    
-                  </div>
+    <div class="container">
+        {# Sección para el Dashboard de Docentes (Perfil 06) #}
+        {% if codigo_perfil == '06' %}
+            <div class="row">
+                <div class="col-12">
+                    <h3 class="mb-3">Indicadores Educativos - Mis Grados</h3>
+                    <p>Bienvenido/a, <strong id="teacherName">{{ nombre_personal }}</strong></p> {# Nombre del docente desde la sesión #}
                 </div>
-        </div>
-      </form>
-        <!-- Small boxes (Stat box) -->
-        <div class="row">
-          <div class="col-12 col-sm-12 col-md-6 col-lg-4 col-xl-3">
-            <!-- small box -->
-            <div class="small-box bg-info">
-              <div class="inner">
-                <h6 id="totaldeEstudiantes">
-                  <label for="totalEstudiantesMasculino"></label> - Masculino
-                  <label for="totalEstudiantesFemenino"></label> - Femenino
-                </h6>
-                <h6><label for="totalEstudiantes"></label> - Estudiantes</h6>
-              </div>
-              <div class="icon">
-                <i class="fas fa-restroom"></i>
-              </div>
-              <a href="#" class="small-box-footer">Más Detalles <i class="fas fa-arrow-circle-right"></i></a>
             </div>
-          </div>
-          <!-- ./col -->
-          <div class="col-12 col-sm-12 col-md-6 col-lg-4 col-xl-3">
-            <!-- small box -->
-            <div class="small-box bg-success">
-              <div class="inner">
-                <h3><sup></sup></h3>
 
-                <p>Personal</p>
-              </div>
-              <div class="icon">
-                <i class="fas fa-user-tie"></i>
-              </div>
-              <a href="#" class="small-box-footer">Más Detalles <i class="fas fa-arrow-circle-right"></i></a>
+            <div class="row mb-3">
+                <div class="col-md-3">
+                    <label for="selectAnnLectivo">Año Lectivo:</label>
+                    <select id="selectAnnLectivo" class="form-control select2" style="width: 100%;">
+                        <option value="">Seleccione un Año</option>
+                    </select>
+                </div>
+                <div class="col-md-5">
+                    <label for="selectGradoSeccionTurno">Grado / Sección / Turno:</label>
+                    <select id="selectGradoSeccionTurno" class="form-control select2" style="width: 100%;">
+                        <option value="">Seleccione Grado / Sección / Turno</option>
+                    </select>
+                </div>
+                <div class="col-md-4 d-flex align-items-end">
+                    <button id="btnLoadIndicators" class="btn btn-primary btn-block"><i class="fas fa-chart-line"></i> Cargar Indicadores</button>
+                </div>
             </div>
-          </div>
-          <!-- ./col -->
-          <div class="col-12 col-sm-12 col-md-6 col-lg-4 col-xl-3">
-            <!-- small box -->
-            <div class="small-box bg-warning">
-              <div class="inner">
-                <h3 id="Familias">
-                  <label for="TotalFamilias"></label> 
-                </h3>
 
-                <p>Total de Familias</p>
-              </div>
-              <div class="icon">
-                <i class="fas fa-users"></i>
-              </div>
-              <a href="#" class="small-box-footer"> Más Detalles <i class="fas fa-arrow-circle-right"></i></a>
-            </div>
-          </div>
-          <!-- ./col -->
-          <div class="col-12 col-sm-12 col-md-6 col-lg-4 col-xl-3">
-            <!-- small box -->
-            <div class="small-box bg-danger">
-              <div class="inner">
-                <h6 id="Docentes">
-                  <label for="totalDocentesMasculino"></label> - Masculino
-                  <label for="totalDocentesFemenino"></label> - Femenino
-                </h6>
-                <h6><label for="totalDocentes"></label> - Docentes</h6>
-                <p>Total Docentes</p>
-              </div>
-              <div class="icon">
-                <i class="fas fa-chalkboard-teacher"></i>
-              </div>
-              <a href="#" class="small-box-footer"> Más Detalles <i class="fas fa-arrow-circle-right"></i></a>
-            </div>
-          </div>
-          <!-- ./col -->
-        </div>
-        <!-- /.row -->
-        <div class="row">
-          <div class="col">
-                <!-- GRAFICOS  y TABLA-->  
-                <section id="GraficosTablas">
-                  <div class="row">
-                        <!-- GRAFICOS -->
-                    <div class="col col-md-6 col-lg-6 col-xl-6">
-                      <div class="jumbotron">
-                        <h2>Matrícula Máxima y Retirados</h2>
-                            <button type="button" class="btn btn-primary">
-                              Masculino <span class="badge badge-light" id="MatriculaMasculino">0</span>
-                            </button>
-                            <button type="button" class="btn btn-danger">
-                              Femenino <span class="badge badge-light" id="MatriculaFemenino">0</span>
-                            </button>
-                            <button type="button" class="btn btn-success">
-                              Total <span class="badge badge-light" id="MatriculaTotal">0</span>
-                            </button>
-                        <div>
-                          <canvas id="GraficoMatricula" height="300px"></canvas>    
-                      </div>
-                    </div>
-                    </div>
-                    <!-- TABLA DE INDICADORES -->
-                      <div class="col col-md-6 col-lg-6 col-xl-6">
-                        <div class="jumbotron">
-                          <h2>Matricula</h2>
-                          <table class="table table-striped table-sm" id="listadoMatricula">     
-                            <thead>     
-                              <tr>     
-                                <th>N°</th>     
-                                <th>Modalidad</th>     
-                                <th>Turno</th>     
-                                <th>Masculino</th>     
-                                <th>Femenino</th>     
-                                <th>Total</th>     
-                              </tr>                         
-                            </thead>     
-                            <tbody id="listaMatricula">     
-                                  
-                            </tbody>     
-                          </table>             
+            <div class="row">
+                {# Cards de Indicadores para Docentes #}
+                <div class="col-lg-3 col-6">
+                    <div class="small-box bg-info">
+                        <div class="inner">
+                            <h3 id="totalStudents">0</h3>
+                            <p>Total de Estudiantes a Cargo</p>
                         </div>
-                      </div>
+                        <div class="icon">
+                            <i class="ion ion-person-add"></i>
+                        </div>
+                        <a href="#" class="small-box-footer">Más info <i class="fas fa-arrow-circle-right"></i></a>
                     </div>
-                </section>            
-          </div>
-        </div>
+                </div>
+                <div class="col-lg-3 col-6">
+                    <div class="small-box bg-success">
+                        <div class="inner">
+                            <h3 id="assignedGrades">0</h3>
+                            <p>Grados/Secciones Asignadas</p>
+                        </div>
+                        <div class="icon">
+                            <i class="ion ion-stats-bars"></i>
+                        </div>
+                        <a href="#" class="small-box-footer">Más info <i class="fas fa-arrow-circle-right"></i></a>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-6">
+                    <div class="small-box bg-warning">
+                        <div class="inner">
+                            <h3 id="approvalRate">0<sup style="font-size: 20px">%</sup></h3>
+                            <p>Tasa de Aprobación General</p>
+                        </div>
+                        <div class="icon">
+                            <i class="ion ion-pie-graph"></i>
+                        </div>
+                        <a href="#" class="small-box-footer">Más info <i class="fas fa-arrow-circle-right"></i></a>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-6">
+                    <div class="small-box bg-danger">
+                        <div class="inner">
+                            <h3 id="lowPerformanceStudents">0</h3>
+                            <p>Estudiantes con Bajo Rendimiento</p>
+                        </div>
+                        <div class="icon">
+                            <i class="ion ion-alert-circled"></i>
+                        </div>
+                        <a href="#" class="small-box-footer">Más info <i class="fas fa-arrow-circle-right"></i></a>
+                    </div>
+                </div>
+            </div>
+            {# Fila para Gráficos o Tablas Detalladas para Docentes #}
+            <div class="row">
+                <section class="col-lg-7 connectedSortable">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">
+                                <i class="fas fa-chart-pie mr-1"></i>
+                                Rendimiento por Grado/Sección
+                            </h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="chartjs-size-monitor"><div class="chartjs-size-monitor-expand"><div class=""></div></div><div class="chartjs-size-monitor-shrink"><div class=""></div></div></div>
+                            <canvas id="performanceChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%; display: block; width: 487px;" width="487" height="250" class="chartjs-render-monitor"></canvas>
+                        </div>
+                    </div>
+                </section>
+                <section class="col-lg-5 connectedSortable">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">
+                                <i class="fas fa-th mr-1"></i>
+                                Mis Grados y Secciones
+                            </h3>
+                        </div>
+                        <div class="card-body p-0">
+                            <ul class="nav nav-pills flex-column" id="gradesList">
+                                <li class="nav-item">
+                                    <a href="#" class="nav-link">
+                                        <i class="far fa-circle text-danger"></i> Cargando grados...
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        {% else %}
+            {# Contenido original de tu layout_index.html para otros perfiles (01, 04, 05, etc.) #}
+            <div class="row mb-3">
+                <div class="col-md-3">
+                    <label for="lstannlectivo">Año Lectivo:</label>
+                    <select id="lstannlectivo" class="form-control select2" style="width: 100%;">
+                        <option value="">Seleccione un Año</option>
+                    </select>
+                </div>
+                <div class="col-md-4 d-flex align-items-end">
+                    <button id="btnLoadGeneralIndicators" class="btn btn-primary btn-block"><i class="fas fa-sync-alt"></i> Actualizar Indicadores</button>
+                </div>
+            </div>
 
-      </div>
-    </section>
-
-  </div> <!-- /.content-Wrapper, Contains page content. -->
-  <!-- Modal VENTANA EN ESPERA. PHP-AJAX- CUANDO SE ESTA CARGANDO UN ARCHIVO-->
-  <div id="myModal" class="modal fadeIn" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel"><label for="VerificarActualizar">Actualizando...</label></h5>
-        </div>
-        <div class="modal-body">
-          <div class="d-flex justify-content-center mb-3">
-            <img src="img/ajax-loader.gif" width="45" height="45" alt="Loading...">
-          </div>
-        </div>
-          <div class="modal-footer">
-            <label for="NombreArchivo"></label>
-          </div>
-      </div>
+            <div class="row">
+                <div class="col-12 col-sm-12 col-md-6 col-lg-4 col-xl-3">
+                    <div class="small-box bg-info">
+                        <div class="inner">
+                            <h6 id="totaldeEstudiantes">
+                                <label for="totalEstudiantesMasculino"></label> - Masculino
+                                <label for="totalEstudiantesFemenino"></label> - Femenino
+                            </h6>
+                            <h6><label for="totalEstudiantes"></label> - Estudiantes</h6>
+                        </div>
+                        <div class="icon">
+                            <i class="fas fa-restroom"></i>
+                        </div>
+                        <a href="#" class="small-box-footer">Más Detalles <i class="fas fa-arrow-circle-right"></i></a>
+                    </div>
+                </div>
+                <div class="col-12 col-sm-12 col-md-6 col-lg-4 col-xl-3">
+                    <div class="small-box bg-success">
+                        <div class="inner">
+                            <h3><sup></sup></h3>
+                            <p>Personal</p>
+                        </div>
+                        <div class="icon">
+                            <i class="fas fa-user-tie"></i>
+                        </div>
+                        <a href="#" class="small-box-footer">Más Detalles <i class="fas fa-arrow-circle-right"></i></a>
+                    </div>
+                </div>
+                <div class="col-12 col-sm-12 col-md-6 col-lg-4 col-xl-3">
+                    <div class="small-box bg-warning">
+                        <div class="inner">
+                            <h3 id="Familias">
+                                <label for="TotalFamilias"></label> 
+                            </h3>
+                            <p>Total de Familias</p>
+                        </div>
+                        <div class="icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <a href="#" class="small-box-footer"> Más Detalles <i class="fas fa-arrow-circle-right"></i></a>
+                    </div>
+                </div>
+                <div class="col-12 col-sm-12 col-md-6 col-lg-4 col-xl-3">
+                    <div class="small-box bg-danger">
+                        <div class="inner">
+                            <h6 id="Docentes">
+                                <label for="totalDocentesMasculino"></label> - Masculino
+                                <label for="totalDocentesFemenino"></label> - Femenino
+                            </h6>
+                            <h6><label for="totalDocentes"></label> - Docentes</h6>
+                            <p>Total Docentes</p>
+                        </div>
+                        <div class="icon">
+                            <i class="fas fa-chalkboard-teacher"></i>
+                        </div>
+                        <a href="#" class="small-box-footer"> Más Detalles <i class="fas fa-arrow-circle-right"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <section id="GraficosTablas">
+                        <div class="row">
+                            <div class="col col-md-6 col-lg-6 col-xl-6">
+                                <div class="jumbotron">
+                                    <h2>Matrícula Máxima y Retirados</h2>
+                                    <button type="button" class="btn btn-primary">
+                                        Masculino <span class="badge badge-light" id="MatriculaMasculino">0</span>
+                                    </button>
+                                    <button type="button" class="btn btn-danger">
+                                        Femenino <span class="badge badge-light" id="MatriculaFemenino">0</span>
+                                    </button>
+                                    <button type="button" class="btn btn-success">
+                                        Total <span class="badge badge-light" id="MatriculaTotal">0</span>
+                                    </button>
+                                    <div>
+                                        <canvas id="GraficoMatricula" height="300px"></canvas>    
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col col-md-6 col-lg-6 col-xl-6">
+                                <div class="jumbotron">
+                                    <h2>Matricula</h2>
+                                    <table class="table table-striped table-sm" id="listadoMatricula">     
+                                        <thead>     
+                                            <tr>     
+                                                <th>N°</th>     
+                                                <th>Modalidad</th>     
+                                                <th>Turno</th>     
+                                                <th>Masculino</th>     
+                                                <th>Femenino</th>     
+                                                <th>Total</th>     
+                                            </tr>                         
+                                        </thead>     
+                                        <tbody id="listaMatricula">     
+                                            
+                                        </tbody>     
+                                    </table>             
+                                </div>
+                            </div>
+                        </div>
+                    </section>            
+                </div>
+            </div>
+        {% endif %}
     </div>
-  </div>  
-  {% endblock %}
-{% block loginUser %}
-<!--	{% include 'layout-login-user.html' %} -->
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }} {# Mantener los scripts del layout padre #}
+
+    <script src="js/Chart.js-2.7.0/dist/Chart.min.js"></script> {# O la ruta de tu Chart.js #}
+
+    <script>
+      $(document).ready(function () { 
+        $(document).ajaxStop(function () {
+            $('#myModal').modal('hide');
+        });
+        $(document).ajaxError(function () {
+            $('#myModal').modal('hide');
+        });   
+      });
+    </script>
+
+    {# Script para SweetAlert2 Toast (asegúrate de que SweetAlert2 esté cargado) #}
+    <script>
+        const Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+                toast.addEventListener('mouseenter', Swal.stopTimer);
+                toast.addEventListener('mouseleave', Swal.resumeTimer);
+            }
+        });
+    </script>
+
+    {# Script específico para el dashboard de docentes #}
+    {% if codigo_perfil == '06' %}
+        <script>
+            $(function () {
+                // Inicializar Select2 para los selects dinámicos del docente
+                $('#selectAnnLectivo, #selectGradoSeccionTurno').select2({
+                    placeholder: "Seleccione una opción",
+                    allowClear: true
+                });
+
+                // Función para cargar los Años Lectivos para el docente
+                function loadAcademicYearsForTeacher() {
+                    $.ajax({
+                        url: 'php_libs/soporte/dashboard/phpAjaxDashboard.inc.php',
+                        type: 'POST',
+                        dataType: 'json',
+                        data: {
+                            action: 'getAcademicYears',
+                            codigo_perfil: '{{ codigo_perfil }}'
+                        },
+                        success: function(response) {
+                            const $select = $('#selectAnnLectivo');
+                            $select.empty().append('<option value="">Seleccione un Año</option>');
+                            if (response.success && response.years.length > 0) {
+                                response.years.forEach(function(year) {
+                                    $select.append(`<option value="${year.codigo}">${year.nombre}</option>`);
+                                });
+                            } else {
+                                Toast.fire({ icon: 'warning', title: response.message || 'No se encontraron años lectivos.' });
+                            }
+                        },
+                        error: function(jqXHR, textStatus, errorThrown) {
+                            Toast.fire({ icon: 'error', title: 'Error al cargar años lectivos.' });
+                            console.error("AJAX Error (Años Lectivos Docente):", textStatus, errorThrown, jqXHR.responseText);
+                        }
+                    });
+                }
+
+                // Función para cargar los Grados/Secciones/Turnos para un docente y año específico
+                function loadTeacherGradesAndSections(annLectivo) {
+                    const $select = $('#selectGradoSeccionTurno');
+                    $select.empty().append('<option value="">Seleccione Grado / Sección / Turno</option>');
+                    
+                    if (!annLectivo) {
+                        $select.prop('disabled', true);
+                        return;
+                    }
+                    $select.prop('disabled', false);
+
+                    $.ajax({
+                        url: 'php_libs/soporte/dashboard/phpAjaxDashboard.inc.php',
+                        type: 'POST',
+                        dataType: 'json',
+                        data: {
+                            action: 'getTeacherGradesAndSections',
+                            codigo_personal: '{{ codigo_personal }}',
+                            codigo_ann_lectivo: annLectivo
+                        },
+                        success: function(response) {
+                            if (response.success && response.grades.length > 0) {
+                                response.grades.forEach(function(grade) {
+                                    $select.append(`<option value="${grade.id_combinado}">${grade.nombre_combinado}</option>`);
+                                });
+                            } else {
+                                Toast.fire({ icon: 'warning', title: response.message || 'No se encontraron grados/secciones para este año.' });
+                            }
+                        },
+                        error: function(jqXHR, textStatus, errorThrown) {
+                            Toast.fire({ icon: 'error', title: 'Error al cargar grados/secciones.' });
+                            console.error("AJAX Error (Grados/Secciones Docente):", textStatus, errorThrown, jqXHR.responseText);
+                        }
+                    });
+                }
+
+                // Event listener para cuando cambia el Año Lectivo del docente
+                $('#selectAnnLectivo').on('change', function() {
+                    const selectedAnnLectivo = $(this).val();
+                    loadTeacherGradesAndSections(selectedAnnLectivo);
+                });
+
+                // Función para cargar los indicadores del docente (adaptada para usar los selects)
+                function loadTeacherDashboardData() {
+                    const selectedAnnLectivo = $('#selectAnnLectivo').val();
+                    const selectedGradoSeccionTurno = $('#selectGradoSeccionTurno').val();
+
+                    if (!selectedAnnLectivo || !selectedGradoSeccionTurno) {
+                        Toast.fire({ icon: 'info', title: 'Por favor, seleccione un Año Lectivo y un Grado/Sección/Turno.' });
+                        return;
+                    }
+                    
+                    $.ajax({
+                        url: 'php_libs/soporte/dashboard/phpAjaxDashboard.inc.php',
+                        type: 'POST',
+                        dataType: 'json',
+                        data: {
+                            action: 'getTeacherIndicators',
+                            codigo_personal: '{{ codigo_personal }}',
+                            codigo_ann_lectivo: selectedAnnLectivo,
+                            codigo_grado_seccion_turno: selectedGradoSeccionTurno
+                        },
+                        success: function(response) {
+                            if (response.success) {
+                                $('#totalStudents').text(response.data.total_students || 0);
+                                $('#assignedGrades').text(response.data.assigned_grades || 0);
+                                $('#approvalRate').html((response.data.approval_rate || 0) + '<sup style="font-size: 20px">%</sup>');
+                                $('#lowPerformanceStudents').text(response.data.low_performance_students || 0);
+
+                                const $gradesList = $('#gradesList');
+                                $gradesList.empty();
+                                if (response.data.grades && response.data.grades.length > 0) {
+                                    response.data.grades.forEach(function(grade) {
+                                        $gradesList.append(`
+                                            <li class="nav-item">
+                                                <a href="#" class="nav-link">
+                                                    <i class="far fa-circle text-info"></i> ${grade.nombre_grado} ${grade.nombre_seccion} (${grade.estudiantes_count} estudiantes)
+                                                </a>
+                                            </li>
+                                        `);
+                                    });
+                                } else {
+                                    $gradesList.append(`
+                                        <li class="nav-item">
+                                            <a href="#" class="nav-link">
+                                                <i class="far fa-circle text-secondary"></i> No hay grados asignados o datos.
+                                            </a>
+                                        </li>
+                                    `);
+                                }
+
+                                if (response.data.performance_by_grade) {
+                                    const ctx = document.getElementById('performanceChart').getContext('2d');
+                                    if (window.teacherPerformanceChart instanceof Chart) {
+                                        window.teacherPerformanceChart.destroy();
+                                    }
+                                    
+                                    const gradeLabels = response.data.performance_by_grade.map(item => `${item.nombre_grado} ${item.nombre_seccion}`);
+                                    const approvalRates = response.data.performance_by_grade.map(item => item.tasa_aprobacion);
+
+                                    window.teacherPerformanceChart = new Chart(ctx, {
+                                        type: 'bar', 
+                                        data: {
+                                            labels: gradeLabels,
+                                            datasets: [{
+                                                label: 'Tasa de Aprobación (%)',
+                                                data: approvalRates,
+                                                backgroundColor: [
+                                                    'rgba(255, 99, 132, 0.5)', 'rgba(54, 162, 235, 0.5)', 'rgba(255, 206, 86, 0.5)',
+                                                    'rgba(75, 192, 192, 0.5)', 'rgba(153, 102, 255, 0.5)', 'rgba(255, 159, 64, 0.5)'
+                                                ],
+                                                borderColor: [
+                                                    'rgba(255, 99, 132, 1)', 'rgba(54, 162, 235, 1)', 'rgba(255, 206, 86, 1)',
+                                                    'rgba(75, 192, 192, 1)', 'rgba(153, 102, 255, 1)', 'rgba(255, 159, 64, 1)'
+                                                ],
+                                                borderWidth: 1
+                                            }]
+                                        },
+                                        options: {
+                                            responsive: true, maintainAspectRatio: false,
+                                            scales: { y: { beginAtZero: true, max: 100 } }
+                                        }
+                                    });
+                                }
+
+                            } else {
+                                Toast.fire({ icon: 'error', title: response.message || 'Error desconocido al cargar indicadores del docente.' });
+                            }
+                        },
+                        error: function(jqXHR, textStatus, errorThrown) {
+                            Toast.fire({ icon: 'error', title: 'Error de comunicación al cargar indicadores.' });
+                            console.error("AJAX Error (Indicadores Docente):", textStatus, errorThrown, jqXHR.responseText);
+                        }
+                    });
+                }
+
+                // Event listener para el botón "Cargar Indicadores" del docente
+                $('#btnLoadIndicators').on('click', function() {
+                    loadTeacherDashboardData();
+                });
+
+                // Cargar los años lectivos al iniciar la página para el docente
+                loadAcademicYearsForTeacher();
+                // Deshabilitar el select de grados/secciones al inicio
+                $('#selectGradoSeccionTurno').prop('disabled', true);
+            });
+        </script>
+    {% else %}
+        {# Script específico para el dashboard general (otros perfiles) #}
+        <script>
+            $(function () {
+                // Inicializar Select2 para el select de año lectivo general
+                $('#lstannlectivo').select2({
+                    placeholder: "Seleccione un Año",
+                    allowClear: true
+                });
+
+                // Función para cargar los Años Lectivos para perfiles generales
+                function loadAcademicYearsForGeneralProfiles() {
+                    $.ajax({
+                        url: 'php_libs/soporte/dashboard/phpAjaxDashboard.inc.php',
+                        type: 'POST',
+                        dataType: 'json',
+                        data: {
+                            action: 'getAcademicYears',
+                            codigo_perfil: '{{ codigo_perfil }}' // Se usa para la lógica de estatus = 't'
+                        },
+                        success: function(response) {
+                            const $select = $('#lstannlectivo');
+                            $select.empty().append('<option value="">Seleccione un Año</option>');
+                            if (response.success && response.years.length > 0) {
+                                response.years.forEach(function(year) {
+                                    $select.append(`<option value="${year.codigo}">${year.nombre}</option>`);
+                                });
+                                // Seleccionar el año más reciente por defecto si no hay uno seleccionado
+                                if ($select.val() === "") {
+                                    $select.val(response.years[0].codigo).trigger('change');
+                                }
+                            } else {
+                                Toast.fire({ icon: 'warning', title: response.message || 'No se encontraron años lectivos generales.' });
+                            }
+                        },
+                        error: function(jqXHR, textStatus, errorThrown) {
+                            Toast.fire({ icon: 'error', title: 'Error al cargar años lectivos generales.' });
+                            console.error("AJAX Error (Años Lectivos General):", textStatus, errorThrown, jqXHR.responseText);
+                        }
+                    });
+                }
+
+                // Función para cargar los indicadores generales (matrícula, personal, etc.)
+                function loadGeneralDashboardData() {
+                    const selectedAnnLectivo = $('#lstannlectivo').val();
+
+                    if (!selectedAnnLectivo) {
+                        Toast.fire({ icon: 'info', title: 'Por favor, seleccione un Año Lectivo.' });
+                        return;
+                    }
+
+                    $.ajax({
+                        url: 'php_libs/soporte/dashboard/phpAjaxDashboard.inc.php',
+                        type: 'POST',
+                        dataType: 'json',
+                        data: {
+                            action: 'getGeneralIndicators', // Nueva acción para indicadores generales
+                            codigo_ann_lectivo: selectedAnnLectivo
+                        },
+                        success: function(response) {
+                            if (response.success) {
+                                // Aquí actualiza tus elementos existentes con los datos de response.data
+                                // Por ejemplo:
+                                $('#totalEstudiantesMasculino').text(response.data.total_estudiantes_masculino || 0);
+                                $('#totalEstudiantesFemenino').text(response.data.total_estudiantes_femenino || 0);
+                                $('#totalEstudiantes').text(response.data.total_estudiantes || 0);
+                                $('#TotalFamilias').text(response.data.total_familias || 0);
+                                $('#totalDocentesMasculino').text(response.data.total_docentes_masculino || 0);
+                                $('#totalDocentesFemenino').text(response.data.total_docentes_femenino || 0);
+                                $('#totalDocentes').text(response.data.total_docentes || 0);
+                                
+                                // Actualizar gráficos y tablas si tienes datos para ellos
+                                // Esto es un ejemplo, adapta a tu lógica de carga de gráficos existente
+                                if (response.data.matricula_grafico) {
+                                    $('#MatriculaMasculino').text(response.data.matricula_grafico.masculino || 0);
+                                    $('#MatriculaFemenino').text(response.data.matricula_grafico.femenino || 0);
+                                    $('#MatriculaTotal').text(response.data.matricula_grafico.total || 0);
+
+                                    // Renderizar GraficoMatricula (si usas Chart.js aquí)
+                                    // Necesitarías destruir el gráfico anterior si existe
+                                    // y crear uno nuevo con los datos de response.data.matricula_grafico
+                                }
+
+                                if (response.data.lista_matricula) {
+                                    const $listaMatricula = $('#listaMatricula');
+                                    $listaMatricula.empty();
+                                    response.data.lista_matricula.forEach(function(item, index) {
+                                        $listaMatricula.append(`
+                                            <tr>
+                                                <td>${index + 1}</td>
+                                                <td>${item.modalidad}</td>
+                                                <td>${item.turno}</td>
+                                                <td>${item.masculino}</td>
+                                                <td>${item.femenino}</td>
+                                                <td>${item.total}</td>
+                                            </tr>
+                                        `);
+                                    });
+                                }
+
+                                // Mostrar la sección de gráficos y tablas si hay datos
+                                $('#GraficosTablas').show();
+
+                            } else {
+                                Toast.fire({ icon: 'error', title: response.message || 'Error desconocido al cargar indicadores generales.' });
+                            }
+                        },
+                        error: function(jqXHR, textStatus, errorThrown) {
+                            Toast.fire({ icon: 'error', title: 'Error de comunicación al cargar indicadores generales.' });
+                            console.error("AJAX Error (Indicadores General):", textStatus, errorThrown, jqXHR.responseText);
+                        }
+                    });
+                }
+
+                // Event listener para el botón "Actualizar Indicadores" general
+                $('#btnLoadGeneralIndicators').on('click', function() {
+                    loadGeneralDashboardData();
+                });
+
+                // Event listener para cuando cambia el Año Lectivo general
+                $('#lstannlectivo').on('change', function() {
+                    // Cargar indicadores generales automáticamente al cambiar el año
+                    loadGeneralDashboardData();
+                });
+
+                // Cargar los años lectivos al iniciar la página para perfiles generales
+                loadAcademicYearsForGeneralProfiles();
+                // Cargar los indicadores generales al inicio (con el año por defecto)
+                // Esto se disparará con el 'change' del select al seleccionar el año más reciente.
+            });
+        </script>
+    {% endif %}
+
+    {# <script type="text/JavaScript" src="js/carga-datos-indicadores-educativos.js"></script> #}
+    {# <script type="text/JavaScript" src="js/main_reportes-indicadores.js"></script> #}
+    {# <script type="text/JavaScript" src="js/main_graficos_indicadores.js"></script> #}
+    {# <script type="text/JavaScript" src="js/main_actualizar_indicadores.js"></script> #}
 {% endblock %}
