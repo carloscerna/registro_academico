@@ -136,78 +136,80 @@
                 </section>
             </div>
         {% else %}
-            {# Contenido original de tu layout_index.html para otros perfiles (01, 04, 05, etc.) #}
-            <div class="row mb-3">
-                <div class="col-md-3">
-                    <label for="lstannlectivo">Año Lectivo:</label>
-                    <select id="lstannlectivo" class="form-control select2" style="width: 100%;">
-                        <option value="">Seleccione un Año</option>
-                    </select>
-                </div>
-                <div class="col-md-4 d-flex align-items-end">
-                    <button id="btnLoadGeneralIndicators" class="btn btn-primary btn-block"><i class="fas fa-sync-alt"></i> Actualizar Indicadores</button>
-                </div>
-            </div>
+    {# Contenido original de tu layout_index.html para otros perfiles (01, 04, 05, etc.) #}
+    <div class="row mb-3">
+        <div class="col-md-3">
+            <label for="lstannlectivo">Año Lectivo:</label>
+            <select id="lstannlectivo" class="form-control select2" style="width: 100%;">
+                <option value="">Seleccione un Año</option>
+            </select>
+        </div>
+        <div class="col-md-4 d-flex align-items-end">
+            <button id="btnLoadGeneralIndicators" class="btn btn-primary btn-block"><i class="fas fa-sync-alt"></i> Actualizar Indicadores</button>
+        </div>
+    </div>
 
-            <div class="row">
-                <div class="col-12 col-sm-12 col-md-6 col-lg-4 col-xl-3">
-                    <div class="small-box bg-info">
-                        <div class="inner">
-                            <h6 id="totaldeEstudiantes">
-                                <label for="totalEstudiantesMasculino"></label> - Masculino
-                                <label for="totalEstudiantesFemenino"></label> - Femenino
-                            </h6>
-                            <h6><label for="totalEstudiantes"></label> - Estudiantes</h6>
-                        </div>
-                        <div class="icon">
-                            <i class="fas fa-restroom"></i>
-                        </div>
-                        <a href="#" class="small-box-footer">Más Detalles <i class="fas fa-arrow-circle-right"></i></a>
+    <div class="row">
+        <div class="col-12 col-sm-12 col-md-6 col-lg-4 col-xl-3">
+            <div class="small-box bg-info">
+                <div class="inner">
+                    <h6>
+                        <span id="totalEstudiantesMasculino">0</span> - Masculino
+                        <span id="totalEstudiantesFemenino">0</span> - Femenino
+                    </h6>
+                    <h6><span id="totalEstudiantes">0</span> - Estudiantes</h6>
                     </div>
+                <div class="icon">
+                    <i class="fas fa-restroom"></i>
                 </div>
-                <div class="col-12 col-sm-12 col-md-6 col-lg-4 col-xl-3">
-                    <div class="small-box bg-success">
-                        <div class="inner">
-                            <h3><sup></sup></h3>
-                            <p>Personal</p>
-                        </div>
-                        <div class="icon">
-                            <i class="fas fa-user-tie"></i>
-                        </div>
-                        <a href="#" class="small-box-footer">Más Detalles <i class="fas fa-arrow-circle-right"></i></a>
-                    </div>
-                </div>
-                <div class="col-12 col-sm-12 col-md-6 col-lg-4 col-xl-3">
-                    <div class="small-box bg-warning">
-                        <div class="inner">
-                            <h3 id="Familias">
-                                <label for="TotalFamilias"></label> 
-                            </h3>
-                            <p>Total de Familias</p>
-                        </div>
-                        <div class="icon">
-                            <i class="fas fa-users"></i>
-                        </div>
-                        <a href="#" class="small-box-footer"> Más Detalles <i class="fas fa-arrow-circle-right"></i></a>
-                    </div>
-                </div>
-                <div class="col-12 col-sm-12 col-md-6 col-lg-4 col-xl-3">
-                    <div class="small-box bg-danger">
-                        <div class="inner">
-                            <h6 id="Docentes">
-                                <label for="totalDocentesMasculino"></label> - Masculino
-                                <label for="totalDocentesFemenino"></label> - Femenino
-                            </h6>
-                            <h6><label for="totalDocentes"></label> - Docentes</h6>
-                            <p>Total Docentes</p>
-                        </div>
-                        <div class="icon">
-                            <i class="fas fa-chalkboard-teacher"></i>
-                        </div>
-                        <a href="#" class="small-box-footer"> Más Detalles <i class="fas fa-arrow-circle-right"></i></a>
-                    </div>
-                </div>
+                <a href="#" class="small-box-footer">Más Detalles <i class="fas fa-arrow-circle-right"></i></a>
             </div>
+        </div>
+        <div class="col-12 col-sm-12 col-md-6 col-lg-4 col-xl-3">
+            <div class="small-box bg-success">
+                <div class="inner">
+                    <h3><span id="totalPersonal">0</span><sup></sup></h3> {# Añade un span con ID para Personal #}
+                    <p>Personal</p>
+                </div>
+                <div class="icon">
+                    <i class="fas fa-user-tie"></i>
+                </div>
+                <a href="#" class="small-box-footer">Más Detalles <i class="fas fa-arrow-circle-right"></i></a>
+            </div>
+        </div>
+        <div class="col-12 col-sm-12 col-md-6 col-lg-4 col-xl-3">
+            <div class="small-box bg-warning">
+                <div class="inner">
+                    <h3>
+                        <span id="TotalFamilias">0</span> {# Añade un span con ID para Total Familias #}
+                    </h3>
+                    <p>Total de Familias</p>
+                </div>
+                <div class="icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <a href="#" class="small-box-footer"> Más Detalles <i class="fas fa-arrow-circle-right"></i></a>
+            </div>
+        </div>
+        <div class="col-12 col-sm-12 col-md-6 col-lg-4 col-xl-3">
+            <div class="small-box bg-danger">
+                <div class="inner">
+                    <h6>
+                        <span id="totalDocentesMasculino">0</span> - Masculino
+                        <span id="totalDocentesFemenino">0</span> - Femenino
+                    </h6>
+                    <h6><span id="totalDocentes">0</span> - Docentes</h6>
+                    <p>Total Docentes</p>
+                </div>
+                <div class="icon">
+                    <i class="fas fa-chalkboard-teacher"></i>
+                </div>
+                <a href="#" class="small-box-footer"> Más Detalles <i class="fas fa-arrow-circle-right"></i></a>
+            </div>
+        </div>
+    </div>
+    {# ... (el resto del contenido de los gráficos y tablas para perfiles generales) ... #}
+
             <div class="row">
                 <div class="col">
                     <section id="GraficosTablas">
@@ -260,7 +262,7 @@
 {% block javascripts %}
     {{ parent() }} {# Mantener los scripts del layout padre #}
 
-    <script src="js/Chart.js-2.7.0/dist/Chart.min.js"></script> {# O la ruta de tu Chart.js #}
+    <script src="js/plugins/chart.js/Chart.min.js"></script>
 
     <script>
       $(document).ready(function () { 
