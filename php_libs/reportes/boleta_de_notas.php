@@ -336,6 +336,7 @@ function FancyTable($header)
 			consultas_alumno(2,0,$codigo_all,$codigo_alumno,$codigo_matricula,$codigo_ann_lectivo,$db_link,'');
 			$codigo_alumno_listado[] = $codigo_alumno;
 			$codigo_matricula_listado[] = $codigo_matricula;
+			$resultados = $result;
 		}
 	else
 		{
@@ -361,7 +362,7 @@ function FancyTable($header)
 				$resultados[] = [
 					'codigo_alumno' => $row['codigo_alumno'],
 					'codigo_matricula' => $row['codigo_matricula']
-				];
+				];  
 			}
 		}
 	// condicionar el ancho y ALTO de cada columna.
@@ -647,29 +648,32 @@ while($row = $result -> fetch(PDO::FETCH_BOTH)) // bucle para la recorrer las as
 							$AR = cambiar_aprobado_reprobado_m($calificacion_);}
 						else if($codigo_bachillerato == '10'){
 							$AR = cambiar_aprobado_reprobado_b($calificacion_);
-						}else{
+						}else if ($codigo_bachillerato == '15') {
 							$AR = cambiar_aprobado_reprobado_m($calificacion_);
-						}
-						if($codigo_servicio_educativo == '20' || $codigo_servicio_educativo == '13'){
-							$AR = cambiar_aprobado_reprobado_media_contable($calificacion_, $descripcion_area);
-						}
-					// cambiar COLOR.
-						if($codigo_area == "03" && $codigo_bachillerato == "15"){
+						}else{
+							$AR = cambiar_aprobado_reprobado_m($calificacion_);		
+						}				
 
-						}elseif($codigo_area == "03" and $codigo_bachillerato == "10"){
+						// cambiar COLOR.
+							if($codigo_area == "03"){
 
-						}
-						else{
-							if($AR == "A"){
-								$pdf->Cell($ancho[2],($line * $alto[0]),$AR,'R',0,'C',$fill);
-							}else{
-								$pdf->SetFont('Arial','B',9);
-								$pdf->SetTextColor(255, 25, 0);
-								$pdf->Cell($ancho[2],($line * $alto[0]),$AR,'R',0,'C',$fill);
-								$pdf->SetFont('');
-								$pdf->SetTextColor(0,0,0);
+							}elseif($codigo_area == "03" and $codigo_bachillerato == "10"){
+
 							}
-						}
+							else{
+								if($AR == "A"){
+									$pdf->Cell($ancho[2],($line * $alto[0]),$AR,'R',0,'C',$fill);
+								}else{
+									$pdf->SetFont('Arial','B',9);
+									$pdf->SetTextColor(255, 25, 0);
+									$pdf->Cell($ancho[2],($line * $alto[0]),$AR,'R',0,'C',$fill);
+									$pdf->SetFont('');
+									$pdf->SetTextColor(0,0,0);
+								}
+							}
+							if($codigo_servicio_educativo == '20' || $codigo_servicio_educativo == '13' || $codigo_servicio_educativo == '15'){
+								$AR = cambiar_aprobado_reprobado_media_contable($calificacion_, $descripcion_area);
+							}						
 				}	// FOR
 				//
 				// VALORES RESTANTES. total de puntos, nota_final, recuperacion.

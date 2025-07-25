@@ -74,44 +74,44 @@
 // Evaluador nota para basica y parvularia, Extraer el nombre del grado
         switch ($codigo_modalidad) {
           case ($codigo_modalidad >= '03' and $codigo_modalidad <= '05'): // educación basica y III Ciclo.
-            if($periodo == "Periodo 1"){$nota_p_p = "nota_p_p_1";}
-            if($periodo == "Periodo 2"){$nota_p_p = "nota_p_p_2";}
-            if($periodo == "Periodo 3"){$nota_p_p = "nota_p_p_3";}        
+            if($periodo == "1"){$nota_p_p = "nota_p_p_1";}
+            if($periodo == "2"){$nota_p_p = "nota_p_p_2";}
+            if($periodo == "3"){$nota_p_p = "nota_p_p_3";}        
               break;
           case ($codigo_modalidad >= '06' and $codigo_modalidad <= '09'): // Edcuación Media Jornada Completa.
-            if($periodo == "Periodo 1"){$nota_p_p = "nota_p_p_1";}
-            if($periodo == "Periodo 2"){$nota_p_p = "nota_p_p_2";}
-            if($periodo == "Periodo 3"){$nota_p_p = "nota_p_p_3";}
-            if($periodo == "Periodo 4"){$nota_p_p = "nota_p_p_4";}
+            if($periodo == "1"){$nota_p_p = "nota_p_p_1";}
+            if($periodo == "2"){$nota_p_p = "nota_p_p_2";}
+            if($periodo == "3"){$nota_p_p = "nota_p_p_3";}
+            if($periodo == "4"){$nota_p_p = "nota_p_p_4";}
               break;
           case ($codigo_modalidad >= '10' and $codigo_modalidad <= '12'): // educación media y III ciclo nocturna.
-            if($periodo == "Periodo 1"){$nota_p_p = "nota_p_p_1";}
-            if($periodo == "Periodo 2"){$nota_p_p = "nota_p_p_2";}
-            if($periodo == "Periodo 3"){$nota_p_p = "nota_p_p_3";}
-            if($periodo == "Periodo 4"){$nota_p_p = "nota_p_p_4";}
-            if($periodo == "Periodo 5"){$nota_p_p = "nota_p_p_5";}
+            if($periodo == "1"){$nota_p_p = "nota_p_p_1";}
+            if($periodo == "2"){$nota_p_p = "nota_p_p_2";}
+            if($periodo == "3"){$nota_p_p = "nota_p_p_3";}
+            if($periodo == "4"){$nota_p_p = "nota_p_p_4";}
+            if($periodo == "5"){$nota_p_p = "nota_p_p_5";}
               break;
           case ($codigo_modalidad >= '13' and $codigo_modalidad <= '14'): // Educación Parvularia Estándar de desarrollo
-            if($periodo == "Periodo 1"){$nota_p_p = "indicador_p_p_1";}
-            if($periodo == "Periodo 2"){$nota_p_p = "indicador_p_p_2";}
-            if($periodo == "Periodo 3"){$nota_p_p = "indicador_p_p_3";}        
+            if($periodo == "1"){$nota_p_p = "indicador_p_p_1";}
+            if($periodo == "2"){$nota_p_p = "indicador_p_p_2";}
+            if($periodo == "3"){$nota_p_p = "indicador_p_p_3";}        
             if($periodo == "Alertas"){$nota_p_p = "alertas";}
               break;
           case ($codigo_modalidad == '16'): // Educación Básica Segundo y Tercer grado Focalizado.
-            if($periodo == "Periodo 1"){$nota_p_p = "indicador_p_p_1";}
-            if($periodo == "Periodo 2"){$nota_p_p = "indicador_p_p_2";}
-            if($periodo == "Periodo 3"){$nota_p_p = "indicador_p_p_3";}        
+            if($periodo == "1"){$nota_p_p = "indicador_p_p_1";}
+            if($periodo == "2"){$nota_p_p = "indicador_p_p_2";}
+            if($periodo == "3"){$nota_p_p = "indicador_p_p_3";}        
               break;
           case ($codigo_modalidad == '15'): // Educación Media Bachillerato Tecnico Vocacion Administrativo Contable.
-            if($periodo == "Periodo 1"){$nota_p_p = "nota_p_p_1";}
-            if($periodo == "Periodo 2"){$nota_p_p = "nota_p_p_2";}
-            if($periodo == "Periodo 3"){$nota_p_p = "nota_p_p_3";}
-            if($periodo == "Periodo 4"){$nota_p_p = "nota_p_p_4";}
+            if($periodo == "1"){$nota_p_p = "nota_p_p_1";}
+            if($periodo == "2"){$nota_p_p = "nota_p_p_2";}
+            if($periodo == "3"){$nota_p_p = "nota_p_p_3";}
+            if($periodo == "4"){$nota_p_p = "nota_p_p_4";}
               break;
           default:
-            if($periodo == "Periodo 1"){$nota_p_p = "nota_p_p_1";}
-            if($periodo == "Periodo 2"){$nota_p_p = "nota_p_p_2";}
-            if($periodo == "Periodo 3"){$nota_p_p = "nota_p_p_3";}
+            if($periodo == "1"){$nota_p_p = "nota_p_p_1";}
+            if($periodo == "2"){$nota_p_p = "nota_p_p_2";}
+            if($periodo == "3"){$nota_p_p = "nota_p_p_3";}
         }
 //
 //  EVALUAR SI SON TODAS LAS ASIGNATURAS O SOLO UNA.
@@ -197,7 +197,7 @@
     foreach ($datos as $fila) {
         $nie = trim($fila['codigo_nie']);
         $asignatura = $fila['nombre_asignatura'];
-        $nota = $fila['nota_p_p_1'];
+        $nota = $fila["$nota_p_p"];
         $codigo_cc = trim($fila['codigo_cc']);
         $indicador = $fila['indicador_p_p_1'];
         $codigo_bachillerato_actual = trim($fila['codigo_bachillerato']);
