@@ -26,6 +26,13 @@ include($path_root."/registro_academico/includes/mainFunctions_.php");
 
 $codigo_perfil = $_SESSION['codigo_perfil'] ?? null; // Obtener el código de perfil de la sesión
 
+$allowed_profiles = ['04', '05', '06']; // <<-- ¡CAMBIO AQUÍ! Añade '06'
+if (!in_array($codigo_perfil, $allowed_profiles)) {
+    header('Content-Type: application/json;charset=utf-8');
+    echo json_encode(['success' => false, 'message' => 'Acceso denegado al menú para este perfil.']);
+    exit();
+}
+
 $menuItems = []; // Array final que contendrá el menú estructurado
 $rawMenuItems = []; // Array para almacenar los elementos del menú planos de la DB
 

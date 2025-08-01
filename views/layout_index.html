@@ -135,6 +135,38 @@
                     </div>
                 </section>
             </div>
+            {# MODAL PARA LISTAR ESTUDIANTES Y EDITAR CONTACTOS #}
+    <div class="modal fade" id="studentsListModal" tabindex="-1" aria-labelledby="studentsListModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl"> {# Modal grande para la tabla #}
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="studentsListModalLabel">Detalles de Estudiantes</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <h6 id="modalStudentsTitle"></h6>
+                    <table id="studentsDetailTable" class="table table-bordered table-striped">
+                        <thead>
+                            <tr>
+                                <th>Nombre del Estudiante</th>
+                                <th>Grado/Sección/Turno</th>
+                                <th>Encargado Principal</th>
+                                <th>Teléfono Encargado</th>
+                                <th>Teléfono Estudiante</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {# Los datos se cargarán aquí con DataTables AJAX #}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
         {% else %}
     {# Contenido original de tu layout_index.html para otros perfiles (01, 04, 05, etc.) #}
     <div class="row mb-3">
@@ -143,6 +175,9 @@
             <select id="lstannlectivo" class="form-control select2" style="width: 100%;">
                 <option value="">Seleccione un Año</option>
             </select>
+        </div>
+        <div class="col-md-4 d-flex align-items-end">
+            <button id="btnLoadGeneralIndicators" class="btn btn-primary btn-block"><i class="fas fa-sync-alt"></i> R</button>
         </div>
         <div class="col-md-4 d-flex align-items-end">
             <button id="btnLoadGeneralIndicators" class="btn btn-primary btn-block"><i class="fas fa-sync-alt"></i> Actualizar Indicadores</button>
@@ -419,43 +454,60 @@
                                     `);
                                 }
 
-                                if (response.data.performance_by_grade) {
-                                    const ctx = document.getElementById('performanceChart').getContext('2d');
-                                    if (window.teacherPerformanceChart instanceof Chart) {
-                                        window.teacherPerformanceChart.destroy();
-                                    }
-                                    
-                                    const gradeLabels = response.data.performance_by_grade.map(item => `${item.nombre_grado} ${item.nombre_seccion}`);
-                                    const approvalRates = response.data.performance_by_grade.map(item => item.tasa_aprobacion);
-
-                                    window.teacherPerformanceChart = new Chart(ctx, {
-                                        type: 'bar', 
-                                        data: {
-                                            labels: gradeLabels,
-                                            datasets: [{
-                                                label: 'Tasa de Aprobación (%)',
-                                                data: approvalRates,
-                                                backgroundColor: [
-                                                    'rgba(255, 99, 132, 0.5)', 'rgba(54, 162, 235, 0.5)', 'rgba(255, 206, 86, 0.5)',
-                                                    'rgba(75, 192, 192, 0.5)', 'rgba(153, 102, 255, 0.5)', 'rgba(255, 159, 64, 0.5)'
-                                                ],
-                                                borderColor: [
-                                                    'rgba(255, 99, 132, 1)', 'rgba(54, 162, 235, 1)', 'rgba(255, 206, 86, 1)',
-                                                    'rgba(75, 192, 192, 1)', 'rgba(153, 102, 255, 1)', 'rgba(255, 159, 64, 1)'
-                                                ],
-                                                borderWidth: 1
-                                            }]
-                                        },
-                                        options: {
-                                            responsive: true, maintainAspectRatio: false,
-                                            scales: { y: { beginAtZero: true, max: 100 } }
-                                        }
-                                    });
-                                }
-
-                            } else {
-                                Toast.fire({ icon: 'error', title: response.message || 'Error desconocido al cargar indicadores del docente.' });
+                                 // Renderizar el gráfico (ejemplo con Chart.js)
+                        if (response.data.performance_by_grade && response.data.performance_by_grade.length > 0) { // Asegurarse de que hay datos
+                            const ctx = document.getElementById('performanceChart').getContext('2d');
+                            // Destruir el gráfico existente para evitar superposiciones
+                            if (window.teacherPerformanceChart instanceof Chart) {
+                                window.teacherPerformanceChart.destroy();
                             }
+                            
+                            // === CAMBIO CRÍTICO AQUÍ ===
+                            const chartLabels = response.data.performance_by_grade.map(item => item.asignatura_name);
+                            const chartData = response.data.performance_by_grade.map(item => item.tasa_aprobacion);
+
+                            window.teacherPerformanceChart = new Chart(ctx, {
+                                type: 'bar',
+                                data: {
+                                    labels: chartLabels, // Usamos las etiquetas de asignatura
+                                    datasets: [{
+                                        label: 'Tasa de Aprobación (%)',
+                                        data: chartData, // Los datos de aprobación
+                                        backgroundColor: [
+                                            'rgba(255, 99, 132, 0.5)', 'rgba(54, 162, 235, 0.5)', 'rgba(255, 206, 86, 0.5)',
+                                            'rgba(75, 192, 192, 0.5)', 'rgba(153, 102, 255, 0.5)', 'rgba(255, 159, 64, 0.5)'
+                                        ],
+                                        borderColor: [
+                                            'rgba(255, 99, 132, 1)', 'rgba(54, 162, 235, 1)', 'rgba(255, 206, 86, 1)',
+                                            'rgba(75, 192, 192, 1)', 'rgba(153, 102, 255, 1)', 'rgba(255, 159, 64, 1)'
+                                        ],
+                                        borderWidth: 1
+                                    }]
+                                },
+                                options: {
+                                    responsive: true,
+                                    maintainAspectRatio: false,
+                                    scales: {
+                                        y: {
+                                            beginAtZero: true,
+                                            max: 100 // Asegura que el eje Y va hasta 100%
+                                        }
+                                    }
+                                }
+                            });
+                        } else {
+                            // Si no hay datos para el gráfico, puedes mostrar un mensaje o limpiar el canvas
+                            const ctx = document.getElementById('performanceChart').getContext('2d');
+                            if (window.teacherPerformanceChart instanceof Chart) {
+                                window.teacherPerformanceChart.destroy(); // Destruye el gráfico anterior si lo hay
+                            }
+                            ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height); // Limpia el canvas
+                            Toast.fire({ icon: 'info', title: 'No hay datos de rendimiento disponibles para el gráfico.' });
+                        }
+
+                    } else {
+                        Toast.fire({ icon: 'error', title: response.message || 'Error desconocido al cargar indicadores del docente.' });
+                    }
                         },
                         error: function(jqXHR, textStatus, errorThrown) {
                             Toast.fire({ icon: 'error', title: 'Error de comunicación al cargar indicadores.' });

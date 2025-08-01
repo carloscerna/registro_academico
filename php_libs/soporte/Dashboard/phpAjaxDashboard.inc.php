@@ -56,8 +56,7 @@ try {
                         TRIM(grd.nombre) || ' - ' || TRIM(sec.nombre) || ' - ' || TRIM(tur.nombre) AS nombre_combinado,
                         TRIM(grd.nombre) AS nombre_grado,
                         TRIM(sec.nombre) AS nombre_seccion,
-                        TRIM(tur.nombre) AS nombre_turno,
-                        grd.nombre, sec.nombre, tur.nombre
+                        TRIM(tur.nombre) AS nombre_turno
                     FROM public.carga_docente cd
                     INNER JOIN public.grado_ano grd ON grd.codigo = cd.codigo_grado
                     INNER JOIN public.turno tur ON tur.codigo = cd.codigo_turno
@@ -167,7 +166,7 @@ try {
                         AND am.codigo_seccion = :codigoSeccion
                         AND am.codigo_turno = :codigoTurno
                         AND am.retirado = 'f' 
-                        AND asi.estatus = 't' -- CORREGIDO: Usando 't' para estatus activo, ya que es BOOLEAN
+                        AND asi.estatus = 't' -- CORRECTO: Usando 't' para estatus activo (BOOLEAN)
                         AND n.nota_final IS NOT NULL 
                 )
                 SELECT
@@ -211,7 +210,7 @@ try {
                     AND am.codigo_grado = :codigoGrado
                     AND am.codigo_seccion = :codigoSeccion
                     AND am.codigo_turno = :codigoTurno
-                    AND am.retirado = 'f' AND asi.estatus = 't' -- CORREGIDO: USO 't' PARA ESTATUS ACTIVO
+                    AND am.retirado = 'f' AND asi.estatus = 't' -- CORRECTO: USO 't' PARA ESTATUS ACTIVO
                     AND n.nota_final IS NOT NULL
                 GROUP BY asi.nombre
                 ORDER BY asi.nombre;
@@ -235,6 +234,123 @@ try {
             }, $chart_data_raw);
             
             $response = ['success' => true, 'data' => $indicators_data];
+            break;
+        
+        case 'getStudentsByGradoSeccionTurno': // Para 'Total de Estudiantes a Cargo'
+        case 'getLowPerformanceStudents':     // Para 'Estudiantes con Bajo Rendimiento'
+            $codigo_ann_lectivo = $_POST['codigo_ann_lectivo'] ?? '';
+            $codigo_grado = $_POST['codigo_grado'] ?? ''; // Ahora recibimos los componentes individuales
+            $codigo_seccion = $_POST['codigo_seccion'] ?? '';
+            $codigo_turno = $_POST['codigo_turno'] ?? '';
+            $codigo_personal = $_POST['codigo_personal'] ?? null; // Asegúrate de que el docente esté logueado
+
+            if (empty($codigo_ann_lectivo) || empty($codigo_grado) || empty($codigo_seccion) || empty($codigo_turno) || empty($codigo_personal)) {
+                throw new Exception("Faltan parámetros para obtener la lista de estudiantes.");
+            }
+
+            // Consulta base de estudiantes y encargados
+            $sql_base = "
+                SELECT
+                    a.id_alumno,
+                    TRIM(btrim(a.nombre_completo || ' ' || a.apellido_paterno || ' ' || a.apellido_materno)) AS nombre_estudiante,
+                    TRIM(gan.nombre) || ' - ' || TRIM(sec.nombre) || ' - ' || TRIM(tur.nombre) AS grado_seccion_turno,
+                    a.telefono_celular AS telefono_estudiante, -- Teléfono del alumno
+                    ae.id_alumno_encargado, -- ID del registro de encargado
+                    TRIM(ae.nombres) AS nombre_encargado, -- Nombre del encargado
+                    ae.telefono AS telefono_encargado_principal -- Teléfono del encargado principal
+                FROM public.alumno a
+                INNER JOIN public.alumno_matricula am ON a.id_alumno = am.codigo_alumno AND am.retirado = 'f'
+                LEFT JOIN public.alumno_encargado ae ON a.id_alumno = ae.codigo_alumno AND ae.encargado = 't' -- SOLO ENCARGADO PRINCIPAL
+                INNER JOIN public.grado_ano gan ON gan.codigo = am.codigo_grado
+                INNER JOIN public.seccion sec ON sec.codigo = am.codigo_seccion
+                INNER JOIN public.turno tur ON tur.codigo = am.codigo_turno
+                INNER JOIN public.carga_docente cd ON
+                    am.codigo_grado = cd.codigo_grado AND am.codigo_seccion = cd.codigo_seccion AND am.codigo_turno = cd.codigo_turno AND am.codigo_ann_lectivo = cd.codigo_ann_lectivo AND cd.codigo_docente = :codigoPersonal
+                WHERE
+                    am.codigo_ann_lectivo = :codigoAnnLectivo
+                    AND am.codigo_grado = :codigoGrado
+                    AND am.codigo_seccion = :codigoSeccion
+                    AND am.codigo_turno = :codigoTurno
+            ";
+
+            $params = [
+                ':codigoAnnLectivo' => $codigo_ann_lectivo,
+                ':codigoGrado' => $codigo_grado,
+                ':codigoSeccion' => $codigo_seccion,
+                ':codigoTurno' => $codigo_turno,
+                ':codigoPersonal' => $codigo_personal
+            ];
+
+            if ($action === 'getLowPerformanceStudents') {
+                // Para bajo rendimiento, necesitamos unir con notas y calificacion_minima
+                // Primero, obtenemos la calificacion_minima (ya se obtiene en getTeacherIndicators)
+                $sql_calif_minima = "SELECT calificacion_minima FROM public.catalogo_periodos LIMIT 1"; 
+                $stmt_calif_minima = $dblink->prepare($sql_calif_minima);
+                $stmt_calif_minima->execute();
+                $calificacion_minima = $stmt_calif_minima->fetchColumn() ?? 60;
+
+                // Modificar la consulta base para incluir filtro por bajo rendimiento
+                // Unimos con la tabla 'nota' y filtramos por notas < calificacion_minima
+                // Aseguramos que sea DISTINCT por alumno, ya que un alumno puede reprobar varias asignaturas
+                $sql_base .= "
+                    AND a.id_alumno IN (
+                        SELECT DISTINCT n.codigo_alumno
+                        FROM public.nota n
+                        INNER JOIN public.asignatura asi ON n.codigo_asignatura = asi.codigo
+                        INNER JOIN public.alumno_matricula am_notes ON n.codigo_matricula = am_notes.id_alumno_matricula
+                        WHERE n.nota_final < :calificacionMinima
+                        AND am_notes.codigo_ann_lectivo = am.codigo_ann_lectivo
+                        AND am_notes.codigo_grado = am.codigo_grado
+                        AND am_notes.codigo_seccion = am.codigo_seccion
+                        AND am_notes.codigo_turno = am.codigo_turno
+                        AND asi.estatus = 't' -- Asignaturas activas para calificación
+                        AND n.nota_final IS NOT NULL
+                    )
+                ";
+                $params[':calificacionMinima'] = $calificacion_minima;
+            }
+
+            $sql_base .= " ORDER BY nombre_estudiante ASC";
+
+            $stmt = $dblink->prepare($sql_base);
+            foreach($params as $key => &$val) {
+                $stmt->bindParam($key, $val);
+            }
+            $stmt->execute();
+            $students_data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            $response = ['success' => true, 'data' => $students_data];
+            break;
+
+        case 'updateContactInfo': // Para guardar los cambios de teléfono
+            $id_encargado = $_POST['id_encargado'] ?? null;
+            $new_encargado_phone = $_POST['new_encargado_phone'] ?? '';
+            $id_estudiante = $_POST['id_estudiante'] ?? null;
+            $new_estudiante_phone = $_POST['new_estudiante_phone'] ?? '';
+
+            $dblink->beginTransaction();
+            try {
+                if ($id_encargado && $new_encargado_phone !== null) { // Actualizar teléfono del encargado
+                    $stmt_encargado = $dblink->prepare("UPDATE public.alumno_encargado SET telefono = :telefono WHERE id_alumno_encargado = :id_encargado");
+                    $stmt_encargado->bindParam(':telefono', $new_encargado_phone, PDO::PARAM_STR);
+                    $stmt_encargado->bindParam(':id_encargado', $id_encargado, PDO::PARAM_INT);
+                    $stmt_encargado->execute();
+                }
+                if ($id_estudiante && $new_estudiante_phone !== null) { // Actualizar teléfono del estudiante
+                    $stmt_estudiante = $dblink->prepare("UPDATE public.alumno SET telefono_celular = :telefono_celular WHERE id_alumno = :id_estudiante");
+                    $stmt_estudiante->bindParam(':telefono_celular', $new_estudiante_phone, PDO::PARAM_STR);
+                    $stmt_estudiante->bindParam(':id_estudiante', $id_estudiante, PDO::PARAM_INT);
+                    $stmt_estudiante->execute();
+                }
+                $dblink->commit();
+                $response = ['success' => true, 'message' => 'Teléfonos actualizados exitosamente.'];
+            } catch (PDOException | Exception $e) { // Captura PDOException y otras excepciones
+                if ($dblink->inTransaction()) {
+                    $dblink->rollBack();
+                }
+                error_log("Error al actualizar contactos: " . $e->getMessage());
+                $response = ['success' => false, 'message' => 'Error de base de datos al actualizar contactos: ' . $e->getMessage()]; // Mostrar mensaje de error más detallado
+            }
             break;
 
         case 'getGeneralIndicators':

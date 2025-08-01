@@ -81,6 +81,21 @@ $("#lstCodigoModalidad").change(function () {
     let idAnnLectivo = $("#lstannlectivo").val()
     cargarOpcionesMultiples(miselect, "includes/cargar-grado-seccion.php", { annlectivo: idAnnLectivo, modalidad: idModalidad });
 });
+
+$("#lstCodigoModalidadCD").change(function () {
+    var miselect=$("#lstCodigoGSTCD");
+    let idModalidad = $(this).val();
+    let idAnnLectivo = $("#lstannlectivo").val()
+    cargarOpcionesMultiples(miselect, "includes/cargar-grado-seccion.php", { annlectivo: idAnnLectivo, modalidad: idModalidad });
+});
+
+$("#lstCodigoGSTCD").change(function () {
+    var miselect=$("#lstCodigoAsignaturaCD");
+    let idModalidad = $("#lstCodigoModalidadCD").val();
+    let idAnnLectivo = $("#lstannlectivo").val()
+    let idGradoSeccion = $(this).val();
+    cargarOpcionesMultiples(miselect, "includes/cargar-asignatura.php", { codigo_grado_seccion_turno: idGradoSeccion, annlectivo: idAnnLectivo, modalidad: idModalidad });
+});
 /*	$("#lstCodigoModalidad").change(function () {
 	    	    var miselect=$("#lstCodigoGSTEG");
 		    /* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... 
@@ -254,9 +269,10 @@ $('#goCerrarEG').on('click',function(){
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // SELECT UTILIZANDOS.
+/*
 	$("#lstCodigoModalidadCD").change(function () {
 	    	    var miselect=$("#lstCodigoGSTCD");
-		    /* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
+		    /* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... 
 			miselect.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
 			
    		$("#lstCodigoModalidadCD option:selected").each(function () {
@@ -271,8 +287,8 @@ $('#goCerrarEG').on('click',function(){
 					}
 			}, "json");			
 	    });
-	});
-
+	});*/
+/*
     $("#lstCodigoGSTCD").change(function () {
         const miselect = $("#lstCodigoAsignaturaCD");
     
