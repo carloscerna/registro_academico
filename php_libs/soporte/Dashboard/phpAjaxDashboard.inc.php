@@ -52,6 +52,7 @@ try {
 
             // SQL para obtener GRADOS/SECCIONES/TURNOS únicos que un docente tiene asignados en un año lectivo
             $sql = "SELECT DISTINCT
+                        grd.nombre, sec.nombre, tur.nombre,
                         cd.codigo_grado || '-' || cd.codigo_seccion || '-' || cd.codigo_turno AS id_combinado,
                         TRIM(grd.nombre) || ' - ' || TRIM(sec.nombre) || ' - ' || TRIM(tur.nombre) AS nombre_combinado,
                         TRIM(grd.nombre) AS nombre_grado,
@@ -353,13 +354,14 @@ try {
             }
             break;
 
-        case 'getGeneralIndicators':
+         case 'getGeneralIndicators':
             $codigo_ann_lectivo = $_POST['codigo_ann_lectivo'] ?? '';
 
             if (empty($codigo_ann_lectivo)) {
                 throw new Exception("Falta el parámetro de año lectivo para obtener los indicadores generales.");
             }
 
+            // Inicialización del array de datos
             $general_indicators_data = [
                 'total_estudiantes_masculino' => 0,
                 'total_estudiantes_femenino' => 0,
@@ -368,6 +370,9 @@ try {
                 'total_docentes_masculino' => 0,
                 'total_docentes_femenino' => 0,
                 'total_docentes' => 0,
+                'total_admin_masculino' => 0, // Nuevo
+                'total_admin_femenino' => 0,  // Nuevo
+                'total_admin_total' => 0,     // Nuevo
                 'matricula_grafico' => [
                     'masculino' => 0,
                     'femenino' => 0,
@@ -376,14 +381,8 @@ try {
                 'lista_matricula' => []
             ];
 
-            // Total Estudiantes Masculino/Femenino/Total para el año lectivo
-            $sql_estudiantes_generales = "SELECT
-                                            SUM(CASE WHEN lower(e.genero) = 'm' THEN 1 ELSE 0 END) AS masculino,
-                                            SUM(CASE WHEN lower(e.genero) = 'f' THEN 1 ELSE 0 END) AS femenino,
-                                            COUNT(m.codigo_alumno) AS total
-                                        FROM public.alumno_matricula m
-                                        INNER JOIN public.alumno e ON e.id_alumno = m.codigo_alumno
-                                        WHERE m.codigo_ann_lectivo = :codigoAnnLectivo AND m.retirado = 'f'"; // Solo no retirados
+            // Total Estudiantes (sin cambios)
+            $sql_estudiantes_generales = "SELECT SUM(CASE WHEN lower(e.genero) = 'm' THEN 1 ELSE 0 END) AS masculino, SUM(CASE WHEN lower(e.genero) = 'f' THEN 1 ELSE 0 END) AS femenino, COUNT(m.codigo_alumno) AS total FROM public.alumno_matricula m INNER JOIN public.alumno e ON e.id_alumno = m.codigo_alumno WHERE m.codigo_ann_lectivo = :codigoAnnLectivo AND m.retirado = 'f'";
             $stmt_estudiantes = $dblink->prepare($sql_estudiantes_generales);
             $stmt_estudiantes->bindParam(':codigoAnnLectivo', $codigo_ann_lectivo, PDO::PARAM_STR);
             $stmt_estudiantes->execute();
@@ -397,24 +396,15 @@ try {
                 $general_indicators_data['matricula_grafico']['total'] = $res_estudiantes['total'];
             }
 
-            // Total Familias (usando alumno_encargado.codigo_familiar)
-            $sql_familias = "SELECT COUNT(DISTINCT ae.codigo_familiar)
-                             FROM public.alumno_matricula am
-                             INNER JOIN public.alumno_encargado ae ON ae.codigo_alumno = am.codigo_alumno
-                             WHERE am.codigo_ann_lectivo = :codigoAnnLectivo
-                             AND ae.codigo_familiar IS NOT NULL AND ae.codigo_familiar != ''";
+            // Total Familias (sin cambios)
+            $sql_familias = "SELECT COUNT(DISTINCT ae.codigo_familiar) FROM public.alumno_matricula am INNER JOIN public.alumno_encargado ae ON ae.codigo_alumno = am.codigo_alumno WHERE am.codigo_ann_lectivo = :codigoAnnLectivo AND ae.codigo_familiar IS NOT NULL AND ae.codigo_familiar != ''";
             $stmt_familias = $dblink->prepare($sql_familias);
             $stmt_familias->bindParam(':codigoAnnLectivo', $codigo_ann_lectivo, PDO::PARAM_STR);
             $stmt_familias->execute();
             $general_indicators_data['total_familias'] = $stmt_familias->fetchColumn();
 
-            // Total Docentes Masculino/Femenino/Total
-            $sql_docentes = "SELECT
-                                SUM(CASE WHEN lower(codigo_genero) = 'm' THEN 1 ELSE 0 END) AS masculino,
-                                SUM(CASE WHEN lower(codigo_genero) = 'f' THEN 1 ELSE 0 END) AS femenino,
-                                COUNT(id_personal) AS total
-                            FROM public.personal
-                            WHERE codigo_cargo = '03' AND codigo_estatus = '01'";
+            // Total Docentes (sin cambios, ya estaba correcto)
+            $sql_docentes = "SELECT SUM(CASE WHEN lower(codigo_genero) = '01' THEN 1 ELSE 0 END) AS masculino, SUM(CASE WHEN lower(codigo_genero) = '02' THEN 1 ELSE 0 END) AS femenino, COUNT(id_personal) AS total FROM public.personal WHERE codigo_cargo = '03' AND codigo_estatus = '01'";
             $stmt_docentes = $dblink->prepare($sql_docentes);
             $stmt_docentes->execute();
             $res_docentes = $stmt_docentes->fetch(PDO::FETCH_ASSOC);
@@ -424,20 +414,19 @@ try {
                 $general_indicators_data['total_docentes'] = $res_docentes['total'];
             }
 
-            // Lista de Matrícula por Modalidad/Turno (para la tabla)
-            $sql_lista_matricula = "SELECT
-                                        TRIM(modl.nombre) AS modalidad,
-                                        TRIM(tur.nombre) AS turno,
-                                        SUM(CASE WHEN lower(e.genero) = 'm' THEN 1 ELSE 0 END) AS masculino,
-                                        SUM(CASE WHEN lower(e.genero) = 'f' THEN 1 ELSE 0 END) AS femenino,
-                                        COUNT(m.codigo_alumno) AS total
-                                    FROM public.alumno_matricula m
-                                    INNER JOIN public.alumno e ON e.id_alumno = m.codigo_alumno
-                                    INNER JOIN public.bachillerato_ciclo modl ON modl.codigo = m.codigo_bach_o_ciclo
-                                    INNER JOIN public.turno tur ON tur.codigo = m.codigo_turno
-                                    WHERE m.codigo_ann_lectivo = :codigoAnnLectivo AND m.retirado = 'f'
-                                    GROUP BY modl.nombre, tur.nombre
-                                    ORDER BY modl.nombre, tur.nombre";
+            // NUEVO: Total Personal Administrativo
+            $sql_admin = "SELECT SUM(CASE WHEN lower(codigo_genero) = '01' THEN 1 ELSE 0 END) AS masculino, SUM(CASE WHEN lower(codigo_genero) = '02' THEN 1 ELSE 0 END) AS femenino, COUNT(id_personal) AS total FROM public.personal WHERE codigo_cargo <> '03' AND codigo_estatus = '01'";
+            $stmt_admin = $dblink->prepare($sql_admin);
+            $stmt_admin->execute();
+            $res_admin = $stmt_admin->fetch(PDO::FETCH_ASSOC);
+            if ($res_admin) {
+                $general_indicators_data['total_admin_masculino'] = $res_admin['masculino'];
+                $general_indicators_data['total_admin_femenino'] = $res_admin['femenino'];
+                $general_indicators_data['total_admin_total'] = $res_admin['total'];
+            }
+
+            // Lista de Matrícula (sin cambios)
+            $sql_lista_matricula = "SELECT TRIM(modl.nombre) AS modalidad, TRIM(tur.nombre) AS turno, SUM(CASE WHEN lower(e.genero) = 'm' THEN 1 ELSE 0 END) AS masculino, SUM(CASE WHEN lower(e.genero) = 'f' THEN 1 ELSE 0 END) AS femenino, COUNT(m.codigo_alumno) AS total FROM public.alumno_matricula m INNER JOIN public.alumno e ON e.id_alumno = m.codigo_alumno INNER JOIN public.bachillerato_ciclo modl ON modl.codigo = m.codigo_bach_o_ciclo INNER JOIN public.turno tur ON tur.codigo = m.codigo_turno WHERE m.codigo_ann_lectivo = :codigoAnnLectivo AND m.retirado = 'f' GROUP BY modl.nombre, tur.nombre ORDER BY modl.nombre, tur.nombre";
             $stmt_lista_matricula = $dblink->prepare($sql_lista_matricula);
             $stmt_lista_matricula->bindParam(':codigoAnnLectivo', $codigo_ann_lectivo, PDO::PARAM_STR);
             $stmt_lista_matricula->execute();

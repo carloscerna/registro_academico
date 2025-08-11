@@ -10,7 +10,7 @@
 // cambiar a utf-8.
      header("Content-Type: text/html; charset=UTF-8");    
 // variables y consulta a la tabla.
-     $codigo_ann_lectivo = $_REQUEST["lstannlectivo"];
+     $codigo_ann_lectivo = $_REQUEST["ann_lectivo"];
      $db_link = $dblink;
      $codigo_all_indicadores = array(); $nombre_grado = array(); $nombre_modalidad = array(); $nombre_ann_lectivo = array();
 	 $codigo_modalidad_matriz = array();
