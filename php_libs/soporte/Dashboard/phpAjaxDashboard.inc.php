@@ -396,12 +396,21 @@ try {
                 $general_indicators_data['matricula_grafico']['total'] = $res_estudiantes['total'];
             }
 
-            // Total Familias (sin cambios)
-            $sql_familias = "SELECT COUNT(DISTINCT ae.codigo_familiar) FROM public.alumno_matricula am INNER JOIN public.alumno_encargado ae ON ae.codigo_alumno = am.codigo_alumno WHERE am.codigo_ann_lectivo = :codigoAnnLectivo AND ae.codigo_familiar IS NOT NULL AND ae.codigo_familiar != ''";
+           // === CONSULTA DE FAMILIAS CORREGIDA (VERSIÓN FINAL) ===
+            // Contamos los DUI únicos de los encargados PRINCIPALES ('t') de los alumnos matriculados.
+            $sql_familias = "SELECT COUNT(DISTINCT ae.dui)
+                             FROM public.alumno_encargado ae
+                             WHERE ae.dui IS NOT NULL AND ae.dui != '' AND ae.encargado = 't'
+                             AND ae.codigo_alumno IN (
+                                SELECT m.codigo_alumno
+                                FROM public.alumno_matricula m
+                                WHERE m.codigo_ann_lectivo = :codigoAnnLectivo AND m.retirado = 'f'
+                             )";
             $stmt_familias = $dblink->prepare($sql_familias);
             $stmt_familias->bindParam(':codigoAnnLectivo', $codigo_ann_lectivo, PDO::PARAM_STR);
             $stmt_familias->execute();
             $general_indicators_data['total_familias'] = $stmt_familias->fetchColumn();
+            // === FIN DE LA CORRECCIÓN ===
 
             // Total Docentes (sin cambios, ya estaba correcto)
             $sql_docentes = "SELECT SUM(CASE WHEN lower(codigo_genero) = '01' THEN 1 ELSE 0 END) AS masculino, SUM(CASE WHEN lower(codigo_genero) = '02' THEN 1 ELSE 0 END) AS femenino, COUNT(id_personal) AS total FROM public.personal WHERE codigo_cargo = '03' AND codigo_estatus = '01'";

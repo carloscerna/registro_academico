@@ -157,7 +157,19 @@
                     </a>
                 </div>
             </div>
-            <div class="col-12 col-sm-12 col-md-6 col-lg-4 col-xl-3"><div class="small-box bg-warning"><div class="inner"><h3><span id="TotalFamilias">0</span></h3><p>Total de Familias</p></div><div class="icon"><i class="fas fa-users"></i></div><a href="#" class="small-box-footer"> Más Detalles <i class="fas fa-arrow-circle-right"></i></a></div></div>
+            <!-- Small-Box Familias - MODIFICADO -->
+            <div class="col-12 col-sm-12 col-md-6 col-lg-4 col-xl-3">
+                <div class="small-box bg-warning">
+                    <div class="inner">
+                        <h3><span id="TotalFamilias">0</span></h3>
+                        <p>Total de Familias</p>
+                    </div>
+                    <div class="icon"><i class="fas fa-users"></i></div>
+                    <a id="linkReporteFamilias" href="#" target="_blank" class="small-box-footer"> 
+                        Ver Reporte <i class="fas fa-arrow-circle-right"></i>
+                    </a>
+                </div>
+            </div>
             <div class="col-12 col-sm-12 col-md-6 col-lg-4 col-xl-3">
                 <div class="small-box bg-danger">
                     <div class="inner">
@@ -408,7 +420,10 @@ function loadTeacherDashboardData() {
                                 const urlReporteMemoria = `php_libs/reportes/Estadisticos/Memoria.php?ann_lectivo=${selectedAnnLectivo}`;
                                 $('#linkReporteMemoria').attr('href', urlReporteMemoria);
                                 // --- Fin de la Actualización de Enlaces ---
-
+                                // MODIFICADO: Añadir enlace para el reporte de familias
+                                const urlReporteFamilias = `php_libs/reportes/Estudiante/NominaFamilias.php?ann_lectivo=${selectedAnnLectivo}`;
+                                $('#linkReporteFamilias').attr('href', urlReporteFamilias);
+                                
                                 // --- Actualización de los contadores en los small-box ---
                                 $('#totalEstudiantesMasculino').text(response.data.total_estudiantes_masculino || 0);
                                 $('#totalEstudiantesFemenino').text(response.data.total_estudiantes_femenino || 0);
@@ -496,7 +511,7 @@ function loadTeacherDashboardData() {
                                     $listaMatricula.append(`<tr class="table-dark font-weight-bolder"><td colspan="3" class="text-right">TOTALES GENERALES</td><td>${grandTotalMasculino}</td><td>${grandTotalFemenino}</td><td>${grandTotalGeneral}</td></tr>`);
                                 }
                                 // === FIN DE LA LÓGICA MODIFICADA ===
- // === INICIO DE LA NUEVA LÓGICA PARA EL GRÁFICO DE BARRAS ===
+                                // === INICIO DE LA NUEVA LÓGICA PARA EL GRÁFICO DE BARRAS ===
                                 if (response.data.lista_matricula && response.data.lista_matricula.length > 0) {
                                     // 1. Agrupar y sumar los datos por turno
                                     const turnosData = {};
