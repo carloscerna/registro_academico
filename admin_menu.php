@@ -6,7 +6,7 @@ $_SESSION['path_root'] = trim($_SERVER['DOCUMENT_ROOT']);
 $root = ''; // <--- ¡Asegúrate de que esta línea esté presente!
 
 // Asegurarse de que el usuario está logueado y tiene el perfil correcto
-$allowed_profiles = ['01', '99']; // Solo administradores o ROOT pueden acceder a esta página
+$allowed_profiles = ['01', '99', '04']; // Solo administradores o ROOT pueden acceder a esta página
 
 if (!empty($_SESSION) && $_SESSION['userLogin'] == true && in_array($_SESSION['codigo_perfil'], $allowed_profiles)) {
     include('includes/templateEngine.inc.php');

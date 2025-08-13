@@ -1,0 +1,121 @@
+{# Heredando la plantilla principal #}
+
+{% extends 'default_layout.html' %}
+
+{% block extraCSS %}
+<style>
+    /* Estilos para el encabezado fijo de la tabla */
+    .table-responsive {
+        max-height: 60vh; /* Altura máxima del contenedor de la tabla */
+        overflow-y: auto;
+    }
+    #tablaDatosEstudiantes thead {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+    }
+</style>
+{% endblock %}
+
+{% block javascripts %}
+    <script type="text/JavaScript" src="js/Estudiantes/DatosEstudiantes.js"></script>
+    <script type="text/JavaScript" src="js/default.js"></script>
+    <script type="text/javascript" src="js/jquery-mask/jquery.maskedinput.js"></script>
+    <script type="text/JavaScript" src="js/Utilidades/cargarDatosSelect.js"></script>
+    <script type="text/JavaScript" src="js/Utilidades/utilidadesSelect.js"></script>
+{% endblock %}
+
+{% block contenidos %}
+ <div class="content-wrapper">
+    <section class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-1">
+          <div class="col-sm-6">
+            <h4>Estudiante - Datos Personales</h4>
+          </div>
+          <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-right">
+              <li class="breadcrumb-item"><a href="index.php">Home</a></li>
+              <li class="breadcrumb-item active">Datos de Estudiantes</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </section>
+
+<section class="content">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col">
+            <div class="card card-primary mx-auto">
+              <div class="card-header">
+                <h3 class="card-title">Seleccione un Grupo</h3>
+              </div>
+              <div class="card-body">
+                <form action="" method="post" name="formDatosEstudiantes" id="formDatosEstudiantes" class="form-horizontal">
+                  <input type="hidden" id="accion_buscar" name="accion_buscar" value="BuscarListaEstudiantes">
+                  <div class="form-group row">
+                      <label class="col-sm-4 col-form-label" for="lstannlectivo">Año Lectivo</label>
+                      <div class="col-sm-6">
+                        <select id="lstannlectivo" name="lstannlectivo" autofocus class="form-select" required></select>
+                      </div>
+                    </div>
+                    <div class="form-group row">
+                      <label class="col-sm-4 col-form-label" for="lstmodalidad">Modalidad</label>
+                      <div class="col-sm-6">
+                        <select id="lstmodalidad" name="lstmodalidad" class="form-select" required></select>
+                      </div>
+                    </div>
+                    <div class="form-group row">
+                      <label class="col-sm-4 col-form-label" for="lstgradoseccion">Grado - Sección - Turno</label>
+                      <div class="col-sm-6">
+                        <select id="lstgradoseccion" name="lstgradoseccion" class="form-select" required></select>
+                      </div>
+                    </div>
+                </form>
+              </div>
+                <div class="card-footer d-flex justify-content-center">
+                    <button type="submit" form="formDatosEstudiantes" class="btn btn-primary mx-1" id="goBuscar">
+                      <i class="fas fa-search"></i> Buscar Registudiantes
+                    </button>
+                    <button type="button" class="btn btn-success mx-1" id="goActualizar" disabled>
+                      <i class="fas fa-save"></i> Actualizar Registros
+                    </button>
+                    <button type="button" class="btn btn-danger mx-1" id="goCancelar">
+                      <i class="fas fa-times"></i> Cancelar
+                    </button>
+                </div>
+            </div>
+          </div>
+        </div>
+          <div class="row">
+            <div class="col">
+             <div class="card card-secondary mx-auto" id="divTabla" style="display: none;">
+                <div class="card-header">
+                  <h3 class="card-title">Listado de Estudiantes</h3>
+                </div>
+                <div class="card-body p-0">
+                  <div class="table-responsive">
+                    <table class="table table-striped table-sm table-bordered" id="tablaDatosEstudiantes">
+                      <thead class="thead-dark">
+                        <tr>
+                          <th style="width: 4%;">N°</th>
+                          <th style="width: 26%;">Estudiante</th>
+                          <th style="width: 35%;">Dirección</th>
+                          <th style="width: 15%;">Tel. Encargado</th>
+                          <th style="width: 10%;">Tel. Residencia</th>
+                          <th style="width: 10%;">Tel. Celular</th>
+                        </tr>                    
+                      </thead>
+                      <tbody id="listaEstudiantesOK">
+                       
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+    </section>
+  </div>
+{% endblock %}
