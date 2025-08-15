@@ -1,0 +1,182 @@
+{# Heredando la plantilla principal #}
+
+{% extends 'default_layout.html' %}
+
+{% block extraCSS %}
+<style>
+    /* Estilos para el encabezado fijo de la tabla */
+    .table-responsive {
+        max-height: 60vh; /* Altura máxima del contenedor de la tabla */
+        overflow-y: auto;
+    }
+    #tablaDatosPn thead {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+    }
+    /* Ajustar tamaño de checkboxes y inputs */
+    .form-check-input {
+        width: 1.5em;
+        height: 1.5em;
+    }
+    #tablaDatosPn input[type="text"], #tablaDatosPn input[type="date"], #tablaDatosPn select {
+        font-size: 0.8rem;
+    }
+    /* Estilo para el resumen de edades */
+    #resumenEdadesContainer .list-group-item {
+        padding: 0.5rem 1rem;
+    }
+</style>
+{% endblock %}
+
+{% block javascripts %}
+    <script type="text/JavaScript" src="js/Estudiantes/DatosPartidaNacimiento.js"></script>
+    <script type="text/JavaScript" src="js/default.js"></script>
+    <script type="text/JavaScript" src="js/Utilidades/cargarDatosSelect.js"></script>
+    <script type="text/JavaScript" src="js/Utilidades/utilidadesSelect.js"></script>
+{% endblock %}
+
+{% block contenidos %}
+ <div class="content-wrapper">
+    <section class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-1">
+          <div class="col-sm-6">
+            <h4>Estudiante - Datos de Partida de Nacimiento</h4>
+          </div>
+          <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-right">
+              <li class="breadcrumb-item"><a href="index.php">Home</a></li>
+              <li class="breadcrumb-item active">Datos P.N.</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </section>
+
+<section class="content">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col">
+            <div class="card card-primary mx-auto">
+              <div class="card-header">
+                <h3 class="card-title">Seleccione un Grupo</h3>
+              </div>
+              <div class="card-body">
+                <form action="" method="post" name="formDatosPn" id="formDatosPn" class="form-horizontal">
+                  <input type="hidden" id="accion_buscar" name="accion_buscar" value="BuscarListaPn">
+                  <div class="form-group row">
+                      <label class="col-sm-4 col-form-label" for="lstannlectivo">Año Lectivo</label>
+                      <div class="col-sm-6">
+                        <select id="lstannlectivo" name="lstannlectivo" autofocus class="form-select" required></select>
+                      </div>
+                    </div>
+                    <div class="form-group row">
+                      <label class="col-sm-4 col-form-label" for="lstmodalidad">Modalidad</label>
+                      <div class="col-sm-6">
+                        <select id="lstmodalidad" name="lstmodalidad" class="form-select" required></select>
+                      </div>
+                    </div>
+                    <div class="form-group row">
+                      <label class="col-sm-4 col-form-label" for="lstgradoseccion">Grado - Sección - Turno</label>
+                      <div class="col-sm-6">
+                        <select id="lstgradoseccion" name="lstgradoseccion" class="form-select" required></select>
+                      </div>
+                    </div>
+                </form>
+              </div>
+                <div class="card-footer d-flex justify-content-center">
+                    <button type="submit" form="formDatosPn" class="btn btn-primary mx-1" id="goBuscar">
+                      <i class="fas fa-search"></i> Buscar
+                    </button>
+                    <button type="button" class="btn btn-success mx-1" id="goActualizar" disabled>
+                      <i class="fas fa-save"></i> Actualizar
+                    </button>
+                    <button type="button" class="btn btn-info mx-1" id="goResumen" data-bs-toggle="offcanvas" data-bs-target="#resumenPnOffcanvas" aria-controls="resumenPnOffcanvas" disabled>
+                      <i class="fas fa-chart-bar"></i> Resumen
+                    </button>
+                    <button type="button" class="btn btn-danger mx-1" id="goCancelar">
+                      <i class="fas fa-times"></i> Cancelar
+                    </button>
+                </div>
+            </div>
+          </div>
+        </div>
+          <div class="row">
+            <div class="col">
+             <div class="card card-secondary mx-auto" id="divTabla" style="display: none;">
+                <div class="card-header">
+                  <h3 class="card-title">Listado de Estudiantes</h3>
+                </div>
+                <div class="card-body p-0">
+                  <div class="table-responsive">
+                    <table class="table table-striped table-sm table-bordered table-hover" id="tablaDatosPn">
+                      <thead class="thead-dark text-center">
+                        <tr>
+                          <th style="width: 4%;">N°</th>
+                          <th style="width: 25%;">Estudiante</th>
+                          <th style="width: 10%;">NIE</th>
+                          <th style="width: 10%;">Género</th>
+                          <th style="width: 12%;">F. Nac.</th>
+                          <th style="width: 5%;">Edad</th>
+                          <th style="width: 7%;">N° P.</th>
+                          <th style="width: 7%;">Folio</th>
+                          <th style="width: 7%;">Tomo</th>
+                          <th style="width: 7%;">Libro</th>
+                          <th style="width: 6%;">E. Parv.</th>
+                        </tr>
+                      </thead>
+                      <tbody id="listaPnOK">
+
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          </div>
+    </section>
+  </div>
+
+  <!-- PANEL LATERAL (OFFCANVAS) PARA EL RESUMEN -->
+  <div class="offcanvas offcanvas-end" tabindex="-1" id="resumenPnOffcanvas" aria-labelledby="resumenPnOffcanvasLabel">
+    <div class="offcanvas-header">
+      <h5 id="resumenPnOffcanvasLabel">Resumen de Datos del Grupo</h5>
+      <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+      <h6><i class="fas fa-venus-mars"></i> Resumen por Género</h6>
+      <ul class="list-group mb-3">
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          Masculino
+          <span class="badge bg-primary rounded-pill" id="resumenMasculino">0</span>
+        </li>
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          Femenino
+          <span class="badge bg-pink rounded-pill" id="resumenFemenino">0</span>
+        </li>
+      </ul>
+
+      <h6><i class="fas fa-child"></i> Resumen Estudio Parvularia</h6>
+      <ul class="list-group mb-3">
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          Sí Estudió
+          <span class="badge bg-success rounded-pill" id="resumenParvulariaSi">0</span>
+        </li>
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          No Estudió
+          <span class="badge bg-secondary rounded-pill" id="resumenParvulariaNo">0</span>
+        </li>
+      </ul>
+
+      <h6><i class="fas fa-birthday-cake"></i> Resumen por Edades</h6>
+      <div id="resumenEdadesContainer">
+        <!-- El contenido se generará dinámicamente con JS -->
+        <ul class="list-group">
+            <li class="list-group-item text-center">No hay datos para mostrar.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+{% endblock %}
