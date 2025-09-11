@@ -6,7 +6,7 @@ header ('Content-type: text/html; charset=utf-8');
 // variables/conexion.
 $host = 'localhost';
 $port = 5432;
-$database = 'acomtus';
+$database = 'sistema_facturacion';
 $username = 'postgres';
 $password = 'Orellana';
 //Construimos el DSN//
@@ -27,7 +27,7 @@ include($path_root."/registro_academico/includes/funciones.php");
     set_time_limit(0);
     ini_set("memory_limit","2000M");
 // variables. del post.
-	$ruta = $path_root.'/registro_academico/formatos_hoja_de_calculo/CATALOGO DE RIESGOS.xlsx';
+	$ruta = $path_root.'/registro_academico/formatos_hoja_de_calculo/catalogosDET.xlsx';
   //$trimestre = trim($_REQUEST["periodo_"]);
 // variable de la conexi�n dbf.
     $db_link = $dblink;
@@ -53,8 +53,8 @@ $datos=array(); $fila_array = 0;
 // Leemos un archivo Excel 2007
    $objReader = \PhpOffice\PhpSpreadsheet\IOFactory::createReader("Xlsx");
     $origen = $ruta;
-	 $fila = 3;
-     $nombre_tabla = "catalogo_montos_ingreso";
+	 $fila = 2;
+     $nombre_tabla = "catalogo_dte_tablas";
     $objPHPExcel = $objReader->load($origen);
 //
 // Establecer formato para la fecha.
@@ -90,6 +90,6 @@ $datos=array(); $fila_array = 0;
 				 	//$query = "INSERT INTO $nombre_tabla (codigo, descripcion,codigo_clasificacion_riesgo) VALUES ('$codigo','$descripcion','$codigo_riesgo')";
                      $query = "INSERT INTO $nombre_tabla (codigo, descripcion) VALUES ('$codigo','$descripcion')";
                     
-					//$consulta = $dblink -> query($query);
+					$consulta = $dblink -> query($query);
 		}	// FIN DEL WHILE PRINCIPAL DE L AHOJA DE CALCULO.			
 ?>

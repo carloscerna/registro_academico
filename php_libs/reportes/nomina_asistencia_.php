@@ -32,13 +32,13 @@ function Header()
         global $print_bachillerato, $print_grado, $print_seccion, $print_ann_lectivo, $print_periodo, $pagina_impar;
 
         //Logo
-	$img = $_SERVER['DOCUMENT_ROOT'].'/registro_web/img/'.$_SESSION['logo_uno'];
+	$img = $_SERVER['DOCUMENT_ROOT'].'/registro_academico/img/'.$_SESSION['logo_uno'];
         $this->Image($img,20,15,12,15);
         //Arial bold 15
         $this->SetFont('Arial','B',13);
         //Título
         $this->RotatedText(35,15,utf8_decode($_SESSION['institucion']),0);
-        $this->RotatedText(35,20,'Lista de Asistencia',0,1,'L');
+        $this->RotatedText(35,20,utf8_decode('Lista de Asistencia - Control de Deméritos.'),0,1,'L');
         
         $this->SetFont('Arial','',9);
         // Imprimir Modalidad y Asignatura.
