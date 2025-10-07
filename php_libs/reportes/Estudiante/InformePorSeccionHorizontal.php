@@ -16,14 +16,21 @@ $asignatura   = $_GET['asignatura'] ?? null; // opcional
 $periodo      = $_GET['periodo']    ?? null; // opcional
 $id_alumno_individual = $_GET['id_alumno'] ?? null; // Nuevo: ID de alumno individual
 
-// Obtener cantidad de períodos desde catalogo_periodos
-$sqlPeriodo = "SELECT cantidad_periodos FROM catalogo_periodos WHERE codigo_modalidad = ? LIMIT 1";
+// Obtener cantidad de períodos y calificación mínima desde catalogo_periodos
+$sqlConfig = "SELECT cantidad_periodos, calificacion_minima FROM catalogo_periodos WHERE codigo_modalidad = ? LIMIT 1";
+
+// Valores por defecto en caso de que la consulta falle
 $cant_periodos = 3;
-if ($stmt = $pdo->prepare($sqlPeriodo)) {
-    $stmt->execute([$modalidad]);
-    $cant_periodos = (int) $stmt->fetchColumn() ?: 3;
+$calif_minima = 6; // Este es ahora un valor de respaldo
+
+$stmtConfig = $pdo->prepare($sqlConfig);
+if ($stmtConfig && $stmtConfig->execute([$modalidad])) {
+    $config = $stmtConfig->fetch(PDO::FETCH_ASSOC);
+    if ($config) {
+        $cant_periodos = (int) $config['cantidad_periodos'];
+        $calif_minima = (float) $config['calificacion_minima']; // Usamos float para notas con decimales
+    }
 }
-$calif_minima = 6; // Calificación mínima para aprobar
 
 // Construir codigo_all
 $codigo_all = $modalidad . substr($gradoseccion, 0, 6) . $annlectivo; 
@@ -91,6 +98,24 @@ class PDF extends FPDF {
         $this->Line(10, $y + 25, 80, $y + 25);   // Línea Docente
         $this->Line(120, $y + 25, 190, $y + 25); // Línea Director
         $this->Line(5, $y + 42, 203, $y + 42);   // Línea final horizontal
+
+            // --- INICIO: AÑADIR FECHA DE EMISIÓN ---
+
+            // Array para los meses en español
+            $meses = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+            $dia = date('d');
+            $mes = $meses[date('n') - 1]; // date('n') da el mes del 1-12, el array es 0-11
+            $ann = date('Y');
+
+            // Construir el texto de la fecha. Puedes cambiar "Santa Ana" por la ciudad que necesites.
+            $fecha_texto = "Santa Ana, $dia de $mes de $ann";
+
+            // Posicionar y escribir la fecha
+            $this->SetY($y + 37); // Un poco por encima de la línea final
+            $this->SetFont('Arial', 'I', 8); // Letra pequeña e itálica
+            $this->Cell(0, 5, convertirtexto("Fecha de Emisión: " . $fecha_texto), 0, 0, 'R'); // 'R' para alinear a la derecha
+
+            // 
 
         // Firma del Docente Encargado
         if (!empty($this->nombre_encargado)) {
@@ -372,7 +397,7 @@ $sqlEst = "SELECT a.id_alumno, a.codigo_nie, a.foto, a.codigo_genero,
 if ($id_alumno_individual !== null) {
     $sqlEst .= " AND a.id_alumno = :id_alumno_individual";
 }
-$sqlEst .= " AND am.retirado = false ORDER BY nombres, apellido_paterno, apellido_materno"; 
+$sqlEst .= " AND am.retirado = false ORDER BY apellido_paterno, apellido_materno, nombres"; 
 
 $st = $pdo->prepare($sqlEst);
 $params = [
@@ -414,79 +439,114 @@ foreach ($estudiantes as $est) {
         $est['codigo_genero']  // Pasar el código de género del estudiante
     );
 
-$sqlNotas = "
-    SELECT
-        asig.nombre AS asignatura,
-        n.nota_a1_1, n.nota_a2_1, n.nota_a3_1, n.nota_r_1, n.nota_p_p_1,
-        n.nota_a1_2, n.nota_a2_2, n.nota_a3_2, n.nota_r_2, n.nota_p_p_2,
-        n.nota_a1_3, n.nota_a2_3, n.nota_a3_3, n.nota_r_3, n.nota_p_p_3,
-        n.nota_a1_4, n.nota_a2_4, n.nota_a3_4, n.nota_r_4, n.nota_p_p_4,
-        n.nota_a1_5, n.nota_a2_5, n.nota_a3_5, n.nota_r_5, n.nota_p_p_5,
-        n.recuperacion, n.nota_recuperacion_2, n.nota_final
-    FROM alumno a
-    INNER JOIN alumno_matricula am
-        ON a.id_alumno = am.codigo_alumno
-        AND am.retirado = 'f'
-        AND am.codigo_ann_lectivo = :annlectivo
-    INNER JOIN nota n
-        ON n.codigo_alumno = a.id_alumno
-        AND n.codigo_matricula = am.id_alumno_matricula
-    INNER JOIN asignatura asig
-        ON asig.codigo = n.codigo_asignatura
-    WHERE a.id_alumno = :id_alumno
-    ORDER BY n.orden
-";
-$rows = $pdo->prepare($sqlNotas);
-$rows->execute([
-    ':id_alumno' => $est['id_alumno'],
-    ':annlectivo' => $annlectivo
-]);
-    // Preparar estructura por asignatura
+    $sqlNotas = "
+        SELECT
+            asig.nombre AS asignatura,
+            -- Añadimos el código del tipo de calificación
+            cca.codigo AS tipo_calificacion,
+            n.nota_a1_1, n.nota_a2_1, n.nota_a3_1, n.nota_r_1, n.nota_p_p_1,
+            n.nota_a1_2, n.nota_a2_2, n.nota_a3_2, n.nota_r_2, n.nota_p_p_2,
+            n.nota_a1_3, n.nota_a2_3, n.nota_a3_3, n.nota_r_3, n.nota_p_p_3,
+            n.nota_a1_4, n.nota_a2_4, n.nota_a3_4, n.nota_r_4, n.nota_p_p_4,
+            n.nota_a1_5, n.nota_a2_5, n.nota_a3_5, n.nota_r_5, n.nota_p_p_5,
+            n.recuperacion, n.nota_recuperacion_2, n.nota_final
+        FROM alumno a
+        INNER JOIN alumno_matricula am
+            ON a.id_alumno = am.codigo_alumno
+            AND am.retirado = 'f'
+            AND am.codigo_ann_lectivo = :annlectivo
+        INNER JOIN nota n
+            ON n.codigo_alumno = a.id_alumno
+            AND n.codigo_matricula = am.id_alumno_matricula
+        INNER JOIN asignatura asig
+            ON asig.codigo = n.codigo_asignatura
+        -- Unimos con la tabla que controla el tipo de calificación
+        INNER JOIN catalogo_cc_asignatura cca 
+            ON asig.codigo_cc = cca.codigo -- ¡Ajusta 'asig.codigo_cc' si el campo se llama diferente!
+        WHERE a.id_alumno = :id_alumno
+        -- Ordenamos para poner los modulares ('04') al final, y luego por el orden normal.
+        ORDER BY
+            CASE WHEN cca.codigo = '04' THEN 1 ELSE 0 END,
+            n.orden
+    ";
+    $rows = $pdo->prepare($sqlNotas);
+    $rows->execute([
+        ':id_alumno' => $est['id_alumno'],
+        ':annlectivo' => $annlectivo
+    ]);
+        // Preparar estructura por asignatura
     $asignaturas = [];
     foreach ($rows as $r) {
         $nombreAsignatura = $r['asignatura'] ?? 'Desconocida';
-        
-        // Inicializar el array para la asignatura actual si no existe
+        $tipo_calificacion = $r['tipo_calificacion'];
+        $nota_final_numerica = ($r['nota_final'] === null || $r['nota_final'] === '') ? null : (float)$r['nota_final'];
+
         if (!isset($asignaturas[$nombreAsignatura])) {
             $asignaturas[$nombreAsignatura] = [];
         }
 
-        // Recorrer todos los períodos posibles y añadir sus datos
-        // Asegurarse de que el bucle solo añade datos para los períodos existentes según $cant_periodos
-        for ($p = 1; $p <= $cant_periodos; $p++) {
-            // Asignar datos del período directamente al número del período
-            $asignaturas[$nombreAsignatura][$p] = [
-                'A1' => ($r["nota_a1_$p"] == 0 || $r["nota_a1_$p"] === null) ? '' : number_format($r["nota_a1_$p"], 1),
-                'A2' => ($r["nota_a2_$p"] == 0 || $r["nota_a2_$p"] === null) ? '' : number_format($r["nota_a2_$p"], 1),
-                'A3' => ($r["nota_a3_$p"] == 0 || $r["nota_a3_$p"] === null) ? '' : number_format($r["nota_a3_$p"], 1),
-                'R' => ($r["nota_r_$p"] == 0 || $r["nota_r_$p"] === null) ? '' : number_format($r["nota_r_$p"], 1),
-                'PP' => ($r["nota_p_p_$p"] == 0 || $r["nota_p_p_$p"] === null) ? '' : number_format($r["nota_p_p_$p"], 1)
-            ];
-        }
-        // Añadir notas finales y recuperaciones directamente a la clave 'Final' dentro de la asignatura
-        $recuperacion = ($r['recuperacion'] == 0 || $r['recuperacion'] === null) ? '' : number_format($r['recuperacion'], 1);
-        $nota_recuperacion_2 = ($r['nota_recuperacion_2'] == 0 || $r['nota_recuperacion_2'] === null) ? '' : number_format($r['nota_recuperacion_2'], 1);
-        $nota_final = ($r['nota_final'] == 0 || $r['nota_final'] === null) ? '' : (int)round($r['nota_final']); // NF como entero
+        // Usamos un SWITCH para manejar los diferentes tipos de calificación de forma ordenada
+        switch ($tipo_calificacion) {
+            case '04': // Asignaturas Modulares con lógica invertida
+                // 1. Períodos en blanco
+                for ($p = 1; $p <= $cant_periodos; $p++) {
+                    $asignaturas[$nombreAsignatura][$p] = ['A1'=>'', 'A2'=>'', 'A3'=>'', 'R'=>'', 'PP'=>''];
+                }
+                // 2. NF es numérica
+                $asignaturas[$nombreAsignatura]['Final'] = [
+                    'R1' => '', 'R2' => '', 'NF' => ($nota_final_numerica !== null) ? (int)round($nota_final_numerica) : ''
+                ];
+                // 3. Resultado 'Res.' con lógica invertida (como la ajustaste)
+                $resultado = '';
+                if ($nota_final_numerica !== null) {
+                    if ($nota_final_numerica >= 4 && $nota_final_numerica <= 5) {
+                        $resultado = 'Aprobado';
+                    } else if ($nota_final_numerica >= 1 && $nota_final_numerica <= 3) {
+                        $resultado = 'Reprobado';
+                    }
+                }
+                $asignaturas[$nombreAsignatura]['Resultado'] = $resultado;
+                break;
 
-        $asignaturas[$nombreAsignatura]['Final'] = [
-            'R1' => $recuperacion,
-            'R2' => $nota_recuperacion_2,
-            'NF' => $nota_final
-        ];
+            case '01': // Asignaturas Cualitativas
+            case '02': // Asignaturas de Concepto
+            default:   // Asignaturas Numéricas Normales
+                // Todas estas se rigen por la lógica estándar
+                
+                // 1. Llenamos las notas de cada período
+                for ($p = 1; $p <= $cant_periodos; $p++) {
+                    $asignaturas[$nombreAsignatura][$p] = [
+                        'A1' => ($r["nota_a1_$p"] == 0 || $r["nota_a1_$p"] === null) ? '' : number_format($r["nota_a1_$p"], 1),
+                        'A2' => ($r["nota_a2_$p"] == 0 || $r["nota_a2_$p"] === null) ? '' : number_format($r["nota_a2_$p"], 1),
+                        'A3' => ($r["nota_a3_$p"] == 0 || $r["nota_a3_$p"] === null) ? '' : number_format($r["nota_a3_$p"], 1),
+                        'R' => ($r["nota_r_$p"] == 0 || $r["nota_r_$p"] === null) ? '' : number_format($r["nota_r_$p"], 1),
+                        'PP' => ($r["nota_p_p_$p"] == 0 || $r["nota_p_p_$p"] === null) ? '' : number_format($r["nota_p_p_$p"], 1)
+                    ];
+                }
 
-        // Calcular el resultado
-        $resultado = '';
-        if ($r['nota_final'] !== null && $r['nota_final'] !== '') { // Solo calcular si nota_final existe y no está en blanco
-            if ($r['nota_final'] < $calif_minima) {
-                $resultado = 'Reprobado';
-            } else {
-                $resultado = 'Aprobado';
-            }
+                // 2. Asignamos las notas finales numéricas
+                $recuperacion = ($r['recuperacion'] == 0 || $r['recuperacion'] === null) ? '' : number_format($r['recuperacion'], 1);
+                $nota_recuperacion_2 = ($r['nota_recuperacion_2'] == 0 || $r['nota_recuperacion_2'] === null) ? '' : number_format($r['nota_recuperacion_2'], 1);
+                
+                $asignaturas[$nombreAsignatura]['Final'] = [
+                    'R1' => $recuperacion, 'R2' => $nota_recuperacion_2, 'NF' => ($nota_final_numerica !== null) ? (int)round($nota_final_numerica) : ''
+                ];
+
+                // 3. Resultado 'Res.' se calcula con la $calif_minima DINÁMICA
+                $resultado = '';
+                if ($nota_final_numerica !== null) {
+                    if ($nota_final_numerica < $calif_minima) {
+                        $resultado = 'Reprobado';
+                    } else {
+                        $resultado = 'Aprobado';
+                    }
+                }
+                $asignaturas[$nombreAsignatura]['Resultado'] = $resultado;
+                break;
         }
-        $asignaturas[$nombreAsignatura]['Resultado'] = $resultado;
     }
 
-    $pdf->addTabla($asignaturas, $cant_periodos, $calif_minima);
+$pdf->addTabla($asignaturas, $cant_periodos, $calif_minima);
 }
 
 // Función auxiliar para limpiar cadenas para nombres de archivo (eliminar caracteres especiales y acentos)
