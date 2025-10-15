@@ -46,7 +46,7 @@ class PDF_Asistencia extends FPDF {
         // Cajas de información
         $this->SetFont('Arial', '', 9);
         $this->SetXY(10, 22);
-        $this->Cell(140, 6, 'Modalidad: ' . $this->datosEncabezado['bachillerato'], 1, 0, 'L');
+        $this->Cell(140, 6, convertirTexto('Modalidad: ' . $this->datosEncabezado['bachillerato']), 1, 0, 'L');
         $this->SetXY(10, 29);
         $this->Cell(100, 6, 'Nombre Asignatura:', 1, 0, 'L');
         $this->Cell(100, 6, 'Nombre Docente:', 1, 0, 'L');
@@ -55,10 +55,10 @@ class PDF_Asistencia extends FPDF {
         $this->SetXY(215, 8);
         $this->SetFont('Arial', '', 10);
         $this->Cell(50, 27, '', 1, 0, 'L');
-        $this->Text(217, 13, 'Grado: ' . $this->convertirTexto(datosEncabezado['grado']));
-        $this->Text(217, 18, 'Seccion: ' . $this->datosEncabezado['seccion']);
-        $this->Text(217, 23, 'Ano Lectivo: ' . $this->datosEncabezado['ann_lectivo']);
-        $this->Text(217, 28, 'Periodo: ____________');
+        $this->Text(217, 13, convertirTexto('Grado: ' . $this->datosEncabezado['grado']));
+        $this->Text(217, 18, convertirTexto('Sección: ' . $this->datosEncabezado['seccion']));
+        $this->Text(217, 23, convertirTexto('Año Lectivo: ' . $this->datosEncabezado['ann_lectivo']));
+        $this->Text(217, 28, convertirTexto('Período: ____________'));
         
         $this->SetY(40);
     }
