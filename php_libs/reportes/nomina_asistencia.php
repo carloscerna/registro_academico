@@ -1,291 +1,246 @@
 <?php
-// ruta de los archivos con su carpeta
-    $path_root=trim($_SERVER['DOCUMENT_ROOT']);
-// Archivos que se incluyen.
-     include($path_root."/registro_academico/includes/funciones.php");
-     include($path_root."/registro_academico/includes/consultas.php");
-     include $path_root."/registro_academico/includes/mainFunctions_conexion.php";
-// Llamar a la libreria fpdf
-     include($path_root."/registro_academico/php_libs/fpdf/fpdf.php");
-// cambiar a utf-8.
-     header("Content-Type: text/html; charset=UTF-8");    
-//
-    $fecha_mes = $_REQUEST["FechaMes"];//$_REQUEST["fechaMes"];
-    $fecha_ann = $_REQUEST["lstannlectivo"]; //$_REQUEST["fechaAnn"];
-    $quincena = "Q1";
-// variables y consulta a la tabla.
-     $codigo_all = $_REQUEST["todos"];
-     $db_link = $dblink;
-//
-	    // Establecer formato para la fecha.
-	    // 
-		date_default_timezone_set('America/El_Salvador');
-		setlocale(LC_TIME,'es_SV');
-	    //
-		//$dias = array("Domingo","Lunes","Martes","Miercoles","Jueves","Viernes","Sábado");
-            $meses = array("enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre");
-                //Salida: Viernes 24 de Febrero del 2012		
-		//Crear una línea. Fecha.
-		$dia = strftime("%d");		// El Día.
-        $mes = $meses[date('n')-1];     // El Mes.
-        $año = strftime("%Y");		// El Año.
-//        $total_de_dias = date('t');    // total de dias.
-        $total_de_dias = cal_days_in_month(CAL_GREGORIAN, (int)$fecha_mes, $año);
-        $NombreMes = $meses[(int)$fecha_mes - 1];
+// <-- VERSIÓN FINAL CON AJUSTES VISUALES COMPLETOS -->
 
-// definimos 2 array uno para los nombre de los dias y otro para los nombres de los meses
-    $nombresDias = array("D", "L", "M", "M", "J", "V", "S" );
-    $nombresMeses = array(1=>"Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre");
-// ARMANR FECHA DEPENDIENDO DE LA QUINCENA
-    if($quincena == "Q1"){
-        $fecha_inicio = $año . '-' . $fecha_mes . '-01'; 
-        $fecha_fin = $año . '-' . $fecha_mes . '-'.$total_de_dias; 
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
+// --- INCLUDES Y CONFIGURACIÓN INICIAL ---
+$path_root = trim($_SERVER['DOCUMENT_ROOT']);
+require_once $path_root . "/registro_academico/includes/funciones.php";
+require_once $path_root . "/registro_academico/includes/mainFunctions_conexion.php";
+require_once $path_root . "/registro_academico/php_libs/fpdf/fpdf.php";
+
+define('FILAS_POR_PAGINA', 25);
+
+/**
+ * Clase FPDF final, ajustada para replicar el diseño de la imagen.
+ */
+class PDF_Asistencia extends FPDF {
+    private $datosEncabezado = [];
+    private $diasDelMes = [];
+
+    public function setDatosEncabezado(array $datos) {
+        $this->datosEncabezado = $datos;
     }
-// establecemos la fecha de inicio
-    $inicio =  DateTime::createFromFormat('Y-m-d', $fecha_inicio, new DateTimeZone('America/El_Salvador'));
-// establecemos la fecha final (fecha de inicio + dias que queramos)
-    $fin =  DateTime::createFromFormat('Y-m-d', $fecha_fin, new DateTimeZone('America/El_Salvador'));
-// definier el número de días dependiendo de la quincena.
-    $fin = $fin->modify( '+1 day' );
-// creamos el periodo de fechas
-    $periodo = new DatePeriod($inicio, new DateInterval('P1D') ,$fin);
-// Crear Matriz para el # de dia y nombre del dia.
-    $nombreDia_a = array(); $numeroDia_a = array();
-// recorremos las dechas del periodo
-    foreach($periodo as $date){
-    // definimos la variables para verlo mejor
-        $nombreDia = $nombresDias[$date->format("w")];
-        $nombreMes = $nombresMeses[$date->format("n")];
-        $numeroDia = $date->format("j");
-        $anyo = $date->format("Y");
-    // mostramos los datos
-        $nombreDia_a[] = $nombreDia;
-        $numeroDia_a[] = $numeroDia;
+
+    public function setDiasDelMes(array $dias) {
+        $this->diasDelMes = $dias;
     }
-// buscar la consulta y la ejecuta.
-  consultas(9,0,$codigo_all,'','','',$db_link,'');
-//  imprimir datos del bachillerato.
-    while($row = $result_encabezado -> fetch(PDO::FETCH_BOTH))
-    {
-        $print_bachillerato = convertirtexto('Modalidad: '.trim($row['nombre_bachillerato']));
-        $nombre_modalidad = convertirtexto(trim($row['nombre_bachillerato']));
-        $print_grado = convertirtexto('Grado:     '.trim($row['nombre_grado']));
-        $nombre_grado = convertirtexto(trim($row['nombre_grado']));
-        $print_seccion = convertirtexto('Sección:  '.trim($row['nombre_seccion']));
-        $nombre_seccion = convertirtexto(trim($row['nombre_seccion']));
-        $print_ann_lectivo = convertirtexto('Año Lectivo: '.trim($row['nombre_ann_lectivo']));
-        $nombre_ann_lectivo = convertirtexto(trim($row['nombre_ann_lectivo']));
-        $print_periodo = convertirtexto('Período: _____');
-        break;
-    }
-class PDF extends FPDF
-{
-//Cabecera de página
-function Header()
-{
-        global $print_bachillerato, $print_grado, $print_seccion, $print_ann_lectivo, $print_periodo, $pagina_impar, $NombreMes;
-        //Logo
-    	$img = $_SERVER['DOCUMENT_ROOT'].'/registro_academico/img/'.$_SESSION['logo_uno'];
-        $this->Image($img,20,15,12,15);
-        //Arial bold 15
-        $this->SetFont('Arial','B',13);
-        //Título
-        $this->RotatedText(35,15,convertirtexto($_SESSION['institucion']),0);
-        $this->RotatedText(35,20,'Lista de Asistencia - Mes: '. strtoupper($NombreMes),0,1,'L');
-        $this->SetFont('Arial','',9);
-        // Imprimir Modalidad y Asignatura.
-        $this->RoundedRect(34, 22, 130, 6, 1.5, '1234', '');
-        $this->RotatedText(35,26,$print_bachillerato,0);
-        $this->RoundedRect(34, 29, 100, 6, 1.5, '1234', '');
-        $this->RotatedText(35,33,'Nombre Asignatura: ',0);
-	    $this->RoundedRect(160, 29, 100, 6, 1.5, '1234', '');
-        $this->RotatedText(162,33,'Nombre Docente: ',0);
-    // Generar el cuadro en donde se ubicara el grado, sección y año lectivo.
-        $this->RoundedRect(230, 11, 35, 18, 3.5, '1234', '');
-        $this->RotatedText(232,16,$print_grado,0);
-        $this->RotatedText(232,20,$print_seccion,0);
-        $this->RotatedText(232,24,$print_ann_lectivo,0);
-        $this->RotatedText(232,28,$print_periodo,0);
-    // Ubicación en donde empezará a imprimirlos valores.
-    $this->SetY(35);
-}
-//Pie de página
-function Footer()
-{
-    //
-  // Establecer formato para la fecha.
-  // 
-   date_default_timezone_set('America/El_Salvador');
-   setlocale(LC_TIME, 'spanish');
-    //Posición: a 1,5 cm del final
-    $this->SetY(-15);
-    //Arial italic 8
-    $this->SetFont('Arial','I',8);
-    //Crear ubna línea
-    $this->Line(10,285,200,285);
-    //Número de página
-    $fecha = date("l, F jS Y ");
-    $this->Cell(0,10,'Page '.$this->PageNo().'/{nb} '.$fecha,0,0,'C');
-}
-//Tabla coloreada
-function FancyTable($header)
-{
-    global $nombreDia_a, $numeroDia_a, $total_de_dias;
-    //Colores, ancho de línea y fuente en negrita
-    $this->SetFillColor(0,0,0);
-    $this->SetTextColor(255);
-    $this->SetDrawColor(0,0,0);
-    $this->SetLineWidth(.3);
-    $this->SetFont('','B');
-    //Cabecera
-    $w=array(6,14,70,170); //determina el ancho de las columnas
-    $w1=array(5.66); //determina el ancho de las columnas
-    
-    for($i=0;$i<count($header);$i++)
-        $this->Cell($w[$i],7,convertirtexto($header[$i]),1,0,'C',1);
-        // Coloca las lineas de los cuadros.
-            $this->SetFillColor(255,255,255);
-            $this->SetTextColor(0);
-            for($j=0;$j<=$total_de_dias-1;$j++){
-                if($nombreDia_a[$j] == "S" || $nombreDia_a[$j] == "D"){
-                    $this->SetFillColor(213, 216, 220);
-                        $this->Cell($w1[0],7,$nombreDia_a[$j],1,0,'C',1);
-                }else{
-                    $this->SetFillColor(255,255,255);
-                        $this->Cell($w1[0],7,$nombreDia_a[$j],1,0,'C',1);
-                }
-            }
-              $this->Ln();
-            $this->Cell($w[0],7,'','LBR',0,'C',1);
-            $this->Cell($w[1],7,'','LBR',0,'C',1);
-        $this->Cell($w[2],7,convertirtexto('(Orden Alfabético por Apellido)'),'LBR',0,'C',1);
-        $this->SetFillColor(255,255,255);
-        for($j=0;$j<=$total_de_dias-1;$j++)
-        if($nombreDia_a[$j] == "S" || $nombreDia_a[$j] == "D"){
-            $this->SetFillColor(213, 216, 220);
-                $this->Cell($w1[0],7,$numeroDia_a[$j],'1',0,'C',1);
-        }else{
-            $this->SetFillColor(255,255,255);
-                $this->Cell($w1[0],7,$numeroDia_a[$j],'1',0,'C',1);
+
+    function Header() {
+        // --- Encabezado replicando el diseño de la imagen ---
+        $this->SetFont('Arial', 'B', 12);
+        
+        // Logo
+        $logoPath = $_SERVER['DOCUMENT_ROOT'] . '/registro_academico/img/' . ($_SESSION['logo_uno'] ?? 'logo_default.png');
+        if (file_exists($logoPath)) {
+            $this->Image($logoPath, 10, 8, 15);
         }
-    $this->Ln();
-    //Restauración de colores y fuentes
-    $this->SetFillColor(224,235,255);
-    $this->SetTextColor(0);
-    $this->SetFont('');
-    //Datos
-    $fill=false;
+
+        // Títulos
+        $this->Text(28, 12, convertirtexto('COMPLEJO EDUCATIVO COLONIA RÍO ZARCO'));
+        $this->SetFont('Arial', 'B', 11);
+        $this->Text(28, 18, 'Lista de Asistencia - Mes: ' . strtoupper($this->datosEncabezado['nombre_mes']));
+        
+        // Cajas de información
+        $this->SetFont('Arial', '', 9);
+        $this->SetXY(10, 22);
+        $this->Cell(140, 6, 'Modalidad: ' . $this->datosEncabezado['bachillerato'], 1, 0, 'L');
+        $this->SetXY(10, 29);
+        $this->Cell(100, 6, 'Nombre Asignatura:', 1, 0, 'L');
+        $this->Cell(100, 6, 'Nombre Docente:', 1, 0, 'L');
+
+        // Cuadro de Grado/Sección a la derecha
+        $this->SetXY(215, 8);
+        $this->SetFont('Arial', '', 10);
+        $this->Cell(50, 27, '', 1, 0, 'L');
+        $this->Text(217, 13, 'Grado: ' . $this->convertirTexto(datosEncabezado['grado']));
+        $this->Text(217, 18, 'Seccion: ' . $this->datosEncabezado['seccion']);
+        $this->Text(217, 23, 'Ano Lectivo: ' . $this->datosEncabezado['ann_lectivo']);
+        $this->Text(217, 28, 'Periodo: ____________');
+        
+        $this->SetY(40);
+    }
+
+// ### FUNCIÓN FOOTER CORREGIDA ###
+    function Footer() {
+        $this->SetY(-15);
+        $this->SetFont('Arial', 'I', 8);
+
+        // Array de meses en español
+        $meses = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
+        
+        // Construir la fecha en el formato deseado
+        $dia = date('d');
+        $mes = $meses[date('n') - 1];
+        $anio = date('Y');
+        $fechaFormateada = "Santa Ana, $dia de $mes de $anio";
+
+        // Construir la cadena completa del pie de página
+        $textoFooter = "$fechaFormateada, Pagina " . $this->PageNo() . ' de {nb}';
+        
+        // Imprimir la celda, aplicando convertirtexto() para manejar tildes
+        $this->Cell(0, 10, convertirtexto($textoFooter), 0, 0, 'C');
+    }
+    // #################################
+
+    function TablaEncabezado() {
+        $this->SetFillColor(220, 220, 220); // Gris del encabezado
+        $this->SetTextColor(0);
+        $this->SetDrawColor(0, 0, 0);
+        $this->SetLineWidth(.2);
+        $this->SetFont('Arial', 'B', 8);
+
+        $y_inicial = $this->GetY();
+        $this->Cell(8, 10, 'N', 1, 0, 'C', true);
+        $this->Cell(16, 10, 'NIE', 1, 0, 'C', true);
+
+        $x_pos = $this->GetX();
+        $this->MultiCell(66, 5, "Nombre de Alumnos/as\n(Orden Alfabético por Apellido)", 1, 'C', true);
+        $this->SetXY($x_pos + 66, $y_inicial);
+
+        // Ancho disponible: 279mm (Letter L) - 15mm (márgenes) - 8 - 16 - 66 = 174mm
+        $anchoDia = 174 / count($this->diasDelMes);
+        
+        $this->SetFont('Arial', 'B', 7);
+        foreach ($this->diasDelMes as $dia) {
+            $this->Cell($anchoDia, 5, $dia['nombreDia'], 1, 0, 'C', true);
+        }
+
+        $this->SetXY($x_pos + 66, $y_inicial + 5);
+        foreach ($this->diasDelMes as $dia) {
+             $this->Cell($anchoDia, 5, $dia['numeroDia'], 1, 0, 'C', true);
+        }
+        $this->Ln(5);
+    }
 }
+
+function obtenerDatosAsistencia(PDO $pdo, string $codigoAll, string $mes, string $ann_lectivo): array {
+    // ... (Esta función no necesita cambios, la dejamos como estaba) ...
+    $datos = ['encabezado' => [], 'alumnos' => [], 'calendario' => []];
+    $sqlEncabezado = "SELECT btrim(bach.nombre) as bachillerato, btrim(gan.nombre) as grado, 
+                      btrim(sec.nombre) as seccion, ann.nombre as ann_lectivo
+                      FROM alumno_matricula am
+                      INNER JOIN bachillerato_ciclo bach ON bach.codigo = am.codigo_bach_o_ciclo
+                      INNER JOIN grado_ano gan ON gan.codigo = am.codigo_grado
+                      INNER JOIN seccion sec ON sec.codigo = am.codigo_seccion
+                      INNER JOIN ann_lectivo ann ON ann.codigo = am.codigo_ann_lectivo
+                      WHERE btrim(am.codigo_bach_o_ciclo::text || am.codigo_grado::text || am.codigo_seccion::text || am.codigo_ann_lectivo::text || am.codigo_turno::text) = ?
+                      LIMIT 1";
+    $stmt = $pdo->prepare($sqlEncabezado);
+    $stmt->execute([$codigoAll]);
+    $encabezado = $stmt->fetch(PDO::FETCH_ASSOC);
+    if ($encabezado) { $datos['encabezado'] = $encabezado; }
+    $sqlAlumnos = "SELECT a.codigo_nie, btrim(a.apellido_paterno || ' ' || a.apellido_materno || ', ' || a.nombre_completo) as apellido_alumno
+                   FROM alumno a
+                   INNER JOIN alumno_matricula am ON a.id_alumno = am.codigo_alumno AND am.retirado = 'f'
+                   WHERE btrim(am.codigo_bach_o_ciclo::text || am.codigo_grado::text || am.codigo_seccion::text || am.codigo_ann_lectivo::text || am.codigo_turno::text) = ?
+                   ORDER BY apellido_alumno";
+    $stmt = $pdo->prepare($sqlAlumnos);
+    $stmt->execute([$codigoAll]);
+    $datos['alumnos'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $meses = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
+    $datos['encabezado']['nombre_mes'] = $meses[(int)$mes - 1];
+    $totalDias = cal_days_in_month(CAL_GREGORIAN, (int)$mes, (int)$ann_lectivo);
+    $nombresDias = ["D", "L", "M", "M", "J", "V", "S"];
+    for ($d = 1; $d <= $totalDias; $d++) {
+        $fecha = new DateTime("$ann_lectivo-$mes-$d");
+        $datos['calendario'][] = ['numeroDia' => $d, 'nombreDia' => $nombresDias[$fecha->format('w')]];
+    }
+    return $datos;
 }
-//************************************************************************************************************************
-// Creando el Informe.
-    $pdf=new PDF('L','mm','Letter');
-    $data = array();
-    #Establecemos los márgenes izquierda, arriba y derecha:
+
+function generarPdfAsistencia(array $datos) {
+    $pdf = new PDF_Asistencia('L', 'mm', 'Letter');
     $pdf->SetMargins(10, 15, 5);
-    #Establecemos el margen inferior: 
-    $pdf->SetAutoPageBreak(true,10);
-//Títulos de las columnas
-    $header=array('Nº','NIE','Nombre de Alumnos/as');
+    $pdf->SetAutoPageBreak(true, 15);
     $pdf->AliasNbPages();
-    $pdf->SetFont('Arial','',12);
+
+    $pdf->setDatosEncabezado($datos['encabezado']);
+    $pdf->setDiasDelMes($datos['calendario']);
+    
     $pdf->AddPage();
-// Aqui mandamos texto a imprimir o al documento.
-// Definimos el tipo de fuente, estilo y tamaño.
-    $pdf->SetFont('Arial','B',13); // I : Italica; U: Normal;
-    $pdf->ln();
-  // variables y consulta a la tabla.
-      consultas(4,0,$codigo_all,'','','',$db_link,'');
-// Definimos el tipo de fuente, estilo y tamaño.
-    $pdf->SetFont('Arial','',9); // I : Italica; U: Normal;
-    $pdf->FancyTable($header); // Solo carge el encabezado de la tabla porque medaba error el cargas los datos desde la consulta.
-    $w=array(6,14,70,5.66); //determina el ancho de las columnas
-    $fill=false; $i=1; $m = 0; $f = 0; $suma = 0;
-        while($row = $result -> fetch(PDO::FETCH_BOTH))
-            {
-                $pdf->SetFont('Arial','',8); // I : Italica; U: Normal;
-                    $pdf->Cell($w[0],6,$i,'LR',0,'C',$fill);        // núermo correlativo
-                    $pdf->Cell($w[1],6,trim($row['codigo_nie']),'LR',0,'C',$fill);        // núermo correlativo
-                    $pdf->Cell($w[2],6,convertirtexto(trim($row['apellido_alumno'])),'LR',0,'L',$fill); // Nombre + apellido_materno + apellido_paterno
-                $pdf->SetFont('Arial','',9); // I : Italica; U: Normal;
-                for($j=0;$j<=$total_de_dias-1;$j++){
-                    if($nombreDia_a[$j] == "S" || $nombreDia_a[$j] == "D"){
-                        $pdf->SetFillColor(255, 255, 255);
-                            $pdf->Cell($w[3],6,'','LR',0,'C',$fill);
-                    }else{
-                        $pdf->SetFillColor(213, 216, 220);
-                            $pdf->Cell($w[3],6,'','1',0,'C',$fill);
-                    }
-                }
-                    $pdf->ln();
-                if($i==25 || $i == 50 || $i == 75){
-                    $pdf->Cell(array_sum($w)+$w[3]*29,0,'','T');
-                    $pdf->AddPage();
-                    $pdf->FancyTable($header);
-                }
-                $fill=!$fill;
-                $i=$i+1;
-            }
-           // rellenar cuando i sea menor que 25.
-           if($i<26){
-            $menor_de_25 = $i;
-            $linea_faltante = 25 - $menor_de_25;
-            $numero_p = $menor_de_25 - 1;               
-                for($i=0;$i<=$linea_faltante;$i++)
-                  {
-                    $pdf->SetFont('Arial','',8); // I : Italica; U: Normal;
-                      $pdf->Cell($w[0],6,$menor_de_25++,'LR',0,'C',$fill);  // N| de Orden.
-                      $pdf->Cell($w[1],6,'','LR',0,'l',$fill);  // nombre del alumno.
-                      $pdf->Cell($w[2],6,'','LR',0,'l',$fill);  // nombre del alumno.
-			for($j=0;$j<=$total_de_dias-1;$j++){
-                if($nombreDia_a[$j] == "S" || $nombreDia_a[$j] == "D"){
-                    $pdf->SetFillColor(255, 255, 255);
-                        $pdf->Cell($w[3],6,'','LR',0,'C',$fill);
-                }else{
-                    $pdf->SetFillColor(213, 216, 220);
-                        $pdf->Cell($w[3],6,'','1',0,'C',$fill);
-                }
-            }
-            $pdf->Ln();   
-            $fill=!$fill;
-            // Salto de Línea.
-            if($i==25 || $i == 50 || $i == 75){
-                $pdf->Cell(array_sum($w)+$w[3]*29,0,'','T');
-                $pdf->AddPage();
-                $pdf->FancyTable($header);}
-            }
-           }
-           else{
-          // rellenar con las lineas que faltan y colocar total de puntos y promedio.
-          	$numero = $i;
-                $linea_faltante =  50 - $numero;
-                $numero_p = $numero - 1;               
-                for($i=0;$i<=$linea_faltante;$i++)
-                  {
-                    $pdf->SetFont('Arial','',8); // I : Italica; U: Normal;
-                      $pdf->Cell($w[0],6,$numero++,'LR',0,'C',$fill);  // N| de Orden.
-                      $pdf->Cell($w[1],6,'','LR',0,'l',$fill);  // nombre del alumno.
-                      $pdf->Cell($w[2],6,'','LR',0,'l',$fill);  // nombre del alumno.
-                for($j=0;$j<=$total_de_dias-1;$j++){
-                    if($nombreDia_a[$j] == "S" || $nombreDia_a[$j] == "D"){
-                        $pdf->SetFillColor(255, 255, 255);
-                            $pdf->Cell($w[3],6,'','LR',0,'C',$fill);
-                    }else{
-                        $pdf->SetFillColor(213, 216, 220);
-                            $pdf->Cell($w[3],6,'','1',0,'C',$fill);
-                    }
-                }               
-                $pdf->Ln();   
-                $fill=!$fill;
-                      // Salto de Línea.
-        		if($i==25 || $i == 50 || $i == 75){
-				    $pdf->Cell(array_sum($w)+$w[3]*29,0,'','T');
-				    $pdf->AddPage();
-				    $pdf->FancyTable($header);}
-                }
-           }    // IF QUE AGREGAR LAS LINEAS FALTANTES.
-$pdf->Cell(array_sum($w)+$w[3]*29,0,'','T');
-// Salida del pdf.
-    $modo = 'I'; // Envia al navegador (I), Descarga el archivo (D), Guardar el fichero en un local(F).
-    $print_nombre = trim($nombre_modalidad) . ' - ' . trim($nombre_grado) . ' ' . trim($nombre_seccion) . ' - ' . trim($nombre_ann_lectivo) . '-AS.pdf';
-    $pdf->Output($print_nombre,$modo);
+    $pdf->TablaEncabezado();
+
+    $pdf->SetFont('Arial', '', 8);
+    
+    $numFila = 0;
+    $fill = false; // Para controlar el color de fondo alterno
+    $anchoDia = 174 / count($datos['calendario']);
+
+    // Colores
+    $colorFilaGris = [240, 240, 240];
+    $colorBlanco = [255, 255, 255];
+    $colorFinDeSemana = [220, 220, 220];
+
+    // Bucle para alumnos
+    foreach ($datos['alumnos'] as $alumno) {
+        if ($numFila > 0 && $numFila % FILAS_POR_PAGINA == 0) {
+            $pdf->AddPage();
+            $pdf->TablaEncabezado();
+            $pdf->SetFont('Arial', '', 8);
+        }
+        
+        // Establecer color de fondo para la fila (blanco o gris claro)
+        $pdf->SetFillColor($fill ? $colorFilaGris[0] : $colorBlanco[0], $fill ? $colorFilaGris[1] : $colorBlanco[1], $fill ? $colorFilaGris[2] : $colorBlanco[2]);
+        
+        $pdf->Cell(8, 6, $numFila + 1, 'LR', 0, 'C', true);
+        $pdf->Cell(16, 6, trim($alumno['codigo_nie']), 'LR', 0, 'C', true);
+        $pdf->Cell(66, 6, convertirtexto(trim($alumno['apellido_alumno'])), 'LR', 0, 'L', true);
+        
+        foreach ($datos['calendario'] as $dia) {
+            $esFinDeSemana = in_array($dia['nombreDia'], ['S', 'D']);
+            // Si es fin de semana, usar el color de fin de semana. Si no, mantener el color de la fila.
+            $pdf->SetFillColor($esFinDeSemana ? $colorFinDeSemana[0] : ($fill ? $colorFilaGris[0] : $colorBlanco[0]), $esFinDeSemana ? $colorFinDeSemana[1] : ($fill ? $colorFilaGris[1] : $colorBlanco[1]), $esFinDeSemana ? $colorFinDeSemana[2] : ($fill ? $colorFilaGris[2] : $colorBlanco[2]));
+            $pdf->Cell($anchoDia, 6, '', 1, 0, 'C', true);
+        }
+
+        $pdf->Ln();
+        $fill = !$fill;
+        $numFila++;
+    }
+
+    // Bucle para rellenar filas vacías
+    $filasEnPagina = $numFila % FILAS_POR_PAGINA;
+    if ($filasEnPagina == 0 && $numFila > 0) $filasEnPagina = FILAS_POR_PAGINA;
+    $filasFaltantes = ($numFila == 0) ? FILAS_POR_PAGINA : FILAS_POR_PAGINA - $filasEnPagina;
+    
+    for ($i = 0; $i < $filasFaltantes; $i++) {
+        $pdf->SetFillColor($fill ? $colorFilaGris[0] : $colorBlanco[0], $fill ? $colorFilaGris[1] : $colorBlanco[1], $fill ? $colorFilaGris[2] : $colorBlanco[2]);
+        $pdf->Cell(8, 6, $numFila + 1, 'LRB', 0, 'C', true);
+        $pdf->Cell(16, 6, '', 'LRB', 0, 'C', true);
+        $pdf->Cell(66, 6, '', 'LRB', 0, 'L', true);
+        foreach ($datos['calendario'] as $dia) {
+            $esFinDeSemana = in_array($dia['nombreDia'], ['S', 'D']);
+            $pdf->SetFillColor($esFinDeSemana ? $colorFinDeSemana[0] : ($fill ? $colorFilaGris[0] : $colorBlanco[0]), $esFinDeSemana ? $colorFinDeSemana[1] : ($fill ? $colorFilaGris[1] : $colorBlanco[1]), $esFinDeSemana ? $colorFinDeSemana[2] : ($fill ? $colorFilaGris[2] : $colorBlanco[2]));
+            $pdf->Cell($anchoDia, 6, '', 1, 0, 'C', true);
+        }
+        $pdf->Ln();
+        $fill = !$fill;
+        $numFila++;
+    }
+    
+    $nombreArchivo = "Asistencia - {$datos['encabezado']['grado']} {$datos['encabezado']['seccion']} - {$datos['encabezado']['nombre_mes']}.pdf";
+    $pdf->Output($nombreArchivo, 'I');
+}
+
+// --- PUNTO DE ENTRADA DEL SCRIPT ---
+try {
+    if ($errorDbConexion) { throw new Exception("No se puede conectar a la base de datos."); }
+    $codigo_all = $_GET["todos"] ?? null;
+    $fecha_mes = $_GET["lstFechaMes"] ?? null;
+    $fecha_ann = $_GET["lstannlectivo"] ?? null;
+    if (!$codigo_all || !$fecha_mes || !$fecha_ann) { throw new Exception("Faltan parámetros para generar el reporte."); }
+    $datosReporte = obtenerDatosAsistencia($dblink, $codigo_all, $fecha_mes, $fecha_ann);
+    if (empty($datosReporte['alumnos'])) {
+        echo "No se encontraron alumnos para este grupo. Verifique los filtros.";
+        exit;
+    }
+    generarPdfAsistencia($datosReporte);
+} catch (Exception $e) {
+    header("Content-Type: text/html; charset=UTF-8");
+    echo "<h1>Error al generar el reporte</h1>";
+    echo "<p>Detalles del error: " . htmlspecialchars($e->getMessage()) . "</p>";
+}
+?>
