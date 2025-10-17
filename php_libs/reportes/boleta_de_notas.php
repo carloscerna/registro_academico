@@ -20,18 +20,18 @@
 // variables y consulta a la tabla.
   $codigo_all = $_REQUEST["todos"];		// codigro - 
   $codigoBachGradoAnnLectivo = $_REQUEST["todos"];		// codigro - 
-  $codigo_alumno = $_REQUEST["txtidalumno"];
-  $codigo_matricula = $_REQUEST["txtcodmatricula"];
+  $codigo_alumno = $_REQUEST["txtidalumno"] ?? '';
+  $codigo_matricula = $_REQUEST["txtcodmatricula"] ?? '';
   $codigo_ann_lectivo = "";
   if(isset($_REQUEST["codigo_ann_lectivo"])){
-	$codigo_ann_lectivo = $_REQUEST["codigo_ann_lectivo"];
+	$codigo_ann_lectivo = $_REQUEST["codigo_ann_lectivo"] ?? '';
   }
   $crear_archivos = "no";
-  $firma = $_REQUEST["chkfirma"];
-  $sello = $_REQUEST["chksello"];
-  $chkfoto = $_REQUEST["chkfoto"];
-  $crear_archivos = $_REQUEST["chkCrearArchivoPdf"];
-  $print_uno = $_REQUEST["print_uno"]; // variable para imprimir un solo registro.
+  $firma = $_REQUEST["chkfirma"] ?? '';
+  $sello = $_REQUEST["chksello"] ?? '';
+  $chkfoto = $_REQUEST["chkfoto"] ?? '';
+  $crear_archivos = $_REQUEST["chkCrearArchivoPdf"] ?? 'no';
+  $print_uno = $_REQUEST["print_uno"] ?? ''; // variable para imprimir un solo registro.
 // variables a utilizar en el encabezado de la tabla para las notas.
 	$registro_docente = "";//$_SESSION['nombre_personal']; //
 	$periodo_trimestre = "TRIMESTRE";

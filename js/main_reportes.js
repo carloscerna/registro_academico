@@ -20,8 +20,10 @@ const reportConfig = {
       'familias': { url: '/registro_academico/php_libs/reportes/Estudiante/Familias.php', params: ['lstannlectivo'] },
 // ▼▼▼ LÍNEA MODIFICADA ▼▼▼
     'firmas': { url: '/registro_academico/php_libs/reportes/Estudiante/Firmas.php', params: ['tituloFirmas'] },
-    // Notas
-    'boleta_notas': { url: '/registro_academico/php_libs/reportes/boleta_de_notas.php', params: ['chksello', 'chkfirma', 'chkfoto'] },
+// Notas
+    // ▼▼▼ LÍNEA MODIFICADA ▼▼▼
+    'boleta_notas': { url: '/registro_academico/php_libs/reportes/boleta_de_notas.php', params: ['chksello', 'chkfirma', 'chkfoto', 'chkCrearArchivoPdf'] },
+    // ...
     'por_trimestre': { url: '/registro_academico/php_libs/reportes/notas_por_trimestre.php', params: ['lsttri'] },
     'por_asignatura': { url: '/registro_academico/php_libs/reportes/notas_trimestre_por_asignatura_basica.php', params: ['lstasignatura'] },
     'cuadro_promocion': { url: '/registro_academico/php_libs/reportes/Cuadros de Registro/Basica II y III Ciclo.php' },
