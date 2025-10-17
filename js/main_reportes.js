@@ -7,11 +7,19 @@ const reportConfig = {
     'orden': { url: '/registro_academico/php_libs/reportes/Estudiante/Nomina.php' },
     'control_actividades': { url: '/registro_academico/php_libs/reportes/Estudiante/ControlActividades.php' },
     // CÓDIGO CORREGIDO
-        'asistencia': { url: '/registro_academico/php_libs/reportes/nomina_asistencia.php', params: ['lstannlectivo', 'lstFechaMes'] },
+        'asistencia': { url: '/registro_academico/php_libs/reportes/Estudiante/Asistencia.php', params: ['lstannlectivo', 'lstFechaMes'] },
+    // ▼▼▼ LÍNEA NUEVA ▼▼▼
+        'asistenciax30': { url: '/registro_academico/php_libs/reportes/Estudiante/Asistenciax30cuadros.php' },
     'cuadro-de-promocion': { 
         isAjax: true, // Indica que no abre una ventana, sino que hace una llamada AJAX
         url: '/registro_academico/php_libs/soporte/CrearCuadrodePromocion.php' 
     },
+    'paquete_escolar_02': { 
+        url: '/registro_academico/php_libs/reportes/Estudiante/Paquetes.php' 
+    },
+      'familias': { url: '/registro_academico/php_libs/reportes/Estudiante/Familias.php', params: ['lstannlectivo'] },
+// ▼▼▼ LÍNEA MODIFICADA ▼▼▼
+    'firmas': { url: '/registro_academico/php_libs/reportes/Estudiante/Firmas.php', params: ['tituloFirmas'] },
     // Notas
     'boleta_notas': { url: '/registro_academico/php_libs/reportes/boleta_de_notas.php', params: ['chksello', 'chkfirma', 'chkfoto'] },
     'por_trimestre': { url: '/registro_academico/php_libs/reportes/notas_por_trimestre.php', params: ['lsttri'] },
@@ -133,6 +141,32 @@ $(function() {
             return;
         }
         
+        // ▼▼▼ LÓGICA NUEVA PARA MANEJAR EL CASO ESPECIAL DE PAQUETE ESCOLAR ▼▼▼
+        if (reportKey === 'paquete_escolar_02') {
+            const rubroValor = $('#lstRubro').val();
+            let urlDestino = '/registro_academico/php_libs/reportes/Estudiante/Paquetes.php'; // URL por defecto
+
+            // Si el rubro es '05' (Familias), cambiamos la URL
+            if (rubroValor === '05') {
+                urlDestino = '/registro_academico/php_libs/reportes/paquete_familias.php';
+            }
+
+            // Recolectamos todos los parámetros del panel
+            const params = new URLSearchParams({
+                todos: reportCode,
+                fechapaquete: $('#FechaPaquete').val(),
+                rubro: $('#lstRubro option:selected').text(), // El texto del rubro
+                chkfechaPaquete: $('#chkfechaPaquete').is(':checked') ? 'yes' : 'no',
+                chkNIEPaquete: $('#chkNIEPaquete').is(':checked') ? 'yes' : 'no'
+            });
+
+            const finalUrl = `${urlDestino}?${params.toString()}`;
+            console.log("Abriendo URL de Paquete Escolar:", finalUrl);
+            window.open(finalUrl, '_blank');
+            return; // Detenemos la ejecución para no continuar con la lógica genérica
+        }
+        // ▲▲▲ FIN DE LA LÓGICA ESPECIAL ▲▲▲
+        
         const config = reportConfig[reportKey];
         if (!config) {
             toastr.error(`No hay una configuración definida para el reporte "${reportKey}".`, 'Error de Configuración');
@@ -175,4 +209,5 @@ $(function() {
             window.open(finalUrl, '_blank');
         }
     });
+
 });

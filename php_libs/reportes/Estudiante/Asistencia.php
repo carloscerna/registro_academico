@@ -35,7 +35,7 @@ class PDF_Asistencia extends FPDF {
         // Logo
         $logoPath = $_SERVER['DOCUMENT_ROOT'] . '/registro_academico/img/' . ($_SESSION['logo_uno'] ?? 'logo_default.png');
         if (file_exists($logoPath)) {
-            $this->Image($logoPath, 10, 8, 15);
+            $this->Image($logoPath, 10, 8, 12);
         }
 
         // Títulos
@@ -97,7 +97,7 @@ class PDF_Asistencia extends FPDF {
         $this->Cell(16, 10, 'NIE', 1, 0, 'C', true);
 
         $x_pos = $this->GetX();
-        $this->MultiCell(66, 5, "Nombre de Alumnos/as\n(Orden Alfabético por Apellido)", 1, 'C', true);
+        $this->MultiCell(66, 5, convertirTexto("Nombre de Alumnos/as\n(Orden Alfabético por Apellido)"), 1, 'C', true);
         $this->SetXY($x_pos + 66, $y_inicial);
 
         // Ancho disponible: 279mm (Letter L) - 15mm (márgenes) - 8 - 16 - 66 = 174mm
@@ -143,7 +143,8 @@ function obtenerDatosAsistencia(PDO $pdo, string $codigoAll, string $mes, string
     $meses = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
     $datos['encabezado']['nombre_mes'] = $meses[(int)$mes - 1];
     $totalDias = cal_days_in_month(CAL_GREGORIAN, (int)$mes, (int)$ann_lectivo);
-    $nombresDias = ["D", "L", "M", "M", "J", "V", "S"];
+    // CÓDIGO CORREGIDO
+    $nombresDias = ["Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sa"];
     for ($d = 1; $d <= $totalDias; $d++) {
         $fecha = new DateTime("$ann_lectivo-$mes-$d");
         $datos['calendario'][] = ['numeroDia' => $d, 'nombreDia' => $nombresDias[$fecha->format('w')]];
