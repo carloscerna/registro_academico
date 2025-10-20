@@ -20,13 +20,15 @@ const reportConfig = {
       'familias': { url: '/registro_academico/php_libs/reportes/Estudiante/Familias.php', params: ['lstannlectivo'] },
 // ▼▼▼ LÍNEA MODIFICADA ▼▼▼
     'firmas': { url: '/registro_academico/php_libs/reportes/Estudiante/Firmas.php', params: ['tituloFirmas'] },
+    'nomina-excel': {isAjax: true, url: '/registro_academico/php_libs/soporte/CrearNominas.php' },
+    'nomina-simple-excel': { isAjax: true, url: '/registro_academico/php_libs/soporte/CrearNominaEstudiante.php' },
 // Notas
     // ▼▼▼ LÍNEA MODIFICADA ▼▼▼
     'boleta_notas': { url: '/registro_academico/php_libs/reportes/boleta_de_notas.php', params: ['chksello', 'chkfirma', 'chkfoto', 'chkCrearArchivoPdf'] },
     // ...
-    'por_trimestre': { url: '/registro_academico/php_libs/reportes/notas_por_trimestre.php', params: ['lsttri'] },
-    'por_asignatura': { url: '/registro_academico/php_libs/reportes/notas_trimestre_por_asignatura_basica.php', params: ['lstasignatura'] },
-    'cuadro_promocion': { url: '/registro_academico/php_libs/reportes/Cuadros de Registro/Basica II y III Ciclo.php' },
+    'por_trimestre': { url: '/registro_academico/php_libs/reportes/notas_por_trimestre.php', params: ['lsttrimestres'] },
+    'por_asignatura': { url: '/registro_academico/php_libs/reportes/notas_por_asignatura.php', params: ['lstasignatura'] },
+    'cuadro_promocion': { url: '/registro_academico/php_libs/reportes/Cuadros de Registro/CuadroRegistroEvaluacion.php' },
     'certificados': { url: '/registro_academico/php_libs/reportes/certificados_2018.php' }
     // ... Agrega aquí las demás configuraciones de reportes
 };
@@ -137,7 +139,8 @@ $(function() {
         const reportType = link.data('report-type'); // 'nominas' o 'notas'
         const reportKey = $(`select[data-group='${reportType}']`).val();
         const reportCode = link.data('report-code'); // ej: '0301011801'
-        
+        const spinner = link.find('.spinner-border'); // Encontramos el spinner dentro del enlace
+
         if (!reportKey) {
             toastr.warning(`Por favor, seleccione un tipo de reporte de "${reportType}".`, 'Atención');
             return;
@@ -177,6 +180,9 @@ $(function() {
 
         // Si es una llamada AJAX (ej. para generar un Excel)
         if (config.isAjax) {
+            // ▼▼▼ MOSTRAR SPINNER Y DESHABILITAR BOTÓN ▼▼▼
+                spinner.removeClass('d-none');
+                link.addClass('disabled'); // Opcional: deshabilita el botón
             $.ajax({
                 url: config.url,
                 type: "POST",
@@ -187,7 +193,12 @@ $(function() {
                     if(res.respuesta) toastr.success(res.contenido || res.mensaje, "Archivo Generado");
                     else toastr.error(res.mensaje, "Error al generar");
                 },
-                error: () => toastr.error('No se pudo generar el archivo.', 'Error Fatal')
+                error: () => toastr.error('No se pudo generar el archivo.', 'Error Fatal'),
+                complete: () => { // Se ejecuta siempre, al final (éxito o error)
+                // ▼▼▼ OCULTAR SPINNER Y HABILITAR BOTÓN ▼▼▼
+                spinner.addClass('d-none');
+                link.removeClass('disabled'); // Habilita el botón de nuevo
+                }
             });
         } else { // Si es para abrir una nueva ventana (PDF)
             let params = new URLSearchParams({ todos: reportCode });

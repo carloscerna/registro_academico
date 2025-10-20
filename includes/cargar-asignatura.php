@@ -1,71 +1,69 @@
 <?php
-// ruta de los archivos con su carpeta
-$path_root=trim($_SERVER['DOCUMENT_ROOT']);
-// Incluimos el archivo de funciones y conexión a la base de datos
- include($path_root."/registro_academico/includes/mainFunctions_conexion.php");
-// armando el Query.
-try {
-    // Verificar si los parámetros existen
-    if (!isset($_REQUEST["modalidad"]) || !isset($_REQUEST["annlectivo"]) || !isset($_REQUEST["codigo_grado_seccion_turno"])) {
-        echo json_encode(["error" => "Parámetros insuficientes"]);
-        exit;
-    }
+// cargar-asignatura.php (VERSIÓN CON isset() PARA COMPATIBILIDAD)
 
-    $codigoBachillerato = $_REQUEST["modalidad"];
-    $codigoAnnLectivo = $_REQUEST["annlectivo"];
-    $codigoPerfil = $_SESSION['codigo_perfil'];
-    $codigoPersonal = trim($_SESSION['codigo_personal']);
-    $codigoGradoSeccionTurno = trim($_REQUEST["codigo_grado_seccion_turno"]);
-    $codigoGrado = substr($codigoGradoSeccionTurno,0,2);
-    // Determinar la consulta según el perfil
-    if ($codigoPerfil == '06') {
-        $query = "SELECT DISTINCT 
-                        cd.codigo_bachillerato, cd.codigo_ann_lectivo, 
-                        cd.codigo_grado || '-' || cd.codigo_seccion || '-' || cd.codigo_turno AS codigo_grado_seccion_turno,
-                        grd.nombre || ' - ' || tur.nombre AS nombre_grado_turno, 
-                        asi.codigo AS codigo, asi.nombre AS nombre
-                  FROM carga_docente cd
-                  INNER JOIN grado_ano grd ON grd.codigo = cd.codigo_grado
-                  INNER JOIN turno tur ON tur.codigo = cd.codigo_turno
-                  INNER JOIN asignatura asi ON asi.codigo = cd.codigo_asignatura AND asi.estatus = '1'
-                  WHERE cd.codigo_grado || cd.codigo_seccion || cd.codigo_turno = :codigoGradoSeccionTurno
-                  AND cd.codigo_bachillerato = :codigoBachillerato
-                  AND cd.codigo_ann_lectivo = :codigoAnnLectivo
-                  AND cd.codigo_docente = :codigoPersonal
-                  ORDER BY asi.codigo";
-    } elseif (in_array($codigoPerfil, ['04', '05', '01'])) { // Registro Académico Básica y Media
-        $query = "SELECT DISTINCT ON (aaa.codigo_asignatura) 
-                        aaa.codigo_asignatura as codigo, 
-                        aaa.codigo_grado || '-' || aaa.codigo_sirai AS codigo_sirai,
-                        asi.nombre AS nombre
-                  FROM a_a_a_bach_o_ciclo aaa
-                  INNER JOIN asignatura asi ON asi.codigo = aaa.codigo_asignatura
-                  WHERE aaa.codigo_bach_o_ciclo = :codigoBachillerato
-                  AND aaa.codigo_ann_lectivo = :codigoAnnLectivo
-                  AND aaa.codigo_grado = :codigoGrado
-                  ORDER BY aaa.codigo_asignatura";
-    } else {
-        echo json_encode(["error" => "Perfil no autorizado"]);
-        exit;
-    }
+header('Content-Type: application/json; charset=utf-8');
+$path_root = trim($_SERVER['DOCUMENT_ROOT']);
+require_once $path_root . "/registro_academico/includes/mainFunctions_conexion.php"; // Asegúrate de incluir tu conexión PDO ($dblink)
 
-    // Preparar la consulta con parámetros seguros
-    $stmt = $dblink->prepare($query);
-    $stmt->bindParam(':codigoBachillerato', $codigoBachillerato, PDO::PARAM_INT);
-    $stmt->bindParam(':codigoAnnLectivo', $codigoAnnLectivo, PDO::PARAM_INT);
-    
-    if ($codigoPerfil == '06') {
-        $stmt->bindParam(':codigoGradoSeccionTurno', $codigoGradoSeccionTurno, PDO::PARAM_STR);
-        $stmt->bindParam(':codigoPersonal', $codigoPersonal, PDO::PARAM_INT);
-    } elseif (in_array($codigoPerfil, ['04', '05', '01'])) {
-        $stmt->bindParam(':codigoGrado',$codigoGrado, PDO::PARAM_INT);
-    }
+$respuesta = [];
 
-    $stmt->execute();
-    $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+// 1. Validar parámetros básicos (modalidad y annlectivo siempre necesarios)
+$modalidad = $_REQUEST["modalidad"] ?? null;
+$annlectivo = $_REQUEST["annlectivo"] ?? null;
 
-    // Enviar respuesta en formato JSON
-    echo json_encode($result);
-} catch (Exception $e) {
-    echo json_encode(["error" => "Error al obtener los datos: " . $e->getMessage()]);
+if (!$modalidad || !$annlectivo) {
+    echo json_encode(["error" => "Parámetros insuficientes (modalidad o annlectivo faltante)"]);
+    exit;
 }
+
+// 2. Determinar el código de grado según el parámetro presente
+$codigo_grado = null;
+if (isset($_REQUEST["codigo_grado_seccion_turno"])) {
+    // Modo antiguo: Extraer grado del código completo
+    $codigo_completo = $_REQUEST["codigo_grado_seccion_turno"];
+    // *** ¡IMPORTANTE! Ajusta substr() según tu estructura exacta ***
+    // Asumiendo que el grado son los caracteres 3 y 4 (ej: 17'07'012501 -> '07')
+    $codigo_grado = substr($codigo_completo, 0, 2);
+} else if (isset($_REQUEST["elegido"])) {
+    // Modo nuevo: Usar 'elegido' directamente
+    $codigo_grado = $_REQUEST["elegido"];
+}
+
+// Validar que obtuvimos un código de grado
+if ($codigo_grado === null) {
+    echo json_encode(["error" => "Parámetro de grado faltante (ni codigo_grado_seccion_turno ni elegido)"]);
+    exit;
+}
+
+
+try {
+    if ($errorDbConexion) { throw new Exception("Error de conexión BD."); }
+
+    // 3. Consulta SQL usando los parámetros correctos
+    $query_asignaturas = "SELECT DISTINCT aaa.codigo_asignatura as codigo, asig.nombre as nombre, asig.nombre as descripcion, asig.ordenar
+                         FROM a_a_a_bach_o_ciclo aaa
+                         INNER JOIN asignatura asig ON aaa.codigo_asignatura = asig.codigo
+                         WHERE aaa.codigo_bach_o_ciclo = :modalidad
+                           AND aaa.codigo_grado = :grado
+                           AND aaa.codigo_ann_lectivo = :annlectivo
+                         ORDER BY asig.ordenar";
+
+    $stmt = $dblink->prepare($query_asignaturas);
+    $stmt->bindParam(':modalidad', $modalidad);
+    $stmt->bindParam(':grado', $codigo_grado); // Usar el $codigo_grado determinado
+    $stmt->bindParam(':annlectivo', $annlectivo);
+    $stmt->execute();
+    $resultado = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    // 4. Devolver resultado
+    if ($resultado) {
+         $respuesta = array_map(function($item) { unset($item['ordenar']); return $item; }, $resultado);
+    } else {
+        $respuesta = [];
+    }
+    echo json_encode($respuesta);
+
+} catch (Exception $e) {
+    echo json_encode(["error" => "Error al consultar asignaturas: " . $e->getMessage()]);
+}
+?>

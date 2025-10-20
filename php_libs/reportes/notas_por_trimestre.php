@@ -1,462 +1,275 @@
 <?php
-// ruta de los archivos con su carpeta
-    $path_root=trim($_SERVER['DOCUMENT_ROOT']);
-// archivos que se incluyen.
-    include($path_root."/registro_academico/includes/funciones.php");
-    include($path_root."/registro_academico/includes/consultas.php");
-    include($path_root."/registro_academico/includes/mainFunctions_conexion.php");
-    include($path_root."/registro_academico/includes/DeNumero_a_Letras.php");
-// Llamar a la libreria fpdf
-    include($path_root."/registro_academico/php_libs/fpdf/fpdf.php");
+// <-- VERSIÓN FINAL CON AJUSTES DETALLADOS -->
 
-// cambiar a utf-8.
-    header("Content-Type: text/html; charset=UTF-8");
-// variables y consulta a la tabla.
-  $codigo_all = $_REQUEST["todos"];
-// variable de la conexión dbf.
-  $db_link = $dblink;
-// buscar la consulta y la ejecuta.
-  consultas(18,0,$codigo_all,'','','',$db_link,'');
-//  imprimir datos del bachillerato.
-        while($row = $result_encabezado -> fetch(PDO::FETCH_BOTH))
-            {
-            $print_bachillerato = utf8_decode('Modalidad: '.trim($row['nombre_bachillerato']));
-            $print_grado = utf8_decode('Grado: '.trim($row['nombre_grado']));
-            $print_seccion = utf8_decode('Sección: '.trim($row['nombre_seccion']));
-            $print_ann_lectivo = utf8_decode('Año Lectivo: '.trim($row['nombre_ann_lectivo']));
+date_default_timezone_set('America/El_Salvador');
+ini_set('display_errors', 1); error_reporting(E_ALL);
 
-            $nombre_grado = utf8_decode(trim($row['nombre_grado']));
-            $nombre_seccion = utf8_decode(trim($row['nombre_seccion']));
+// --- INCLUDES Y CONFIGURACIÓN ---
+$path_root = trim($_SERVER['DOCUMENT_ROOT']);
+require_once $path_root . "/registro_academico/includes/funciones.php";
+require_once $path_root . "/registro_academico/includes/mainFunctions_conexion.php";
+require_once $path_root . "/registro_academico/php_libs/fpdf/fpdf.php";
 
-            $print_codigo_grado = (trim($row['codigo_grado']));
-            $print_codigo_bachillerato = (trim($row['codigo_bachillerato']));
-            $print_nombre_bachillerato = utf8_decode(trim($row['nombre_bachillerato']));
+define('FILAS_POR_PAGINA_TRIMESTRE', 28); // Un poco menos para dar espacio al Top 5
 
-            $codigo_ann_lectivo = (trim($row['codigo_ann_lectivo']));
-            
-            $codigo_bachillerato = $row['codigo_bachillerato'];
-	    break;
-            }
-// variables y consulta a la tabla.
-      $nota_p_p = $_REQUEST["lsttri"];
-      if($nota_p_p == "nota_p_p_1"){$trimestre = "Timestre 1";}
-      if($nota_p_p == "nota_p_p_2"){$trimestre = "Timestre 2";}
-      if($nota_p_p == "nota_p_p_3"){$trimestre = "Timestre 3";}
-      if($nota_p_p == "nota_p_p_4"){$trimestre = "Timestre 4";}
-      if($nota_p_p == "nota_final"){$trimestre = "Nota Final";}
+/**
+ * Clase FPDF personalizada (con MultiCell en encabezado).
+ */
+class PDF_NotasTrimestre extends FPDF {
+    public $datosEncabezado = [];
+    public $asignaturasHeader = [];
+    public $nombrePeriodo = '';
+    public $notaMinima = 5.0; // Valor por defecto
+function Header() {
+        $logoPath = $_SERVER['DOCUMENT_ROOT'] . '/registro_academico/img/' . ($_SESSION['logo_uno'] ?? 'logo_default.png');
+        if (file_exists($logoPath)) { $this->Image($logoPath, 10, 8, 15); }
 
-class PDF extends FPDF
-{
-//Cabecera de página
-function Header()
-{
-    //Logo
-    $img = $_SERVER['DOCUMENT_ROOT'].'/registro_academico/img/'.$_SESSION['logo_uno'];
-    $this->Image($img,5,4,12,15);
-    //Arial bold 15
-    $this->SetFont('Arial','B',14);
-    //Movernos a la derecha
-    //$this->Cell(20);
-    //Título
-    $this->Cell(200,7,utf8_decode($_SESSION['institucion']),0,1,'C');
-    $this->Cell(200,7,utf8_decode('INFORME DE NOTAS POR TRIMESTRE O PERÍODO'),0,1,'C');
-    $this->Line(0,20,250,20);
-}
+        $this->SetFont('Arial', 'B', 12);
+        $this->Cell(0, 6, convertirtexto($_SESSION['institucion']), 0, 1, 'C');
+        $this->Cell(0, 6, convertirtexto('INFORME DE NOTAS POR ' . strtoupper($this->nombrePeriodo)), 0, 1, 'C');
+        
+        $this->SetFont('Arial', '', 9);
+        $this->Cell(80, 5, 'Modalidad: ' . convertirtexto($this->datosEncabezado['nombre_bachillerato']), 0, 0, 'L');
+        $this->Cell(40, 5, 'Grado: ' . convertirtexto($this->datosEncabezado['nombre_grado']), 0, 0, 'L');
+        $this->Cell(30, 5, 'Seccion: ' . convertirtexto($this->datosEncabezado['nombre_seccion']), 0, 0, 'L');
+        $this->Cell(0, 5, 'Ano Lectivo: ' . convertirtexto($this->datosEncabezado['nombre_ann_lectivo']), 0, 1, 'L');
+        
+        $this->Ln(5);
+    }
 
-//Pie de página
-function Footer()
-{
-    //Posición: a 1,5 cm del final
-    $this->SetY(-20);
-    //Arial italic 8
-    $this->SetFont('Arial','I',8);
-    //Número de página
-    $this->SetY(-10);
-    $this->Cell(0,6,utf8_decode('Página ').$this->PageNo().'/{nb}',0,0,'C');
-}
+function Footer() {
+        $this->SetY(-15);
+        $this->SetFont('Arial', 'I', 8);
+        $meses = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
+        $dia = date('d'); $mes = $meses[date('n') - 1]; $anio = date('Y');
+        $fechaFormateada = "Santa Ana, $dia de $mes de $anio";
+        $horaFormateada = date('g:i a');
+        $textoFooter = "$fechaFormateada - $horaFormateada | Pagina " . $this->PageNo() . ' de {nb}';
+        $this->Cell(0, 10, convertirtexto($textoFooter), 0, 0, 'C');
+    }
 
-//Tabla coloreada
-function FancyTable($header)
-{
-    //Colores, ancho de línea y fuente en negrita
-    $this->SetFillColor(255,255,255);
-    $this->SetTextColor(0);
-    $this->SetDrawColor(0,0,0);
-    $this->SetLineWidth(.3);
-    $this->SetFont('','B');
-    //Cabecera
-    $w=array(5,70,10,10,10,10,10,10,10,10,10,10,10,10,10,10); //determina el ancho de las columnas
-    $w2=array(5,12); //determina el ancho de las columnas
-    for($i=0;$i<count($header);$i++)
-        $this->Cell($w[$i],7,utf8_decode($header[$i]),1,0,'C',1);
-    $this->Ln();
-    //Restauración de colores y fuentes
-    $this->SetFillColor(224,235,255);
-    $this->SetTextColor(0);
-    $this->SetFont('');
-    //Datos
-    $fill=false;
-}
+    function TablaEncabezado() {
+        $this->SetFillColor(220, 220, 220); $this->SetTextColor(0);
+        $this->SetFont('Arial', 'B', 7);
+        $y1 = $this->GetY();
+        $this->Cell(8, 10, 'N#', 1, 0, 'C', true); // Altura 10 para dos líneas
+        $this->Cell(15, 10, 'NIE', 1, 0, 'C', true); // Nueva columna NIE
+        $this->Cell(65, 10, 'APELLIDO - NOMBRE', 1, 0, 'C', true); // Ancho ajustado
 
-}
-//************************************************************************************************************************
-// Creando el Informe.
-    $pdf=new PDF('P','mm','Letter');
-    #Establecemos los márgenes izquierda, arriba y derecha: 
-    $pdf->SetMargins(5, 5, 5);
-    #Establecemos el margen inferior: 
-    $pdf->SetAutoPageBreak(true,5);
-//Títulos de las columnas
-    $header=array('');
-    $pdf->AliasNbPages();
-    $pdf->AddPage();
-// Aqui mandamos texto a imprimir o al documento.
-// Definimos el tipo de fuente, estilo y tamaño.
-    $pdf->SetFont('Arial','B',14); // I : Italica; U: Normal;
-    $pdf->SetY(20);
-    $pdf->SetX(5);
-// Definimos el tipo de fuente, estilo y tamaño.
-    $pdf->SetFont('Arial','',10); // I : Italica; U: Normal;
-    $w=array(5,70,10); //determina el ancho de las columnas
-    $w2=array(7,12); //determina el alto de las columnas
-////////////////////////////////////////////////////////////////////
-//////// CONTAR CUANTAS ASIGNATURAS TIENE CADA MODALIDAD.
-//////////////////////////////////////////////////////////////////
-// buscar la consulta y la ejecuta.
-consulta_contar(1,0,$codigo_all,'','','',$db_link,'');
-// EJECUTAR CONDICIONES PARA EL NOMBRE DEL NIVEL Y EL N�MERO DE ASIGNATURAS.
-	$total_asignaturas = 0;	
-        while($row = $result -> fetch(PDO::FETCH_BOTH))	// RECORRER PARA EL CONTEO DE Nº DE ASIGNATURAS.
-            {
-        $total_asignaturas = (trim($row['total_asignaturas']));
-            }
-// COLOCAR ENCABEZANDO A LA BOLETA DE CALIFICACIÓN.		
-      	if($print_codigo_bachillerato >= '03' and $print_codigo_bachillerato <= '05')
-	    	{
-			$nivel_educacion = "Educación Básica";
-		}elseif($print_codigo_bachillerato >= '01' and $print_codigo_bachillerato <= '03')
-		{
-			$nivel_educacion = "Educación Parvularia";
-		}else{
-			// Validar Bachillerato.
-			if($print_codigo_bachillerato == '06'){
-				$nivel_educacion = "Educación Media - General";
-			}
-			if($print_codigo_bachillerato == '07'){
-				$nivel_educacion = "Educación Media - Técnico";
-			}
-			
-			if($print_codigo_bachillerato == '08' or $print_codigo_bachillerato == '09'){
-				$nivel_educacion = "Educación Media - Contaduría";
-			}
-			if($print_codigo_bachillerato == '10'){
-				$nivel_educacion = "Educación Básica - TERCER CICLO - NOCTURNA";
-			}
-			if($print_codigo_bachillerato == '11'){
-				$nivel_educacion = "Educación Media - General - NOCTURNA";
-			}		
-				// Validar grado de educaci�n Media.
-				if($print_codigo_grado == '10'){
-					$print_grado_media = "Primer año";
-				}
-				if($print_codigo_grado == '11'){
-					$print_grado_media = "Segundo año";
-				}
-				if($print_codigo_grado == '12'){
-					$print_grado_media = "Tercer año";
-				}
-      }
-// buscar la consulta y la ejecuta.
-$codigo_b_g_a = $print_codigo_bachillerato . $print_codigo_grado . $codigo_ann_lectivo;
-$j=0; $data=array();
-consultas(19,0,$codigo_b_g_a,'','','',$db_link,'');
-//  imprimir datos del bachillerato.
-     while($row = $result_nombre_asignatura -> fetch(PDO::FETCH_BOTH))
-        {
-            $data[$j] = substr(utf8_decode(trim($row['nombre_asignatura'])),0,5);
-              $j++;
+        $numAsignaturas = count($this->asignaturasHeader);
+        // Ancho disponible: 190 (total usable) - 8 (N) - 15 (NIE) - 65 (Nombre) - 10 (TP) = 92
+        $anchoAsignatura = ($numAsignaturas > 0) ? (92 / $numAsignaturas) : 10;
+
+        $x_inicio_asig = $this->GetX(); // Guardar X antes de asignaturas
+
+        foreach ($this->asignaturasHeader as $asignatura) {
+             $x1 = $this->GetX(); // Posición X actual
+             $y1 = $this->GetY(); // Posición Y actual
+             // Usar MultiCell para permitir el ajuste automático
+             $this->MultiCell($anchoAsignatura, 5, convertirtexto($asignatura['nombre']), 1, 'C', true);
+             // Regresar a la posición Y original y moverse a la derecha para la siguiente celda
+             $this->SetXY($x1 + $anchoAsignatura, $y1);
         }
-// hacer nuevamente la consulta.
-      consultas(5,0,$codigo_all,'','','',$db_link,'');
-// Definimos el tipo de fuente, estilo y tamaño.
-            $pdf->SetFont('Arial','',10); // I : Italica; U: Normal;
-             $pdf->SetY(22);
-                 //  imprimir datos del bachillerato.
-                $pdf->Cell(80,$w2[0],$print_bachillerato,0,0,'L');
-                $pdf->Cell(40,$w2[0],$print_grado,0,0,'L');
-                $pdf->Cell(20,$w2[0],$print_seccion,0,0,'L');
-                $pdf->Cell(20,$w2[0],$print_ann_lectivo,0,0,'L');
+        // Asegurarse de estar en la posición Y correcta después de MultiCell
+        $this->SetXY($x_inicio_asig + ($anchoAsignatura * $numAsignaturas), $y1);
 
-             $pdf->Cell(45,$w2[0],$trimestre,0,0,'R');
-            $pdf->ln();
-//  mostrar los valores de la consulta
-            // dibujar encabezado de la tabla.
-            $pdf->SetFont('Arial','',9); // I : Italica; U: Normal;
-            $header1=array('Nº','Apellido - Nombre');
-            $tp=array('TP');
-            $header = array_merge($header1,$data,$tp);
-            $pdf->FancyTable($header);
+        $this->Cell(10, 10, 'T.P.', 1, 1, 'C', true); // Total Puntos
+    }
+}
 
-    $fill = false; $i=1;  $numero_linea = 1;
-    // Matrices para la sumatoria de las asignaturas.
-      $sumatoria_lenguaje = array();
-      $sumatoria_matematica = array();
-      $sumatoria_ciencias = array();
-      $sumatoria_sociales = array();
-      $sumatoria_ingles = array();
-      $sumatoria_fisica = array();
-      
-      $sumatoria_1 = array();
-      $sumatoria_2 = array();
-      $sumatoria_3 = array();
-      $sumatoria_4 = array();
-      $sumatoria_5 = array();
-      $sumatoria_6 = array();
-      
-      $total_puntos = array();
-	  // Crear Martiz para Camptura NOMBRES Y Total de Puntos.
-    $datos[] = array("nombre"=>'', "puntaje"=>'');
-      //RECORRER LA CONSULTA PARA QUE MUESTRE LAS NOTAS.
-        while($row = $result -> fetch(PDO::FETCH_BOTH))
-            {
-            // >Impresión de la primera asignatura. primer ciclo, segundo y tercero.
-                if ($i == 1)
-				{
-          $pdf->SetFont('Arial','',8); // I : Italica; U: Normal;
-					$pdf->Cell($w[0],$w2[0],$numero_linea,0,0,'C',$fill);
-					$pdf->Cell($w[1],$w2[0],utf8_decode(trim($row['apellido_alumno'])),0,0,'L',$fill);   // Nombre + apellido_materno + apellido_paterno
-					$pdf->Cell($w[2],$w2[0],trim($row[$nota_p_p]),0,0,'C',$fill);
-					// Agregar valor a matriz. NOMBRE.
-					$datos[$numero_linea]['nombre'] = utf8_decode(trim($row['apellido_alumno']));
-				}
-                // Acumular valores
-                if ($print_nombre_bachillerato == 'Primer Ciclo' || $print_nombre_bachillerato == 'Segundo Ciclo' || $print_nombre_bachillerato == 'Tercer Ciclo' || $print_nombre_bachillerato == 'Bachillerato General')
-                  {
-                    if($row['codigo_asignatura'] == '00' || $row['codigo_asignatura'] == '01' || $row['codigo_asignatura'] == '15'){
-                      $sumatoria_lenguaje[] = $row[$nota_p_p];
-                      $total_puntos[] = $row[$nota_p_p];}
-                    else{
-                      // sumar promedios de asignaturas.
-					    if($i == 1){$sumatoria_lenguaje[] = $row[$nota_p_p]; $total_puntos[] = $row[$nota_p_p];}
-                        if($i == 2){$sumatoria_matematica[] = $row[$nota_p_p]; $total_puntos[] = $row[$nota_p_p];}
-                        if($i == 3){$sumatoria_ciencias[] = $row[$nota_p_p]; $total_puntos[] = $row[$nota_p_p];}
-                        if($i == 4){$sumatoria_sociales[] = $row[$nota_p_p]; $total_puntos[] = $row[$nota_p_p];}
-                        if($i == 5){$sumatoria_fisica[] = $row[$nota_p_p]; $total_puntos[] = $row[$nota_p_p];}
-                        if($i == 6){$sumatoria_ingles[] = $row[$nota_p_p]; $total_puntos[] = $row[$nota_p_p];}
-                      
-                      if($print_nombre_bachillerato == 'Bachillerato General')
-                      {
-                        if($i == 7){$sumatoria_1[] = $row[$nota_p_p]; $total_puntos[] = $row[$nota_p_p];}
-                        if($i == 8){$sumatoria_2[] = $row[$nota_p_p]; $total_puntos[] = $row[$nota_p_p];}
-                        if($i == 9){$sumatoria_3[] = $row[$nota_p_p]; $total_puntos[] = $row[$nota_p_p];}
-                        if($i == 10){$sumatoria_4[] = $row[$nota_p_p]; $total_puntos[] = $row[$nota_p_p];}
-                        if($i == 11){$sumatoria_5[] = $row[$nota_p_p]; $total_puntos[] = $row[$nota_p_p];}
-                        if($i == 12){$sumatoria_6[] = $row[$nota_p_p]; $total_puntos[] = $row[$nota_p_p];}
-                      }
-                      // Imprimir el valor de la nota segun periodo o trimestre.  
-                        if($i == 6 || $i == 12){
-                          $pdf->Cell($w[2],$w2[0],trim($row[$nota_p_p]),'R',0,'C',$fill);
-                        }else{
-								if($i<> 1){
-									$pdf->Cell($w[2],$w2[0],trim($row[$nota_p_p]),0,0,'C',$fill);
-								}
-							}						  
-                    }
-                  }    
-			// En el Caso de 1º, 2º y 3º Ciclo.
-               if ($print_nombre_bachillerato == 'Primer Ciclo' || $print_nombre_bachillerato == 'Segundo Ciclo' || $print_nombre_bachillerato == 'Tercer Ciclo' || $print_nombre_bachillerato == 'Bachillerato General'){
-                if ($i == 12){
-                   // Imprimir total de puntos y limpiar la matriz.
-                   $pdf->SetFont('Arial','B',10); // I : Italica; U: Normal;
-                   $pdf->Cell($w[2],$w2[0],round(array_sum($total_puntos),1),0,0,'C',$fill);
-                   $pdf->SetFont('Arial','',9); // I : Italica; U: Normal;
-                   // Agregar valor a matriz. TOTAL DE PUNTOS POR NOMBRE
-						$datos[$numero_linea]['puntaje'] = round(array_sum($total_puntos),1);
-                   // Limpiar matriz.
-				   $total_puntos = array();
-                   //////////////////////////////////////////////////////////////////////                    
-                    $numero_linea++;
-                    $pdf->Ln();
-                  // salto de pagina.
-                    if($numero_linea == 30 && $i == 12){
-                      $pdf->Cell(205,0,'','T');
-                      $pdf->AddPage();
-                      $pdf->SetXY(5,25);
-                      $pdf->FancyTable($header);}
-                      $i = 1;
-                      $fill=!$fill;
-                  }
-                   else{
-                // acumulador para el numero de asignaturas
-                    $i++;
-                }}
+/**
+ * Obtiene todos los datos necesarios, incluyendo nota mínima.
+ */
+function obtenerDatosPorTrimestre(PDO $pdo, string $codigoAll, string $campoNota): array {
+    $datos = ['encabezado' => [], 'notas' => [], 'asignaturas' => []];
 
-               if ($codigo_bachillerato == '07')
-               {
-                if($row['codigo_asignatura'] == '00' || $row['codigo_asignatura'] == '01' || $row['codigo_asignatura'] == '15'){
-                      $sumatoria_lenguaje[] = $row[$nota_p_p];
-                      $total_puntos[] = $row[$nota_p_p];}
-                    else{
-                      // sumar promedios de asignaturas.
-                        if($i == 2){$sumatoria_matematica[] = $row[$nota_p_p]; $total_puntos[] = $row[$nota_p_p];}
-                        if($i == 3){$sumatoria_ciencias[] = $row[$nota_p_p]; $total_puntos[] = $row[$nota_p_p];}
-                        if($i == 4){$sumatoria_sociales[] = $row[$nota_p_p]; $total_puntos[] = $row[$nota_p_p];}
-                        if($i == 5){$sumatoria_fisica[] = $row[$nota_p_p]; $total_puntos[] = $row[$nota_p_p];}
-                        if($i == 6){$sumatoria_ingles[] = $row[$nota_p_p]; $total_puntos[] = $row[$nota_p_p];}}
-			
-                        if($i == 7){$sumatoria_1[] = $row[$nota_p_p]; $total_puntos[] = $row[$nota_p_p];}
-                        if($i == 8){$sumatoria_2[] = $row[$nota_p_p]; $total_puntos[] = $row[$nota_p_p];}
-                        if($i == 9){$sumatoria_3[] = $row[$nota_p_p]; $total_puntos[] = $row[$nota_p_p];}
-                        if($i == 10){$sumatoria_4[] = $row[$nota_p_p]; $total_puntos[] = $row[$nota_p_p];}
-                        if($i == 11){$sumatoria_5[] = $row[$nota_p_p]; $total_puntos[] = $row[$nota_p_p];}
-                        
-		    if($i>=2){$pdf->Cell($w[2],$w2[0],trim($row[$nota_p_p]),0,0,'C',$fill);}
-                    
-                if ($i == 13)
-                {
-                    $pdf->SetFont('Arial','B',10); // I : Italica; U: Normal;
-                    $pdf->Cell($w[2],$w2[0],round(array_sum($total_puntos),1),0,0,'C',$fill);
-                    $pdf->SetFont('Arial','',9); // I : Italica; U: Normal;
-                    $total_puntos = array();
-                   
-                   //////////////////////////////////////////////////////////////////////
-                // salto de pagina.
-                    $numero_linea++;
-                    $pdf->Ln();
-                  // salto de pagina.
-                    if($numero_linea == 30 && $i == 13){
-                      $pdf->Cell(205,0,'','T');
-                      $pdf->AddPage();
-                      $pdf->SetXY(5,25);
-                      $pdf->FancyTable($header);}
-                    $i = 1;
-                    $fill=!$fill;
-                  }
-                   else{
-                // acumulador para el numero de asignaturas
-                    $i++;}
-                }
+    // Consulta de encabezado (añadir codigo_bach_o_ciclo)
+    $sqlEncabezado = "SELECT btrim(bach.nombre) as nombre_bachillerato, am.codigo_bach_o_ciclo, btrim(gan.nombre) as nombre_grado, btrim(sec.nombre) as nombre_seccion, ann.nombre as nombre_ann_lectivo
+                      FROM alumno_matricula am
+                      INNER JOIN bachillerato_ciclo bach ON bach.codigo = am.codigo_bach_o_ciclo
+                      INNER JOIN grado_ano gan ON gan.codigo = am.codigo_grado
+                      INNER JOIN seccion sec ON sec.codigo = am.codigo_seccion
+                      INNER JOIN ann_lectivo ann ON ann.codigo = am.codigo_ann_lectivo
+                      WHERE btrim(am.codigo_bach_o_ciclo::text || am.codigo_grado::text || am.codigo_seccion::text || am.codigo_ann_lectivo::text || am.codigo_turno::text) = :codigo_all LIMIT 1";
+    $stmt = $pdo->prepare($sqlEncabezado); $stmt->bindParam(':codigo_all', $codigoAll); $stmt->execute();
+    $datos['encabezado'] = $stmt->fetch(PDO::FETCH_ASSOC);
 
-               if ($codigo_bachillerato >= '08')
-               {
-                 if($row['codigo_asignatura'] == '24' || $row['codigo_asignatura'] == '01' || $row['codigo_asignatura'] == '15'){
-                      $sumatoria_lenguaje[] = $row[$nota_p_p];
-                      $total_puntos[] = $row[$nota_p_p];}
-                    else{
-                      // sumar promedios de asignaturas.
-                        if($i == 2){$sumatoria_matematica[] = $row[$nota_p_p]; $total_puntos[] = $row[$nota_p_p];}
-                        if($i == 3){$sumatoria_ciencias[] = $row[$nota_p_p]; $total_puntos[] = $row[$nota_p_p];}
-                        if($i == 4){$sumatoria_sociales[] = $row[$nota_p_p]; $total_puntos[] = $row[$nota_p_p];}
-                        if($i == 5){$sumatoria_fisica[] = $row[$nota_p_p]; $total_puntos[] = $row[$nota_p_p];}
-                        if($i == 6){$sumatoria_ingles[] = $row[$nota_p_p]; $total_puntos[] = $row[$nota_p_p];}}
-			
-		  if($i>=2){$pdf->Cell($w[2],$w2[0],trim($row[$nota_p_p]),0,0,'C',$fill);}
-                  
-                if ($i == 7)
-                {
-                    $pdf->SetFont('Arial','B',10); // I : Italica; U: Normal;
-                    $pdf->Cell($w[2],$w2[0],round(array_sum($total_puntos),1),0,0,'C',$fill);
-                    $pdf->SetFont('Arial','',9); // I : Italica; U: Normal;
-                    $total_puntos = array();
-                   
-                   //////////////////////////////////////////////////////////////////////
-                // salto de pagina.
-                    $numero_linea++;
-                    $pdf->Ln();
-                  // salto de pagina.
-                    if($numero_linea == 33 && $i == 13){$pdf->Cell(205,0,'','T');$pdf->AddPage();$pdf->FancyTable($header);}
-                    $i = 1;
-                    $fill=!$fill;
-                  }
-                   else
-                   {
-                // acumulador para el numero de asignaturas
-                    $i++;
-                    }
-                }                 
-             } // este recorre nombre por nombre (bucle)
-             
-        // Presentar la sumatoria y el promedio de la asignatura.
-            $pdf->Cell(205,0,'','T');
-            $pdf->Ln(2);
-            $pdf->SetFont('Arial','b',9); 
-            $pdf->Cell($w[0],$w2[0],'',0,0,'C',$fill);
-            $pdf->Cell($w[1],$w2[0],'TOTAL DE PUNTOS',0,0,'R',$fill);   
-            $pdf->Cell($w[2],$w2[0],array_sum($sumatoria_lenguaje),0,0,'C',$fill);
-            $pdf->Cell($w[2],$w2[0],array_sum($sumatoria_matematica),0,0,'C',$fill);
-            $pdf->Cell($w[2],$w2[0],array_sum($sumatoria_ciencias),0,0,'C',$fill);
-            $pdf->Cell($w[2],$w2[0],array_sum($sumatoria_sociales),0,0,'C',$fill);
-            $pdf->Cell($w[2],$w2[0],array_sum($sumatoria_fisica),0,0,'C',$fill);
-            $pdf->Cell($w[2],$w2[0],array_sum($sumatoria_ingles),0,0,'C',$fill);
-            
-            if($print_nombre_bachillerato == 'Bachillerato General' || $print_nombre_bachillerato == 'Bachillerato Técnico Vocacional Comercial')
-            {
-                $pdf->Cell($w[2],$w2[0],array_sum($sumatoria_1),0,0,'C',$fill);
-                $pdf->Cell($w[2],$w2[0],array_sum($sumatoria_2),0,0,'C',$fill);
-                $pdf->Cell($w[2],$w2[0],array_sum($sumatoria_3),0,0,'C',$fill);
-                $pdf->Cell($w[2],$w2[0],array_sum($sumatoria_4),0,0,'C',$fill);
-                $pdf->Cell($w[2],$w2[0],array_sum($sumatoria_5),0,0,'C',$fill);
+    // Obtener nota mínima si tenemos el código de modalidad
+    if ($datos['encabezado'] && isset($datos['encabezado']['codigo_bach_o_ciclo'])) {
+        $codigoModalidad = $datos['encabezado']['codigo_bach_o_ciclo'];
+        $sqlNotaMin = "SELECT calificacion_minima FROM catalogo_periodos WHERE codigo_modalidad = :codigo_modalidad LIMIT 1";
+        $stmtMin = $pdo->prepare($sqlNotaMin);
+        $stmtMin->bindParam(':codigo_modalidad', $codigoModalidad);
+        $stmtMin->execute();
+        $resultMin = $stmtMin->fetch(PDO::FETCH_ASSOC);
+        $datos['encabezado']['nota_minima'] = $resultMin['calificacion_minima'] ?? 5.0; // Usar 5.0 si no se encuentra
+    } else {
+        $datos['encabezado']['nota_minima'] = 5.0; // Valor por defecto si falla encabezado
+    }
+
+
+    // Consulta de asignaturas (corregida)
+    $sqlAsignaturas = "SELECT DISTINCT asig.codigo, asig.nombre, asig.ordenar FROM asignatura asig INNER JOIN nota n ON asig.codigo = n.codigo_asignatura INNER JOIN alumno_matricula am ON n.codigo_matricula = am.id_alumno_matricula WHERE btrim(am.codigo_bach_o_ciclo::text || am.codigo_grado::text || am.codigo_seccion::text || am.codigo_ann_lectivo::text || am.codigo_turno::text) = :codigo_all ORDER BY asig.ordenar";
+    $stmtAsig = $pdo->prepare($sqlAsignaturas); $stmtAsig->bindParam(':codigo_all', $codigoAll); $stmtAsig->execute();
+    if($stmtAsig->rowCount() > 0) {
+        $datos['asignaturas'] = array_map(function($item) { unset($item['ordenar']); return $item; }, $stmtAsig->fetchAll(PDO::FETCH_ASSOC));
+    } else { $datos['asignaturas'] = []; }
+
+    // Consulta principal para notas (añadir codigo_nie)
+    if (!in_array($campoNota, ['nota_p_p_1', 'nota_p_p_2', 'nota_p_p_3', 'nota_final'])) { throw new Exception("..."); }
+    $sqlNotas = "SELECT a.id_alumno, a.codigo_nie, btrim(a.apellido_paterno || ' ' || a.apellido_materno || ', ' || a.nombre_completo) as nombre_completo, n.codigo_asignatura, n.$campoNota as nota_periodo FROM alumno a INNER JOIN alumno_matricula am ON a.id_alumno = am.codigo_alumno AND am.retirado = 'f' INNER JOIN nota n ON am.id_alumno_matricula = n.codigo_matricula WHERE btrim(am.codigo_bach_o_ciclo::text || am.codigo_grado::text || am.codigo_seccion::text || am.codigo_ann_lectivo::text || am.codigo_turno::text) = :codigo_all ORDER BY nombre_completo, n.codigo_asignatura";
+    $stmtNotas = $pdo->prepare($sqlNotas); $stmtNotas->bindParam(':codigo_all', $codigoAll); $stmtNotas->execute();
+    $datos['notas'] = $stmtNotas->fetchAll(PDO::FETCH_ASSOC);
+
+    return $datos;
+}
+
+/**
+ * Genera el PDF del reporte.
+ */
+function generarPdfPorTrimestre(array $datos, string $nombrePeriodo) {
+    if (empty($datos['asignaturas'])) { throw new Exception("..."); }
+
+    $notaMinima = floatval($datos['encabezado']['nota_minima']); // Usar nota mínima dinámica
+
+    // --- PROCESAR Y PIVOTAR DATOS ---
+    $alumnosNotas = [];
+    foreach ($datos['notas'] as $nota) {
+        $idAlumno = $nota['id_alumno'];
+        if (!isset($alumnosNotas[$idAlumno])) {
+            $alumnosNotas[$idAlumno]['nombre'] = $nota['nombre_completo'];
+            $alumnosNotas[$idAlumno]['nie'] = $nota['codigo_nie']; // Guardar NIE
+            $alumnosNotas[$idAlumno]['notas'] = [];
+            foreach ($datos['asignaturas'] as $asig) { $alumnosNotas[$idAlumno]['notas'][$asig['codigo']] = ''; }
+        }
+        if(isset($alumnosNotas[$idAlumno]['notas'][$nota['codigo_asignatura']])) {
+            $alumnosNotas[$idAlumno]['notas'][$nota['codigo_asignatura']] = floatval($nota['nota_periodo']);
+        }
+    }
+
+    // --- GENERAR PDF ---
+    $pdf = new PDF_NotasTrimestre('P', 'mm', 'Letter');
+    $pdf->SetMargins(10, 15, 10); $pdf->SetAutoPageBreak(true, 15); $pdf->AliasNbPages();
+    $pdf->datosEncabezado = $datos['encabezado'];
+    $pdf->asignaturasHeader = $datos['asignaturas'];
+    $pdf->nombrePeriodo = $nombrePeriodo;
+    $pdf->notaMinima = $notaMinima; // Pasar nota mínima a la clase PDF si se necesita allí
+
+    $pdf->AddPage();
+    $pdf->TablaEncabezado();
+
+    $pdf->SetFont('Arial', '', 8); $fill = false; $numFila = 0;
+    $numAsignaturas = count($datos['asignaturas']);
+    $anchoAsignatura = 92 / $numAsignaturas;
+
+    $sumatorias = array_fill_keys(array_column($datos['asignaturas'], 'codigo'), 0);
+    $numAlumnosValidos = 0;
+    $alumnosPuntajes = []; // Array para guardar puntajes para el Top 5
+
+    foreach ($alumnosNotas as $idAlumno => $alumno) {
+        if ($numFila > 0 && $numFila % FILAS_POR_PAGINA_TRIMESTRE == 0) { $pdf->AddPage(); $pdf->TablaEncabezado(); $pdf->SetFont('Arial', '', 8); }
+        $pdf->SetFillColor($fill ? 240 : 255, $fill ? 240 : 255, $fill ? 240 : 255);
+
+        $pdf->Cell(8, 6, $numFila + 1, 1, 0, 'C', true);
+        $pdf->Cell(15, 6, $alumno['nie'], 1, 0, 'C', true); // Columna NIE
+        $pdf->Cell(65, 6, convertirtexto($alumno['nombre']), 1, 0, 'L', true); // Ancho ajustado
+
+        $totalPuntosAlumno = 0;
+        $tieneNotas = false;
+        foreach ($datos['asignaturas'] as $asig) {
+            $nota = $alumno['notas'][$asig['codigo']];
+            $notaVal = ($nota !== '') ? floatval($nota) : null;
+
+            if($notaVal !== null && $notaVal >= 0) { // Considerar nota 0 como válida
+                 if($notaVal < $notaMinima && $notaVal > 0) { $pdf->SetTextColor(255, 0, 0); } // Colorear solo si > 0 y < minima
+                 $pdf->Cell($anchoAsignatura, 6, number_format($notaVal, 2), 1, 0, 'C', true);
+                 $pdf->SetTextColor(0);
+                 if ($notaVal > 0) { // Solo sumar puntos si la nota es mayor a 0
+                     $totalPuntosAlumno += $notaVal;
+                     if(isset($sumatorias[$asig['codigo']])) { $sumatorias[$asig['codigo']] += $notaVal; }
+                     $tieneNotas = true;
+                 }
+            } else {
+                 $pdf->Cell($anchoAsignatura, 6, '', 1, 0, 'C', true);
             }
-            $pdf->Ln();
-            $pdf->Cell($w[0],$w2[0],'',0,0,'C',$fill);
-            $pdf->Cell($w[1],$w2[0],'PROMEDIO',0,0,'R',$fill);   
-            $pdf->Cell($w[2],$w2[0],round(array_sum($sumatoria_lenguaje)/$numero_linea,0),1,0,'C',$fill);
-            $pdf->Cell($w[2],$w2[0],round(array_sum($sumatoria_matematica)/$numero_linea,0),1,0,'C',$fill);
-            $pdf->Cell($w[2],$w2[0],round(array_sum($sumatoria_ciencias)/$numero_linea,0),1,0,'C',$fill);
-            $pdf->Cell($w[2],$w2[0],round(array_sum($sumatoria_sociales)/$numero_linea,0),1,0,'C',$fill);
-            $pdf->Cell($w[2],$w2[0],round(array_sum($sumatoria_fisica)/$numero_linea,0),1,0,'C',$fill);
-            $pdf->Cell($w[2],$w2[0],round(array_sum($sumatoria_ingles)/$numero_linea,0),1,0,'C',$fill);
+        }
+        
+        if ($tieneNotas) $numAlumnosValidos++;
 
-            if($print_nombre_bachillerato == 'Bachillerato General' || $print_nombre_bachillerato == 'Bachillerato Técnico Vocacional Comercial')
-            {
-                $pdf->Cell($w[2],$w2[0],round(array_sum($sumatoria_1)/$numero_linea,0),1,0,'C',$fill);
-                $pdf->Cell($w[2],$w2[0],round(array_sum($sumatoria_2)/$numero_linea,0),1,0,'C',$fill);
-                $pdf->Cell($w[2],$w2[0],round(array_sum($sumatoria_3)/$numero_linea,0),1,0,'C',$fill);
-                $pdf->Cell($w[2],$w2[0],round(array_sum($sumatoria_4)/$numero_linea,0),1,0,'C',$fill);
-                $pdf->Cell($w[2],$w2[0],round(array_sum($sumatoria_5)/$numero_linea,0),1,0,'C',$fill);
-            }
-			
-			////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-			////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-			// CONSTRUIR TABLA CON LOS ALUMNOS QUE HAN OBTENIDO MAYOR PUNTAJE.
-			////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-			////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            // salto de pagina.
+        $pdf->Cell(10, 6, ($totalPuntosAlumno > 0) ? number_format($totalPuntosAlumno, 2) : '0.00', 1, 1, 'C', true); // Mostrar 0.00 si no hay notas
 
-			if($numero_linea >= 30)
-			{
-				//$pdf->AddPage();
-			}else{
-				if($numero_linea <= 23 or $numero_linea >=23){$pdf->AddPage();}			
-			}
-			// Contruir matriz con los puntos.
-				foreach ($datos as $key => $row) {
-				    $aux[$key] = $row['puntaje'];}
-			// Ordenar de forma ASC o DES
-				array_multisort($aux, SORT_DESC, $datos);
-			// Presentar los primeros 5 lugages.
-			// Linea en blanco
-			$pdf->Ln(12);
-			$pdf->Cell($w[1]+$w[2]+$w[2]+20,$w2[0],utf8_decode('Alumnos con Mayor Puntaje'),1,1,'C',$fill);
-			$pdf->Cell($w[2],$w2[0],utf8_decode('Nº'),1,0,'C',$fill);
-			$pdf->Cell($w[1]+20,$w2[0],utf8_decode('Nombre del Alumno'),1,0,'C',$fill);
-			$pdf->Cell($w[2],$w2[0],utf8_decode('Ptos.'),1,1,'C',$fill);
-			// Recorrer los primeros 5 valores.
-			 for($jj=0;$jj <=4; $jj++){
-				 // Cambiar color de fondo.
-					 $fill=!$fill;
-				 // Pasar valores de matriz a variables.
-				 $nombre_puntaje = $datos[$jj]['nombre'];
-				 $puntos_puntaje = $datos[$jj]['puntaje'];
-				 // Imprimir en Pantalla.
-				 $pdf->Cell($w[2],$w2[0],$jj+1,1,0,'C',$fill);
-				 $pdf->Cell($w[1]+20,$w2[0],$nombre_puntaje,1,0,'L',$fill);
-				 $pdf->Cell($w[2],$w2[0],$puntos_puntaje,1,1,'C',$fill);
-			 }
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    // Construir el nombre del archivo.
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	$nombre_archivo = utf8_decode('Promedio por Período: ' . $nombre_grado . ' ' . $nombre_seccion . '.pdf');
-// Salida del pdf.
-    $pdf->Output($nombre_archivo,'I');
+        // Guardar datos para el Top 5
+        $alumnosPuntajes[] = [
+            'id' => $idAlumno,
+            'nie' => $alumno['nie'],
+            'nombre' => $alumno['nombre'],
+            'puntaje' => $totalPuntosAlumno
+        ];
+
+        $fill = !$fill; $numFila++;
+    }
+
+    // Filas de TOTAL y PROMEDIO
+    $pdf->SetFont('Arial','B', 8);
+    $pdf->Cell(88, 6, 'TOTAL DE PUNTOS', 1, 0, 'R', true); // 8+15+65
+    foreach($datos['asignaturas'] as $asig) { $suma = $sumatorias[$asig['codigo']] ?? 0; $pdf->Cell($anchoAsignatura, 6, ($suma > 0) ? number_format($suma, 2) : '', 1, 0, 'C', true); }
+    $pdf->Cell(10, 6, '', 1, 1, 'C', true);
+    $pdf->Cell(88, 6, 'PROMEDIO', 1, 0, 'R', true);
+    foreach($datos['asignaturas'] as $asig) { $suma = $sumatorias[$asig['codigo']] ?? 0; $promedio = ($numAlumnosValidos > 0 && $suma > 0) ? round($suma / $numAlumnosValidos) : ''; $pdf->Cell($anchoAsignatura, 6, $promedio, 1, 0, 'C', true); }
+    $pdf->Cell(10, 6, '', 1, 1, 'C', true);
+
+    // --- TABLA TOP 5 (SOLO SI ES NOTA FINAL) ---
+    if ($nombrePeriodo == 'Nota Final') {
+        // Ordenar alumnos por puntaje descendente
+        usort($alumnosPuntajes, function($a, $b) {
+            return $b['puntaje'] <=> $a['puntaje']; // <=> para PHP 7+
+        });
+
+        // Tomar los primeros 5
+        $top5 = array_slice($alumnosPuntajes, 0, 5);
+
+        $pdf->Ln(10);
+        $pdf->SetFont('Arial', 'B', 10);
+        $pdf->Cell(0, 7, 'Alumnos con Mayor Puntaje (Nota Final)', 0, 1, 'C');
+        $pdf->Ln(2);
+
+        $pdf->SetFont('Arial', 'B', 8);
+        $pdf->SetFillColor(220, 220, 220);
+        $pdf->Cell(10, 7, 'N#', 1, 0, 'C', true);
+        $pdf->Cell(20, 7, 'NIE', 1, 0, 'C', true); // Columna NIE
+        $pdf->Cell(100, 7, 'Nombre del Alumno', 1, 0, 'C', true);
+        $pdf->Cell(20, 7, 'Puntaje', 1, 1, 'C', true);
+
+        $pdf->SetFont('Arial', '', 8);
+        $fillTop = false;
+        foreach ($top5 as $index => $topAlumno) {
+            $pdf->SetFillColor($fillTop ? 240 : 255, $fillTop ? 240 : 255, $fillTop ? 240 : 255);
+            $pdf->Cell(10, 6, $index + 1, 1, 0, 'C', true);
+            $pdf->Cell(20, 6, $topAlumno['nie'], 1, 0, 'C', true); // Mostrar NIE
+            $pdf->Cell(100, 6, convertirtexto($topAlumno['nombre']), 1, 0, 'L', true);
+            $pdf->Cell(20, 6, number_format($topAlumno['puntaje'], 2), 1, 1, 'C', true);
+            $fillTop = !$fillTop;
+        }
+    }
+
+    $pdf->Output('Notas_por_Trimestre.pdf', 'I');
+}
+
+// --- PUNTO DE ENTRADA DEL SCRIPT ---
+try {
+    // ... (Validación de conexión y parámetros sin cambios) ...
+    if ($errorDbConexion) { throw new Exception("..."); }
+    $codigo_all = $_GET["todos"] ?? null; $periodoSeleccionado = $_GET["lsttrimestres"] ?? 'nota_p_p_1';
+    $mapPeriodos = ['nota_p_p_1' => ['columna' => 'nota_p_p_1', 'nombre' => 'Trimestre 1'], 'nota_p_p_2' => ['columna' => 'nota_p_p_2', 'nombre' => 'Trimestre 2'], 'nota_p_p_3' => ['columna' => 'nota_p_p_3', 'nombre' => 'Trimestre 3'], 'nota_final' => ['columna' => 'nota_final', 'nombre' => 'Nota Final']];
+    if (!$codigo_all || !isset($mapPeriodos[$periodoSeleccionado])) { throw new Exception("..."); }
+    $campoNotaDB = $mapPeriodos[$periodoSeleccionado]['columna']; $nombrePeriodoLegible = $mapPeriodos[$periodoSeleccionado]['nombre'];
+
+    $datosReporte = obtenerDatosPorTrimestre($dblink, $codigo_all, $campoNotaDB);
+
+    if (empty($datosReporte['notas'])) { echo "No se encontraron notas para este grupo y período."; exit; }
+    if (empty($datosReporte['asignaturas'])) { echo "No se encontraron asignaturas configuradas para este grupo."; exit; }
+
+    generarPdfPorTrimestre($datosReporte, $nombrePeriodoLegible);
+
+} catch (PDOException $e) { /* ... */ } catch (Exception $e) { /* ... */ }
 ?>

@@ -1,179 +1,182 @@
 <?php
-// ruta de los archivos con su carpeta
-    $path_root=trim($_SERVER['DOCUMENT_ROOT']);
-// archivos que se incluyen.
-    include($path_root."/registro_academico/includes/funciones.php");
-	include($path_root."/registro_academico/includes/funciones_2.php");
-    include($path_root."/registro_academico/includes/consultas.php");
-    include($path_root."/registro_academico/includes/mainFunctions_conexion.php");
-// variables y consulta a la tabla.
-  $codigo_all = $_REQUEST["todos"];
-  $db_link = $dblink;
+// <-- VERSIÓN REFACTORIZADA Y SEGURA: CrearNominas.php -->
 
-// Inicializamos variables de mensajes y JSON
-$respuestaOK = true;
-$mensajeError = "No se puede ejecutar la aplicación";
-$contenidoOK = "";
-// Información Académica.
-       $codigo_bachillerato = substr($codigo_all,0,2);
-       $codigo_grado = substr($codigo_all,2,2);
-       $codigo_seccion = substr($codigo_all,4,2);
-       $codigo_annlectivo = substr($codigo_all,6,2);
-// buscar la consulta y la ejecuta.
-  consultas(9,0,$codigo_all,'','','',$db_link,'');
-//  imprimir datos del bachillerato.
-        while($row = $result_encabezado -> fetch(PDO::FETCH_BOTH))
-            {
-            $print_bachillerato ='Modalidad: '.trim($row['nombre_bachillerato']);
-			$nombre_ann_lectivo = trim($row['nombre_ann_lectivo']);
-            $print_grado = 'Grado: '. trim($row['nombre_grado']);
-			$nombre_grado = trim($row['nombre_grado']);
-            $print_seccion = ('Sección: ').trim($row['nombre_seccion']);
-			$nombre_seccion = trim($row['nombre_seccion']);
-            $print_ann_lectivo = 'Año Lectivo: '.trim($row['nombre_ann_lectivo']);
-	            break;
-            }
-// Proceso de la creaciòn de la Hoja de cálculo.
-    $n_hoja = 0;	// variable para el activesheet.
-    consultas(4,0,$codigo_all,'','','',$db_link,'');
-// call the autoload
-    require $path_root."/registro_academico/vendor/autoload.php";
-// load phpspreadsheet class using namespaces.
-    use PhpOffice\PhpSpreadsheet\Spreadsheet;
-// call xlsx weriter class to make an xlsx file
-    use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
-// Creamos un objeto Spreadsheet object
-    $objPHPExcel = new Spreadsheet();
-// Time zone.
-    //echo date('H:i:s') . " Set Time Zone"."<br />";
-    date_default_timezone_set('America/El_Salvador');
-// set codings.
-//    $objPHPExcel->_defaultEncoding = 'ISO-8859-1';
-// Set default font
-    //echo date('H:i:s') . " Set default font"."<br />";
-    $objPHPExcel->getDefaultStyle()->getFont()->setName('Arial');
-    $objPHPExcel->getDefaultStyle()->getFont()->setSize(10);
-// Leemos un archivo Excel 2007
-    $objReader = \PhpOffice\PhpSpreadsheet\IOFactory::createReader("Xlsx");
-    $origen = $path_root."/registro_academico/formatos_hoja_de_calculo/";
-    $objPHPExcel = $objReader->load($origen."Formato - Listado - 2023.xlsx");
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    // consulta a la tabla para optener la nomina.
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//  Get the current sheet with all its newly-set style properties
-    $objWorkSheetBase = $objPHPExcel->getSheet(0); 
-// Indicamos que se pare en la hoja uno del libro
-    $objPHPExcel->setActiveSheetIndex($n_hoja);
-    //$objPHPExcel->getActiveSheet($n_hoja)->setTitle(cambiar_de_del($print_grado).' '.$print_seccion);
-    $n_hoja++;    
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Time zone.
-    //echo date('H:i:s') . " Set Encabezado"."<br />";
-//Escribimos en la hoja en la celda e3. los datos del bachillerato, grado, sección, año lectivo, etc.
-    $objPHPExcel->getActiveSheet()->SetCellValue('A1', $print_bachillerato);
-    $objPHPExcel->getActiveSheet()->SetCellValue('A2', $print_grado);
-    $objPHPExcel->getActiveSheet()->SetCellValue('C2', $print_seccion);
-    $objPHPExcel->getActiveSheet()->SetCellValue('D2', $print_ann_lectivo);
-// Correlativo, numero de linea.
-    $num = 0; $fila_excel = 4;
-    while($row = $result -> fetch(PDO::FETCH_BOTH))
-    {
-    // acumular correlativo y fila.
-        $num++; $fila_excel++;
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	// Apellidos (paterno y materno) - nombres.
-	$apellidos_nombres = trim(cambiar_de_del_2($row['apellido_alumno']));
-	// Apellidos (paterno y materno)
-        $apellido_paterno = trim($row['apellido_paterno']);
-        $apellido_materno = trim($row['apellido_materno']);
-        $nombre_completo_2 = mb_strtoupper(trim($row['nombre_completo']),"UTF-8");
+// Set timezone
+date_default_timezone_set('America/El_Salvador');
+header('Content-Type: application/json; charset=utf-8'); // Output JSON
 
-	$apellidos_materno_paterno = trim(cambiar_de_del_2($row['apellidos_alumno']));
-	// Nombres
-    // genero estudiante
-    $genero_estudiante = trim($row['genero_estudiante']);
-	$nombres = trim(cambiar_de_del_2($row['nombre_completo']));
-  // Código Alumno
-  $codigo_alumno = trim(($row['id_alumno']));
-  $nombre_grado_seccion = trim(($row['nombre_grado'])) . ' ' . trim(($row['nombre_seccion']));
-  // Código Matricula
-  $codigo_matricula = trim(($row['codigo_matricula']));
-  // datos de los encargados
-  $nombre_encargado = trim(($row['nombres']));
-  $dui_encargado = trim(($row['encargado_dui']));
-  $telefono_encargado = trim(($row['telefono_encargado']));
-  $telefono_estudiante = trim(($row['telefono_alumno']));
-  $nombre_parentesco = trim(($row['nombre_tipo_parentesco']));
-  $numero_telefono_encargado = trim(($row['telefono_encargado']));
-  $direccion = trim(($row['direccion_alumno']));
-  $fecha_nacimiento = trim(cambiaf_a_normal(($row['fecha_nacimiento'])));
-  $edad = trim(($row['edad']));
-  $pn_numero = trim(($row['pn_numero']));
-  $pn_tomo = trim(($row['pn_tomo']));
-  $pn_libro = trim(($row['pn_libro']));
-  $pn_folio = trim(($row['pn_folio']));
-  $genero = mb_strtoupper(trim(($row['genero']),"UTF-8"));
-  $fecha_nacimiento_encargado = trim(cambiaf_a_normal(($row['encargado_fecha_nacimiento'])));
-        $nombre_completo = $nombres . " " . $apellidos_materno_paterno;
-  //$ = trim(($row['']));
-        //  IMPRIMIR EL CONTENIDO DE  INFORMACION EN EXCEL.
-	    $objPHPExcel->getActiveSheet()->SetCellValue("A".$fila_excel, $num);
-        $objPHPExcel->getActiveSheet()->SetCellValue("B".$fila_excel,($codigo_alumno));
-        $objPHPExcel->getActiveSheet()->SetCellValue("C".$fila_excel,($codigo_matricula));
-        $objPHPExcel->getActiveSheet()->SetCellValue("D".$fila_excel, TRIM($row['codigo_nie']));
-        $objPHPExcel->getActiveSheet()->SetCellValue("E".$fila_excel,($nombre_completo));
-        $objPHPExcel->getActiveSheet()->SetCellValue("F".$fila_excel,($genero_estudiante));
-        $objPHPExcel->getActiveSheet()->SetCellValue("G".$fila_excel,($fecha_nacimiento));
-        $objPHPExcel->getActiveSheet()->SetCellValue("H".$fila_excel,($edad));
-        $objPHPExcel->getActiveSheet()->SetCellValue("I".$fila_excel,($pn_numero));
-        $objPHPExcel->getActiveSheet()->SetCellValue("J".$fila_excel,($pn_folio));
-        $objPHPExcel->getActiveSheet()->SetCellValue("K".$fila_excel,($pn_tomo));
-        $objPHPExcel->getActiveSheet()->SetCellValue("L".$fila_excel,($pn_libro));
-        $objPHPExcel->getActiveSheet()->SetCellValue("M".$fila_excel, $nombre_grado_seccion);
-        $objPHPExcel->getActiveSheet()->SetCellValue("N".$fila_excel,($telefono_estudiante));
-        $objPHPExcel->getActiveSheet()->SetCellValue("O".$fila_excel,($direccion));
+// --- INCLUDES ---
+$path_root = trim($_SERVER['DOCUMENT_ROOT']);
+require_once $path_root . "/registro_academico/includes/funciones.php";
+require_once $path_root . "/registro_academico/includes/funciones_2.php";
+require_once $path_root . "/registro_academico/includes/mainFunctions_conexion.php"; // Needed for $dblink and CrearDirectorios
+require_once $path_root . "/registro_academico/vendor/autoload.php"; // PhpSpreadsheet
 
-        // datos del encargado nombre y n.º de dui.
-        $objPHPExcel->getActiveSheet()->SetCellValue("P".$fila_excel,($nombre_encargado));
-        $objPHPExcel->getActiveSheet()->SetCellValue("Q".$fila_excel,($fecha_nacimiento_encargado));
-        $objPHPExcel->getActiveSheet()->SetCellValue("R".$fila_excel,($dui_encargado));
-        $objPHPExcel->getActiveSheet()->SetCellValue("S".$fila_excel,($nombre_parentesco));
-        $objPHPExcel->getActiveSheet()->SetCellValue("T".$fila_excel,($numero_telefono_encargado));
-        // INFORMACION PARA EL CUANDRO DE PROMOCION
-        $objPHPExcel->getActiveSheet()->SetCellValue("W".$fila_excel,($apellido_paterno));
-        $objPHPExcel->getActiveSheet()->SetCellValue("X".$fila_excel,($apellido_materno));
-        $objPHPExcel->getActiveSheet()->SetCellValue("Y".$fila_excel,($nombre_completo_2));
-        $objPHPExcel->getActiveSheet()->SetCellValue("Z".$fila_excel, TRIM($row['codigo_nie']));
-        $objPHPExcel->getActiveSheet()->SetCellValue("AA".$fila_excel, $genero);
-        //
-        // GENERO ESTUDIANTAE
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////        
-   }    //  FIN DEL WHILE.
-// Verificar si Existe el directorio archivos.
-		$codigo_modalidad = $codigo_bachillerato;
-		//$nombre_ann_lectivo = $nombre_ann_lectivo;
-	// Tipo de Carpeta a Grabar Cuadro de Calificaciones.
-		$codigo_destino = 1;
-		CrearDirectorios($path_root,$nombre_ann_lectivo,$codigo_modalidad,$codigo_destino,"");
-	// Nombre del archivo.
-		$nombre_archivo = replace_3($codigo_modalidad . "-". $nombre_grado ."-".$nombre_seccion.".xlsx");
-        $contenidoOK = "Archivo Creado: " . $nombre_archivo;
-	try {
-    // Grabar el archivo.
-		$objWriter = new Xlsx($objPHPExcel);
-		$objWriter->save($DestinoArchivo.$nombre_archivo);
-    // cambiar permisos del archivo antes grabado.
-		chmod($DestinoArchivo.$nombre_archivo,07777);
-	}catch(Exception $e){
-		$respuestaOK = false;
-		$mensajeError = "No Save";
-		$contenidoOK = "Error - > ".$e;
-	}
-// Armamos array para convertir a JSON
-$salidaJson = array("respuesta" => $respuestaOK,
-		"mensaje" => $mensajeError,
-		"contenido" => $contenidoOK);
+// Load PhpSpreadsheet classes
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 
-echo json_encode($salidaJson);	
+// Default JSON response
+$respuesta = [
+    "respuesta" => false,
+    "mensaje" => "Petición inválida.",
+    "contenido" => ""
+];
+
+try {
+    if ($errorDbConexion) { throw new Exception("No se puede conectar a la base de datos."); }
+
+    $codigo_all = $_REQUEST["todos"] ?? null;
+    if (!$codigo_all) { throw new Exception("Faltan parámetros (código de grupo)."); }
+
+    // --- 1. OBTENER DATOS DEL ENCABEZADO ---
+    $sqlHeader = "SELECT btrim(bach.nombre) as nombre_bachillerato, btrim(gan.nombre) as nombre_grado,
+                  btrim(sec.nombre) as nombre_seccion, ann.nombre as nombre_ann_lectivo,
+                  bach.codigo as codigo_bachillerato, ann.codigo as codigo_ann_lectivo
+                  FROM alumno_matricula am
+                  INNER JOIN bachillerato_ciclo bach ON bach.codigo = am.codigo_bach_o_ciclo
+                  INNER JOIN grado_ano gan ON gan.codigo = am.codigo_grado
+                  INNER JOIN seccion sec ON sec.codigo = am.codigo_seccion
+                  INNER JOIN ann_lectivo ann ON ann.codigo = am.codigo_ann_lectivo
+                  WHERE btrim(am.codigo_bach_o_ciclo::text || am.codigo_grado::text || am.codigo_seccion::text || am.codigo_ann_lectivo::text || am.codigo_turno::text) = :codigo_all
+                  LIMIT 1";
+    $stmtHeader = $dblink->prepare($sqlHeader);
+    $stmtHeader->bindParam(':codigo_all', $codigo_all);
+    $stmtHeader->execute();
+    $headerData = $stmtHeader->fetch(PDO::FETCH_ASSOC);
+
+    if (!$headerData) { throw new Exception("No se encontraron datos para el encabezado del grupo."); }
+
+    $print_bachillerato = 'Modalidad: ' . $headerData['nombre_bachillerato'];
+    $print_grado = 'Grado: ' . $headerData['nombre_grado'];
+    $print_seccion = 'Sección: ' . $headerData['nombre_seccion'];
+    $print_ann_lectivo = 'Año Lectivo: ' . $headerData['nombre_ann_lectivo'];
+    $nombre_grado = $headerData['nombre_grado'];
+    $nombre_seccion = $headerData['nombre_seccion'];
+    $codigo_bachillerato = $headerData['codigo_bachillerato'];
+    $nombre_ann_lectivo = $headerData['nombre_ann_lectivo'];
+
+
+    // --- 2. OBTENER DATOS DE ESTUDIANTES Y ENCARGADOS ---
+    $sqlData = "SELECT
+            a.id_alumno, am.id_alumno_matricula as codigo_matricula, a.codigo_nie,
+            btrim(trim(a.apellido_paterno) || ' ' || trim(a.apellido_materno) || ', ' || a.nombre_completo) as apellido_alumno,
+            a.apellido_paterno, a.apellido_materno, a.nombre_completo,
+            btrim(trim(a.apellido_paterno) || ' ' || trim(a.apellido_materno)) as apellidos_alumno,
+            a.genero as genero_estudiante_code,
+            CASE WHEN a.genero = '01' THEN 'Masculino' ELSE 'Femenino' END as genero_estudiante,
+            a.fecha_nacimiento, AGE(a.fecha_nacimiento) as edad_interval, EXTRACT(YEAR FROM AGE(a.fecha_nacimiento)) as edad,
+            a.pn_numero as pn_numero, a.pn_folio as pn_folio,
+            a.pn_tomo as pn_tomo, a.pn_libro as pn_libro,
+            btrim(gan.nombre) as nombre_grado, btrim(sec.nombre) as nombre_seccion,
+            a.telefono_alumno as telefono_alumno, a.direccion_alumno as direccion_alumno,
+            btrim(ae.nombres) as nombres_encargado, ae.fecha_nacimiento as encargado_fecha_nacimiento,
+            ae.dui as encargado_dui, cf.descripcion as nombre_tipo_parentesco, ae.telefono as telefono_encargado
+            FROM alumno a
+            INNER JOIN alumno_matricula am ON a.id_alumno = am.codigo_alumno AND am.retirado = 'f'
+            INNER JOIN grado_ano gan ON gan.codigo = am.codigo_grado
+            INNER JOIN seccion sec ON sec.codigo = am.codigo_seccion
+            LEFT JOIN alumno_encargado ae ON a.id_alumno = ae.codigo_alumno AND ae.encargado = 't'
+            LEFT JOIN catalogo_familiar cf ON ae.codigo_familiar = cf.codigo
+            WHERE btrim(am.codigo_bach_o_ciclo::text || am.codigo_grado::text || am.codigo_seccion::text || am.codigo_ann_lectivo::text || am.codigo_turno::text) = :codigo_all
+            ORDER BY apellido_alumno";
+
+    $stmtData = $dblink->prepare($sqlData);
+    $stmtData->bindParam(':codigo_all', $codigo_all);
+    $stmtData->execute();
+    $studentData = $stmtData->fetchAll(PDO::FETCH_ASSOC);
+
+    if (empty($studentData)) { throw new Exception("No se encontraron estudiantes para este grupo."); }
+
+    // --- 3. CREAR EL ARCHIVO EXCEL ---
+    $origen = $path_root . "/registro_academico/formatos_hoja_de_calculo/";
+    $templateFile = $origen . "Formato - Listado - 2023.xlsx";
+    if (!file_exists($templateFile)) { throw new Exception("No se encontró el archivo de plantilla Excel: " . $templateFile); }
+
+    $objReader = IOFactory::createReader("Xlsx");
+    $objPHPExcel = $objReader->load($templateFile);
+    $objPHPExcel->setActiveSheetIndex(0); // Trabajar en la primera hoja
+
+    // Escribir encabezados personalizados
+    $objPHPExcel->getActiveSheet()->setCellValue('A1', $print_bachillerato);
+    $objPHPExcel->getActiveSheet()->setCellValue('A2', $print_grado);
+    $objPHPExcel->getActiveSheet()->setCellValue('C2', $print_seccion);
+    $objPHPExcel->getActiveSheet()->setCellValue('D2', $print_ann_lectivo);
+
+    // Llenar datos de estudiantes
+    $num = 0;
+    $fila_excel = 4; // Fila inicial de datos en la plantilla
+    foreach ($studentData as $row) {
+        $num++;
+        $fila_excel++;
+
+        $nombre_completo_excel = trim(cambiar_de_del_2($row['nombre_completo'] . ' ' . $row['apellidos_alumno']));
+        $nombre_completo_promocion = mb_strtoupper(trim($row['nombre_completo']), "UTF-8");
+        $nombre_grado_seccion = trim($row['nombre_grado'] . ' ' . $row['nombre_seccion']);
+
+        $objPHPExcel->getActiveSheet()->setCellValue("A" . $fila_excel, $num);
+        $objPHPExcel->getActiveSheet()->setCellValue("B" . $fila_excel, $row['id_alumno']);
+        $objPHPExcel->getActiveSheet()->setCellValue("C" . $fila_excel, $row['codigo_matricula']);
+        $objPHPExcel->getActiveSheet()->setCellValueExplicit("D" . $fila_excel, $row['codigo_nie'], \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING); // Forzar NIE como texto
+        $objPHPExcel->getActiveSheet()->setCellValue("E" . $fila_excel, $nombre_completo_excel);
+        $objPHPExcel->getActiveSheet()->setCellValue("F" . $fila_excel, $row['genero_estudiante']);
+        $objPHPExcel->getActiveSheet()->setCellValue("G" . $fila_excel, cambiaf_a_normal($row['fecha_nacimiento']));
+        $objPHPExcel->getActiveSheet()->setCellValue("H" . $fila_excel, $row['edad']);
+        $objPHPExcel->getActiveSheet()->setCellValue("I" . $fila_excel, $row['pn_numero']);
+        $objPHPExcel->getActiveSheet()->setCellValue("J" . $fila_excel, $row['pn_folio']);
+        $objPHPExcel->getActiveSheet()->setCellValue("K" . $fila_excel, $row['pn_tomo']);
+        $objPHPExcel->getActiveSheet()->setCellValue("L" . $fila_excel, $row['pn_libro']);
+        $objPHPExcel->getActiveSheet()->setCellValue("M" . $fila_excel, $nombre_grado_seccion);
+        $objPHPExcel->getActiveSheet()->setCellValueExplicit("N" . $fila_excel, $row['telefono_alumno'], \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING);
+        $objPHPExcel->getActiveSheet()->setCellValue("O" . $fila_excel, trim($row['direccion_alumno']));
+        $objPHPExcel->getActiveSheet()->setCellValue("P" . $fila_excel, trim($row['nombres_encargado']));
+        $objPHPExcel->getActiveSheet()->setCellValue("Q" . $fila_excel, cambiaf_a_normal($row['encargado_fecha_nacimiento']));
+        $objPHPExcel->getActiveSheet()->setCellValueExplicit("R" . $fila_excel, $row['encargado_dui'], \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING);
+        $objPHPExcel->getActiveSheet()->setCellValue("S" . $fila_excel, trim($row['nombre_tipo_parentesco']));
+        $objPHPExcel->getActiveSheet()->setCellValueExplicit("T" . $fila_excel, $row['telefono_encargado'], \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING);
+
+        // Columnas para cuadro de promoción (originalmente W, X, Y, Z, AA)
+        $objPHPExcel->getActiveSheet()->setCellValue("W" . $fila_excel, trim($row['apellido_paterno']));
+        $objPHPExcel->getActiveSheet()->setCellValue("X" . $fila_excel, trim($row['apellido_materno']));
+        $objPHPExcel->getActiveSheet()->setCellValue("Y" . $fila_excel, $nombre_completo_promocion);
+        $objPHPExcel->getActiveSheet()->setCellValueExplicit("Z" . $fila_excel, $row['codigo_nie'], \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING);
+        $objPHPExcel->getActiveSheet()->setCellValue("AA" . $fila_excel, mb_strtoupper($row['genero_estudiante_code'],"UTF-8")); // 'm' or 'f'
+    }
+
+    // --- 4. GUARDAR EL ARCHIVO ---
+    // Asegurarse de que $DestinoArchivo se define correctamente en CrearDirectorios
+    $codigo_destino = 1; // 1 = Cuadro de Calificaciones (según tu código original)
+    // La función CrearDirectorios debe definir globalmente $DestinoArchivo
+    CrearDirectorios($path_root, $nombre_ann_lectivo, $codigo_bachillerato, $codigo_destino, ""); 
+
+    if (empty($DestinoArchivo) || !is_dir($DestinoArchivo)) {
+        throw new Exception("El directorio de destino no es válido o no se pudo crear: " . ($DestinoArchivo ?? 'No definido'));
+    }
+
+    $nombre_archivo_base = replace_3($codigo_bachillerato . "-". $nombre_grado ."-".$nombre_seccion.".xlsx");
+    $rutaCompletaArchivo = $DestinoArchivo . $nombre_archivo_base;
+
+    $objWriter = new Xlsx($objPHPExcel);
+    $objWriter->save($rutaCompletaArchivo);
+
+    if (!file_exists($rutaCompletaArchivo)) {
+        throw new Exception("No se pudo guardar el archivo Excel en el servidor.");
+    }
+    chmod($rutaCompletaArchivo, 0777); // Intentar dar permisos (puede fallar dependiendo del servidor)
+
+    $respuesta['respuesta'] = true;
+    $respuesta['mensaje'] = "Archivo Excel generado correctamente.";
+    $respuesta['contenido'] = "Archivo guardado como: " . basename($rutaCompletaArchivo); // Solo el nombre del archivo
+
+} catch (PDOException $e) {
+    $respuesta['mensaje'] = "Error de Base de Datos: " . $e->getMessage();
+    // Considera loggear el error completo: error_log($e->getMessage());
+} catch (Exception $e) {
+    $respuesta['mensaje'] = "Error: " . $e->getMessage();
+    // Considera loggear el error completo: error_log($e->getMessage());
+}
+
+// Enviar respuesta JSON
+echo json_encode($respuesta);
 ?>

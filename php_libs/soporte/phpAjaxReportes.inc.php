@@ -80,9 +80,22 @@ try {
                 . '<td><label class="fw-bold">' . htmlspecialchars($fila['nombre_grado'] . ' - ' . $fila['nombre_seccion'] . ' - ' . $fila['nombre_turno']) . '</label>'
                 . '<br><small>Encargado: <span class="badge bg-secondary">' . htmlspecialchars($fila['nombre_docente']) . '</span></small>'
                 . '</td>'
-                // --- BOTONES COMPATIBLES CON EL NUEVO JS ---
-                . '<td><a href="#" class="btn btn-sm btn-info report-link" data-report-type="nominas" data-report-code="' . htmlspecialchars($report_code) . '" title="Imprimir Nómina"><i class="fas fa-print"></i> Imprimir</a></td>'
-                . '<td><a href="#" class="btn btn-sm btn-info report-link" data-report-type="notas" data-report-code="' . htmlspecialchars($report_code) . '" title="Imprimir Reporte de Notas"><i class="fas fa-print"></i> Imprimir</a></td>'
+                // --- BOTONES CON SPINNER AÑADIDO ---
+                . '<td>'
+                . '<a href="#" class="btn btn-sm btn-info report-link" data-report-type="nominas" data-report-code="' . htmlspecialchars($report_code) . '" title="Imprimir Nómina">'
+                . '<i class="fas fa-print me-1"></i> Imprimir'
+                // ▼▼▼ SPINNER AÑADIDO (inicialmente oculto) ▼▼▼
+                . '<span class="spinner-border spinner-border-sm ms-1 d-none" role="status" aria-hidden="true"></span>'
+                . '</a>'
+                . '</td>'
+                . '<td>'
+                . '<a href="#" class="btn btn-sm btn-info report-link" data-report-type="notas" data-report-code="' . htmlspecialchars($report_code) . '" title="Imprimir Reporte de Notas">'
+                . '<i class="fas fa-print me-1"></i> Imprimir'
+                // ▼▼▼ SPINNER AÑADIDO (inicialmente oculto) ▼▼▼
+                . '<span class="spinner-border spinner-border-sm ms-1 d-none" role="status" aria-hidden="true"></span>'
+                . '</a>'
+                . '</td>'
+                // --- FIN DE BOTONES CON SPINNER ---
                 . '</tr>';
 
             // Almacenar grados para el dropdown (se filtrarán duplicados después).
