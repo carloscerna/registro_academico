@@ -339,6 +339,15 @@ function generarPdfCuadro(array $datos) {
 
     // Bucle principal adaptado de tu original
     foreach ($alumnosNotas as $idAlumno => $alumno) {
+        // --- Control de Salto de Página Manual ---
+        $limiteFilas = $pdf->GetLimiteFilasPagina(); // Obtiene 23 o FILAS_SIGUIENTES_PAGINAS
+        // Si la fila actual ALCANZA O SUPERA el límite, añade página ANTES de dibujarla
+        if ($pdf->GetNumFilaActual() >= $limiteFilas) {
+             $ancho_total_tabla = 7 + 20 + 90 + (count($datos['asignaturas']) * $ancho_asig_pdf) + 20;
+             $pdf->Cell($ancho_total_tabla, 0, '', 'T'); // Línea inferior tabla anterior
+             $pdf->AddPage(); // Llama a Header (que reinicia numFilaActual)
+             $pdf->SetFont('Arial', '', TAMANO_FUENTE_DATOS); // Restaurar fuente
+        }
         if ($numFila > 0 && $numFila % FILAS_POR_PAGINA_CUADRO == 0) { $pdf->AddPage(); $pdf->SetFont('Arial', '', 7); } // AddPage redibuja Header
         $pdf->SetFillColor($fill ? 240 : 255, $fill ? 240 : 255, $fill ? 240 : 255);
 
