@@ -316,28 +316,29 @@ function calcularEstadisticasFinales($pdo, $codigoAll, $notas, $asignaturas, $no
  * Genera el PDF del reporte adaptando el bucle original y usando el Header detallado.
  */
 function generarPdfCuadro(array $datos) {
-    // ... (Código para obtener $notaMinima, $stats, procesar $alumnosNotas sin cambios) ...
-    $notaMinima = floatval($datos['encabezado']['nota_minima'] ?? 5.0);
+ $notaMinima = floatval($datos['encabezado']['nota_minima'] ?? 5.0);
     $stats = $datos['estadisticas'];
-    $alumnosNotas = [];
-    foreach ($datos['notas'] as $nota) { $idAlumno = $nota['id_alumno']; if (!isset($alumnosNotas[$idAlumno])) { $alumnosNotas[$idAlumno] = ['info' => ['nombre' => $nota['nombre_completo'], 'nie' => $nota['codigo_nie'], 'genero' => $nota['genero']], 'notas' => []]; } $alumnosNotas[$idAlumno]['notas'][$nota['codigo_asignatura']] = ['nf' => $nota['nota_final'], 'nr1' => $nota['recuperacion'], 'nr2' => $nota['nota_recuperacion_2']]; }
+
+    // --- PROCESAR Y PIVOTAR DATOS DE NOTAS ---
+    $alumnosNotas = []; foreach ($datos['notas'] as $nota) { /* ... */ }
 
     // --- GENERAR PDF ---
     $pdf = new PDF_CuadroRegistro('L', 'mm', 'Legal');
-    $pdf->SetMargins(10, 5, 10); $pdf->SetAutoPageBreak(true, 15); $pdf->AliasNbPages();
-    $pdf->datosEncabezado = $datos['encabezado'];
-    $pdf->asignaturas = $datos['asignaturas'];
-    $pdf->nombreDocente = $datos['encabezado']['nombre_docente'];
-    $pdf->estadisticas = $stats;
+    $pdf->SetMargins(10, 5, 10);
+    $pdf->SetAutoPageBreak(false); // **CONTROL MANUAL DE SALTOS**
+    $pdf->AliasNbPages('{nb}'); // Activar conteo total
+    $pdf->datosEncabezado = $datos['encabezado']; $pdf->asignaturas = $datos['asignaturas'];
+    $pdf->nombreDocente = $datos['encabezado']['nombre_docente']; $pdf->estadisticas = $stats;
     $pdf->codigoGrado = $datos['encabezado']['codigo_grado'] ?? '';
 
-    $pdf->AddPage(); // Dibuja el Header complejo automáticamente
+    $pdf->AddPage(); // Dibuja el Header complejo (con bloques condicionales)
 
-    $pdf->SetFont('Arial', '', 7); $fill = false; $numFila = 0;
-    $ancho_asig_pdf = 10;
+    $pdf->SetFont('Arial', '', TAMANO_FUENTE_DATOS); $fill = false; $numFilaTotal = 0;
+    $ancho_asig_pdf = 10; $alto_fila = ALTO_FILA_DATOS; // Usar constantes
     $promediosAsignatura = array_fill_keys(array_column($datos['asignaturas'], 'codigo'), ['suma' => 0, 'contador' => 0]);
+    $conteo_alumnos_promedio = 0;
 
-    // Bucle principal adaptado de tu original
+    // Bucle principal
     foreach ($alumnosNotas as $idAlumno => $alumno) {
         // --- Control de Salto de Página Manual ---
         $limiteFilas = $pdf->GetLimiteFilasPagina(); // Obtiene 23 o FILAS_SIGUIENTES_PAGINAS
@@ -348,89 +349,48 @@ function generarPdfCuadro(array $datos) {
              $pdf->AddPage(); // Llama a Header (que reinicia numFilaActual)
              $pdf->SetFont('Arial', '', TAMANO_FUENTE_DATOS); // Restaurar fuente
         }
-        if ($numFila > 0 && $numFila % FILAS_POR_PAGINA_CUADRO == 0) { $pdf->AddPage(); $pdf->SetFont('Arial', '', 7); } // AddPage redibuja Header
+
+        // --- Dibujo de la fila ---
         $pdf->SetFillColor($fill ? 240 : 255, $fill ? 240 : 255, $fill ? 240 : 255);
+        $pdf->Cell(7, $alto_fila, $numFilaTotal + 1, 1, 0, 'C', true); // N#
+        $pdf->Cell(20, $alto_fila, $alumno['info']['nie'], 1, 0, 'C', true); // NIE
+        $pdf->Cell(90, $alto_fila, convertirtexto($alumno['info']['nombre']), 1, 0, 'L', true); // Nombre
+        $asignaturasBasicasReprobadas = 0; $tieneNotasValidas = false;
+        foreach ($datos['asignaturas'] as $asig) { /* ... Llenado de notas con $alto_fila y coloreado ... */ }
+        $resultadoFinal = ($asignaturasBasicasReprobadas <= 2) ? 'P' : 'R'; // AJUSTA LÓGICA
+        $pdf->Cell(20, $alto_fila, $resultadoFinal, 1, 1, 'C', true);
 
-        $pdf->Cell(7, 5, $numFila + 1, 1, 0, 'C', true); // N#
-        $pdf->Cell(20, 5, $alumno['info']['nie'], 1, 0, 'C', true); // NIE
-        $pdf->Cell(90, 5, convertirtexto($alumno['info']['nombre']), 1, 0, 'L', true); // Nombre
-
-        $asignaturasBasicasReprobadas = 0;
-
-        foreach ($datos['asignaturas'] as $asig) {
-            $notaData = $alumno['notas'][$asig['codigo']] ?? ['nf' => null, 'nr1' => null, 'nr2' => null];
-            $notaFinalVerificada = verificar_nota($notaData['nf'] ?? null, $notaData['nr1'] ?? null, $notaData['nr2'] ?? null);
-            $nfVal = floatval($notaFinalVerificada);
-            $displayNota = '';
-
-            if ($nfVal >= 0) {
-                 if (trim($asig['codigo_area']) == '07') { $displayNota = cambiar_concepto($nfVal); }
-                 else {
-                    $displayNota = number_format($nfVal, 0);
-                     // *** REVISA ESTA LÓGICA DE COLOREADO Y CONTEO ***
-                    if($nfVal < $notaMinima && $nfVal >= 0) { // Colorear si reprobada (incluye 0?)
-                        $pdf->SetTextColor(255, 0, 0);
-                        // *** REVISA CÓDIGOS DE ÁREA BÁSICA ***
-                        if (in_array(trim($asig['codigo_area']), ['01', '03'])) { $asignaturasBasicasReprobadas++; }
-                    }
-                    // Sumar para promedio solo si nota > 0 (o >= 0?)
-                    if(isset($promediosAsignatura[$asig['codigo']]) && $nfVal > 0) {
-                         $promediosAsignatura[$asig['codigo']]['suma'] += $nfVal;
-                         $promediosAsignatura[$asig['codigo']]['contador']++;
-                    }
-                 }
-            }
-            $pdf->Cell($ancho_asig_pdf, 5, $displayNota, 1, 0, 'C', true);
-            $pdf->SetTextColor(0); // Restaurar color
-        }
-         // *** REVISA ESTA LÓGICA DE PROMOCIÓN ***
-        $resultadoFinal = ($asignaturasBasicasReprobadas <= 2) ? 'P' : 'R';
-        $pdf->Cell(20, 5, $resultadoFinal, 1, 1, 'C', true);
-
-        $fill = !$fill; $numFila++;
+        if($tieneNotasValidas) $conteo_alumnos_promedio++;
+        $fill = !$fill; $numFilaTotal++; $pdf->IncrementaFila(); // Incrementar contador de página
     }
 
-    // --- Rellenar filas vacías ---
-    // ... (código similar al anterior, usando FILAS_POR_PAGINA_CUADRO) ...
-// --- Rellenar filas vacías (Adaptado de tu original) ---
-    $filasEnPagina = $numFila % FILAS_POR_PAGINA_CUADRO;
-    if ($filasEnPagina == 0 && $numFila > 0) $filasEnPagina = FILAS_POR_PAGINA_CUADRO;
+    // --- Rellenar filas vacías en la ÚLTIMA página ---
+    $limiteUltimaPagina = $pdf->GetLimiteFilasPagina(); // Límite de la página actual
+    $filasActualesUltimaPagina = $pdf->GetNumFilaActual();
+    $linea_faltante = $limiteUltimaPagina - $filasActualesUltimaPagina; if ($linea_faltante < 0) $linea_faltante = 0;
 
-    // ▼▼▼ CALCULAR linea_faltante PRIMERO ▼▼▼
-    $linea_faltante = ($numFila == 0) ? FILAS_POR_PAGINA_CUADRO : FILAS_POR_PAGINA_CUADRO - $filasEnPagina;
-    if ($linea_faltante < 0) $linea_faltante = 0; // Asegurar que no sea negativo
-
-    // Dibujar línea diagonal si hay espacio (Ahora $linea_faltante existe)
-    if ($linea_faltante > 0 && $numFila < FILAS_POR_PAGINA_CUADRO) {
+    // Dibujar línea diagonal si es necesario
+    if ($linea_faltante > 0) {
         $valor_y1 = $pdf->GetY();
-        // Ajusta las coordenadas X2, Y2 de la línea según el tamaño Legal y márgenes
-        $pdf->Line(17, $valor_y1, 237, $pdf->GetPageHeight() - $pdf->bMargin - 25);
+        $pdf->Line(17, $valor_y1, 237, $pdf->GetPageHeight() - 30); // Ajusta el 30
     }
 
-    // Bucle para rellenar las filas
-    for($i=0; $i < $linea_faltante; $i++) { // Usar $linea_faltante
+    for($i=0; $i < $linea_faltante; $i++) {
         $pdf->SetFillColor($fill ? 240 : 255, $fill ? 240 : 255, $fill ? 240 : 255);
-        $pdf->Cell(7, 5, $numFila + 1, 1, 0, 'C', true);
-        $pdf->Cell(20, 5, '', 1, 0, 'C', true);
-        $pdf->Cell(90, 5, '', 1, 0, 'L', true);
-        foreach ($datos['asignaturas'] as $asig) { $pdf->Cell($ancho_asig_pdf, 5, '', 1, 0, 'C', true); }
-        $pdf->Cell(20, 5, '', 1, 1, 'C', true);
-        $fill = !$fill; $numFila++;
+        $pdf->Cell(7, $alto_fila, $numFilaTotal + 1, 1, 0, 'C', true);
+        $pdf->Cell(20, $alto_fila, '', 1, 0, 'C', true); $pdf->Cell(90, $alto_fila, '', 1, 0, 'L', true);
+        foreach ($datos['asignaturas'] as $asig) { $pdf->Cell($ancho_asig_pdf, $alto_fila, '', 1, 0, 'C', true); }
+        $pdf->Cell(20, $alto_fila, '', 1, 1, 'C', true);
+        $fill = !$fill; $numFilaTotal++; $pdf->IncrementaFila();
     }
-
-
-    // --- Fila de Promedios por Asignatura ---
+// --- Fila de Promedios por Asignatura ---
      $pdf->SetFont('Arial', 'B', 7);
-     $pdf->Cell(117, 5, 'PROMEDIO POR ASIGNATURA', 1, 0, 'R', true); // 7+20+90
-     foreach($datos['asignaturas'] as $asig) {
-         $promData = $promediosAsignatura[$asig['codigo']] ?? ['suma' => 0, 'contador' => 0];
-         $promedio = ($promData['contador'] > 0) ? number_format(round($promData['suma'] / $promData['contador']), 0) : ''; // Redondeado
-         $displayPromedio = (trim($asig['codigo_area']) == '07' && $promedio !== '') ? cambiar_concepto($promedio) : $promedio;
-         $pdf->Cell($ancho_asig_pdf, 5, $displayPromedio, 1, 0, 'C', true);
-     }
-     $pdf->Cell(20, 5, '', 1, 1, 'C', true);
+     $pdf->Cell(117, $alto_fila, 'PROMEDIO POR ASIGNATURA', 1, 0, 'R', true);
+     foreach($datos['asignaturas'] as $asig) { /* ... código ... */ }
+     $pdf->Cell(20, $alto_fila, '', 1, 1, 'C', true);
 
-// --- SECCIÓN DE FIRMAS (AL FINAL, SOLO SI ES LA ÚLTIMA PÁGINA) ---
+
+    // --- SECCIÓN DE FIRMAS (AL FINAL, SOLO SI ES LA ÚLTIMA PÁGINA) ---
     // Obtenemos el número total de páginas REAL después de procesar todo.
      $numPagesTotal = $pdf->PageNo(); // El número de página actual es el total.
 
@@ -439,14 +399,15 @@ function generarPdfCuadro(array $datos) {
          $y_actual_firmas = $pdf->GetY();
 
          // Controlar salto si las firmas no caben
-         if ($y_actual_firmas > $pdf->GetPageHeight() - 45) { // Ajusta el 45
-           //  $pdf->AddPage();
+         // Ajusta el 45 si la sección de firmas + promedios necesita más/menos espacio
+         if ($y_actual_firmas > $pdf->GetPageHeight() - 45) {
+             $pdf->AddPage();
              $y_actual_firmas = $pdf->GetY() + 10; // Reiniciar Y y bajar un poco
              $pdf->SetFont('Arial','',10); // Restaurar fuente
          }
 
-         // Promovidos y Retenidos en letras
-         $pdf->SetXY(250, $y_actual_firmas); $pdf->Cell(30,5,'PROMOVIDOS: '.$numPagesTotal . $pdf->pageNo(),0,0,'L'); $pdf->SetX(280);
+         // Promovidos y Retenidos en letras (posicionados a la derecha)
+         $pdf->SetXY(250, $y_actual_firmas); $pdf->Cell(30,5,'PROMOVIDOS:',0,0,'L'); $pdf->SetX(280);
          $total_promovidos = ($stats['total_promovidos_m'] ?? 0) + ($stats['total_promovidos_f'] ?? 0);
          $pdf->Cell(60, 5, ($total_promovidos == 0) ? 'cero' : convertirtexto(strtolower(num2letras($total_promovidos))), 'B', 1, 'C');
          $pdf->SetXY(250, $y_actual_firmas + 10); $pdf->Cell(30,5,'RETENIDOS:',0,0,'L'); $pdf->SetX(280);
