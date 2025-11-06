@@ -139,6 +139,7 @@
                     <div class="dropdown-menu">
                         <a class="dropdown-item" id="linkReporteIndicadores" href="#" target="_blank">Indicadores Educativos</a>
                         <a class="dropdown-item" id="linkReporteMemoria" href="#" target="_blank">Memoria de Labores</a>
+                        <a class="dropdown-item" id="linkReporteRecuperaciones" href="#" target="_blank">Reporte de Recuperaciones</a>
                     </div>
                 </div>
                 <!-- FIN DEL PIE MODIFICADO -->
@@ -419,6 +420,13 @@ function loadTeacherDashboardData() {
                                 // 2. Enlace para Reporte de Memoria
                                 const urlReporteMemoria = `php_libs/reportes/Estadisticos/Memoria.php?ann_lectivo=${selectedAnnLectivo}`;
                                 $('#linkReporteMemoria').attr('href', urlReporteMemoria);
+                                // 3. NUEVO: Enlace para Reporte de Recuperaciones
+                                // Obtenemos el texto del año seleccionado (ej. "Año Escolar 2025")
+                                const selectedAnnLectivoNombre = $('#lstannlectivo option:selected').text();
+                                const urlReporteRecuperaciones = `php_libs/reportes/Estadisticos/reporteRecuperacionesGeneral.php?annlectivo=${selectedAnnLectivo}&nombre_annlectivo=${encodeURIComponent(selectedAnnLectivoNombre)}`;
+                                $('#linkReporteRecuperaciones').attr('href', urlReporteRecuperaciones);
+                                // --- Fin del nuevo enlace ---
+
                                 // --- Fin de la Actualización de Enlaces ---
                                 // MODIFICADO: Añadir enlace para el reporte de familias
                                 const urlReporteFamilias = `php_libs/reportes/Estudiante/NominaFamilias.php?ann_lectivo=${selectedAnnLectivo}`;

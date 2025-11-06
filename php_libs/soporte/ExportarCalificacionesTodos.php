@@ -102,7 +102,7 @@
             if($periodo == "2"){$nota_p_p = "indicador_p_p_2";}
             if($periodo == "3"){$nota_p_p = "indicador_p_p_3";}        
               break;
-          case ($codigo_modalidad == '15'): // Educación Media Bachillerato Tecnico Vocacion Administrativo Contable.
+          case ($codigo_modalidad == '15' || $codigo_modalidad == '21'): // Educación Media Bachillerato Tecnico Vocacion Administrativo Contable.
             if($periodo == "1"){$nota_p_p = "nota_p_p_1";}
             if($periodo == "2"){$nota_p_p = "nota_p_p_2";}
             if($periodo == "3"){$nota_p_p = "nota_p_p_3";}
@@ -177,7 +177,7 @@
       $codigo_area_actual = trim($fila['codigo_area']);
         // Verificar si cumple las condiciones de exclusión
         if ($codigo_bachillerato_actual === '15' && $codigo_area_actual === '03') {
-          continue; // Saltar esta asignatura y no procesarla
+          //continue; // Saltar esta asignatura y no procesarla
       }
       //
         if (!in_array($fila['nombre_asignatura'], $asignaturas)) {
@@ -206,7 +206,7 @@
 
     // Evitar que los datos se procesen si codigo_bachillerato es 10 y codigo_area es "03"
     if ($codigo_bachillerato_actual === "15" && $codigo_area_actual === "03") {
-      continue; // Saltar esta fila y no procesarla
+     // continue; // Saltar esta fila y no procesarla
     } // condicion para el bachillerato tecnido vocacional administrativo.
 
   // Aplicar lógica según codigo_cc
@@ -231,7 +231,15 @@
           } else {
               $nota_formateada = $nota; // Para otros valores
           }
-      }  
+      } elseif ($codigo_cc === "04") { // Modular
+          if (is_null($nota) || $nota <= 0) { // Vacío o igual a 0
+              $nota_formateada = "1"; // Asignar 1
+          } elseif ($nota > 6 && $nota <= 10) { // Entre 0 y 0.99
+              $nota_formateada = "1"; // Mantener tal como está
+          } else {
+              $nota_formateada = $nota; // Para otros valores
+          }
+        } 
         // Agrupar los datos correctamente
         if (!isset($datos_agrupados[$nie])) {
           $datos_agrupados[$nie] = []; // Inicializar agrupación
@@ -306,6 +314,16 @@ function ConceptoCalificacion($codigo_cc){
         }else{
           $objPHPExcel->getActiveSheet()->SetCellValue("B".$fila_excel, $nota_p_p_);                       
         }
+          break;
+      case "04":  // Modular
+          if($nota_p_p_ < 1){
+            $objPHPExcel->getActiveSheet()->getStyle($columnaAsignaturas[$conteoAsignaturas].$fila_excel)->getNumberFormat()->setFormatCode('#,##0.0');
+            $objPHPExcel->getActiveSheet()->SetCellValue($columnaAsignaturas[$conteoAsignaturas].$fila_excel, $valor_uno);
+          }else{
+            //print $conteoAsignaturas . "<br>";
+            $objPHPExcel->getActiveSheet()->getStyle($columnaAsignaturas[$conteoAsignaturas].$fila_excel)->getNumberFormat()->setFormatCode('#,##0.0');
+            $objPHPExcel->getActiveSheet()->SetCellValue($columnaAsignaturas[$conteoAsignaturas].$fila_excel, $nota_p_p_);
+          }
           break;
       default:
         echo "";

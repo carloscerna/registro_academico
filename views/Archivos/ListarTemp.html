@@ -3,307 +3,445 @@
 {% extends 'default_layout.html' %}
 
 {% block extraCSS %}
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
 <style>
-    #lista-contenido li {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-    
-    #lista-contenido li .ruta {
-        flex: 1; /* La columna de la ruta ocupa todo el espacio disponible */
-        text-align: left; /* Asegura que el texto e íconos estén alineados a la izquierda */
-        display: flex; /* Si los íconos y nombres están desalineados */
-        align-items: center; /* Centra verticalmente íconos y nombres */
-        gap: 10px; /* Añade espacio entre íconos y nombres */
-    }
-    
-    #lista-contenido li .boton {
-        flex: 0; /* La columna del botón ocupa solo lo necesario */
-        text-align: right;
-    }
-/* ESTILO DEL FLEXBOX */ 
-.flex-lista {
-    display: flex;
-    flex-wrap: wrap; /* Permitir que los elementos pasen a la siguiente fila */
-    gap: 10px; /* Espaciado entre los elementos */
-    list-style-type: none;
-    padding: 0;
-}
+    /* ... (tus estilos de íconos y botones btn-descargar/btn-eliminar se mantienen) ... */
+    .fa-file-pdf { color: red; }
+    .fa-file-word { color: blue; }
+    .fa-file-excel { color: green; }
+    .fa-file-image { color: orange; }
+    .fa-file-archive { color: #E6A23C; }
+    .fa-folder { color: #FFD700; }
+    .fa-file { color: #6c757d; }
 
-.flex-lista li {
-    flex: 1 1 calc(50% - 10px); /* Cada elemento ocupa el 50% menos el espacio del gap */
-    background-color: #f9f9f9;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    box-sizing: border-box; /* Asegura que el padding no afecte el ancho */
-}
-
-/* MEJORA DE ICONOS Y BOTONES. */
-.flex-lista li, .grid-lista li {
-    display: flex;
-    justify-content: flex-start; /* Ícono a la izquierda, botón a la derecha */
-    align-items: center; /* Centrar verticalmente */
-    gap: 20px;
-}
-
-.flex-lista li button, .grid-lista li button {
-    margin-left: 10px; /* Espaciado del botón respecto al texto */
-}
-    /* ESTILO PARA LOS BOTONES */
-    .btn-descargar {
+    #tabla-archivos .btn-descargar,
+    #tabla-archivos .btn-eliminar {
         padding: 5px 10px;
-        background-color: #28a745;
+        color: white;
+        border: none;
+        border-radius: 3px;
+        cursor: pointer;
+        margin: 2px;
+    }
+    
+    .btn-descargar { background-color: #28a745; }
+    .btn-descargar:hover { background-color: #218838; }
+    .btn-eliminar { background-color: #dc3545; }
+    .btn-eliminar:hover { background-color: #c82333; }
+
+    /* --- NUEVO: Estilo para el botón de descarga múltiple --- */
+    .btn-descarga-multiple {
+        padding: 5px 10px;
+        background-color: #007bff;
         color: white;
         border: none;
         border-radius: 3px;
         cursor: pointer;
         margin-left: 10px;
     }
-    
-    .btn-descargar:hover {
-        background-color: #218838;
-    }
-    .btn-eliminar { /* Nuevo estilo para el botón de eliminar */
+    .btn-descarga-multiple:hover { background-color: #0056b3; }
+    /* --- FIN NUEVO --- */
+
+/* --- NUEVO: Estilo para el botón de eliminación múltiple --- */
+    .btn-eliminar-multiple {
         padding: 5px 10px;
-        background-color: #dc3545; /* Color rojo para eliminar */
+        background-color: #dc3545; /* Rojo, igual que el individual */
         color: white;
         border: none;
         border-radius: 3px;
         cursor: pointer;
-        margin-left: 10px;
+    }
+    .btn-eliminar-multiple:hover { background-color: #c82333; }
+    /* --- FIN NUEVO --- */
+
+
+    #tabla-archivos .dt-center {
+        text-align: center;
+        vertical-align: middle;
+    }
+    
+    #tabla-archivos .dt-left {
+        text-align: left;
+        vertical-align: middle;
     }
 
-    .btn-eliminar:hover { /* Efecto hover para el botón de eliminar */
-        background-color: #c82333;
+    a.carpeta-link {
+        font-weight: bold;
+        cursor: pointer;
     }
-    /* ESTLO PARA LA PAGINA Y LOS ELEMENTOS*/
-            body {
-                font-family: Arial, sans-serif;
-                margin: 0px;
-            }
-    
-            h1 {
-                text-align: center;
-            }
-    
-            #lista-contenido {
-                list-style-type: none;
-                padding: 0;
-            }
-    
-            #lista-contenido li {
-                margin: 5px 0;
-            }
-    
-            a {
-                text-decoration: none;
-                color: #007BFF;
-                cursor: pointer;
-            }
-    
-            a:hover {
-                text-decoration: underline;
-            }
-    
-            .navegacion {
-                margin-bottom: 20px;
-            }
-    
-            .navegacion a {
-                font-weight: bold;
-                color: #FF5733;
-            }
-            .fa-file-pdf {
-                color: red;
-            }
-            
-            .fa-file-word {
-                color: blue;
-            }
-            
-            .fa-file-excel {
-                color: green;
-            }
-            
-            .fa-file-image {
-                color: orange;
-            }
+
+    /* --- NUEVO: Ocultar checkbox de carpetas --- */
+    input.chk-seleccionar[disabled] {
+        display: none;
+    }
+
 </style>
 {% endblock %}
 
 {% block javascripts %}
+<script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+<script src="https://cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json"></script>
+
 <script>
+// Variables globales
+let historial = ["C:/TempSistemaRegistro/Carpetas"];
+let miTabla; // Variable para la instancia de DataTables
+
+/**
+ * Obtiene el ícono de Font Awesome según el formato.
+ */
 function obtenerIcono(formato) {
     switch (formato.toLowerCase()) {
+        case 'carpeta':
+            return '<i class="fas fa-folder fa-lg"></i>';
         case 'pdf':
-            return '<i class="fad fa-file-pdf"></i>';
-            //return '📄'; // Puedes reemplazar con `<i class="fas fa-file-pdf"></i>` usando Font Awesome
+            return '<i class="fas fa-file-pdf fa-lg"></i>';
         case 'doc':
         case 'docx':
-            return '📝'; // Para documentos Word
+            return '<i class="fas fa-file-word fa-lg"></i>';
         case 'xls':
-            return '<i class="fad fa-file-excel"></i>';
         case 'xlsx':
-            return '<i class="fad fa-file-excel"></i>';
-            //return '📊'; // Para hojas de cálculo Excel
+            return '<i class="fas fa-file-excel fa-lg"></i>';
         case 'png':
         case 'jpg':
         case 'jpeg':
         case 'gif':
-            return '🖼️'; // Para imágenes
+            return '<i class="fas fa-file-image fa-lg"></i>';
         case 'zip':
         case 'rar':
-            return '📦'; // Para archivos comprimidos
+            return '<i class="fas fa-file-archive fa-lg"></i>';
         default:
-            return '<i class="fad fa-folder fa-lg" style="--fa-primary-color: #eefd21; --fa-secondary-color: #e5ff00;"></i>' ;
-            // return '📁'; // Genérico o carpetas
+            return '<i class="fas fa-file fa-lg"></i>';
     }
 }
-</script>
-<script>  
-        // Variables globales para controlar la navegación
-        let historial = ["C:/TempSistemaRegistro/Carpetas"];
 
-        // Función para cargar el contenido de una carpeta
-        function cargarContenido(ruta = "C:/TempSistemaRegistro/Carpetas") {
+/**
+ * Carga el contenido de una ruta usando AJAX y actualiza la DataTable.
+ */
+function cargarContenido(ruta = "C:/TempSistemaRegistro/Carpetas") {
+    $.ajax({
+        url: 'php_libs/soporte/Archivos/ListarTemp.php',
+        method: 'GET',
+        data: { ruta: ruta },
+        dataType: 'json',
+        success: function(respuesta) {
+            if (ruta !== historial[historial.length - 1]) {
+                historial.push(ruta);
+            }
+
+            if (miTabla) {
+                miTabla.clear();
+                miTabla.rows.add(respuesta);
+                miTabla.draw();
+            }
+            // --- NUEVO: Desmarcar el "Seleccionar Todo" al cargar contenido ---
+            $('#select-all').prop('checked', false);
+        },
+        error: function() {
+            alert('Hubo un problema al cargar el contenido.');
+        }
+    });
+}
+
+// --- INICIALIZACIÓN Y EVENTOS ---
+
+$(document).ready(function() {
+
+    // 1. Inicializar la DataTable
+    miTabla = $('#tabla-archivos').DataTable({
+        "columns": [
+            // --- NUEVA Columna 0: Checkbox ---
+            {
+                "data": null,
+                "orderable": false,
+                "searchable": false,
+                "className": "dt-center",
+                "width": "5%",
+                "render": function(data, type, row) {
+                    // Solo mostrar checkbox para archivos, no para carpetas
+                    if (row.tipo === 'Carpeta') {
+                        // Devolvemos un checkbox deshabilitado (y lo ocultamos con CSS)
+                        // para mantener la estructura de la tabla
+                        return '<input type="checkbox" class="chk-seleccionar" disabled>';
+                    }
+                    return '<input type="checkbox" class="chk-seleccionar">';
+                }
+            },
+            // Columna 1: Ícono (Tipo)
+            { 
+                "data": "formato",
+                "render": function(data, type, row) {
+                    return obtenerIcono(row.tipo === 'Carpeta' ? 'carpeta' : data);
+                },
+                "className": "dt-center",
+                "orderable": false,
+                "width": "5%"
+            },
+            // Columna 2: Nombre
+            { 
+                "data": "nombre",
+                "className": "dt-left",
+                "render": function(data, type, row) {
+                    if (row.tipo === 'Carpeta') {
+                        return `<a href="#" class="carpeta-link" data-ruta="${row.ruta}">${data}</a>`;
+                    } else {
+                        return `${data} (${row.formato.toUpperCase()})`;
+                    }
+                }
+            },
+            // Columna 3: Fecha
+            { "data": "fecha", "className": "dt-center", "width": "15%" },
+            // Columna 4: Hora
+            { "data": "hora", "className": "dt-center", "width": "15%" },
+            // Columna 5: Acciones (Botones)
+            { 
+                "data": "ruta",
+                "render": function(data, type, row) {
+                    let botones = '';
+                    if (row.tipo !== 'Carpeta') {
+                        // Botón de descarga individual (se mantiene)
+                        botones += `<button class="btn-descargar" data-archivo="${data}">Descargar</button>`;
+                    }
+                    botones += `<button class="btn-eliminar" data-ruta-eliminar="${data}">Eliminar</button>`;
+                    return botones;
+                },
+                "className": "dt-center",
+                "orderable": false,
+                "width": "20%"
+            }
+        ],
+        "language": {
+            "url": "https://cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json"
+        },
+        "order": [[2, 'asc']] // Ordenar por nombre (ahora columna 2)
+    });
+
+    // 2. Cargar el contenido inicial
+    cargarContenido();
+
+    // 3. Evento para el botón "Atrás"
+    $('#btnAtras').on('click', function() {
+        if (historial.length > 1) {
+            historial.pop();
+            const rutaAnterior = historial[historial.length - 1];
+            cargarContenido(rutaAnterior);
+        } else {
+            alert('No hay carpetas anteriores para regresar.');
+        }
+    });
+
+    // 4. Evento para hacer clic en una carpeta
+    $('#tabla-archivos tbody').on('click', 'a.carpeta-link', function(e) {
+        e.preventDefault();
+        const nuevaRuta = $(this).data('ruta');
+        cargarContenido(nuevaRuta);
+    });
+
+    // 5. Evento para descargar (INDIVIDUAL)
+    $('#tabla-archivos tbody').on('click', '.btn-descargar', function(e) {
+        e.preventDefault();
+        const archivo = $(this).data('archivo');
+        window.location.href = `php_libs/soporte/Archivos/descargar.php?archivo=${encodeURIComponent(archivo)}`;
+    });
+
+    // 6. Evento para eliminar
+    $('#tabla-archivos tbody').on('click', '.btn-eliminar', function(e) {
+        e.preventDefault();
+        const rutaAEliminar = $(this).data('ruta-eliminar');
+        
+        if (confirm(`¿Estás seguro de que quieres eliminar "${rutaAEliminar}"? Esta acción no se puede deshacer.`)) {
             $.ajax({
-                url: 'php_libs/soporte/Archivos/ListarTemp.php',
-                method: 'GET',
-                data: { ruta: ruta },
+                url: 'php_libs/soporte/Archivos/BorrarArchivo.php', 
+                method: 'POST',
+                data: { ruta: rutaAEliminar },
                 dataType: 'json',
                 success: function(respuesta) {
-                    const lista = $('#lista-contenido');
-                    lista.empty(); // Limpiar la lista existente
-
-                    if (ruta !== historial[historial.length - 1]) {
-                        historial.push(ruta); // Agrega la ruta al historial si es nueva
-                        console.log('Historial actualizado:', historial); // Depuración
+                    if (respuesta.success) {
+                        alert(respuesta.message);
+                        cargarContenido(historial[historial.length - 1]); 
+                    } else {
+                        alert('Error al eliminar: ' + respuesta.message);
                     }
-
-                    respuesta.forEach(function(elemento) {
-                        if (elemento.tipo === 'Carpeta') {
-                            lista.append(`<li>
-                                <div class="ruta">
-                                    📁 <a href="#" class="carpeta" data-ruta="${elemento.ruta}">${elemento.nombre}</a>
-                                </div>
-                                <div class="boton">
-                                    <button class="btn-eliminar" data-ruta-eliminar="${elemento.ruta}">Eliminar</button> </div>
-                                    <!-- Ningún botón en las carpetas, pero la estructura se conserva -->
-                                </div>
-                            </li>`);
-                        } else {
-                            const icono = obtenerIcono(elemento.formato); // Obtener el ícono según el formato
-                            lista.append(`<li>
-                                <div class="ruta">
-                                    ${icono} ${elemento.nombre} (${elemento.formato.toUpperCase()})
-                                </div>
-                                <div class="boton">
-                                    <button class="btn-descargar" data-archivo="${elemento.ruta}">Descargar</button>
-                                    <button class="btn-eliminar" data-ruta-eliminar="${elemento.ruta}">Eliminar</button> </div>
-                                </div>
-                            </li>`);
-                        }
-                    });
-
-                    // Agregar evento de clic a las carpetas
-                    $('.carpeta').on('click', function(e) {
-                        e.preventDefault();
-                        const nuevaRuta = $(this).data('ruta');
-                        cargarContenido(nuevaRuta); // Cargar la nueva carpeta
-                    });
                 },
                 error: function() {
-                    alert('Hubo un problema al cargar el contenido.');
+                    alert('Hubo un problema al comunicarse con el servidor para eliminar.');
                 }
             });
         }
+    });
 
-        $(document).ready(function() {
-            // Función para regresar a la carpeta anterior
-            $('#btnAtras').on('click', function() {
-                console.log('Botón atrás presionado'); // Depuración
-                if (historial.length > 1) {
-                    historial.pop(); // Elimina la carpeta actual del historial
-                    const rutaAnterior = historial[historial.length - 1]; // Obtén la carpeta anterior
-                    cargarContenido(rutaAnterior); // Carga la carpeta anterior
-                } else {
-                    alert('No hay carpetas anteriores para regresar.');
-                }
-            });
-        });
-        //
-        // Evento para descargar archivos
-        $(document).ready(function() {
-            $(document).on('click', '.btn-descargar', function(e) {
-                e.preventDefault();
-                const archivo = $(this).data('archivo');
-                window.location.href = `php_libs/soporte/Archivos/descargar.php?archivo=${encodeURIComponent(archivo)}`;
-            });
-        });
-           // NUEVO: Evento para eliminar archivos/carpetas
-           $(document).on('click', '.btn-eliminar', function(e) {
-            e.preventDefault();
-            const rutaAEliminar = $(this).data('ruta-eliminar');
-            
-            if (confirm(`¿Estás seguro de que quieres eliminar "${rutaAEliminar}"? Esta acción no se puede deshacer.`)) {
-                $.ajax({
-                    url: 'php_libs/soporte/Archivos/BorrarArchivo.php', // Ruta al nuevo script PHP
-                    method: 'POST',
-                    data: { ruta: rutaAEliminar },
-                    dataType: 'json',
-                    success: function(respuesta) {
-                        if (respuesta.success) {
-                            alert(respuesta.message);
-                            cargarContenido(historial[historial.length - 1]); // Recargar el contenido de la carpeta actual
-                        } else {
-                            alert('Error al eliminar: ' + respuesta.message);
-                        }
-                    },
-                    error: function(xhr, status, error) {
-                        alert('Hubo un problema al comunicarse con el servidor para eliminar: ' + error);
-                        console.error('Error AJAX:', xhr.responseText);
-                    }
-                });
+    // --- INICIO DE NUEVA LÓGICA ---
+
+// --- INICIO DE NUEVA LÓGICA ---
+
+    // 10. Evento para el botón "Eliminar Selección"
+    $('#btnEliminarSeleccion').on('click', function() {
+        let rutasAEliminar = [];
+
+        // Iterar sobre todas las filas para encontrar las seleccionadas
+        miTabla.rows().every(function() {
+            var $row = $(this.node());
+            var $checkbox = $row.find('.chk-seleccionar');
+
+            if ($checkbox.prop('checked')) {
+                var data = this.data(); 
+                rutasAEliminar.push(data.ruta);
             }
         });
-    //
-    function normalizarRuta(ruta) {
-        return ruta.replace(/\\/g, '/');
-    }
 
-    // Cargar la carpeta inicial al cargar la página
-        $(document).ready(function() {
-            cargarContenido();
+        if (rutasAEliminar.length === 0) {
+            alert('No has seleccionado ningún elemento para eliminar.');
+            return;
+        }
+
+        // --- Preguntar por confirmación (¡MUY IMPORTANTE!) ---
+        if (confirm(`¿Estás seguro de que quieres eliminar ${rutasAEliminar.length} elementos? Esta acción no se puede deshacer.`)) {
+            
+            // Usar AJAX para enviar el array de rutas al nuevo script PHP
+            $.ajax({
+                url: 'php_libs/soporte/Archivos/BorrarSeleccion.php', // El nuevo script que creamos
+                method: 'POST',
+                data: { rutas: rutasAEliminar }, // Enviamos el array con la clave 'rutas'
+                dataType: 'json',
+                success: function(respuesta) {
+                    // Mostrar el mensaje del servidor (ej. "Éxitos: 5, Fallos: 0")
+                    alert(respuesta.message);
+                    
+                    if (respuesta.success) {
+                        // Recargar el contenido de la carpeta actual para ver los cambios
+                        cargarContenido(historial[historial.length - 1]);
+                        // Desmarcar el "Seleccionar Todo"
+                        $('#select-all').prop('checked', false);
+                    }
+                },
+                error: function(xhr) {
+                    alert('Hubo un problema al comunicarse con el servidor para eliminar.');
+                    console.error(xhr.responseText);
+                }
+            });
+        }
+    });
+    // --- FIN DE NUEVA LÓGICA ---
+
+    // 7. Evento para el checkbox "Seleccionar Todo"
+    $('#select-all').on('click', function() {
+        // Obtener el estado (marcado/desmarcado) del checkbox "maestro"
+        const isChecked = $(this).prop('checked');
+        
+        // Iterar sobre TODAS las filas (incluyendo las de otras páginas)
+        miTabla.rows().every(function() {
+            // "this.node()" es el <tr>
+            var $row = $(this.node());
+            var $checkbox = $row.find('.chk-seleccionar');
+            
+            // Solo marcar los checkboxes que no estén deshabilitados (los de archivos)
+            if (!$checkbox.is(':disabled')) {
+                $checkbox.prop('checked', isChecked);
+            }
         });
+    });
+
+    // 8. Evento para desmarcar "Seleccionar Todo" si se desmarca uno individual
+    $('#tabla-archivos tbody').on('click', '.chk-seleccionar', function() {
+        if (!$(this).prop('checked')) {
+            // Si un checkbox individual se desmarca, desmarcamos el "maestro"
+            $('#select-all').prop('checked', false);
+        }
+    });
+
+    // 9. Evento para el botón "Descargar Selección"
+    $('#btnDescargarSeleccion').on('click', function() {
+        let archivosADescargar = [];
+
+        // Iterar sobre todas las filas de la tabla
+        miTabla.rows().every(function() {
+            var $row = $(this.node());
+            var $checkbox = $row.find('.chk-seleccionar');
+
+            // Si el checkbox de la fila está marcado
+            if ($checkbox.prop('checked')) {
+                // Obtener los datos de esa fila
+                var data = this.data(); 
+                // Añadir la ruta al array (el PHP ya valida si es archivo)
+                archivosADescargar.push(data.ruta);
+            }
+        });
+
+        if (archivosADescargar.length === 0) {
+            alert('No has seleccionado ningún archivo para descargar.');
+            return;
+        }
+
+        // --- Método para enviar un POST que resulta en una descarga ---
+        // 1. Crear un formulario oculto en la memoria
+        let form = $('<form>', {
+            'action': 'php_libs/soporte/Archivos/descargar_seleccion.php',
+            'method': 'POST',
+            'target': '_blank' // Abrir en una nueva pestaña (evita que la página actual se bloquee)
+        });
+
+        // 2. Añadir cada ruta de archivo como un input oculto
+        $.each(archivosADescargar, function(index, ruta) {
+            $('<input>').attr({
+                type: 'hidden',
+                name: 'archivos[]', // Enviar como un array
+                value: ruta
+            }).appendTo(form);
+        });
+
+        // 3. Añadir el formulario al body, enviarlo y luego eliminarlo
+        form.appendTo('body').submit();
+        form.remove();
+    });
+
+    // --- FIN DE NUEVA LÓGICA ---
+});
 </script>
 {% endblock %}
 
 {% block contenidos %}
-<!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper fondoBody">
-    <!-- Content Header (Page header) 
-    Se elimino content-header section solo se va dejar Main Content -->
-
-  <!-- Main content -->
     <section class="content">
         <div class="container-fluid">
             <h1>Explorador de la Carpeta</h1>
-            <div class="navegacion">
-                <button id="btnAtras" name="btaTras" title="Atras" class="form-control">⏪ Regresar</button>
+
+            <div class="navegacion" style="margin-bottom: 20px; display: flex; gap: 10px;">
+                <button id="btnAtras" name="btaTras" title="Atras" class="btn btn-secondary">⏪ Regresar</button>
+                
+                <button id="btnDescargarSeleccion" class="btn-descarga-multiple">
+                    <i class="fas fa-download"></i> Descargar Selección
+                </button>
+
+                <button id="btnEliminarSeleccion" class="btn-eliminar-multiple">
+                    <i class="fas fa-trash-alt"></i> Eliminar Selección
+                </button>
+
             </div>
             
-        
-            <ul id="lista-contenido" class="flex-lista">
-                <!-- Aquí se mostrarán carpetas y archivos -->
-            </ul>
+            <table id="tabla-archivos" class="table table-striped table-bordered" style="width:100%">
+                <thead>
+                    <tr>
+                        <th class="dt-center">
+                            <input type="checkbox" id="select-all" title="Seleccionar Todo">
+                        </th>
+                        <th>Tipo</th>
+                        <th>Nombre</th>
+                        <th>Fecha Mod.</th>
+                        <th>Hora Mod.</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    </tbody>
+            </table>
     
         </div>
     </section>  
-</div> <!-- /.content-Wrapper, Contains page content. -->
-{% endblock %}
+</div> {% endblock %}
 
 {% block loginUser %}
-<!--	{% include 'layout-login-user.html' %} -->
 {% endblock %}
