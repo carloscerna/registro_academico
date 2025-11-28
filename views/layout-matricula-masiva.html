@@ -10,7 +10,7 @@
     <script type="text/JavaScript" src="js/main_matricula_masiva.js"></script>
     <script type="text/JavaScript" src="js/default.js"></script>
  <!-- cargar datos del nombre del archivo. -->
-<script language="javascript">
+<script type="text/JavaScript">
 // Carga la INformación de Tabla Año Lectivo.
 	$(document).ready(function()
 	{
@@ -48,7 +48,7 @@
 					miselect.empty();
 					miselect.append('<option value="">Seleccionar...</option>');
 					for (var i=0; i<data.length; i++) {
-						miselect.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');
+						miselect.append('<option value="' + data[i].codigo + '">' + data[i].nombre + '</option>');
 					}
 			}, "json");			
 	    });
@@ -64,12 +64,12 @@
             lblturno.empty();
             elegido=$(this).val();
             ann=$("#lstannlectivo").val();
-            $.post("includes/cargar-grado-seccion.php", { elegido: elegido, ann: ann },
+            $.post("includes/cargar-grado-seccion.php", { modalidad: elegido, annlectivo: ann },
                    function(data){
               miselect.empty();
               miselect.append('<option value="">Seleccionar...</option>');
               for (var i=0; i<data.length; i++) {
-                miselect.append('<option value="' + data[i].codigo_grado + data[i].codigo_seccion + data[i].codigo_turno + '">' + data[i].descripcion_grado + ' ' + data[i].descripcion_seccion + ' - ' + data[i].descripcion_turno + '</option>');
+                miselect.append('<option value="' + data[i].codigo + '">' + data[i].nombre +'</option>');
               }
             }, "json");
           });
@@ -77,7 +77,7 @@
 });
 </script>
 
-<script language="javascript">
+<script type="text/JavaScript">
 // Carga la INformación de Tabla Año Lectivo.
 	$(document).ready(function()
 	{

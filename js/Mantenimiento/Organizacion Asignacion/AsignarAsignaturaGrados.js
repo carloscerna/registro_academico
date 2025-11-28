@@ -49,7 +49,7 @@ $(function(){
                                 miselect2.empty();
                                 miselect2.append("<option value='00'>Seleccionar...</option>");
                                 for (var i=0; i<data.length; i++) {
-                                miselect2.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');
+                                miselect2.append('<option value="' + data[i].codigo + '">' + data[i].nombre + '</option>');
                                 }
                     }, "json");		
                 });

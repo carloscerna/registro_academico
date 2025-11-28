@@ -105,6 +105,37 @@ class PDF extends FPDF
 }
 // --- FIN DE LA CLASE PDF ---
 
+// --- INICIO DE LA NUEVA FUNCIÓN ---
+/**
+ * Calcula la nota final basada en las recuperaciones.
+ * Lógica: Si R2 es 0, la NF = R1. Si R2 > 0, la NF = (R1 + R2) / 2.
+ * Siempre redondea a 0 decimales.
+ *
+ * @param mixed $r1 Valor de la recuperación 1.
+ * @param mixed $r2 Valor de la recuperación 2.
+ * @return int La nota final calculada y redondeada.
+ */
+function calcularNotaFinalCalculada($r1, $r2) {
+    $rec_1 = floatval($r1);
+    $rec_2 = floatval($r2);
+
+    $nota_calculada = 0;
+
+    // "cuando nota_recuperacion_2 == 0, se evalua recuperacion"
+    // Si R2 es 0, o no es numérico, la nota final es solo R1.
+    if ($rec_2 <= 0) {
+        $nota_calculada = $rec_1;
+    } 
+    // "y si nota_recuperacion_2 <> 0..."
+    // Si R2 tiene un valor, se promedian.
+    else {
+        $nota_calculada = ($rec_1 + $rec_2) / 2;
+    }
+
+    // "aproximado a un entero 0 decimales"
+    return round($nota_calculada, 0);
+}
+// --- FIN DE LA NUEVA FUNCIÓN ---
 
 // --- CONSULTA SQL PRINCIPAL ---
 // Esta consulta busca en TODO el año lectivo, TODOS los grados y secciones.
@@ -118,12 +149,14 @@ $sql = "
         n.nota_final,
         cm.nombre AS nombre_modalidad,
         cg.nombre AS nombre_grado,
-        cs.nombre AS nombre_seccion
+        cs.nombre AS nombre_seccion,
+        cp.calificacion_minima AS calificacion_minima_mod
     FROM alumno a
     INNER JOIN alumno_matricula am ON a.id_alumno = am.codigo_alumno AND am.retirado = 'f'
     INNER JOIN nota n ON n.codigo_alumno = a.id_alumno AND am.id_alumno_matricula = n.codigo_matricula
     INNER JOIN asignatura asig ON asig.codigo = n.codigo_asignatura
-    
+    INNER JOIN catalogo_periodos cp ON cp.codigo_modalidad = am.codigo_bach_o_ciclo
+    -- --- FIN DE LA MODIFICACIÓN ---
     -- === INICIO DE LA CORRECCIÓN ===
     -- Se cambió 'catalogo_modalidad' por 'catalogo_bach_o_ciclo'
     INNER JOIN bachillerato_ciclo cm ON cm.codigo = am.codigo_bach_o_ciclo
@@ -173,6 +206,8 @@ foreach ($data as $row) {
     // --- ¡¡INICIO DE LA CORRECCIÓN!! ---
     // Reseteamos el color del texto a negro al inicio de CADA fila.
     $pdf->SetTextColor(0, 0, 0); 
+    $calif_min_dinamica = floatval($row['calificacion_minima_mod']);
+    // --- FIN DE LA MODIFICACIÓN ---
     // --- FIN DE LA CORRECCIÓN ---
     // FPDF maneja el salto de página y la redibujado del Header() automáticamente
     $pdf->Cell($widths['num'], 6, $i, 1, 0, 'C');
@@ -183,10 +218,19 @@ foreach ($data as $row) {
     $pdf->Cell($widths['seccion'], 6, convertirtexto($row['nombre_seccion']), 1, 0, 'C');
     $pdf->Cell($widths['asig'], 6, convertirtexto($row['nombre_asignatura']), 1, 0, 'L');
     
-    // Usar la función personalizada para colorear notas
-    $pdf->CellNota($widths['nota'], 6, $row['recuperacion'], $calificacion_minima);
-    $pdf->CellNota($widths['nota'], 6, $row['nota_recuperacion_2'], $calificacion_minima);
-    $pdf->CellNota($widths['nota'], 6, $row['nota_final'], $calificacion_minima);
+// 1. Obtener los valores originales de R1 y R2
+    $r1 = $row['recuperacion'];
+    $r2 = $row['nota_recuperacion_2'];
+    
+    // 2. Calcular la nueva nota final usando la función
+    $nueva_nota_final = calcularNotaFinalCalculada($r1, $r2);
+    
+    // 3. Imprimir las celdas
+$pdf->CellNota($widths['nota'], 6, $r1, $calif_min_dinamica);                 // R1
+    $pdf->CellNota($widths['nota'], 6, $r2, $calif_min_dinamica);                 // R2
+    $pdf->CellNota($widths['nota'], 6, $nueva_nota_final, $calif_min_dinamica); // NF (Calculada)
+    
+    // --- FIN DE LA MODIFICACIÓN ---
     
     $pdf->Ln();
     $i++;

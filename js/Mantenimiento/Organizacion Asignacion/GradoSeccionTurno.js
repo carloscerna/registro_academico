@@ -29,12 +29,12 @@ $(function(){
                 let idAnnLectivo = $(this).val();
                 cargarOpcionesDependiente(miselect2, "includes/cargar-bachillerato.php", { annlectivo: idAnnLectivo });
             });
-    // Cuando el usuario seleccione una Modalidad, cargamos Grado-Sección-Turno con dos variables
-        $(miselect2).change(function() {
+    /* Cuando el usuario seleccione una Modalidad, cargamos Grado-Sección-Turno con dos variables
+        $(miselect4).change(function() {
             let idAnnLectivo = $(miselect88).val();  // Año Lectivo seleccionado
             let idModalidad = $(this).val();  // Modalidad seleccionada
-            cargarOpcionesMultiples("#lstSeGST", "includes/cargar-grado-seccion.php", { annlectivo: idAnnLectivo, modalidad: idModalidad });
-        });
+            cargarOpcionesMultiples("#lstGradoSeGST", "includes/cargar-grado-seccion.php", { annlectivo: idAnnLectivo, modalidad: idModalidad });
+        });*/
 
         // CUANDO EL VALOR DE NIVEL O MODALIDAD CAMBIE.
         $("#lstModalidadSeGST").change(function () {
