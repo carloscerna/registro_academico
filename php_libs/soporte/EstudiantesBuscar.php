@@ -1,108 +1,119 @@
 <?php
-//session_name('demoUI');
-//session_start();
-// limpiar cache.
+// Configuración de cabeceras para JSON y UTF-8
+header("Content-Type: application/json; charset=UTF-8");
 clearstatcache();
-// Script para ejecutar AJAX
-// cambiar a utf-8.
-header("Content-Type: text/html;charset=iso-8859-1");
-// Insertar y actualizar tabla de usuarios
-sleep(0);
+sleep(0); // Opcional, solo si quieres simular latencia
 
-// Inicializamos variables de mensajes y JSON
-$respuestaOK = false;
-$mensajeError = "No se puede ejecutar la aplicaci�n";
-$contenidoOK = "";
-$lista = "";
-$arreglo = array();
-$datos = array();
-// ruta de los archivos con su carpeta
-    $path_root=trim($_SERVER['DOCUMENT_ROOT']);
-    
-// Incluimos el archivo de funciones y conexi�n a la base de datos
+// Ruta raiz
+$path_root = trim($_SERVER['DOCUMENT_ROOT']);
 
+// Incluimos conexión (Asumiendo que $dblink es un objeto PDO)
 include($path_root."/registro_academico/includes/mainFunctions_conexion.php");
 
-// Validar conexi�n con la base de datos
+// Inicializamos respuesta por defecto
+$response = [
+    "respuesta" => false,
+    "mensaje"   => "Error desconocido",
+    "contenido" => "",
+    "data"      => [] // DataTables espera "data" para arrays
+];
+
+// Validar conexión
 if($errorDbConexion == false){
-	// Validamos qe existan las variables post
-	if(isset($_POST) && !empty($_POST)){
-		if(!empty($_POST['accion_buscar'])){
-			$_POST['accion'] = $_POST['accion_buscar'];
-		}
-		// Verificamos las variables de acci�n
-		switch ($_POST['accion']) {
-		case 'BuscarTodos':
-				// Armamos el query.
-				$query = "SELECT a.id_alumno, to_char(a.fecha_nacimiento,'dd/mm/yyyy') as fecha_nacimiento, a.edad, btrim(a.nombre_completo || CAST(' ' AS VARCHAR) || a.apellido_paterno || CAST(' ' AS VARCHAR) || a.apellido_materno) as nombre_completo_apellidos, a.codigo_nie, a.codigo_estatus, cat_est.descripcion as estatus,
-									am.nombres, am.dui, to_char(am.fecha_nacimiento,'dd/mm/yyyy') as fecha_nacimiento_encargado, cat_familiar.descripcion as nombre_familiar, am.direccion, am.telefono
-							FROM alumno a
-							INNER JOIN catalogo_estatus cat_est ON cat_est.codigo = a.codigo_estatus
-							INNER JOIN alumno_encargado am ON am.codigo_alumno = a.id_alumno
-							INNER JOIN catalogo_familiar cat_familiar ON cat_familiar.codigo = am.codigo_familiar
-								WHERE am.encargado = true
-									ORDER BY a.id_alumno DESC
-						";
-				// Ejecutamos el Query.
-				$consulta = $dblink -> query($query);
-				// Validar si hay registros.
-				if($consulta -> rowCount() != 0){
-					$respuestaOK = true;
-					$num = 0;
-					// convertimos el objeto
-					while($listado = $consulta -> fetch(PDO::FETCH_BOTH))
-					{
-						$arreglo["data"][] = $listado;						
-					}
-					$mensajeError = "Si Registro";
-				}
-				else{
-					$respuestaOK = true;
-					$contenidoOK = '';
-					$mensajeError =  'No Registro';
-				}
-			break;
+    
+    // PHP 8: Uso de Null Coalescing Operator (??) para evitar "Undefined array key"
+    // Aceptamos tanto POST como REQUEST por flexibilidad
+    $accion = $_REQUEST['accion_buscar'] ?? $_REQUEST['accion'] ?? '';
 
-			case 'eliminarA':
-				// Armamos el query
-				$query = "DELETE FROM alumno WHERE id_alumno = $_POST[id_user]";
+    if(!empty($accion)){
+        switch ($accion) {
+            case 'BuscarTodos':
+                // Consulta optimizada. Nota: CAST y btrim son funciones de PostgreSQL, asumo que usas Postgres.
+                $query = "SELECT 
+                            a.id_alumno, 
+                            to_char(a.fecha_nacimiento,'dd/mm/yyyy') as fecha_nacimiento, 
+                            a.edad, 
+                            btrim(a.nombre_completo || ' ' || a.apellido_paterno || ' ' || a.apellido_materno) as nombre_completo_apellidos, 
+                            a.codigo_nie, 
+                            a.codigo_estatus, 
+                            cat_est.descripcion as estatus,
+                            am.nombres, 
+                            am.dui, 
+                            to_char(am.fecha_nacimiento,'dd/mm/yyyy') as fecha_nacimiento_encargado, 
+                            cat_familiar.descripcion as nombre_familiar, 
+                            am.direccion, 
+                            am.telefono
+                        FROM alumno a
+                        INNER JOIN catalogo_estatus cat_est ON cat_est.codigo = a.codigo_estatus
+                        INNER JOIN alumno_encargado am ON am.codigo_alumno = a.id_alumno
+                        INNER JOIN catalogo_familiar cat_familiar ON cat_familiar.codigo = am.codigo_familiar
+                        WHERE am.encargado = true
+                        ORDER BY a.id_alumno DESC";
+                
+                try {
+                    $consulta = $dblink->prepare($query);
+                    $consulta->execute();
+                    
+                    // Obtener resultados
+                    $resultado = $consulta->fetchAll(PDO::FETCH_ASSOC);
 
-				// Ejecutamos el query
-					$count = $dblink -> exec($query);
-				
-				// Validamos que se haya actualizado el registro
-				if($count != 0){
-					$respuestaOK = true;
-					$mensajeError = 'Se ha eliminado el registro correctamente'.$query;
+                    if($resultado){
+                        $response["respuesta"] = true;
+                        $response["mensaje"] = "Registros Encontrados";
+                        // DataTables espera el array dentro de "data"
+                        $response["data"] = $resultado; 
+                    } else {
+                        $response["respuesta"] = true;
+                        $response["mensaje"] = "No hay registros";
+                        $response["data"] = [];
+                    }
+                } catch (PDOException $e) {
+                    $response["mensaje"] = "Error en BD: " . $e->getMessage();
+                }
+                break;
 
-					$contenidoOK = 'Se ha Eliminado '.$count.' Registro(s).';
+            case 'eliminarEstudiante': // CORREGIDO: Coincide con JS 'eliminarEstudiante'
+                // PHP 8: Validación estricta de variables
+                $id_user = $_REQUEST['id_estudiante'] ?? 0;
 
-				}else{
-					$mensajeError = 'No se ha eliminado el registro'.$query;
-				}
-			break;
-        
-			default:
-				$mensajeError = 'Esta acci�n no se encuentra disponible';
-			break;
-		}
-	}
-	else{
-		$mensajeError = 'No se puede ejecutar la aplicaci�n';}
+                if($id_user > 0){
+                    try {
+                        // SEGURIDAD: Sentencia Preparada (Evita SQL Injection)
+                        $query = "DELETE FROM alumno WHERE id_alumno = :id";
+                        $stmt = $dblink->prepare($query);
+                        
+                        if($stmt->execute([':id' => $id_user])){
+                            $count = $stmt->rowCount();
+                            if($count > 0){
+                                $response["respuesta"] = true;
+                                $response["mensaje"] = "Registro eliminado correctamente.";
+                                $response["contenido"] = "Se eliminaron $count registros.";
+                            } else {
+                                $response["mensaje"] = "No se encontró el registro para eliminar.";
+                            }
+                        } else {
+                            $response["mensaje"] = "Error al ejecutar la eliminación.";
+                        }
+                    } catch (PDOException $e) {
+                        $response["mensaje"] = "Error crítico: " . $e->getMessage();
+                    }
+                } else {
+                    $response["mensaje"] = "ID de estudiante no válido.";
+                }
+                break;
+            
+            default:
+                $response["mensaje"] = "Acción '$accion' no disponible.";
+                break;
+        }
+    } else {
+        $response["mensaje"] = "No se definió ninguna acción.";
+    }
+} else {
+    $response["mensaje"] = "No se puede establecer conexión con la base de datos.";
 }
-else{
-	$mensajeError = 'No se puede establecer conexi�n con la base de datos';}
-// Salida de la Array con JSON.
-	if($_POST["accion"] === "BuscarTodos" or $_POST["accion"] === "BuscarTodosCodigo"){
-		echo json_encode($arreglo);	
-	}elseif($_POST["accion"] === "BuscarCodigo" or $_POST["accion"] === "GenerarCodigoNuevo" or $_POST["accion"] === "EditarRegistro"){
-		echo json_encode($datos);
-		}
-	else{
-		// Armamos array para convertir a JSON
-		$salidaJson = array("respuesta" => $respuestaOK,
-			"mensaje" => $mensajeError,
-			"contenido" => $contenidoOK);
-		echo json_encode($salidaJson);
-	}
+
+// Salida JSON limpia
+echo json_encode($response);
+exit;
 ?>

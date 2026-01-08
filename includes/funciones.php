@@ -679,10 +679,37 @@ function verificar_nota_media_contable($nota_final, $recuperacion)
 /////////////////////////////////////////////////////////////////////////////////////////
 //				**	cambiar el Del por del ó De por de.
 /////////////////////////////////////////////////////////////////////////////////////////
-function convertirTexto($texto){
-	$texto = mb_convert_encoding($texto,"ISO-8859-1","UTF-8");
-		return $texto;
+function convertirTexto($texto) {
+        // Aseguramos que sea string
+        $texto = (string)$texto;
+        // Convertimos forzosamente de UTF-8 a ISO-8859-1
+        return mb_convert_encoding($texto, 'ISO-8859-1', 'UTF-8');
+    }
+
+// --- AGREGAR ESTO EN funciones.php ---
+
+// 1. Para limpiar datos que vienen de la Base de Datos
+// Úsala con: $variable = textoBD($row['campo']);
+function textoBD($texto) {
+if (empty($texto)) return '';
+    
+    // Detectamos si YA es UTF-8
+    if (mb_detect_encoding($texto, 'UTF-8', true)) {
+        // Si ya es UTF-8, lo devolvemos tal cual
+        return trim($texto);
+    }
+    
+    // Si NO es UTF-8, asumimos que es ISO-8859-1 y lo convertimos
+    return mb_convert_encoding(trim($texto), 'UTF-8', 'ISO-8859-1');
 }
+
+// 2. Para imprimir el resultado final en el PDF
+// Úsala con: $pdf->MultiCell(..., textoPDF($parrafo), ...);
+function textoPDF($texto) {
+    if (empty($texto)) return '';
+    // Convierte todo (tildes de código + tildes de BD) al formato de FPDF
+    return mb_convert_encoding($texto, 'ISO-8859-1', 'UTF-8');
+}	
 	function cambiar_de_del($de_por_de)
 	{
 		$ver = ""; $vere = ""; $nombre = ""; $nuevonombre = ""; $cambiar = 0;	$nuevo_de_del = "";

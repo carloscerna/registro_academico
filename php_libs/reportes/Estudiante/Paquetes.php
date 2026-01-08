@@ -1,5 +1,5 @@
 <?php
-// <-- VERSIÓN REFACTORIZADA Y SEGURA: paquete_escolar_3.php -->
+// <-- VERSIÓN REFACTORIZADA CON COLUMNA NIE Y DUI FIJO -->
 
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
@@ -10,8 +10,8 @@ require_once $path_root . "/registro_academico/includes/funciones.php";
 require_once $path_root . "/registro_academico/includes/mainFunctions_conexion.php";
 require_once $path_root . "/registro_academico/php_libs/fpdf/fpdf.php";
 
-define('FILAS_POR_PAGINA', 10); // Alto de fila es mayor, así que caben menos.
-define('ALTURA_FILA', 12);      // <-- 📏 NUEVA CONSTANTE: Ajusta este valor (ej. 10, 12, 14) para cambiar la altura.
+define('FILAS_POR_PAGINA', 10); 
+define('ALTURA_FILA', 12);      
 
 /**
  * Clase FPDF personalizada para el reporte de Paquete Escolar.
@@ -22,40 +22,59 @@ class PDF_Paquete extends FPDF {
     public function setDatos(array $datos) {
         $this->datosReporte = $datos;
     }
-
-    function Header() {
+function Header() {
         $params = $this->datosReporte['parametros'];
         $encabezado = $this->datosReporte['encabezado'];
 
-        // Títulos principales
+        // --- 1. Títulos principales ---
         $this->SetFont('Arial', 'B', 11);
         $this->Cell(0, 5, convertirtexto("FORMULARIO DE RECEPCIÓN DE BIENES POR PARTE DE LOS PADRES, MADRES, RESPONSABLES"), 0, 1, "C");
         $this->Cell(0, 5, convertirtexto("PROGRAMA DE DOTACIÓN DE UNIFORMES, ZAPATOS Y ÚTILES ESCOLARES AÑO " . $encabezado['nombre_ann_lectivo']), 0, 1, "C");
         
         $this->Ln(5);
 
-        // Columnas de información
+        // --- 2. Bloque de Datos Generales ---
+        
+        // Fila 1: Rubro y Departamento
         $this->SetFont('Arial', '', 9);
         $this->Cell(35, 5, 'RUBRO:', 0, 0, 'L');
         $this->SetFont('Arial', 'B', 9);
         $this->Cell(125, 5, convertirtexto($params['rubro']), 0, 0, 'L');
+        
         $this->SetFont('Arial', '', 9);
         $this->Cell(35, 5, 'DEPARTAMENTO:', 0, 0, 'L');
         $this->SetFont('Arial', 'B', 9);
+        // NOTA: Asegúrate de que esta variable de sesión exista o la consultaremos en la BD
         $this->Cell(0, 5, convertirtexto($_SESSION['nombre_departamento']), 0, 1, 'L');
 
-        // Fecha y Municipio
+        // Fila 2: Fecha y Municipio (El municipio ahora es la agrupación grande, ej: San Salvador Este)
         $fecha = ($params['mostrarFecha'] === 'yes' && !empty($params['fecha'])) ? date("d/m/Y", strtotime($params['fecha'])) : '__________________';
+        
         $this->SetFont('Arial', '', 9);
         $this->Cell(35, 5, 'FECHA:', 0, 0, 'L');
         $this->SetFont('Arial', 'B', 9);
         $this->Cell(125, 5, $fecha, 0, 0, 'L');
+        
         $this->SetFont('Arial', '', 9);
         $this->Cell(35, 5, 'MUNICIPIO:', 0, 0, 'L');
         $this->SetFont('Arial', 'B', 9);
         $this->Cell(0, 5, convertirtexto($_SESSION['nombre_municipio']), 0, 1, 'L');
 
-        // Código C.E. y Grado
+        // Fila 3: (NUEVA) Distrito (Ej: Soyapango, Ilopango, etc.)
+        // Aquí usaremos una variable temporal $distrito. 
+        // Cuando me pases las tablas, llenaremos esta variable correctamente desde la BD.
+        $distrito = isset($_SESSION['nombre_distrito']) ? $_SESSION['nombre_distrito'] : 'DISTRITO PENDIENTE'; 
+
+        $this->SetFont('Arial', '', 9);
+        $this->Cell(35, 5, '', 0, 0, 'L'); // Espacio vacío a la izquierda (debajo de fecha) o puedes poner otro dato
+        $this->Cell(125, 5, '', 0, 0, 'L'); // Espacio vacío
+        
+        $this->SetFont('Arial', '', 9);
+        $this->Cell(35, 5, 'DISTRITO:', 0, 0, 'L');
+        $this->SetFont('Arial', 'B', 9);
+        $this->Cell(0, 5, convertirtexto($distrito), 0, 1, 'L');
+
+        // Fila 4: Código C.E. y Grado
         $this->SetFont('Arial', '', 9);
         $this->Cell(35, 5, convertirtexto('CÓDIGO DEL C.E.:'), 0, 0, 'L');
         $this->SetFont('Arial', 'B', 9);
@@ -65,7 +84,7 @@ class PDF_Paquete extends FPDF {
         $this->SetFont('Arial', 'B', 9);
         $this->Cell(0, 5, convertirtexto($encabezado['nombre_grado']), 0, 1, 'L');
         
-        // Nombre C.E. y Sección
+        // Fila 5: Nombre C.E. y Sección
         $this->SetFont('Arial', '', 9);
         $this->Cell(35, 5, 'NOMBRE DEL C.E.:', 0, 0, 'L');
         $this->SetFont('Arial', 'B', 9);
@@ -75,7 +94,7 @@ class PDF_Paquete extends FPDF {
         $this->SetFont('Arial', 'B', 9);
         $this->Cell(0, 5, convertirtexto($encabezado['nombre_seccion']), 0, 1, 'L');
         
-        $this->Ln(3);
+        $this->Ln(5);
     }
 
     function Footer() {
@@ -87,8 +106,8 @@ class PDF_Paquete extends FPDF {
         $this->SetTextColor(0);
         $this->SetDrawColor(0, 0, 0);
         $this->SetLineWidth(.2);
-        $this->SetFont('Arial', 'B', 7);
-        $this->SetY(52); // Posición fija para el inicio de la tabla
+        $this->SetFont('Arial', 'B', 7); // Fuente un poco más pequeña para que quepan los encabezados
+        $this->SetY(62); // Posición fija para el inicio de la tabla
 
         foreach ($this->datosReporte['header'] as $key => $columna) {
             $this->Cell($this->datosReporte['widths'][$key], ALTURA_FILA, convertirtexto($columna), 1, 0, 'C', true);
@@ -142,12 +161,16 @@ function generarPdfPaquete(array $datos) {
     $rubro = $datos['parametros']['rubro'];
     $esUtiles = in_array($rubro, ["Útiles Escolares", "Familias", "Libro de ESMATE", "Libro de Lenguaje"]);
     
+    // --- CAMBIOS EN ANCHOS Y ENCABEZADOS ---
+    // Total disponible aprox: 255mm - 260mm. 
+    // Nuevos anchos: 8(N)+18(NIE)+70(Nom)+8(M)+8(F)+12(Tal)+66(Enc)+25(DUI)+40(Fir) = 255mm
+    
     if ($esUtiles) {
-        $datos['header'] = ['Nº', 'NOMBRE DEL ESTUDIANTE', 'M', 'F', 'CICLO', 'NOMBRE DEL PADRE/MADRE O RESPONSABLE', 'No. DUI O NIE', 'FIRMA'];
-        $datos['widths'] = [8, 80, 8, 8, 12, 72, 25, 42];
+        $datos['header'] = ['Nº', 'NIE', 'NOMBRE DEL ESTUDIANTE', 'M', 'F', 'CICLO', 'NOMBRE DEL PADRE/MADRE O RESPONSABLE', 'Nº DUI', 'FIRMA'];
+        $datos['widths'] = [8, 18, 70, 8, 8, 12, 66, 25, 40];
     } else {
-        $datos['header'] = ['Nº', 'NOMBRE DEL ESTUDIANTE', 'M', 'F', 'TALLA', 'NOMBRE DEL PADRE/MADRE O RESPONSABLE', 'No. DUI O NIE', 'FIRMA'];
-        $datos['widths'] = [8, 80, 8, 8, 12, 72, 25, 42];
+        $datos['header'] = ['Nº', 'NIE', 'NOMBRE DEL ESTUDIANTE', 'M', 'F', 'TALLA', 'NOMBRE DEL PADRE/MADRE O RESPONSABLE', 'Nº DUI', 'FIRMA'];
+        $datos['widths'] = [8, 18, 70, 8, 8, 12, 66, 25, 40];
     }
     
     $pdf->setDatos($datos);
@@ -167,28 +190,37 @@ function generarPdfPaquete(array $datos) {
 
         $pdf->SetFillColor($fill ? 240 : 255, $fill ? 240 : 255, $fill ? 240 : 255);
         
+        // 0. Número correlativo
         $pdf->Cell($datos['widths'][0], ALTURA_FILA, $numFila + 1, 1, 0, 'C', true);
-        $pdf->Cell($datos['widths'][1], ALTURA_FILA, convertirtexto($alumno['apellido_alumno']), 1, 0, 'L', true);
-        
-        // Columna de Género dividida
-        $pdf->Cell($datos['widths'][2], ALTURA_FILA, ($alumno['genero'] == 'm' ? 'M' : ''), 1, 0, 'C', true);
-        $pdf->Cell($datos['widths'][3], ALTURA_FILA, ($alumno['genero'] == 'f' ? 'F' : ''), 1, 0, 'C', true);
-        
-        $pdf->Cell($datos['widths'][4], ALTURA_FILA, '', 1, 0, 'C', true); // Talla o Ciclo (en blanco)
-        $pdf->Cell($datos['widths'][5], ALTURA_FILA, convertirtexto($alumno['nombre_encargado']), 1, 0, 'L', true);
 
-        // Columna DUI o NIE
-        $identificacion = ($datos['parametros']['mostrarNIE'] === 'yes') ? $alumno['codigo_nie'] : $alumno['dui'];
-        $pdf->Cell($datos['widths'][6], ALTURA_FILA, $identificacion, 1, 0, 'C', true);
+        // 1. NUEVA COLUMNA: NIE
+        $pdf->Cell($datos['widths'][1], ALTURA_FILA, $alumno['codigo_nie'], 1, 0, 'C', true);
+
+        // 2. Nombre Estudiante
+        $pdf->Cell($datos['widths'][2], ALTURA_FILA, convertirtexto($alumno['apellido_alumno']), 1, 0, 'L', true);
         
-        $pdf->Cell($datos['widths'][7], ALTURA_FILA, '', 1, 0, 'C', true); // Firma
+        // 3 y 4. Género
+        $pdf->Cell($datos['widths'][3], ALTURA_FILA, ($alumno['genero'] == 'm' ? 'M' : ''), 1, 0, 'C', true);
+        $pdf->Cell($datos['widths'][4], ALTURA_FILA, ($alumno['genero'] == 'f' ? 'F' : ''), 1, 0, 'C', true);
+        
+        // 5. Talla o Ciclo
+        $pdf->Cell($datos['widths'][5], ALTURA_FILA, '', 1, 0, 'C', true); 
+
+        // 6. Nombre Encargado
+        $pdf->Cell($datos['widths'][6], ALTURA_FILA, convertirtexto($alumno['nombre_encargado']), 1, 0, 'L', true);
+
+        // 7. COLUMNA MODIFICADA: Solo DUI
+        $pdf->Cell($datos['widths'][7], ALTURA_FILA, $alumno['dui'], 1, 0, 'C', true);
+        
+        // 8. Firma
+        $pdf->Cell($datos['widths'][8], ALTURA_FILA, '', 1, 0, 'C', true);
 
         $pdf->Ln();
         $fill = !$fill;
         $numFila++;
     }
 
-    // Rellenar filas vacías
+    // Rellenar filas vacías (Si es necesario completar la página)
     $filasEnPagina = $numFila % FILAS_POR_PAGINA;
     if ($filasEnPagina == 0 && $numFila > 0) $filasEnPagina = FILAS_POR_PAGINA;
     $filasFaltantes = ($numFila == 0) ? FILAS_POR_PAGINA : FILAS_POR_PAGINA - $filasEnPagina;

@@ -112,16 +112,40 @@ if ($errorDbConexion === false && isset($dblink)) {
 							//print $_SESSION['dbname'] ?? 'No database name set in session.';
                             // Obtener datos de la institución DESPUÉS de asegurar la conexión a la BD correcta
                             if ($dblink) { // Asegúrate de que $dblink esté válido después de la posible reconexión
-                                $query_institucion = "SELECT inf.id_institucion, inf.codigo_departamento, inf.codigo_municipio, inf.codigo_institucion, inf.nombre_institucion, inf.direccion_institucion, inf.telefono_uno,
-                                                            depa.codigo, depa.nombre as nombre_departamento,
-                                                            mu.codigo, mu.codigo_departamento, mu.nombre as nombre_municipio, inf.numero_acuerdo,
-                                                            btrim(p.nombres || CAST(' ' AS VARCHAR) || p.apellidos) as nombre_completo,
-                                                            inf.se_extiende_la_presente, inf.dia_entrega, inf.logo_uno, inf.logo_dos, inf.imagen_firma, inf.imagen_sello
-                                                        FROM informacion_institucion inf
-                                                        INNER JOIN personal p ON p.id_personal = CAST(inf.nombre_director AS INTEGER)
-                                                        INNER JOIN departamento depa ON depa.codigo = inf.codigo_departamento
-                                                        INNER JOIN municipio mu ON mu.codigo = inf.codigo_municipio AND mu.codigo_departamento = inf.codigo_departamento
-                                                        WHERE inf.codigo_institucion = :codigo_institucion LIMIT 1";
+                                $query_institucion = "SELECT 
+                                    inf.id_institucion, 
+                                    inf.codigo_departamento, 
+                                    inf.codigo_municipio, 
+                                    inf.codigo_institucion, 
+                                    inf.nombre_institucion, 
+                                    inf.direccion_institucion, 
+                                    inf.telefono_uno,
+                                    depa.codigo as codigo_departamento, 
+                                    depa.descripcion as nombre_departamento,
+                                    dis.descripcion as nombre_distrito, 
+                                    dis.codigo as codigo_distrito,
+                                    mu.codigo as codigo_municipio, 
+                                    mu.codigo_departamento, 
+                                    mu.descripcion as nombre_municipio, 
+                                    inf.numero_acuerdo,
+                                    btrim(p.nombres || CAST(' ' AS VARCHAR) || p.apellidos) as nombre_completo,
+                                    inf.se_extiende_la_presente, 
+                                    inf.dia_entrega, 
+                                    inf.logo_uno, 
+                                    inf.logo_dos, 
+                                    inf.imagen_firma, 
+                                    inf.imagen_sello
+                                FROM informacion_institucion inf
+                                INNER JOIN personal p ON p.id_personal = CAST(inf.nombre_director AS INTEGER)
+                                INNER JOIN catalogo_departamentos depa ON depa.codigo = inf.codigo_departamento
+                                INNER JOIN catalogo_municipios mu ON mu.codigo = inf.codigo_municipio AND mu.codigo_departamento = inf.codigo_departamento
+                                -- CORRECCIÓN AQUÍ ABAJO: --
+                                INNER JOIN catalogo_distritos dis ON 
+                                    dis.codigo = inf.codigo_distrito 
+                                    AND dis.codigo_municipio = inf.codigo_municipio 
+                                    AND dis.codigo_departamento = inf.codigo_departamento
+                                WHERE inf.codigo_institucion = :codigo_institucion
+                                LIMIT 1;";
 
                                 $stmt_institucion = $dblink->prepare($query_institucion);
                                 $stmt_institucion->bindParam(':codigo_institucion', $_SESSION['codigo_escuela'], PDO::PARAM_STR);
@@ -137,6 +161,7 @@ if ($errorDbConexion === false && isset($dblink)) {
                                     $_SESSION['nombre_municipio'] = convertirtexto(trim($institucionData['nombre_municipio']));
                                     $_SESSION['codigo_departamento'] = trim($institucionData['codigo_departamento']);
                                     $_SESSION['nombre_departamento'] = convertirtexto(trim($institucionData['nombre_departamento']));
+                                    $_SESSION['nombre_distrito'] = $institucionData['nombre_distrito'];
                                     $_SESSION['nombre_director'] = trim($institucionData['nombre_completo']);
                                     $_SESSION['numero_acuerdo'] = trim($institucionData['numero_acuerdo']);
                                     $_SESSION['se_extiende'] = trim($institucionData['se_extiende_la_presente']);
