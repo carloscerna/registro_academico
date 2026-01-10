@@ -18,6 +18,7 @@ const reportConfig = {
         url: '/registro_academico/php_libs/reportes/Estudiante/Paquetes.php' 
     },
       'familias': { url: '/registro_academico/php_libs/reportes/Estudiante/Familias.php', params: ['lstannlectivo'] },
+      'tomadetalla': { url: '/registro_academico/php_libs/reportes/Estudiante/TomaDeTalla.php' },
 // ▼▼▼ LÍNEA MODIFICADA ▼▼▼
     'firmas': { url: '/registro_academico/php_libs/reportes/Estudiante/Firmas.php', params: ['tituloFirmas'] },
     'nomina-excel': {isAjax: true, url: '/registro_academico/php_libs/soporte/CrearNominas.php' },
