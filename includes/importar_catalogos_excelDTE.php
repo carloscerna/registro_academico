@@ -54,7 +54,7 @@ $datos=array(); $fila_array = 0;
    $objReader = \PhpOffice\PhpSpreadsheet\IOFactory::createReader("Xlsx");
     $origen = $ruta;
 	 $fila = 2;
-     $nombre_tabla = "catalogo_dte_tablas";
+     $nombre_tabla = "cat_20";
     $objPHPExcel = $objReader->load($origen);
 //
 // Establecer formato para la fecha.
