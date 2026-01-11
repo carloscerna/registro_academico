@@ -1,4 +1,16 @@
 <?php
+// 1. SUPRIMIR WARNINGS y DEFINIR FUNCIÓN DE COMPATIBILIDAD
+error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED & ~E_WARNING);
+ini_set('display_errors', 0);
+
+if (!function_exists('utf8_decode_fix')) {
+    function utf8_decode_fix($texto) {
+        if (is_null($texto)) return '';
+        // Convierte de UTF-8 (Base de datos) a ISO-8859-1 (Lo que pide FPDF)
+        return mb_convert_encoding((string)$texto, 'ISO-8859-1', 'UTF-8');
+    }
+}
+
 // ruta de los archivos con su carpeta
     $path_root=trim($_SERVER['DOCUMENT_ROOT']);
 // Archivos que se incluyen.
@@ -37,9 +49,10 @@ $personal_data = $stmt->fetchAll(PDO::FETCH_ASSOC);
 $resumen_genero = ['M' => 0, 'F' => 0];
 
 foreach ($personal_data as $persona) {
-    if (trim($persona['codigo_genero']) == '01') {
+    // CORRECCIÓN: trim seguro
+    if (trim($persona['codigo_genero'] ?? '') == '01') {
         $resumen_genero['M']++;
-    } else if (trim($persona['codigo_genero']) == '02') {
+    } else if (trim($persona['codigo_genero'] ?? '') == '02') {
         $resumen_genero['F']++;
     }
 }
@@ -61,10 +74,11 @@ class PDF extends FPDF
         }
         
         $this->SetFont('Arial','B',14);
-        $this->Cell(0,6,utf8_decode($_SESSION['institucion']),0,1,'C');
+        // CORRECCIÓN: utf8_decode_fix
+        $this->Cell(0,6,utf8_decode_fix($_SESSION['institucion']),0,1,'C');
         
         $this->SetFont('Arial','B',12);
-        $this->Cell(0,10,utf8_decode('NÓMINA DE PERSONAL DOCENTE'),0,1,'C');
+        $this->Cell(0,10,utf8_decode_fix('NÓMINA DE PERSONAL DOCENTE'),0,1,'C');
         
         $this->Ln(5);
 
@@ -79,7 +93,7 @@ class PDF extends FPDF
     {
         $this->SetY(-15);
         $this->SetFont('Arial','I',8);
-        $this->Cell(0,10,utf8_decode('Página ').$this->PageNo().'/{nb}',0,0,'C');
+        $this->Cell(0,10,utf8_decode_fix('Página ').$this->PageNo().'/{nb}',0,0,'C');
     }
 
     // Tabla de resumen
@@ -93,7 +107,7 @@ class PDF extends FPDF
         $this->SetFont('','B', 10);
         $w = array(50, 25);
         for($i=0;$i<count($header);$i++)
-            $this->Cell($w[$i],7,utf8_decode($header[$i]),1,0,'C',true);
+            $this->Cell($w[$i],7,utf8_decode_fix($header[$i]),1,0,'C',true);
         $this->Ln();
         $this->SetFillColor(245,245,245);
         $this->SetTextColor(0);
@@ -102,14 +116,14 @@ class PDF extends FPDF
         foreach($data as $row)
         {
             $this->SetX($startX);
-            $this->Cell($w[0],6,utf8_decode($row[0]),'LR',0,'L',$fill);
+            $this->Cell($w[0],6,utf8_decode_fix($row[0]),'LR',0,'L',$fill);
             $this->Cell($w[1],6,$row[1],'LR',0,'C',$fill);
             $this->Ln();
             $fill = !$fill;
         }
         $this->SetX($startX);
         $this->SetFont('','B', 10);
-        $this->Cell($w[0],7,utf8_decode($total_row[0]),'T',0,'L',false);
+        $this->Cell($w[0],7,utf8_decode_fix($total_row[0]),'T',0,'L',false);
         $this->Cell($w[1],7,$total_row[1],'T',0,'C',false);
         $this->Ln();
         $this->SetX($startX);
@@ -124,7 +138,7 @@ class PDF extends FPDF
         $this->SetTextColor(255);
         
         for($i=0;$i<count($this->header_detalle);$i++)
-            $this->Cell($this->widths[$i],7,utf8_decode($this->header_detalle[$i]),1,0,'C',true);
+            $this->Cell($this->widths[$i],7,utf8_decode_fix($this->header_detalle[$i]),1,0,'C',true);
         $this->Ln();
     }
 
@@ -153,7 +167,7 @@ class PDF extends FPDF
             // FPDF maneja el salto de página automático.
             // La función Header() se encargará de dibujar el encabezado de la tabla.
             $this->Cell($this->widths[0],6,$row[0],'LR',0,'C',$fill); // N#
-            $this->Cell($this->widths[1],6,utf8_decode($row[1]),'LR',0,'L',$fill); // Nombre
+            $this->Cell($this->widths[1],6,utf8_decode_fix($row[1]),'LR',0,'L',$fill); // Nombre
             $this->Cell($this->widths[2],6,$row[2],'LR',0,'C',$fill); // Género
             $this->Cell($this->widths[3],6,$row[3],'LR',0,'C',$fill); // DUI
             $this->Cell($this->widths[4],6,$row[4],'LR',0,'C',$fill); // NIT
@@ -177,7 +191,7 @@ $pdf->SetFont('Arial','',12);
 
 // Título de la sección de resúmenes
 $pdf->SetFont('Arial','B',12);
-$pdf->Cell(0,10,utf8_decode('Resumen General por Género'),0,1,'C');
+$pdf->Cell(0,10,utf8_decode_fix('Resumen General por Género'),0,1,'C');
 $pdf->Ln(2);
 
 // Crear datos para la tabla de resumen
@@ -192,18 +206,19 @@ $pdf->SetY($pdf->GetY() + 10);
 
 // Título de la sección de detalle
 $pdf->SetFont('Arial','B',12);
-$pdf->Cell(0,10,utf8_decode('Nómina Detallada'),0,1,'C');
+$pdf->Cell(0,10,utf8_decode_fix('Nómina Detallada'),0,1,'C');
 $pdf->Ln(5);
 
 // Preparar datos para la tabla detallada
 $header_detalle = ['N#', 'Nombre Completo', 'Gén.', 'DUI', 'NIT', 'NIP', 'Teléfono'];
 $data_detalle = [];
 foreach($personal_data as $index => $persona){
-    $genero_letra = (trim($persona['codigo_genero']) == '01') ? 'M' : 'F';
+    // CORRECCIÓN: trim seguro
+    $genero_letra = (trim($persona['codigo_genero'] ?? '') == '01') ? 'M' : 'F';
     
     $data_detalle[] = [
         $index + 1,
-        trim($persona['nombres']) . ' ' . trim($persona['apellidos']),
+        trim($persona['nombres'] ?? '') . ' ' . trim($persona['apellidos'] ?? ''),
         $genero_letra,
         $persona['dui'],
         $persona['nit'],

@@ -1,4 +1,16 @@
 <?php
+// 1. MODO SILENCIOSO Y COMPATIBILIDAD PHP 8.3
+error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED & ~E_WARNING);
+ini_set('display_errors', 0);
+
+// Fix para utf8_decode si fuera necesario
+if (!function_exists('utf8_decode_fix')) {
+    function utf8_decode_fix($texto) {
+        if (is_null($texto)) return '';
+        return mb_convert_encoding((string)$texto, 'ISO-8859-1', 'UTF-8');
+    }
+}
+
 // ruta de los archivos con su carpeta
     $path_root=trim($_SERVER['DOCUMENT_ROOT']);
 // Archivos que se incluyen.
@@ -10,13 +22,15 @@
 // cambiar a utf-8.
      header("Content-Type: text/html; charset=UTF-8");    
 // variables y consulta a la tabla.
-     $codigo_ann_lectivo = $_REQUEST["ann_lectivo"];
+     $codigo_ann_lectivo = $_REQUEST["ann_lectivo"] ?? ''; // Protección básica
      $db_link = $dblink;
      $codigo_all_indicadores = array(); $nombre_grado = array(); $nombre_modalidad = array(); $nombre_ann_lectivo = array();
 	 $codigo_modalidad_matriz = array();
+     $codigo_indicadores = array(); // Inicialización importante
 // Establecer formato para la fecha.
 	date_default_timezone_set('America/El_Salvador');
-	setlocale(LC_TIME,'es_SV');
+	// setlocale(LC_TIME,'es_SV'); // Comentado para evitar conflictos en Windows
+
 // CREAR MATRIZ DE MESES Y FECH.
 	$meses = ["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
 //Crear una línea. Fecha con getdate();
@@ -25,13 +39,28 @@
 	$dia = $hoy["mday"];    // dia de la semana
 	$mes = $hoy["mon"];     // mes
 	$año = $hoy["year"];    // año
-	$total_de_dias = cal_days_in_month(CAL_GREGORIAN, (int)$mes, $año);
+	
+    // Validación para funcion de calendario
+    if(function_exists('cal_days_in_month')){
+        $total_de_dias = cal_days_in_month(CAL_GREGORIAN, (int)$mes, $año);
+    } else {
+        $total_de_dias = date('t');
+    }
+
 	$NombreMes = $meses[(int)$mes - 1];
 // definimos 2 array uno para los nombre de los dias y otro para los nombres de los meses
 	$nombresDias = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
 	$nombresMeses = [1=>"Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
-	$fecha = convertirTexto("Santa Ana, $nombresDias[$NombreDia] $dia de $nombresMeses[$mes] de $año");
-	setlocale(LC_MONETARY,"es_ES");
+	
+    // Uso seguro de convertirTexto
+    if(function_exists('convertirTexto')){
+        $fecha = convertirTexto("Santa Ana, $nombresDias[$NombreDia] $dia de $nombresMeses[$mes] de $año");
+    } else {
+        $fecha = "Santa Ana, $nombresDias[$NombreDia] $dia de $nombresMeses[$mes] de $año";
+    }
+
+	// setlocale(LC_MONETARY,"es_ES"); 
+
 //CONSULTA PARA LE MEMORIA ESTADISTICA
 	$query_grados = "SELECT DISTINCT ROW(org.codigo_bachillerato), org.codigo_bachillerato as codigo_modalidad, org.codigo_grado, org.codigo_ann_lectivo,
 		gan.nombre as nombre_grado, ann.nombre as nombre_ann_lectivo,  bach.nombre as nombre_modalidad, bach.ordenar
@@ -45,15 +74,26 @@
 //  captura de datos para información individual de grado y sección.
 	while($row = $result_grados -> fetch(PDO::FETCH_BOTH))
         {
-	    	$codigo_grado = trim($row['codigo_grado']);
-            $nombre_ann_lectivo = trim($row['nombre_ann_lectivo']);
-            $codigo_modalidad = trim($row['codigo_modalidad']);
-			$codigo_modalidad_matriz[] = trim($row['codigo_modalidad']);
-            $nombre_modalidad[] = convertirTexto(trim($row['nombre_modalidad']));
-            $nombre_grado[] = cambiar_de_del(trim($row['nombre_grado']));
+            // CORRECCIÓN PHP 8: trim con ?? ''
+	    	$codigo_grado = trim($row['codigo_grado'] ?? '');
+            $nombre_ann_lectivo_val = trim($row['nombre_ann_lectivo'] ?? ''); // Variable temporal
+            // Solo asignar si es la primera vez o sobreescribir (es global para el header)
+            $nombre_ann_lectivo = $nombre_ann_lectivo_val; 
+
+            $codigo_modalidad = trim($row['codigo_modalidad'] ?? '');
+			$codigo_modalidad_matriz[] = trim($row['codigo_modalidad'] ?? '');
+            
+            $nom_mod = trim($row['nombre_modalidad'] ?? '');
+            $nombre_modalidad[] = (function_exists('convertirTexto')) ? convertirTexto($nom_mod) : $nom_mod;
+
+            $nom_gra = trim($row['nombre_grado'] ?? '');
+            // Verificar si existe la funcion cambiar_de_del
+            $nombre_grado[] = (function_exists('cambiar_de_del')) ? cambiar_de_del($nom_gra) : $nom_gra;
+
 	    	// modalidad, grado y año lectivo.
 	    	$codigo_indicadores[] = $codigo_modalidad . $codigo_grado . $codigo_ann_lectivo;
         }
+
 class PDF extends FPDF
 {
 //Cabecera de página
@@ -62,13 +102,17 @@ function Header()
     global $nombre_ann_lectivo;
     //Logo
     $img = $_SERVER['DOCUMENT_ROOT'].'/registro_academico/img/'.$_SESSION['logo_uno'];
-    $this->Image($img,10,15,12,15);
+    if(file_exists($img)){
+        $this->Image($img,10,15,12,15);
+    }
     //Título
     $this->SetFont('Arial','',10);
     $this->Cell(350,4,convertirtexto('MINISTERIO DE EDUCACION, CIENCIA Y TECNOLOGIA'),0,1,'C');
     $this->Cell(350,4,convertirtexto('DIRECCION DEPARTAMENTAL DE SANTA ANA'),0,1,'C');
     $this->SetFont('Arial','B',10);
-    $this->Cell(350,4,convertirtexto('MEMORIA ESTADISTICA ') . $nombre_ann_lectivo,0,1,'C');
+    // Verificar si nombre_ann_lectivo es array o string (en el loop original se usaba como string global)
+    $texto_ann = is_array($nombre_ann_lectivo) ? ($nombre_ann_lectivo[0] ?? '') : $nombre_ann_lectivo;
+    $this->Cell(350,4,convertirtexto('MEMORIA ESTADISTICA ') . $texto_ann,0,1,'C');
     $this->SetFont('Arial','',8);
     $this->ln();
     $this->Cell(150,4,'CENTRO ESCOLAR: ' . convertirtexto($_SESSION['institucion']),0,0,'L');
@@ -80,9 +124,14 @@ function Header()
 function Footer()
 {
 	//Firma Director.
-	$nombre_director = cambiar_de_del($_SESSION['nombre_director']);
+    $nom_dir = $_SESSION['nombre_director'] ?? '';
+	$nombre_director = (function_exists('cambiar_de_del')) ? cambiar_de_del($nom_dir) : $nom_dir;
+    
+    // Validar si RotatedText existe en la clase FPDF extendida
+    if(method_exists($this, 'RotatedText')){
 		$this->RotatedText(260,205,$nombre_director,0);	    // Nombre Director
 		$this->RotatedText(270,210,'Director(a)',0);			// ETIQUETA DIRECTOR.
+    }
   //
   // Establecer formato para la fecha.
   // 
@@ -266,14 +315,16 @@ function encabezado()
 						$total_alumnos_masculino = 0;
 							while($rows_total_alumnos_m = $result_total_masculino -> fetch(PDO::FETCH_BOTH))
 								{
-									$total_alumnos_masculino = trim($rows_total_alumnos_m['total_alumnos_matricula_inicial_masculino']);
+                                    // CORRECCION PHP 8
+									$total_alumnos_masculino = trim($rows_total_alumnos_m['total_alumnos_matricula_inicial_masculino'] ?? '');
 								}
 
 						//  cuenta el total de alumnos para colocar en la estadistica MATRICULA INICIAL..
 						$total_alumnos_femenino = 0;
 							while($rows_total_alumnos_f = $result_total_femenino -> fetch(PDO::FETCH_BOTH))
 								{
-									$total_alumnos_femenino = trim($rows_total_alumnos_f['total_alumnos_matricula_inicial_femenino']);
+                                    // CORRECCION PHP 8
+									$total_alumnos_femenino = trim($rows_total_alumnos_f['total_alumnos_matricula_inicial_femenino'] ?? '');
 								}	
 					//
 					// total final
@@ -310,14 +361,16 @@ function encabezado()
 						$total_alumnos_masculino = 0;
 							while($rows_total_alumnos_m = $result_total_masculino -> fetch(PDO::FETCH_BOTH))
 								{
-									$total_alumnos_masculino = trim($rows_total_alumnos_m['total_alumnos_matricula_inicial_masculino']);
+                                    // CORRECCION PHP 8
+									$total_alumnos_masculino = trim($rows_total_alumnos_m['total_alumnos_matricula_inicial_masculino'] ?? '');
 								}
 
 						//  cuenta el total de alumnos para colocar en la estadistica MATRICULA INICIAL..
 						$total_alumnos_femenino = 0;
 							while($rows_total_alumnos_f = $result_total_femenino -> fetch(PDO::FETCH_BOTH))
 								{
-									$total_alumnos_femenino = trim($rows_total_alumnos_f['total_alumnos_matricula_inicial_femenino']);
+                                    // CORRECCION PHP 8
+									$total_alumnos_femenino = trim($rows_total_alumnos_f['total_alumnos_matricula_inicial_femenino'] ?? '');
 								}	
 					//
 						$total_alumnos_masculino = $total_final_masculino - $total_alumnos_masculino;
@@ -344,8 +397,9 @@ function encabezado()
 						$total_alumnos_masculino = 0;
 							while($rows_total_alumnos_m = $result_total_masculino -> fetch(PDO::FETCH_BOTH))
 								{
-									$total_alumnos_masculino = trim($rows_total_alumnos_m['total_alumnos_promovidos_masculino']);
-									if($total_alumnos_masculino == null){
+                                    // CORRECCION PHP 8
+									$total_alumnos_masculino = trim($rows_total_alumnos_m['total_alumnos_promovidos_masculino'] ?? '');
+									if($total_alumnos_masculino == null || $total_alumnos_masculino == ''){
 										$total_alumnos_masculino = 0;
 									}
 								}
@@ -354,8 +408,9 @@ function encabezado()
 						$total_alumnos_femenino = 0;
 							while($rows_total_alumnos_f = $result_total_femenino -> fetch(PDO::FETCH_BOTH))
 								{
-									$total_alumnos_femenino = trim($rows_total_alumnos_f['total_alumnos_promovidos_femenino']);
-									if($total_alumnos_femenino == null){
+                                    // CORRECCION PHP 8
+									$total_alumnos_femenino = trim($rows_total_alumnos_f['total_alumnos_promovidos_femenino'] ?? '');
+									if($total_alumnos_femenino == null || $total_alumnos_femenino == ''){
 										$total_alumnos_femenino = 0;
 									}
 								}	
@@ -389,7 +444,8 @@ function encabezado()
 						$total_alumnos_masculino = 0;
 							while($rows_total_alumnos_m = $result_total_masculino -> fetch(PDO::FETCH_BOTH))
 								{
-									$total_alumnos_masculino = trim($rows_total_alumnos_m['total_alumnos_matricula_inicial_masculino']);
+                                    // CORRECCION PHP 8
+									$total_alumnos_masculino = trim($rows_total_alumnos_m['total_alumnos_matricula_inicial_masculino'] ?? '');
 									if($total_alumnos_masculino == null){
 										$total_alumnos_masculino = 0;
 									}
@@ -399,7 +455,8 @@ function encabezado()
 						$total_alumnos_femenino = 0;
 							while($rows_total_alumnos_f = $result_total_femenino -> fetch(PDO::FETCH_BOTH))
 								{
-									$total_alumnos_femenino = trim($rows_total_alumnos_f['total_alumnos_matricula_inicial_femenino']);
+                                    // CORRECCION PHP 8
+									$total_alumnos_femenino = trim($rows_total_alumnos_f['total_alumnos_matricula_inicial_femenino'] ?? '');
 									if($total_alumnos_femenino == null){
 										$total_alumnos_femenino = 0;
 									}
@@ -548,6 +605,9 @@ function encabezado()
 			//
 			$pdf->ln(); 
 // Salida del pdf.
+    // Corrección para evitar error por nulos en el nombre
+    $nombre_pdf_final = is_array($nombre_ann_lectivo) ? ($nombre_ann_lectivo[0] ?? '') : ($nombre_ann_lectivo ?? '');
 	$modo = 'I'; // Envia al navegador (I), Descarga el archivo (D).
-	$print_nombre = 'MEMORIA ESTADISTICA ' . $nombre_ann_lectivo;
+	$print_nombre = 'MEMORIA ESTADISTICA ' . $nombre_pdf_final;
 	$pdf->Output($print_nombre,$modo);
+?>

@@ -110,7 +110,7 @@ try {
                             if ($institucionData) {
                                 $_SESSION['institucion'] = trim($institucionData['nombre_institucion']);
                                 $_SESSION['direccion'] = trim($institucionData['direccion_institucion']);
-                                $_SESSION['codigo'] = trim($institucionData['codigo_institucion']);
+                                $_SESSION['codigo_institucion'] = trim($institucionData['codigo_institucion']);
                                 $_SESSION['telefono'] = trim($institucionData['telefono_uno']);
                                 $_SESSION['codigo_municipio'] = trim($institucionData['codigo_municipio']);
                                 // Usamos utf8_encode solo si conversion es necesaria, sino directo

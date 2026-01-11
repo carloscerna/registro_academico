@@ -1,4 +1,8 @@
 <?php
+// 1. SILENCIAR ADVERTENCIAS (Vital para FPDF en PHP 8)
+error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED & ~E_WARNING);
+ini_set('display_errors', 0);
+
 // ruta de los archivos con su carpeta
     $path_root=trim($_SERVER['DOCUMENT_ROOT']);
 // Archivos que se incluyen.
@@ -15,7 +19,8 @@
     $print_nombre_docente = "";  
 // Establecer formato para la fecha.
     date_default_timezone_set('America/El_Salvador');
-    setlocale(LC_TIME,'es_SV');
+    // setlocale(LC_TIME,'es_SV'); // Comentado por compatibilidad Windows/PHP8
+
 // CREAR MATRIZ DE MESES Y FECH.
     $meses = ["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
 //Crear una línea. Fecha con getdate();
@@ -24,13 +29,20 @@
     $dia = $hoy["mday"];    // dia de la semana
     $mes = $hoy["mon"];     // mes
     $año = $hoy["year"];    // año
+    // cal_days_in_month requiere que la extensión 'calendar' esté activa en Wamp. Si falla, usar date('t').
     $total_de_dias = cal_days_in_month(CAL_GREGORIAN, (int)$mes, $año);
     $NombreMes = $meses[(int)$mes - 1];
 // definimos 2 array uno para los nombre de los dias y otro para los nombres de los meses
     $nombresDias = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
     $nombresMeses = [1=>"Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
-    $fecha = convertirTexto("Santa Ana, $nombresDias[$NombreDia] $dia de $nombresMeses[$mes] de $año");
-    setlocale(LC_MONETARY,"es_ES");
+    
+    // VALIDACION: Usar funcion si existe, sino directo
+    if(function_exists('convertirTexto')){
+        $fecha = convertirTexto("Santa Ana, $nombresDias[$NombreDia] $dia de $nombresMeses[$mes] de $año");
+    } else {
+        $fecha = "Santa Ana, $nombresDias[$NombreDia] $dia de $nombresMeses[$mes] de $año";
+    }
+
 // buscar los datos de la sección y extraer el codigo del nivel.
     $codigo_nivel = substr($codigo_all,0,2);
         consultas(13,0,$codigo_all,'','','',$db_link,''); // valor 13 en consultas.
@@ -39,6 +51,7 @@
 // CAPTURAR EL NOMBRE DEL RESPONSABLES DE LA SECCIÓN.
 	consultas_docentes(1,0,$codigo_all,'','','',$db_link,'');
         global $result_docente, $print_nombre_docente; 
+
 class PDF extends FPDF
 {
 //Cabecera de página
@@ -47,7 +60,9 @@ function Header()
     global $print_nombre_docente, $nombreNivel, $nombreGrado, $nombreSeccion, $nombreAñoLectivo, $nombreTurno;
     //Logo
     $img = $_SERVER['DOCUMENT_ROOT'].'/registro_academico/img/'.$_SESSION['logo_uno'];
-    $this->Image($img,10,5,15,20);
+    if(file_exists($img)){
+        $this->Image($img,10,5,15,20);
+    }
     //Arial bold 15
     $this->SetFont('PoetsenOne','',16);
     //Título - Nuevo Encabezado incluir todo lo que sea necesario.
@@ -172,9 +187,13 @@ function FancyTable($header)
         $nuevoingresom = 0; $nuevoingresof = 0;
         while($row = $result -> fetch(PDO::FETCH_BOTH))
             {
+                // PROTECCION PHP 8: trim(null) da error, usamos ?? ''
+                $codigo_nie = trim($row['codigo_nie'] ?? '');
+                $apellido = trim($row['apellido_alumno'] ?? '');
+                
                 $pdf->Cell($w[0],$ancho_libro[0],$i,'LR',0,'C',$fill);        // núermo correlativo
-                $pdf->Cell($w[1],$ancho_libro[0],trim($row['codigo_nie']),'LR',0,'C',$fill);  // NIE
-                $pdf->Cell($w[2],$ancho_libro[0],convertirtexto(trim($row['apellido_alumno'])),'LR',0,'L',$fill); // Nombre + apellido_materno + apellido_paterno
+                $pdf->Cell($w[1],$ancho_libro[0],$codigo_nie,'LR',0,'C',$fill);  // NIE
+                $pdf->Cell($w[2],$ancho_libro[0],convertirtexto($apellido),'LR',0,'L',$fill); // Nombre + apellido_materno + apellido_paterno
                 $pdf->Cell($w[3],$ancho_libro[0],cambiaf_a_normal($row['fecha_nacimiento']),'LR',0,'C',$fill);  // edad
                 $pdf->Cell($w[4],$ancho_libro[0],$row['edad'],'LR',0,'C',$fill);  // edad
                 $pdf->Cell($w[5],$ancho_libro[0],strtoupper($row['genero']),'LR',0,'C',$fill);    // genero
@@ -294,11 +313,14 @@ function FancyTable($header)
                 $pdf->SetFont('Arial','',9); // I : Italica; U: Normal;
 // Salida del pdf.
     $modo = 'I'; // Envia al navegador (I), Descarga el archivo (D), Guardar el fichero en un local(F).
-    $print_nombre = trim($nombreNivel) . ' - ' . trim($nombreGrado) . ' ' . trim($nombreSeccion) . ' - ' . trim($nombreAñolectivo) . ' - ' . trim($nombreTurno) . '-Nomina.pdf';
-    $pdf->Output($print_nombre,$modo);
+    
+    // CORRECCIÓN PHP 8: trim con validación de nulidad
+    $nombre_pdf = trim($nombreNivel ?? '') . ' - ' . trim($nombreGrado ?? '') . ' ' . trim($nombreSeccion ?? '') . ' - ' . trim($nombreAñolectivo ?? '') . ' - ' . trim($nombreTurno ?? '') . '-Nomina.pdf';
+    $pdf->Output($nombre_pdf,$modo);
     }   // condicion si existen registros.
 else{
     // si no existen registros.
     $pdf->Cell(150,7,$fila.' NO EXISTEN REGISTROS EN LA TABLA.',1,0,'L');
 	$pdf->Output();
 }    
+?>
