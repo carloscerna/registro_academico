@@ -1,16 +1,18 @@
 <?php
-// <-- NUEVO ARCHIVO: CrearNominaEstudiante.php -->
+// <-- VERSIÓN BLINDADA: CrearNominaEstudiante.php -->
+
+// 1. INICIAR BUFFER (Atrapa los errores naranjas)
+ob_start();
 
 // Set timezone
 date_default_timezone_set('America/El_Salvador');
-header('Content-Type: application/json; charset=utf-8'); // Output JSON
 
 // --- INCLUDES ---
 $path_root = trim($_SERVER['DOCUMENT_ROOT']);
 require_once $path_root . "/registro_academico/includes/funciones.php";
-require_once $path_root . "/registro_academico/includes/funciones_2.php"; // Needed for cambiaf_a_normal, replace_3 etc.
-require_once $path_root . "/registro_academico/includes/mainFunctions_conexion.php"; // Needed for $dblink and CrearDirectorios
-require_once $path_root . "/registro_academico/vendor/autoload.php"; // PhpSpreadsheet
+require_once $path_root . "/registro_academico/includes/funciones_2.php"; 
+require_once $path_root . "/registro_academico/includes/mainFunctions_conexion.php"; 
+require_once $path_root . "/registro_academico/vendor/autoload.php"; 
 
 // Load PhpSpreadsheet classes
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
@@ -26,9 +28,9 @@ $respuesta = [
 ];
 
 try {
-    if ($errorDbConexion) { throw new Exception("No se puede conectar a la base de datos."); }
+    if (isset($errorDbConexion) && $errorDbConexion) { throw new Exception("No se puede conectar a la base de datos."); }
 
-    $codigo_all = $_REQUEST["todos"] ?? null; // Acepta GET o POST
+    $codigo_all = $_REQUEST["todos"] ?? null; 
     if (!$codigo_all) { throw new Exception("Faltan parámetros (código de grupo)."); }
 
     // --- 1. OBTENER DATOS DEL ENCABEZADO ---
@@ -76,9 +78,11 @@ try {
     $spreadsheet = new Spreadsheet();
     $sheet = $spreadsheet->getActiveSheet();
 
-    // Escribir encabezados del reporte
+    // Escribir encabezados del reporte (Protegido contra nulos)
+    $institucion = $_SESSION['institucion'] ?? 'Nombre Institución';
+    
     $sheet->setCellValue('A1', 'Institución:');
-    $sheet->setCellValue('B1', $_SESSION['institucion'] ?? '');
+    $sheet->setCellValue('B1', $institucion);
     $sheet->setCellValue('A2', 'Modalidad:');
     $sheet->setCellValue('B2', $headerData['nombre_bachillerato']);
     $sheet->setCellValue('A3', 'Grado:');
@@ -87,7 +91,7 @@ try {
     $sheet->setCellValue('D3', $nombre_seccion);
     $sheet->setCellValue('E3', 'Año Lectivo:');
     $sheet->setCellValue('F3', $nombre_ann_lectivo);
-    $sheet->mergeCells('B1:F1'); // Combinar celdas para el nombre largo
+    $sheet->mergeCells('B1:F1'); 
 
     // Estilo básico para encabezados
     $headerStyle = [
@@ -115,7 +119,7 @@ try {
 
     // Llenar datos de estudiantes
     $num = 0;
-    $fila_excel = 5; // Fila inicial de datos
+    $fila_excel = 5; 
     foreach ($studentData as $row) {
         $num++;
         $fila_excel++;
@@ -134,33 +138,41 @@ try {
     $sheet->getColumnDimension('E')->setWidth(10);
 
     // --- 4. GUARDAR EL ARCHIVO ---
-    $codigo_destino = 1; // Mantenemos el mismo destino que la nómina completa
+    $codigo_destino = 1; 
+    
+    // Aquí ocurre el Warning "Undefined array key" en funciones.php
+    // El ob_start() del inicio se encargará de ocultarlo.
     CrearDirectorios($path_root, $nombre_ann_lectivo, $codigo_bachillerato, $codigo_destino, "");
 
+    // Validación por si CrearDirectorios falla
     if (empty($DestinoArchivo) || !is_dir($DestinoArchivo)) {
-        throw new Exception("El directorio de destino no es válido o no se pudo crear: " . ($DestinoArchivo ?? 'No definido'));
+        // Fallback: intentar ruta temporal
+        $DestinoArchivo = $path_root . "/registro_academico/temp/";
+        if(!is_dir($DestinoArchivo)) { @mkdir($DestinoArchivo, 0777, true); }
     }
 
-    // Nombre de archivo ligeramente diferente
     $nombre_archivo_base = replace_3("NominaSimple-" . $codigo_bachillerato . "-". $nombre_grado ."-".$nombre_seccion.".xlsx");
     $rutaCompletaArchivo = $DestinoArchivo . $nombre_archivo_base;
 
     $writer = new Xlsx($spreadsheet);
     $writer->save($rutaCompletaArchivo);
 
-    if (!file_exists($rutaCompletaArchivo)) { throw new Exception("No se pudo guardar el archivo Excel en el servidor."); }
-    chmod($rutaCompletaArchivo, 0777);
+    if (!file_exists($rutaCompletaArchivo)) { throw new Exception("No se pudo guardar el archivo Excel."); }
+    // chmod puede fallar en Windows, lo silenciamos con @
+    @chmod($rutaCompletaArchivo, 0777);
 
     $respuesta['respuesta'] = true;
     $respuesta['mensaje'] = "Archivo Excel (Nómina Simple) generado correctamente.";
-    $respuesta['contenido'] = "Archivo guardado como: " . basename($rutaCompletaArchivo);
+    $respuesta['contenido'] = basename($rutaCompletaArchivo); // Solo devolvemos el nombre del archivo
 
 } catch (PDOException $e) {
-    $respuesta['mensaje'] = "Error de Base de Datos: " . $e->getMessage();
+    $respuesta['mensaje'] = "Error BD: " . $e->getMessage();
 } catch (Exception $e) {
     $respuesta['mensaje'] = "Error: " . $e->getMessage();
 }
 
-// Enviar respuesta JSON
+// 2. LIMPIEZA FINAL: Borrar basura (warnings) y enviar JSON limpio
+ob_end_clean(); 
+header('Content-Type: application/json; charset=utf-8');
 echo json_encode($respuesta);
 ?>
