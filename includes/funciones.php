@@ -4,7 +4,7 @@
 /////////////////////////////////////////////////////////////////////////////////////////
 function CrearDirectorios($ruta_url,$nombre_ann_lectivo,$codigo_modalidad,$codigo_destino,$numero_periodo){
 	global $DestinoArchivo;
-	$codigo_institucion = $_SESSION["codigo"];
+	$codigo_institucion = $_SESSION["codigo_institucion"];
 	// Crear Carpeta en C:\TempSistemaRegistro/
 	$TempSistema = "c:/TempSistemaRegistro"; $CarpetaArchivo = "Carpetas";
 	if(!file_exists($TempSistema)){

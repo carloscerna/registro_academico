@@ -1,113 +1,156 @@
 <?php
-// cargar-asignatura.php (VERSIÓN MODIFICADA CON LÓGICA DE ROLES)
+// includes/cargar-asignatura.php
+// VERSIÓN MAESTRA: Perfiles + Detección de Ocupados + PHP 8.3
 
+ob_start();
 header('Content-Type: application/json; charset=utf-8');
+
 $path_root = trim($_SERVER['DOCUMENT_ROOT']);
-require_once $path_root . "/registro_academico/includes/mainFunctions_conexion.php"; // Asegúrate de incluir tu conexión PDO ($dblink)
+include($path_root . "/registro_academico/includes/mainFunctions_conexion.php");
 
-// *** NUEVO: Obtener variables de sesión ***
-// Asumimos que mainFunctions_conexion.php ya ha iniciado la sesión (session_start())
-$codigoPerfil = $_SESSION['codigo_perfil'] ?? null;
-$codigoPersonal = trim($_SESSION['codigo_personal'] ?? '');
-
-
-$respuesta = [];
-
-// 1. Validar parámetros básicos (modalidad y annlectivo siempre necesarios)
-$modalidad = $_REQUEST["modalidad"] ?? null;
-$annlectivo = $_REQUEST["annlectivo"] ?? null;
-
-if (!$modalidad || !$annlectivo) {
-    echo json_encode(["error" => "Parámetros insuficientes (modalidad o annlectivo faltante)"]);
-    exit;
-}
-
-// 2. Determinar el código de grado según el parámetro presente
-$codigo_grado = null;
-if (isset($_REQUEST["codigo_grado_seccion_turno"])) {
-    // Modo antiguo: Extraer grado del código completo
-    $codigo_completo = $_REQUEST["codigo_grado_seccion_turno"];
-    // *** ¡IMPORTANTE! Ajusta substr() según tu estructura exacta ***
-    $codigo_grado = substr($codigo_completo, 0, 2);
-} else if (isset($_REQUEST["elegido"])) {
-    // Modo nuevo: Usar 'elegido' directamente
-    $codigo_grado = $_REQUEST["elegido"];
-}
-
-// Validar que obtuvimos un código de grado
-if ($codigo_grado === null) {
-    echo json_encode(["error" => "Parámetro de grado faltante (ni codigo_grado_seccion_turno ni elegido)"]);
-    exit;
-}
-
-// *** NUEVO: Validar perfil de usuario ***
-if ($codigoPerfil === null) {
-     echo json_encode(["error" => "Sesión no válida o perfil no encontrado."]);
-     exit;
-}
-
+$datos = [];
 
 try {
+    // 1. Validar Sesión
+    $codigoPerfil = $_SESSION['codigo_perfil'] ?? null;
+    $codigoPersonal = trim($_SESSION['codigo_personal'] ?? '');
+
+    if (!$codigoPerfil) {
+        throw new Exception("Sesión no válida.");
+    }
+
     if ($errorDbConexion) { throw new Exception("Error de conexión BD."); }
 
-    // 3. *** MODIFICADO: Consulta SQL según el perfil del usuario ***
-    $query_asignaturas = "";
-    $bindPersonal = false; // Flag para saber si vincular :codigoPersonal
-
-    if ($codigoPerfil == '06') { // Perfil Docente
-        // Asume que 'carga_docente' tiene los campos:
-        // codigo_asignatura, codigo_bachillerato, codigo_grado, codigo_ann_lectivo, codigo_docente
-        $query_asignaturas = "SELECT DISTINCT cd.codigo_asignatura as codigo, asig.nombre as nombre, asig.nombre as descripcion, asig.ordenar
-                             FROM carga_docente cd
-                             INNER JOIN asignatura asig ON cd.codigo_asignatura = asig.codigo
-                             WHERE cd.codigo_bachillerato = :modalidad
-                               AND cd.codigo_grado = :grado
-                               AND cd.codigo_ann_lectivo = :annlectivo
-                               AND cd.codigo_docente = :codigoPersonal
-                             ORDER BY asig.ordenar";
-        $bindPersonal = true; // Necesitamos vincular el código del docente
-
-    } else if ($codigoPerfil == '01' || $codigoPerfil == '04' || $codigoPerfil == '05') { // Admin o Registro
-        // Consulta original para ver todas las asignaturas de la estructura
-        $query_asignaturas = "SELECT DISTINCT aaa.codigo_asignatura as codigo, asig.nombre as nombre, asig.nombre as descripcion, asig.ordenar
-                             FROM a_a_a_bach_o_ciclo aaa
-                             INNER JOIN asignatura asig ON aaa.codigo_asignatura = asig.codigo
-                             WHERE aaa.codigo_bach_o_ciclo = :modalidad
-                               AND aaa.codigo_grado = :grado
-                               AND aaa.codigo_ann_lectivo = :annlectivo
-                             ORDER BY asig.ordenar";
-    } else {
-        // Otro perfil no tiene acceso
-        throw new Exception("Perfil no autorizado (" . htmlspecialchars($codigoPerfil) . ").");
-    }
-
-    // Preparar y ejecutar la consulta
-    $stmt = $dblink->prepare($query_asignaturas);
-    $stmt->bindParam(':modalidad', $modalidad);
-    $stmt->bindParam(':grado', $codigo_grado); // Usar el $codigo_grado determinado
-    $stmt->bindParam(':annlectivo', $annlectivo);
-
-    // Vincular :codigoPersonal solo si es necesario (perfil 06)
-    if ($bindPersonal) {
-        if (empty($codigoPersonal)) {
-            throw new Exception("Código de personal no encontrado en la sesión para el perfil docente.");
-        }
-        $stmt->bindParam(':codigoPersonal', $codigoPersonal);
-    }
+    // 2. Recibir Parámetros
+    // Soportamos nombres nuevos (JS nuevo) y viejos para compatibilidad
+    $modalidad = $_REQUEST["modalidad"] ?? null;
+    $annlectivo = $_REQUEST["annlectivo"] ?? ($_REQUEST["ann"] ?? null);
     
-    $stmt->execute();
-    $resultado = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    // Obtener el código GST (Grado Sección Turno)
+    // El JS nuevo envía 'codigo_gst', el archivo viejo esperaba 'codigo_grado_seccion_turno'
+    $codigo_gst = $_REQUEST["codigo_gst"] ?? ($_REQUEST["codigo_grado_seccion_turno"] ?? ($_REQUEST["elegido"] ?? ''));
 
-    // 4. Devolver resultado
-    if ($resultado) {
-         // Quitar el campo 'ordenar' de la respuesta JSON final
-         $respuesta = array_map(function($item) { unset($item['ordenar']); return $item; }, $resultado);
-    } else {
-        $respuesta = []; // Devuelve array vacío si no hay resultados
+    if (!$modalidad || !$annlectivo || empty($codigo_gst)) {
+        // Retornamos vacío en lugar de error fatal para no romper el JS con alertas feas
+        echo json_encode([]); 
+        exit;
     }
-    echo json_encode($respuesta);
+
+    // 3. Desglosar GST (Grado, Sección, Turno)
+    // Necesitamos los 3 para saber si la materia está ocupada en ESA sección específica
+    $grado = ''; $seccion = ''; $turno = '';
+    
+    if (strlen($codigo_gst) >= 6) {
+        $grado = substr($codigo_gst, 0, 2);
+        $seccion = substr($codigo_gst, 2, 2);
+        $turno = substr($codigo_gst, 4, 2);
+    } else {
+        // Si viene solo el grado (modo antiguo), solo tomamos los primeros 2
+        $grado = substr($codigo_gst, 0, 2);
+    }
+
+    // =================================================================================
+    // CASO 1: DOCENTE (06) - Solo ve LO SUYO
+    // =================================================================================
+    if ($codigoPerfil == '06') {
+        // Consulta original optimizada
+        $query = "SELECT DISTINCT cd.codigo_asignatura as codigo, asig.nombre as nombre
+                  FROM carga_docente cd
+                  INNER JOIN asignatura asig ON cd.codigo_asignatura = asig.codigo
+                  WHERE cd.codigo_bachillerato = :modalidad
+                    AND cd.codigo_grado = :grado
+                    AND cd.codigo_ann_lectivo = :annlectivo
+                    AND cd.codigo_docente = :codigoPersonal
+                  ORDER BY asig.nombre"; // O asig.ordenar si existe
+
+        $stmt = $dblink->prepare($query);
+        $stmt->bindParam(':modalidad', $modalidad);
+        $stmt->bindParam(':grado', $grado);
+        $stmt->bindParam(':annlectivo', $annlectivo);
+        $stmt->bindParam(':codigoPersonal', $codigoPersonal);
+        $stmt->execute();
+
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $descripcion = trim($row['nombre']);
+            
+            // UTF-8 Fix
+            if (!mb_check_encoding($descripcion, 'UTF-8')) {
+                $descripcion = mb_convert_encoding($descripcion, 'UTF-8', 'ISO-8859-1');
+            }
+
+            $datos[] = [
+                "codigo" => $row['codigo'],
+                "descripcion" => $descripcion,
+                "ocupado" => false, // Para el docente, visualmente no bloqueamos nada (es su carga)
+                "encargado" => ""
+            ];
+        }
+    }
+    // =================================================================================
+    // CASO 2: ADMIN / REGISTRO (01, 04, 05) - Ven TODO y detectan OCUPADOS
+    // =================================================================================
+    elseif ($codigoPerfil == '01' || $codigoPerfil == '04' || $codigoPerfil == '05') {
+        
+        // Consulta Maestra: Plan de Estudios + Subconsulta "Espía"
+        $query = "SELECT 
+                    aaa.codigo_asignatura as codigo, 
+                    asig.nombre as nombre,
+                    (
+                        SELECT btrim(p.nombres || ' ' || p.apellidos)
+                        FROM carga_docente cd
+                        INNER JOIN personal p ON cd.codigo_docente = p.id_personal
+                        WHERE cd.codigo_ann_lectivo = :annlectivo
+                          AND cd.codigo_bachillerato = :modalidad
+                          AND cd.codigo_grado = :grado
+                          AND cd.codigo_seccion = :seccion  -- Validación estricta
+                          AND cd.codigo_turno = :turno      -- Validación estricta
+                          AND cd.codigo_asignatura = aaa.codigo_asignatura
+                        LIMIT 1
+                    ) as docente_asignado
+                  FROM a_a_a_bach_o_ciclo aaa
+                  INNER JOIN asignatura asig ON aaa.codigo_asignatura = asig.codigo
+                  WHERE aaa.codigo_bach_o_ciclo = :modalidad
+                    AND aaa.codigo_grado = :grado
+                    AND aaa.codigo_ann_lectivo = :annlectivo
+                  ORDER BY asig.ordenar, asig.nombre";
+
+        $stmt = $dblink->prepare($query);
+        $stmt->bindParam(':modalidad', $modalidad);
+        $stmt->bindParam(':grado', $grado);
+        $stmt->bindParam(':annlectivo', $annlectivo);
+        // Parametros para la subconsulta (Solo si tenemos GST completo)
+        $stmt->bindParam(':seccion', $seccion);
+        $stmt->bindParam(':turno', $turno);
+        
+        $stmt->execute();
+
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $descripcion = trim($row['nombre']);
+            $encargado = $row['docente_asignado'] ?? '';
+
+            // UTF-8 Fix para Nombre Asignatura
+            if (!mb_check_encoding($descripcion, 'UTF-8')) {
+                $descripcion = mb_convert_encoding($descripcion, 'UTF-8', 'ISO-8859-1');
+            }
+            // UTF-8 Fix para Nombre Docente
+            if (!empty($encargado) && !mb_check_encoding($encargado, 'UTF-8')) {
+                $encargado = mb_convert_encoding($encargado, 'UTF-8', 'ISO-8859-1');
+            }
+
+            $datos[] = [
+                "codigo" => $row['codigo'],
+                "descripcion" => $descripcion,
+                "ocupado" => !empty($encargado), // TRUE si hay profe asignado
+                "encargado" => $encargado
+            ];
+        }
+    }
 
 } catch (Exception $e) {
-    echo json_encode(["error" => "Error al consultar asignaturas: " . $e->getMessage()]);
+    // Si hay error, devolvemos array vacío para no romper el JS
+    // (Opcional: logging de error en servidor)
 }
+
+ob_end_clean();
+echo json_encode($datos);
 ?>
