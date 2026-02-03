@@ -102,6 +102,41 @@ if($errorDbConexion == false){
                 }
                 break;
             
+                case 'BuscarHistorial':
+                    $id_estudiante = $_REQUEST['id_estudiante'] ?? 0;
+                    
+                    // Tu consulta actualizada
+                    $query = "SELECT 
+                                m.codigo_ann_lectivo, 
+                                g.nombre as nombre_grado, 
+                                s.nombre as nombre_seccion,
+                                a.nombre as nombre_annlectivo,
+                                CASE WHEN m.retirado = 't' THEN 'Retirado' ELSE 'Activo' END as condicion
+                              FROM alumno_matricula m
+                              INNER JOIN grado_ano g ON g.codigo = m.codigo_grado
+                              INNER JOIN seccion s ON s.codigo = m.codigo_seccion
+                              INNER JOIN ann_lectivo a ON a.codigo = m.codigo_ann_lectivo
+                              WHERE m.codigo_alumno = :id
+                              ORDER BY m.codigo_ann_lectivo DESC";
+                    
+                    try {
+                        $stmt = $dblink->prepare($query);
+                        $stmt->execute([':id' => $id_estudiante]);
+                        $res = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                        
+                        if($res){
+                            $response["respuesta"] = true;
+                            $response["data"] = $res;
+                        } else {
+                            $response["respuesta"] = false;
+                            $response["mensaje"] = "No se encontró historial para este alumno.";
+                        }
+                    } catch (PDOException $e) {
+                        $response["respuesta"] = false;
+                        $response["mensaje"] = "Error en BD: " . $e->getMessage();
+                    }
+                    break;
+
             default:
                 $response["mensaje"] = "Acción '$accion' no disponible.";
                 break;

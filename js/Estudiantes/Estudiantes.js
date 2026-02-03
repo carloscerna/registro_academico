@@ -7,17 +7,16 @@ let tablaEstudiantes = ""; // Renombrado para claridad
 const menu_group = `
 <div class="dropdown">
     <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-bs-toggle="dropdown">
-        ...
+        Acciones
     </button>
     <div class="dropdown-menu">
+        <a class="historial dropdown-item fas fa-flag text-success" href="#"> Ver Historial</a>
+        <div class="dropdown-divider"></div>
         <a class="editar dropdown-item fal fa-user-edit" href="#"> Editar</a>
         <a class="expediente dropdown-item far fa-id-card" href="#"> Expediente</a>
-        <a class="imprimir-portada dropdown-item fas fa-address-card" href="#"> Portada</a>
-        <a class="imprimir-portada-promocion dropdown-item fas fa-address-card" href="#"> Portada Promoción</a>
-        <div class="dropdown-divider"></div>
-        <a class="eliminar dropdown-item fas fa-user-slash text-danger" href="#"> Eliminar</a>
     </div>
 </div>`;
+
 
 $(function(){ 
     // Inicializar al cargar
@@ -175,6 +174,63 @@ $(function(){
                 }
             })
         });
+
+// --- CARGAR HISTORIAL ---
+$(tbody).on("click", "a.historial", function(e){
+    e.preventDefault();
+    let data = tabla.row($(this).parents("tr")).data();
+    let id_estudiante = data.id_alumno; //
+
+    // Limpiar y mostrar spinner
+    $("#contenidoHistorial").html('<div class="text-center"><i class="fas fa-spinner fa-spin fa-2x"></i> Cargando historial...</div>');
+    $("#modalHistorial").modal("show");
+
+    $.ajax({
+        type: "POST",
+        url: "php_libs/soporte/EstudiantesBuscar.php", //
+        data: { accion_buscar: 'BuscarHistorial', id_estudiante: id_estudiante },
+        dataType: "json",
+        success: function(response) {
+            if (response.respuesta) {
+                let html = `
+                <table class="table table-sm table-striped table-bordered table-hover">
+                    <thead class="bg-navy text-white text-center">
+                        <tr>
+                            <th>Código</th>
+                            <th>Año Lectivo</th>
+                            <th>Grado</th>
+                            <th>Sección</th>
+                            <th>Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody>`;
+                
+                response.data.forEach(reg => {
+                    // Se usan los nombres definidos en tu consulta SQL
+                    html += `<tr>
+                        <td class="text-center">${reg.codigo_ann_lectivo}</td>
+                        <td>${reg.nombre_annlectivo}</td>
+                        <td>${reg.nombre_grado}</td>
+                        <td class="text-center">${reg.nombre_seccion}</td>
+                        <td class="text-center">
+                            <span class="badge ${reg.condicion === 'Activo' ? 'bg-success' : 'bg-danger'}">
+                                ${reg.condicion}
+                            </span>
+                        </td>
+                    </tr>`;
+                });
+                
+                html += `</tbody></table>`;
+                $("#contenidoHistorial").html(html);
+            } else {
+                $("#contenidoHistorial").html(`<div class="alert alert-info text-center">${response.mensaje}</div>`);
+            }
+        },
+        error: function() {
+            $("#contenidoHistorial").html('<div class="alert alert-danger text-center">Error de comunicación con el servidor.</div>');
+        }
+    });
+});
     };
 
     // ------------------------------------------------------------------------
