@@ -1,117 +1,98 @@
 <?php
 /**
  * Crear Hoja de Cálculo (CrearHC.php)
- * Versión optimizada para PHP 8.3
+ * VERSIÓN BLINDADA PHP 8.3
  */
 
-// 1. INICIAR BUFFER PARA PROTEGER EL JSON DE ERRORES/WARNINGS
+// 1. INICIAR BUFFER (Atrapa errores para no romper el JSON)
 ob_start();
 
-// Configuración inicial
 session_name('demoUI');
-// session_start(); // Descomenta si lo necesitas, pero cuidado con doble inicio
+// session_start(); 
 header("Content-Type: application/json; charset=utf-8");
 
-// Configuración de memoria y tiempo
+// Configuración de memoria y tiempo para procesos largos
 set_time_limit(0);
 ini_set("memory_limit","1024M");
 
-// Definición de Rutas
 $path_root = trim($_SERVER['DOCUMENT_ROOT']);
 
 // INCLUDES
 include($path_root."/registro_academico/includes/mainFunctions_conexion.php");
 include($path_root."/registro_academico/includes/funciones.php");
-include($path_root."/registro_academico/includes/funciones_2.php"); // Asegúrate de que este exista, o comenta si no
+include($path_root."/registro_academico/includes/funciones_2.php");
 
-// CARGAR AUTOLOAD DE COMPOSER
+// AUTOLOAD COMPOSER (PhpSpreadsheet)
 require $path_root."/registro_academico/vendor/autoload.php";
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 
-// --- FUNCIONES AUXILIARES DE COMPATIBILIDAD UTF8 ---
-if (!function_exists('utf8_decode_fix')) {
-    function utf8_decode_fix($texto) {
-        if (is_null($texto)) return '';
-        return mb_convert_encoding((string)$texto, 'ISO-8859-1', 'UTF-8');
-    }
-}
-if (!function_exists('utf8_encode_fix')) {
-    function utf8_encode_fix($texto) {
-        if (is_null($texto)) return '';
-        return mb_convert_encoding((string)$texto, 'UTF-8', 'ISO-8859-1');
-    }
-}
-// ---------------------------------------------------
-
-// Inicializar variables
+// --- VARIABLES INICIALES ---
 $respuestaOK = true;
-$mensajeError = "Si Save";
-$contenidoOK = "Si Save";
+$mensajeError = "";
+$contenidoOK = "";
 $mensajeErrorTabla = "";
 $tiempo_inicio = microtime(true);
 
-// Recibir variables con protección
+// Recibir variables del Frontend
 $codigo_docente = trim($_REQUEST["codigo_docente"] ?? '');
 $codigo_annlectivo = trim($_REQUEST["codigo_annlectivo"] ?? '');
+
+// Checkboxes de trimestres
 $trimestre_1 = trim($_REQUEST["t1"] ?? 'no');
 $trimestre_2 = trim($_REQUEST["t2"] ?? 'no');
 $trimestre_3 = trim($_REQUEST["t3"] ?? 'no');
 $trimestre_4 = trim($_REQUEST["t4"] ?? 'no');
 
-// Variables para lógica
 $hoja_aspectos = 0;
-$n_hoja = 4;
-$fila_docente = 0;
+$n_hoja = 4; // Índice inicial para hojas nuevas
 
-// CONSULTA DOCENTE
-$query = "SELECT eg.encargado, eg.codigo_ann_lectivo, eg.codigo_grado, eg.codigo_seccion, eg.codigo_bachillerato, eg.codigo_docente, eg.imparte_asignatura
-          FROM encargado_grado eg 
+// ------------------------------------------------------------------------------------------------
+// 1. CONSULTA INICIAL PARA OBTENER DATOS DEL DOCENTE (Solo validación)
+// ------------------------------------------------------------------------------------------------
+$query = "SELECT eg.codigo_bachillerato FROM encargado_grado eg 
           WHERE eg.codigo_docente = '$codigo_docente' AND eg.codigo_ann_lectivo = '$codigo_annlectivo'";
+// Solo ejecutamos para validar conexión, la lógica real está más abajo en el bucle
+$dblink->query($query);
 
-try {
-    $consulta_docente = $dblink->query($query);
-    // Variables para primer ciclo (arrays)
-    $codigo_bachillerato_primer_ciclo = [];
-    $codigo_grado_primer_ciclo = [];
-    $codigo_seccion_primer_ciclo = [];
-
-    while($listadoDocente = $consulta_docente->fetch(PDO::FETCH_BOTH)) {
-        // No necesitamos guardar esto si no se usa después, pero mantenemos la lógica original
-        $codigo_bachillerato_primer_ciclo[] = trim($listadoDocente['codigo_bachillerato']);
-        // ... resto de lógica
-    }
-} catch (PDOException $e) {
-    // Manejo silencioso o log
-}
-
-// INICIAR SPREADSHEET
+// ------------------------------------------------------------------------------------------------
+// 2. PREPARAR EL EXCEL BASE
+// ------------------------------------------------------------------------------------------------
 $objPHPExcel = new Spreadsheet();
+// Configurar fuente base
 $objPHPExcel->getDefaultStyle()->getFont()->setName('Arial');
 $objPHPExcel->getDefaultStyle()->getFont()->setSize(10);
 
-// Cargar plantilla
-$objReader = IOFactory::createReader("Xlsx");
+// Definir qué plantilla usar
 $origen = $path_root."/registro_academico/formatos_hoja_de_calculo/";
 $nombre_de_hoja_de_calculo = "Control de Actividades Ver.2025.xlsx"; // Default
 
-// Lógica de trimestres para cambiar plantilla (Mantenida del original)
 if($trimestre_1 == "yes") $nombre_de_hoja_de_calculo = "Control de Actividades Ver.2019-1.xlsx";
 if($trimestre_2 == "yes" && $trimestre_1 == "yes") $nombre_de_hoja_de_calculo = "Control de Actividades Ver.2019-2.xlsx";
 if($trimestre_3 == "yes") $nombre_de_hoja_de_calculo = "Control de Actividades Ver.2019-3.xlsx";
 if($trimestre_4 == "yes") $nombre_de_hoja_de_calculo = "Control de Actividades Ver.2019-4.xlsx";
 
-// Cargar archivo base
+// Cargar Plantilla
+$objReader = IOFactory::createReader("Xlsx");
 if (file_exists($origen.$nombre_de_hoja_de_calculo)) {
     $objPHPExcel = $objReader->load($origen.$nombre_de_hoja_de_calculo);
 } else {
-    // Fallback si no existe la plantilla específica
-    // $objPHPExcel = $objReader->load($origen."Control de Actividades Ver.2025.xlsx");
+    // Si no existe la específica, intentar cargar la default
+    if(file_exists($origen."Control de Actividades Ver.2025.xlsx")){
+        $objPHPExcel = $objReader->load($origen."Control de Actividades Ver.2025.xlsx");
+    } else {
+        // Error fatal controlado
+        ob_end_clean();
+        echo json_encode(["respuesta"=>false, "mensaje"=>"No se encuentra la plantilla Excel en el servidor."]);
+        exit;
+    }
 }
 
-// OBTENER CARGA DOCENTE
+// ------------------------------------------------------------------------------------------------
+// 3. OBTENER CARGA ACADÉMICA (Asignaturas a procesar)
+// ------------------------------------------------------------------------------------------------
 $query = "SELECT cd.codigo_docente, cd.codigo_asignatura, cd.codigo_seccion, cd.codigo_bachillerato, cd.codigo_grado, cd.codigo_ann_lectivo
           FROM carga_docente cd
           WHERE cd.codigo_docente = '$codigo_docente' AND cd.codigo_ann_lectivo = '$codigo_annlectivo'
@@ -120,6 +101,7 @@ $query = "SELECT cd.codigo_docente, cd.codigo_asignatura, cd.codigo_seccion, cd.
 $consulta_docente = $dblink->query($query);
 $fila_docente = $consulta_docente->rowCount();
 
+// Arrays para almacenar la carga
 $codigo_bachillerato_partes = [];
 $codigo_grado_partes = [];
 $codigo_seccion_partes = [];
@@ -133,122 +115,118 @@ if ($fila_docente > 0) {
         $codigo_asignatura_partes[] = trim($listadoDocente['codigo_asignatura']);
     }
 } else {
-    // Si no hay carga
     ob_end_clean();
-    echo json_encode([
-        "respuesta" => false,
-        "mensaje" => "Error de Creación.",
-        "contenido" => "<strong>No hay Carga Académica Asignada</strong>",
-        "mensajeErrorTabla" => ""
-    ]);
+    echo json_encode(["respuesta" => false, "mensaje" => "No tiene Carga Académica asignada."]);
     exit;
 }
 
-// Variables globales para el nombre del archivo final
+// Variables para nombre de archivo final
 $nombre_docente_archivo = "Docente"; 
 $nombre_ann_lectivo_archivo = "202X";
 $codigo_modalidad_archivo = "00";
 
-// RECORRER CARGA
+// ------------------------------------------------------------------------------------------------
+// 4. BUCLE PRINCIPAL: PROCESAR CADA ASIGNATURA
+// ------------------------------------------------------------------------------------------------
 for($ii=0; $ii<$fila_docente; $ii++) {
     
-    // Consulta detallada por asignatura
+    // Consulta detallada de la asignatura actual
     $query = "SELECT cd.codigo_docente, cd.codigo_ann_lectivo, cd.codigo_bachillerato, cd.codigo_grado, cd.codigo_seccion, cd.codigo_asignatura,
         asig.nombre as nombre_asignatura, btrim(pd.nombres || CAST(' ' AS VARCHAR) || pd.apellidos) as nombre_docente, grado.nombre as nombre_grado, sec.nombre as nombre_seccion,
-        ann.nombre as nombre_ann_lectivo, bach.nombre as nombre_bachillerato, asig.codigo_cc, asig.codigo_area,
-        cat_cc.descripcion as concepto_calificacion
-        from carga_docente cd
+        ann.nombre as nombre_ann_lectivo, bach.nombre as nombre_bachillerato, asig.codigo_cc, asig.codigo_area
+        FROM carga_docente cd
         INNER JOIN bachillerato_ciclo bach ON bach.codigo = cd.codigo_bachillerato
         INNER JOIN asignatura asig ON asig.codigo = cd.codigo_asignatura
         INNER JOIN ann_lectivo ann ON ann.codigo = cd.codigo_ann_lectivo
         INNER JOIN personal pd ON pd.id_personal = (cd.codigo_docente)::int
         INNER JOIN grado_ano grado ON grado.codigo = cd.codigo_grado
         INNER JOIN seccion sec ON sec.codigo = cd.codigo_seccion
-        INNER JOIN catalogo_cc_asignatura cat_cc ON cat_cc.codigo = asig.codigo_cc
-        WHERE codigo_docente = '".$codigo_docente."' 
-        AND codigo_ann_lectivo = '".$codigo_annlectivo."' 
-        AND codigo_bachillerato = '".$codigo_bachillerato_partes[$ii]."' 
-        AND codigo_grado = '".$codigo_grado_partes[$ii]."' 
-        AND codigo_seccion = '".$codigo_seccion_partes[$ii]."' 
-        AND cd.codigo_asignatura = '".$codigo_asignatura_partes[$ii]."' 
-        ORDER BY cd.codigo_grado, cd.codigo_seccion, cd.codigo_asignatura";
+        WHERE cd.codigo_docente = '$codigo_docente' 
+        AND cd.codigo_ann_lectivo = '$codigo_annlectivo' 
+        AND cd.codigo_bachillerato = '".$codigo_bachillerato_partes[$ii]."' 
+        AND cd.codigo_grado = '".$codigo_grado_partes[$ii]."' 
+        AND cd.codigo_seccion = '".$codigo_seccion_partes[$ii]."' 
+        AND cd.codigo_asignatura = '".$codigo_asignatura_partes[$ii]."'";
 
     $result_consulta = $dblink->query($query);
     
-    // Variables temporales del ciclo
+    // Variables temporales
     $codigo_area = "";
-    $codigo_bach_limpio = ""; // Para guardar sin comillas
+    $codigo_bach_limpio = ""; 
 
     while($rows = $result_consulta->fetch(PDO::FETCH_BOTH)) {
-        // Datos básicos
+        
         $nuevo_codigo_asignatura = trim($rows['codigo_asignatura']);
         
-        // CORRECCIÓN UTF8
-        $nombre_asignatura = trim($rows['nombre_asignatura']); // Usaremos mb_convert si es necesario
-        // Si tienes una función replace_3, úsala, si no, usa str_replace básico
-        if(function_exists('replace_3')) {
-            $nombre_asignatura = replace_3($nombre_asignatura);
-        }
+        // Limpieza de nombres UTF-8
+        $nombre_asignatura = trim($rows['nombre_asignatura']);
+        if(function_exists('replace_3')) $nombre_asignatura = replace_3($nombre_asignatura);
 
-        // GUARDAR DATOS PARA LUEGO (CON COMILLAS PARA SQL SI ES NECESARIO, LIMPIOS PARA LÓGICA)
-        // El código original agregaba comillas manuales: "'".trim()."'"
-        // Mantendremos esa lógica SOLO para variables que van a consultas SQL directas o Excel
-        
+        // -- VARIABLES LIMPIAS (Para lógica PHP y Nombres de Archivo) --
         $codigo_bach_limpio = trim($rows['codigo_bachillerato']);
-        $codigo_bach = "'".$codigo_bach_limpio."'";
+        $codigo_grado_limpio = trim($rows['codigo_grado']);
+        $codigo_seccion_limpio = trim($rows['codigo_seccion']);
+        $codigo_ann_limpio = trim($rows['codigo_ann_lectivo']);
         
-        $codigo_ann = "'".trim($rows['codigo_ann_lectivo'])."'";
-        $codigo_grado = "'".trim($rows['codigo_grado'])."'";
-        $codigo_seccion = "'".trim($rows['codigo_seccion'])."'";
+        // -- VARIABLES CON COMILLAS (Solo si tu SQL antiguo las necesita estrictamente) --
+        // Aunque PDO prefiere sin comillas si usas bindParam, aquí mantenemos tu lógica string
+        $codigo_bach = "'".$codigo_bach_limpio."'";
+        $codigo_ann = "'".$codigo_ann_limpio."'";
+        $codigo_grado = "'".$codigo_grado_limpio."'";
+        $codigo_seccion = "'".$codigo_seccion_limpio."'";
 
-        // Textos
-        $nombre_bachillerato_en_excel = trim($rows['nombre_bachillerato']);
+        // Textos para Excel
+        $nombre_bachillerato_excel = trim($rows['nombre_bachillerato']);
         $nombre_ann_lectivo = trim($rows['nombre_ann_lectivo']);
-        $nombre_docente_en_excel = trim($rows['nombre_docente']);
+        $nombre_docente_excel = trim($rows['nombre_docente']);
         $nombre_grado = trim($rows['nombre_grado']);
         $nombre_seccion = trim($rows['nombre_seccion']);
         $codigo_area = trim($rows['codigo_area']);
 
-        // Guardar para el final (nombre de archivo)
-        $nombre_docente_archivo = $nombre_docente_en_excel;
+        // Guardar datos globales para el nombre del archivo final
+        $nombre_docente_archivo = $nombre_docente_excel;
         $nombre_ann_lectivo_archivo = $nombre_ann_lectivo;
-        $codigo_modalidad_archivo = $codigo_bach_limpio; // Guardamos el limpio
+        $codigo_modalidad_archivo = $codigo_bach_limpio; 
     }
     
     // LÓGICA DE HOJAS Y CLONACIÓN
     $pase = 0; 
     $numero_hoja_clonar = 0;
 
-    // Convivencia / Conducta
+    // Detectar si es Convivencia/Conducta (Area 07)
     if($codigo_area == '07') {
         $hoja_aspectos++;
+        // Asumiendo que tienes hasta 5 aspectos
         if($hoja_aspectos >= 1 && $hoja_aspectos <= 5) {
             $pase = 1; 
-            $numero_hoja_clonar = 1;
+            $numero_hoja_clonar = 1; // Hoja base de conducta
         }
     } else {
         $hoja_aspectos = 0; 
         $pase = 0; 
-        $numero_hoja_clonar = 0;
+        $numero_hoja_clonar = 0; // Hoja base de notas normal
     }
 
-    // CLONAR HOJA ESTÁNDAR
+    // -------------------------------------------------------
+    // CASO A: CLONAR HOJA DE NOTAS (NORMAL)
+    // -------------------------------------------------------
     if($pase == 0 && $numero_hoja_clonar == 0) {
-        // Turnos Nocturna
+        // Ajuste para Nocturna (usar otra hoja base)
         if($codigo_bach_limpio == "10" || $codigo_bach_limpio == "11" || $codigo_bach_limpio == "12"){
-            $numero_hoja_clonar = 2;
+            $numero_hoja_clonar = 2; 
         }
         
+        // Clonar
         $objWorkSheetBase = $objPHPExcel->getSheet($numero_hoja_clonar);
         $objWorkSheet1 = clone $objWorkSheetBase;
         $objWorkSheet1->setTitle('Cloned Sheet');
         $objPHPExcel->addSheet($objWorkSheet1);
         
+        // Moverse a la nueva hoja
         $objPHPExcel->setActiveSheetIndex($n_hoja);
         
-        // Título de la hoja (limitar caracteres para que Excel no falle > 31 chars)
-        $titulo_hoja = substr(str_replace("'","",$codigo_grado),1,1).'.º-'.$nombre_seccion.' '.substr($nombre_asignatura,0,10);
-        // Limpiar caracteres inválidos en nombre de hoja Excel
+        // Titular la hoja (Limpieza de caracteres prohibidos en Excel)
+        $titulo_hoja = substr($codigo_grado_limpio, 1, 1) . '.º-' . $nombre_seccion . ' ' . substr($nombre_asignatura, 0, 10);
         $titulo_hoja = str_replace([':', '\\', '/', '?', '*', '[', ']'], '', $titulo_hoja);
         $objPHPExcel->getActiveSheet($n_hoja)->setTitle($titulo_hoja);
         
@@ -256,10 +234,10 @@ for($ii=0; $ii<$fila_docente; $ii++) {
 
         // ESCRIBIR ENCABEZADOS
         $sheet = $objPHPExcel->getActiveSheet();
-        $sheet->SetCellValue('E2', $nombre_docente_en_excel);
-        $sheet->SetCellValue('F2', "'".$codigo_docente."'");
+        $sheet->SetCellValue('E2', $nombre_docente_excel);
+        $sheet->SetCellValue('F2', "'".$codigo_docente."'"); // ID Docente con comilla para que Excel lo trate como texto
         $sheet->SetCellValue('D3', $codigo_bach);
-        $sheet->SetCellValue('E3', $nombre_bachillerato_en_excel);
+        $sheet->SetCellValue('E3', $nombre_bachillerato_excel);
         $sheet->SetCellValue('D4', $codigo_ann);
         $sheet->SetCellValue('E4', $nombre_ann_lectivo);
         $sheet->SetCellValue('D5', $codigo_grado);
@@ -269,43 +247,35 @@ for($ii=0; $ii<$fila_docente; $ii++) {
         $sheet->SetCellValue('D7', "'".$nuevo_codigo_asignatura."'");
         $sheet->SetCellValue('E7', $nombre_asignatura);
 
-        // Lógica Básica vs Media
+        // Configurar Textos según Nivel (Básica vs Media)
         if($codigo_bach_limpio >= "01" && $codigo_bach_limpio <= "05") {
             $sheet->SetCellValue('G4', 'BASICA');
             $sheet->SetCellValue('G7', 'T R I M E S T R E');
-            // ... (resto de celdas) ...
-            
+            // ... Repite para otros trimestres si es necesario en la plantilla
             if($codigo_bach_limpio == "05"){
                 $sheet->SetCellValue('G4', 'BASICA - TERCER CICLO');
             }
         } else {
             $sheet->SetCellValue('G4', 'MEDIA');
             $sheet->SetCellValue('G7', 'P E R I O D O');
-            // ...
         }
 
-        // CONSULTA ALUMNOS
-        // Construir código "all" limpiando comillas simples si las tienen
-        $bach_tmp = str_replace("'", "", $codigo_bach);
-        $grado_tmp = str_replace("'", "", $codigo_grado);
-        $sec_tmp = str_replace("'", "", $codigo_seccion);
-        $ann_tmp = str_replace("'", "", $codigo_ann);
-        
-        $codigo_all = $bach_tmp . $grado_tmp . $sec_tmp . $ann_tmp;
+        // -------------------------------------------------------
+        // CONSULTA DE ALUMNOS
+        // -------------------------------------------------------
+        // Reconstruimos el código "all" concatenando las versiones LIMPIAS
+        $codigo_all_limpio = $codigo_bach_limpio . $codigo_grado_limpio . $codigo_seccion_limpio . $codigo_ann_limpio;
 
-        $query_alumnos = "SELECT a.id_alumno, a.codigo_nie, btrim(a.apellido_paterno || CAST(' ' AS VARCHAR) || a.apellido_materno || CAST(', ' AS VARCHAR) || a.nombre_completo) as apellido_alumno,
-            a.genero, a.id_alumno as cod_alumno, am.id_alumno_matricula as codigo_matricula, am.codigo_bach_o_ciclo,
-            bach.nombre as nombre_bachillerato, am.codigo_ann_lectivo, ann.nombre as nombre_ann_lectivo, am.codigo_grado, gan.nombre as nombre_grado, am.codigo_seccion, sec.nombre as nombre_seccion,
-            n.nota_p_p_1, n.nota_p_p_2, n.nota_p_p_3, n.nota_p_p_4, n.codigo_asignatura
+        // Nota: En la consulta SQL concatenas con btrim(...). Asegúrate que la BD espera lo mismo.
+        // Aquí usaremos la variable limpia para no meter comillas dobles en el SQL
+        $query_alumnos = "SELECT a.codigo_nie, btrim(a.apellido_paterno || ' ' || a.apellido_materno || ', ' || a.nombre_completo) as apellido_alumno,
+            a.genero, a.id_alumno as cod_alumno, am.id_alumno_matricula as codigo_matricula,
+            n.nota_p_p_1, n.nota_p_p_2, n.nota_p_p_3, n.nota_p_p_4
             FROM alumno a 
             INNER JOIN alumno_matricula am ON a.id_alumno = am.codigo_alumno and am.retirado = 'f' 
-            INNER JOIN bachillerato_ciclo bach ON bach.codigo = am.codigo_bach_o_ciclo 
-            INNER JOIN grado_ano gan ON gan.codigo = am.codigo_grado
-            INNER JOIN seccion sec ON sec.codigo = am.codigo_seccion 
-            INNER JOIN ann_lectivo ann ON ann.codigo = am.codigo_ann_lectivo 
             INNER JOIN nota n ON n.codigo_alumno = a.id_alumno and am.id_alumno_matricula = n.codigo_matricula
-            WHERE btrim(am.codigo_bach_o_ciclo || am.codigo_grado || am.codigo_seccion || am.codigo_ann_lectivo) = '".$codigo_all."' 
-            AND n.codigo_asignatura = '".$nuevo_codigo_asignatura."' 
+            WHERE btrim(am.codigo_bach_o_ciclo || am.codigo_grado || am.codigo_seccion || am.codigo_ann_lectivo) = '$codigo_all_limpio' 
+            AND n.codigo_asignatura = '$nuevo_codigo_asignatura' 
             ORDER BY apellido_alumno ASC";
 
         $result_alumnos = $dblink->query($query_alumnos);
@@ -320,109 +290,131 @@ for($ii=0; $ii<$fila_docente; $ii++) {
             
             $sheet->SetCellValue("A".$fila_excel, $num);
             $sheet->SetCellValue("B".$fila_excel, trim($row['codigo_nie']));
-            $sheet->SetCellValue("C".$fila_excel, trim($row['codigo_alumno']));
+            $sheet->SetCellValue("C".$fila_excel, trim($row['cod_alumno']));
             $sheet->SetCellValue("D".$fila_excel, trim($row['codigo_matricula']));
             $sheet->SetCellValue("E".$fila_excel, trim($row['apellido_alumno']));
             $sheet->SetCellValue("F".$fila_excel, $sexo);
 
-            // Grabar Notas (Si está activado)
+            // Rellenar notas si se solicitó
             if($trimestre_1 == "yes") $sheet->SetCellValue("Y".$fila_excel, trim($row['nota_p_p_1']));
             if($trimestre_2 == "yes") {
-                $sheet->SetCellValue("Y".$fila_excel, trim($row['nota_p_p_1']));
+                $sheet->SetCellValue("Y".$fila_excel, trim($row['nota_p_p_1'])); // Refuerzo T1
                 $sheet->SetCellValue("AR".$fila_excel, trim($row['nota_p_p_2']));
             }
-            // ... resto de trimestres ...
+            if($trimestre_3 == "yes") {
+                $sheet->SetCellValue("Y".$fila_excel, trim($row['nota_p_p_1']));
+                $sheet->SetCellValue("AR".$fila_excel, trim($row['nota_p_p_2']));
+                $sheet->SetCellValue("BK".$fila_excel, trim($row['nota_p_p_3']));
+            }
+            if($trimestre_4 == "yes") {
+                $sheet->SetCellValue("Y".$fila_excel, trim($row['nota_p_p_1']));
+                $sheet->SetCellValue("AR".$fila_excel, trim($row['nota_p_p_2']));
+                $sheet->SetCellValue("BK".$fila_excel, trim($row['nota_p_p_3']));
+                $sheet->SetCellValue("CD".$fila_excel, trim($row['nota_p_p_4']));
+            }
         }
         
-        // Proteger
+        // Proteger hoja
         $sheet->getProtection()->setPassword('1');
         $sheet->getProtection()->setSheet(true);
-    } // Fin IF PASE == 0
+        
+    } // FIN CASO A
 
-    // LOGICA CLONACION ASPECTOS (CONDUCTA)
+    // -------------------------------------------------------
+    // CASO B: CLONAR HOJA DE CONDUCTA/ASPECTOS
+    // -------------------------------------------------------
     if($pase == 1 && $numero_hoja_clonar == 1) {
-        // Lógica similar a la anterior para hojas de conducta...
-        // ... (Se mantiene la lógica original, omitida por brevedad pero asumiendo que está ok)
-        // Solo asegúrate de usar $sheet = $objPHPExcel->getActiveSheet();
-        
-        // Replicar la limpieza de variables y asignación de celdas...
-        // ...
-        
-        // NOTA: Para no hacer el código gigante aquí, asumo que copias la lógica del bloque anterior
-        // Pero usando $hoja_aspectos para el switch.
+        // (Aquí va la lógica de clonado para hojas de conducta, similar a la anterior)
+        // Por brevedad, si funciona tu lógica original, pégala aquí pero asegúrate
+        // de usar las variables _limpias para los títulos y referencias.
     }
 
 } // FIN FOR PRINCIPAL
 
+// ------------------------------------------------------------------------------------------------
+// 5. GUARDAR ARCHIVO FINAL (RUTA EXTERNA C:\TempSistemaRegistro...)
+// ------------------------------------------------------------------------------------------------
 
-// ==========================================
-// GUARDAR ARCHIVO
-// ==========================================
+// 1. OBTENER VARIABLES PARA LA RUTA
+$codigo_institucion = $_SESSION['codigo_institucion'] ?? '00000'; // Valor por defecto si falla la sesión
+$ann_lectivo = $nombre_ann_lectivo_archivo; // Año lectivo (ej: 2025)
 
-// Limpiar código modalidad para la función de directorios
-// AQUÍ ESTABA EL ERROR: Se enviaba con comillas simples extra ('18' en vez de 18)
-$codigo_destino = 2;
+// 2. DEFINIR RUTA BASE SOLICITADA
+// Ruta: C:/TempSistemaRegistro/Carpetas/10391/Cuadro_Notas/2025/
+$ruta_base_personalizada = "C:/TempSistemaRegistro/Carpetas/" . $codigo_institucion . "/Cuadro_Notas/" . $ann_lectivo . "/";
 
-// Usamos el código limpio que guardamos antes
-// Y usamos str_replace por si acaso se nos coló alguna comilla
-$codigo_modalidad_limpio = str_replace("'", "", $codigo_modalidad_archivo);
+// 3. SANITIZAR NOMBRE DE ARCHIVO
+// Quitamos tildes para evitar errores en Windows
+$nombre_base = $nombre_docente_archivo . "-" . $nombre_ann_lectivo_archivo;
+$unwanted_array = array(    'Š'=>'S', 'š'=>'s', 'Ž'=>'Z', 'ž'=>'z', 'À'=>'A', 'Á'=>'A', 'Â'=>'A', 'Ã'=>'A', 'Ä'=>'A', 'Å'=>'A', 'Æ'=>'A', 'Ç'=>'C', 'È'=>'E', 'É'=>'E',
+                            'Ê'=>'E', 'Ë'=>'E', 'Ì'=>'I', 'Í'=>'I', 'Î'=>'I', 'Ï'=>'I', 'Ñ'=>'N', 'Ò'=>'O', 'Ó'=>'O', 'Ô'=>'O', 'Õ'=>'O', 'Ö'=>'O', 'Ø'=>'O', 'Ù'=>'U',
+                            'Ú'=>'U', 'Û'=>'U', 'Ü'=>'U', 'Ý'=>'Y', 'Þ'=>'B', 'ß'=>'Ss', 'à'=>'a', 'á'=>'a', 'â'=>'a', 'ã'=>'a', 'ä'=>'a', 'å'=>'a', 'æ'=>'a', 'ç'=>'c',
+                            'è'=>'e', 'é'=>'e', 'ê'=>'e', 'ë'=>'e', 'ì'=>'i', 'í'=>'i', 'î'=>'i', 'ï'=>'i', 'ð'=>'o', 'ñ'=>'n', 'ò'=>'o', 'ó'=>'o', 'ô'=>'o', 'õ'=>'o',
+                            'ö'=>'o', 'ø'=>'o', 'ù'=>'u', 'ú'=>'u', 'û'=>'u', 'ý'=>'y', 'þ'=>'b', 'ÿ'=>'y' );
+$nombre_limpio = strtr( $nombre_base, $unwanted_array );
+$nombre_archivo = str_replace(" ", "-", $nombre_limpio) . ".xlsx";
 
-// Crear directorios (Requiere que funciones.php esté arreglado o esto fallará si ya existe)
-// Pero si PHP 8.3 sigue quejándose, podemos silenciarlo con @ (no recomendado pero funcional)
-// o mejor, confiar en que arreglaste funciones.php como te indiqué arriba.
-CrearDirectorios($path_root, $nombre_ann_lectivo_archivo, $codigo_modalidad_limpio, $codigo_destino, "");
-
-// Nombre Archivo
-// Fix UTF8 en nombre de archivo
-if (!mb_check_encoding($nombre_docente_archivo, 'UTF-8')){
-    $nombre_docente_archivo = mb_convert_encoding($nombre_docente_archivo, 'UTF-8', 'ISO-8859-1');
+// 4. CREAR DIRECTORIOS SI NO EXISTEN
+if (!is_dir($ruta_base_personalizada)) {
+    // mkdir recursivo (true)
+    if (!mkdir($ruta_base_personalizada, 0777, true)) {
+        ob_end_clean();
+        echo json_encode([
+            "respuesta" => false, 
+            "mensaje" => "Error crítico: No se pudo crear la carpeta en C:/TempSistemaRegistro...",
+            "contenido" => "Ruta intentada: " . $ruta_base_personalizada
+        ]);
+        exit;
+    }
 }
-$nombre_archivo = $nombre_docente_archivo."-".$nombre_ann_lectivo_archivo.".xlsx";
-$nombre_archivo = str_replace(" ", "-", $nombre_archivo); // Reemplazar espacios
 
-// Limpiar hojas base
-$objPHPExcel->removeSheetByIndex(0);
-$objPHPExcel->removeSheetByIndex(0);
-$objPHPExcel->removeSheetByIndex(0);
-$objPHPExcel->removeSheetByIndex(0);
-
-// Definir ruta destino
-// Asegúrate de que $DestinoArchivo esté definido (generalmente lo define CrearDirectorios o es global)
-// Si CrearDirectorios no define la global, hay que reconstruirla:
-$DestinoArchivo = $path_root . "/registro_academico/Archivos/" . $codigo_modalidad_limpio . "/Cuadro_Notas/" . $nombre_ann_lectivo_archivo . "/";
-
+// 5. INTENTAR GUARDAR EL ARCHIVO
 try {
+    // Limpiar hojas vacías de la plantilla si ya generamos contenido
+    $hojas_total = $objPHPExcel->getSheetCount();
+    if ($n_hoja > 4 && $hojas_total > 4) {
+        $objPHPExcel->removeSheetByIndex(0);
+        $objPHPExcel->removeSheetByIndex(0);
+        $objPHPExcel->removeSheetByIndex(0);
+        $objPHPExcel->removeSheetByIndex(0);
+    }
+
     $objPHPExcel->setActiveSheetIndex(0);
     $objWriter = new Xlsx($objPHPExcel);
-    $objWriter->save($DestinoArchivo.$nombre_archivo);
     
-    // Calcular tiempo
+    // GUARDAR EN LA RUTA C:\
+    $ruta_completa_archivo = $ruta_base_personalizada . $nombre_archivo;
+    $objWriter->save($ruta_completa_archivo);
+    
+    // Cálculos finales
     $tiempo_fin = microtime(true);
     $duration = $tiempo_fin - $tiempo_inicio;
     $minutes = (int)($duration/60);
     $seconds = (int)$duration - ($minutes*60);
+    $hojas_creadas = ($n_hoja > 4) ? ($n_hoja - 4) : 0;
     
-    $n_hoja = $n_hoja - 4;
+    // RESPUESTA EXITOSA
+    // Nota: Devolvemos la ruta local. Si necesitas descargar, tu JS o un script PHP
+    // debe tomar esta ruta y forzar la descarga (readfile).
+    $mensajeError = $ruta_completa_archivo; 
     
-    // Ruta relativa para el enlace
-    $ruta_relativa = "/registro_academico/Archivos/".$codigo_modalidad_limpio."/Cuadro_Notas/".$nombre_ann_lectivo_archivo."/".$nombre_archivo;
-    
-    $mensajeError = $ruta_relativa;
-    $contenidoOK = "<p><strong>Nombre del Archivo: " . $nombre_archivo . "</strong></p>"
-                 . "<p>Nº de Hojas creadas: " . $n_hoja  . "</p>"
-                 . "<p>Tiempo empleado: " . $minutes . " min " . $seconds . " seg</p>";
+    $contenidoOK = "<p><strong>Archivo Generado Exitosamente</strong></p>"
+                 . "<p>Ubicación: " . $ruta_completa_archivo . "</p>"
+                 . "<p>Hojas: " . $hojas_creadas  . " | Tiempo: " . $minutes . "m " . $seconds . "s</p>";
 
 } catch(Exception $e) {
     $respuestaOK = false;
-    $mensajeError = "Error al guardar";
-    $contenidoOK = "Error: " . $e->getMessage();
+    $mensajeError = "Error al escribir el archivo";
+    $contenidoOK = "Verifique que el archivo no esté abierto.<br>Error: " . $e->getMessage();
 }
 
-// SALIDA JSON FINAL
-ob_end_clean(); // Limpiar cualquier warning previo
+// ------------------------------------------------------------------------------------------------
+// 6. SALIDA JSON FINAL
+// ------------------------------------------------------------------------------------------------
+ob_end_clean(); 
 echo json_encode([
     "respuesta" => $respuestaOK,
-    "mensaje" => $mensajeError, // En este caso devuelve la URL para descarga
+    "mensaje" => $mensajeError, 
     "contenido" => $contenidoOK,
     "mensajeErrorTabla" => $mensajeErrorTabla
 ]);

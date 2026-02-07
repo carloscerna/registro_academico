@@ -38,6 +38,10 @@ foreach ($alumnos as $a) {
     $nombre_completo = trim($a['nombre_completo']);
 
     try {
+        // [MODIFICACIÓN 1] Iniciamos la transacción SIEMPRE al entrar al intento, 
+        // para cubrir tanto alumnos nuevos como antiguos.
+        $dblink->beginTransaction(); 
+
         $stmt = $dblink->prepare("SELECT id_alumno FROM alumno WHERE codigo_nie = ?");
         $stmt->execute([$nie]);
         
@@ -46,8 +50,7 @@ foreach ($alumnos as $a) {
             $idAlumno = $fila['id_alumno'];
             //echo "ID Alumno: " . $idAlumno;
         } else {
-            //$matriculados++;
-            $dblink->beginTransaction(); // Iniciar la transacción antes de la inserción
+            // [MODIFICACIÓN] Quitamos el beginTransaction de aquí porque ya está arriba
 
             $query_insert_alumno = "INSERT INTO alumno (codigo_nie, apellido_paterno, apellido_materno, nombre_completo, codigo_genero, codigo_estatus)
                                     VALUES (:codigo_nie, :apellido_paterno, :apellido_materno, :nombre_completo, :codigo_genero, :codigo_estatus)
@@ -74,9 +77,15 @@ foreach ($alumnos as $a) {
         $stmt_check->execute([$idAlumno, $modalidad, $codigo_grado, $codigo_seccion, $annLectivo]);
 
         if ($stmt_check->rowCount() > 0) {
+            // [MODIFICACIÓN 2] Si ya existe, debemos CERRAR la transacción abierta antes de saltar al siguiente.
+            // Usamos rollBack porque no hicimos cambios.
+            if ($dblink->inTransaction()) {
+                $dblink->rollBack();
+            }
             $ya_existian++;
             continue;
         }
+
         //print "Id alumno: " . $idAlumno;
         $query_insert_matricula = "INSERT INTO alumno_matricula (codigo_alumno) VALUES (:codigo_alumno) RETURNING id_alumno_matricula";
         $stmt_matricula = $dblink->prepare($query_insert_matricula);
@@ -117,7 +126,10 @@ foreach ($alumnos as $a) {
         $matriculados++;
 
     } catch (Exception $e) {
-        $dblink->rollBack();
+        // [MODIFICACIÓN 3] Validamos si hay transacción antes de hacer rollback
+        if ($dblink->inTransaction()) {
+            $dblink->rollBack();
+        }
         $errores[] = "Error con NIE $nie: " . $e->getMessage();
         continue;
     }

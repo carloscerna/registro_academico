@@ -6,13 +6,13 @@
 {% block javascripts %}
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
-  
+
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
   <script type="text/JavaScript" src="js/Utilidades/cargarDatosSelect.js"></script>
   <script type="text/JavaScript" src="js/Utilidades/utilidadesSelect.js"></script>
-  <script type="text/JavaScript" src="js/main_reportes.js"></script> 
+  <script type="text/JavaScript" src="js/main_reportes.js"></script>
 {% endblock %}
 
 {% block contenidos %}
@@ -41,7 +41,7 @@
                         <div class="card-header">
                             <h3 class="card-title">Seleccione Filtros</h3>
                         </div>
-                        <form role="form" id="formFiltros" novalidate>
+                        <form id="formFiltros" novalidate>
                           <input type="hidden" id="accion_buscar" name="accion_buscar" value="BuscarUser">
                             <div class="card-body">
                                 <div class="mb-3">
@@ -72,15 +72,15 @@
                                 <table class="table table-striped table-hover table-sm">
                                     <thead>
                                         <tr>
-                                            <th style="width: 5%;">#</th>
-                                            <th>Grado, Sección, Turno, Docente</th>
-                                            <th style="width: 25%;">Nóminas</th>
-                                            <th style="width: 25%;">Notas y Promedios</th>
+                                            <th scope="col" style="width: 5%;">#</th>
+                                            <th scope="col">Grado, Sección, Turno, Docente</th>
+                                            <th scope="col" style="width: 25%;">Nóminas</th>
+                                            <th scope="col" style="width: 25%;">Notas y Promedios</thstyle=>
                                         </tr>
                                         <tr>
                                             <td colspan="2"></td>
                                             <td>
-                                                <select class="form-select form-select-sm report-selector" data-group="nominas">
+                                                <select class="form-select form-select-sm report-selector" data-group="nominas" title="Seleccione el tipo de nómina a generar">
                                                     <option value="" selected>Seleccione Nómina...</option>
                                                     <option value="orden">Orden Alfabético</option>
                                                     <option value="control_actividades">Control de Actividades</option>
@@ -89,6 +89,8 @@
                                                     <option value="paquete_escolar_02" data-bs-target="#panel-paquete">Paquete Escolar</option>
                                                     <option value="tomadetalla">Toma de Talla</option>
                                                     <option value="firmas" data-bs-target="#panel-firmas">Listado para Firmas</option>
+                                                    <option value="datosMatricula" data-bs-target="#panel-firmas">Datos de Matricula</option>
+                                                    <option value="datosTelefono" data-bs-target="#panel-firmas">Nº Teléfono (Estudiantes y Encargados)</option>
                                                     <option value="familias">Informe de Grupos Familiares</option>
                                                     <option value="nomina-excel">Hoja de Cálculo (Nómina Completa)</option>
                                                     <option value="nomina-simple-excel">Hoja de Cálculo (Nómina Simple)</option>
@@ -132,7 +134,7 @@
                                                     </div>
                                             </td>
                                             <td>
-                                                <select class="form-select form-select-sm report-selector" data-group="notas">
+                                                <select class="form-select form-select-sm report-selector" data-group="notas" title="Seleccione el tipo de reporte de notas a generar">
                                                     <option value="" selected>Seleccione Reporte de Notas...</option>
                                                     <option value="boleta_notas" data-bs-target="#panel-boleta">Boleta de Notas</option>
                                                     <option value="por_trimestre" data-bs-target="#panel-trimestre">Por Trimestre</option>

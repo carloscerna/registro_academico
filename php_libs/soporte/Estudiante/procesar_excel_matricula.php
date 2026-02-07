@@ -23,7 +23,8 @@ if (empty($_POST['filaInicio']) || empty($_POST['colNIE']) || empty($_POST['colN
 
 // Función: convertir letra de columna (A, B, C...) a índice numérico (0, 1, 2...)
 function colLetraAIndice($letra) {
-    $letra = strtoupper(trim($letra));
+    // CORRECCIÓN PHP 8: Asegurar que $letra sea string antes de trim
+    $letra = strtoupper(trim((string)$letra));
     $col = 0;
     for ($i = 0; $i < strlen($letra); $i++) {
         $col = $col * 26 + (ord($letra[$i]) - ord('A') + 1);
@@ -56,13 +57,16 @@ try {
     $coincidencias = 0;
 
     foreach ($hoja->getRowIterator($filaInicio) as $fila) {
-        $rowIndex = $fila->getRowIndex(); // CORRECTO para PhpSpreadsheet
+        $rowIndex = $fila->getRowIndex(); 
 
         $cellNIE = $hoja->getCellByColumnAndRow($colNIE + 1, $rowIndex)->getValue();
         $cellNombre = $hoja->getCellByColumnAndRow($colNombre + 1, $rowIndex)->getValue();
 
-        $codigo_nie = trim($cellNIE);
-        $nombre_completo_raw = trim($cellNombre);
+        // ▼▼▼ CORRECCIÓN CRÍTICA PARA PHP 8 ▼▼▼
+        // getValue() puede devolver null. En PHP 8, trim(null) causa error.
+        // Forzamos (string) para que null se convierta en "" (vacío).
+        $codigo_nie = trim((string)$cellNIE);
+        $nombre_completo_raw = trim((string)$cellNombre);
 
         if (empty($codigo_nie) || empty($nombre_completo_raw)) continue;
 
@@ -72,14 +76,25 @@ try {
         $nombre_completo = '';
 
         if (strpos($nombre_completo_raw, ',') !== false) {
-            [$apellidos, $nombres] = explode(',', $nombre_completo_raw, 2);
-            $apellidos = trim($apellidos);
-            $nombres = trim($nombres);
+            // Usamos una variable temporal para el explode
+            $partesNombre = explode(',', $nombre_completo_raw, 2);
+            
+            // Validamos que el array tenga los elementos esperados
+            if (count($partesNombre) >= 2) {
+                $apellidos = trim($partesNombre[0]);
+                $nombres = trim($partesNombre[1]);
 
-            $apellidos_parts = explode(' ', $apellidos);
-            $apellido_paterno = $apellidos_parts[0] ?? '';
-            $apellido_materno = $apellidos_parts[1] ?? '';
-            $nombre_completo = $nombres;
+                $apellidos_parts = explode(' ', $apellidos);
+                $apellido_paterno = $apellidos_parts[0] ?? '';
+                $apellido_materno = $apellidos_parts[1] ?? ''; // Operador ?? evita error si no existe segundo apellido
+                $nombre_completo = $nombres;
+            } else {
+                // Fallback si la coma existe pero no separó bien
+                $nombre_completo = $nombre_completo_raw;
+            }
+        } else {
+            // Si no hay coma, asignamos todo al nombre (o ajusta según tu lógica)
+            $nombre_completo = $nombre_completo_raw;
         }
 
         // Buscar NIE en la BD
@@ -107,3 +122,4 @@ try {
 }
 
 echo json_encode($response);
+?>

@@ -44,7 +44,7 @@ function cargarOpcionesMultiples(selector, url, parametros) {
         success: function(data) {
             $(selector).empty().append('<option value="">Seleccione...</option>');
             $.each(data, function(index, item) {
-                $(selector).append('<option value="'+item.codigo+'">'+item.nombre+'</option>');
+                $(selector).append('<option value="'+item.codigo+'">'+item.descripcion+'</option>');
             });
         },
         error: function(xhr, status, error) {

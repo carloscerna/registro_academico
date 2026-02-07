@@ -17,8 +17,11 @@ const reportConfig = {
     'paquete_escolar_02': { 
         url: '/registro_academico/php_libs/reportes/Estudiante/Paquetes.php' 
     },
+
       'familias': { url: '/registro_academico/php_libs/reportes/Estudiante/Familias.php', params: ['lstannlectivo'] },
       'tomadetalla': { url: '/registro_academico/php_libs/reportes/Estudiante/TomaDeTalla.php' },
+      'datosMatricula': { url: '/registro_academico/php_libs/reportes/Estudiante/DatosMatricula.php' },
+      'datosTelefono': { url: '/registro_academico/php_libs/reportes/Estudiante/Telefono.php' },
 // ▼▼▼ LÍNEA MODIFICADA ▼▼▼
     'firmas': { url: '/registro_academico/php_libs/reportes/Estudiante/Firmas.php', params: ['tituloFirmas'] },
     'nomina-excel': {isAjax: true, url: '/registro_academico/php_libs/soporte/CrearNominas.php' },
