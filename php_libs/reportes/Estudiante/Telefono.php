@@ -77,8 +77,9 @@ class PDF extends FPDF
         $this->SetFont('PoetsenOne','',16);
         $this->Cell(200,6,convertirtexto($_SESSION['institucion']),0,1,'C');
         $this->SetFont('PoetsenOne','',11);
-        $this->Cell(200,4,convertirtexto('Nómina de Estudiantes y Padre/madre/Responsable - Acta de Compromiso y Autorización Fotografía'),0,1,'C');
+        //$this->Cell(200,4,convertirtexto('Nómina de Estudiantes y Padre/madre/Responsable - Acta de Compromiso y Autorización Fotografía'),0,1,'C');
         //$this->Cell(200,4,convertirtexto('Primera Asamblea General Padre/Madre/Responsable - Asistencia'),0,1,'C');
+        $this->Cell(200,4,convertirtexto('Reunión General Padre/Madre/Responsable - Asistencia'),0,1,'C');
         
         // Docente
         $this->SetXY(25,20);

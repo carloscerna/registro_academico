@@ -107,6 +107,7 @@ if($errorDbConexion == false){
                     
                     // Tu consulta actualizada
                     $query = "SELECT 
+                                m.id_alumno_matricula,
                                 m.codigo_ann_lectivo, 
                                 g.nombre as nombre_grado, 
                                 s.nombre as nombre_seccion,
@@ -136,6 +137,47 @@ if($errorDbConexion == false){
                         $response["mensaje"] = "Error en BD: " . $e->getMessage();
                     }
                     break;
+        case 'BuscarRendimiento':
+            $id_matricula = $_REQUEST['id_matricula'] ?? 0;
+            
+            // Consulta para obtener notas por materia
+            // Nota: Asumo que la tabla de nombres de materias es 'asignatura'
+            $query = "SELECT 
+                        asig.nombre as materia,
+                        n.nota_final,
+                        n.nota_p_p_1, n.nota_p_p_2, n.nota_p_p_3, n.nota_p_p_4
+                    FROM nota n
+                    INNER JOIN asignatura asig ON asig.codigo = n.codigo_asignatura
+                    WHERE n.codigo_matricula = :id_m
+                    ORDER BY asig.nombre ASC";
+            
+            try {
+                $stmt = $dblink->prepare($query);
+                $stmt->execute([':id_m' => $id_matricula]);
+                $notas = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                
+                $sumaFinal = 0;
+                $conteo = count($notas);
+                
+                foreach($notas as $n) {
+                    $sumaFinal += (float)$n['nota_final'];
+                }
+                
+                $promedioGlobal = ($conteo > 0) ? round($sumaFinal / $conteo, 2) : 0;
+                // Criterio MINED: 6.0 para aprobar
+                $estadoAnual = ($promedioGlobal >= 6.0) ? "APROBADO" : "REPROBADO";
+
+                $response["respuesta"] = true;
+                $response["data"] = [
+                    "notas" => $notas,
+                    "promedio_global" => $promedioGlobal,
+                    "estado" => $estadoAnual
+                ];
+            } catch (PDOException $e) {
+                $response["mensaje"] = $e->getMessage();
+            }
+            break;
+
 
             default:
                 $response["mensaje"] = "Acción '$accion' no disponible.";

@@ -95,15 +95,60 @@
     </section>  
 </div> 
 
-<div class="modal fade" id="modalHistorial" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-lg">
+<div class="modal fade" id="modalHistorial" tabindex="-1" aria-labelledby="modalHistorialLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
     <div class="modal-content">
-      <div class="modal-header bg-gradient-navy text-white">
-        <h5 class="modal-title"><i class="fas fa-flag"></i> Historial de Matrículas</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      
+      <div class="modal-header bg-navy text-white">
+        <h5 class="modal-title" id="modalHistorialLabel">
+          <i class="fas fa-user-graduate me-2"></i> Resumen Académico del Estudiante
+        </h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <div id="contenidoHistorial" class="modal-body">
+
+      <div class="modal-body">
+        <ul class="nav nav-tabs" id="tabEstudiante" role="tablist">
+          <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="tab-historial-btn" data-bs-toggle="tab" data-bs-target="#panel-historial" type="button" role="tab">
+              <i class="fas fa-history"></i> Historial de Matrículas
+            </button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" id="tab-rendimiento-btn" data-bs-toggle="tab" data-bs-target="#panel-rendimiento" type="button" role="tab">
+              <i class="fas fa-chart-line"></i> Rendimiento Académico
+            </button>
+          </li>
+        </ul>
+
+        <div class="tab-content mt-3" id="tabEstudianteContent">
+          
+          <div class="tab-pane fade show active" id="panel-historial" role="tabpanel">
+            <div class="table-responsive">
+                <div id="contenidoHistorial">
+                  <p class="text-muted text-center">Cargando registros...</p>
+                </div>
+            </div>
+            <div class="alert alert-info py-2 mt-2" style="font-size: 0.85rem;">
+              <i class="fas fa-info-circle"></i> <strong>Tip:</strong> Haz clic sobre una fila para ver las notas de ese año.
+            </div>
+          </div>
+
+          <div class="tab-pane fade" id="panel-rendimiento" role="tabpanel">
+            <div id="infoResumen" class="mb-3">
+              </div>
+            
+            <div class="chart-container" style="position: relative; height:350px; width:100%">
+              <canvas id="graficaRendimiento"></canvas>
+            </div>
+          </div>
+
         </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+      </div>
+
     </div>
   </div>
 </div>
