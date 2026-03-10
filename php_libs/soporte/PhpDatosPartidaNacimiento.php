@@ -64,7 +64,8 @@ if($errorDbConexion == false){
                 }
 						
 				$query = "SELECT a.id_alumno, a.codigo_nie, btrim(a.apellido_paterno || ' ' || a.apellido_materno || ', ' || a.nombre_completo) as apellido_alumno,
-                            a.codigo_genero, a.fecha_nacimiento, a.edad, a.pn_numero, a.pn_folio, a.pn_tomo, a.pn_libro, a.estudio_parvularia
+                            a.codigo_genero, a.fecha_nacimiento, a.edad, a.pn_numero, a.pn_folio, a.pn_tomo, a.pn_libro, a.estudio_parvularia,
+                            am.id_alumno_matricula
 							FROM alumno a
 							INNER JOIN alumno_matricula am ON a.id_alumno = am.codigo_alumno AND am.retirado = 'f'
 							WHERE am.codigo_bach_o_ciclo = :modalidad AND am.codigo_grado = :grado AND am.codigo_seccion = :seccion AND am.codigo_ann_lectivo = :annlectivo AND am.codigo_turno = :turno
@@ -112,7 +113,7 @@ if($errorDbConexion == false){
                         $chk_parvularia = ($listado['estudio_parvularia'] == 't') ? 'checked' : '';
 
                         // htmlspecialchars((string)...) es vital en PHP 8.1+
-						$contenidoOK .= '<tr data-id-alumno="' . $listado['id_alumno'] . '">
+						$contenidoOK .= '<tr data-id-alumno="' . $listado['id_alumno'] . '" data-id-matricula="' . $listado['id_alumno_matricula'] . '">
                             <td class="text-center">' . $num . '</td>
                             <td>' . htmlspecialchars((string)$listado['apellido_alumno']) . '</td>
                             <td><input type="text" name="codigo_nie" class="form-control form-control-sm" value="' . htmlspecialchars((string)$listado['codigo_nie']) . '"></td>
@@ -144,6 +145,8 @@ if($errorDbConexion == false){
 			case 'ActualizarDatosPn':
                 $total_filas = isset($_POST['total_filas']) ? (int)$_POST['total_filas'] : 0;
                 $codigos_alumnos = $_POST['codigo_alumno'] ?? [];
+                $codigos_matriculas = $_POST['codigo_alumno_matricula'] ?? [];
+                $codigo_grado = $_POST['codigo_grado'] ?? '';
                 
                 // Arrays de datos (uso de operador null coalescing para seguridad)
                 $array_nies = $_POST['codigo_nie'] ?? [];
@@ -194,7 +197,11 @@ if($errorDbConexion == false){
                                     $edad = 0; // Fecha inválida
                                 }
                             }
-                            
+                            // 2. CALCULAR SOBREEDAD (Basado en funciones.php)
+                                $sobreedad = 'f'; // Valor por defecto (false)
+                                if ($edad > 0 && !empty($codigo_grado)) {
+                                    $sobreedad = calcular_sobreedad($edad, $codigo_grado);
+                                }
                             $query_update = "UPDATE alumno SET
                                 codigo_nie = :codigo_nie,
                                 codigo_genero = :codigo_genero,
@@ -222,8 +229,25 @@ if($errorDbConexion == false){
                             $stmt_update->bindParam(':id_alumno', $id_alumno);
                             $stmt_update->bindParam(':genero', $genero);
                             $stmt_update->execute();
+
+// 5. UPDATE en tabla 'alumno_matricula' (Sobreedad)
+                // Usamos la combinación de ambas llaves para máxima eficiencia
+               $query_matricula = "UPDATE alumno_matricula SET 
+                                        sobreedad = :sobreedad 
+                                    WHERE id_alumno_matricula = :id_mat 
+                                    AND codigo_alumno = :id_aln";
+                
+                $stmt_mat = $dblink->prepare($query_matricula);
+                $stmt_mat->execute([
+                    ':sobreedad' => $sobreedad,
+                    ':id_mat' => $codigos_matriculas[$i] ?? 0, // Validar índice
+                    ':id_aln' => $id_alumno
+                ]);
+
+
                         }
-                        
+              
+
                         $dblink->commit();
                         $respuestaOK = true;
                         $mensajeError = 'Registros actualizados correctamente.';

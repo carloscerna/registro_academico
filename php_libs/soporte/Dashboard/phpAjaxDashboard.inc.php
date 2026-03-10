@@ -441,6 +441,90 @@ try {
             $stmt_lista_matricula->execute();
             $general_indicators_data['lista_matricula'] = $stmt_lista_matricula->fetchAll(PDO::FETCH_ASSOC);
 
+
+            // --- LÓGICA DE SOBREEDAD Y REPITENCIA CON NOMBRES DE CAMPOS REALES ---
+            $sql_rep_sob = "SELECT 
+                g.nombre AS grado,
+                SUM(CASE WHEN m.sobreedad = 't' AND e.codigo_genero = '01' THEN 1 ELSE 0 END) AS sob_m,
+                SUM(CASE WHEN m.sobreedad = 't' AND e.codigo_genero = '02' THEN 1 ELSE 0 END) AS sob_f,
+                SUM(CASE WHEN EXISTS (
+                    SELECT 1 FROM alumno_matricula m2 
+                    WHERE m2.codigo_alumno = m.codigo_alumno 
+                    AND m2.codigo_grado = m.codigo_grado 
+                    AND m2.codigo_ann_lectivo = :anioAnterior
+                ) AND e.codigo_genero = '01' THEN 1 ELSE 0 END) AS rep_m,
+                SUM(CASE WHEN EXISTS (
+                    SELECT 1 FROM alumno_matricula m2 
+                    WHERE m2.codigo_alumno = m.codigo_alumno 
+                    AND m2.codigo_grado = m.codigo_grado 
+                    AND m2.codigo_ann_lectivo = :anioAnterior
+                ) AND e.codigo_genero = '02' THEN 1 ELSE 0 END) AS rep_f
+            FROM alumno_matricula m
+            INNER JOIN alumno e ON e.id_alumno = m.codigo_alumno
+            INNER JOIN grado_ano g ON g.codigo = m.codigo_grado
+            WHERE m.codigo_ann_lectivo = :codigoAnnLectivo 
+            AND m.retirado = 'f'
+            GROUP BY g.nombre, m.codigo_grado
+            ORDER BY m.codigo_grado";
+
+            // Calculamos el año anterior (asumiendo formato YYYY como 2026)
+            $anio_actual = (int)$codigo_ann_lectivo;
+            $anio_anterior = (string)($anio_actual - 1);
+
+            $stmt_rep = $dblink->prepare($sql_rep_sob);
+            $stmt_rep->bindParam(':codigoAnnLectivo', $codigo_ann_lectivo);
+            $stmt_rep->bindParam(':anioAnterior', $anio_anterior);
+            $stmt_rep->execute();
+
+            $general_indicators_data['repitencia_sobreedad'] = $stmt_rep->fetchAll(PDO::FETCH_ASSOC);
+
+// --- 1. ACTUALIZACIÓN DE CAMPO 'repitente' ---
+$sql_update_rep = "UPDATE alumno_matricula m 
+                   SET repitente = 't' 
+                   WHERE m.codigo_ann_lectivo = :codigoAnnLectivo 
+                   AND EXISTS (
+                       SELECT 1 FROM alumno_matricula m2 
+                       WHERE m2.codigo_alumno = m.codigo_alumno 
+                       AND m2.codigo_grado = m.codigo_grado 
+                       AND m2.codigo_ann_lectivo = :anioAnterior
+                   )";
+$anio_anterior = (string)((int)$codigo_ann_lectivo - 1);
+$stmt_up = $dblink->prepare($sql_update_rep);
+$stmt_up->execute([':codigoAnnLectivo' => $codigo_ann_lectivo, ':anioAnterior' => $anio_anterior]);
+
+// --- 2. TOTALES PARA SMALL BOXES (Usando campo 'repitente') ---
+$sql_globales = "SELECT 
+    SUM(CASE WHEN m.sobreedad = 't' AND e.codigo_genero = '01' THEN 1 ELSE 0 END) AS sob_m,
+    SUM(CASE WHEN m.sobreedad = 't' AND e.codigo_genero = '02' THEN 1 ELSE 0 END) AS sob_f,
+    SUM(CASE WHEN m.repitente = 't' AND e.codigo_genero = '01' THEN 1 ELSE 0 END) AS rep_m,
+    SUM(CASE WHEN m.repitente = 't' AND e.codigo_genero = '02' THEN 1 ELSE 0 END) AS rep_f,
+    SUM(CASE WHEN m.retirado = 't' AND e.codigo_genero = '01' THEN 1 ELSE 0 END) AS des_m,
+    SUM(CASE WHEN m.retirado = 't' AND e.codigo_genero = '02' THEN 1 ELSE 0 END) AS des_f
+FROM alumno_matricula m
+INNER JOIN alumno e ON e.id_alumno = m.codigo_alumno
+WHERE m.codigo_ann_lectivo = :codigoAnnLectivo";
+
+$stmt_g = $dblink->prepare($sql_globales);
+$stmt_g->execute([':codigoAnnLectivo' => $codigo_ann_lectivo]);
+$general_indicators_data['totales_globales'] = $stmt_g->fetch(PDO::FETCH_ASSOC);
+
+// --- 3. DETALLE PARA DATATABLE ---
+$sql_detalle_rep = "SELECT 
+    a.codigo_nie, 
+    (a.apellido_paterno || ' ' || a.apellido_materno || ', ' || a.nombre_completo) AS nombre_estudiante,
+    g.nombre AS nombre_grado,
+    s.nombre AS nombre_seccion
+FROM alumno_matricula m
+INNER JOIN alumno a ON a.id_alumno = m.codigo_alumno
+INNER JOIN grado_ano g ON g.codigo = m.codigo_grado
+INNER JOIN seccion s ON s.codigo = m.codigo_seccion
+WHERE m.codigo_ann_lectivo = :codigoAnnLectivo AND m.repitente = 't' AND m.retirado = 'f'
+ORDER BY g.codigo, s.codigo, a.apellido_paterno ASC";
+
+$stmt_det = $dblink->prepare($sql_detalle_rep);
+$stmt_det->execute([':codigoAnnLectivo' => $codigo_ann_lectivo]);
+$general_indicators_data['lista_repitentes_detalle'] = $stmt_det->fetchAll(PDO::FETCH_ASSOC) ?: []; // Asegura un array vacío si no hay datos
+
             $response = ['success' => true, 'data' => $general_indicators_data];
             break;
 

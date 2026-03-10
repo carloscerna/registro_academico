@@ -19,8 +19,15 @@ $(function(){
     $('#goActualizar').on('click',function(){
         var accion_ok = 'ActualizarDatosPn';
         
+        // Obtenemos el valor completo (ejemplo: "040101")
+        var valorCompleto = $("#lstgradoseccion").val();
+
+        // Extraemos los primeros dos caracteres ("04")
+        var codigoGrado = valorCompleto.substring(0, 2);
+
         var codigo_alumno_ = [], codigo_nie_ = [], codigo_genero_ = [], fecha_nacimiento_ = [],
             numero_pn_ = [], folio_pn_ = [], tomo_pn_ = [], libro_pn_ = [], estudio_parvularia_ = [];
+                codigo_alumno_matricula_ = [];
         
         var fila = 0;
         
@@ -28,6 +35,7 @@ $(function(){
             var $row = $(this);
             
             codigo_alumno_[fila] = $row.data('id-alumno');
+            codigo_alumno_matricula_[fila] = $row.data('id-matricula');
             codigo_nie_[fila] = $row.find("input[name='codigo_nie']").val();
             codigo_genero_[fila] = $row.find("select[name='codigo_genero']").val();
             fecha_nacimiento_[fila] = $row.find("input[name='fecha_nacimiento']").val();
@@ -49,6 +57,7 @@ $(function(){
                 accion: accion_ok, 
                 total_filas: fila,
                 codigo_alumno: codigo_alumno_,
+                codigo_alumno_matricula: codigo_alumno_matricula_,
                 codigo_nie: codigo_nie_,
                 codigo_genero: codigo_genero_,
                 fecha_nacimiento: fecha_nacimiento_,
@@ -56,7 +65,8 @@ $(function(){
                 folio_pn: folio_pn_,
                 tomo_pn: tomo_pn_,
                 libro_pn: libro_pn_,
-                estudio_parvularia: estudio_parvularia_
+                estudio_parvularia: estudio_parvularia_,
+                codigo_grado: codigoGrado
             },                     
             success: function(response) {                     
                 if (response.respuesta === true) {                     
