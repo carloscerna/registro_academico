@@ -291,7 +291,7 @@ function SetLineStyle($style) {
 	// - style: Style of rectangule (draw and/or fill: D, F, DF, FD)
 	// - line_style: Line style for curve. Array like for SetLineStyle
 	// - fill_color: Fill color. Array with components (red, green, blue)
-	function CurveDraw($x0, $y0, $x1, $y1, $x2, $y2, $x3, $y3, $style = '', $line_style = null, $fill_color = null) {
+	function CurveDraw($x0, $y0, $x1, $y1, $x2, $y2, $x3, $y3, $style = '', $line_style = '', $fill_color = null) {
 		if (!(false === strpos($style, 'F')) && $fill_color) {
 			list($r, $g, $b) = $fill_color;
 			$this->SetFillColor($r, $g, $b);

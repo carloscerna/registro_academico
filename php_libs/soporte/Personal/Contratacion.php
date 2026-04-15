@@ -10,7 +10,7 @@ session_name('demoUI');
 // ruta de los archivos con su carpeta
     $path_root=trim($_SERVER['DOCUMENT_ROOT']);
 // Incluimos el archivo de funciones y conexión a la base de datos
-	include($path_root."/registro_web/includes/mainFunctions_conexion.php");
+	include($path_root."/registro_academico/includes/mainFunctions_conexion.php");
 // Validar conexión con la base de datos
 if($errorDbConexion == false)
 {
@@ -43,17 +43,17 @@ if($errorDbConexion == false)
 							while($listadoPersonal = $consulta_personal -> fetch(PDO::FETCH_BOTH))
 							{
 								// recopilar los valores de los campos.
-									$id_personal_salario = trim($listadoPersonal['id_personal_salario']);
-									$fecha = trim($listadoPersonal['fecha']);
-									$cod_personal = trim($listadoPersonal['codigo_personal']);
-									$nombre_personal = trim($listadoPersonal['nombre_empleado']);
-									$nombre_cargo = trim($listadoPersonal['nombre_cargo']);
-									$codigo_rubro = trim($listadoPersonal['codigo_rubro']);
-									$tipo_descuento = trim($listadoPersonal['codigo_tipo_descuento']);
-									$codigo_turno = trim($listadoPersonal['codigo_turno']);
-									$codigo_horario = trim($listadoPersonal['codigo_horario']);
-									$tipo_contratacion = trim($listadoPersonal['codigo_tipo_contratacion']);
-									$salario = trim($listadoPersonal['salario']);
+									$id_personal_salario =($listadoPersonal['id_personal_salario']);
+									$fecha = ($listadoPersonal['fecha']);
+									$cod_personal = ($listadoPersonal['codigo_personal']);
+									$nombre_personal = ($listadoPersonal['nombre_empleado']);
+									$nombre_cargo = ($listadoPersonal['nombre_cargo']);
+									$codigo_rubro = ($listadoPersonal['codigo_rubro']);
+									$tipo_descuento = ($listadoPersonal['codigo_tipo_descuento']);
+									$codigo_turno = ($listadoPersonal['codigo_turno']);
+									$codigo_horario = ($listadoPersonal['codigo_horario']);
+									$tipo_contratacion = ($listadoPersonal['codigo_tipo_contratacion']);
+									$salario = ($listadoPersonal['salario']);
 								// pasar a la matriz.
 									$datos[$fila_array]["id_personal_salario"] = $id_personal_salario;
 									$datos[$fila_array]["fecha"] = $fecha;
@@ -200,14 +200,14 @@ function BuscarPersonalSalario(){
 		while($listadoPersonal = $consulta_personal -> fetch(PDO::FETCH_BOTH))
 			{
 			// recopilar los valores de los campos.
-			$id_ = trim($listadoPersonal['id_personal_salario']);
-			$cod_personal = trim($listadoPersonal['codigo_personal']);
-			$nombre_rubro = trim($listadoPersonal['nombre_rubro']);
-			$nombre_descuento = trim($listadoPersonal['nombre_descuento']);
-			$nombre_turno = trim($listadoPersonal['nombre_turno']);
-			$nombre_contratacion = trim($listadoPersonal['nombre_contratacion']);
-			$salario = trim($listadoPersonal['salario']);
-			$fecha = cambiaf_a_normal(trim($listadoPersonal['fecha']));
+			$id_ = ($listadoPersonal['id_personal_salario']);
+			$cod_personal = ($listadoPersonal['codigo_personal']);
+			$nombre_rubro = ($listadoPersonal['nombre_rubro']);
+			$nombre_descuento = ($listadoPersonal['nombre_descuento']);
+			$nombre_turno = ($listadoPersonal['nombre_turno']);
+			$nombre_contratacion = ($listadoPersonal['nombre_contratacion']);
+			$salario = ($listadoPersonal['salario']);
+			$fecha = cambiaf_a_normal(($listadoPersonal['fecha']));
 			
 			// pasar a la matriz.
 			$contenidoOK .= "<tr>

@@ -78,7 +78,7 @@ function Header() {
         $this->SetFont('Arial', '', 9);
         $this->Cell(35, 5, convertirtexto('CÓDIGO DEL C.E.:'), 0, 0, 'L');
         $this->SetFont('Arial', 'B', 9);
-        $this->Cell(125, 5, $_SESSION['codigo'], 0, 0, 'L');
+        $this->Cell(125, 5, $_SESSION['codigo_escuela'], 0, 0, 'L');
         $this->SetFont('Arial', '', 9);
         $this->Cell(35, 5, 'GRADO:', 0, 0, 'L');
         $this->SetFont('Arial', 'B', 9);

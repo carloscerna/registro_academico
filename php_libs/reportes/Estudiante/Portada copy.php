@@ -1,26 +1,21 @@
 <?php
-/**
- * Portada.php - Versión compatible con PHP 8.x
- * MANTIENE EL ESTILO Y DISEÑO ORIGINAL COMPLETO.
- */
-
-// 1. RUTAS E INCLUDES ORIGINALES
-$path_root = trim($_SERVER['DOCUMENT_ROOT'] ?? '');
-require_once($path_root . "/registro_academico/includes/funciones.php");
-require_once($path_root . "/registro_academico/includes/consultas.php");
-require_once($path_root . "/registro_academico/includes/mainFunctions_conexion.php");
-require_once($path_root . "/registro_academico/includes/DeNumero_a_Letras.php");
-require_once($path_root . "/registro_academico/php_libs/fpdf/fpdf.php");
-
-header("Content-Type: text/html; charset=UTF-8");
-
-// 2. VARIABLES Y CONSULTA
-$codigo_alumno = $_REQUEST['txtidalumno'] ?? '';
-$db_link = $dblink;
-
-date_default_timezone_set('America/El_Salvador');
-setlocale(LC_TIME, 'es_SV.UTF-8', 'es_SV');
-
+// ruta de los archivos con su carpeta
+    $path_root=trim($_SERVER['DOCUMENT_ROOT']);
+// archivos que se incluyen.
+    include($path_root."/registro_academico/includes/funciones.php");
+    include($path_root."/registro_academico/includes/consultas.php");
+    include($path_root."/registro_academico/includes/mainFunctions_conexion.php");
+    include($path_root."/registro_academico/includes/DeNumero_a_Letras.php");
+// Llamar a la libreria fpdf
+    include($path_root."/registro_academico/php_libs/fpdf/fpdf.php");
+// cambiar a utf-8.
+    header("Content-Type: text/html; charset=UTF-8");
+// variables y consulta a la tabla.
+    $codigo_alumno = $_REQUEST['txtidalumno'];
+    $db_link = $dblink;
+// Establecer formato para la fecha.
+    date_default_timezone_set('America/El_Salvador');
+    setlocale(LC_TIME,'es_SV');
 // CREAR MATRIZ DE MESES Y FECH.
     $meses = ["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
 //Crear una línea. Fecha con getdate();
@@ -36,14 +31,10 @@ setlocale(LC_TIME, 'es_SV.UTF-8', 'es_SV');
     $nombresMeses = [1=>"Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
     $fecha = convertirTexto("Santa Ana, $nombresDias[$NombreDia] $dia de $nombresMeses[$mes] de $año");
     setlocale(LC_MONETARY,"es_ES");
-
-
-/**
- * Clase PDF - Mantiene tu lógica de rotación y soluciona el error de CurveDraw
- */
-class PDF extends FPDF {
-    public $angle = 0;
-  //Cabecera de página
+class PDF extends FPDF
+{
+    
+    //Cabecera de página
     function Header()
     {
     //Logo
@@ -65,35 +56,12 @@ class PDF extends FPDF {
 	}
     // ARMAR ENCABEZADO.
 	$style6 = ['width' => 0.3, 'cap' => 'butt', 'join' => 'miter', 'dash' => '0', 'color' => array(0,0,0)];
-	$this->CurveDraw(0, 37, 120, 40, 155, 20, 225, 20, '', $style6);
-	$this->CurveDraw(0, 36, 120, 39, 155, 19, 225, 19, '', $style6);	
+	$this->CurveDraw(0, 37, 120, 40, 155, 20, 225, 20, null, $style6);
+	$this->CurveDraw(0, 36, 120, 39, 155, 19, 225, 19, null, $style6);	
     }
-function Rect($x, $y, $w, $h, $style = '') {
-        parent::Rect($x, $y, $w, $h, (string)($style ?? ''));
-    }
-
-    function Rotate($angle, $x = -1, $y = -1) {
-        if ($x == -1) $x = $this->x;
-        if ($y == -1) $y = $this->y;
-        if ($this->angle != 0) $this->_out('Q');
-        $this->angle = $angle;
-        if ($angle != 0) {
-            $angle *= M_PI / 180;
-            $c = cos($angle); $s = sin($angle);
-            $cx = $x * $this->k; $cy = ($this->h - $y) * $this->k;
-            $this->_out(sprintf('q %.5F %.5F %.5F %.5F %.2F %.2F cm 1 0 0 1 %.2F %.2F cm', $c, $s, -$s, $c, $cx, $cy, -$cx, -$cy));
-        }
-    }
-
-    function RotatedText($x, $y, $txt, $angle) {
-        $this->Rotate($angle, $x, $y);
-        // PHP 8: Asegurar que $txt no sea null
-        $this->Text($x, $y, (string)($txt ?? ''));
-        $this->Rotate(0);
-    }
-
-    // Si tu Footer usa CurveDraw o funciones similares, forzamos el estilo a string vacío si es null
-    function Footer() {
+//Pie de página
+function Footer()
+{
     global $fecha;
 //Posición: a 1,5 cm del final
     $this->SetY(-20);
@@ -101,49 +69,25 @@ function Rect($x, $y, $w, $h, $style = '') {
     $this->SetFont('Arial','I',12);    
 // ARMAR pie de página.
 	$style6 = array('width' => 0.3, 'cap' => 'butt', 'join' => 'miter', 'dash' => '0', 'color' => array(0,0,0));
-	$this->CurveDraw(0, 267, 120, 270, 155, 250, 225, 250, '', $style6);
-    $this->CurveDraw(0, 266, 120, 269, 155, 249, 225, 249, '', $style6);	
+	$this->CurveDraw(0, 267, 120, 270, 155, 250, 225, 250, null, $style6);
+    $this->CurveDraw(0, 266, 120, 269, 155, 249, 225, 249, null, $style6);	
 //N�mero de p�gina y fecha
     $this->SetY(-15);
     $this->SetX(10);
     $this->SetFont('Arial','',10);
     $this->Cell(0,10,'Digitalizado: ' . $fecha,0,0,'R');
-    }
 }
-
-// 3. CONSULTA SQL ORIGINAL
-$query = "SELECT a.id_alumno, a.codigo_nie, a.apellido_paterno, a.apellido_materno, a.nombre_completo, a.fecha_nacimiento,
-       a.pn_numero, a.pn_folio, a.pn_tomo, a.pn_libro,
-	   es.nombre_departamento, es.nombre_municipio, es.nombre_distrito
-        FROM alumno a
-        INNER JOIN elsalvador es ON es.codigo_departamento = a.codigo_departamento_pn and es.codigo_municipio = a.codigo_municipio_pn and es.codigo_distrito = a.codigo_distrito_pn
-        WHERE id_alumno = '$codigo_alumno'";
-
-$consulta = $db_link->query($query);
-
-if ($row = $consulta->fetch(PDO::FETCH_ASSOC)) {
-    // 4. LIMPIEZA DE DATOS PARA PHP 8 (Evita el error en strpos)
-    $nie = (string)($row['nie'] ?? '');
-    $apellido_paterno = trim((string)($row['apellido_paterno']) ?? '');
-    $apellido_materno = trim((string)($row['apellido_materno']) ?? '');
-    $nombre_completo = trim((string)($row['nombre_completo']) ?? '');
-    $genero = ((string)($row['codigo_genero'] ?? '')) == '01' ? 'MASCULINO' : 'FEMENINO';
-    $pn_numero = (string)($row['pn_numero'] ?? '');
-    $pn_folio = (string)($row['pn_folio'] ?? '');
-    $pn_tomo = (string)($row['pn_tomo'] ?? '');
-    $pn_libro = (string)($row['pn_libro'] ?? '');
-    $nombre_distrito = (string)($row['nombre_distrito'] ?? '');
-    $fecha_nacimiento = !empty($row['fecha_nacimiento']) ? date('d/m/Y', strtotime($row['fecha_nacimiento'])) : '';
-    $nombre_departamento = (string)($row['nombre_departamento'] ?? '');
-    $nombre_municipio = (string)($row['nombre_municipio'] ?? '');
-    $nombre_distrito = (string)($row['nombre_distrito'] ?? '');
-
-
-    // 5. INICIO DE PDF (Tus mismas coordenadas)
-    $pdf = new PDF('P', 'mm', 'Letter');
+}
+//************************************************************************************************************************
+// Creando el Informe.
+    $pdf=new PDF('P','mm','Letter');
+    #Establecemos los márgenes izquierda, arriba y derecha: 
+    $pdf->SetMargins(20, 20);
+    #Establecemos el margen inferior: 
+    $pdf->SetAutoPageBreak(true,5);
+//Títulos de las columnas
+    $pdf->AliasNbPages();
     $pdf->AddPage();
-    $pdf->SetFont('Arial', '', 12);
-
 //	Agregar el tipo de letra.	
 	$pdf->AddFont('Comic','','comic.php');
 	$pdf->AddFont('PoetsenOne','','PoetsenOne-Regular.php');
@@ -170,9 +114,33 @@ if ($row = $consulta->fetch(PDO::FETCH_ASSOC)) {
     $w = [60,25,125]; //determina el ancho de las columnas
     $w2 = [8,12]; //determina el ancho de las columnas
 // Variables.
-    $apellido_alumno = $apellido_paterno . ' ' . $apellido_materno . ', ' . $nombre_completo;
     $fill = false; $i=1;
-    // Definimos el tipo de fuente, estilo y tamaño.
+// Consultar y Ejecutar el Query.
+      $query = "SELECT a.id_alumno, a.codigo_nie, a.apellido_paterno, a.apellido_materno, a.nombre_completo, a.fecha_nacimiento,
+       a.pn_numero, a.pn_folio, a.pn_tomo, a.pn_libro,
+	   es.nombre_departamento, es.nombre_municipio, es.nombre_distrito
+        FROM alumno a
+        INNER JOIN elsalvador es ON es.codigo_departamento = a.codigo_departamento_pn and es.codigo_municipio = a.codigo_municipio_pn and es.codigo_distrito = a.codigo_distrito_pn
+        WHERE id_alumno = '$codigo_alumno'";
+        $result = $db_link -> query($query);
+        while($row = $result -> fetch(PDO::FETCH_BOTH))
+            {
+                // variables.
+                    $apellido_paterno = trim($row['apellido_paterno']);
+                    $apellido_materno = trim($row['apellido_materno']);
+                    $nombre_completo = trim($row['nombre_completo']);
+                    $nombre_departamento = convertirtexto(trim($row['nombre_departamento']));
+                    $nombre_municipio = convertirtexto(trim($row['nombre_municipio']));
+                    $nombre_distrito = convertirtexto(trim($row['nombre_distrito']));
+                    $fecha_nacimiento = cambiaf_a_normal(trim($row['fecha_nacimiento']));
+                // Datos de partida de nacimiento
+                    $pn_numero = trim($row['pn_numero']);
+                    $pn_folio = trim($row['pn_folio']);
+                    $pn_tomo = trim($row['pn_tomo']);
+                    $pn_libro = trim($row['pn_libro']);
+                    
+                    $apellido_alumno = $apellido_paterno . ' ' . $apellido_materno . ', ' . $nombre_completo;
+            // Definimos el tipo de fuente, estilo y tamaño.
             $pdf->SetFont('Arial','',12); // I : Italica; U: Normal;
             $pdf->SetXY(15,45);
             $pdf->RotatedText(20,60,'Alumno(a): ',0);
@@ -229,8 +197,7 @@ if ($row = $consulta->fetch(PDO::FETCH_ASSOC)) {
             $pdf->RotatedText(180,180,convertirtexto(trim($row['id_alumno'])),270);   // NIE
               	$fill=!$fill;	
               		$i++;
-
+		break;
+            }   // despues del bucle.
+// Salida del pdf.
     $pdf->Output();
-} else {
-    echo "No se encontraron registros.";
-}
