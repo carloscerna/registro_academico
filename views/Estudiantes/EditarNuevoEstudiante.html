@@ -135,74 +135,85 @@ jQuery(function($){
    $("#telefonoo").mask("9999-9999");
 });
 });
-  /* SCRIPT PARA SUBIR LA IMAGEN DE LA PARTIDA DE NACIMIENTO.*/
-  $('#fileupPN').change(function(){
-  //here we take the file extension and set an array of valid extensions
-      var res=$('#fileupPN').val();
-      var arr = res.split("\\");
-      var filename=arr.slice(-1)[0];
-      console.log(this.files);
-  
-      filextension=filename.split(".");
-      filext="."+filextension.slice(-1)[0];
-      valid=[".jpg",".png",".jpeg",".bmp",".pdf"];
-  //if file is not valid we show the error icon, the red alert, and hide the submit button
-      if (valid.indexOf(filext.toLowerCase())==-1){
-          $( ".imguploadPN.ok" ).hide("slow");
-          $( ".imguploadPN.stop" ).show("slow");
+    /* SCRIPT PARA SUBIR LA IMAGEN DE LA PARTIDA DE NACIMIENTO */
+    $('#fileupPN').change(function() {
+        var fileInput = this;
+        var res = $(this).val();
+        var arr = res.split("\\");
+        var filename = arr.slice(-1)[0];
         
-          $('#namefilePN').css({"color":"red","font-weight":700});
-          $('#namefilePN').html("Archivo Invalido: " + filename);
-      }else{
-          //if file is valid we show the green alert and show the valid submit
-          $( ".imguploadPN.stop" ).hide("slow");
-          $( ".imguploadPN.ok" ).show("slow");
-        
-          $('#namefilePN').css({"color":"green","font-weight":700});
-          $('#namefilePN').html("Archivo: " + filename);
-          //
-          var formData = new FormData();
-          var files = $('#fileupPN')[0].files[0];
-          formData.append('file',files);
-          $.ajax({
-              cache: false,
-              url: 'php_libs/soporte/Estudiante/UploadPartidaNacimiento.php',
-              type: 'post',
-              dataType: "json",
-              data: formData,
-              contentType: false,
-              processData: false,
-              success: function(response) {
-                if(response.contenido == "img"){
-                  $("#iframePDFPn").css("display","none");
-                  $(".card-img-top-PN").css("display","block");
-                  $(".card-img-top-PN").attr("src", response.url);
-                  $('#namefilePN').html("Imagen Cargada!");
-                    toastr["success"](response.mensaje, "Sistema");	
-                }
+        var filextension = filename.split(".");
+        var filext = "." + filextension.slice(-1)[0].toLowerCase();
+        var valid = [".jpg", ".png", ".jpeg", ".bmp", ".pdf"];
 
-                if (response.contenido == 'pdf') {
-                  $("#iframePDFPn").css("display","block");
-                  $(".card-img-top-PN").css("display","none");
-                  $("#iframePDFPn").attr("src", response.url);
-                    toastr["success"](response.mensaje, "Sistema");	
+        // 1. VALIDACIÓN DE EXTENSIÓN
+        if (valid.indexOf(filext) == -1) {
+            $(".imguploadPN.ok").hide();
+            $(".imguploadPN.stop").show("slow");
+            $('#namefilePN').css({"color": "red", "font-weight": 700}).html("Archivo Inválido: " + filename);
+            toastr["error"]("El formato de archivo no es permitido", "Sistema");
+            return false;
+        }
+
+        // 2. PREVISUALIZACIÓN INMEDIATA (Antes de subir)
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            // Ocultamos el mensaje de "Sin archivo" si lo tienes
+            $("#noArchivo").hide(); 
+
+            if (filext === ".pdf") {
+                $("#iframePDFPn").show().attr("src", e.target.result + "#toolbar=0&navpanes=0");
+                $(".card-img-top-PN").hide();
+            } else {
+                $(".card-img-top-PN").show().attr("src", e.target.result);
+                $("#iframePDFPn").hide();
+            }
+        };
+        reader.readAsDataURL(fileInput.files[0]);
+
+        // 3. PROCESO DE SUBIDA VÍA AJAX
+        $(".imguploadPN.stop").hide();
+        $(".imguploadPN.ok").show();
+        $('#namefilePN').css({"color": "green", "font-weight": 700}).html("Subiendo: " + filename);
+
+        var formData = new FormData();
+        var files = fileInput.files[0];
+        formData.append('file', files);
+
+        $.ajax({
+            cache: false,
+            url: 'php_libs/soporte/Estudiante/UploadPartidaNacimiento.php',
+            type: 'post',
+            dataType: "json",
+            data: formData,
+            contentType: false,
+            processData: false,
+            success: function(response) {
+                if (response.respuesta) {
+                  // --- ESTA ES LA LÍNEA QUE DEBES AGREGAR ---
+                  $("#noArchivo").hide(); 
+                  // -----------------------------------------
+                    // Actualizamos la URL con la ruta real que devolvió el PHP
+                    if (response.contenido == "img") {
+                        $(".card-img-top-PN").attr("src", response.url);
+                        $('#namefilePN').html("¡Imagen Guardada!");
+                    } else if (response.contenido == "pdf") {
+                        $("#iframePDFPn").attr("src", response.url + "#toolbar=0&navpanes=0");
+                        $('#namefilePN').html("¡PDF Guardado!");
+                    }
+                    toastr["success"](response.mensaje, "Sistema");
+                } else {
+                    toastr["error"](response.mensaje, "Error");
+                    $(".imguploadPN.ok").hide();
+                    $(".imguploadPN.stop").show();
                 }
-                /*
-                  if (response != 0) {
-                      $(".card-img-top-PN").attr("src", response);
-                      $('#namefilePN').html("Imagen Cargada!");
-                      toastr["success"]('Imagen Cargada...', "Sistema");
-                  } else {
-                    toastr["error"]('Formato de imagen incorrecto.', "Sistema");
-                  }
-                  */
-              }
-          });
-      return false;
-      }
-  });
+            },
+            error: function() {
+                toastr["error"]("Error crítico en el servidor al subir el archivo", "Sistema");
+            }
+        });
+    });
 });
-
 </script>
 {% endblock %}
 
@@ -515,30 +526,35 @@ jQuery(function($){
                                   <!-- Your second column here  DATOS DE LA PARTIDA DE NACIMIENTO-->
                                   <form method="post" action="#" enctype="multipart/form-data">
                                     <div class="card">
-                                      <div class="card-header bg-gradient-info text-black">
-                                        <div class="d-flex flex-row w-100 justify-content-between">
-                                          <div id="CargarArchivoFotoPN">
-                                            <label for="CargarArchivoFotoPN" class="text-white">Cargar: <i class="fad fa-upload fa-lg"></i>
-                                              <input type="file" value="" name="fileupPN" id="fileupPN" disabled aria-label="FileUpPN">
-                                            </label>
-                                          </div>
-                                          <div>
-                                            <label class="text-center text-white" id="namefilePN"></label>
-                                            <span class="imguploadPN ok text-white" ><i class="fa fa-check"></i></span>
-                                            <span class="imguploadPN stop text-white"><i class="fa fa-times"></i></span>
-                                          </div>
-                                        </div>
-                                    </div>
-                                      <div class="card-body">
-                                        <form method="post" action="#" enctype="multipart/form-data">
-                                          <img class="card-img-top-PN img-fluid" id="ImagenPN" src="#" aria-label="CardImgPN" alt="Partida de nacimiento">
-                                          <embed id="iframePDFPn" frameborder="0" scrolling="no" width="100px" height="250px" src="../registro_academico/img/EnBlanco.pdf" title="Mi Pdf">
+    <div class="card-header bg-gradient-info text-white">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <label style="cursor:pointer;" class="mb-0">
+                    Cargar Partida: <i class="fad fa-upload fa-lg"></i>
+                    <input type="file" name="fileupPN" id="fileupPN" style="display:none;">
+                </label>
+            </div>
+            <div id="statusPN">
+                <label id="namefilePN" class="small"></label>
+                <span class="imguploadPN ok" style="display:none;"><i class="fa fa-check text-white"></i></span>
+            </div>
+        </div>
+    </div>
 
-                                        </form>
-                                      </div>
-                                      <div class="card-footer bg-gradient-info">
-                                      </div>
-                                    </div>
+    <div class="card-body p-0 text-center" style="min-height: 250px; background: #f4f4f4;">
+        <img id="ImagenPN" src="" class="img-fluid" style="display:none; max-height: 350px; width: auto;">
+        
+        <iframe id="iframePDFPn" src="" width="100%" height="350px" style="display:none; border:none;"></iframe>
+        
+        <div id="noArchivo" class="py-5 text-muted">
+            <i class="fad fa-file-search fa-3x"></i><br>
+            Sin documento cargado
+        </div>
+    </div>
+
+    <div class="card-footer bg-gradient-info py-1">
+        </div>
+</div>
                                   </form>
                             </div>
                           </div><!-- FIN MODAL BODY INFORMACIÓN GENERAL-->

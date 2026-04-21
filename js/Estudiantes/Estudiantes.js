@@ -3,18 +3,46 @@ let id_ = 0;
 let NIE = 0;
 let tablaEstudiantes = ""; // Renombrado para claridad
 
-// Menú de acciones (HTML string)
+// Menú de acciones mejorado (Bootstrap + FontAwesome)
 const menu_group = `
 <div class="dropdown">
-    <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-bs-toggle="dropdown">
-        Acciones
+    <button type="button" class="btn btn-outline-primary btn-sm dropdown-toggle shadow-sm" data-bs-toggle="dropdown" aria-expanded="false">
+        <i class="fas fa-ellipsis-v me-1"></i> Acciones
     </button>
-    <div class="dropdown-menu">
-        <a class="historial dropdown-item fas fa-flag text-success" href="#"> Ver Historial</a>
-        <div class="dropdown-divider"></div>
-        <a class="editar dropdown-item fal fa-user-edit" href="#"> Editar</a>
-        <a class="expediente dropdown-item far fa-id-card" href="#"> Expediente</a>
-    </div>
+    <ul class="dropdown-menu shadow-lg border-0">
+        <li><h6 class="dropdown-header"><i class="fas fa-search me-1"></i> Consultas</h6></li>
+        <li>
+            <a class="historial dropdown-item py-2" href="#">
+                <i class="fas fa-history text-success fa-fw me-2"></i> Ver Historial de Notas
+            </a>
+        </li>
+        <li>
+            <a class="expediente dropdown-item py-2" href="#">
+                <i class="fas fa-file-invoice fa-fw text-info me-2"></i> Expediente del Alumno
+            </a>
+        </li>
+
+        <li><div class="dropdown-divider"></div></li>
+        <li><h6 class="dropdown-header"><i class="fas fa-pen me-1"></i> Edición</h6></li>
+        <li>
+            <a class="editar dropdown-item py-2" href="#">
+                <i class="fas fa-user-edit fa-fw text-primary me-2"></i> Modificar Información
+            </a>
+        </li>
+
+        <li><div class="dropdown-divider"></div></li>
+        <li><h6 class="dropdown-header"><i class="fas fa-print me-1"></i> Documentos PDF</h6></li>
+        <li>
+            <a class="imprimir-portada dropdown-item py-2" href="#">
+                <i class="fas fa-file-pdf text-danger fa-fw me-2"></i> Imprimir Ficha (Portada)
+            </a>
+        </li>
+        <li>
+            <a class="imprimir-portada-promocion dropdown-item py-2" href="#">
+                <i class="fas fa-certificate text-warning fa-fw me-2"></i> Portada de Promoción
+            </a>
+        </li>
+    </ul>
 </div>`;
 
 

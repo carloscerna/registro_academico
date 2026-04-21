@@ -139,8 +139,13 @@ if ($row = $consulta->fetch(PDO::FETCH_ASSOC)) {
     $nombre_distrito = (string)($row['nombre_distrito'] ?? '');
 
 
-    // 5. INICIO DE PDF (Tus mismas coordenadas)
-    $pdf = new PDF('P', 'mm', 'Letter');
+    // Definimos el ancho personalizado: 235mm (23.5cm) 
+// El alto lo mantendré en 279mm (Carta) o puedes ajustarlo también
+$ancho_personalizado = 235; 
+$alto_personalizado = 290; // Puedes cambiar esto según necesites
+
+    $pdf = new PDF('P', 'mm', array($ancho_personalizado, $alto_personalizado));
+    //$pdf = new PDF('P', 'mm', 'Letter');
     $pdf->AddPage();
     $pdf->SetFont('Arial', '', 12);
 
@@ -172,6 +177,22 @@ if ($row = $consulta->fetch(PDO::FETCH_ASSOC)) {
 // Variables.
     $apellido_alumno = $apellido_paterno . ' ' . $apellido_materno . ', ' . $nombre_completo;
     $fill = false; $i=1;
+
+    // --- CONFIGURACIÓN PARA TEXTO VERTICAL A LA DERECHA ---
+
+// 1. Definimos las variables (asegurando que no sean nulas para PHP 8)
+$nie_estudiante = (string)($row['codigo_nie'] ?? '');
+$nombre_estudiante = $apellido_alumno ?? '';
+$texto_completo = convertirtexto($nie_estudiante . " - " . $nombre_estudiante);
+
+// 2. Posicionamiento:
+// X = 225 (Cerca del borde derecho de los 235mm totales)
+// Y = 10  (Distancia desde el borde superior según solicitaste)
+// Ángulo = 90 (Orientación vertical de arriba hacia abajo)
+
+$pdf->SetFont('Arial', 'B', 13); // Tamaño sugerido para que quepa bien
+$pdf->RotatedText(230, 10, $texto_completo, 270);
+
     // Definimos el tipo de fuente, estilo y tamaño.
             $pdf->SetFont('Arial','',12); // I : Italica; U: Normal;
             $pdf->SetXY(15,45);
@@ -226,7 +247,7 @@ if ($row = $consulta->fetch(PDO::FETCH_ASSOC)) {
                 $pdf->SetFont('Arial','',12);
             //
             $pdf->SetFont('Comic','',56);
-            $pdf->RotatedText(180,180,convertirtexto(trim($row['id_alumno'])),270);   // NIE
+            $pdf->RotatedText(180,200,convertirtexto(trim($row['id_alumno'])),270);   // NIE
               	$fill=!$fill;	
               		$i++;
 

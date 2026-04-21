@@ -158,6 +158,9 @@ $(function(){ // INICIO DEL FUNCTION.
 						{
 							$(".card-img-top-PN").attr("src", "../registro_academico/img/NoDisponible.jpg");	
 						}else{
+							// --- ESTA ES LA LÍNEA QUE DEBES AGREGAR ---
+							$("#noArchivo").hide(); 
+							// -----------------------------------------
 							//alert(myExtension[1]);
 							if(myExtension[1] == "pdf" || myExtension[1] == "PDF"){
 								$('#iframePDFPn').attr('src',ruta_imagen)
