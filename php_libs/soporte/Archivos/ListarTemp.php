@@ -3,72 +3,69 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-// Ruta inicial por defecto
+// 1. Configuración Regional: Hora exacta de El Salvador
+date_default_timezone_set('America/El_Salvador'); 
+
+/**
+ * Función para convertir bytes en formato legible (KB, MB, GB)[cite: 1]
+ */
+function formatoTamaño($bytes) {
+    if ($bytes >= 1073741824) return number_format($bytes / 1073741824, 2) . ' GB';
+    if ($bytes >= 1048576) return number_format($bytes / 1048576, 2) . ' MB';
+    if ($bytes >= 1024) return number_format($bytes / 1024, 2) . ' KB';
+    return ($bytes > 0) ? $bytes . ' bytes' : '0 bytes';
+}
+
+// Ruta base del sistema
 $rutaBase = 'C:/TempSistemaRegistro/Carpetas/10391';
-
-// Obtener la ruta del GET o usar la ruta base
 $carpeta = isset($_GET['ruta']) && !empty($_GET['ruta']) ? $_GET['ruta'] : $rutaBase;
-
-// Normalizar la ruta para que use siempre "/"
 $carpeta = str_replace('\\', '/', $carpeta);
 
-// Validar que la carpeta exista y sea un directorio
+// Validación de seguridad de la carpeta
 if (empty($carpeta) || !is_dir($carpeta)) {
     header('Content-Type: application/json');
-    // Devolvemos un array vacío o un error para que DataTables no falle
     echo json_encode([]); 
-    exit; // Detener si la carpeta no es válida
+    exit; 
 }
 
 $contenido = array_diff(scandir($carpeta), array('..', '.'));
 $resultados = [];
 
 foreach ($contenido as $elemento) {
-    // Usamos "/" directamente ya que normalizamos $carpeta
     $rutaCompleta = $carpeta . '/' . $elemento; 
+    $timestamp = @filemtime($rutaCompleta);
     
-    // --- INICIO DE LA MODIFICACIÓN ---
-    
-    // Obtener el timestamp de la última modificación
-    // Usamos @ para suprimir errores si el archivo es temporal o inaccesible
-    $timestamp = @filemtime($rutaCompleta); 
-    
-    if ($timestamp === false) {
-        // En caso de error (ej. permisos), mostrar 'N/A'
-        $fechaMod = 'N/A';
-        $horaMod = 'N/A';
-    } else {
-        // Formatear la fecha y la hora
-        $fechaMod = date("Y-m-d", $timestamp);
-        $horaMod = date("H:i:s", $timestamp);
-    }
+    // Formateo de fecha y hora (12h am/pm)[cite: 1]
+    $fechaMod = ($timestamp) ? date("d/m/Y", $timestamp) : 'N/A';
+    $horaMod = ($timestamp) ? date("h:i:s a", $timestamp) : 'N/A';
 
-    // --- FIN DE LA MODIFICACIÓN ---
+    // Obtener extensión y asegurar que no sea undefined[cite: 1]
+    $extension = pathinfo($rutaCompleta, PATHINFO_EXTENSION);
+    $formato = empty($extension) ? 'archivo' : strtolower($extension);
 
     if (is_dir($rutaCompleta)) {
         $resultados[] = [
             'nombre'  => $elemento,
             'tipo'    => 'Carpeta',
+            'formato' => 'carpeta',
+            'tamaño'  => '--',
             'ruta'    => $rutaCompleta,
-            'formato' => 'Carpeta', // Añadido para consistencia
-            'fecha'   => $fechaMod,  // <-- NUEVO
-            'hora'    => $horaMod    // <-- NUEVO
+            'fecha'   => $fechaMod,
+            'hora'    => $horaMod
         ];
     } else {
-        $extension = pathinfo($rutaCompleta, PATHINFO_EXTENSION);
         $resultados[] = [
             'nombre'  => $elemento,
             'tipo'    => 'Archivo',
-            'formato' => empty($extension) ? 'Archivo' : $extension, // Manejar archivos sin extensión
+            'formato' => $formato,
+            'tamaño'  => formatoTamaño(@filesize($rutaCompleta)),
             'ruta'    => $rutaCompleta,
-            'fecha'   => $fechaMod,  // <-- NUEVO
-            'hora'    => $horaMod    // <-- NUEVO
+            'fecha'   => $fechaMod,
+            'hora'    => $horaMod
         ];
     }
 }
 
 header('Content-Type: application/json');
 echo json_encode($resultados);
-
-// NOTA: Se eliminó un '}' extra que estaba aquí en tu archivo original.
 ?>

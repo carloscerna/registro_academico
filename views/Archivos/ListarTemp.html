@@ -95,6 +95,8 @@ let miTabla; // Variable para la instancia de DataTables
  * Obtiene el ícono de Font Awesome según el formato.
  */
 function obtenerIcono(formato) {
+    // Si formato es undefined o null, usamos un string vacío
+    const ext = (formato || "").toLowerCase();
     switch (formato.toLowerCase()) {
         case 'carpeta':
             return '<i class="fas fa-folder fa-lg"></i>';
@@ -173,9 +175,11 @@ $(document).ready(function() {
             },
             // Columna 1: Ícono (Tipo)
             { 
-                "data": "formato",
+             "data": "formato",
                 "render": function(data, type, row) {
-                    return obtenerIcono(row.tipo === 'Carpeta' ? 'carpeta' : data);
+                    // Si es carpeta, forzamos el texto 'carpeta', de lo contrario pasamos el formato
+                    let tipoParaIcono = (row.tipo === 'Carpeta') ? 'carpeta' : (data || 'archivo');
+                    return obtenerIcono(tipoParaIcono);
                 },
                 "className": "dt-center",
                 "orderable": false,
@@ -193,6 +197,7 @@ $(document).ready(function() {
                     }
                 }
             },
+            { "data": "tamaño", "className": "dt-center" }, // Mostrar el tamaño legible
             // Columna 3: Fecha
             { "data": "fecha", "className": "dt-center", "width": "15%" },
             // Columna 4: Hora
@@ -430,6 +435,7 @@ $(document).ready(function() {
                         </th>
                         <th>Tipo</th>
                         <th>Nombre</th>
+                        <th>Tamaño</th>
                         <th>Fecha Mod.</th>
                         <th>Hora Mod.</th>
                         <th>Acciones</th>
