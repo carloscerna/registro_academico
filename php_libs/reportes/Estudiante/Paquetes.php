@@ -23,23 +23,37 @@ class PDF_Paquete extends FPDF {
         $this->datosReporte = $datos;
     }
 function Header() {
-        $params = $this->datosReporte['parametros'];
-        $encabezado = $this->datosReporte['encabezado'];
+    $params = $this->datosReporte['parametros'];
+    $encabezado = $this->datosReporte['encabezado'];
+    $rubro = $params['rubro']; // Obtenemos el rubro actual
 
-        // --- 1. Títulos principales ---
-        $this->SetFont('Arial', 'B', 11);
+    // --- 1. Títulos principales condicionales ---
+    $this->SetFont('Arial', 'B', 11);
+    
+    if ($rubro === "Para firmas") {
+        // Encabezado especial cuando es "Para firmas"
+        $this->Cell(0, 5, convertirtexto("PADRE/MADRE/ RESPONSABLE DEL ESTUDIANTE"), 0, 1, "C");
+        $this->Cell(0, 5, convertirtexto("NOMINA DE ESTUDIANTES"), 0, 1, "C");
+    } else {
+        // Encabezado original para otros rubros
         $this->Cell(0, 5, convertirtexto("FORMULARIO DE RECEPCIÓN DE BIENES POR PARTE DE LOS PADRES, MADRES, RESPONSABLES"), 0, 1, "C");
         $this->Cell(0, 5, convertirtexto("PROGRAMA DE DOTACIÓN DE UNIFORMES, ZAPATOS Y ÚTILES ESCOLARES AÑO " . $encabezado['nombre_ann_lectivo']), 0, 1, "C");
-        
-        $this->Ln(5);
+    }
+    
+    $this->Ln(5);
 
-        // --- 2. Bloque de Datos Generales ---
-        
-        // Fila 1: Rubro y Departamento
+    // --- 2. Bloque de Datos Generales ---
+    
+    // Fila 1: Rubro (Solo se muestra si NO es "Para firmas")
+    if ($rubro !== "Para firmas") {
         $this->SetFont('Arial', '', 9);
         $this->Cell(35, 5, 'RUBRO:', 0, 0, 'L');
         $this->SetFont('Arial', 'B', 9);
-        $this->Cell(125, 5, convertirtexto($params['rubro']), 0, 0, 'L');
+        $this->Cell(125, 5, convertirtexto($rubro), 0, 0, 'L');
+    } else {
+        // Si no mostramos rubro, dejamos el espacio en blanco o ajustamos la posición
+        $this->Cell(160, 5, '', 0, 0, 'L'); 
+    }
         
         $this->SetFont('Arial', '', 9);
         $this->Cell(35, 5, 'DEPARTAMENTO:', 0, 0, 'L');
