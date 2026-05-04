@@ -185,21 +185,46 @@ try {
                                         $columnas[] = Coordinate::stringFromColumnIndex($colIndex);
                                     }
                                     
-                                    // 4. Recorre cada columna y clona la validación de la fila 2
-                                    foreach ($columnas as $col) {
-                                        /** @var DataValidation $dvOriginal */
-                                        $dvOriginal = $sheet->getCell("{$col}2")->getDataValidation();
-                                        if (!($dvOriginal instanceof DataValidation)) {
-                                            continue; // si en esa columna no hay validación en la fila 2, saltamos
-                                        }
-                                    
-                                        // 5. Aplica la validación a cada celda desde la fila 3 hasta $ultimaFila
-                                        for ($fila = 3; $fila <= $ultimaFila; $fila++) {
-                                            $newDv = clone $dvOriginal;
-                                            $newDv->setSqref("{$col}{$fila}");
-                                            $sheet->getCell("{$col}{$fila}")->setDataValidation($newDv);
-                                        }
-                                    }
+// 4. Recorre cada columna (desde la C) y aplica validación y formatos
+foreach ($columnas as $col) {
+    /** @var DataValidation $dvOriginal */
+    $dvOriginal = $sheet->getCell("{$col}2")->getDataValidation();
+
+    if (!($dvOriginal instanceof DataValidation)) {
+        continue; 
+    }
+
+    // 5. Aplicar a cada fila de estudiante (desde la fila 3)
+    for ($fila = 3; $fila <= $ultimaFila; $fila++) {
+        $celda = "{$col}{$fila}";
+
+        // --- VALIDACIÓN ---
+        $newDv = clone $dvOriginal;
+        $newDv->setSqref($celda);
+        $sheet->getCell($celda)->setDataValidation($newDv);
+        
+        // --- VALOR PREDETERMINADO ---
+        // Forzamos el texto exacto como STRING
+        $sheet->setCellValueExplicit($celda, "No Evaluado", \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING);
+
+        // --- ESTILOS Y FORMATO ---
+        // 1. Definir el alto de la fila (se aplica a la fila completa una sola vez por iteración de columna)
+        $sheet->getRowDimension($fila)->setRowHeight(50);
+
+        // 2. Aplicar estilos de alineación, ajuste de texto y color de fondo
+        $sheet->getStyle($celda)->applyFromArray([
+            'alignment' => [
+                'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+                'vertical'   => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
+                'wrapText'   => true, // ACTIVAR: Ajustar texto
+            ],
+            'fill' => [
+                'fillType'   => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+                'startColor' => ['rgb' => 'F2F2F2'], // COLOR: Gris muy claro
+            ],
+        ]);
+    }
+}
                                         // RELLENAR CONTENIDO EN LA HOJA 2.
                                         // define aquí los dos colores que quieras alternar
                                         $coloresBloque = ['FFFFFF', 'D9E1F2']; // blanco / celeste claro
