@@ -21,6 +21,11 @@ use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Worksheet\PageSetup;
 use PhpOffice\PhpSpreadsheet\Worksheet\PageMargins;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use PhpOffice\PhpSpreadsheet\Style\Conditional;
+use PhpOffice\PhpSpreadsheet\Style\Style;
+// Esta es la clase que probablemente te falta y causa el error:
+use PhpOffice\PhpSpreadsheet\Style\ConditionalFormatting\Wizard;
+
 // conexión.
 $pdo = $dblink;
 
@@ -119,25 +124,33 @@ try {
                             ],
                         ];
 
-                        // Preparar la consulta
-                        $codigo_all = $bach . $grado . $seccion . $turno . $ann;
-                
-                        $stmt = $pdo->prepare("
-                            SELECT 
-                                a.codigo_nie, 
-                                btrim(a.apellido_paterno || ' ' || a.apellido_materno || ', ' || a.nombre_completo) AS nombre_alumno
-                            FROM alumno a
-                            INNER JOIN alumno_matricula am ON a.id_alumno = am.codigo_alumno 
-                            WHERE am.retirado = 'f'
-                              AND btrim(am.codigo_bach_o_ciclo || am.codigo_grado || am.codigo_seccion || am.codigo_turno || am.codigo_ann_lectivo) = :codigo_all
-                            ORDER BY nombre_alumno
-                        ");
-                        $stmt->execute([':codigo_all' => $codigo_all]);
-                        $alumnos = $stmt->fetchAll(PDO::FETCH_ASSOC);
-                
-                        if (empty($alumnos)) {
-                            throw new Exception('No se encontraron alumnos para este grupo.');
-                        }
+                        // Preparar la consulta con nombres de grado y sección
+$codigo_all = $bach . $grado . $seccion . $turno . $ann;
+
+$stmt = $pdo->prepare("
+    SELECT 
+        a.codigo_nie, 
+        btrim(a.apellido_paterno || ' ' || a.apellido_materno || ', ' || a.nombre_completo) AS nombre_alumno,
+        grd.nombre AS nombre_grado,
+        sec.nombre AS nombre_seccion
+    FROM alumno a
+    INNER JOIN alumno_matricula am ON a.id_alumno = am.codigo_alumno 
+    INNER JOIN grado_ano grd ON am.codigo_grado = grd.codigo
+    INNER JOIN seccion sec ON am.codigo_seccion = sec.codigo
+    WHERE am.retirado = 'f'
+      AND btrim(am.codigo_bach_o_ciclo || am.codigo_grado || am.codigo_seccion || am.codigo_turno || am.codigo_ann_lectivo) = :codigo_all
+    ORDER BY nombre_alumno
+");
+$stmt->execute([':codigo_all' => $codigo_all]);
+$alumnos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+if (empty($alumnos)) {
+    throw new Exception('No se encontraron alumnos para este grupo.');
+}
+
+// Guardamos los nombres del primer registro para el archivo
+$txtGrado = $alumnos[0]['nombre_grado'];
+$txtSeccion = $alumnos[0]['nombre_seccion'];
                 
                         // Insertar los datos en la hoja de Excel (desde fila 2)
                         $fila = 2;
@@ -185,7 +198,7 @@ try {
                                         $columnas[] = Coordinate::stringFromColumnIndex($colIndex);
                                     }
                                     
-// 4. Recorre cada columna (desde la C) y aplica validación y formatos
+// 4. Recorre cada columna (C, D, E...)
 foreach ($columnas as $col) {
     /** @var DataValidation $dvOriginal */
     $dvOriginal = $sheet->getCell("{$col}2")->getDataValidation();
@@ -194,36 +207,45 @@ foreach ($columnas as $col) {
         continue; 
     }
 
-    // 5. Aplicar a cada fila de estudiante (desde la fila 3)
-    for ($fila = 3; $fila <= $ultimaFila; $fila++) {
-        $celda = "{$col}{$fila}";
+    // Definimos el rango de esta columna (ej. C2:C50)
+    $rangoColumna = "{$col}2:{$col}{$ultimaFila}";
 
-        // --- VALIDACIÓN ---
+    // --- 1. APLICAR VALOR, ALTO Y AJUSTE DE TEXTO ---
+    for ($fila = 2; $fila <= $ultimaFila; $fila++) {
+        $celda = "{$col}{$fila}";
+        
+        // Clonar validación
         $newDv = clone $dvOriginal;
         $newDv->setSqref($celda);
         $sheet->getCell($celda)->setDataValidation($newDv);
         
-        // --- VALOR PREDETERMINADO ---
-        // Forzamos el texto exacto como STRING
+        // Valor predeterminado
         $sheet->setCellValueExplicit($celda, "No Evaluado", \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING);
-
-        // --- ESTILOS Y FORMATO ---
-        // 1. Definir el alto de la fila (se aplica a la fila completa una sola vez por iteración de columna)
-        $sheet->getRowDimension($fila)->setRowHeight(50);
-
-        // 2. Aplicar estilos de alineación, ajuste de texto y color de fondo
-        $sheet->getStyle($celda)->applyFromArray([
-            'alignment' => [
-                'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
-                'vertical'   => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
-                'wrapText'   => true, // ACTIVAR: Ajustar texto
-            ],
-            'fill' => [
-                'fillType'   => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
-                'startColor' => ['rgb' => 'F2F2F2'], // COLOR: Gris muy claro
-            ],
-        ]);
+        
+        // Alto de fila (solo se necesita setear una vez por fila)
+        $sheet->getRowDimension($fila)->setRowHeight(60);
     }
+
+    // --- 2. FORMATO GENERAL (Alineación y Ajuste) ---
+    $sheet->getStyle($rangoColumna)->getAlignment()->applyFromArray([
+        'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+        'vertical'   => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
+        'wrapText'   => true,
+    ]);
+
+    // --- 3. FORMATO CONDICIONAL (El fondo dinámico) ---
+    // Creamos la regla: Si es IGUAL a "No Evaluado", fondo GRIS. 
+    // Si cambia, Excel quita el estilo automáticamente.
+    $conditional = new Conditional();
+    $conditional->setConditionType(Conditional::CONDITION_CELLIS)
+                ->setOperatorType(Conditional::OPERATOR_EQUAL)
+                ->addCondition('"No Evaluado"'); // IMPORTANTE: Las comillas dobles dentro de las simples
+    
+    $conditional->getStyle()->getFill()->setFillType(Fill::FILL_SOLID)
+                ->getStartColor()->setRGB('F2F2F2');
+
+    // Aplicar la regla a todo el rango de la columna de una vez
+    $sheet->getStyle($rangoColumna)->setConditionalStyles([$conditional]);
 }
                                         // RELLENAR CONTENIDO EN LA HOJA 2.
                                         // define aquí los dos colores que quieras alternar
@@ -326,6 +348,13 @@ foreach ($columnas as $col) {
                                          $name = $sheet1->getCell("B{$r}")->getValue(); // o la columna que sea
                                          $dataNom[] = ['nie'=>$nie,'nombre'=>$name];
                                      }   
+// 1. Inmovilizar Paneles para facilitar la lectura
+$sheet->freezePane('C2');
+
+// 2. Ajustar anchos finales (opcional si no lo habías hecho arriba)
+$sheet->getColumnDimension('A')->setAutoSize(true);
+$sheet->getColumnDimension('B')->setAutoSize(true);
+
                                         // 7) Guardar Excel
                                         $ruta = 'temp_excel_' . '.xlsx';
                                         (new Xlsx($spreadsheet))->save($ruta);
@@ -354,24 +383,26 @@ foreach ($columnas as $col) {
                             $seccion = substr($grupo, 2, 2);           // "02"
                             $turno   = substr($grupo, 4, 2);           // "03"
                             */
+// 1. Limpiar caracteres extraños del nombre (por seguridad)
+$nombreLimpio = "Descriptores - {$txtGrado} Sección {$txtSeccion}";
+$nombreLimpio = str_replace(['/', '\\', '*', ':', '?', '"', '<', '>', '|'], '-', $nombreLimpio);
 
-                            // 4. Construir nombre de salida
-                            $outputFileName = "Nomina_{$grado}_{$seccion}_{$turno}.xlsx";
-                            $outputFilePath = "{$targetDirectory}/{$outputFileName}";
+// 2. Construir nombre de salida
+$outputFileName = $nombreLimpio . ".xlsx";
+$outputFilePath = "{$targetDirectory}/{$outputFileName}";
 
-                            // 5. Copiar (o renombrar) el archivo
-                            if (!copy($ruta, $outputFilePath)) {
-                                // Si falla la copia, puedes intentar con rename()
-                                 rename($ruta, $outputFilePath);
-                                throw new Exception("No se pudo copiar el archivo a la ruta destino.");
-                            }
-       
-                        $response = [
-                            'success' => true,
-                            'message' => 'Procesado correctamente',
-                            'archivo' => $outputFileName,
-                            'data'    => $dataNom
-                        ];
+// 3. Copiar archivo a la ruta final
+if (!copy($ruta, $outputFilePath)) {
+    rename($ruta, $outputFilePath);
+}
+
+// 4. Responder al cliente
+$response = [
+    'success' => true,
+    'message' => 'Archivo generado con éxito',
+    'archivo' => $outputFileName, // Este es el nombre que verá el usuario para descargar
+    'data'    => $dataNom
+];
                     } catch (Exception $e) {
                         echo json_encode([
                             'success' => false,

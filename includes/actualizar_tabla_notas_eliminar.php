@@ -83,8 +83,8 @@ $num = 0;
                     for ($i=0; $i < count($codigo_asignatura_array); $i++) { 
                       $query_eliminar = "DELETE FROM nota WHERE codigo_alumno = '$codigo_alumno' and codigo_matricula = '$codigo_alumno_matricula' and codigo_asignatura = '$codigo_asignatura_array[$i]'";
                         
-                        $result_consulta_eliminar_notas = $dblink -> query($query_eliminar);
-                        print $num . "Eliminar-" . $codigo_nie . "-" .  $codigo_alumno . " " . $codigo_alumno_matricula . " " .$nombres . " " . $codigo_asignatura_array[$i] . "<br>";
+                       // $result_consulta_eliminar_notas = $dblink -> query($query_eliminar);
+                        //print $num . "Eliminar-" . $codigo_nie . "-" .  $codigo_alumno . " " . $codigo_alumno_matricula . " " .$nombres . " " . $codigo_asignatura_array[$i] . "<br>";
                             if($result_consulta_eliminar_notas)
                             {
                                 //
@@ -94,5 +94,5 @@ $num = 0;
                     }
                     // eliminar matricula
                     $query_eliminar_matricula = "DELETE FROM alumno_matricula where codigo_alumno = '$codigo_alumno' and id_alumno_matricula = '$codigo_alumno_matricula'";
-                    $result_consulta_eliminar_matricula = $dblink -> query($query_eliminar_matricula);
+                    //$result_consulta_eliminar_matricula = $dblink -> query($query_eliminar_matricula);
                  }
