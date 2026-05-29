@@ -188,29 +188,53 @@ jQuery(function($){
             data: formData,
             contentType: false,
             processData: false,
-            success: function(response) {
-                if (response.respuesta) {
-                  // --- ESTA ES LA LÍNEA QUE DEBES AGREGAR ---
-                  $("#noArchivo").hide(); 
-                  // -----------------------------------------
-                    // Actualizamos la URL con la ruta real que devolvió el PHP
-                    if (response.contenido == "img") {
-                        $(".card-img-top-PN").attr("src", response.url);
-                        $('#namefilePN').html("¡Imagen Guardada!");
-                    } else if (response.contenido == "pdf") {
-                        $("#iframePDFPn").attr("src", response.url + "#toolbar=0&navpanes=0");
-                        $('#namefilePN').html("¡PDF Guardado!");
-                    }
-                    toastr["success"](response.mensaje, "Sistema");
-                } else {
-                    toastr["error"](response.mensaje, "Error");
-                    $(".imguploadPN.ok").hide();
-                    $(".imguploadPN.stop").show();
-                }
-            },
-            error: function() {
-                toastr["error"]("Error crítico en el servidor al subir el archivo", "Sistema");
-            }
+success: function(response) {
+  
+  
+  if (response.respuesta) {
+        // Ocultamos el mensaje de "Sin documento cargado"
+        $("#noArchivo").hide(); 
+
+        // 1. Creamos el rompe-caché con el tiempo actual en milisegundos
+        var cacheBuster = "?t=" + new Date().getTime();
+        var rutaConFuerza = response.url + cacheBuster;
+
+        // 2. ACTUALIZACIÓN CRÍTICA: Guardamos la última ruta con el rompe-caché en el botón
+        $("#btnAmpliarDocumento").attr("data-ruta", rutaConFuerza);
+        // Nos aseguramos de que el botón aparezca visible si antes estaba oculto
+        $("#btnAmpliarDocumento").fadeIn(); 
+
+        // 3. Validamos el tipo de contenido que devolvió el PHP
+        if (response.contenido == "img") {
+            
+            // Apagamos por completo el iframe del PDF por si estaba activo
+            $("#iframePDFPn").hide().attr("src", "#");
+
+            // Rellenamos la imagen con el ID real y la mostramos
+            $("#ImagenPN").attr("src", rutaConFuerza);
+            $("#ImagenPN").show();
+
+            $('#namefilePN').html("¡Imagen Guardada!");
+
+        } else if (response.contenido == "pdf") {
+            
+            // Apagamos por completo la caja de la imagen por si estaba activa
+            $("#ImagenPN").hide().attr("src", "#");
+
+            // Rellenamos el iframe con su ID correcto y lo mostramos
+            $("#iframePDFPn").attr("src", response.url + "#toolbar=0&navpanes=0");
+            $("#iframePDFPn").show();
+
+            $('#namefilePN').html("¡PDF Guardado!");
+        }
+
+        toastr["success"](response.mensaje, "Sistema");
+    } else {
+        toastr["error"](response.mensaje, "Error");
+        $(".imguploadPN.ok").hide();
+        $(".imguploadPN.stop").show();
+    }
+},
         });
     });
 });
@@ -542,7 +566,7 @@ jQuery(function($){
     </div>
 
     <div class="card-body p-0 text-center" style="min-height: 250px; background: #f4f4f4;">
-        <img id="ImagenPN" src="" class="img-fluid" style="display:none; max-height: 350px; width: auto;">
+        <img id="ImagenPN" src="#" class="img-fluid" style="display:none; max-height: 350px; width: auto;">
         
         <iframe id="iframePDFPn" src="" width="100%" height="350px" style="display:none; border:none;"></iframe>
         
@@ -550,6 +574,11 @@ jQuery(function($){
             <i class="fad fa-file-search fa-3x"></i><br>
             Sin documento cargado
         </div>
+        <div class="p-2 bg-light border-top text-right">
+        <button type="button" id="btnAmpliarDocumento" class="btn btn-xs btn-outline-primary" style="display: none;">
+            <i class="fad fa-search-plus"></i> Ver más grande
+        </button>
+    </div>
     </div>
 
     <div class="card-footer bg-gradient-info py-1">
@@ -1514,6 +1543,30 @@ jQuery(function($){
       </form> <!-- fin del form -->            
     </section>
 </div> <!-- /.content-Wrapper, Contains page content. -->
+
+
+<div class="modal fade" id="modalVisorDocumento" tabindex="-1" aria-labelledby="modalVisorLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title" id="modalVisorLabel"><i class="fad fa-file-search"></i> Vista Previa del Documento</h5>
+        <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body p-0 text-center" style="background: #333; min-height: 500px;">
+        
+        <img id="visorImagenGrande" src="#" class="img-fluid d-none" style="max-height: 80vh; width: auto; margin: auto;">
+        
+        <iframe id="visorPDFGrande" src="" width="100%" style="height: 80vh; border:none;" class="d-none"></iframe>
+        
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar Vista</button>
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock %}
 
 {% block loginUser %}

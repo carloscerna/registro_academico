@@ -153,26 +153,48 @@ $(function(){ // INICIO DEL FUNCTION.
 					// IMAGEN PARTIDA DE NACIMIENTO.
 					let text = data[0].url_pn;
 					const myExtension = text.split(".");
-					ruta_imagen = "../registro_academico/img/Pn/" + data[0].url_pn;
-						if(data[0].url_pn == "foto_no_disponible.jpg")
-						{
-							$(".card-img-top-PN").attr("src", "../registro_academico/img/NoDisponible.jpg");	
-						}else{
-							// --- ESTA ES LA LÍNEA QUE DEBES AGREGAR ---
-							$("#noArchivo").hide(); 
-							// -----------------------------------------
-							//alert(myExtension[1]);
-							if(myExtension[1] == "pdf" || myExtension[1] == "PDF"){
-								$('#iframePDFPn').attr('src',ruta_imagen)
-								$("#iframePDFPn").css("display","block");		// Botón Ver
-								$(".card-img-top-PN").css("display","none");
-							}else{
-								$(".card-img-top-PN").attr("src", ruta_imagen);	
-								$(".card-img-top-PN").css("display","block");		// Botón Ver
-								$("#iframePDFPn").css("display","none");
-							}
-							
-						}				
+					// BUSCA ESTA LÍNEA:
+ ruta_imagen = "../registro_academico/img/Pn/" + data[0].url_pn;
+
+if(data[0].url_pn == "foto_no_disponible.jpg") {
+    // Si usas ID o clase para la imagen "no disponible", asegúrate de usar el correcto
+    $("#ImagenPN").attr("src", "../registro_academico/img/NoDisponible.jpg");
+    $("#ImagenPN").css("display", "block");
+    $("#iframePDFPn").css("display", "none");
+} else {
+    $("#noArchivo").hide(); 
+    console.log("Ruta asignada:", ruta_imagen);
+
+    // Método seguro para extraer la extensión real (siempre el último elemento tras el punto)
+    var nombreArchivo = data[0].url_pn;
+    var extension = nombreArchivo.split('.').pop().toLowerCase();
+console.log("Extension: " + extension);
+    if(extension == "pdf"){
+        // Asignamos la ruta al iframe y lo mostramos
+        $('#iframePDFPn').attr('src', ruta_imagen);
+        $("#iframePDFPn").css("display", "block");       
+        
+        // Ocultamos la etiqueta de imagen por ID y por clase
+        $("#ImagenPN").css("display", "none");
+        $(".card-img-top-PN").css("display", "none");
+	   }   else {
+    // 1. Forzar limpieza de la caché de imagen
+    var cacheBuster = "?t=" + new Date().getTime();
+    var rutaConFuerza = ruta_imagen + cacheBuster;
+
+    console.log("Renderizando imagen en el contenedor real:", rutaConFuerza);
+
+    // 2. Apagar elementos sobrantes (PDF y mensaje de vacío)
+    $("#iframePDFPn").hide().attr("src", "#");
+    $("#noArchivo").hide();
+
+    // 3. Encender y rellenar la imagen usando el ID correcto del HTML (#ImagenPN)
+    $("#ImagenPN").attr("src", rutaConFuerza);
+    $("#ImagenPN").show(); // Quita el display:none del estilo en línea
+}
+}
+// Añade esto cuando la subida o la lectura sea exitosa:
+$("#btnAmpliarDocumento").fadeIn().attr("data-ruta", ruta_imagen); // O response.url si estás en el AJAX
 					// datos para el card TITLE - INFORMACIÓN GENERAL
 						$('#txtcodigo').val(id_);
 						$('#txtnombres').val(data[0].nombre_completo);
@@ -723,6 +745,51 @@ $(function(){ // INICIO DEL FUNCTION.
 	$("#goGuardar").click(function() {     
 		$("#formUsers").submit();
 	});
+
+///////////////////////////////////////////////////////////////////////////////
+// EVENTO PARA ABRIR EL VISOR EN UNA VENTANA MODAL INTERNA
+///////////////////////////////////////////////////////////////////////////////
+$(document).on("click", "#btnAmpliarDocumento", function(e) {
+    e.preventDefault();
+    
+    // 1. Extraemos la ruta que guardamos previamente en el botón
+    var rutaDocumento = $(this).attr("data-ruta");
+    if(!rutaDocumento || rutaDocumento === "#" || rutaDocumento === "") return;
+    
+    // 2. Extraemos la extensión de manera segura
+    var extension = rutaDocumento.split('.').pop().split('?')[0].toLowerCase();
+    
+    // 3. Reseteamos los contenedores internos de la Modal
+    $("#visorImagenGrande").addClass("d-none").attr("src", "#");
+    $("#visorPDFGrande").addClass("d-none").attr("src", "");
+    
+    // 4. Evaluamos el tipo de archivo para encender el contenedor correcto
+    if (extension === "pdf") {
+        $("#visorPDFGrande").attr("src", rutaDocumento).removeClass("d-none");
+    } else {
+        // Le agregamos una estampa de tiempo para burlar la caché del navegador
+        var cacheBuster = "?t=" + new Date().getTime();
+        $("#visorImagenGrande").attr("src", rutaDocumento + cacheBuster).removeClass("d-none");
+    }
+    
+    // 5. Ordenamos a Bootstrap que levante la ventana emergente en pantalla
+    $("#modalVisorDocumento").modal("show");
+});
+
+///////////////////////////////////////////////////////////////////////////////
+// FORZAR EL CIERRE DE LA MODAL EN BOOTSTRAP 4 Y LIMPIAR CONTENIDOS
+///////////////////////////////////////////////////////////////////////////////
+$(document).on("click", "[data-dismiss='modal']", function(e) {
+    e.preventDefault();
+    
+    // 1. Forzamos el cierre de la modal usando la instrucción nativa de Bootstrap 4
+    $("#modalVisorDocumento").modal("hide");
+    
+    // 2. Limpiamos los contenedores para liberar la memoria del navegador
+    $("#visorImagenGrande").attr("src", "#").addClass("d-none");
+    $("#visorPDFGrande").attr("src", "").addClass("d-none");
+});
+
 }); // fin de la funcion principal ************************************/
 
 // Pasar foco cuando seleccionar un encargado.
