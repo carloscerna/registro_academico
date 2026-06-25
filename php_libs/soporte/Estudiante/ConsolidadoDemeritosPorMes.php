@@ -45,7 +45,7 @@ if ($errorDbConexion == false) {
                                         ogs.codigo_grado, 
                                         ogs.codigo_seccion, 
                                         ogs.codigo_turno,
-                                        btrim(g.nombre_grado || ' ' || s.nombre_seccion || ' - ' || t.nombre_turno) as nombre_seccion_completa
+                                        btrim(g.nombre || ' ' || s.nombre || ' - ' || t.nombre) as nombre_seccion_completa
                                     FROM public.organizacion_grados_secciones ogs
                                     INNER JOIN public.encargado_grado eg 
                                         ON eg.codigo_bachillerato = ogs.codigo_bachillerato 
@@ -53,7 +53,7 @@ if ($errorDbConexion == false) {
                                        AND eg.codigo_seccion = ogs.codigo_seccion 
                                        AND eg.codigo_turno = ogs.codigo_turno
                                        AND eg.codigo_ann_lectivo = ogs.codigo_ann_lectivo
-                                    INNER JOIN grado g ON g.codigo = ogs.codigo_grado
+                                    INNER JOIN grado_ano g ON g.codigo = ogs.codigo_grado
                                     INNER JOIN seccion s ON s.codigo = ogs.codigo_seccion
                                     INNER JOIN turno t ON t.codigo = ogs.codigo_turno
                                     WHERE ogs.codigo_ann_lectivo = :ann

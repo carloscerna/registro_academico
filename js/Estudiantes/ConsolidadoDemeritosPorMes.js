@@ -70,10 +70,11 @@ $(function(){
                 dataType: "json",
                 url: "php_libs/soporte/Estudiante/ConsolidadoDemeritosPorMes.php", // Tu ruta centralizada de soporte
                 data: str,
-                success: function(response){
+               success: function(response){
                     if(response.respuesta === false){
                         toastr.warning(response.mensaje || "No se encontraron registros académicos para el período seleccionado.");
                         $('#listaDatosConsolidadoOK').empty();
+                        $('#totalesConsolidadoMensual').hide();
                     } else {
                         toastr.success("Consolidado institucional generado con éxito.");
                         
@@ -85,19 +86,51 @@ $(function(){
                             $('#divCardsAuditoria').removeClass('d-none');
                         }
 
-                        // --- INYECTAR FILAS EN LA TABLA MATRIZ ---
+                        // --- VARIABLES ACUMULADORAS PARA EL PIE DE TABLA ---
+                        var g_mat_m = 0, g_mat_h = 0;
+                        var g_dem_m = 0, g_dem_h = 0;
+                        var g_c_a = 0, g_c_b = 0, g_c_c = 0, g_c_d = 0;
+                        var g_red_m = 0, g_red_h = 0;
+                        var g_r_a = 0, g_r_b = 0, g_r_c = 0;
+                        var g_rec_m = 0, g_rec_h = 0;
+
                         var tbody = $('#listaDatosConsolidadoOK');
                         tbody.empty();
 
                         // Recorremos las secciones devueltas por el backend
                         $.each(response.contenido, function(index, reg){
-                            // Totales calculados al vuelo por fila (sección)
-                            var total_mat = parseInt(reg.mat_h) + parseInt(reg.mat_m);
-                            var total_dem = parseInt(reg.dem_h) + parseInt(reg.dem_m);
-                            var total_causales = parseInt(reg.c_a) + parseInt(reg.c_b) + parseInt(reg.c_c) + parseInt(reg.c_d);
-                            var total_red = parseInt(reg.red_h) + parseInt(reg.red_m);
-                            var total_opciones = parseInt(reg.r_a) + parseInt(reg.r_b) + parseInt(reg.r_c);
-                            var total_rec = parseInt(reg.rec_h) + parseInt(reg.rec_m);
+                            // Conversiones seguras a enteros por fila
+                            var mat_h = parseInt(reg.mat_h) || 0;
+                            var mat_m = parseInt(reg.mat_m) || 0;
+                            var dem_h = parseInt(reg.dem_h) || 0;
+                            var dem_m = parseInt(reg.dem_m) || 0;
+                            var c_a   = parseInt(reg.c_a) || 0;
+                            var c_b   = parseInt(reg.c_b) || 0;
+                            var c_c   = parseInt(reg.c_c) || 0;
+                            var c_d   = parseInt(reg.c_d) || 0;
+                            var red_h = parseInt(reg.red_h) || 0;
+                            var red_m = parseInt(reg.red_m) || 0;
+                            var r_a   = parseInt(reg.r_a) || 0;
+                            var r_b   = parseInt(reg.r_b) || 0;
+                            var r_c   = parseInt(reg.r_c) || 0;
+                            var rec_h = parseInt(reg.rec_h) || 0;
+                            var rec_m = parseInt(reg.rec_m) || 0;
+
+                            // Totales por fila (sección)
+                            var total_mat = mat_h + mat_m;
+                            var total_dem = dem_h + dem_m;
+                            var total_causales = c_a + c_b + c_c + c_d;
+                            var total_red = red_h + red_m;
+                            var total_opciones = r_a + r_b + r_c;
+                            var total_rec = rec_h + rec_m;
+
+                            // Acumulación Vertical para los Totales Generales
+                            g_mat_m += mat_m; g_mat_h += mat_h;
+                            g_dem_m += dem_m; g_dem_h += dem_h;
+                            g_c_a += c_a; g_c_b += c_b; g_c_c += c_c; g_c_d += c_d;
+                            g_red_m += red_m; g_red_h += red_h;
+                            g_r_a += r_a; g_r_b += r_b; g_r_c += r_c;
+                            g_rec_m += rec_m; g_rec_h += rec_h;
 
                             // Badge de estatus según la entrega de datos
                             var badgeEstatus = (reg.tiene_datos === true) 
@@ -108,21 +141,32 @@ $(function(){
                                 <tr>
                                     <td class="fw-bold text-start ps-2 text-uppercase bg-light">${reg.nombre_seccion}</td>
                                     <td>${badgeEstatus}</td>
-                                    <td>${reg.mat_m}</td><td>${reg.mat_h}</td><td class="table-secondary fw-bold">${total_mat}</td>
-                                    <td>${reg.dem_m}</td><td>${reg.dem_h}</td><td class="table-secondary fw-bold">${total_dem}</td>
-                                    <td>${reg.c_a}</td><td>${reg.c_b}</td><td>${reg.c_c}</td><td>${reg.c_d}</td><td class="table-secondary fw-bold">${total_causales}</td>
-                                    <td>${reg.red_m}</td><td>${reg.red_h}</td><td class="table-secondary fw-bold">${total_red}</td>
-                                    <td>${reg.r_a}</td><td>${reg.r_b}</td><td>${reg.r_c}</td><td class="table-secondary fw-bold">${total_opciones}</td>
-                                    <td>${reg.rec_m}</td><td>${reg.rec_h}</td><td class="table-secondary fw-bold">${total_rec}</td>
+                                    <td>${mat_m}</td><td>${mat_h}</td><td class="table-secondary fw-bold">${total_mat}</td>
+                                    <td>${dem_m}</td><td>${dem_h}</td><td class="table-secondary fw-bold">${total_dem}</td>
+                                    <td>${c_a}</td><td>${c_b}</td><td>${c_c}</td><td>${c_d}</td><td class="table-secondary fw-bold">${total_causales}</td>
+                                    <td>${red_m}</td><td>${red_h}</td><td class="table-secondary fw-bold">${total_red}</td>
+                                    <td>${r_a}</td><td>${r_b}</td><td>${r_c}</td><td class="table-secondary fw-bold">${total_opciones}</td>
+                                    <td>${rec_m}</td><td>${rec_h}</td><td class="table-secondary fw-bold">${total_rec}</td>
                                 </tr>
                             `);
                         });
 
-                        // Desplazar el scroll arriba y mostrar la tabla armada
+                        // --- INYECTAR DATOS EN EL PIE DE TABLA (TFOOT) ---
+                        $('#tot_mat_m').text(g_mat_m); $('#tot_mat_h').text(g_mat_h); $('#tot_mat_t').text(g_mat_m + g_mat_h);
+                        $('#tot_dem_m').text(g_dem_m); $('#tot_dem_h').text(g_dem_h); $('#tot_dem_t').text(g_dem_m + g_dem_h);
+                        $('#tot_c_a').text(g_c_a); $('#tot_c_b').text(g_c_b); $('#tot_c_c').text(g_c_c); $('#tot_c_d').text(g_c_d);
+                        $('#tot_causales_t').text(g_c_a + g_c_b + g_c_c + g_c_d);
+                        $('#tot_red_m').text(g_red_m); $('#tot_red_h').text(g_red_h); $('#tot_red_t').text(g_red_m + g_red_h);
+                        $('#tot_r_a').text(g_r_a); $('#tot_r_b').text(g_r_b); $('#tot_r_c').text(g_r_c);
+                        $('#tot_opciones_t').text(g_r_a + g_r_b + g_r_c);
+                        $('#tot_rec_m').text(g_rec_m); $('#tot_rec_h').text(g_rec_h); $('#tot_rec_t').text(g_rec_m + g_rec_h);
+
+                        // Mostrar la tabla y el pie de tabla calculado
                         $('.table-responsive').scrollTop(0);
+                        $('#totalesConsolidadoMensual').show();
                         $('#divTabla').fadeIn();
                         
-                        // Bloquear campos de búsqueda para mantener la integridad de la consulta actual
+                        // Bloquear campos de búsqueda para mantener la integridad
                         $("#goBuscar").prop("disabled", true);
                         $("#lstannlectivo, #lstmes").prop("disabled", true);
                     }
