@@ -217,4 +217,26 @@ $(function(){
             return false;
         }
     });
+
+// --- MODO ENFOQUE PARA TABLAS GERENCIALES ---
+$('#btnModoEnfoque').on('click', function() {
+    var contenedor = $('#contenedorTablaTabla');
+    
+    // Alternar clase personalizada para maximizar
+    contenedor.toggleClass('fullscreen-mode');
+    
+    // Cambiar ícono visual
+    if(contenedor.hasClass('fullscreen-mode')) {
+        $(this).html('<i class="fas fa-compress-arrows-alt"></i>');
+        // Ocultar filtros superiores para ganar espacio (opcional, según tu gusto)
+        $('#divFiltrosPrincipales').fadeOut(200); 
+    } else {
+        $(this).html('<i class="fas fa-expand-arrows-alt"></i>');
+        $('#divFiltrosPrincipales').fadeIn(200);
+    }
+});
+
+
+
+
 });

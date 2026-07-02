@@ -23,7 +23,22 @@
         font-size: 1.875rem;
         width: 70px;
     }
-</style>
+
+.fullscreen-mode {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 9999;
+    background: white;
+    padding: 20px;
+    overflow: auto;
+}
+.fullscreen-mode .table-responsive {
+    max-height: 85vh !important; /* Aprovechamos casi toda la pantalla */
+}
+  </style>
 {% endblock %}
 
 {% block javascripts %}
@@ -159,6 +174,15 @@
 
         <div class="row">
           <div class="col-12">
+          <div class="card shadow-sm border-0" id="contenedorTablaTabla">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0 fw-bold text-dark"><i class="fas fa-table me-2"></i>Consolidado Mensual</h5>
+                <!-- Botón de Enfoque -->
+                <button type="button" class="btn btn-sm btn-outline-secondary" id="btnModoEnfoque" title="Pantalla completa">
+                  <i class="fas fa-expand-arrows-alt"></i>
+                </button>
+              </div>
+
              <div class="card card-secondary shadow-sm" id="divTabla" style="display: none;">
                 <div class="card-header d-flex align-items-center">
                   <h3 class="card-title"><i class="fas fa-chart-bar me-2"></i>Desglose General por Grados y Secciones - Instrumento 002</h3>
@@ -204,6 +228,7 @@
                   </div>
                 </div>
               </div>
+            </div>
             </div>
           </div>
 
