@@ -654,6 +654,70 @@ if($ejecutar == 19)
       $result_encabezado = $db_link -> query($query);
       $result_indicadores = $db_link -> query($query);
   }
+
+    // ===================================================================
+    // REPORTE NOMINA POR RANGOS DE EDADES
+    // ===================================================================
+    if($ejecutar == 23)
+    {
+        $query = "
+            SELECT
+                am.codigo_grado,
+                gan.nombre AS nombre_grado,
+
+                COUNT(*) FILTER (
+                    WHERE a.edad = 12
+                    AND lower(a.genero)='m'
+                ) AS edad12_m,
+
+                COUNT(*) FILTER (
+                    WHERE a.edad = 12
+                    AND lower(a.genero)='f'
+                ) AS edad12_f,
+
+                COUNT(*) FILTER (
+                    WHERE a.edad BETWEEN 13 AND 19
+                    AND lower(a.genero)='m'
+                ) AS edad13_19_m,
+
+                COUNT(*) FILTER (
+                    WHERE a.edad BETWEEN 13 AND 19
+                    AND lower(a.genero)='f'
+                ) AS edad13_19_f,
+
+                COUNT(*) FILTER (
+                    WHERE a.edad >=20
+                    AND lower(a.genero)='m'
+                ) AS edad20_m,
+
+                COUNT(*) FILTER (
+                    WHERE a.edad >=20
+                    AND lower(a.genero)='f'
+                ) AS edad20_f
+
+            FROM alumno a
+
+            INNER JOIN alumno_matricula am
+                ON am.codigo_alumno=a.id_alumno
+                AND am.retirado='f'
+
+            INNER JOIN grado_ano gan
+                ON gan.codigo=am.codigo_grado
+
+            WHERE am.codigo_ann_lectivo='".$codigo_bachillerato."'
+
+            GROUP BY
+                am.codigo_grado,
+                gan.nombre
+
+            ORDER BY
+                am.codigo_grado;
+        ";
+
+        $result = $db_link->query($query);
+        $result_encabezado = $db_link->query($query);
+    }
+
 }   // FIN DE LA FUNCION CONSULTAS
 
 function consultas_alumno($ejecutar,$cerrar,$buscar_nombre,$codigo_alumno,$codigo_matricula,$codigo_ann_lectivo, $db_link,$result)

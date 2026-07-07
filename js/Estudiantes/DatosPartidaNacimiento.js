@@ -156,4 +156,20 @@ $(function(){
             return false;
         },
     });
+
+    // LOGICA PARA EL INFORME .PDF
+    $("#goInforme").click(function () {
+
+        let annlectivo = $("#lstannlectivo").val();
+
+        if (annlectivo == "") {
+            // mensaje
+            return;
+        }
+
+        window.open(
+            "php_libs/reportes/Estudiante/NominaEdades.php?annlectivo=" + annlectivo,
+            "_blank"
+        );
+    });
 });
