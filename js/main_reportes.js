@@ -17,6 +17,9 @@ const reportConfig = {
     'paquete_escolar_02': { 
         url: '/registro_academico/php_libs/reportes/Estudiante/Paquetes.php' 
     },
+    'datosCarnet': { 
+        url: '/registro_academico/php_libs/reportes/Estudiante/Carnet.php' 
+    },
 
       'familias': { url: '/registro_academico/php_libs/reportes/Estudiante/Familias.php', params: ['lstannlectivo'] },
       'tomadetalla': { url: '/registro_academico/php_libs/reportes/Estudiante/TomaDeTalla.php' },

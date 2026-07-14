@@ -15,8 +15,8 @@
 	$fecha_vencimiento = "31/12/" . $fecha;
 
 	$path_fotos = $_REQUEST["path_foto"] ?? null;
-    $firma = $_REQUEST["chkfirma"];
-    $sello = $_REQUEST["chksello"];
+    $firma = $_REQUEST["chkfirma"] ?? "si";
+    $sello = $_REQUEST["chksello"] ?? "si";
     $db_link = $dblink;
 // buscar la consulta y la ejecuta.
   consultas(9,0,$codigo_all,'','','',$db_link,'');
@@ -127,13 +127,17 @@ function carnet()
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
       consultas(10,0,$codigo_all,'','','',$db_link,'');
       $filas = $result -> rowCount();
-	  $nombres = array(); $nies = array(); $ruta_foto = array(); 
-	  $fila_contar = 0;
+// SOLUCIÓN AL WARNING: Inicialización explícita como Arrays limpios
+$nombres = []; 
+$nies = []; 
+$fotos = []; 
+$ruta_foto = []; 
+$fila_contar = 0;
 		while($row = $result -> fetch(PDO::FETCH_BOTH))
 		{
 			$nombres[$fila_contar] = trim($row['nombres']);
 			$nies[$fila_contar] = trim($row['codigo_nie']);
-			$fotos[$fila_contar] = trim($row['foto']);
+			//$fotos[$fila_contar] = trim($row['foto']);
 			$codigo_genero = trim($row['codigo_genero']);
 			$codigo_institucion = $_SESSION['codigo_institucion'];
 			
@@ -211,29 +215,29 @@ function carnet()
 				$pdf->Image($ruta_foto[$i],$valor_x_foto+1,$valor_y_foto+1,$ancho_de_la_foto-2,$alto_de_la_foto-2);
 				// Tamaño y Etiqueta Carnet Valor 0.
 				$pdf->SetFont('Arial','B',16);
-				$pdf->RotatedText($valor_x+$espacio_x_label_0,$valor_y+$espacio_y_label_0,utf8_decode($etiqueta_carnet[0]),0);
+				$pdf->RotatedText($valor_x+$espacio_x_label_0,$valor_y+$espacio_y_label_0,convertirTexto($etiqueta_carnet[0]),0);
 				$pdf->SetFont('Arial','B',11);
-				$pdf->RotatedText($valor_x+$espacio_x_label_1,$valor_y+$espacio_y_label_1,utf8_decode($etiqueta_carnet[1]),0);
-				$pdf->RotatedText($valor_x+$espacio_x_label_2,$valor_y+$espacio_y_label_2,utf8_decode($etiqueta_carnet[2]),0);
-				$pdf->RotatedText($valor_x+$espacio_x_label_3,$valor_y+$espacio_y_label_3,utf8_decode($etiqueta_carnet[3]),0);				
-				$pdf->RotatedText($valor_x+$espacio_x_label_4,$valor_y+$espacio_y_label_4,utf8_decode($etiqueta_carnet[4]),0);
+				$pdf->RotatedText($valor_x+$espacio_x_label_1,$valor_y+$espacio_y_label_1,convertirTexto($etiqueta_carnet[1]),0);
+				$pdf->RotatedText($valor_x+$espacio_x_label_2,$valor_y+$espacio_y_label_2,convertirTexto($etiqueta_carnet[2]),0);
+				$pdf->RotatedText($valor_x+$espacio_x_label_3,$valor_y+$espacio_y_label_3,convertirTexto($etiqueta_carnet[3]),0);				
+				$pdf->RotatedText($valor_x+$espacio_x_label_4,$valor_y+$espacio_y_label_4,convertirTexto($etiqueta_carnet[4]),0);
 				$pdf->SetFont('Arial','B',13);
-				$pdf->RotatedText($valor_x+$espacio_x_label_5,$valor_y+$espacio_y_label_5,utf8_decode($etiqueta_carnet[5]),0);
+				$pdf->RotatedText($valor_x+$espacio_x_label_5,$valor_y+$espacio_y_label_5,convertirTexto($etiqueta_carnet[5]),0);
 				$pdf->SetFont('Arial','B',8);
-				$pdf->RotatedText($valor_x+$espacio_x_label_6,$valor_y+$espacio_y_label_6,utf8_decode($etiqueta_carnet[6] . " " . $fecha_vencimiento),0);
+				$pdf->RotatedText($valor_x+$espacio_x_label_6,$valor_y+$espacio_y_label_6,convertirTexto($etiqueta_carnet[6] . " " . $fecha_vencimiento),0);
 				// Tamaño y Etiqueta de Texto.
 				$pdf->SetFont('Arial','B',10);
-				$pdf->RotatedTextMultiCell($valor_x+$espacio_x_text_0,$valor_y+$espacio_y_text_0,utf8_decode($_SESSION["institucion"]),0);
+				$pdf->RotatedTextMultiCell($valor_x+$espacio_x_text_0,$valor_y+$espacio_y_text_0,convertirTexto($_SESSION["institucion"]),0);
 				$pdf->SetFont('Arial','B',10);
-				$pdf->RotatedTextNombre($valor_x+$espacio_x_text_1,$valor_y+$espacio_y_text_1,utf8_decode($nombres[$i]),0);
+				$pdf->RotatedTextNombre($valor_x+$espacio_x_text_1,$valor_y+$espacio_y_text_1,convertirTexto($nombres[$i]),0);
 				$pdf->SetFont('Arial','B',9);
-				$pdf->RotatedTextModalidad($valor_x+$espacio_x_text_2,$valor_y+$espacio_y_text_2,utf8_decode($print_modalidad),0);
+				$pdf->RotatedTextModalidad($valor_x+$espacio_x_text_2,$valor_y+$espacio_y_text_2,convertirTexto($print_modalidad),0);
 				$pdf->SetFont('Arial','B',8);
-				$pdf->RotatedTextGrado($valor_x+$espacio_x_text_3,$valor_y+$espacio_y_text_3,utf8_decode($print_grado),0);
+				$pdf->RotatedTextGrado($valor_x+$espacio_x_text_3,$valor_y+$espacio_y_text_3,convertirTexto($print_grado),0);
 				$pdf->SetFont('Arial','B',11);
-				$pdf->RotatedTextSeccion($valor_x+$espacio_x_text_4,$valor_y+$espacio_y_text_4,utf8_decode($print_seccion),0);
+				$pdf->RotatedTextSeccion($valor_x+$espacio_x_text_4,$valor_y+$espacio_y_text_4,convertirTexto($print_seccion),0);
 				$pdf->SetFont('Arial','B',11);
-				$pdf->RotatedTextNIE($valor_x+$espacio_x_text_5,$valor_y+$espacio_y_text_5,utf8_decode($nies[$i]),0);
+				$pdf->RotatedTextNIE($valor_x+$espacio_x_text_5,$valor_y+$espacio_y_text_5,convertirTexto($nies[$i]),0);
 				
 				$espacio_horizontal = 20;
 				$salto_de_carnet = true;
@@ -253,29 +257,29 @@ function carnet()
 				$pdf->Image($ruta_foto[$i],$valor_x_foto+1+$espacio_horizontal+$ancho_del_carnet,$valor_y_foto+1,$ancho_de_la_foto-2,$alto_de_la_foto-2);
 				// Tamaño y Etiqueta Carnet Valor 0.
 				$pdf->SetFont('Arial','B',16);
-				$pdf->RotatedText($valor_x+$ancho_del_carnet+$espacio_horizontal+$espacio_x_label_0,$valor_y+$espacio_y_label_0,utf8_decode($etiqueta_carnet[0]),0);
+				$pdf->RotatedText($valor_x+$ancho_del_carnet+$espacio_horizontal+$espacio_x_label_0,$valor_y+$espacio_y_label_0,convertirTexto($etiqueta_carnet[0]),0);
 				$pdf->SetFont('Arial','B',11);
-				$pdf->RotatedText($valor_x+$ancho_del_carnet+$espacio_horizontal+$espacio_x_label_1,$valor_y+$espacio_y_label_1,utf8_decode($etiqueta_carnet[1]),0);				
-				$pdf->RotatedText($valor_x+$ancho_del_carnet+$espacio_horizontal+$espacio_x_label_2,$valor_y+$espacio_y_label_2,utf8_decode($etiqueta_carnet[2]),0);
-				$pdf->RotatedText($valor_x+$ancho_del_carnet+$espacio_horizontal+$espacio_x_label_3,$valor_y+$espacio_y_label_3,utf8_decode($etiqueta_carnet[3]),0);
-				$pdf->RotatedText($valor_x+$ancho_del_carnet+$espacio_horizontal+$espacio_x_label_4,$valor_y+$espacio_y_label_4,utf8_decode($etiqueta_carnet[4]),0);
+				$pdf->RotatedText($valor_x+$ancho_del_carnet+$espacio_horizontal+$espacio_x_label_1,$valor_y+$espacio_y_label_1,convertirTexto($etiqueta_carnet[1]),0);				
+				$pdf->RotatedText($valor_x+$ancho_del_carnet+$espacio_horizontal+$espacio_x_label_2,$valor_y+$espacio_y_label_2,convertirTexto($etiqueta_carnet[2]),0);
+				$pdf->RotatedText($valor_x+$ancho_del_carnet+$espacio_horizontal+$espacio_x_label_3,$valor_y+$espacio_y_label_3,convertirTexto($etiqueta_carnet[3]),0);
+				$pdf->RotatedText($valor_x+$ancho_del_carnet+$espacio_horizontal+$espacio_x_label_4,$valor_y+$espacio_y_label_4,convertirTexto($etiqueta_carnet[4]),0);
 				$pdf->SetFont('Arial','B',13);
-				$pdf->RotatedText($valor_x+$ancho_del_carnet+$espacio_horizontal+$espacio_x_label_5,$valor_y+$espacio_y_label_5,utf8_decode($etiqueta_carnet[5]),0);
+				$pdf->RotatedText($valor_x+$ancho_del_carnet+$espacio_horizontal+$espacio_x_label_5,$valor_y+$espacio_y_label_5,convertirTexto($etiqueta_carnet[5]),0);
 				$pdf->SetFont('Arial','B',8);
-				$pdf->RotatedText($valor_x+$ancho_del_carnet+$espacio_horizontal+$espacio_x_label_6,$valor_y+$espacio_y_label_6,utf8_decode($etiqueta_carnet[6]  . " " . $fecha_vencimiento),0);
+				$pdf->RotatedText($valor_x+$ancho_del_carnet+$espacio_horizontal+$espacio_x_label_6,$valor_y+$espacio_y_label_6,convertirTexto($etiqueta_carnet[6]  . " " . $fecha_vencimiento),0);
 				// Tamaño y Etiqueta de Texto.
 				$pdf->SetFont('Arial','B',10);
-				$pdf->RotatedTextMultiCell($valor_x+$ancho_del_carnet+$espacio_horizontal+$espacio_x_text_0,$valor_y+$espacio_y_text_0,utf8_decode($_SESSION["institucion"]),0);
+				$pdf->RotatedTextMultiCell($valor_x+$ancho_del_carnet+$espacio_horizontal+$espacio_x_text_0,$valor_y+$espacio_y_text_0,convertirTexto($_SESSION["institucion"]),0);
 				$pdf->SetFont('Arial','B',10);
-				$pdf->RotatedTextNombre($valor_x+$ancho_del_carnet+$espacio_horizontal+$espacio_x_text_1,$valor_y+$espacio_y_text_1,utf8_decode($nombres[$i]),0);
+				$pdf->RotatedTextNombre($valor_x+$ancho_del_carnet+$espacio_horizontal+$espacio_x_text_1,$valor_y+$espacio_y_text_1,convertirTexto($nombres[$i]),0);
 				$pdf->SetFont('Arial','B',9);
-				$pdf->RotatedTextModalidad($valor_x+$ancho_del_carnet+$espacio_horizontal+$espacio_x_text_2,$valor_y+$espacio_y_text_2,utf8_decode($print_modalidad),0);
+				$pdf->RotatedTextModalidad($valor_x+$ancho_del_carnet+$espacio_horizontal+$espacio_x_text_2,$valor_y+$espacio_y_text_2,convertirTexto($print_modalidad),0);
 				$pdf->SetFont('Arial','B',8);
-				$pdf->RotatedTextGrado($valor_x+$ancho_del_carnet+$espacio_horizontal+$espacio_x_text_3,$valor_y+$espacio_y_text_3,utf8_decode($print_grado),0);
+				$pdf->RotatedTextGrado($valor_x+$ancho_del_carnet+$espacio_horizontal+$espacio_x_text_3,$valor_y+$espacio_y_text_3,convertirTexto($print_grado),0);
 				$pdf->SetFont('Arial','B',10);
-				$pdf->RotatedTextSeccion($valor_x+$ancho_del_carnet+$espacio_horizontal+$espacio_x_text_4,$valor_y+$espacio_y_text_4,utf8_decode($print_seccion),0);
+				$pdf->RotatedTextSeccion($valor_x+$ancho_del_carnet+$espacio_horizontal+$espacio_x_text_4,$valor_y+$espacio_y_text_4,convertirTexto($print_seccion),0);
 				$pdf->SetFont('Arial','B',11);
-				$pdf->RotatedTextNIE($valor_x+$ancho_del_carnet+$espacio_horizontal+$espacio_x_text_5,$valor_y+$espacio_y_text_5,utf8_decode($nies[$i]),0);
+				$pdf->RotatedTextNIE($valor_x+$ancho_del_carnet+$espacio_horizontal+$espacio_x_text_5,$valor_y+$espacio_y_text_5,convertirTexto($nies[$i]),0);
 				
 				$espacio_horizontal = 0;
 				$salto_de_carnet = false;
@@ -296,29 +300,29 @@ function carnet()
 				$pdf->Image($ruta_foto[$i],$espacio_horizontal+$valor_x_foto+1,$valor_y+$espacio_y_foto+1,$ancho_de_la_foto-2,$alto_de_la_foto-2);
 				// Tamaño y Etiqueta Carnet Valor 0.
 				$pdf->SetFont('Arial','B',16);
-				$pdf->RotatedText($valor_x+$espacio_x_label_0,$valor_y+$espacio_y_label_0,utf8_decode($etiqueta_carnet[0]),0);
+				$pdf->RotatedText($valor_x+$espacio_x_label_0,$valor_y+$espacio_y_label_0,convertirTexto($etiqueta_carnet[0]),0);
 				$pdf->SetFont('Arial','B',11);
-				$pdf->RotatedText($valor_x+$espacio_x_label_1,$valor_y+$espacio_y_label_1,utf8_decode($etiqueta_carnet[1]),0);				
-				$pdf->RotatedText($valor_x+$espacio_x_label_2,$valor_y+$espacio_y_label_2,utf8_decode($etiqueta_carnet[2]),0);
-				$pdf->RotatedText($valor_x+$espacio_x_label_3,$valor_y+$espacio_y_label_3,utf8_decode($etiqueta_carnet[3]),0);
-				$pdf->RotatedText($valor_x+$espacio_x_label_4,$valor_y+$espacio_y_label_4,utf8_decode($etiqueta_carnet[4]),0);
+				$pdf->RotatedText($valor_x+$espacio_x_label_1,$valor_y+$espacio_y_label_1,convertirTexto($etiqueta_carnet[1]),0);				
+				$pdf->RotatedText($valor_x+$espacio_x_label_2,$valor_y+$espacio_y_label_2,convertirTexto($etiqueta_carnet[2]),0);
+				$pdf->RotatedText($valor_x+$espacio_x_label_3,$valor_y+$espacio_y_label_3,convertirTexto($etiqueta_carnet[3]),0);
+				$pdf->RotatedText($valor_x+$espacio_x_label_4,$valor_y+$espacio_y_label_4,convertirTexto($etiqueta_carnet[4]),0);
 				$pdf->SetFont('Arial','B',13);
-				$pdf->RotatedText($valor_x+$espacio_x_label_5,$valor_y+$espacio_y_label_5,utf8_decode($etiqueta_carnet[5]),0);
+				$pdf->RotatedText($valor_x+$espacio_x_label_5,$valor_y+$espacio_y_label_5,convertirTexto($etiqueta_carnet[5]),0);
 				$pdf->SetFont('Arial','B',8);
-				$pdf->RotatedText($valor_x+$espacio_x_label_6,$valor_y+$espacio_y_label_6,utf8_decode($etiqueta_carnet[6] . " " . $fecha_vencimiento),0);
+				$pdf->RotatedText($valor_x+$espacio_x_label_6,$valor_y+$espacio_y_label_6,convertirTexto($etiqueta_carnet[6] . " " . $fecha_vencimiento),0);
 				// Tamaño y Etiqueta de Texto.
 				$pdf->SetFont('Arial','B',10);
-				$pdf->RotatedTextMultiCell($valor_x+$espacio_x_text_0,$valor_y+$espacio_y_text_0,utf8_decode($_SESSION["institucion"]),0);
+				$pdf->RotatedTextMultiCell($valor_x+$espacio_x_text_0,$valor_y+$espacio_y_text_0,convertirTexto($_SESSION["institucion"]),0);
 				$pdf->SetFont('Arial','B',10);
-				$pdf->RotatedTextNombre($valor_x+$espacio_x_text_1,$valor_y+$espacio_y_text_1,utf8_decode($nombres[$i]),0);
+				$pdf->RotatedTextNombre($valor_x+$espacio_x_text_1,$valor_y+$espacio_y_text_1,convertirTexto($nombres[$i]),0);
 				$pdf->SetFont('Arial','B',9);
-				$pdf->RotatedTextModalidad($valor_x+$espacio_x_text_2,$valor_y+$espacio_y_text_2,utf8_decode($print_modalidad),0);
+				$pdf->RotatedTextModalidad($valor_x+$espacio_x_text_2,$valor_y+$espacio_y_text_2,convertirTexto($print_modalidad),0);
 				$pdf->SetFont('Arial','B',8);
-				$pdf->RotatedTextGrado($valor_x+$espacio_x_text_3,$valor_y+$espacio_y_text_3,utf8_decode($print_grado),0);
+				$pdf->RotatedTextGrado($valor_x+$espacio_x_text_3,$valor_y+$espacio_y_text_3,convertirTexto($print_grado),0);
 				$pdf->SetFont('Arial','B',10);
-				$pdf->RotatedTextSeccion($valor_x+$espacio_x_text_4,$valor_y+$espacio_y_text_4,utf8_decode($print_seccion),0);
+				$pdf->RotatedTextSeccion($valor_x+$espacio_x_text_4,$valor_y+$espacio_y_text_4,convertirTexto($print_seccion),0);
 				$pdf->SetFont('Arial','B',11);
-				$pdf->RotatedTextNIE($valor_x+$espacio_x_text_5,$valor_y+$espacio_y_text_5,utf8_decode($nies[$i]),0);
+				$pdf->RotatedTextNIE($valor_x+$espacio_x_text_5,$valor_y+$espacio_y_text_5,convertirTexto($nies[$i]),0);
 				
 				$espacio_horizontal = 20;
 				$salto_de_carnet = true;
@@ -338,29 +342,29 @@ function carnet()
 				$pdf->Image($ruta_foto[$i],$espacio_horizontal+$valor_x_foto+1+$ancho_del_carnet,$valor_y+$espacio_y_foto+1,$ancho_de_la_foto-2,$alto_de_la_foto-2);
 				// Tamaño y Etiqueta Carnet Valor 0.
 				$pdf->SetFont('Arial','B',16);
-				$pdf->RotatedText($valor_x+$espacio_horizontal+$ancho_del_carnet+$espacio_x_label_0,$valor_y+$espacio_y_label_0,utf8_decode($etiqueta_carnet[0]),0);
+				$pdf->RotatedText($valor_x+$espacio_horizontal+$ancho_del_carnet+$espacio_x_label_0,$valor_y+$espacio_y_label_0,convertirTexto($etiqueta_carnet[0]),0);
 				$pdf->SetFont('Arial','B',11);
-				$pdf->RotatedText($valor_x+$ancho_del_carnet+$espacio_horizontal+$espacio_x_label_1,$valor_y+$espacio_y_label_1,utf8_decode($etiqueta_carnet[1]),0);				
-				$pdf->RotatedText($valor_x+$ancho_del_carnet+$espacio_horizontal+$espacio_x_label_2,$valor_y+$espacio_y_label_2,utf8_decode($etiqueta_carnet[2]),0);
-				$pdf->RotatedText($valor_x+$ancho_del_carnet+$espacio_horizontal+$espacio_x_label_3,$valor_y+$espacio_y_label_3,utf8_decode($etiqueta_carnet[3]),0);
-				$pdf->RotatedText($valor_x+$ancho_del_carnet+$espacio_horizontal+$espacio_x_label_4,$valor_y+$espacio_y_label_4,utf8_decode($etiqueta_carnet[4]),0);
+				$pdf->RotatedText($valor_x+$ancho_del_carnet+$espacio_horizontal+$espacio_x_label_1,$valor_y+$espacio_y_label_1,convertirTexto($etiqueta_carnet[1]),0);				
+				$pdf->RotatedText($valor_x+$ancho_del_carnet+$espacio_horizontal+$espacio_x_label_2,$valor_y+$espacio_y_label_2,convertirTexto($etiqueta_carnet[2]),0);
+				$pdf->RotatedText($valor_x+$ancho_del_carnet+$espacio_horizontal+$espacio_x_label_3,$valor_y+$espacio_y_label_3,convertirTexto($etiqueta_carnet[3]),0);
+				$pdf->RotatedText($valor_x+$ancho_del_carnet+$espacio_horizontal+$espacio_x_label_4,$valor_y+$espacio_y_label_4,convertirTexto($etiqueta_carnet[4]),0);
 				$pdf->SetFont('Arial','B',13);
-				$pdf->RotatedText($valor_x+$ancho_del_carnet+$espacio_horizontal+$espacio_x_label_5,$valor_y+$espacio_y_label_5,utf8_decode($etiqueta_carnet[5]),0);
+				$pdf->RotatedText($valor_x+$ancho_del_carnet+$espacio_horizontal+$espacio_x_label_5,$valor_y+$espacio_y_label_5,convertirTexto($etiqueta_carnet[5]),0);
 				$pdf->SetFont('Arial','B',8);
-				$pdf->RotatedText($valor_x+$ancho_del_carnet+$espacio_horizontal+$espacio_x_label_6,$valor_y+$espacio_y_label_6,utf8_decode($etiqueta_carnet[6] . " " . $fecha_vencimiento),0);
+				$pdf->RotatedText($valor_x+$ancho_del_carnet+$espacio_horizontal+$espacio_x_label_6,$valor_y+$espacio_y_label_6,convertirTexto($etiqueta_carnet[6] . " " . $fecha_vencimiento),0);
 				// Tamaño y Etiqueta de Texto.
 				$pdf->SetFont('Arial','B',10);
-				$pdf->RotatedTextMultiCell($valor_x+$ancho_del_carnet+$espacio_horizontal+$espacio_x_text_0,$valor_y+$espacio_y_text_0,utf8_decode($_SESSION["institucion"]),0);
+				$pdf->RotatedTextMultiCell($valor_x+$ancho_del_carnet+$espacio_horizontal+$espacio_x_text_0,$valor_y+$espacio_y_text_0,convertirTexto($_SESSION["institucion"]),0);
 				$pdf->SetFont('Arial','B',10);
-				$pdf->RotatedTextNombre($valor_x+$ancho_del_carnet+$espacio_horizontal+$espacio_x_text_1,$valor_y+$espacio_y_text_1,utf8_decode($nombres[$i]),0);
+				$pdf->RotatedTextNombre($valor_x+$ancho_del_carnet+$espacio_horizontal+$espacio_x_text_1,$valor_y+$espacio_y_text_1,convertirTexto($nombres[$i]),0);
 				$pdf->SetFont('Arial','B',9);
-				$pdf->RotatedTextModalidad($valor_x+$ancho_del_carnet+$espacio_horizontal+$espacio_x_text_2,$valor_y+$espacio_y_text_2,utf8_decode($print_modalidad),0);
+				$pdf->RotatedTextModalidad($valor_x+$ancho_del_carnet+$espacio_horizontal+$espacio_x_text_2,$valor_y+$espacio_y_text_2,convertirTexto($print_modalidad),0);
 				$pdf->SetFont('Arial','B',8);
-				$pdf->RotatedTextGrado($valor_x+$ancho_del_carnet+$espacio_horizontal+$espacio_x_text_3,$valor_y+$espacio_y_text_3,utf8_decode($print_grado),0);
+				$pdf->RotatedTextGrado($valor_x+$ancho_del_carnet+$espacio_horizontal+$espacio_x_text_3,$valor_y+$espacio_y_text_3,convertirTexto($print_grado),0);
 				$pdf->SetFont('Arial','B',10);
-				$pdf->RotatedTextSeccion($valor_x+$ancho_del_carnet+$espacio_horizontal+$espacio_x_text_4,$valor_y+$espacio_y_text_4,utf8_decode($print_seccion),0);
+				$pdf->RotatedTextSeccion($valor_x+$ancho_del_carnet+$espacio_horizontal+$espacio_x_text_4,$valor_y+$espacio_y_text_4,convertirTexto($print_seccion),0);
 				$pdf->SetFont('Arial','B',11);
-				$pdf->RotatedTextNIE($valor_x+$ancho_del_carnet+$espacio_horizontal+$espacio_x_text_5,$valor_y+$espacio_y_text_5,utf8_decode($nies[$i]),0);
+				$pdf->RotatedTextNIE($valor_x+$ancho_del_carnet+$espacio_horizontal+$espacio_x_text_5,$valor_y+$espacio_y_text_5,convertirTexto($nies[$i]),0);
 				
 				$espacio_horizontal = 0;
 				$salto_de_carnet = false;

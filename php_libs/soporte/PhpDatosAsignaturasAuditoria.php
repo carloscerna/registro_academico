@@ -251,42 +251,54 @@ if ($errorDbConexion == false) {
                     $codigos_actuales = array_column($materias_actuales, 'asig');
 
                     // 3. Construcción del HTML Comparativo para el modal
-                    $html_modal = "<div class='row'>
-                        <div class='col-md-6'>
-                            <h6 class='font-weight-bold text-primary'><i class='fas fa-graduation-cap'></i> Plan Oficial Teórico (".count($malla_oficial).")</h6>
-                            <ul class='list-group' style='max-height: 400px; overflow-y: auto;'>";
-                            foreach ($malla_oficial as $m) {
-                                $existe = in_array($m['asig'], $codigos_actuales);
-                                $clase_check = $existe ? 'list-group-item-success' : 'list-group-item-danger';
-                                $icono = $existe ? '<i class="fas fa-check-circle text-success"></i>' : '<i class="fas fa-times-circle text-danger"></i> (Falta)';
-                                $html_modal .= "<li class='list-group-item d-flex justify-content-between align-items-center p-2 {$clase_check}' style='font-size:0.8rem;'>
-                                    <span><strong>{$m['asig']}</strong> - {$m['nombre_asignatura']}</span>
-                                    <span class='ml-2'>{$icono}</span>
-                                </li>";
-                            }
-                    $html_modal .= "</ul></div>
-                        <div class='col-md-6'>
-                            <h6 class='font-weight-bold text-success'><i class='fas fa-folder-open'></i> Carga Real en Base Datos (".count($materias_actuales).")</h6>
-                            <ul class='list-group' style='max-height: 400px; overflow-y: auto;'>";
-                            foreach ($materias_actuales as $n) {
-                                $es_valida = in_array($n['asig'], $codigos_malla);
-                                $clase_nota = $es_valida ? '' : 'list-group-item-warning font-weight-bold';
-                                $badge_sobra = $es_valida ? '<span class="badge badge-secondary">Correcta</span>' : '<span class="badge badge-warning"><i class="fas fa-trash"></i> Sobra / Remover</span>';
-                                $html_modal .= "<li class='list-group-item d-flex justify-content-between align-items-center p-2 {$clase_nota}' style='font-size:0.8rem;'>
-                                    <span><strong>{$n['asig']}</strong> - ".($n['nombre_asignatura'] ?? 'Asignatura Desconocida')."</span>
-                                    <span class='ml-2'>{$badge_sobra}</span>
-                                </li>";
-                            }
-                    $html_modal .= "</ul></div></div>";
+                        $html_modal = "<div class='row'>
+                            <div class='col-md-6'>
+                                <h6 class='font-weight-bold text-primary'><i class='fas fa-graduation-cap'></i> Plan Oficial Teórico (".count($malla_oficial).")</h6>
+                                <ul class='list-group' style='max-height: 400px; overflow-y: auto;'>";
+                                foreach ($malla_oficial as $m) {
+                                    $existe = in_array($m['asig'], $codigos_actuales);
+                                    $clase_check = $existe ? 'list-group-item-success' : 'list-group-item-danger';
+                                    $icono = $existe ? '<i class="fas fa-check-circle text-success"></i>' : '<i class="fas fa-times-circle text-danger"></i> (Falta)';
+                                    $html_modal .= "<li class='list-group-item d-flex justify-content-between align-items-center p-2 {$clase_check}' style='font-size:0.8rem;'>
+                                        <span><strong>{$m['asig']}</strong> - {$m['nombre_asignatura']}</span>
+                                        <span class='ml-2'>{$icono}</span>
+                                    </li>";
+                                }
+                        $html_modal .= "</ul></div>
+                            <div class='col-md-6'>
+                                <h6 class='font-weight-bold text-success'><i class='fas fa-folder-open'></i> Carga Real en Base Datos (".count($materias_actuales).")</h6>
+                                <ul class='list-group' style='max-height: 400px; overflow-y: auto;'>";
+                                foreach ($materias_actuales as $n) {
+                                    $es_valida = in_array($n['asig'], $codigos_malla);
+                                    $clase_nota = $es_valida ? '' : 'list-group-item-warning font-weight-bold';
+                                    
+                                    // MODIFICADO: Si la materia sobra, le metemos un botón de eliminación manual directo
+                                    if($es_valida) {
+                                        $badge_accion = '<span class="badge badge-secondary">Correcta</span>';
+                                    } else {
+                                        $badge_accion = "<button type='button' class='btn btn-danger btn-xs btn-eliminar-materia-manual' 
+                                                            data-matricula='{$id_matricula}' 
+                                                            data-asignatura='{$n['asig']}' 
+                                                            title='Forzar eliminación de esta materia huerfana'>
+                                                            <i class='fas fa-trash-alt'></i> Quitar
+                                                        </button>";
+                                    }
 
-                    $contenidoOK = $html_modal;
-                    $respuestaOK = true;
-                    $mensajeError = "";
-                } catch (Exception $e) {
-                    $respuestaOK = false;
-                    $mensajeError = "Error al extraer el desglose: " . $e->getMessage();
-                }
-            break;
+                                    $html_modal .= "<li class='list-group-item d-flex justify-content-between align-items-center p-2 {$clase_nota}' style='font-size:0.8rem;'>
+                                        <span><strong>".($n['asig'] ?: 'S/C')."</strong> - ".($n['nombre_asignatura'] ?? 'Asignatura Desconocida / Código Corrupto')."</span>
+                                        <span class='ml-2'>{$badge_accion}</span>
+                                    </li>";
+                                }
+                        $html_modal .= "</ul></div></div>";
+
+                        $contenidoOK = $html_modal;
+                        $respuestaOK = true;
+                        $mensajeError = "";
+                    } catch (Exception $e) {
+                        $respuestaOK = false;
+                        $mensajeError = "Error al extraer el desglose: " . $e->getMessage();
+                    }
+                break;
 
             // =========================================================================
             // NUEVO CASE OPTIMIZADO: `ObtenerMatriculasSeccion` (Para armar la cola en JS)
@@ -355,6 +367,33 @@ if ($errorDbConexion == false) {
                     if($dblink->inTransaction()) $dblink->rollBack();
                     $respuestaOK = false;
                     $mensajeError = $e->getMessage();
+                }
+            break;
+
+            // =========================================================================
+            // NUEVO CASE: `EliminarAsignaturaIndividual` (Para remover registros rebeldes)
+            // =========================================================================
+            case 'EliminarAsignaturaIndividual':
+                try {
+                    $id_mat = isset($_POST['id_matricula']) ? trim($_POST['id_matricula']) : '';
+                    $cod_asig = isset($_POST['codigo_asignatura']) ? trim($_POST['codigo_asignatura']) : '';
+
+                    // Si el código viene vacío (así como el que viste en la imagen), lo buscamos de forma segura
+                    if(empty($cod_asig) || $cod_asig == 'S/C') {
+                        $q_del = "DELETE FROM nota WHERE codigo_matricula = :mat AND (codigo_asignatura IS NULL OR codigo_asignatura = '' OR codigo_asignatura = 'S/C')";
+                        $stmt_del = $dblink->prepare($q_del);
+                        $stmt_del->execute([':mat' => $id_mat]);
+                    } else {
+                        $q_del = "DELETE FROM nota WHERE codigo_matricula = :mat AND codigo_asignatura = :asig";
+                        $stmt_del = $dblink->prepare($q_del);
+                        $stmt_del->execute([':mat' => $id_mat, ':asig' => $cod_asig]);
+                    }
+
+                    $respuestaOK = true;
+                    $mensajeError = "Asignatura removida correctamente del expediente del alumno.";
+                } catch (Exception $e) {
+                    $respuestaOK = false;
+                    $mensajeError = "No se pudo eliminar la asignatura: " . $e->getMessage();
                 }
             break;
         }

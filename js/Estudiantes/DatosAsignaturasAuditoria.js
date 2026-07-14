@@ -9,85 +9,146 @@ $(function(){
         $('#lstannlectivo').focus();
     });
 
-// Funcionalidad del botón Actualizar Masivo con Barra de Progreso Soportada
+    // Funcionalidad del botón Actualizar Masivo con SweetAlert2 y Barra de Progreso Soportada
 $('#goActualizar').on('click', function(){
-    let infoFiltros = $("#formAsignaturasAuditoria").serialize();
+    // Capturamos los filtros principales uno por uno de forma segura
+    let annlectivo = $('#lstannlectivo').val();
+    let modalidad = $('#lstmodalidad').val();
+    let gradoseccion = $('#lstgradoseccion').val();
 
-    if(!confirm("¿Desea iniciar la sincronización y depuración de la carga académica para este grado?")) {
-        return;
-    }
+    // CAMBIO A SWEETALERT2: Alerta estilizada de confirmación antes de proceder
+    Swal.fire({
+        title: '¿Iniciar actualización masiva?',
+        text: "Se sincronizarán las asignaturas oficiales y se depurarán las cargas incorrectas para todos los estudiantes de esta sección.",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#28a745',
+        cancelButtonColor: '#dc3545',
+        confirmButtonText: '<i class="fas fa-check"></i> Sí, actualizar',
+        cancelButtonText: '<i class="fas fa-times"></i> Cancelar',
+        focusCancel: true
+    }).then((result) => {
+        // Si el usuario confirma la acción en SweetAlert
+        if (result.isConfirmed) {
+            
+            // 1. Solicitamos la lista completa de alumnos pertenecientes a la sección
+            $.ajax({
+                cache: false,
+                type: "POST",
+                dataType: "json",
+                url: "php_libs/soporte/PhpDatosAsignaturasAuditoria.php",
+                data: {
+                    accion: 'ObtenerMatriculasSeccion',
+                    lstannlectivo: annlectivo,
+                    lstmodalidad: modalidad,
+                    lstgradoseccion: gradoseccion
+                },
+                beforeSend: function() {
+                    // Deshabilitamos todos los controles durante el proceso para evitar dobles clics
+                    $('#goActualizar, #goBuscar, #goCancelar').prop('disabled', true);
+                    $("#lstannlectivo, #lstmodalidad, #lstgradoseccion").prop("disabled", true);
+                    $('#contenedorProgresoSincro').fadeIn();
+                    ajustarBarra(0, "Preparando lista de estudiantes...");
+                },
+                success: async function(res) {
+                    if(res.respuesta && res.contenido.length > 0) {
+                        let listaAlumnos = res.contenido;
+                        let totalAlumnos = listaAlumnos.length;
+                        let procesadosExito = 0;
 
-    // 1. Solicitamos la lista de alumnos pertenecientes a la sección
-    $.ajax({
-        cache: false,
-        type: "POST",
-        dataType: "json",
-        url: "php_libs/soporte/PhpDatosAsignaturasAuditoria.php",
-        data: infoFiltros + "&accion=ObtenerMatriculasSeccion",
-        beforeSend: function() {
-            $('#goActualizar, #goCancelar').prop('disabled', true);
-            $('#contenedorProgresoSincro').fadeIn();
-            ajustarBarra(0, "Preparando lista de estudiantes...");
-        },
-        success: async function(res) {
-            if(res.respuesta && res.contenido.length > 0) {
-                let listaAlumnos = res.contenido;
-                let totalAlumnos = listaAlumnos.length;
-                let procesadosExito = 0;
+                        // 2. Iteramos en bucle asíncrono ordenado uno por uno
+                        for (let i = 0; i < totalAlumnos; i++) {
+                            let alumno = listaAlumnos[i];
+                            let porcentaje = Math.round(((i + 1) / totalAlumnos) * 100);
+                            
+                            ajustarBarra(porcentaje, "Sincronizando estudiante " + (i + 1) + " de " + totalAlumnos);
 
-                // 2. Iteramos en bucle asíncrono ordenado para simular la barra de progreso real
-                for (let i = 0; i < totalAlumnos; i++) {
-                    let alumno = listaAlumnos[i];
-                    let porcentaje = Math.round(((i + 1) / totalAlumnos) * 100);
-                    
-                    ajustarBarra(porcentaje, "Sincronizando estudiante " + (i + 1) + " de " + totalAlumnos);
+                            // Enviamos la petición individual asegurando TODOS los filtros necesarios en el POST
+                            await $.ajax({
+                                type: "POST",
+                                dataType: "json",
+                                url: "php_libs/soporte/PhpDatosAsignaturasAuditoria.php",
+                                data: {
+                                    accion: 'SincronizarUnEstudiante',
+                                    lstannlectivo: annlectivo,
+                                    lstmodalidad: modalidad,
+                                    lstgradoseccion: gradoseccion,
+                                    id_alumno_matricula: alumno.id_alumno_matricula,
+                                    codigo_alumno: alumno.codigo_alumno
+                                }
+                            }).then(response => {
+                                if(response.respuesta === true) {
+                                    procesadosExito++;
+                                } else {
+                                    console.warn("Aviso en matrícula " + alumno.id_alumno_matricula + ": " + response.mensaje);
+                                }
+                            }).catch(err => {
+                                console.error("Error crítico de red en matrícula: " + alumno.id_alumno_matricula);
+                            });
+                        }
 
-                    // Enviamos la petición individual sincrónica por alumno
-                    await $.ajax({
-                        type: "POST",
-                        dataType: "json",
-                        url: "php_libs/soporte/PhpDatosAsignaturasAuditoria.php",
-                        data: infoFiltros + "&accion=SincronizarUnEstudiante&id_alumno_matricula=" + alumno.id_alumno_matricula + "&codigo_alumno=" + alumno.codigo_alumno
-                    }).then(response => {
-                        if(response.respuesta) procesadosExito++;
-                    }).catch(() => {
-                        console.error("Error al procesar la matrícula: " + alumno.id_alumno_matricula);
+                        // Mensaje final usando un SweetAlert tipo Toast (pequeño y elegante en la esquina superior)
+                        Swal.fire({
+                            toast: true,
+                            position: 'top-end',
+                            icon: 'success',
+                            title: '¡Sincronización finalizada!',
+                            text: 'Se depuraron con éxito ' + procesadosExito + ' estudiantes.',
+                            showConfirmButton: false,
+                            timer: 3500,
+                            timerProgressBar: true
+                        });
+                        
+                        setTimeout(() => {
+                            $('#contenedorProgresoSincro').fadeOut(300, function(){
+                                ajustarBarra(0, "");
+                                
+                                // REACTIVACIÓN TOTAL DE LA INTERFAZ
+                                $("#goBuscar, #goCancelar").prop("disabled", false);
+                                $("#goActualizar").prop("disabled", true); // Queda deshabilitado hasta una nueva búsqueda
+                                $("#lstannlectivo, #lstmodalidad, #lstgradoseccion").prop("disabled", false);
+                                
+                                // Forzamos el refresco visual automático de la tabla para ver las nóminas en verde
+                                $('#goBuscar').click(); 
+                            });
+                        }, 1000);
+
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Ops...',
+                            text: res.mensaje || "No se encontraron estudiantes activos para procesar en esta sección."
+                        });
+                        restablecerInterfazError();
+                    }
+                },
+                error: function() {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error de Red',
+                        text: "Error crítico de comunicación al preparar la carga académica."
                     });
+                    restablecerInterfazError();
                 }
+            });
 
-                // 3. Render final del proceso
-                toastr.success("Sincronización masiva finalizada con éxito. Alumnos depurados: " + procesadosExito);
-                setTimeout(() => {
-                    $('#contenedorProgresoSincro').fadeOut(300, function(){
-                        ajustarBarra(0, "");
-                        // Reactivamos la búsqueda para actualizar la tabla completa a Verde (Completo)
-                        $("#goBuscar").prop("disabled", false);
-                        $('#goBuscar').click();
-                    });
-                }, 1500);
-
-            } else {
-                toastr.error("No se pudo estructurar el mapa de estudiantes para procesar la barra.");
-                resetBotonesAccion();
-            }
-        },
-        error: function() {
-            toastr.error("Error de comunicación de red al preparar la carga.");
-            resetBotonesAccion();
         }
     });
 });
 
-// Función auxiliar para actualizar la barra de progreso
+// Función auxiliar para actualizar dinámicamente la barra de progreso
 function ajustarBarra(porcentaje, texto) {
     $('#textoProgresoEstatus').text(texto);
     $('#porcentajeProgresoTxt').text(porcentaje + "%");
     $('#barraProgresoSincro').css('width', porcentaje + '%').attr('aria-valuenow', porcentaje).text(porcentaje + "%");
 }
 
-function resetBotonesAccion() {
-    $('#goCancelar').prop('disabled', false).click();
+// Función de rescate en caso de error intermedio, devolviendo el control al usuario
+function restablecerInterfazError() {
     $('#contenedorProgresoSincro').hide();
+    $("#goBuscar, #goCancelar").prop("disabled", false);
+    $("#goActualizar").prop("disabled", false);
+    $("#lstannlectivo, #lstmodalidad, #lstgradoseccion").prop("disabled", false);
 }
 
     // Validación del Formulario de Búsqueda (Auditoría Inicial)
@@ -173,5 +234,71 @@ function resetBotonesAccion() {
             }
         });
     });
+
+        // EVENTO: Eliminar de forma quirúrgica una asignatura individual desde adentro del modal
+        $('#modalCuerpoDetalle').on('click', '.btn-eliminar-materia-manual', function(){
+            let btn = $(this);
+            let id_matricula = btn.data('matricula');
+            let codigo_asignatura = btn.data('asignatura');
+
+            Swal.fire({
+                title: '¿Quitar esta asignatura?',
+                text: "Esta acción removerá de forma permanente el registro de esta materia para este estudiante.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#dc3545',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: '<i class="fas fa-trash"></i> Sí, eliminar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        cache: false,
+                        type: "POST",
+                        dataType: "json",
+                        url: "php_libs/soporte/PhpDatosAsignaturasAuditoria.php",
+                        data: {
+                            accion: 'EliminarAsignaturaIndividual',
+                            id_matricula: id_matricula,
+                            codigo_asignatura: codigo_asignatura
+                        },
+                        success: function(response){
+                            if(response.respuesta === true){
+                                Swal.fire({
+                                    toast: true,
+                                    position: 'top-end',
+                                    icon: 'success',
+                                    title: 'Materia eliminada',
+                                    showConfirmButton: false,
+                                    timer: 2000
+                                });
+
+                                // REFRESCAR EL MODAL: Volvemos a mandar la petición para re-renderizar las listas del modal actualizado
+                                $.ajax({
+                                    type: "POST",
+                                    dataType: "json",
+                                    url: "php_libs/soporte/PhpDatosAsignaturasAuditoria.php",
+                                    data: { accion: 'VerDetalleAlumno', id_matricula: id_matricula },
+                                    success: function(resModal){
+                                        if(resModal.respuesta === true){
+                                            $('#modalCuerpoDetalle').html(resModal.contenido);
+                                        }
+                                    }
+                                });
+                            } else {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'No se pudo eliminar',
+                                    text: response.mensaje
+                                });
+                            }
+                        },
+                        error: function(){
+                            toastr.error("Error de comunicación con el servidor al intentar eliminar.");
+                        }
+                    });
+                }
+            });
+        });
 
 });
