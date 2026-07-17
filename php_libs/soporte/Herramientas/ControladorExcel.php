@@ -4,6 +4,8 @@ header('Content-Type: application/json');
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
+// Al inicio de tu archivo PHP (después de los ini_set que ya tienes), aumenta el límite de memoria:
+ini_set('memory_limit', '512M');
 // ruta de los archivos con su carpeta
 $path_root=trim($_SERVER['DOCUMENT_ROOT']);
 // Incluimos el archivo de funciones y conexi�n a la base de datos
@@ -74,23 +76,35 @@ try {
                         }
                 
                         $archivo = $_FILES['excelFile']['tmp_name'];
-                        $ann = trim($_POST['codigo_ann_lectivo']) ?? null;
-                        $bach = trim($_POST['codigo_bachillerato']) ?? null;
-                        $codigo_grupo = $_POST['codigo_grupo'] ?? null;
-                
-                        if (!$ann || !$bach || !$codigo_grupo) {
-                            throw new Exception('Datos insuficientes para procesar.');
-                        }
-                
-                        [$grado, $seccion, $turno] = explode('|', $codigo_grupo);
-                            $grado = trim($grado);
-                            $seccion = trim($seccion);
-                            $turno = trim($turno);
+                            // 1. Obtener y limpiar estrictamente $ann y $bach de cualquier espacio en blanco
+                            $ann  = isset($_POST['codigo_ann_lectivo']) ? str_replace(' ', '', trim($_POST['codigo_ann_lectivo'])) : null;
+                            $bach = isset($_POST['codigo_bachillerato']) ? str_replace(' ', '', trim($_POST['codigo_bachillerato'])) : null;
+                            $codigo_grupo = $_POST['codigo_grupo'] ?? null;
+
+                            if (!$ann || !$bach || !$codigo_grupo) {
+                                throw new Exception('Datos insuficientes para procesar.');
+                            }
+
+                            // 2. Separar el grupo y limpiar CADA parte de cualquier espacio en blanco intermedio o lateral
+                            [$grado, $seccion, $turno] = explode('|', $codigo_grupo);
+
+                            $grado   = str_replace(' ', '', trim($grado));
+                            $seccion = str_replace(' ', '', trim($seccion));
+                            $turno   = str_replace(' ', '', trim($turno));
                         // Cargar el archivo Excel
-                        $spreadsheet = IOFactory::load($archivo);
-                        $sheet = $spreadsheet->getActiveSheet();
-                       // $sheet = $spreadsheet->setActiveSheetIndex(0);
-                
+                            $spreadsheet = IOFactory::load($archivo);
+                            $spreadsheet->setActiveSheetIndex(0);
+                            // Definir explícitamente cada hoja por su nombre para evitar confusiones
+                            $sheet1 = $spreadsheet->getSheetByName('Hoja1');
+                            $sheet2 = $spreadsheet->getSheetByName('Hoja2');
+
+                            if (!$sheet1 || !$sheet2) {
+                                throw new Exception('El archivo cargado no contiene la Hoja1 o la Hoja2.');
+                            }
+
+                            // Para mantener compatibilidad con tu código actual de inserción, asignamos $sheet a la Hoja1
+                            $sheet = $sheet1;
+                        
                         // Insertar dos columnas al principio (A y B)
                         $sheet->insertNewColumnBefore('A', 1);
                         // Insertar encabezados
@@ -126,7 +140,14 @@ try {
 
                         // Preparar la consulta con nombres de grado y sección
 $codigo_all = $bach . $grado . $seccion . $turno . $ann;
-
+/*
+print "Bachillerato: " . $bach;
+print "Grado: " . $grado;
+print "Sección: " . $seccion;
+print "Turno: " . $turno;
+print "Ann Lectivo: " . $ann;
+exit;
+*/
 $stmt = $pdo->prepare("
     SELECT 
         a.codigo_nie, 
@@ -154,29 +175,40 @@ $txtSeccion = $alumnos[0]['nombre_seccion'];
                 
                         // Insertar los datos en la hoja de Excel (desde fila 2)
                         $fila = 2;
-                        foreach ($alumnos as $alumno) {
-                            $sheet->setCellValue("A{$fila}", $alumno['codigo_nie']);
-                            $sheet->setCellValue("B{$fila}", $alumno['nombre_alumno']);
-                            $fila++;
-                        }
-                            // Ajustar automáticamente el ancho de las columnas A y B
-                            $sheet->getColumnDimension('A')->setAutoSize(true);
-                            $sheet->getColumnDimension('B')->setAutoSize(true);
-                            // 4. AHORA sacás la última fila
-                            $ultimaFila = $sheet->getHighestRow(); // Esto ya te da el último número de fila usado
-                            // Colores de fondo alternos (gris y blanco)
-                            $colorFondo1 = 'D9D9D9'; // Gris claro
-                            $colorFondo2 = 'FFFFFF'; // Blanco
+foreach ($alumnos as $alumno) {
+    // Convertimos el NIE explícitamente a entero (int) para que Excel lo detecte como número
+    $sheet->setCellValue("A{$fila}", (int)$alumno['codigo_nie']);
+    $sheet->setCellValue("B{$fila}", $alumno['nombre_alumno']);
+    $fila++;
+}
 
-                            // Recorremos las filas desde la 2 (ya que la 1 es el encabezado)
-                            for ($i = 2; $i <= $ultimaFila; $i++) {
-                                // Determinar color de fondo: si es impar, gris; si es par, blanco
-                                $colorFondo = ($i % 2 == 0) ? $colorFondo2 : $colorFondo1;
-                                
-                                // Aplicar color de fondo a la fila completa (de A hasta B)
-                                $sheet->getStyle("A{$i}:B{$i}")->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID);
-                                $sheet->getStyle("A{$i}:B{$i}")->getFill()->getStartColor()->setRGB($colorFondo);
-                            }
+// Ajustar automáticamente el ancho de las columnas A y B
+$sheet->getColumnDimension('A')->setAutoSize(true);
+$sheet->getColumnDimension('B')->setAutoSize(true);
+
+// 4. AHORA sacás la última fila
+$ultimaFila = $sheet->getHighestRow(); // Esto ya te da el último número de fila usado
+
+// Aplicamos formato de número entero a toda la columna del NIE (A2 hasta la última fila)
+$sheet->getStyle("A2:A{$ultimaFila}")
+      ->getNumberFormat()
+      ->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_NUMBER);
+
+// Colores de fondo alternos (gris y blanco)
+$colorFondo1 = 'D9D9D9'; // Gris claro
+$colorFondo2 = 'FFFFFF'; // Blanco
+
+// Recorremos las filas desde la 2 (ya que la 1 es el encabezado)
+for ($i = 2; $i <= $ultimaFila; $i++) {
+    // Determinar color de fondo: si es impar, gris; si es par, blanco
+    $colorFondo = ($i % 2 == 0) ? $colorFondo2 : $colorFondo1;
+    
+    // Aplicar color de fondo a la fila completa (de A hasta B)
+    $sheet->getStyle("A{$i}:B{$i}")->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID);
+    $sheet->getStyle("A{$i}:B{$i}")->getFill()->getStartColor()->setRGB($colorFondo);
+}
+
+
                             switch ($grado) {
                                 case $grado == '4P' || $grado == '5P' || $grado == '6P' || $grado == '01':
                                     // … despues de cargar $sheet y calcular $ultimaFila …
@@ -198,61 +230,95 @@ $txtSeccion = $alumnos[0]['nombre_seccion'];
                                         $columnas[] = Coordinate::stringFromColumnIndex($colIndex);
                                     }
                                     
-// 4. Recorre cada columna (C, D, E...)
-foreach ($columnas as $col) {
-    /** @var DataValidation $dvOriginal */
-    $dvOriginal = $sheet->getCell("{$col}2")->getDataValidation();
+                                // 4. Recorre cada columna (C, D, E...)
+                                foreach ($columnas as $col) {
+                                    /** @var DataValidation $dvOriginal */
+                                    $dvOriginal = $sheet->getCell("{$col}2")->getDataValidation();
 
-    if (!($dvOriginal instanceof DataValidation)) {
-        continue; 
-    }
+                                    if (!($dvOriginal instanceof DataValidation)) {
+                                        continue; 
+                                    }
 
-    // Definimos el rango de esta columna (ej. C2:C50)
-    $rangoColumna = "{$col}2:{$col}{$ultimaFila}";
+                                    // Definimos el rango de esta columna (ej. C2:C50)
+                                    $rangoColumna = "{$col}2:{$col}{$ultimaFila}";
 
-    // --- 1. APLICAR VALOR, ALTO Y AJUSTE DE TEXTO ---
-    for ($fila = 2; $fila <= $ultimaFila; $fila++) {
-        $celda = "{$col}{$fila}";
-        
-        // Clonar validación
-        $newDv = clone $dvOriginal;
-        $newDv->setSqref($celda);
-        $sheet->getCell($celda)->setDataValidation($newDv);
-        
-        // Valor predeterminado
-        $sheet->setCellValueExplicit($celda, "No Evaluado", \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING);
-        
-        // Alto de fila (solo se necesita setear una vez por fila)
-        $sheet->getRowDimension($fila)->setRowHeight(60);
-    }
+                                    // --- 1. APLICAR VALOR, ALTO Y AJUSTE DE TEXTO ---
+                                    for ($fila = 2; $fila <= $ultimaFila; $fila++) {
+                                        $celda = "{$col}{$fila}";
+                                        
+                                        // Clonar validación
+                                        $newDv = clone $dvOriginal;
+                                        $newDv->setSqref($celda);
+                                        $sheet->getCell($celda)->setDataValidation($newDv);
+                                        
+                                        // Valor predeterminado
+                                        $sheet->setCellValueExplicit($celda, "No Evaluado", \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING);
+                                        
+                                        // Alto de fila (solo se necesita setear una vez por fila)
+                                        $sheet->getRowDimension($fila)->setRowHeight(60);
+                                    }
 
-    // --- 2. FORMATO GENERAL (Alineación y Ajuste) ---
-    $sheet->getStyle($rangoColumna)->getAlignment()->applyFromArray([
-        'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
-        'vertical'   => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
-        'wrapText'   => true,
-    ]);
+                                    // --- 2. FORMATO GENERAL (Alineación y Ajuste) ---
+                                    $sheet->getStyle($rangoColumna)->getAlignment()->applyFromArray([
+                                        'horizontal' => Alignment::HORIZONTAL_CENTER,
+                                        'vertical'   => Alignment::VERTICAL_CENTER,
+                                        'wrapText'   => true,
+                                    ]);
 
-    // --- 3. FORMATO CONDICIONAL (El fondo dinámico) ---
-    // Creamos la regla: Si es IGUAL a "No Evaluado", fondo GRIS. 
-    // Si cambia, Excel quita el estilo automáticamente.
-    $conditional = new Conditional();
-    $conditional->setConditionType(Conditional::CONDITION_CELLIS)
-                ->setOperatorType(Conditional::OPERATOR_EQUAL)
-                ->addCondition('"No Evaluado"'); // IMPORTANTE: Las comillas dobles dentro de las simples
-    
-    $conditional->getStyle()->getFill()->setFillType(Fill::FILL_SOLID)
-                ->getStartColor()->setRGB('F2F2F2');
+                                    // --- 3. FORMATO CONDICIONAL (El fondo dinámico) ---
+                                    // Creamos la regla: Si es IGUAL a "No Evaluado", fondo GRIS. 
+                                    // Si cambia, Excel quita el estilo automáticamente.
+                                    $conditional = new Conditional();
+                                    $conditional->setConditionType(Conditional::CONDITION_CELLIS)
+                                                ->setOperatorType(Conditional::OPERATOR_EQUAL)
+                                                ->addCondition('"No Evaluado"'); // IMPORTANTE: Las comillas dobles dentro de las simples
+                                    
+                                    $conditional->getStyle()->getFill()->setFillType(Fill::FILL_SOLID)
+                                                ->getStartColor()->setRGB('F2F2F2');
 
-    // Aplicar la regla a todo el rango de la columna de una vez
-    $sheet->getStyle($rangoColumna)->setConditionalStyles([$conditional]);
-}
+                                    // Aplicar la regla a todo el rango de la columna de una vez
+                                    $sheet->getStyle($rangoColumna)->setConditionalStyles([$conditional]);
+                                }
+
+
+
+// =========================================================================
+// NUEVO: INMOVILIZAR PANELES DESDE C2
+// (Mantiene fijas las columnas A y B, y la fila 1 de encabezados)
+// =========================================================================
+$sheet->freezePane('C2');
+// =========================================================================
+// DESBLOQUEAR RANGO EDITABLE Y PROTEGER LA HOJA CON CONTRASEÑA
+// =========================================================================
+
+// Determinamos la última columna de datos real (ej. AN)
+$ultimaColumnaLetra = $sheet->getHighestDataColumn(); 
+
+// El rango editable va desde C2 hasta la última celda con datos (ej. C2:AN45)
+$rangoEditable = "C2:{$ultimaColumnaLetra}{$ultimaFila}";
+
+// 1. Quitamos el bloqueo (Locked = false / PROTECTION_UNPROTECTED) a las celdas de las notas
+/*$sheet->getStyle($rangoEditable)
+      ->getProtection()
+      ->setLocked(\PhpOffice\PhpSpreadsheet\Style\Protection::PROTECTION_UNPROTECTED);*/
+
+// 2. Activamos la protección de la hoja y asignamos la contraseña "1"
+//$sheet->getProtection()->setSheet(true);
+//$sheet->getProtection()->setPassword('1');
+
+
+// 3. ¡PERMISOS CLAVE! Permitimos explícitamente al docente seleccionar y editar las celdas desbloqueadas
+//$sheet->getProtection()->setSelectLockedCells(true);   // Permite dar clic en las celdas bloqueadas (solo lectura)
+//$sheet->getProtection()->setSelectUnlockedCells(true); // Permite dar clic y EDITAR las celdas desbloqueadas (rango C2 en adelante)
+//$sheet->getProtection()->setFormatCells(false);        // Opcional: Bloquea que cambien colores/fuentes
+
+                                        //////////////////////////////////////////////////////
                                         // RELLENAR CONTENIDO EN LA HOJA 2.
                                         // define aquí los dos colores que quieras alternar
                                         $coloresBloque = ['FFFFFF', 'D9E1F2']; // blanco / celeste claro
                                         // asumimos que $spreadsheet ya está cargado
-                                        $sheet1 = $spreadsheet->getSheetByName('Hoja1');
-                                        $sheet2 = $spreadsheet->getSheetByName('Hoja2');
+                                       // $sheet1 = $spreadsheet->getSheetByName('Hoja1');
+                                        //  $sheet2 = $spreadsheet->getSheetByName('Hoja2');
                                         
                                         // 1) Calculamos la última columna con datos en Hoja1
                                         $ultimaColLetra = $sheet1->getHighestDataColumn();
@@ -348,12 +414,12 @@ foreach ($columnas as $col) {
                                          $name = $sheet1->getCell("B{$r}")->getValue(); // o la columna que sea
                                          $dataNom[] = ['nie'=>$nie,'nombre'=>$name];
                                      }   
-// 1. Inmovilizar Paneles para facilitar la lectura
-$sheet->freezePane('C2');
+                                        // 1. Inmovilizar Paneles para facilitar la lectura
+                                        $sheet->freezePane('C2');
 
-// 2. Ajustar anchos finales (opcional si no lo habías hecho arriba)
-$sheet->getColumnDimension('A')->setAutoSize(true);
-$sheet->getColumnDimension('B')->setAutoSize(true);
+                                        // 2. Ajustar anchos finales (opcional si no lo habías hecho arriba)
+                                        $sheet->getColumnDimension('A')->setAutoSize(true);
+                                        $sheet->getColumnDimension('B')->setAutoSize(true);
 
                                         // 7) Guardar Excel
                                         $ruta = 'temp_excel_' . '.xlsx';
