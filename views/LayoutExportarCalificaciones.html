@@ -4,6 +4,56 @@
 
 {% block extraCSS %}
   <link href="css/styles-loading.css" rel="stylesheet">
+  <style>
+    /* Estilos personalizados para elevar la interfaz a un nivel premium */
+    .card-custom {
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05) !important;
+        overflow: hidden;
+    }
+    .card-header-gradient {
+        background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+        color: white;
+        padding: 18px 24px;
+        border: none;
+    }
+    .form-label-custom {
+        font-weight: 600;
+        color: #475569;
+        font-size: 0.9rem;
+        margin-bottom: 6px;
+    }
+    .form-select-custom, .form-control-custom {
+        border-radius: 8px;
+        border: 1px solid #cbd5e1;
+        padding: 10px 14px;
+        font-size: 0.95rem;
+        transition: all 0.2s ease-in-out;
+    }
+    .form-select-custom:focus, .form-control-custom:focus {
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+    }
+    .btn-gradient-success {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        padding: 12px;
+        transition: all 0.2s;
+    }
+    .btn-gradient-success:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+    }
+    .alert-info-custom {
+        background-color: #eff6ff;
+        border-left: 4px solid #3b82f6;
+        color: #1e3a8a;
+        border-radius: 8px;
+    }
+  </style>
 {% endblock %}
 
 {% block javascripts %}
@@ -23,7 +73,7 @@
         document.getElementById('txtfecha').value = today;
     });
 </script>
-<!-- DEINIR EL AJAX START- STOP Y ERROR -->
+<!-- CONFIGURACIÓN DE PANTALLA DE CARGA -->
   <script>
     $(document).ready(function () { 
       var screen = $('#loading-screen');
@@ -31,18 +81,19 @@
     })
   </script>
 {% endblock %}
+
 {% block contenidos %}
 <!-- Content Wrapper -->
-<div class="content-wrapper">
-    <section class="content-header">
+<div class="content-wrapper bg-light-gray py-4">
+    <section class="content-header mb-4">
         <div class="container">
-            <div class="row mb-1">
+            <div class="row align-items-center">
                 <div class="col-sm-6">
-                    <h4>Exportar Calificaciones</h4>
+                    <h1 class="h3 m-0 text-gray-800" style="font-weight: 700;"><i class="fas fa-file-excel text-primary me-2"></i>Exportar Calificaciones</h1>
                 </div>
-                <div class="col-sm-6 text-end">
-                    <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="index.php">Home</a></li>
+                <div class="col-sm-6 text-end d-none d-sm-block">
+                    <ol class="breadcrumb m-0 justify-content-end bg-transparent p-0">
+                        <li class="breadcrumb-item"><a href="index.php" class="text-decoration-none">Home</a></li>
                         <li class="breadcrumb-item active">Exportar Calificaciones</li>
                     </ol>
                 </div>
@@ -55,60 +106,91 @@
         <div class="container">
             <div class="row">
                 <div class="col-lg-12">
-                    <div class="card shadow-sm">
-                        <div class="card-header bg-primary text-white">
-                            <h3 class="card-title"><i class="fas fa-download"></i> Exportar Calificaciones</h3>
+                    <!-- Tarjeta Principal con Degradado -->
+                    <div class="card card-custom">
+                        <div class="card-header card-header-gradient d-flex align-items-center justify-content-between">
+                            <h3 class="card-title h5 m-0" style="font-weight: 600;">
+                                <i class="fas fa-sliders-h me-2"></i>Parámetros de Selección
+                            </h3>
+                            <span class="badge bg-white text-primary px-3 py-2 rounded-pill font-weight-bold">SIGES</span>
                         </div>
-                        <div class="card-body">
+                        <div class="card-body p-4">
                             <form method="post" id="formExportarNotas">
                                 <input type="hidden" id="accion_buscar" name="accion_buscar" value="BuscarNotas">
 
-                                <!-- Año Lectivo -->
-                                <div class="mb-3">
-                                    <label for="lstannlectivo" class="form-label">Año Lectivo</label>
-                                    <select id="lstannlectivo" name="lstannlectivo" class="form-select" required></select>
+                                <!-- Grid de dos columnas para optimizar el espacio vertical -->
+                                <div class="row">
+                                    <!-- Año Lectivo -->
+                                    <div class="col-md-6 mb-3">
+                                        <label for="lstannlectivo" class="form-label form-label-custom">
+                                            <i class="fas fa-calendar-alt text-secondary me-1"></i> Año Lectivo
+                                        </label>
+                                        <select id="lstannlectivo" name="lstannlectivo" class="form-select form-select-custom" required></select>
+                                    </div>
+
+                                    <!-- Nivel -->
+                                    <div class="col-md-6 mb-3">
+                                        <label for="lstmodalidad" class="form-label form-label-custom">
+                                            <i class="fas fa-graduation-cap text-secondary me-1"></i> Nivel / Modalidad
+                                        </label>
+                                        <select id="lstmodalidad" name="lstmodalidad" class="form-select form-select-custom"></select>
+                                    </div>
                                 </div>
 
-                                <!-- Nivel -->
-                                <div class="mb-3">
-                                    <label for="lstmodalidad" class="form-label">Nivel</label>
-                                    <select id="lstmodalidad" name="lstmodalidad" class="form-select"></select>
+                                <div class="row">
+                                    <!-- Grado - Sección - Turno -->
+                                    <div class="col-md-12 mb-3">
+                                        <label for="lstgradoseccion" class="form-label form-label-custom">
+                                            <i class="fas fa-users text-secondary me-1"></i> Grado - Sección - Turno
+                                        </label>
+                                        <select id="lstgradoseccion" name="lstgradoseccion" class="form-select form-select-custom"></select>
+                                    </div>
                                 </div>
 
-                                <!-- Grado - Sección - Turno -->
-                                <div class="mb-3">
-                                    <label for="lstgradoseccion" class="form-label">Grado - Sección - Turno</label>
-                                    <select id="lstgradoseccion" name="lstgradoseccion" class="form-select"></select>
+                                <div class="row">
+                                    <!-- Asignatura -->
+                                    <div class="col-md-6 mb-3">
+                                        <label for="lstasignatura" class="form-label form-label-custom">
+                                            <i class="fas fa-book text-secondary me-1"></i> Asignatura
+                                        </label>
+                                        <select id="lstasignatura" name="lstasignatura" class="form-select form-select-custom"></select>
+                                    </div>
+
+                                    <!-- Período -->
+                                    <div class="col-md-6 mb-3">
+                                        <label for="lstperiodo" class="form-label form-label-custom">
+                                            <i class="fas fa-hourglass-half text-secondary me-1"></i> Período
+                                        </label>
+                                        <select id="lstperiodo" name="lstperiodo" class="form-select form-select-custom"></select>
+                                    </div>
                                 </div>
 
-                                <!-- Asignatura -->
-                                <div class="mb-3">
-                                    <label for="lstasignatura" class="form-label">Asignatura</label>
-                                    <select id="lstasignatura" name="lstasignatura" class="form-select"></select>
+                                <div class="row align-items-end">
+                                    <!-- Fecha -->
+                                    <div class="col-md-6 mb-4">
+                                        <label for="txtfecha" class="form-label form-label-custom">
+                                            <i class="fas fa-calendar-day text-secondary me-1"></i> Fecha de Emisión
+                                        </label>
+                                        <input type="date" id="txtfecha" name="txtfecha" class="form-control form-control-custom">
+                                    </div>
+
+                                    <!-- Seleccionar Todas Las Asignaturas -->
+                                    <div class="col-md-6 mb-4 d-flex align-items-center">
+                                        <div class="form-check form-switch p-0" style="margin-left: 2.5rem;">
+                                            <input class="form-check-input" type="checkbox" id="TodasLasAsignaturas" name="TodasLasAsignaturas" style="width: 2.8em; height: 1.5em; cursor: pointer; float: left; margin-left: -2.5rem;">
+                                            <label for="TodasLasAsignaturas" class="form-check-label ps-2" style="font-weight: 600; color: #475569; cursor: pointer; padding-top: 2px;">
+                                                Crear - Todas Las Asignaturas
+                                            </label>
+                                        </div>
+                                    </div>
                                 </div>
 
-                                <!-- Período -->
-                                <div class="mb-3">
-                                    <label for="lstperiodo" class="form-label">Período</label>
-                                    <select id="lstperiodo" name="lstperiodo" class="form-select"></select>
-                                </div>
-
-                                <!-- Fecha -->
-                                <div class="mb-3">
-                                    <label for="txtfecha" class="form-label">Fecha</label>
-                                    <input type="date" id="txtfecha" name="txtfecha" class="form-control">
-                                </div>
-
-                                <!-- Seleccionar Todas Las Asignaturas -->
-                                <div class="form-check mb-3">
-                                    <input class="form-check-input" type="checkbox" id="TodasLasAsignaturas" name="TodasLasAsignaturas">
-                                    <label for="TodasLasAsignaturas" class="form-check-label">Crear - Todas Las Asignaturas</label>
-                                </div>
+                                <hr class="text-muted my-4">
 
                                 <!-- Botón de Exportar -->
                                 <div class="d-flex justify-content-center">
-                                    <button type="submit" class="btn btn-success btn-lg w-100" id="goNotasExportar">
-                                        <i class="fas fa-file-excel"></i> Exportar <i class="fas fa-arrow-alt-to-bottom"></i>
+                                    <button type="submit" class="btn btn-success btn-gradient-success btn-lg px-5 shadow-sm" id="goNotasExportar">
+                                        <i class="fas fa-file-excel me-2"></i> Procesar y Exportar Archivos
                                     </button>
                                 </div>
                             </form>
@@ -117,27 +199,32 @@
                 </div>
             </div>
 
-            <!-- Tabla de resultados -->
-            <div class="row mt-4">
-                <div class="col-lg-12">
-                    <div class="card card-secondary shadow-sm">
-                        <div class="card-header">
-                            <h3 class="card-title">Componente del Plan de Estudio</h3>
-                        </div>
-                        <div class="card-body p-0">
-                            <table class="table table-hover table-bordered" id="tablaNotasExportar">
-                                <thead class="table-light">
-                                    <tr>
-                                        <th>#</th>
-                                        <th>Descripción</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="listaNotasExportarOK"></tbody>
-                            </table>
-                        </div>
+            <!-- Sección del reporte de resultados -->
+            <!-- Sección del reporte de resultados (Optimizado para recibir la inyección PHP) -->
+<div class="row mt-4">
+    <div class="col-lg-12">
+        <div class="card card-custom">
+            <div class="card-header bg-secondary text-white d-flex align-items-center justify-content-between" style="padding: 14px 24px;">
+                <h3 class="card-title h6 m-0" style="font-weight: 600;">
+                    <i class="fas fa-check-circle me-2"></i>Archivos Generados para Descarga
+                </h3>
+                <span class="badge bg-light text-dark px-2 py-1" style="font-size: 11px;">Estatus</span>
+            </div>
+            <div class="card-body p-4">
+                <!-- Alerta de bienvenida instructiva -->
+                <div id="alertaInformativa" class="alert alert-info-custom d-flex align-items-center mb-3 p-3" role="alert">
+                    <i class="fas fa-info-circle me-3 fa-lg"></i>
+                    <div>
+                        Los archivos procesados aparecerán listados aquí abajo tan pronto como termine el proceso de exportación del servidor.
                     </div>
                 </div>
+                
+                <!-- Aquí se inyectará directamente el HTML moderno generado por el servidor PHP -->
+                <div id="listaNotasExportarOK"></div>
             </div>
+        </div>
+    </div>
+</div>
         </div>
     </section>
 </div>
@@ -146,7 +233,6 @@
 {% endblock %}
 
 {% block menu %}
-<!-- plantilla que contiene el menú principal. -->
 	{% include 'layout-menu.html' %}
 {% endblock %}
 
