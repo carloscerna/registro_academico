@@ -236,69 +236,69 @@ function restablecerInterfazError() {
     });
 
         // EVENTO: Eliminar de forma quirúrgica una asignatura individual desde adentro del modal
-        $('#modalCuerpoDetalle').on('click', '.btn-eliminar-materia-manual', function(){
-            let btn = $(this);
-            let id_matricula = btn.data('matricula');
-            let codigo_asignatura = btn.data('asignatura');
+// EVENTO: Eliminar de forma quirúrgica por ID de Nota individual
+$('#modalCuerpoDetalle').on('click', '.btn-eliminar-id-nota', function(){
+    let btn = $(this);
+    let id_nota = btn.data('idnota');
+    let id_matricula = btn.data('matricula');
+    let info = btn.data('info');
 
-            Swal.fire({
-                title: '¿Quitar esta asignatura?',
-                text: "Esta acción removerá de forma permanente el registro de esta materia para este estudiante.",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#dc3545',
-                cancelButtonColor: '#6c757d',
-                confirmButtonText: '<i class="fas fa-trash"></i> Sí, eliminar',
-                cancelButtonText: 'Cancelar'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    $.ajax({
-                        cache: false,
-                        type: "POST",
-                        dataType: "json",
-                        url: "php_libs/soporte/PhpDatosAsignaturasAuditoria.php",
-                        data: {
-                            accion: 'EliminarAsignaturaIndividual',
-                            id_matricula: id_matricula,
-                            codigo_asignatura: codigo_asignatura
-                        },
-                        success: function(response){
-                            if(response.respuesta === true){
-                                Swal.fire({
-                                    toast: true,
-                                    position: 'top-end',
-                                    icon: 'success',
-                                    title: 'Materia eliminada',
-                                    showConfirmButton: false,
-                                    timer: 2000
-                                });
+    Swal.fire({
+        title: '¿Borrar esta fila de nota?',
+        html: "Vas a eliminar el registro: <strong>" + info + "</strong>.<br><br><span class='text-danger'>Asegúrate de borrar la fila que tiene los periodos en 0.</span>",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#dc3545',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: '<i class="fas fa-trash"></i> Sí, eliminar este ID',
+        cancelButtonText: 'Cancelar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                cache: false,
+                type: "POST",
+                dataType: "json",
+                url: "php_libs/soporte/PhpDatosAsignaturasAuditoria.php",
+                data: {
+                    accion: 'EliminarAsignaturaIndividual',
+                    id_nota: id_nota
+                },
+                success: function(response){
+                    if(response.respuesta === true){
+                        Swal.fire({
+                            toast: true,
+                            position: 'top-end',
+                            icon: 'success',
+                            title: 'Registro borrado con éxito',
+                            showConfirmButton: false,
+                            timer: 2000
+                        });
 
-                                // REFRESCAR EL MODAL: Volvemos a mandar la petición para re-renderizar las listas del modal actualizado
-                                $.ajax({
-                                    type: "POST",
-                                    dataType: "json",
-                                    url: "php_libs/soporte/PhpDatosAsignaturasAuditoria.php",
-                                    data: { accion: 'VerDetalleAlumno', id_matricula: id_matricula },
-                                    success: function(resModal){
-                                        if(resModal.respuesta === true){
-                                            $('#modalCuerpoDetalle').html(resModal.contenido);
-                                        }
-                                    }
-                                });
-                            } else {
-                                Swal.fire({
-                                    icon: 'error',
-                                    title: 'No se pudo eliminar',
-                                    text: response.mensaje
-                                });
+                        // Refrescamos la vista interna del modal de inmediato
+                        $.ajax({
+                            type: "POST",
+                            dataType: "json",
+                            url: "php_libs/soporte/PhpDatosAsignaturasAuditoria.php",
+                            data: { accion: 'VerDetalleAlumno', id_matricula: id_matricula },
+                            success: function(resModal){
+                                if(resModal.respuesta === true){
+                                    $('#modalCuerpoDetalle').html(resModal.contenido);
+                                }
                             }
-                        },
-                        error: function(){
-                            toastr.error("Error de comunicación con el servidor al intentar eliminar.");
-                        }
-                    });
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: response.mensaje
+                        });
+                    }
+                },
+                error: function(){
+                    toastr.error("Error de conexión al eliminar la fila.");
                 }
             });
-        });
-
+        }
+    });
+});
 });

@@ -75,35 +75,45 @@ if ($errorDbConexion == false) {
                     $correlativo = 1;
 
                     foreach ($estudiantes as $est) {
-                        // Obtener las materias reales que posee actualmente en la tabla 'nota'
-                        $q_notas = "SELECT RTRIM(codigo_asignatura) FROM nota WHERE codigo_matricula = :mat";
+                        // Cambiar el SELECT en case 'BuscarLista':
+                        $q_notas = "SELECT RTRIM(codigo_asignatura) as asig, COUNT(*) as cantidad 
+                                    FROM nota 
+                                    WHERE codigo_matricula = :mat 
+                                    GROUP BY RTRIM(codigo_asignatura)";
                         $stmt_notas = $dblink->prepare($q_notas);
                         $stmt_notas->execute([':mat' => $est['id_alumno_matricula']]);
-                        $materias_actuales = $stmt_notas->fetchAll(PDO::FETCH_COLUMN);
+                        $notas_raw = $stmt_notas->fetchAll(PDO::FETCH_ASSOC);
 
-                        // Determinar discrepancias comparando arrays
+                        // Extraemos la lista de materias únicas y las duplicadas
+                        $materias_actuales = array_column($notas_raw, 'asig');
+                        $duplicados = [];
+                        foreach ($notas_raw as $nr) {
+                            if ($nr['cantidad'] > 1) {
+                                $duplicados[] = $nr['asig'] . " (x" . $nr['cantidad'] . ")";
+                            }
+                        }
+
                         $faltantes = array_diff($malla_oficial, $materias_actuales);
                         $sobrantes = array_diff($materias_actuales, $malla_oficial);
 
-                        $total_oficial  = count($malla_oficial);
-                        $total_estudiante = count($materias_actuales);
-
-                        // Definir etiquetas de estado visuales
-                        if (empty($faltantes) && empty($sobrantes)) {
-                            $badge_status = '<span class="badge badge-success"><i class="fas fa-check-circle"></i> Completo ('.$total_estudiante.' de '.$total_oficial.')</span>';
+                        // Agregamos la alerta de DUPLICADOS en los badges
+                        if (empty($faltantes) && empty($sobrantes) && empty($duplicados)) {
+                            $badge_status = '<span class="badge badge-success"><i class="fas fa-check-circle"></i> Completo ('.count($materias_actuales).' de '.count($malla_oficial).')</span>';
                         } else {
-                            $badge_status = '<span class="badge badge-danger"><i class="fas fa-exclamation-triangle"></i> Carga Incorrecta ('.$total_estudiante.' de '.$total_oficial.')</span>';
+                            $badge_status = '<span class="badge badge-danger"><i class="fas fa-exclamation-triangle"></i> Carga Incorrecta</span>';
                         }
 
-                        // Construcción de los textos descriptivos de lo que falta o sobra
                         $txt_detalles = "";
+                        if (!empty($duplicados)) {
+                            $txt_detalles .= "<div class='text-danger font-weight-bold'><i class='fas fa-clone'></i> REPETIDAS: ".implode(', ', $duplicados)."</div>";
+                        }
                         if (!empty($faltantes)) {
-                            $txt_detalles .= "<div class='text-danger'><strong>Faltan (".count($faltantes)."):</strong> ".implode(', ', $faltantes)."</div>";
+                            $txt_detalles .= "<div class='text-danger'><strong>Faltan:</strong> ".implode(', ', $faltantes)."</div>";
                         }
                         if (!empty($sobrantes)) {
-                            $txt_detalles .= "<div class='text-warning'><strong>Sobran (".count($sobrantes)."):</strong> ".implode(', ', $sobrantes)."</div>";
+                            $txt_detalles .= "<div class='text-warning'><strong>Sobran:</strong> ".implode(', ', $sobrantes)."</div>";
                         }
-                        if (empty($faltantes) && empty($sobrantes)) {
+                        if (empty($faltantes) && empty($sobrantes) && empty($duplicados)) {
                             $txt_detalles = "<span class='text-muted font-italic'>Carga limpia y alineada al plan oficial</span>";
                         }
 
@@ -239,15 +249,21 @@ if ($errorDbConexion == false) {
                     $codigos_malla = array_column($malla_oficial, 'asig');
 
                     // 2. Obtener las materias reales que posee en 'nota' con sus nombres oficiales
-                    $q_notas = "SELECT RTRIM(n.codigo_asignatura) as asig, RTRIM(a.nombre) as nombre_asignatura
-                                FROM nota n
-                                LEFT JOIN asignatura a ON RTRIM(a.codigo) = RTRIM(n.codigo_asignatura)
-                                WHERE n.codigo_matricula = :mat
-                                ORDER BY n.codigo_asignatura";
-                    $stmt_notas = $dblink->prepare($q_notas);
-                    $stmt_notas->execute([':mat' => $id_matricula]);
-                    $materias_actuales = $stmt_notas->fetchAll(PDO::FETCH_ASSOC);
-                    
+                    // En case 'VerDetalleAlumno':
+                        $q_notas = "SELECT n.id_notas, RTRIM(n.codigo_asignatura) as asig, RTRIM(a.nombre) as nombre_asignatura,
+                                        COALESCE(n.nota_p_p_1, 0) as p1, COALESCE(n.nota_p_p_2, 0) as p2, 
+                                        COALESCE(n.nota_p_p_3, 0) as p3, COALESCE(n.nota_p_p_4, 0) as p4, 
+                                        COALESCE(n.nota_p_p_5, 0) as p5, COALESCE(n.nota_final, 0) as pf
+                                    FROM nota n
+                                    LEFT JOIN asignatura a ON RTRIM(a.codigo) = RTRIM(n.codigo_asignatura)
+                                    WHERE n.codigo_matricula = :mat
+                                    ORDER BY n.codigo_asignatura, n.id_notas";
+                        $stmt_notas = $dblink->prepare($q_notas);
+                        $stmt_notas->execute([':mat' => $id_matricula]);
+                        $materias_actuales = $stmt_notas->fetchAll(PDO::FETCH_ASSOC);
+
+                        // Para agrupar y detectar repeticiones
+                        $conteo_codigos = array_count_values(array_column($materias_actuales, 'asig'));
                     $codigos_actuales = array_column($materias_actuales, 'asig');
 
                     // 3. Construcción del HTML Comparativo para el modal
@@ -269,23 +285,40 @@ if ($errorDbConexion == false) {
                                 <h6 class='font-weight-bold text-success'><i class='fas fa-folder-open'></i> Carga Real en Base Datos (".count($materias_actuales).")</h6>
                                 <ul class='list-group' style='max-height: 400px; overflow-y: auto;'>";
                                 foreach ($materias_actuales as $n) {
-                                    $es_valida = in_array($n['asig'], $codigos_malla);
-                                    $clase_nota = $es_valida ? '' : 'list-group-item-warning font-weight-bold';
-                                    
-                                    // MODIFICADO: Si la materia sobra, le metemos un botón de eliminación manual directo
-                                    if($es_valida) {
-                                        $badge_accion = '<span class="badge badge-secondary">Correcta</span>';
+                                    $asig_code = $n['asig'] ?: 'S/C';
+                                    $es_valida = in_array($asig_code, $codigos_malla);
+                                    $es_duplicada = ($conteo_codigos[$asig_code] ?? 0) > 1;
+
+                                    // Resumen visual de notas por periodos
+                                    $notas_periodos = "P1:{$n['p1']} | P2:{$n['p2']} | P3:{$n['p3']} | P4:{$n['p4']} | P5:{$n['p5']}";
+                                    $tiene_notas = ($n['p1'] > 0 || $n['p2'] > 0 || $n['p3'] > 0 || $n['p4'] > 0 || $n['p5'] > 0);
+
+                                    // Formato visual según estado
+                                    if ($es_duplicada) {
+                                        $clase_nota = 'list-group-item-danger font-weight-bold';
+                                        $badge_status_asig = '<span class="badge badge-warning"><i class="fas fa-copy"></i> REPETIDA</span>';
+                                    } elseif (!$es_valida) {
+                                        $clase_nota = 'list-group-item-warning font-weight-bold';
+                                        $badge_status_asig = '<span class="badge badge-secondary">Sobrante</span>';
                                     } else {
-                                        $badge_accion = "<button type='button' class='btn btn-danger btn-xs btn-eliminar-materia-manual' 
-                                                            data-matricula='{$id_matricula}' 
-                                                            data-asignatura='{$n['asig']}' 
-                                                            title='Forzar eliminación de esta materia huerfana'>
-                                                            <i class='fas fa-trash-alt'></i> Quitar
-                                                        </button>";
+                                        $clase_nota = '';
+                                        $badge_status_asig = '<span class="badge badge-success">OK</span>';
                                     }
 
+                                    // Cambiamos $n['id_nota'] -> $n['id_notas']
+                                    $badge_accion = "<button type='button' class='btn btn-danger btn-xs btn-eliminar-id-nota' 
+                                                        data-idnota='{$n['id_notas']}' 
+                                                        data-matricula='{$id_matricula}'
+                                                        data-info='{$asig_code} [{$notas_periodos}]'
+                                                        title='Eliminar este registro específico (ID: {$n['id_notas']})'>
+                                                        <i class='fas fa-trash-alt'></i> Borrar
+                                                    </button>";
+
                                     $html_modal .= "<li class='list-group-item d-flex justify-content-between align-items-center p-2 {$clase_nota}' style='font-size:0.8rem;'>
-                                        <span><strong>".($n['asig'] ?: 'S/C')."</strong> - ".($n['nombre_asignatura'] ?? 'Asignatura Desconocida / Código Corrupto')."</span>
+                                        <div>
+                                            <div><strong>{$asig_code}</strong> - ".($n['nombre_asignatura'] ?? 'Asignatura Desconocida')." {$badge_status_asig}</div>
+                                            <small class='text-muted'><i class='far fa-chart-bar'></i> {$notas_periodos} (Final: {$n['pf']}) [ID: {$n['id_notas']}]</small>
+                                        </div>
                                         <span class='ml-2'>{$badge_accion}</span>
                                     </li>";
                                 }
@@ -373,29 +406,22 @@ if ($errorDbConexion == false) {
             // =========================================================================
             // NUEVO CASE: `EliminarAsignaturaIndividual` (Para remover registros rebeldes)
             // =========================================================================
-            case 'EliminarAsignaturaIndividual':
-                try {
-                    $id_mat = isset($_POST['id_matricula']) ? trim($_POST['id_matricula']) : '';
-                    $cod_asig = isset($_POST['codigo_asignatura']) ? trim($_POST['codigo_asignatura']) : '';
+                case 'EliminarAsignaturaIndividual':
+                    try {
+                        $id_nota = isset($_POST['id_nota']) ? trim($_POST['id_nota']) : '';
 
-                    // Si el código viene vacío (así como el que viste en la imagen), lo buscamos de forma segura
-                    if(empty($cod_asig) || $cod_asig == 'S/C') {
-                        $q_del = "DELETE FROM nota WHERE codigo_matricula = :mat AND (codigo_asignatura IS NULL OR codigo_asignatura = '' OR codigo_asignatura = 'S/C')";
+                        // Cambiamos WHERE id_nota -> WHERE id_notas
+                        $q_del = "DELETE FROM nota WHERE id_notas = :id_nota";
                         $stmt_del = $dblink->prepare($q_del);
-                        $stmt_del->execute([':mat' => $id_mat]);
-                    } else {
-                        $q_del = "DELETE FROM nota WHERE codigo_matricula = :mat AND codigo_asignatura = :asig";
-                        $stmt_del = $dblink->prepare($q_del);
-                        $stmt_del->execute([':mat' => $id_mat, ':asig' => $cod_asig]);
+                        $stmt_del->execute([':id_nota' => $id_nota]);
+
+                        $respuestaOK = true;
+                        $mensajeError = "Registro de nota borrado de forma permanente.";
+                    } catch (Exception $e) {
+                        $respuestaOK = false;
+                        $mensajeError = "Error al eliminar la fila: " . $e->getMessage();
                     }
-
-                    $respuestaOK = true;
-                    $mensajeError = "Asignatura removida correctamente del expediente del alumno.";
-                } catch (Exception $e) {
-                    $respuestaOK = false;
-                    $mensajeError = "No se pudo eliminar la asignatura: " . $e->getMessage();
-                }
-            break;
+                break;
         }
     }
 }
