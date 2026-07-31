@@ -34,7 +34,6 @@ include($path_root."/registro_academico/includes/mainFunctions_conexion.php");
     date_default_timezone_set('America/El_Salvador');
 
 // set codings.
-    $objPHPExcel->_defaultEncoding = 'ISO-8859-1';
 
 // Set default font
     //echo date('H:i:s') . " Set default font"."<br />";
@@ -284,7 +283,7 @@ while($objPHPExcel->getActiveSheet()->getCell("E".$fila)->getValue() != "")
 	//	CALCULAR DE Séptimo  A Noveno GRADO.
 	//	CALIFICACIÓN POR TRIMESTRE  Y CALIFICACIÓN FINAL EN ENTERO.
 		if($codigo_grado >= "06" and $codigo_grado <= "09"){
-			$nota_1 = round($nota_trimestre_1,0);  
+			$nota_1 = round($nota_trimestre_1,1);  
 		}
 	//***********************************************************************************************
 	//	CALCULAR DE Primeros y Tercer año de Bachillerato

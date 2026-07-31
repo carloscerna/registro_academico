@@ -1,67 +1,82 @@
-<!-- VENTANA MODAL - MODIFICAR LA FECHA DE LA FACTURA -->
+<!-- VENTANA MODAL - GRADO / SECCIÓN / TURNO (ORGANIZACIÓN Y ASIGNACIÓN) -->
 <div class="row mt-3">
-<div class="col">
-<div class="modal fade" data-backdrop="static" data-keyboard="false" id="VentanaSeGST" tabindex="-1" role="dialog" aria-labelledby="VentanaSeGST" aria-hidden="true">
-<div class="modal-dialog modal-md">
-	<div class="modal-content">
-		<div class="modal-header bg-gradient-navy p-1">
-			<h6 class="modal-title" id="">
-        <span class="fad fa-layer-group"></span>
-          <label for="LblTituloSeGST">Grado/Sección/Turno | </label>
-      </h6>
-			<button class="close" type = "button" data-bs-dismiss="modal" aria-label="Cerrar" id="VentanaSeGST1">
-				<span aria-hidden="true">&times;</span>
-			</button>
-		</div>
-		<!-- FORMULARIO PRINCIPAL. -->
-		<form action="" method="post" name="formVentanaSeGST" id="formVentanaSeGST" role="form" enctype="multipart/form-data">
-      <!-- SECCION DEL HIDDEN INPUT-->
-      <input type="hidden" id="accion_gst" name="accion_gst" value="GuardarGST">
+    <div class="col">
+        <div class="modal fade" id="VentanaSeGST" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false" aria-labelledby="LblTituloSeGST" aria-hidden="true">
+            <div class="modal-dialog modal-md">
+                <div class="modal-content">
+                    
+                    <!-- Encabezado del Modal -->
+                    <div class="modal-header bg-gradient-navy p-2">
+                        <h6 class="modal-title" id="LblTituloSeGST">
+                            <i class="fad fa-layer-group me-1"></i> Grado / Sección / Turno
+                        </h6>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar" id="VentanaSeGST1"></button>
+                    </div>
 
-			<div class="modal-body">
-				<div class="container">
-					<div class="row">
-						<div class="col-12 col-md-12 col-lg-12 col-xl-12">
-                            <fieldset id="FieldsetBusquedaTiquete">
-                                <legend> Grado/Sección/Turno | Organización y Asignación</legend>
-                                    <div class="row">
-                                        <div class="col col-md-12 col-lg-12 col-xl-12">
-                                            <div class="input-group">
-                                                <span class="input-group-text text-info" id="TextoAnnLectivoSeGST" name="TextoAnnLectivoSeGST">Año lectivo</span>
+                    <!-- Formulario Principal -->
+                    <form action="" method="post" name="formVentanaSeGST" id="formVentanaSeGST" role="form" enctype="multipart/form-data">
+                        <!-- Campo Oculto de Acción -->
+                        <input type="hidden" id="accion_gst" name="accion_gst" value="GuardarGST">
+
+                        <div class="modal-body">
+                            <div class="container-fluid">
+                                <div class="row g-3">
+                                    <div class="col-12">
+                                        
+                                        <!-- Sección 1: Asignación Lectiva -->
+                                        <fieldset id="FieldsetBusquedaTiquete" class="border p-2 mb-3 rounded">
+                                            <legend class="float-none w-auto px-2 fs-6 fw-bold">Grado/Sección/Turno | Organización y Asignación</legend>
+                                            
+                                            <div class="input-group mb-2">
+                                                <span class="input-group-text text-info" id="TextoAnnLectivoSeGST">Año lectivo</span>
+                                                <input type="text" class="form-control" id="infoAnnLectivo" readonly placeholder="Cargando año...">
                                             </div>
-                                            <div class="input-group">
-                                            <span class="input-group-text text-info" id="TextoModalidadesSeGST" name="TextoModalidadesSeGST">Modalidad</span>
-                                        </div>
-                                        </div>
+
+                                            <div class="input-group mb-2">
+                                                <span class="input-group-text text-info" id="TextoModalidadesSeGST">Modalidad</span>
+                                                <input type="text" class="form-control" id="infoModalidad" readonly placeholder="Cargando modalidad...">
+                                            </div>
+                                        </fieldset>
+
+                                        <!-- Sección 2: Información General -->
+                                        <fieldset id="FieldsetProduccion" class="border p-2 rounded">
+                                            <legend class="float-none w-auto px-2 fs-6 fw-bold">Grado/Sección/Turno | Información General</legend>
+                                            
+                                            <div class="mb-3">
+                                                <div class="input-group">
+                                                    <label class="input-group-text" for="lstSeGST">Servicio Educativo</label>
+                                                    <select class="form-select" name="lstSeGST" id="lstSeGST">
+                                                        <!-- Opciones cargadas dinámicamente -->
+                                                    </select>
+                                                </div>
+                                            </div>
+
+                                            <div class="mb-2">
+                                                <div class="input-group">
+                                                    <label class="input-group-text" for="lstTurnoSeGST">Turno</label>
+                                                    <select class="form-select" name="lstTurnoSeGST" id="lstTurnoSeGST">
+                                                        <!-- Opciones cargadas dinámicamente -->
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </fieldset>
+
                                     </div>
-                            </fieldset>
-                            <fieldset id="FieldsetProduccion">
-                                <legend> Grado/Sección/Turno | Información General</legend>
-                                    <div class="row">
-                                        <div class="col">
-                                            <div class="input-group">
-                                                <span class="input-group-text">Sercicio Educativo</span>
-                                                <select class="custom-select" name="lstSeGST" id="lstSeGST"></select>
-                                            </div>
-                                            <div class="input-group">
-                                                <span class="input-group-text">Turno</span>
-                                                <select class="custom-select" name="lstTurnoSeGST" id="lstTurnoSeGST"></select>
-                                            </div>
-                                        </div>
-                                    </div>
-                            </fieldset>
+                                </div> <!-- /.row -->
+                            </div> <!-- /.container-fluid -->
+                        </div> <!-- /.modal-body -->
+
+                        <!-- Pie del Modal -->
+                        <div class="modal-footer bg-gradient-cyan p-2 d-flex justify-content-end">
+                            <button class="btn btn-secondary me-2" data-bs-dismiss="modal" type="button">Cerrar</button>
+                            <button class="btn btn-primary" type="button" name="goActualizarSeGST" id="goActualizarSeGST">
+                                <i class="fas fa-save me-1"></i> Guardar
+                            </button>
                         </div>
-                    </div> <!-- ROW -->
-                </div> <!-- CONTAINER -->
-            </div> <!-- MODAL BODY -->
-            <!-- footer modal -->
-            <div class="modal-footer bg-gradient-cyan p-0">
-                <button class="btn btn-default" data-bs-dismiss="modal" type="button">Cerrar</button>
-                <input class="btn btn-primary" type="button" value="Guardar" name="goActualizarSeGST" id="goActualizarSeGST">
+                    </form> <!-- /.formVentanaSeGST -->
+                    
+                </div>
             </div>
-        </form> <!-- from principal -->
-	</div>
-</div>
-</div>
-</div>			
+        </div>
+    </div>			
 </div>

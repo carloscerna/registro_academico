@@ -1,522 +1,463 @@
 {# Heredando la plantilla principal #}
-
 {% extends 'default_layout.html' %}
 
 {% block extraCSS %}
- <link rel="stylesheet" href="js/file-input/css/fileinput.min.css" >
- <link rel="stylesheet" href="js/file-input/themes/explorer/theme.min.css" >
+  <!-- Stylesheets del Plugin FileInput -->
+  <link rel="stylesheet" href="js/file-input/css/fileinput.min.css">
+  <link rel="stylesheet" href="js/file-input/themes/explorer-fas/theme.min.css">
+  <style>
+    .bg-gradient-navy {
+      background: linear-gradient(135deg, #1b2a47 0%, #2c3e50 100%) !important;
+    }
+    .card-accent-primary {
+      border-top: 4px solid #0d6efd;
+    }
+    .card-accent-success {
+      border-top: 4px solid #198754;
+    }
+    .nav-tabs .nav-link.active {
+      font-weight: 600;
+      border-bottom: 3px solid #0d6efd !important;
+      background-color: transparent !important;
+      color: #0d6efd !important;
+    }
+    .kpi-card {
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .kpi-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.08) !important;
+    }
+  </style>
 {% endblock %}
 
 {% block javascripts %}
-    <!-- JS SCRIPT -->
-    <script type="text/JavaScript" src="js/Calificaciones/Importar.js"></script>
-    
-    <script src="js/file-input/js/plugins/piexif.js" type="text/javascript"></script>
-    <script src="js/file-input/js/plugins/sortable.js" type="text/javascript"></script>
-    <script src="js/file-input/js/fileinput.js" type="text/javascript"></script>
-    <script src="js/file-input/js/locales/fr.js" type="text/javascript"></script>
-    <script src="js/file-input/js/locales/es.js" type="text/javascript"></script>
-    <script src="js/file-input/themes/fas/theme.js" type="text/javascript"></script>
-    <script src="js/file-input/themes/explorer-fas/theme.js" type="text/javascript"></script>
- 
-<!-- cargar datos del nombre del archivo. -->
-<script language="javascript">
-	$(document).ready(function()
-	{		
-			$.post("includes/cargar-nombre-archivos.php",
-				function(data) {
-      $('#listaArchivosOK').empty();                                  
-      var filas = data.length;                                  
-                                        
-      if (filas != 0 ) {                                  
-              for (fila=0;fila<filas;fila++) {                                  
-                      $('#listaArchivosOK').append(data[fila].archivo);                                  
-              }                                                                                  
-      }else{                                  
-              $('#listaArchivosOK').append(data[fila].archivo);                                  
-      }                                  
-			}, "json");
-	});
-</script>
-<!-- JS del file-input -->
-<script>
-$(document).ready(function() {
- // Tipos de archivos admitidos por su extensión
-	var tipos = ['docx','xlsx','pptx','pdf'];
- // Contadores de archivos subidos por tipo
-	var contadores=[0,0,0,0];
-// Reinicia los contadores de tipos subidos
-	var reset_contadores = function() {
-		for(var i=0; i<tipos.length;i++) {
-				contadores[i]=0;
-		}
-	};
-// Incrementa el contador de tipo según la extensión del archivo subido	
-	var contadores_tipos = function(archivo) {
-		for(var i=0; i<tipos.length;i++) {
-			if(archivo.indexOf(tipos[i])!=-1) {
-				contadores[i]+=1;
-				break;	
-			}
-		}
-	};
- // Inicializamos el plugin fileinput:
-//		traducción al español
-//		script para procesar las peticiones de subida
-//		desactivar la subida asíncrona
-//		máximo de ficheros que se pueden seleccionar	
-//		Tamaño máximo en Kb de los ficheros que se pueden seleccionar
-//		no mostrar los errores de tipo de archivo (cuando el usuario selecciona un archivo no permitido)
-//		tipos de archivos permitidos por su extensión (array definido al principio del script)
- 		  $('#file-es').fileinput({
-         theme: 'explorer-fas',
-			      language: 'es',
-			      uploadAsync: false,
-			      uploadUrl: 'php_libs/soporte/recibe-fileinput.php',
-			      allowedFileExtensions : tipos,
-			      minFileCount: 1,
-			      maxFileCount: 20,
-         overwriteInitial: false,
-			      showUpload: true,
-			      showRemove: false,
-         removeFromPreviewOnError: true,
-         preferIconicPreview: true, // this will force thumbnails to display icons for following file extensions
-         previewFileIconSettings: { // configure your icon file extensions
-         'xlsx': '<i class="fas fa-file-excel text-success"></i>',
-         'jpg': '<i class="fas fa-file-image text-danger"></i>', 
-         'gif': '<i class="fas fa-file-image text-muted"></i>', 
-         'png': '<i class="fas fa-file-image text-primary"></i>'    
-         },
-         previewFileExtSettings: { // configure the logic for determining icon file extensions
-             'doc': function(ext) {
-                 return ext.match(/(doc|docx)$/i);
-             },
-             'xls': function(ext) {
-                 return ext.match(/(xls|xlsx)$/i);
-             },
-             'xlsx': function(ext) {
-                 return ext.match(/(xls|xlsx)$/i);
-             },
-         },         
-			  });
+  <!-- Scripts para FileInput y Plugins -->
+  <script src="js/file-input/js/plugins/piexif.js" type="text/javascript"></script>
+  <script src="js/file-input/js/plugins/sortable.js" type="text/javascript"></script>
+  <script src="js/file-input/js/fileinput.js" type="text/javascript"></script>
+  <script src="js/file-input/js/locales/es.js" type="text/javascript"></script>
+  <script src="js/file-input/themes/fas/theme.js" type="text/javascript"></script>
+  <script src="js/file-input/themes/explorer-fas/theme.js" type="text/javascript"></script>
+  
+  <!-- Lógica específica de la vista -->
+  <script src="js/Calificaciones/Importar.js" type="text/JavaScript"></script>
 
-     
-// Evento filecleared del plugin que se ejecuta cuando pulsamos el botón 'Quitar'
-//		Vaciamos y ocultamos el div de alerta
-	$('#file-es').on('filecleared', function(event) {
-		$('div.alert').empty();
-		$('div.alert').hide();
-	});
-// Evento filebatchuploadsuccess del plugin que se ejecuta cuando se han enviado todos los archivos al servidor
-//		Mostramos un resumen del proceso realizado
-//			Carpeta donde se han almacenado y total de archivos movidos
-//			Nombre y tamaño de cada archivo procesado
-//			Totales de archivos por tipo
-	$('#file-es').on('filebatchuploadsuccess', function(event, data, previewId, index) {
-	var ficheros = data.files;
-	var respuesta = data.response;
-	var total = data.filescount;
-	var mensaje;
-	var archivo;
-	var total_tipos='';
-	
-		reset_contadores(); // Resetamos los contadores de tipo de archivo
-		// Comenzamos a crear el mensaje que se mostrará en el DIV de alerta
-		mensaje='<p>'+total+ ' ficheros almacenados en la carpeta: '+respuesta.dirupload+'<br><br>';
-		mensaje+='Ficheros procesados:</p><ul>';
-		// Procesamos la lista de ficheros para crear las líneas con sus nombres y tamaños
-		for(var i=0;i<ficheros.length;i++) {
-			if(ficheros[i]!=undefined) {
-				archivo=ficheros[i];				
-				tam=archivo.size / 1024;
-				mensaje+='<li>'+archivo.name+' ('+Math.ceil(tam)+'Kb)'+'</li>';
-				contadores_tipos(archivo.name);
-			} 
-		}
-		
-		mensaje+='</ul><br/>';
-		// Línea que muestra el total de ficheros por tipo que se han subido
-		for(var i=0; i<contadores.length; i++)  total_tipos+='('+contadores[i]+') '+tipos[i]+', ';
-		// Apaño para eliminar la coma y el espacio (, ) que se queda en el último procesado
-		total_tipos=total_tipos.substr(0,total_tipos.length-2);
-		mensaje+='<p>'+total_tipos+'</p>';
-		// Si el total de archivos indicados por el plugin coincide con el total que hemos recibido en la respuesta del script PHP
-		// mostramos mensaje de proceso correcto
-		if(respuesta.total==total) mensaje+='<p>Coinciden con el total de archivos procesados en el servidor.</p>';
-		else mensaje+='<p>No coinciden los archivos enviados con el total de archivos procesados en el servidor.</p>';
-		// Una vez creado todo el mensaje lo cargamos en el DIV de alerta y lo mostramos
-		$('div.alert').html(mensaje);
-		$('div.alert').show();
-    });
-// Ocultamos el div de alerta donde se muestra un resumen del proceso
-	$('div.alert').hide();
-});
-</script>
-<!-- habilita los efectos del jquery-uii. -->
-<script type="text/javascript">
-	$(document).ready(function()
-		{
-   var valor_check = "";
-   var milstmodalidad = "";
-   var milstparvulariagrado = "";
-   var milstperiodo = "";
-   // Crear valor publico
-      $("input[name=customHoja]").click(function () {
-        valor_check = $('input:radio[name=customHoja]:checked').val();
-        CambiarSelect();
-      });
-   
-   function CambiarSelect(){
-      // Valor del alert check
-      console.log(valor_check);
-       if(valor_check === "Promedios")
-     {
-        // Cambiar los valores del Select
-          milstmodalidad = $("#lstmodalidad");
-          milstperiodo = $("#lstperiodo");
-          milstparvulariagrado = $("#lstparvulariagrado");
-           
-           milstmodalidad.empty();
-           milstmodalidad.append('<option value="01" selected>Educación Inicial y Parvularia</option>');
-           milstmodalidad.append('<option value="02">Educación Básica</option>');
-           milstmodalidad.append('<option value="03">Educación Media</option>');
-           // Mostrar valor por defecto.
-           // Para Parvularia y Grados.
-              $("#ParvulariaGrados").show();
-              milstparvulariagrado.empty();
-              milstparvulariagrado.append('<option value="I3" selected>Educación Inicial 3 años</option>');
-              milstparvulariagrado.append('<option value="4P">Sección 4 años</option>');
-              milstparvulariagrado.append('<option value="5P">Sección 5 años</option>');
-              milstparvulariagrado.append('<option value="6P">Sección 6 años</option>');          
-              milstparvulariagrado.append('<option value="17">Segundos y Terceros Focalizados</option>');          
-          // Mostrar valor por defecto.
-           milstperiodo.empty();
-            milstperiodo.append('<option value="Trimestre 1" selected>Trimestre 1</option>');
-            milstperiodo.append('<option value="Trimestre 2">Trimestre 2</option>');
-            milstperiodo.append('<option value="Trimestre 3">Trimestre 3</option>');
-          // Parametros para el grado y sección, al seleccionar el bachillerato.
-      
-       if(valor_check === "Promedios")
-       {
-              $("#lstmodalidad").change(function () {
-                milstperiodo.empty();
-                var valor = $("#lstmodalidad").val();
-                
-                if(valor_check === "Promedios")
-                {
-                 if(valor === "01"){
-                   // Para Parvularia y Grados.
-                   $("#ParvulariaGrados").show();
-                   milstparvulariagrado.empty();
-                   milstparvulariagrado.append('<option value="I3" selected>Educación Inicial 3 años</option>');
-                   milstparvulariagrado.append('<option value="4P">Sección 4 años</option>');
-                   milstparvulariagrado.append('<option value="5P">Sección 5 años</option>');
-                   milstparvulariagrado.append('<option value="6P">Sección 6 años</option>');
-                  // cambiar texto de label y enlace.
-                  $("label[for='lstperiodo']").text("Trimestre");
-                  milstperiodo.append('<option value="Trimestre 1" selected>Trimestre 1</option>');
-                  milstperiodo.append('<option value="Trimestre 2">Trimestre 2</option>');
-                  milstperiodo.append('<option value="Trimestre 3">Trimestre 3</option>');
-                 }
-                 // Para Educación Básica
-                 if(valor === "02"){
-                   // Para Parvularia y Grados.
-                   $("#ParvulariaGrados").show();
-                   milstparvulariagrado.empty();
-                   milstparvulariagrado.append('<option value="EB-Notas-CC" selected>Educación Básica - Notas y CC</option>');
-                   // Datos para el periodo.
-                  $("label[for='lstperiodo']").text("Trimestre");
-                  milstperiodo.append('<option value="Trimestre 1" selected>Trimestre 1</option>');
-                  milstperiodo.append('<option value="Trimestre 2">Trimestre 2</option>');
-                  milstperiodo.append('<option value="Trimestre 3">Trimestre 3</option>');
-                 }
-                 // Para Educación Media.
-                 if(valor === "03"){
-                   // Para Parvularia y Grados.
-                   $("#ParvulariaGrados").show();
-                   milstparvulariagrado.empty();
-                   milstparvulariagrado.append('<option value="EM-CC" selected>Educación Media - Convivencia Ciudadana</option>');
-                   // Datos para el periodo.
-                  $("label[for='lstperiodo']").text("Período");
-                  milstperiodo.append('<option value="Periodo 1" selected>Período 1</option>');
-                  milstperiodo.append('<option value="Periodo 2">Período 2</option>');
-                  milstperiodo.append('<option value="Periodo 3">Período 3</option>');
-                  milstperiodo.append('<option value="Periodo 4">Período 4</option>');
-                 }
-               }
+  <script>
+    $(document).ready(function() {
+      // 1. Cargar lista de archivos subidos
+      function cargarListaArchivos() {
+        $.post("includes/cargar-nombre-archivos.php", function(data) {
+          var $lista = $('#listaArchivosOK');
+          $lista.empty();                                  
+          if (data && data.length > 0) {                                  
+            $.each(data, function(i, item) {
+              $lista.append(item.archivo);
             });
-        }
-     } // FIN DE LA DECISIÓN PROMEDIOS
-     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-     if($('input:radio[name=customHoja]:checked').val() === "Calculo")
-     {
-        // Cambiar los valores del Select
-          milstmodalidad = $("#lstmodalidad");
-          milstperiodo = $("#lstperiodo");
-          milstmodalidad.empty();
-          milstperiodo.empty();
-        // VALORES POR DEFECTO.
-          milstmodalidad.append('<option value="02" selected>Educación Básica</option>');
-          milstmodalidad.append('<option value="03">Educación Media</option>');
-          milstmodalidad.append('<option value="04">Educación Básica y Media (Nocturna)</option>');
-          // Datos para el periodo.
-          $("label[for='lstperiodo']").text("Trimestre");        
-          milstperiodo.append('<option value="P1" selected>Período 1</option>');        
-          milstperiodo.append('<option value="P2">Período 2</option>');        
-          milstperiodo.append('<option value="P3">Período 3</option>');        
-          milstperiodo.append('<option value="Recuperacion">Recuperación</option>');        
+          } else {
+            $lista.append('<tr><td colspan="3" class="text-center text-muted">No hay archivos pendientes para procesar.</td></tr>');
+          }                                  
+        }, "json");
+      }
+      
+      cargarListaArchivos();
 
-       $("#ParvulariaGrados").hide();
-       // lstTrimestres
-       if(valor_check === "Calculo")
-       {
-         $("#lstmodalidad").change(function () {
-                milstperiodo.empty();
-                var valor = $("#lstmodalidad").val();
-         // Para Educación Básica
-                 if(valor === "02"){
-                   // Datos para el periodo.
-                  $("label[for='lstperiodo']").text("Trimestre");
-                  milstperiodo.append('<option value="P1" selected>Período 1</option>');
-                  milstperiodo.append('<option value="P2">Período 2</option>');
-                  milstperiodo.append('<option value="P3">Período 3</option>');
-                  milstperiodo.append('<option value="Recuperacion">Recuperación</option>');
-                 }
-                 // Para Educación Media.
-                 if(valor === "03"){
-                   // Datos para el periodo.
-                  $("label[for='lstperiodo']").text("Período");
-                  milstperiodo.append('<option value="P1" selected>Período 1</option>');
-                  milstperiodo.append('<option value="P2">Período 2</option>');
-                  milstperiodo.append('<option value="P3">Período 3</option>');
-                  milstperiodo.append('<option value="P4">Período 4</option>');
-                  milstperiodo.append('<option value="Recuperacion">Recuperación</option>');
-                 }
-                 // Para Educación Media y Básica Nocturna.
-                 if(valor === "04"){
-                   // Datos para el periodo.
-                  $("label[for='lstperiodo']").text("Período");
-                  milstperiodo.append('<option value="P1" selected>Período 1</option>');
-                  milstperiodo.append('<option value="P2">Período 2</option>');
-                  milstperiodo.append('<option value="P3">Período 3</option>');
-                  milstperiodo.append('<option value="P4">Período 4</option>');
-                  milstperiodo.append('<option value="P5">Período 5</option>');
-                  milstperiodo.append('<option value="Recuperacion">Recuperación</option>');
-                 }
-         });
-       }
-     }
-      //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   } // FIN DE LA FUNCION.
-  });
-</script>
-<!-- DEINIR EL AJAX START- STOP Y ERROR -->
-<script>
- $(document).ready(function () { 
-   /*$(document).ajaxStart(function () {
-        $('#myModal').modal('show');
-    });*/
-    $(document).ajaxStop(function () {
-        $('#myModal').modal('hide');
+      // 2. Configurar Plugin FileInput
+      var tiposPermitidos = ['xlsx', 'xls'];
+      
+      $('#file-es').fileinput({
+        theme: 'explorer-fas',
+        language: 'es',
+        uploadAsync: false,
+        uploadUrl: 'php_libs/soporte/recibe-fileinput.php',
+        allowedFileExtensions: tiposPermitidos,
+        minFileCount: 1,
+        maxFileCount: 10,
+        overwriteInitial: false,
+        showUpload: true,
+        showRemove: true,
+        removeFromPreviewOnError: true,
+        preferIconicPreview: true,
+        previewFileIconSettings: {
+          'xlsx': '<i class="fas fa-file-excel text-success fa-2x"></i>',
+          'xls': '<i class="fas fa-file-excel text-success fa-2x"></i>'
+        }
+      });
+
+      $('#file-es').on('filebatchuploadsuccess', function(event, data) {
+        toastr.success('Archivos subidos correctamente.', 'Sistema');
+        cargarListaArchivos();
+      });
+
+      // 3. Manejo de Opciones de Tipo de Hoja y Selects Dinámicos
+      $("input[name=customHoja]").on('change', function() {
+        var valorCheck = $(this).val();
+        var $modalidad = $("#lstmodalidad");
+        var $periodo = $("#lstperiodo");
+        var $parvularia = $("#lstparvulariagrado");
+        var $containerParvularia = $("#ParvulariaGrados");
+
+        $modalidad.empty();
+        $periodo.empty();
+
+        if (valorCheck === "Promedios") {
+          $containerParvularia.fadeIn();
+          $modalidad.append('<option value="01" selected>Educación Inicial y Parvularia</option>')
+                    .append('<option value="02">Educación Básica</option>')
+                    .append('<option value="03">Educación Media</option>');
+          
+          actualizarCombosPromedios($modalidad.val());
+        } else if (valorCheck === "Calculo" || valorCheck === "Actualizar") {
+          $containerParvularia.fadeOut();
+          $modalidad.append('<option value="02" selected>Educación Básica</option>')
+                    .append('<option value="03">Educación Media</option>')
+                    .append('<option value="04">Educación Básica y Media (Nocturna)</option>');
+          
+          actualizarCombosCalculo($modalidad.val());
+        }
+      });
+
+      $("#lstmodalidad").on('change', function() {
+        var valorCheck = $("input[name=customHoja]:checked").val();
+        if (valorCheck === "Promedios") {
+          actualizarCombosPromedios($(this).val());
+        } else {
+          actualizarCombosCalculo($(this).val());
+        }
+      });
+
+      function actualizarCombosPromedios(modalidad) {
+        var $periodo = $("#lstperiodo");
+        var $parvularia = $("#lstparvulariagrado");
+        $periodo.empty();
+        $parvularia.empty();
+
+        if (modalidad === "01") {
+          $("#ParvulariaGrados").show();
+          $parvularia.append('<option value="I3" selected>Educación Inicial 3 años</option>')
+                     .append('<option value="4P">Sección 4 años</option>')
+                     .append('<option value="5P">Sección 5 años</option>')
+                     .append('<option value="6P">Sección 6 años</option>');
+          $("label[for='lstperiodo']").text("Trimestre");
+          $periodo.append('<option value="Trimestre 1" selected>Trimestre 1</option>')
+                  .append('<option value="Trimestre 2">Trimestre 2</option>')
+                  .append('<option value="Trimestre 3">Trimestre 3</option>');
+        } else if (modalidad === "02") {
+          $("#ParvulariaGrados").show();
+          $parvularia.append('<option value="EB-Notas-CC" selected>Educación Básica - Notas y CC</option>');
+          $("label[for='lstperiodo']").text("Trimestre");
+          $periodo.append('<option value="Trimestre 1" selected>Trimestre 1</option>')
+                  .append('<option value="Trimestre 2">Trimestre 2</option>')
+                  .append('<option value="Trimestre 3">Trimestre 3</option>');
+        } else if (modalidad === "03") {
+          $("#ParvulariaGrados").show();
+          $parvularia.append('<option value="EM-CC" selected>Educación Media - Convivencia Ciudadana</option>');
+          $("label[for='lstperiodo']").text("Período");
+          $periodo.append('<option value="Periodo 1" selected>Período 1</option>')
+                  .append('<option value="Periodo 2">Período 2</option>')
+                  .append('<option value="Periodo 3">Período 3</option>')
+                  .append('<option value="Periodo 4">Período 4</option>');
+        }
+      }
+
+      function actualizarCombosCalculo(modalidad) {
+        var $periodo = $("#lstperiodo");
+        $periodo.empty();
+        $("label[for='lstperiodo']").text("Período / Trimestre");
+
+        $periodo.append('<option value="P1" selected>Período / Trimestre 1</option>')
+                .append('<option value="P2">Período / Trimestre 2</option>')
+                .append('<option value="P3">Período / Trimestre 3</option>');
+
+        if (modalidad === "03" || modalidad === "04") {
+          $periodo.append('<option value="P4">Período 4</option>');
+        }
+        if (modalidad === "04") {
+          $periodo.append('<option value="P5">Período 5</option>');
+        }
+        $periodo.append('<option value="Recuperacion">Recuperación</option>');
+      }
     });
-    $(document).ajaxError(function () {
-        $('#myModal').modal('hide');
-    });   
-});
-</script>
+  </script>
 {% endblock %}
 
 {% block contenidos %}
-<!-- Content Wrapper. Contains page content -->
-<div class="content-wrapper">
-  <!-- Content Header (Page header) -->
-  <section class="content-header p-0">
+<div class="content-wrapper bg-light">
+  
+  <!-- Content Header -->
+  <section class="content-header py-3 px-3">
     <div class="container-fluid">
-      <div class="row mb-1">
-        <div class="col">
-          <ol class="breadcrumb float-sm-right">
-            <li class="breadcrumb-item"><a href="index.php">Home</a></li>
-            <li class="breadcrumb-item active">Calificaciones (Importar de Docentes)</li>
+      <div class="row align-items-center">
+        <div class="col-sm-6">
+          <h1 class="h4 mb-0 text-dark fw-bold">
+            <i class="fas fa-file-import text-primary me-2"></i>Calificaciones (Importar de Docentes)
+          </h1>
+        </div>
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-end bg-transparent p-0 mb-0 small">
+            <li class="breadcrumb-item"><a href="index.php">Inicio</a></li>
+            <li class="breadcrumb-item active">Importar Calificaciones</li>
           </ol>
         </div>
       </div>
-    </div><!-- /.container-fluid -->
+    </div>
   </section>
+
   <!-- Main content -->
-  <section class="content">
+  <section class="content px-3">
     <div class="container-fluid">
-      <div class="tab-content"> <!-- VALIDATE DE TODO EL DIV PARA LOS DIFERENTES INPUT'S -->
-        <div class="row">
-          <div class="col">
-            <div class="card">
-              <div class="card-header bg-gradient-navy">
-                <h3 class="card-title">
-                  Calificaciones (Importar de Docentes)</h3>
-              </div>
-              <!-- /.card-header -->
-              <div class="card-body">
-                <!-- Nav tabs -->
-                <div class="container h-100 py-2">
-                  <ul class="nav nav-tabs border-0" id="myTab" role="list">
-                    <li class="nav-item">
-                        <a class="nav-link active border border-primary border-bottom-0" id="home-tab" data-bs-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Subir Archivo(s)</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link border border-warning border-bottom-0" id="archivos-tab" data-bs-toggle="tab" href="#archivos" role="tab" aria-controls="archivos" aria-selected="false">Importar</a>
-                    </li>
-                  </ul>
-                  <!-- Tab panes -->
-                  <div class="tab-content h-75">
-                    <div class="tab-pane h-100 p-2 active border border-primary" id="home" role="tabpanel" aria-labelledby="home-tab">
-                          <!-- MODAL BODY ROW 
-                          --><div class="modal-body row">
-                            <div class="col">
-                                <div class="file-loading">
-                                    <input id="file-es" name="file-es[]" type="file" multiple accept="image" title="Imagen">
-                                </div>
-                                <small class="form-text text-muted">Seleccionar archivos de Office 201X: xlsx hasta un máximo de 5.</small>
-                                <p>&nbsp;</p>
-                                <div class="alert alert-success" role="alert"></div>
-                          </div>
-                          </div>
+      
+      <!-- CARD CONTENEDOR PRINCIPAL -->
+      <div class="card shadow-sm border-0 rounded-3">
+        <div class="card-header bg-gradient-navy text-white d-flex align-items-center justify-content-between py-2">
+          <h5 class="card-title mb-0 fs-6 fw-semibold">
+            <i class="fas fa-tasks me-2"></i>Módulo de Carga e Importación de Calificaciones
+          </h5>
+        </div>
+
+        <div class="card-body p-3">
+          
+          <!-- PESTAÑAS / NAV TABS -->
+          <ul class="nav nav-tabs border-bottom mb-3" id="importarTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+              <button class="nav-link active d-flex align-items-center gap-2" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab">
+                <i class="fas fa-cloud-upload-alt"></i> 1. Subir Archivos Excel
+              </button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link d-flex align-items-center gap-2" id="archivos-tab" data-bs-toggle="tab" data-bs-target="#archivos" type="button" role="tab">
+                <i class="fas fa-cogs"></i> 2. Procesar e Importar
+              </button>
+            </li>
+          </ul>
+
+          <div class="tab-content" id="importarTabsContent">
+            
+            <!-- TAB 1: SUBIR ARCHIVOS -->
+            <div class="tab-pane fade show active p-2" id="home" role="tabpanel">
+              <div class="row">
+                <div class="col-12">
+                  <div class="alert alert-info border-0 shadow-sm d-flex align-items-center gap-3 mb-3">
+                    <i class="fas fa-info-circle fa-2x text-info"></i>
+                    <div class="small">
+                      Seleccione los libros de cálculo en formato <strong>.XLSX</strong> o <strong>.XLS</strong> provistos por los docentes. Puede seleccionar múltiples archivos simultáneamente para procesarlos en lote.
                     </div>
-                    <!-- ******************************************************************************************************************* -->
-                    <!-- ******************************************************************************************************************* -->
-                    <div class="tab-pane h-100 p-3 border border-warning" id="archivos" role="tabpanel" aria-labelledby="archivos-tab">
-                      <form id="formArchivo" role="form" name="formArchivo">
-                        <div class="modal-body row">
-                          <div class="col-md-6">
-                            <div class="form-group">
-                            <div class="row">
-                              <div class="col-12">
-                                <label>Seleccione Hoja de Cálculo - Calificaciones de Docentes</label>
-                              </div>
-                              
-                              <div class="col-12">
-                                <!-- radio -->
-                                <div class="form-group">
-                                  <div class="custom-control custom-radio">
-                                    <input class="custom-control-input" type="radio" id="TipoHoja1" name="customHoja" value="Promedios">
-                                    <label for="TipoHoja1" class="custom-control-label">Sólo Promedios (Cuadro de Notas)</label>
-                                  </div>
-                                  <div class="custom-control custom-radio">
-                                    <input class="custom-control-input" type="radio" id="TipoHoja2" name="customHoja" value="Calculo">
-                                    <label for="TipoHoja2" class="custom-control-label">Cálculo de Promedios (Contiene el Nombre del Docente)</label>
-                                  </div>
-                                  <div class="custom-control custom-radio">
-                                      <input class="custom-control-input" type="radio" id="TipoHoja3" name="customHoja" value="Actualizar">
-                                      <label for="TipoHoja3" class="custom-control-label">Actualizar Asignaturas Pendientes</label>
-                                    </div>
-                                </div>
-                              </div>
-                            </div>
-                            </div>
-                            <!-- BOTON DE ACTUALIZAR ARCHIVOS Y BARRA DE PROGRESO. -->
-                            <div class="modal-body row">
-                            <div class="col-md-12">
-                              <div>
-                              <button type="button" id="goActualizarDirectorio" class="btn btn-success">
-                                  <span class="fas fa-list"></span> Actualizar Archivos del Directorio ../files/
-                              </button>
-                              </div>
-                              
-                            </div>
-                            </div>
+                  </div>
+                  <div class="file-loading">
+                    <input id="file-es" name="file-es[]" type="file" multiple accept=".xlsx, .xls">
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- TAB 2: CONFIGURACIÓN E IMPORTACIÓN -->
+            <div class="tab-pane fade p-2" id="archivos" role="tabpanel">
+              <form id="formArchivo" name="formArchivo" role="form">
+                
+                <!-- SECCIÓN DE CONFIGURACIÓN DE HOJA -->
+                <div class="row g-3 mb-4">
+                  
+                  <!-- COLUMNA 1: TIPO DE HOJA DE CÁLCULO -->
+                  <div class="col-lg-6">
+                    <div class="card h-100 border rounded-2 card-accent-primary shadow-sm">
+                      <div class="card-body p-3">
+                        <h6 class="fw-bold text-primary mb-3">
+                          <i class="fas fa-list-check me-2"></i>Tipo de Hoja de Cálculo a Procesar
+                        </h6>
+                        
+                        <div class="d-flex flex-column gap-2">
+                          <div class="form-check p-2 rounded-2 border bg-light">
+                            <input class="form-check-input ms-1" type="radio" id="TipoHoja1" name="customHoja" value="Promedios" checked>
+                            <label for="TipoHoja1" class="form-check-label fw-semibold ms-2">
+                              Sólo Promedios <span class="badge bg-secondary ms-1">Cuadro de Notas</span>
+                            </label>
                           </div>
-                            <!-- SEGUNDA COLUMNA DE SELECCIÓN. -->
-                          <div class="col-md-6">
-                            <!-- AGREGAR AL SELECT SEGÚN CONDICIÓN. -->
-                            <div class="row">
-                            <div class="col-12">
-                              <!-- / MODALIDAD -->
-                              <div class="form-group row">
-                                <label class="col-sm-4 col-form-label" for="lstmodalidad">Modalidad</label>
-                                <div class="col-sm-6">
-                                  <select id="lstmodalidad" name="lstmodalidad" class="custom-select"></select>
-                                </div>
-                              </div>
-                              <!-- /  -->
-                              <div class="form-group row" style="display: none;" id="ParvulariaGrados">
-                                <label class="col-sm-4 col-form-label" for="lstparvulariagrado">Parvularia o Grado</label>
-                                <div class="col-sm-6">
-                                  <select id="lstparvulariagrado" name="lstparvulariagrado" class="custom-select"></select>
-                                </div>
-                              </div>
-                              <!-- / PRIODO O TRIMESTRE. -->
-                              <div class="form-group row">
-                                <label class="col-sm-4 col-form-label" for="lstperiodo">Trimestre</label>
-                                <div class="col-sm-6">
-                                  <select id="lstperiodo" name="lstperiodo" class="custom-select"></select>
-                                </div>
-                              </div>
-                            </div>
-                            </div>
+
+                          <div class="form-check p-2 rounded-2 border bg-light">
+                            <input class="form-check-input ms-1" type="radio" id="TipoHoja2" name="customHoja" value="Calculo">
+                            <label for="TipoHoja2" class="form-check-label fw-semibold ms-2">
+                              Cálculo de Promedios <span class="badge bg-info text-dark ms-1">Nombre Docente Integrado</span>
+                            </label>
+                          </div>
+
+                          <div class="form-check p-2 rounded-2 border bg-light">
+                            <input class="form-check-input ms-1" type="radio" id="TipoHoja3" name="customHoja" value="Actualizar">
+                            <label for="TipoHoja3" class="form-check-label fw-semibold ms-2">
+                              Actualizar Asignaturas Pendientes
+                            </label>
                           </div>
                         </div>
-                      </form>
-                      <div class="modal-body row">
-                        <div class="col">
-                            <!-- TABLA CON LOS DATOS DE LOS ARCHIVOS SUBIDOS. -->  
-                            <table id="listadoArchivo" class="table table-striped table-bordered table-hover table-condensed">
-                              <thead>
-                                <tr>
-                                <th>Nombre de Archivos</th>
-                                <th colspan="2">Acción</th>
-                                </tr>
-                              </thead>
-                                <tbody id="listaArchivosOK">
-                              
-                                </tbody>                            
-                              <tfoot>
-                              </tfoot>
-                          </table>
-                      </div>
+
+                        <div class="mt-3 pt-2 border-top d-flex justify-content-between align-items-center">
+                          <button type="button" id="goActualizarDirectorio" class="btn btn-sm btn-outline-primary">
+                            <i class="fas fa-sync-alt me-1"></i> Refrescar Lista de Archivos
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div> 
-              <div class="card-footer">
-                <div id="MensajeImportar">
-                  <label class="text-sucess bg-cyan">?..?</label>
+
+                  <!-- COLUMNA 2: FILTROS / ACADÉMICOS -->
+                  <div class="col-lg-6">
+                    <div class="card h-100 border rounded-2 card-accent-success shadow-sm">
+                      <div class="card-body p-3">
+                        <h6 class="fw-bold text-success mb-3">
+                          <i class="fas fa-sliders-h me-2"></i>Parámetros Académicos
+                        </h6>
+
+                        <div class="mb-3">
+                          <label class="form-label small fw-semibold" for="lstmodalidad">Modalidad / Nivel</label>
+                          <select id="lstmodalidad" name="lstmodalidad" class="form-select form-select-sm"></select>
+                        </div>
+
+                        <div class="mb-3" style="display: none;" id="ParvulariaGrados">
+                          <label class="form-label small fw-semibold" for="lstparvulariagrado">Parvularia o Grado</label>
+                          <select id="lstparvulariagrado" name="lstparvulariagrado" class="form-select form-select-sm"></select>
+                        </div>
+
+                        <div class="mb-2">
+                          <label class="form-label small fw-semibold" for="lstperiodo">Trimestre / Período</label>
+                          <select id="lstperiodo" name="lstperiodo" class="form-select form-select-sm"></select>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                </div> <!-- /.row -->
+
+                <!-- TABLA DE ARCHIVOS SUBIDOS -->
+                <div class="card border rounded-2 shadow-sm mb-4">
+                  <div class="card-header bg-light py-2">
+                    <h6 class="mb-0 fw-bold small text-secondary">
+                      <i class="fas fa-folder-open me-2"></i>Archivos Disponibles para Importación
+                    </h6>
+                  </div>
+                  <div class="table-responsive">
+                    <table id="listadoArchivo" class="table table-hover table-striped align-middle mb-0 small">
+                      <thead class="table-dark">
+                        <tr>
+                          <th>Nombre del Archivo</th>
+                          <th style="width: 150px;" class="text-center">Acciones</th>
+                        </tr>
+                      </thead>
+                      <tbody id="listaArchivosOK">
+                        <!-- Carga dinámica vía AJAX -->
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+              </form>
+
+              <!-- RESUMEN DE CAMBIOS Y ESTADÍSTICAS PROCESADAS -->
+              <div id="seccionResumenImportacion" class="mt-4" style="display: none;">
+                <h6 class="fw-bold text-dark border-bottom pb-2 mb-3">
+                  <i class="fas fa-chart-pie me-2 text-primary"></i>Resumen de Impacto por Grado y Sección
+                </h6>
+
+                <!-- KPIs -->
+                <div class="row g-3 mb-3">
+                  <div class="col-md-3 col-6">
+                    <div class="p-3 bg-white border rounded-2 shadow-sm kpi-card border-start border-4 border-primary">
+                      <div class="text-muted small">Registros Procesados</div>
+                      <div class="fs-4 fw-bold text-dark" id="kpiTotalProcesados">0</div>
+                    </div>
+                  </div>
+                  <div class="col-md-3 col-6">
+                    <div class="p-3 bg-white border rounded-2 shadow-sm kpi-card border-start border-4 border-success">
+                      <div class="text-muted small">Modificados / Actualizados</div>
+                      <div class="fs-4 fw-bold text-success" id="kpiTotalModificados">0</div>
+                    </div>
+                  </div>
+                  <div class="col-md-3 col-6">
+                    <div class="p-3 bg-white border rounded-2 shadow-sm kpi-card border-start border-4 border-info">
+                      <div class="text-muted small">Secciones Afectadas</div>
+                      <div class="fs-4 fw-bold text-info" id="kpiTotalSecciones">0</div>
+                    </div>
+                  </div>
+                  <div class="col-md-3 col-6">
+                    <div class="p-3 bg-white border rounded-2 shadow-sm kpi-card border-start border-4 border-danger">
+                      <div class="text-muted small">Inconsistencias / Errores</div>
+                      <div class="fs-4 fw-bold text-danger" id="kpiTotalErrores">0</div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- DESGLOSE POR GRADO Y SECCIÓN -->
+                <div class="card border rounded-2 shadow-sm">
+                  <div class="card-header bg-light py-2">
+                    <span class="fw-semibold small">Detalle de Modificaciones por Grado / Sección</span>
+                  </div>
+                  <div class="table-responsive">
+                    <table class="table table-sm table-bordered align-middle mb-0 small">
+                      <thead class="bg-light">
+                        <tr>
+                          <th>Grado y Sección</th>
+                          <th>Asignatura</th>
+                          <th class="text-center">Notas Modificadas</th>
+                          <th class="text-center">Estado</th>
+                        </tr>
+                      </thead>
+                      <tbody id="tblDetalleResumenGradoseccion">
+                        <!-- Filas dinámicas del procesamiento -->
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
               </div>
-              </div>
-            </div>
-          </div> <!-- /.card -->
-          <!-- /.card-footer -->
-        </div> <!-- /.col -->
-      </div> <!-- /. tab-content-->
-    </div> <!-- /.Content Wrapper. Caontains page content -->
+
+            </div> <!-- /.tab-pane archivos -->
+
+          </div> <!-- /.tab-content -->
+
+        </div> <!-- /.card-body -->
+
+        <div class="card-footer bg-light py-2 px-3">
+          <div id="MensajeImportar" class="d-flex align-items-center justify-content-between">
+            <span class="badge bg-secondary px-3 py-2 fs-6 fw-normal" id="lblEstadoProceso">Esperando selección de archivos...</span>
+          </div>
+        </div>
+
+      </div> <!-- /.card -->
+
+    </div>
   </section>
 </div>
-<!-- Modal -->
-<div id="myModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static" 
-  data-keyboard="false">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel"><label for="VerificarActualizar"></label></h5>
+
+<!-- MODAL BARRA DE PROGRESO DE PROCESAMIENTO -->
+<div id="myModal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content shadow-lg border-0">
+      
+      <div class="modal-header bg-gradient-navy text-white py-2 px-3">
+        <h6 class="modal-title mb-0 d-flex align-items-center gap-2">
+          <i class="fas fa-spinner fa-spin"></i>
+          <span>Procesando Importación de Calificaciones</span>
+        </h6>
       </div>
-      <div class="modal-body">
-        <div class="d-flex justify-content-center mb-3">
-          <img src="img/carpeta01.gif" width="45" height="45" alt="Loading..." id="imagenGif">
+
+      <div class="modal-body p-4 text-center">
+        <p class="fw-semibold text-secondary mb-2" id="lblProgresoArchivo">Leyendo libro de cálculo...</p>
+        
+        <!-- BARRA DE PROGRESO BS5 -->
+        <!-- Dentro de tu Modal -->
+        <div class="progress mt-3">
+          <div id="barraProgreso" class="progress-bar progress-bar-striped progress-bar-animated bg-success" 
+              role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
         </div>
+
+        <small class="text-muted d-block" id="lblProgresoDetalle">Por favor, no cierre esta ventana mientras se realiza la inserción en la base de datos.</small>
       </div>
-      <div class="modal-footer">
-        <label for="NombreArchivo">Nombre del Archivo.</label>
+
+      <div class="modal-footer bg-light py-2 px-3 d-flex justify-content-between">
+        <span class="small text-muted fw-semibold" id="NombreArchivo">Procesando...</span>
       </div>
+
     </div>
   </div>
-</div>  
+</div>
 {% endblock %}
 
 {% block menu %}
-<!-- plantilla que contiene el menú principal. -->
-		{% include 'layout-menu.html' %}
-{% endblock %}
-
-{% block loginUser %}
-<!--	{% include 'layout-login-user.html' %} -->
+  {% include 'layout-menu.html' %}
 {% endblock %}

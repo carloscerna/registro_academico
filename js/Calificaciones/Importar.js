@@ -91,25 +91,71 @@ $('body').on('click','#listaArchivosOK a',function (e)
 						url_archivo_data = true;
 						console.log(url_archivo_data);
 						// Comenzar el proceso del AJAX PARA EL NUEVO ARCHIVO.
-						// alert(url_archivo);
-							$.ajax({
-								cache: false,		
-								type: "POST",		
-								dataType: "json",		
-								url: url_archivo,		
-								data: "nombre_archivo_=" + nombre_archivo + "&periodo_=" + periodo + "&valor_check=" + valor_check + "&grado=" + grado + "&modalidad=" + modalidad + "&id=" + Math.random(),		
-								success: function(data){		
-								// validar		
-									if (data[0].registro == "Si_registro") {		
-										toastr.success("Hoja de Calculo Actualizada.");
-										$('#MensajeImportar').empty();
-                                        $('#MensajeImportar').append("<label 'class=text-black bg-default'>Archivo Actualizado: "+data[0].nombre_archivo+"</label>");
-									}		
-								},		
-								error:function(){		
-									toastr.error(":(");		
+
+						// Antes de lanzar el AJAX de actualización:
+						var porcentaje = 0;
+						$("label[for='VerificarActualizar']").text("Leyendo libro de cálculo...");
+						$("#barraProgreso").css("width", "10%").text("10%").attr("aria-valuenow", 10);
+
+						// Timer para simular el avance de lectura mientras PHP procesa
+						var animacionProgreso = setInterval(function() {
+							if (porcentaje < 85) {
+								porcentaje += 15;
+								$("#barraProgreso").css("width", porcentaje + "%").text(porcentaje + "%").attr("aria-valuenow", porcentaje);
+								
+								if (porcentaje >= 40 && porcentaje < 70) {
+									$("label[for='VerificarActualizar']").text("Calculando promedios y procesando notas...");
+								} else if (porcentaje >= 70) {
+									$("label[for='VerificarActualizar']").text("Actualizando registros en la base de datos...");
+								}
+							}
+						}, 400); // Avanza cada 400ms
+						// Ejecutar AJAX de importación
+						$.ajax({
+							cache: false,		
+							type: "POST",		
+							dataType: "json",		
+							url: url_archivo,		
+							data: "nombre_archivo_=" + nombre_archivo + "&periodo_=" + periodo + "&valor_check=" + valor_check + "&grado=" + grado + "&modalidad=" + modalidad + "&id=" + Math.random(),		
+							success: function(data){		
+								// Detener la animación programada
+								clearInterval(animacionProgreso);
+
+								if (data && data[0] && data[0].registro == "Si_registro") {		
+									// Llevar la barra inmediatamente al 100%
+									$("#barraProgreso").css("width", "100%").text("100%").attr("aria-valuenow", 100);
+									$("label[for='VerificarActualizar']").text("¡Importación completada!");
+
+									toastr.success("Hoja de Cálculo Actualizada.");
+
+									// Esperar medio segundo para que el usuario vea el 100% y luego cerrar el modal
+									setTimeout(function(){
+										$('#myModal').modal('hide');
+										// Resetear barra para la próxima
+										$("#barraProgreso").css("width", "0%").text("0%");
+									}, 800);
+
+									// Imprimir el resumen al fondo
+									$('#MensajeImportar').empty();
+									var totalActualizados = Object.keys(data).length - 1;
+
+									var htmlResumen = "<div class='alert alert-success mt-2'>";
+									htmlResumen += "<strong>Archivo Procesado:</strong> " + data[0].nombre_archivo + "<br>";
+									htmlResumen += "<strong>Total de registros actualizados:</strong> " + totalActualizados + " alumnos.";
+									htmlResumen += "</div>";
+
+									$('#MensajeImportar').append(htmlResumen);
+								} else {
+									$('#myModal').modal('hide');
+									toastr.error("No se pudo procesar el archivo.");
 								}		
-							}); // Cierre de Ajax. QUE TIENE EL NOMBRE DEL ARCHIVO A ACTUALIZAR.
+							},		
+							error: function(){		
+								clearInterval(animacionProgreso);
+								$('#myModal').modal('hide');
+								toastr.error("Ocurrió un fallo durante la actualización.");		
+							}		
+						});
 					}
 				},		
 				error:function(){		
