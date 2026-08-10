@@ -172,7 +172,7 @@ while ($row = $result->fetch(PDO::FETCH_BOTH)) {
 
     // Configurar color de relleno suave cuando $fill es true
     if ($fill) {
-        $pdf->SetFillColor(240, 244, 248); // Azul/Gris muy suave y legible
+        $pdf->SetFillColor(217, 226, 245); // Azul/Gris muy suave y legible
     } else {
         $pdf->SetFillColor(255, 255, 255); // Blanco
     }
@@ -208,7 +208,7 @@ if ($lineas_restantes < 25 && $lineas_restantes > 0) {
         $i++;
 
         if ($fill) {
-            $pdf->SetFillColor(217, 226, 236);
+            $pdf->SetFillColor(217, 226, 245);
         } else {
             $pdf->SetFillColor(255, 255, 255);
         }

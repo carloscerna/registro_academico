@@ -12,35 +12,35 @@ var msjEtiqueta = "";
 $(function(){
 
     // INVISILBLE TODOS LOS MENSAJES.
-    $("#AlertDN").css("display", "none");
+    $("#AlertModalidad").css("display", "none");
 
     // OPCIONES PARA EL TAB NAV
     $(document).ready(function () {
-        var miselect = $("#lstAnnLectivoDN");
+        var miselect = $("#lstAnnLectivoModalidad");
         
         // Cargar Año Lectivo primero
         cargarOpciones(miselect, "includes/cargar-ann-lectivo.php");
 
         // CUANDO EL VALOR DE ANNLECTIVO CAMBIA.
-        var miselect2 = $("#lstModalidadDN");
+        var miselect2 = $("#lstModalidadModalidad");
         $(miselect).change(function() {
             let idAnnLectivo = $(this).val();
             cargarOpcionesDependiente(miselect2, "includes/cargar-bachillerato.php", { annlectivo: idAnnLectivo });
         });
 
         // CUANDO EL VALOR DE NIVEL O MODALIDAD CAMBIE.
-        $("#lstModalidadDN").change(function () {
+        $("#lstModalidadModalidad").change(function () {
             var modalidad = $(this).val();
 
             if (modalidad == "00") {
                 // borrar el contenido de la Tabla.
-                $('#listaContenidoDN').empty();
+                $('#listaContenidoModalidad').empty();
                 // limpiar selects
                 $("#lstDocenteNivel").empty();
                 $("#lstTurnoDN").empty();
             } else {
                 // borrar el contenido de la Tabla.
-                $('#listaContenidoDN').empty();
+                $('#listaContenidoModalidad').empty();
 
                 // LISTAR PARA EL SERVIICO EDUCATIVO - COMPONENTES DE ESTUDIOS (DOCENTES)
                 var miselectDocente = $("#lstDocenteNivel");
@@ -77,21 +77,21 @@ $(function(){
             var TextoTab = $(this).text();
             if (TextoTab == "Docente/Nivel") {
                 // Borrar información de la Tabla.
-                $('#listaContenidoDN').empty();
-                $("#AlertDN").css("display", "none");
+                $('#listaContenidoModalidad').empty();
+                $("#AlertModalidad").css("display", "none");
                 // Select a 00...
-                $("#lstAnnLectivoDN").val('00');
-                $("#lstModalidadDN").val('00');
+                $("#lstAnnLectivoModalidad").val('00');
+                $("#lstModalidadModalidad").val('00');
             }
         });
 
         // BUSCAR REGISTROS (HORARIOS CREADAS)
-        $('#lstAnnLectivoDN').on('change', function() {
-            $("#AlertDN").css("display", "none");
+        $('#lstAnnLectivoModalidad').on('change', function() {
+            $("#AlertModalidad").css("display", "none");
         });
 
-        $('#lstModalidadDN').on('change', function() {
-            $("#AlertDN").css("display", "none");
+        $('#lstModalidadModalidad').on('change', function() {
+            $("#AlertModalidad").css("display", "none");
         });
 
         // Funcionalidad del botón que abre / cierra el formulario modal
@@ -104,7 +104,7 @@ $(function(){
     });
 
     // BLOQUE EXTRAER INFORMACIÓN DE LOS REGISTROS
-    $('body').on('click', '#listaContenidoDN a', function (e) {
+    $('body').on('click', '#listaContenidoModalidad a', function (e) {
         e.preventDefault();
         
         Id_Editar_Eliminar = $(this).attr('href');
@@ -118,8 +118,8 @@ if (accion_ok == 'EditarDN') {
     var id_ = $(this).parent().parent().children('td:eq(2)').text();
     
     $.post("php_libs/soporte/Mantenimiento/Organizacion Asignacion/phpAjaxOrganizacionAsignacion.php", { id_: id_, accion: accion }, function(data) {
-        var texto_annlectivo_dn = $("#lstAnnLectivoDN option:selected").html();
-        var texto_modalidad_dn = $("#lstModalidadDN option:selected").html();
+        var texto_annlectivo_dn = $("#lstAnnLectivoModalidad option:selected").html();
+        var texto_modalidad_dn = $("#lstModalidadModalidad option:selected").html();
         
         // CORRECCIÓN AQUÍ: Apuntar a los valores visibles del modal
         $("#valAnnLectivoDN").text(texto_annlectivo_dn);
@@ -177,7 +177,7 @@ if (accion_ok == 'EditarDN') {
                                     } else {
                                         toastr["warning"]('Registros No Encontrados', "Sistema");
                                     }
-                                    $('#listaContenidoDN').empty().append(response.contenido);
+                                    $('#listaContenidoModalidad').empty().append(response.contenido);
                                 }, "json");
                             }
                         }                     
@@ -207,19 +207,19 @@ if (accion_ok == 'EditarDN') {
     });	
 
     // ACCIÓN BUSCAR
-    $('#goBuscarDN').on('click', function(){
-        codigo_annlectivo = $("#lstAnnLectivoDN").val();
-        codigo_modalidad = $("#lstModalidadDN").val();
-        accion = 'BuscarDN';
+    $('#goBuscarModalidad').on('click', function(){
+        codigo_annlectivo = $("#lstAnnLectivoModalidad").val();
+        codigo_modalidad = $("#lstModalidadModalidad").val();
+        accion = 'BuscarModalidad';
 
         if (codigo_annlectivo == "00") {
-            $("#AlertDN").css("display", "block");
-            $("#TextoAlertDN").text("Debe Seleccionar Año Lectivo para Buscar.");
+            $("#AlertModalidad").css("display", "block");
+            $("#TextoAlertModalidad").text("Debe Seleccionar Año Lectivo para Buscar.");
             return;
         }
         if (codigo_modalidad == "00") {
-            $("#AlertDN").css("display", "block");
-            $("#TextoAlertDN").text("Debe Seleccionar la Modalidad para Buscar.");
+            $("#AlertModalidad").css("display", "block");
+            $("#TextoAlertModalidad").text("Debe Seleccionar la Modalidad para Buscar.");
             return;
         }
 
@@ -229,14 +229,14 @@ if (accion_ok == 'EditarDN') {
             } else {
                 toastr["error"]('Registros No Encontrados', "Sistema");
             }
-            $('#listaContenidoDN').empty().append(response.contenido);
+            $('#listadoContenidoModalidad').empty().append(response.contenido);
         }, "json");
     });
 
     // ACCIÓN GUARDAR
-    $('#goGuardarDN').on('click', function(){
-        codigo_annlectivo = $("#lstAnnLectivoDN").val();
-        codigo_modalidad = $("#lstModalidadDN").val();
+    $('#goGuardarModalidad').on('click', function(){
+        codigo_annlectivo = $("#lstAnnLectivoModalidad").val();
+        codigo_modalidad = $("#lstModalidadModalidad").val();
         var codigo_dn = $("#lstDocenteNivel").val();
         var codigo_turno = $("#lstTurnoDN").val();
         
@@ -244,23 +244,23 @@ if (accion_ok == 'EditarDN') {
         $('#accion_dn').val('GuardarDN');
 
         if (codigo_annlectivo == "00") {
-            $("#AlertDN").css("display", "block");
-            $("#TextoAlertDN").text("Debe Seleccionar un Año Lectivo para Guardar un Nivel.");
+            $("#AlertModalidad").css("display", "block");
+            $("#TextoAlertModalidad").text("Debe Seleccionar un Año Lectivo para Guardar un Nivel.");
             return;
         }
         if (codigo_modalidad == "00") {
-            $("#AlertDN").css("display", "block");
-            $("#TextoAlertDN").text("Debe Seleccionar un Nivel para Guardar.");
+            $("#AlertModalidad").css("display", "block");
+            $("#TextoAlertModalidad").text("Debe Seleccionar un Nivel para Guardar.");
             return;
         }
         if (codigo_turno == "00" || !codigo_turno) {
-            $("#AlertDN").css("display", "block");
-            $("#TextoAlertDN").text("Debe Seleccionar un Turno para Guardar.");
+            $("#AlertModalidad").css("display", "block");
+            $("#TextoAlertModalidad").text("Debe Seleccionar un Turno para Guardar.");
             return;
         }
         if (codigo_dn == "00" || !codigo_dn) {
-            $("#AlertDN").css("display", "block");
-            $("#TextoAlertDN").text("Debe Seleccionar un Docente para Guardar.");
+            $("#AlertModalidad").css("display", "block");
+            $("#TextoAlertModalidad").text("Debe Seleccionar un Docente para Guardar.");
             return;
         }
 
@@ -268,18 +268,18 @@ if (accion_ok == 'EditarDN') {
     });
 
     // ACCIÓN ACTUALIZAR
-    $('#goActualizarDN').on('click', function(){
-        codigo_annlectivo = $("#lstAnnLectivoDN").val();
-        codigo_modalidad = $("#lstModalidadDN").val();
+    $('#goActualizarModalidad').on('click', function(){
+        codigo_annlectivo = $("#lstAnnLectivoModalidad").val();
+        codigo_modalidad = $("#lstModalidadModalidad").val();
         
-        accion = 'ActualizarDN';
+        accion = 'ActualizarModalidad';
         $('#accion_dn').val('ActualizarDN');
 
         $('#formVentanaDN').submit();
     });
 
     // VALIDACIÓN Y ENVÍO DEL FORMULARIO MODAL (ACTUALIZAR)
-    $('#formVentanaDN').validate({
+    $('#formVentanaModalidad').validate({
         ignore: "",
         rules: {
             lstDocenteNivel: { required: true },
@@ -329,7 +329,7 @@ if (accion_ok == 'EditarDN') {
                             } else {
                                 toastr["warning"]('Registros No Encontrados', "Sistema");
                             }
-                            $('#listaContenidoDN').empty().append(response.contenido);
+                            $('#listaContenidoModalidad').empty().append(response.contenido);
                         }, "json");
                     }               
                 },
@@ -338,10 +338,10 @@ if (accion_ok == 'EditarDN') {
     });
 
     // VALIDACIÓN Y ENVÍO DEL FORMULARIO PRINCIPAL (GUARDAR)
-    $('#FormDN').validate({
+    $('#FormModalidad').validate({
         ignore: "",
         rules: {
-            lstAnnLectivoDN: { required: true },
+            lstAnnLectivoModalidad: { required: true },
         },
         errorElement: "em",
         errorPlacement: function (error, element) {
@@ -384,7 +384,7 @@ if (accion_ok == 'EditarDN') {
                             } else {
                                 toastr["warning"]('Registros No Encontrados', "Sistema");
                             }
-                            $('#listaContenidoDN').empty().append(response.contenido);
+                            $('#listaContenidoModalidad').empty().append(response.contenido);
                         }, "json");
                     }               
                 },

@@ -1,5 +1,5 @@
 <?php
-// <-- VERSIÓN REFACTORIZADA Y SEGURA: Asistenciax30cuadros.php -->
+// <-- VERSIÓN REFACTORIZADA: Control de Punteo (30 Cuadros) -->
 
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
@@ -14,7 +14,7 @@ define('FILAS_POR_PAGINA_30', 25);
 define('NUMERO_CUADROS', 30);
 
 /**
- * Clase FPDF personalizada para el reporte de Asistencia x 30.
+ * Clase FPDF personalizada para el reporte de Control de Punteo / Asistencia x 30.
  */
 class PDF_Asistencia30 extends FPDF {
     private $datosEncabezado = [];
@@ -24,70 +24,102 @@ class PDF_Asistencia30 extends FPDF {
     }
 
     function Header() {
+        // Logo Institucional
         $logoPath = $_SERVER['DOCUMENT_ROOT'] . '/registro_academico/img/' . ($_SESSION['logo_uno'] ?? 'logo_default.png');
         if (file_exists($logoPath)) {
-            $this->Image($logoPath, 20, 15, 12, 15);
+            $this->Image($logoPath, 18, 8, 9);
         }
 
-        $this->SetFont('Arial', 'B', 13);
-        $this->Text(35, 15, convertirtexto($_SESSION['institucion']));
-        $this->Text(35, 20, convertirtexto('_______________________________________________________________'));
-        
-        $this->SetFont('Arial', '', 9);
-        $this->Text(35, 26, 'Modalidad: ' . convertirtexto($this->datosEncabezado['bachillerato']));
-        $this->Text(35, 33, 'Nombre Asignatura: _________________________________________');
-        $this->Text(162, 33, 'Nombre Docente: _________________________________________');
+        // Títulos Principales
+        $this->SetXY(30, 8);
+        $this->SetFont('Arial', 'B', 12);
+        $this->SetTextColor(31, 78, 120);
+        $this->Cell(180, 5, convertirtexto($_SESSION['institucion'] ?? 'INSTITUCIÓN EDUCATIVA'), 0, 1, 'L');
 
-        $this->RoundedRect(230, 11, 35, 15, 3.5, '');
-        $this->Text(232, 16, 'Grado: ' . convertirtexto($this->datosEncabezado['grado']));
-        $this->Text(232, 20, 'Seccion: ' . convertirtexto($this->datosEncabezado['seccion']));
-        $this->Text(232, 24, 'Ano Lectivo: ' . convertirtexto($this->datosEncabezado['ann_lectivo']));
-        
-        $this->SetY(40);
+        $this->SetX(30);
+        $this->SetFont('Arial', 'B', 9.5);
+        $this->SetTextColor(80, 80, 80);
+        $this->Cell(180, 4, convertirtexto('CONTROL DE PUNTEO Y ACTIVIDADES (30 REGISTROS)'), 0, 1, 'L');
+
+        // Cuadro Lateral de Grado / Sección / Año (Derecha)
+        $this->SetXY(215, 8);
+        $this->SetFillColor(245, 247, 250);
+        $this->SetDrawColor(200, 200, 200);
+        $this->Rect(215, 8, 48, 22, 'DF');
+
+        $this->SetFont('Arial', 'B', 8);
+        $this->SetTextColor(31, 78, 120);
+        $this->Text(217, 13, convertirTexto('Grado: ' . $this->datosEncabezado['grado']));
+        $this->Text(217, 18, convertirTexto('Sección: ' . $this->datosEncabezado['seccion']));
+        $this->Text(217, 23, convertirTexto('Año Lectivo: ' . $this->datosEncabezado['ann_lectivo']));
+
+        // Cuadros de Datos de la Asignatura / Docente (Izquierda)
+        $this->SetY(18);
+        $this->SetFont('Arial', '', 8);
+        $this->SetTextColor(0, 0, 0);
+
+        $this->SetX(15);
+        $this->Cell(195, 4.5, convertirTexto('Modalidad: ' . $this->datosEncabezado['bachillerato']), 1, 1, 'L');
+
+        $this->SetX(15);
+        $this->Cell(97.5, 4.5, 'Nombre Asignatura:', 1, 0, 'L');
+        $this->Cell(97.5, 4.5, 'Nombre Docente:', 1, 1, 'L');
+
+        $this->SetY(32);
     }
 
-// ### FUNCIÓN FOOTER CORREGIDA ###
     function Footer() {
-        $this->SetY(-15);
-        $this->SetFont('Arial', 'I', 8);
+        // Zona Horaria Local de El Salvador
+        date_default_timezone_set('America/El_Salvador');
 
-        // Array de meses en español
+        $this->SetY(-12);
+        $this->SetFont('Arial', 'I', 8);
+        $this->SetTextColor(100, 100, 100);
+        $this->SetDrawColor(200, 200, 200);
+
+        $this->Line(15, $this->GetY() - 2, 263, $this->GetY() - 2);
+
         $meses = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
-        
-        // Construir la fecha en el formato deseado
         $dia = date('d');
         $mes = $meses[date('n') - 1];
         $anio = date('Y');
-        $fechaFormateada = "Santa Ana, $dia de $mes de $anio";
+        $hora = date('g:i A');
 
-        // Construir la cadena completa del pie de página
-        $textoFooter = "$fechaFormateada, Pagina " . $this->PageNo() . ' de {nb}';
-        
-        // Imprimir la celda, aplicando convertirtexto() para manejar tildes
-        $this->Cell(0, 10, convertirtexto($textoFooter), 0, 0, 'C');
+        $fechaFormateada = "Generado en Santa Ana, $dia de $mes de $anio a las $hora";
+
+        $this->Cell(180, 6, convertirtexto($fechaFormateada), 0, 0, 'L');
+        $this->Cell(68, 6, convertirtexto('Página ' . $this->PageNo() . ' de {nb}'), 0, 0, 'R');
     }
-    // #################################
 
     function TablaEncabezado() {
-        $this->SetFillColor(220, 220, 220);
-        $this->SetTextColor(0);
-        $this->SetDrawColor(0, 0, 0);
+        $this->SetDrawColor(180, 180, 180);
         $this->SetLineWidth(.2);
+
+        $this->SetFillColor(31, 78, 120);
+        $this->SetTextColor(255, 255, 255);
         $this->SetFont('Arial', 'B', 8);
 
-        $this->Cell(8, 10, 'N', 1, 0, 'C', true);
-        $this->Cell(16, 10, 'NIE', 1, 0, 'C', true);
         $y_inicial = $this->GetY();
+        $this->Cell(8, 10, 'N°', 1, 0, 'C', true);
+        $this->Cell(16, 10, 'NIE', 1, 0, 'C', true);
+
         $x_pos = $this->GetX();
-        $this->MultiCell(66, 5, "Nombre de Alumnos/as\n(Orden Alfabético por Apellido)", 1, 'C', true);
+        $this->MultiCell(66, 5, convertirTexto("Nombre de Alumnos/as\n(Orden Alfabético por Apellido)"), 1, 'C', true);
         $this->SetXY($x_pos + 66, $y_inicial);
 
-        // Ancho disponible: 279 (Letter L) - 30 (márgenes) - 8 - 16 - 66 = 159mm
-        $anchoDia = 159 / NUMERO_CUADROS;
-        
-        for ($i = 0; $i < NUMERO_CUADROS; $i++) {
-            $this->Cell($anchoDia, 10, '', 1, 0, 'C', true);
+        // Ancho total disponible: 279 (Carta Horizontal) - 30 (Márgenes L/R de 15) - 8 - 16 - 66 = 159 mm
+        $anchoCuadro = 159 / NUMERO_CUADROS; // 5.3 mm por cuadro
+
+        $this->SetFillColor(217, 226, 236);
+        $this->SetTextColor(31, 78, 120);
+        $this->SetFont('Arial', 'B', 7);
+
+        // Filas numeradas de las 30 casillas de punteo
+        for ($i = 1; $i <= NUMERO_CUADROS; $i++) {
+            $this->Cell($anchoCuadro, 10, $i, 1, 0, 'C', true);
         }
+
+        $this->SetTextColor(0, 0, 0);
         $this->Ln();
     }
 }
@@ -125,7 +157,7 @@ function obtenerDatosAsistencia30(PDO $pdo, string $codigoAll): array {
     $stmt = $pdo->prepare($sqlAlumnos);
     $stmt->execute([$codigoAll]);
     $datos['alumnos'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    
+
     return $datos;
 }
 
@@ -134,66 +166,92 @@ function obtenerDatosAsistencia30(PDO $pdo, string $codigoAll): array {
  */
 function generarPdfAsistencia30(array $datos) {
     $pdf = new PDF_Asistencia30('L', 'mm', 'Letter');
-    $pdf->SetMargins(15, 15, 15);
+    $pdf->SetMargins(15, 12, 15);
     $pdf->SetAutoPageBreak(true, 15);
     $pdf->AliasNbPages();
     $pdf->setDatosEncabezado($datos['encabezado']);
-    
+
     $pdf->AddPage();
     $pdf->TablaEncabezado();
 
     $pdf->SetFont('Arial', '', 8);
     $fill = false;
     $numFila = 0;
-    $anchoDia = 159 / NUMERO_CUADROS;
+    $anchoCuadro = 159 / NUMERO_CUADROS;
 
     foreach ($datos['alumnos'] as $alumno) {
         if ($numFila > 0 && $numFila % FILAS_POR_PAGINA_30 == 0) {
             $pdf->AddPage();
             $pdf->TablaEncabezado();
             $pdf->SetFont('Arial', '', 8);
+            $fill = false;
         }
-        $pdf->SetFillColor($fill ? 240 : 255, $fill ? 240 : 255, $fill ? 240 : 255);
-        
-        $pdf->Cell(8, 6, $numFila + 1, 'LR', 0, 'C', $fill);
-        $pdf->Cell(16, 6, trim($alumno['codigo_nie']), 'LR', 0, 'C', $fill);
-        $pdf->Cell(66, 6, convertirtexto(trim($alumno['apellido_alumno'])), 'LR', 0, 'L', $fill);
-        
+
+        // Color Intercalado Suave y Elegante
+        if ($fill) {
+            $pdf->SetFillColor(217, 226, 236);
+        } else {
+            $pdf->SetFillColor(255, 255, 255);
+        }
+
+        $pdf->SetFont('Arial', '', 8);
+        $pdf->Cell(8, 6.2, $numFila + 1, 1, 0, 'C', true);
+
+        $pdf->SetFont('Arial', '', 7.5);
+        $pdf->Cell(16, 6.2, trim($alumno['codigo_nie']), 1, 0, 'C', true);
+
+        $pdf->SetFont('Arial', '', 8);
+        $pdf->Cell(66, 6.2, convertirtexto(trim($alumno['apellido_alumno'])), 1, 0, 'L', true);
+
         for ($i = 0; $i < NUMERO_CUADROS; $i++) {
-            $pdf->Cell($anchoDia, 6, '', 1, 0, 'C', $fill);
+            $pdf->Cell($anchoCuadro, 6.2, '', 1, 0, 'C', true);
         }
+
         $pdf->Ln();
         $fill = !$fill;
         $numFila++;
     }
 
-    // Rellenar filas vacías
+    // Rellenar filas vacías para mantener la estética uniforme
     $filasEnPagina = $numFila % FILAS_POR_PAGINA_30;
     if ($filasEnPagina == 0 && $numFila > 0) $filasEnPagina = FILAS_POR_PAGINA_30;
     $filasFaltantes = ($numFila == 0) ? FILAS_POR_PAGINA_30 : FILAS_POR_PAGINA_30 - $filasEnPagina;
-    
+
     for ($i = 0; $i < $filasFaltantes; $i++) {
-        $pdf->SetFillColor($fill ? 240 : 255, $fill ? 240 : 255, $fill ? 240 : 255);
-        $pdf->Cell(8, 6, $numFila + 1, 'LRB', 0, 'C', $fill);
-        $pdf->Cell(16, 6, '', 'LRB', 0, 'C', $fill);
-        $pdf->Cell(66, 6, '', 'LRB', 0, 'L', $fill);
-        for ($j = 0; $j < NUMERO_CUADROS; $j++) {
-            $pdf->Cell($anchoDia, 6, '', 1, 0, 'C', $fill);
+        if ($fill) {
+            $pdf->SetFillColor(217, 226, 236);
+        } else {
+            $pdf->SetFillColor(255, 255, 255);
         }
+
+        $pdf->SetFont('Arial', '', 8);
+        $pdf->Cell(8, 6.2, $numFila + 1, 1, 0, 'C', true);
+        $pdf->Cell(16, 6.2, '', 1, 0, 'C', true);
+        $pdf->Cell(66, 6.2, '', 1, 0, 'L', true);
+
+        for ($j = 0; $j < NUMERO_CUADROS; $j++) {
+            $pdf->Cell($anchoCuadro, 6.2, '', 1, 0, 'C', true);
+        }
+
         $pdf->Ln();
         $fill = !$fill;
         $numFila++;
     }
 
-    $pdf->Output('Asistencia_30_Cuadros.pdf', 'I');
+    $nombreArchivo = 'Control_Punteo_' . trim($datos['encabezado']['grado'] ?? '') . '_' . trim($datos['encabezado']['seccion'] ?? '') . '.pdf';
+    $pdf->Output(convertirtexto($nombreArchivo), 'I');
 }
 
 // --- PUNTO DE ENTRADA DEL SCRIPT ---
 try {
-    if ($errorDbConexion) { throw new Exception("No se puede conectar a la base de datos."); }
+    if (isset($errorDbConexion) && $errorDbConexion) { 
+        throw new Exception("No se puede conectar a la base de datos."); 
+    }
 
     $codigo_all = $_GET["todos"] ?? null;
-    if (!$codigo_all) { throw new Exception("Faltan parámetros para generar el reporte."); }
+    if (!$codigo_all) { 
+        throw new Exception("Faltan parámetros para generar el reporte."); 
+    }
 
     $datosReporte = obtenerDatosAsistencia30($dblink, $codigo_all);
 
