@@ -68,7 +68,7 @@ switch ($codigo_modalidad) {
     case ($codigo_modalidad == '16'):
         $nota_p_p = "indicador_p_p_" . substr($periodo, -1);
         break;
-    case ($codigo_modalidad == '15' || $codigo_modalidad == '21'):
+    case ($codigo_modalidad == '15' || $codigo_modalidad == '21' || $codigo_modalidad == '22' || $codigo_modalidad == '17' || $codigo_modalidad == '18'):
         $nota_p_p = "nota_p_p_" . substr($periodo, -1);
         break;
     default:
