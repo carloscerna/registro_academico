@@ -407,97 +407,113 @@ $(function(){
         //	  
         // Validar Formulario para la buscque de registro segun el criterio.   
         // ACTUALIZAR
-        $('#formVentanaAAG').validate({
-            ignore:"",
-            rules:{
-                    lstDocenteNivel: {required: true},
-                    lstTurnoAAG: {required: true},
-                    },
-                    errorElement: "em",
-                    errorPlacement: function ( error, element ) {
-                        // Add the `invalid-feedback` class to the error element
-                        error.addClass( "invalid-feedback" );
-                        if ( element.prop( "type" ) === "checkbox" ) {
-                            error.insertAfter( element.next( "label" ) );
-                        } else {
-                            error.insertAfter( element );
-                        }
-                    },
-                        highlight: function ( element, errorClass, validClass ) {
-                                    $( element ).addClass( "is-invalid" ).removeClass( "is-valid" );
-                                },
-                        unhighlight: function (element, errorClass, validClass) {
-                                    $( element ).addClass( "is-valid" ).removeClass( "is-invalid" );
-                                },
-                        invalidHandler: function() {
-                            setTimeout(function() {
-                                toastr["error"]("Falta Información en el Formulario.", "Sistema");
-                        });            
-                    },
-                submitHandler: function(){	
-                    var str = $('#formVentanaAAG').serialize();
-                    //alert(str);
-                ///////////////////////////////////////////////////////////////			
-                // Inicio del Ajax. guarda o Actualiza los datos del Formualrio.
-                ///////////////////////////////////////////////////////////////
-                    $.ajax({
-                        beforeSend: function(){
-                            // Información de la tabla para actualizar código sirai.
-                                var $objCuerpoTabla=$("#listaContenidoAAG").children().prev().parent();
-                                var codigo_aa_ = []; var codigo_sirai_ = []; var orden_ = []; var codigo_asignatura_ = [];
-                                var fila = 0;
-                            // recorre el contenido de la tabla.
-                                $objCuerpoTabla.find("tbody tr").each(function(){
-                                    var codigo_aa = $(this).find('td').eq(1).html();
-                                    var codigo_asignatura =$(this).find('td').eq(8).html();
-                                    var codigo_sirai =$(this).find('td').eq(10).find("input[name='codigo_sirai']").val();
-                                    var orden =$(this).find('td').eq(11).find("input[name='orden']").val();
-                            // dar valor a las arrays.
-                                codigo_asignatura_[fila]= codigo_asignatura;
-                                codigo_aa_[fila]= codigo_aa;
-                                    codigo_sirai_[fila]=codigo_sirai;
-                                    orden_[fila]=orden;
-
-                                    fila = fila + 1;
-                            });
-                        },
-                        cache: false,
-                        type: "POST",
-                        dataType: "json",
-                        url:"php_libs/soporte/Mantenimiento/Organizacion Asignacion/phpAjaxOrganizacionAsignacion.php",
-                        data:str + "&accion=" + accion + "&id=" + Math.random() + "&id_=" + Id_Editar_Eliminar,
-                        success: function(response){
-                            // Validar mensaje de error
-                            if(response.respuesta == false){
-                                toastr["error"](response.mensaje, "Sistema");
-                            }
-                            else{
-                                toastr["success"](response.mensaje, "Sistema");
-                                // Abrir ventana modal.
-                                $('#VentanaAAG').modal("hide");
-                                // Reiniciar los valores del Formulario.
-                                    $("#formVentanaAAG").trigger("reset");
-                                // Llamar al archivo php para hacer la consulta y presentar los datos.
-                                    $('#accion_aag').val('BuscarAAG');
-                                    accion = 'BuscarAAG';
-                                    $.post("php_libs/soporte/Mantenimiento/Organizacion Asignacion/phpAjaxOrganizacionAsignacion.php",  {accion: accion, codigo_annlectivo: codigo_annlectivo, codigo_modalidad: codigo_modalidad},
-                                        function(response) {
-                                            if (response.respuesta === true) {
-                                                toastr["info"]('Registros Encontrados', "Sistema");
-                                            }
-                                            if (response.respuesta === false) {
-                                                toastr["warning"]('Registros No Encontrados', "Sistema");
-                                            }                                                                                    // si es exitosa la operación
-                                                $('#listaContenidoAAG').empty();
-                                                $('#listaContenidoAAG').append(response.contenido);
-                                                //
-                                                $("#AlertAAG").css("display", "none");
-                                        },"json");
-                                }               
-                        },
-                    });
-                },
+      
+$('#formVentanaAAG').validate({
+    ignore: "",
+    rules: {
+        lstDocenteNivel: { required: true },
+        lstTurnoAAG: { required: true }
+    },
+    errorElement: "em",
+    errorPlacement: function (error, element) {
+        error.addClass("invalid-feedback");
+        if (element.prop("type") === "checkbox") {
+            error.insertAfter(element.next("label"));
+        } else {
+            error.insertAfter(element);
+        }
+    },
+    highlight: function (element, errorClass, validClass) {
+        $(element).addClass("is-invalid").removeClass("is-valid");
+    },
+    unhighlight: function (element, errorClass, validClass) {
+        $(element).addClass("is-valid").removeClass("is-invalid");
+    },
+    invalidHandler: function () {
+        setTimeout(function () {
+            toastr["error"]("Falta Información en el Formulario.", "Sistema");
         });
+    },
+    submitHandler: function () {
+        var codigo_aa_ = [];
+        var codigo_asignatura_ = [];
+        var orden_ = [];
+        var orden_siges_ = [];
+        var fila = 0;
+
+        // Selección directa del tbody para garantizar la lectura de las filas
+        $("#listaContenidoAAG tr").each(function () {
+            var $row = $(this);
+            
+            // Columna 2 (índice 2): ID asignación
+            var codigo_aa = $.trim($row.find('td').eq(2).text());
+            // Columna 3 (índice 3): Código Asignatura
+            var codigo_asignatura = $.trim($row.find('td').eq(3).text());
+            // Input 'orden' (Columna 6)
+            var orden = $row.find("input[name='orden']").val();
+            // Input 'orden_siges' (Columna 7)
+            var orden_siges = $row.find("input[name='orden_siges']").val();
+
+            if (codigo_aa !== "") {
+                codigo_aa_.push(codigo_aa);
+                codigo_asignatura_.push(codigo_asignatura);
+                orden_.push(orden);
+                orden_siges_.push(orden_siges);
+                fila++;
+            }
+        });
+
+        // Capturar filtros
+        var codigo_annlectivo = $("#lstAnnLectivoAAG").val();
+        var codigo_modalidad = $("#lstModalidadAAG").val();
+        var codigo_grado_se = $("#lstGradoAAG").val();
+
+        $.ajax({
+            cache: false,
+            type: "POST",
+            dataType: "json",
+            url: "php_libs/soporte/Mantenimiento/Organizacion Asignacion/phpAjaxOrganizacionAsignacion.php",
+            data: {
+                accion: accion,
+                codigo_aa: codigo_aa_,
+                codigo_asignatura: codigo_asignatura_,
+                orden: orden_,
+                orden_siges: orden_siges_,
+                fila: fila,
+                codigo_annlectivo: codigo_annlectivo,
+                codigo_modalidad: codigo_modalidad,
+                codigo_grado_se: codigo_grado_se,
+                id_: Id_Editar_Eliminar
+            },
+            success: function (response) {
+                if (response.respuesta === false) {
+                    toastr["error"](response.mensaje, "Sistema");
+                } else {
+                    toastr["success"](response.mensaje, "Sistema");
+                    $('#VentanaAAG').modal("hide");
+                    $("#formVentanaAAG").trigger("reset");
+
+                    // Refrescar lista
+                    $.post("php_libs/soporte/Mantenimiento/Organizacion Asignacion/phpAjaxOrganizacionAsignacion.php", {
+                        accion: 'BuscarAAG',
+                        codigo_annlectivo: codigo_annlectivo,
+                        codigo_modalidad: codigo_modalidad,
+                        codigo_grado_se: codigo_grado_se
+                    }, function (res) {
+                        if (res.respuesta === true) {
+                            toastr["info"]('Registros Encontrados', "Sistema");
+                        } else {
+                            toastr["warning"]('Registros No Encontrados', "Sistema");
+                        }
+                        $('#listaContenidoAAG').empty().append(res.contenido);
+                        $("#AlertAAG").css("display", "none");
+                    }, "json");
+                }
+            }
+        });
+    }
+});
+
         // PARA GUARDAR O ACTUALIZAR.
         $('#FormAAG').validate({
             ignore:"",

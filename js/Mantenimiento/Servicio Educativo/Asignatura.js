@@ -338,7 +338,7 @@ $(function(){
                     $('#formVentanaAsignatura').submit();
             });
         //////////////////////////////////////////////////////////////////////////////////////////////
-        // Información para buscar Asignar Asignatura.
+        // Información para buscar Asignar Asignatura. orden para la impresión de las boletas de calificaciones.
         //////////////////////////////////////////////////////////////////////////////////////////////
             $("#goActualizarOrden").on('click',function () {
                 var accion = "ActualizarOrden";
@@ -369,6 +369,66 @@ $(function(){
                         url:"php_libs/soporte/Mantenimiento/Servicio Educativo/phpAjaxServicioEducativo.php",
                         data: {
                                 accion: accion, orden: orden_, fila: fila, estatus: estatus_,
+                                codigo_asignatura: codigo_asignatura_, id_asignatura: id_asignatura_
+                                },
+                        success: function(response) {
+                                // Validar mensaje de error
+                                if(response.respuesta == false){
+                                    toastr["error"](response.mensaje, "Sistema");
+                                }
+                                else{
+                                    toastr["success"](response.mensaje, "Sistema");
+                                    // Llamar al archivo php para hacer la consulta y presentar los datos.
+                                        $('#accion_asignatura').val('BuscarAsignatura');
+                                        accion = 'BuscarAsignatura';
+                                        $.post("php_libs/soporte/Mantenimiento/Servicio Educativo/phpAjaxServicioEducativo.php",  {accion: accion, codigo_se: codigo_se},
+                                            function(response) {
+                                                if (response.respuesta === true) {
+                                                    toastr["info"]('Registros Encontrados', "Sistema");
+                                                }
+                                                if (response.respuesta === false) {
+                                                    toastr["warning"]('Registros No Encontrados', "Sistema");
+                                                }                                                                                    // si es exitosa la operación
+                                                    $('#listaContenidoSE').empty();
+                                                    $('#listaContenidoSE').append(response.contenido);
+                                            },"json");
+                                    }    
+                        }
+                    });
+            }); 
+
+  //////////////////////////////////////////////////////////////////////////////////////////////
+        // Información para buscar Asignar Asignatura. orden para la exportacion de las calificaciones a SIGES.
+        //////////////////////////////////////////////////////////////////////////////////////////////
+            $("#goActualizarOrdenSIGES").on('click',function () {
+                var accion = "ActualizarOrdenSIGES";
+                // Información de la tabla para actualizar código sirai.
+                    var $objCuerpoTabla=$("#listadoContenidoSEAsignatura").children().prev().parent();
+                    var id_asignatura_ = []; var orden_siges_ = []; var codigo_asignatura_ = []; var estatus_ = [];
+                    var fila = 0;
+                // recorre el contenido de la tabla.
+                    $objCuerpoTabla.find("tbody tr").each(function(){
+                        var id_ = $(this).find('td').eq(2).html();
+                        var codigo_asignatura =$(this).find('td').eq(3).html();
+                        var orden_siges =$(this).find('td').eq(7).find("input[name='orden_siges']").val();
+                        var estatus =$(this).find('td').eq(8).text();
+                    // dar valor a las arrays.
+                        id_asignatura_[fila] = id_;
+                        codigo_asignatura_[fila] = codigo_asignatura;
+                        orden_siges_[fila] = orden_siges;
+                        estatus_[fila] = estatus;
+                            fila = fila + 1;
+                    });
+                    //
+                    $.ajax({
+                        beforeSend: function(){       
+                        },
+                        cache: false,
+                        type: "POST",
+                        dataType: "json",
+                        url:"php_libs/soporte/Mantenimiento/Servicio Educativo/phpAjaxServicioEducativo.php",
+                        data: {
+                                accion: accion, orden_siges: orden_siges_, fila: fila, estatus: estatus_,
                                 codigo_asignatura: codigo_asignatura_, id_asignatura: id_asignatura_
                                 },
                         success: function(response) {

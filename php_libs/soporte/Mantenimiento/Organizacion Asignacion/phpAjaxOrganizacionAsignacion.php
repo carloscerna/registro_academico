@@ -665,75 +665,82 @@ if ($errorDbConexion == false) {
                 }
                 break;
 
-            /***************************************************************************************************
-             * BLOQUE: ASIGNACIÓN DE ASIGNATURAS A GRADOS (AAG)
-             ***************************************************************************************************/
-            case 'BuscarAAG':
-                $codigo_annlectivo = $_POST["codigo_annlectivo"] ?? '';
-                $codigo_modalidad = $_POST["codigo_modalidad"] ?? '';
-                $codigo_grado_se_post = explode("-", $_POST["codigo_grado_se"] ?? '');
-                $codigo_grado = $codigo_grado_se_post[0] ?? '';
+       case 'BuscarAAG':
+    $codigo_annlectivo = $_POST["codigo_annlectivo"] ?? '';
+    $codigo_modalidad = $_POST["codigo_modalidad"] ?? '';
+    $codigo_grado_se_post = explode("-", $_POST["codigo_grado_se"] ?? '');
+    $codigo_grado = $codigo_grado_se_post[0] ?? '';
 
-                $query = "SELECT DISTINCT aaa.codigo_asignacion, aaa.id_asignacion, aaa.orden, 
-                            asig.codigo as codigo_asignatura, asig.nombre as nombre_asignatura,
-                            cat_area_di.descripcion as descripcion_area_dimension, 
-                            cat_area_subdi.descripcion as descripcion_area_subdimension,
-                            cat_area.descripcion as nombre_area
-                          FROM a_a_a_bach_o_ciclo aaa 
-                          INNER JOIN ann_lectivo ann ON ann.codigo = aaa.codigo_ann_lectivo 
-                          INNER JOIN bachillerato_ciclo bach ON bach.codigo = aaa.codigo_bach_o_ciclo 
-                          INNER JOIN grado_ano gr ON gr.codigo = aaa.codigo_grado 
-                          INNER JOIN asignatura asig ON asig.codigo = aaa.codigo_asignatura 
-                          INNER JOIN catalogo_area_asignatura cat_area ON cat_area.codigo = asig.codigo_area 
-                          INNER JOIN catalogo_area_dimension cat_area_di ON cat_area_di.codigo = asig.codigo_area_dimension
-                          INNER JOIN catalogo_area_subdimension cat_area_subdi ON cat_area_subdi.codigo = asig.codigo_area_subdimension
-                          WHERE aaa.codigo_bach_o_ciclo = :modalidad AND aaa.codigo_ann_lectivo = :annlectivo AND aaa.codigo_grado = :grado
-                          ORDER BY aaa.orden";
+    // Consulta SQL seleccionando aaa.orden y aaa.orden_siges
+    $query = "SELECT DISTINCT aaa.codigo_asignacion, aaa.id_asignacion, aaa.orden, aaa.orden_siges, 
+                asig.codigo as codigo_asignatura, asig.nombre as nombre_asignatura,
+                cat_area_di.descripcion as descripcion_area_dimension, 
+                cat_area_subdi.descripcion as descripcion_area_subdimension,
+                cat_area.descripcion as nombre_area
+              FROM a_a_a_bach_o_ciclo aaa 
+              INNER JOIN ann_lectivo ann ON ann.codigo = aaa.codigo_ann_lectivo 
+              INNER JOIN bachillerato_ciclo bach ON bach.codigo = aaa.codigo_bach_o_ciclo 
+              INNER JOIN grado_ano gr ON gr.codigo = aaa.codigo_grado 
+              INNER JOIN asignatura asig ON asig.codigo = aaa.codigo_asignatura 
+              INNER JOIN catalogo_area_asignatura cat_area ON cat_area.codigo = asig.codigo_area 
+              INNER JOIN catalogo_area_dimension cat_area_di ON cat_area_di.codigo = asig.codigo_area_dimension
+              INNER JOIN catalogo_area_subdimension cat_area_subdi ON cat_area_subdi.codigo = asig.codigo_area_subdimension
+              WHERE aaa.codigo_bach_o_ciclo = :modalidad 
+                AND aaa.codigo_ann_lectivo = :annlectivo 
+                AND aaa.codigo_grado = :grado
+              ORDER BY aaa.orden";
 
-                $stmt = $dblink->prepare($query);
-                $stmt->execute([
-                    ':modalidad'  => $codigo_modalidad,
-                    ':annlectivo' => $codigo_annlectivo,
-                    ':grado'      => $codigo_grado
-                ]);
+    $stmt = $dblink->prepare($query);
+    $stmt->execute([
+        ':modalidad'  => $codigo_modalidad,
+        ':annlectivo' => $codigo_annlectivo,
+        ':grado'      => $codigo_grado
+    ]);
 
-                if ($stmt->rowCount() > 0) {
-                    $respuestaOK = true;
-                    $num = 0;
+    if ($stmt->rowCount() > 0) {
+        $respuestaOK = true;
+        $num = 0;
 
-                    while ($listado = $stmt->fetch(PDO::FETCH_BOTH)) {
-                        $num++;
-                        $id_ = trim($listado['id_asignacion']);
-                        $nombre_area = trim($listado["nombre_area"]);
-                        $nombre_area_dimension = trim($listado['descripcion_area_dimension']);
-                        $nombre_area_subdimension = trim($listado['descripcion_area_subdimension']);
-                        $nombre_asignatura = trim($listado["nombre_asignatura"]);
-                        $orden = trim($listado["orden"]);
-                        $codigo_asignatura = trim($listado["codigo_asignatura"]);
+        while ($listado = $stmt->fetch(PDO::FETCH_BOTH)) {
+            $num++;
+            $id_ = trim($listado['id_asignacion']);
+            $nombre_area = trim($listado["nombre_area"]);
+            $nombre_area_dimension = trim($listado['descripcion_area_dimension']);
+            $nombre_area_subdimension = trim($listado['descripcion_area_subdimension']);
+            $nombre_asignatura = trim($listado["nombre_asignatura"]);
+            $orden = trim($listado["orden"] ?? '');
+            $orden_siges = trim($listado["orden_siges"] ?? '');
+            $codigo_asignatura = trim($listado["codigo_asignatura"]);
 
-                        if ($nombre_area_dimension == "Ninguno") {
-                            $nombre_area_dimension_subdimension_asignatura = $nombre_area . " - " . $nombre_asignatura;
-                        } else {
-                            $nombre_area_dimension_subdimension_asignatura = $nombre_area . "-" . $nombre_area_dimension . "-" . $nombre_area_subdimension . "-" . $nombre_asignatura;
-                        }
+            if ($nombre_area_dimension == "Ninguno") {
+                $nombre_area_dimension_subdimension_asignatura = $nombre_area . " - " . $nombre_asignatura;
+            } else {
+                $nombre_area_dimension_subdimension_asignatura = $nombre_area . "-" . $nombre_area_dimension . "-" . $nombre_area_subdimension . "-" . $nombre_asignatura;
+            }
 
-                        $contenidoOK .= "<tr>
-                            <td><input type='checkbox' class='case' name='chk$id_' id='chk$id_'></td>
-                            <td>$num</td>
-                            <td>$id_</td>
-                            <td>$codigo_asignatura</td>
-                            <td>$nombre_area_dimension_subdimension_asignatura</td>
-                            <td>$nombre_asignatura</td>
-                            <td>$orden</td>
-                            <td>
-                                <a data-accion='EditarAAG' class='btn btn-xs btn-info' data-toggle='tooltip' data-placement='top' title='Editar' href='$id_'><i class='fas fa-edit'></i></a>
-                                <a data-accion='EliminarAAG' class='btn btn-xs btn-warning' data-toggle='tooltip' data-placement='top' title='Eliminar' href='$id_'><i class='fas fa-trash'></i></a>
-                            </td>
-                        </tr>";
-                    }
-                    $mensajeError = "Si Registro";
-                }
-                break;
+            // Filas con inputs para editar 'orden' y 'orden_siges'
+            $contenidoOK .= "<tr>
+                <td><input type='checkbox' class='case' name='chk$id_' id='chk$id_'></td>
+                <td>$num</td>
+                <td>$id_</td>
+                <td>$codigo_asignatura</td>
+                <td>$nombre_area_dimension_subdimension_asignatura</td>
+                <td>$nombre_asignatura</td>
+                <td>
+                    <input type='text' class='form-control form-control-sm text-center' name='orden' value='$orden' style='width: 70px;'>
+                </td>
+                <td>
+                    <input type='text' class='form-control form-control-sm text-center' name='orden_siges' value='$orden_siges' style='width: 80px;'>
+                </td>
+                <td>
+                    <a data-accion='EditarAAG' class='btn btn-xs btn-info' data-toggle='tooltip' data-placement='top' title='Editar' href='$id_'><i class='fas fa-edit'></i></a>
+                    <a data-accion='EliminarAAG' class='btn btn-xs btn-warning' data-toggle='tooltip' data-placement='top' title='Eliminar' href='$id_'><i class='fas fa-trash'></i></a>
+                </td>
+            </tr>";
+        }
+        $mensajeError = "Si Registro";
+    }
+    break;
 
             case 'GuardarAAG':
                 $codigo_annlectivo = $_POST['lstAnnLectivoAAG'] ?? '';
@@ -827,40 +834,65 @@ if ($errorDbConexion == false) {
                 break;
 
             case 'ActualizarAAG':
-                $codigo_aa = $_POST["codigo_aa"] ?? array();
-                $codigo_asignatura = $_POST["codigo_asignatura"] ?? array();
-                $codigo_sirai = $_POST["codigo_sirai"] ?? array();
-                $orden = $_POST["orden"] ?? array();
-                $fila = ($_POST["fila"] ?? 1) - 1;
+    $codigo_aa = $_POST["codigo_aa"] ?? array();
+    $codigo_asignatura = $_POST["codigo_asignatura"] ?? array();
+    $orden = $_POST["orden"] ?? array();
+    $orden_siges = $_POST["orden_siges"] ?? array();
+    $total_filas = intval($_POST["fila"] ?? 0);
 
-                $query_aa = "UPDATE a_a_a_bach_o_ciclo SET codigo_sirai = :sirai, orden = :orden WHERE id_asignacion = :id";
-                $stmt_aa = $dblink->prepare($query_aa);
+    $codigo_annlectivo = $_POST['codigo_annlectivo'] ?? '';
+    $codigo_modalidad = $_POST['codigo_modalidad'] ?? '';
+    $codigo_grado_se_post = explode("-", $_POST["codigo_grado_se"] ?? '');
+    $codigo_grado = $codigo_grado_se_post[0] ?? '';
 
-                $query_aa_nota = "UPDATE nota SET orden = :orden WHERE codigo_asignatura = :asignatura";
-                $stmt_nota = $dblink->prepare($query_aa_nota);
+    // 1. Actualizar tabla a_a_a_bach_o_ciclo
+    $query_aa = "UPDATE a_a_a_bach_o_ciclo 
+                 SET orden = :orden, orden_siges = :orden_siges 
+                 WHERE id_asignacion = :id";
+    $stmt_aa = $dblink->prepare($query_aa);
 
-                for ($i = 0; $i <= $fila; $i++) {
-                    $codigo_a = $codigo_aa[0][$i];
-                    $codigo_asig = $codigo_asignatura[0][$i];
-                    $codigo_cs = $codigo_sirai[0][$i];
-                    $orden_ = $orden[0][$i];
+    for ($i = 0; $i < $total_filas; $i++) {
+        $id_asig = $codigo_aa[$i] ?? null;
+        $ord = $orden[$i] ?? null;
+        $ord_siges = $orden_siges[$i] ?? null;
 
-                    $stmt_aa->execute([
-                        ':sirai' => $codigo_cs,
-                        ':orden' => $orden_,
-                        ':id'    => $codigo_a
-                    ]);
+        if ($id_asig) {
+            $stmt_aa->execute([
+                ':orden'       => $ord,
+                ':orden_siges' => $ord_siges,
+                ':id'          => $id_asig
+            ]);
+        }
+    }
 
-                    $stmt_nota->execute([
-                        ':orden'      => $orden_,
-                        ':asignatura' => $codigo_asig
-                    ]);
-                }
+    // 2. Actualizar la tabla public.nota
+    if (!empty($codigo_annlectivo) && !empty($codigo_modalidad) && !empty($codigo_grado)) {
+        $query_actualizar_nota = "UPDATE public.nota n
+            SET orden = aaa.orden,
+                orden_siges = aaa.orden_siges
+            FROM public.a_a_a_bach_o_ciclo aaa
+            INNER JOIN public.alumno_matricula am 
+                ON am.codigo_bach_o_ciclo = aaa.codigo_bach_o_ciclo 
+               AND am.codigo_ann_lectivo = aaa.codigo_ann_lectivo 
+               AND am.codigo_grado = aaa.codigo_grado
+            WHERE n.codigo_matricula = am.id_alumno_matricula
+              AND n.codigo_asignatura = aaa.codigo_asignatura
+              AND aaa.codigo_ann_lectivo = :annlectivo
+              AND aaa.codigo_bach_o_ciclo = :modalidad
+              AND aaa.codigo_grado = :grado";
 
-                $respuestaOK = true;
-                $contenidoOK = 'Registros Actualizados.';
-                $mensajeError = 'Si Registro';
-                break;
+        $stmt_nota = $dblink->prepare($query_actualizar_nota);
+        $stmt_nota->execute([
+            ':annlectivo' => $codigo_annlectivo,
+            ':modalidad'  => $codigo_modalidad,
+            ':grado'      => $codigo_grado
+        ]);
+    }
+
+    $respuestaOK = true;
+    $contenidoOK = 'Registros y Notas Actualizados Correctamente.';
+    $mensajeError = 'Si Registro';
+    break;
 
             case 'EliminarAAG':
                 $id_ = $_POST['id_'] ?? '';

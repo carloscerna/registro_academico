@@ -400,83 +400,90 @@
                     </div>
                   </div>
 
-                  <!-- ========================================== -->
-                  <!-- 5. TAB: ASIGNATURAS / NIVELES              -->
-                  <!-- ========================================== -->
-                  <div class="tab-pane fade" id="pills-asignaturas-niveles" role="tabpanel" aria-labelledby="pills-asignaturas-niveles-tab">
-                    
-                    <!-- Barra de Herramientas -->
-                    <div class="d-flex align-items-center justify-content-between p-2 bg-light border rounded mb-3">
-                      <div class="d-flex gap-2">
-                        <button type="button" id="goBuscarAAG" class="btn btn-info text-white btn-sm" data-bs-toggle="tooltip" title="Buscar">
-                          <i class="fas fa-search me-1"></i> Buscar
-                        </button>
-                        <button type="button" id="goGuardarAAG" class="btn btn-primary btn-sm" data-bs-toggle="tooltip" title="Guardar">
-                          <i class="fas fa-save me-1"></i> Guardar
-                        </button>
-                      </div>
-                      <div class="alert alert-danger py-1 px-3 m-0 d-none" role="alert" id="AlertAAG">
-                        <span id="TextoAlertAAG">...</span>
-                      </div>
-                    </div>
+                 <!-- ========================================== -->
+<!-- 5. TAB: ASIGNATURAS / NIVELES              -->
+<!-- ========================================== -->
+<div class="tab-pane fade" id="pills-asignaturas-niveles" role="tabpanel" aria-labelledby="pills-asignaturs-niveles-tab">
+  <!-- Botonera y Alertas -->
+  <div class="bg-secondary text-white p-2 mb-2">
+    <button type="button" id="goBuscarAAG" class="btn btn-info" data-toggle="tooltip" title="Buscar">
+      <i class="fal fa-search"></i> Buscar
+    </button>
+    <button type="button" id="goGuardarAAG" class="btn btn-primary" data-toggle="tooltip" title="Guardar Asignatura">
+      <i class="fal fa-save"></i> Guardar
+    </button>
+    <button type="button" id="goActualizarAAG" class="btn btn-warning" data-toggle="tooltip" title="Actualizar Orden y Orden SIGES">
+      <i class="fal fa-sync"></i> Actualizar Orden y SIGES
+    </button>
+    
+    <div class="alert alert-danger p-1 m-1" role="alert" id="AlertAAG" style="display:none;">
+      <span id="TextoAlertAAG">...</span>
+    </div>
+  </div>
 
-                    <!-- Formulario Asignaturas -->
-                    <form id="FormAAG" name="FormAAG" class="mb-3">
-                      <div class="row g-3">
-                        <div class="col-md-3">
-                          <label for="lstAnnLectivoAAG" class="form-label fw-semibold">Año Lectivo</label>
-                          <select class="form-select" id="lstAnnLectivoAAG" name="lstAnnLectivoAAG" aria-label="lstAnnlectivoAAG"></select>
-                        </div>
-                        <div class="col-md-3">
-                          <label for="lstModalidadAAG" class="form-label fw-semibold">Nivel</label>
-                          <select class="form-select" id="lstModalidadAAG" name="lstModalidadAAG" aria-label="lstModalidadAAG"></select>
-                        </div>
-                        <div class="col-md-3">
-                          <label for="lstGradoAAG" class="form-label fw-semibold">Grado</label>
-                          <select class="form-select" id="lstGradoAAG" name="lstGradoAAG" aria-label="lstGradoAAG"></select>
-                        </div>
-                        <div class="col-md-3">
-                          <label for="lstAAG" class="form-label fw-semibold">Componente Plan de Estudio</label>
-                          <select class="form-select mb-2" id="lstAAG" name="lstAAG" aria-label="lstAAG"></select>
-                          <div class="form-check">
-                            <input type="checkbox" class="form-check-input" id="TodasLasAsignaturas" name="TodasLasAsignaturas">
-                            <label class="form-check-label small fw-semibold" for="TodasLasAsignaturas">
-                              Todas las asignaturas
-                            </label>
-                          </div>
-                        </div>
-                      </div>
-                    </form>
+  <!-- Formulario de Selección -->
+  <form class="form" id="formVentanaAAG" name="formVentanaAAG">
+    <div class="row">
+      <div class="col-md-3 col-12">
+        <div class="form-group">
+          <label for="lstAnnLectivoAAG">Año Lectivo</label>
+          <select class="form-control" id="lstAnnLectivoAAG" name="lstAnnLectivoAAG"></select>
+        </div>
+      </div>
+      <div class="col-md-3 col-12">
+        <div class="form-group">
+          <label for="lstModalidadAAG">Nivel / Modalidad</label>
+          <select class="form-control" id="lstModalidadAAG" name="lstModalidadAAG"></select>
+        </div>
+      </div>
+      <div class="col-md-3 col-12">
+        <div class="form-group">
+          <label for="lstGradoAAG">Grado</label>
+          <select class="form-control" id="lstGradoAAG" name="lstGradoAAG"></select>
+        </div>
+      </div>
+      <div class="col-md-3 col-12">
+        <div class="form-group">
+          <label for="lstAAG">Asignatura</label>
+          <select class="form-control" id="lstAAG" name="lstAAG"></select>
+        </div>
+      </div>
+      <div class="col-12 mt-2">
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" id="TodasLasAsignaturas" name="TodasLasAsignaturas" value="yes">
+          <label class="form-check-label" for="TodasLasAsignaturas">
+            Agregar todas las asignaturas del Plan de Estudio
+          </label>
+        </div>
+      </div>
+    </div>
+  </form>
 
-                    <!-- Tabla Asignaturas -->
-                    <div class="card border-0 shadow-sm">
-                      <div class="card-header bg-info text-white py-1 fs-6 fw-semibold">
-                        Asignación Servicio Educativo (Asignaturas) según Año Lectivo
-                      </div>
-                      <div class="table-responsive">
-                        <table id="listadoContenidoAAG" class="table table-striped table-hover align-middle mb-0">
-                          <thead class="table-dark">
-                            <tr>
-                              <th style="width: 70px;" class="text-center">
-                                <input type="checkbox" class="form-check-input" name="checkBoxAllAAG" id="checkBoxAllAAG" data-bs-toggle="tooltip" title="Marcar/Desmarcar Todo">
-                                <button type="button" id="goEliminarAAG" class="btn btn-sm btn-link text-danger p-0 ms-1" data-bs-toggle="tooltip" title="Eliminar Seleccionados">
-                                  <i class="fas fa-trash-alt"></i>
-                                </button>
-                              </th>
-                              <th>#</th>
-                              <th>ID</th>
-                              <th>Código</th>
-                              <th>Área / Dimensión / SubDimensión</th>
-                              <th>Componente Plan de Estudio</th>
-                              <th>Orden</th>
-                              <th>Acciones</th>
-                            </tr>
-                          </thead>
-                          <tbody id="listaContenidoAAG"></tbody>
-                        </table>
-                      </div>
-                    </div>
-                  </div>
+  <!-- Tabla de Asignaturas -->
+  <div class="bg-info text-white p-1 mt-3">_Asignación de Asignaturas por Grado y Nivel_</div>
+  <div class="modal-body p-0 mt-2">
+    <table id="listadoContenidoAAG" class="table table-striped table-bordered table-hover table-condensed">
+      <thead class="table-dark">
+        <tr>
+          <th>
+            <input type="checkbox" id="checkBoxAllAAG">
+          </th>
+          <th>#</th>
+          <th>ID</th>
+          <th>Código</th>
+          <th>Área / Dimensión</th>
+          <th>Asignatura</th>
+          <th>Orden</th>
+          <th>Orden SIGES</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody id="listaContenidoAAG">
+        <!-- Se llena dinámicamente vía AJAX -->
+      </tbody>
+    </table>
+  </div>
+</div>
 
                 </div> <!-- /.tab-content -->
               </div> <!-- /.card-body -->

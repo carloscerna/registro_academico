@@ -132,7 +132,7 @@ if ($todasLasAsignaturas == "yes") {
             AND aaa.codigo_bach_o_ciclo = '$codigo_bachillerato' 
             AND aaa.codigo_grado = '$codigo_grado'
         WHERE btrim(am.codigo_bach_o_ciclo || am.codigo_grado || am.codigo_seccion || am.codigo_ann_lectivo) = '$codigo_all'
-        ORDER BY apellido_alumno, n.codigo_asignatura ASC";
+        ORDER BY apellido_alumno, n.orden_siges ASC";
 
     $result_asignatura = $db_link->query($query_todas);
     $datos = $result_asignatura->fetchAll(PDO::FETCH_ASSOC);
@@ -162,8 +162,9 @@ if ($todasLasAsignaturas == "yes") {
 
     // Paso 2: Configurar Encabezados en Hojas de Excel correspondientes
     // Excel Académico
-    $sheetAcademico->setCellValue('A1', 'Código NIE');
-    $col = 'B';
+    $sheetAcademico->setCellValue('A1', 'Estudiante');
+    $sheetAcademico->setCellValue('B1', 'Nombre');
+    $col = 'C';
     foreach ($asignaturas_academicas as $asig) {
         $sheetAcademico->setCellValue($col . '1', mb_strtoupper($asig, 'UTF-8'));
         $col++;
@@ -171,8 +172,9 @@ if ($todasLasAsignaturas == "yes") {
 
     // Excel Modular (si aplica)
     if ($codigo_modalidad == '15' && $sheetModulos !== null) {
-        $sheetModulos->setCellValue('A1', 'Código NIE');
-        $col = 'B';
+        $sheetModulos->setCellValue('A1', 'Estudiante');
+        $sheetModulos->setCellValue('B1', 'Nombre');
+        $col = 'C';
         foreach ($asignaturas_modulares as $asig) {
             $sheetModulos->setCellValue($col . '1', mb_strtoupper($asig, 'UTF-8'));
             $col++;
@@ -185,6 +187,7 @@ if ($todasLasAsignaturas == "yes") {
 
     foreach ($datos as $fila) {
         $nie = trim($fila['codigo_nie']);
+        $nombre_completo = trim($fila['apellido_alumno']); // O $fila['nombre_completo'] según prefieras la presentación
         $asignatura = $fila['nombre_asignatura'];
         $nota = $fila[$nota_p_p];
         $codigo_cc = trim($fila['codigo_cc']);
@@ -217,12 +220,16 @@ if ($todasLasAsignaturas == "yes") {
         // Clasificar y guardar en el arreglo correspondiente de forma separada
         if ($codigo_bachillerato_actual === '15' && $codigo_area_actual === '03') {
             if (!isset($datos_agrupados_modulares[$nie])) {
-                $datos_agrupados_modulares[$nie] = [];
+                $datos_agrupados_modulares[$nie] = [
+                    'nombre' => $nombre_completo
+                ];
             }
             $datos_agrupados_modulares[$nie][$asignatura] = $nota_formateada;
         } else {
             if (!isset($datos_agrupados_academicos[$nie])) {
-                $datos_agrupados_academicos[$nie] = [];
+                $datos_agrupados_academicos[$nie] = [
+                    'nombre' => $nombre_completo
+                ];
             }
             $datos_agrupados_academicos[$nie][$asignatura] = $nota_formateada;
         }
@@ -232,8 +239,11 @@ if ($todasLasAsignaturas == "yes") {
     $fila_num = 2;
     foreach ($datos_agrupados_academicos as $nie => $datosAlumno) {
         $sheetAcademico->setCellValue("A$fila_num", $nie);
+        $sheetAcademico->setCellValue("B$fila_num", $datosAlumno['nombre']);
+        
         foreach ($asignaturas_academicas as $index => $asig) {
-            $columna = obtenerLetraColumna($index + 1); // Función auxiliar robusta de conversión de columnas
+            // Se le suma 2 a index porque la columna A es 0, B es 1 y la primera asignatura va en C (índice 2)
+            $columna = obtenerLetraColumna($index + 2); 
             $nota_celda = isset($datosAlumno[$asig]) ? $datosAlumno[$asig] : "";
             $sheetAcademico->setCellValue("$columna$fila_num", $nota_celda);
         }
@@ -248,8 +258,11 @@ if ($todasLasAsignaturas == "yes") {
         $fila_num_mod = 2;
         foreach ($datos_agrupados_modulares as $nie => $datosAlumno) {
             $sheetModulos->setCellValue("A$fila_num_mod", $nie);
+            $sheetModulos->setCellValue("B$fila_num_mod", $datosAlumno['nombre']);
+            
             foreach ($asignaturas_modulares as $index => $asig) {
-                $columna = obtenerLetraColumna($index + 1);
+                // Se le suma 2 a index para empezar en la columna C
+                $columna = obtenerLetraColumna($index + 2);
                 $nota_celda = isset($datosAlumno[$asig]) ? $datosAlumno[$asig] : "";
                 $sheetModulos->setCellValue("$columna$fila_num_mod", $nota_celda);
             }
@@ -280,14 +293,13 @@ function obtenerLetraColumna($index) {
     return $letra;
 }
 
-// Función encargada de guardar ambos archivos de forma física y generar el reporte HTML en JSON (Versión Modernizada e Integrada)
+// Función encargada de guardar ambos archivos de forma física y generar el reporte HTML en JSON
 function NombreArchivoExcelDoble($objPHPExcel, $objPHPExcelModulos, $nombreSeccion, $datos_academicos, $datos_modulares) {
     global $codigo_bachillerato, $nombre_annlectivo, $path_root, $nombre_modalidad, $nombre_grado, $periodo, $DestinoArchivo, $salidaJson;
     
     $codigo_destino = 3; 
     $conteo = 1;
     
-    // Contenedor principal adaptable con estilos modernos consistentes con la interfaz
     $contenidoHTML = "
     <div style='overflow-x: auto; border: 1px solid #e2e8f0; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);'>
         <table style='width: 100%; border-collapse: collapse; text-align: center; font-family: system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, sans-serif; font-size: 14px;'>
@@ -310,7 +322,6 @@ function NombreArchivoExcelDoble($objPHPExcel, $objPHPExcelModulos, $nombreSecci
         $nombreBase = htmlspecialchars($nombre_grado) . " " . $nombreSeccion . " - " . $nombre_modalidad;
         $nombreBaseClean = str_replace(['/', ':'], '-', $nombreBase);
         
-        // Ícono de Excel estilizado (Badge verde redondeado)
         $iconoExcel = "<span style='display: inline-flex; align-items: center; justify-content: center; background-color: #ecfdf5; color: #059669; width: 28px; height: 28px; border-radius: 6px; margin-right: 10px; font-size: 14px;'><i class='fas fa-file-excel'></i></span>";
 
         // 1. Guardar archivo Académico
@@ -324,7 +335,6 @@ function NombreArchivoExcelDoble($objPHPExcel, $objPHPExcelModulos, $nombreSecci
             $tamano = round(filesize($rutaAcademica) / 1024, 2);
             $tamanoTexto = $tamano < 1024 ? "{$tamano} KB" : round($tamano / 1024, 2) . " MB";
 
-            // Fila con fondo blanco limpio
             $contenidoHTML .= "
                 <tr style='background-color: #ffffff; border-bottom: 1px solid #e2e8f0;'>
                     <td style='padding: 12px 15px; color: #64748b; font-weight: bold;'>{$conteo}</td>
@@ -350,7 +360,6 @@ function NombreArchivoExcelDoble($objPHPExcel, $objPHPExcelModulos, $nombreSecci
             $tamanoMod = round(filesize($rutaModular) / 1024, 2);
             $tamanoTextoMod = $tamanoMod < 1024 ? "{$tamanoMod} KB" : round($tamanoMod / 1024, 2) . " MB";
 
-            // Fila con sombreado de cebra alterno (#f8fafc)
             $contenidoHTML .= "
                 <tr style='background-color: #f8fafc; border-bottom: 1px solid #e2e8f0;'>
                     <td style='padding: 12px 15px; color: #64748b; font-weight: bold;'>{$conteo}</td>

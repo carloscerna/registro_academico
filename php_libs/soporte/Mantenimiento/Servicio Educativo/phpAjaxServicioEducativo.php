@@ -55,7 +55,7 @@ if($errorDbConexion == false){
 				$codigo_se_post = $_POST["codigo_se"];
 				// Armamos el query.
 					$query = "SELECT asig.id_asignatura, asig.nombre, asig.codigo as codigo_asignatura, asig.codigo_servicio_educativo, asig.codigo_cc, 
-							asig.codigo_servicio_educativo, asig.codigo_area, asig.estatus, asig.ordenar, asig.codigo_estatus,
+							asig.codigo_servicio_educativo, asig.codigo_area, asig.estatus, asig.ordenar, asig.codigo_estatus, asig.ordenar_siges,
 							cat_se.descripcion as nombre_servicio_educativo, 
 							cat_cc.descripcion as nombre_cc, cat_cc.codigo,
 							cat_area.descripcion as nombre_area, cat_area.codigo
@@ -86,6 +86,7 @@ if($errorDbConexion == false){
 					$nombre_area = trim($listado['nombre_area']);
 					$estatus = trim($listado['codigo_estatus']);
 					$ordenar = trim($listado['ordenar']);
+					$ordenar_siges = trim($listado['ordenar_siges']);
 					$num++;
 					// VARIABLES ESTATUS.
 						if($estatus == '01'){
@@ -101,6 +102,7 @@ if($errorDbConexion == false){
 							<td>$nombre_area
 							<td>$nombre
 							<td><input type=number id=orden name=orden value ='$ordenar' class=form-control>
+							<td><input type=number id=orden_siges name=orden_siges value ='$ordenar_siges' class=form-control>
 							$estatus
 							<td><a data-accion=editar_asignatura class='btn btn-xs btn-info' href=$id_-$codigo tabindex='-1' data-toggle='tooltip' data-placement='top' title='Editar'><i class='fad fa-edit'></i></a>
 							<a data-accion=eliminar_asignatura class='btn btn-xs btn-warning' href=$id_-$codigo tabindex='-1' data-toggle='tooltip' data-placement='top' title='Eliminar'><i class='fad fa-trash'></i></a>
@@ -294,6 +296,42 @@ if($errorDbConexion == false){
 							$consulta_aa_nota = $dblink -> query($query_aa_nota); 				// Ejecutamos el Query.
 					// armar sql para actualizar tabla asignatura.
 						$query_asignatura = "UPDATE asignatura SET ordenar = '$orden_' WHERE id_asignatura = '$id_asignatura_' and codigo_estatus = '$codigo_estatus'";
+							$consulta_asignatura = $dblink -> query($query_asignatura); 				// Ejecutamos el Query.
+				}
+
+				$respuestaOK = true;
+				$contenidoOK = '';
+				$mensajeError =  'Registro Actualizado';
+			break;
+			case 'ActualizarOrdenSIGES':		
+				// armar variables y consulta Query.
+				$id_asignatura[] = $_POST["id_asignatura"];
+				$codigo_asignatura[] = $_POST["codigo_asignatura"];
+				$estatus[] = $_POST["estatus"];
+				$orden_siges[] = $_POST["orden_siges"];
+				// Variales.
+				$fila = $_POST["fila"];
+					$fila = $fila - 1;
+				// recorrer la array para extraer los datos.
+				for($i=0;$i<=$fila;$i++){
+					$id_asignatura_ = trim($id_asignatura[0][$i]);
+					$codigo_asignatura_ = trim($codigo_asignatura[0][$i]);
+					$estatus_ = trim($estatus[0][$i]);
+					$orden_siges_ = $orden_siges[0][$i];
+					// cambiar estatus
+						if($estatus_ == "Activo"){
+							$codigo_estatus = "01";
+						}else{
+							$codigo_estatus = "02";
+						}
+					// armar sql para actualizar tabla a_a_a_bacho_o_ciclo
+						$query_aaa = "UPDATE a_a_a_bach_o_ciclo SET orden_siges = '$orden_siges_' WHERE codigo_asignatura = '$codigo_asignatura_'";
+							$consulta_aaa = $dblink -> query($query_aaa); // Ejecutamos el Query.
+					// armar sql para actualizar tabla nota.
+						$query_aa_nota = "UPDATE nota SET orden_siges = '$orden_siges_' WHERE codigo_asignatura = '$codigo_asignatura_'";
+							$consulta_aa_nota = $dblink -> query($query_aa_nota); 				// Ejecutamos el Query.
+					// armar sql para actualizar tabla asignatura.
+						$query_asignatura = "UPDATE asignatura SET ordenar_siges = '$orden_siges_' WHERE id_asignatura = '$id_asignatura_' and codigo_estatus = '$codigo_estatus'";
 							$consulta_asignatura = $dblink -> query($query_asignatura); 				// Ejecutamos el Query.
 				}
 
