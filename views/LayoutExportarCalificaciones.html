@@ -148,12 +148,17 @@
                                 </div>
 
                                 <div class="row">
-                                    <!-- Asignatura -->
+                                    <!-- Seleccionar Asignatura(s) -->
                                     <div class="col-md-6 mb-3">
                                         <label for="lstasignatura" class="form-label form-label-custom">
-                                            <i class="fas fa-book text-secondary me-1"></i> Asignatura
+                                            <i class="fas fa-book-reader text-secondary me-1"></i> Seleccionar Asignatura(s)
                                         </label>
-                                        <select id="lstasignatura" name="lstasignatura" class="form-select form-select-custom"></select>
+                                        <select class="form-select" id="lstasignatura" name="lstasignatura[]" multiple="multiple" size="4" data-placeholder="Seleccione una o varias asignaturas">
+                                            <!-- Opciones cargadas dinámicamente desde la BD -->
+                                        </select>
+                                        <small class="form-text text-muted">
+                                            <i class="fas fa-info-circle me-1"></i> Mantén presionada la tecla <strong>Ctrl</strong> (o <strong>Cmd</strong> en Mac) para seleccionar varias materias.
+                                        </small>
                                     </div>
 
                                     <!-- Período -->
@@ -169,21 +174,40 @@
                                     <!-- Fecha -->
                                     <div class="col-md-6 mb-4">
                                         <label for="txtfecha" class="form-label form-label-custom">
-                                            <i class="fas fa-calendar-day text-secondary me-1"></i> Fecha de Emisión
-                                        </label>
-                                        <input type="date" id="txtfecha" name="txtfecha" class="form-control form-control-custom">
-                                    </div>
+                            <i class="fas fa-calendar-day text-secondary me-1"></i> Fecha de Emisión
+                        </label>
+                        <input type="date" id="txtfecha" name="txtfecha" class="form-control form-control-custom">
+                    </div>
 
-                                    <!-- Seleccionar Todas Las Asignaturas -->
-                                    <div class="col-md-6 mb-4 d-flex align-items-center">
-                                        <div class="form-check form-switch p-0" style="margin-left: 2.5rem;">
-                                            <input class="form-check-input" type="checkbox" id="TodasLasAsignaturas" name="TodasLasAsignaturas" style="width: 2.8em; height: 1.5em; cursor: pointer; float: left; margin-left: -2.5rem;">
-                                            <label for="TodasLasAsignaturas" class="form-check-label ps-2" style="font-weight: 600; color: #475569; cursor: pointer; padding-top: 2px;">
-                                                Crear - Todas Las Asignaturas
-                                            </label>
-                                        </div>
-                                    </div>
-                                </div>
+                    <!-- Seleccionar Todas Las Asignaturas -->
+                    <div class="col-md-6 mb-4 d-flex align-items-center">
+                        <div class="form-check form-switch p-0" style="margin-left: 2.5rem;">
+                            <input class="form-check-input" type="checkbox" id="TodasLasAsignaturas" name="TodasLasAsignaturas" style="width: 2.8em; height: 1.5em; cursor: pointer; float: left; margin-left: -2.5rem;">
+                            <label for="TodasLasAsignaturas" class="form-check-label ps-2" style="font-weight: 600; color: #475569; cursor: pointer; padding-top: 2px;">
+                                Crear - Todas Las Asignaturas
+                            </label>
+                        </div>
+                    </div>
+
+
+                    <!-- Modalidad de Exportación: Por Materia vs Por Materias -->
+<div class="col-md-6 mb-4">
+    <label class="form-label form-label-custom">
+        <i class="fas fa-file-export text-secondary me-1"></i> Formato de Exportación
+    </label>
+    <div class="btn-group w-100" role="group" aria-label="Modo de Exportación">
+        <input type="radio" class="btn-check" name="TipoExportacion" id="modoPorMateria" value="no" checked>
+        <label class="btn btn-outline-primary py-2" for="modoPorMateria" style="border-radius: 8px 0 0 8px; font-weight: 600;">
+            <i class="fas fa-book me-1"></i> Por Materia
+        </label>
+
+        <input type="radio" class="btn-check" name="TipoExportacion" id="modoPorMaterias" value="yes">
+        <label class="btn btn-outline-primary py-2" for="modoPorMaterias" style="border-radius: 0 8px 8px 0; font-weight: 600;">
+            <i class="fas fa-layer-group me-1"></i> Por Materias (Todas)
+        </label>
+    </div>
+</div>
+                </div>
 
                                 <hr class="text-muted my-4">
 

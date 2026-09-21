@@ -31,14 +31,30 @@ $('#formExportarNotas').validate({
 					//variables checked
 					var TodasLasAsignaturas = ""; 
 					if($('#TodasLasAsignaturas').is(":checked")) {TodasLasAsignaturas = 'yes';}
+
+					// Dentro de submitHandler:
+					var valPeriodo = $("#lstperiodo").val();
+					var mapaPeriodosJS = { '1': 'P1', '2': 'P2', '3': 'P3', '4': 'P4', '5': 'P5' };
+					var periodoCorto = mapaPeriodosJS[valPeriodo] || ('P' + valPeriodo);
+
+					// Capturar Múltiples Asignaturas (Nombres)
+						var asignaturasSeleccionadas = [];
+						$("#lstasignatura option:selected").each(function() {
+							asignaturasSeleccionadas.push($(this).text());
+						});
+
 					var Exportar = {};
 					Exportar['NombreAnnLectivo'] = $("#lstannlectivo option:selected").text();	// Año Lectivo
 					Exportar['NombreNivel'] = $("#lstmodalidad option:selected").text();	// Nivel
 					Exportar['NombreGST'] = $("#lstgradoseccion option:selected").text(); // Grado Seccion Turno
-					Exportar['NombreAsignatura'] = $("#lstasignatura option:selected").text();	// Asignatura
+//					Exportar['NombreAsignatura'] = $("#lstasignatura option:selected").text();	// Asignatura
+					Exportar['NombreAsignatura'] = asignaturasSeleccionadas.join(" / "); // Formato legible para el reporte
 					Exportar['NombrePeriodo'] = $("#lstperiodo option:selected").text();	// Periodo
+					Exportar['PeriodoCorto'] = periodoCorto; // Asignación de etiqueta corta
 					console.log(Exportar);
+
 					var DatosExportar = JSON.stringify(Exportar);
+					
 				$.ajax({
 					beforeSend: function(){
 						$('#tabstabla').show();

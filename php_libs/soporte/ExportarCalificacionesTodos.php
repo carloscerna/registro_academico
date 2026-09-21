@@ -19,7 +19,7 @@ $respuestaOK = false;
 $mensajeError = "";
 $contenidoOK = "";
 $observaciones = "";
-$todasLasAsignaturas = $_REQUEST["TodasLasAsignaturas"];
+$todasLasAsignaturas = $_REQUEST["TodasLasAsignaturas"] ?? "no";
 $Exportar = json_decode($_REQUEST["Exportar"]);
 
 $NombreAsignatura = $Exportar->NombreAsignatura;
@@ -37,7 +37,10 @@ if($nombre_grado == "Segundo grado" || $nombre_grado == "Tercer grado"){
 $codigo_all = $_REQUEST["lstmodalidad"] . substr($_REQUEST["lstgradoseccion"], 0, 4) . $_REQUEST["lstannlectivo"];
 $codigoModalidadGradoAnnLectivo = $_REQUEST["lstmodalidad"] . substr($_REQUEST["lstgradoseccion"], 0, 2) . $_REQUEST["lstannlectivo"];
 $periodo = $_REQUEST["lstperiodo"];
-$codigo_asignatura = substr($_REQUEST["lstasignatura"], 0, 3);
+//$codigo_asignatura = substr($_REQUEST["lstasignatura"], 0, 3);
+// En PHP: Procesar si lstasignatura es array o cadena
+$lstAsignaturaInput = $_REQUEST["lstasignatura"] ?? null;
+
 $fecha = $_REQUEST["txtfecha"];
 
 // Carga de PhpSpreadsheet mediante Composer Autoload
@@ -93,6 +96,9 @@ if ($codigo_modalidad == '15') {
     $sheetModulos = $objPHPExcelModulos->getActiveSheet();
 }
 
+// =========================================================================
+//  OPCIÓN 1: POR MATERIAS (FORMATO COMPLETO / CONSOLIDADO)
+// =========================================================================
 if ($todasLasAsignaturas == "yes") {
     $query_todas = "SELECT 
         a.codigo_nie, 
@@ -114,9 +120,7 @@ if ($todasLasAsignaturas == "yes") {
         asig.codigo_cc,
         n.codigo_asignatura,
         n.nota_p_p_1, n.nota_p_p_2, n.nota_p_p_3, n.nota_p_p_4, n.nota_p_p_5,
-        n.indicador_p_p_1, n.indicador_p_p_2, n.indicador_p_p_3, n.indicador_final,
-        ROUND((n.nota_p_p_1 + n.nota_p_p_2 + n.nota_p_p_3),1) AS total_puntos_basica,
-        ROUND((n.nota_p_p_1 + n.nota_p_p_2 + n.nota_p_p_3 + n.nota_p_p_4),1) AS total_puntos_media
+        n.indicador_p_p_1, n.indicador_p_p_2, n.indicador_p_p_3, n.indicador_final
         FROM alumno a
         INNER JOIN alumno_encargado ae ON a.id_alumno = ae.codigo_alumno AND ae.encargado = 't'
         INNER JOIN alumno_matricula am ON a.id_alumno = am.codigo_alumno AND am.retirado = 'f' 
@@ -137,12 +141,10 @@ if ($todasLasAsignaturas == "yes") {
     $result_asignatura = $db_link->query($query_todas);
     $datos = $result_asignatura->fetchAll(PDO::FETCH_ASSOC);
 
-    // Listas dinámicas de asignaturas (Columnas de cada archivo)
     $asignaturas_academicas = [];
     $asignaturas_modulares = [];
     $nombreSeccion = "";
 
-    // Paso 1: Clasificar las columnas (encabezados de asignaturas)
     foreach ($datos as $fila) {
         $codigo_bachillerato_actual = trim($fila['codigo_bachillerato']);
         $codigo_area_actual = trim($fila['codigo_area']);
@@ -160,8 +162,7 @@ if ($todasLasAsignaturas == "yes") {
         }
     }
 
-    // Paso 2: Configurar Encabezados en Hojas de Excel correspondientes
-    // Excel Académico
+    // Encabezados Opción Por Materias
     $sheetAcademico->setCellValue('A1', 'Estudiante');
     $sheetAcademico->setCellValue('B1', 'Nombre');
     $col = 'C';
@@ -170,7 +171,6 @@ if ($todasLasAsignaturas == "yes") {
         $col++;
     }
 
-    // Excel Modular (si aplica)
     if ($codigo_modalidad == '15' && $sheetModulos !== null) {
         $sheetModulos->setCellValue('A1', 'Estudiante');
         $sheetModulos->setCellValue('B1', 'Nombre');
@@ -181,13 +181,12 @@ if ($todasLasAsignaturas == "yes") {
         }
     }
 
-    // Paso 3: Agrupar calificaciones por alumno para cada archivo
     $datos_agrupados_academicos = [];
     $datos_agrupados_modulares = [];
 
     foreach ($datos as $fila) {
         $nie = trim($fila['codigo_nie']);
-        $nombre_completo = trim($fila['apellido_alumno']); // O $fila['nombre_completo'] según prefieras la presentación
+        $nombre_completo = trim($fila['apellido_alumno']);
         $asignatura = $fila['nombre_asignatura'];
         $nota = $fila[$nota_p_p];
         $codigo_cc = trim($fila['codigo_cc']);
@@ -195,65 +194,35 @@ if ($todasLasAsignaturas == "yes") {
         $codigo_bachillerato_actual = trim($fila['codigo_bachillerato']);
         $codigo_area_actual = trim($fila['codigo_area']);
 
-        // Formatear la calificación según codigo_cc
-        $nota_formateada = "";
-        if ($codigo_cc === "02") {
-            if (is_null($nota) || $nota <= 0 || $nota == "") {
-                $nota_formateada = "B";
-            } elseif ($nota >= 9) {
-                $nota_formateada = "E";
-            } elseif ($nota >= 7) {
-                $nota_formateada = "MB";
-            } else {
-                $nota_formateada = "B";
-            }
-        } elseif ($codigo_cc === "03") {
-            $nota_formateada = $indicador;
-        } elseif ($codigo_cc === "01" || $codigo_cc === "04") {
-            if (is_null($nota) || $nota <= 0) {
-                $nota_formateada = "1";
-            } else {
-                $nota_formateada = $nota;
-            }
-        }
+        $nota_formateada = calcularNotaFormateada($codigo_cc, $nota, $indicador);
 
-        // Clasificar y guardar en el arreglo correspondiente de forma separada
         if ($codigo_bachillerato_actual === '15' && $codigo_area_actual === '03') {
             if (!isset($datos_agrupados_modulares[$nie])) {
-                $datos_agrupados_modulares[$nie] = [
-                    'nombre' => $nombre_completo
-                ];
+                $datos_agrupados_modulares[$nie] = ['nombre' => $nombre_completo];
             }
             $datos_agrupados_modulares[$nie][$asignatura] = $nota_formateada;
         } else {
             if (!isset($datos_agrupados_academicos[$nie])) {
-                $datos_agrupados_academicos[$nie] = [
-                    'nombre' => $nombre_completo
-                ];
+                $datos_agrupados_academicos[$nie] = ['nombre' => $nombre_completo];
             }
             $datos_agrupados_academicos[$nie][$asignatura] = $nota_formateada;
         }
     }
 
-    // Paso 4: Rellenar Filas de Datos - Académicos
+    // Llenar Filas Académicas
     $fila_num = 2;
     foreach ($datos_agrupados_academicos as $nie => $datosAlumno) {
         $sheetAcademico->setCellValue("A$fila_num", $nie);
         $sheetAcademico->setCellValue("B$fila_num", $datosAlumno['nombre']);
         
         foreach ($asignaturas_academicas as $index => $asig) {
-            // Se le suma 2 a index porque la columna A es 0, B es 1 y la primera asignatura va en C (índice 2)
             $columna = obtenerLetraColumna($index + 2); 
-            $nota_celda = isset($datosAlumno[$asig]) ? $datosAlumno[$asig] : "";
-            $sheetAcademico->setCellValue("$columna$fila_num", $nota_celda);
+            $sheetAcademico->setCellValue("$columna$fila_num", $datosAlumno[$asig] ?? "");
         }
         $fila_num++;
     }
-    foreach ($sheetAcademico->getColumnIterator() as $column) {
-        $sheetAcademico->getColumnDimension($column->getColumnIndex())->setAutoSize(true);
-    }
 
-    // Paso 5: Rellenar Filas de Datos - Modulares
+    // Llenar Filas Modulares
     if ($codigo_modalidad == '15' && !empty($datos_agrupados_modulares) && $sheetModulos !== null) {
         $fila_num_mod = 2;
         foreach ($datos_agrupados_modulares as $nie => $datosAlumno) {
@@ -261,21 +230,160 @@ if ($todasLasAsignaturas == "yes") {
             $sheetModulos->setCellValue("B$fila_num_mod", $datosAlumno['nombre']);
             
             foreach ($asignaturas_modulares as $index => $asig) {
-                // Se le suma 2 a index para empezar en la columna C
                 $columna = obtenerLetraColumna($index + 2);
-                $nota_celda = isset($datosAlumno[$asig]) ? $datosAlumno[$asig] : "";
-                $sheetModulos->setCellValue("$columna$fila_num_mod", $nota_celda);
+                $sheetModulos->setCellValue("$columna$fila_num_mod", $datosAlumno[$asig] ?? "");
             }
             $fila_num_mod++;
         }
-        foreach ($sheetModulos->getColumnIterator() as $column) {
-            $sheetModulos->getColumnDimension($column->getColumnIndex())->setAutoSize(true);
+    }
+
+} else {
+    // =========================================================================
+    //  OPCIÓN 2: POR MATERIA (MÉTODO TRADICIONAL / INDIVIDUAL)
+    //  A1 = Código NIE | B1..N = Asignaturas | A2..N = NIEs | B2..N = Notas
+    // =========================================================================
+if (is_array($lstAsignaturaInput)) {
+    // Extraer los códigos de 3 dígitos de cada elemento seleccionado
+    $codigos_materia = array_map(function($item) {
+        return substr($item, 0, 3);
+    }, $lstAsignaturaInput);
+    
+    // Crear condición SQL IN ('001', '002', ...)
+    $listaCodigosSQL = "'" . implode("','", $codigos_materia) . "'";
+    $where_asignatura = " AND n.codigo_asignatura IN ($listaCodigosSQL) ";
+} else {
+    $codigo_asignatura = substr($lstAsignaturaInput, 0, 3);
+    $where_asignatura = ($codigo_asignatura !== "00" && !empty($codigo_asignatura)) 
+        ? " AND n.codigo_asignatura = '$codigo_asignatura' " 
+        : "";
+}
+
+    $query_materia = "SELECT 
+        a.codigo_nie, 
+        TRIM(a.apellido_paterno || ' ' || a.apellido_materno || ', ' || a.nombre_completo) AS apellido_alumno,
+        am.codigo_bach_o_ciclo AS codigo_bachillerato,
+        asig.codigo_area, 
+        asig.nombre AS nombre_asignatura,
+        asig.codigo_cc,
+        sec.nombre AS nombre_seccion,
+        n.codigo_asignatura,
+        n.$nota_p_p AS nota_eval,
+        n.indicador_p_p_1
+        FROM alumno a
+        INNER JOIN alumno_matricula am ON a.id_alumno = am.codigo_alumno AND am.retirado = 'f' 
+        INNER JOIN seccion sec ON sec.codigo = am.codigo_seccion
+        INNER JOIN nota n ON n.codigo_alumno = a.id_alumno AND am.id_alumno_matricula = n.codigo_matricula
+        INNER JOIN asignatura asig ON asig.codigo = n.codigo_asignatura
+        WHERE btrim(am.codigo_bach_o_ciclo || am.codigo_grado || am.codigo_seccion || am.codigo_ann_lectivo) = '$codigo_all'
+        $where_asignatura
+        ORDER BY apellido_alumno, n.orden_siges ASC";
+
+    $result_materia = $db_link->query($query_materia);
+    $datos = $result_materia->fetchAll(PDO::FETCH_ASSOC);
+
+    $asignaturas_academicas = [];
+    $asignaturas_modulares = [];
+    $nombreSeccion = "";
+
+    foreach ($datos as $fila) {
+        $codigo_bachillerato_actual = trim($fila['codigo_bachillerato']);
+        $codigo_area_actual = trim($fila['codigo_area']);
+        $nombre_asig = $fila['nombre_asignatura'];
+        $nombreSeccion = trim($fila['nombre_seccion']);
+
+        if ($codigo_bachillerato_actual === '15' && $codigo_area_actual === '03') {
+            if (!in_array($nombre_asig, $asignaturas_modulares)) {
+                $asignaturas_modulares[] = $nombre_asig;
+            }
+        } else {
+            if (!in_array($nombre_asig, $asignaturas_academicas)) {
+                $asignaturas_academicas[] = $nombre_asig;
+            }
         }
     }
 
-    // Guardar y generar la respuesta JSON
-    NombreArchivoExcelDoble($objPHPExcel, $objPHPExcelModulos, $nombreSeccion, $datos_agrupados_academicos, $datos_agrupados_modulares);
+    // Encabezados Opción Por Materia (Formato antiguo)
+    $sheetAcademico->setCellValue('A1', 'Código NIE');
+    $col = 'B';
+    foreach ($asignaturas_academicas as $asig) {
+        $sheetAcademico->setCellValue($col . '1', mb_strtoupper($asig, 'UTF-8'));
+        $col++;
+    }
+
+    if ($codigo_modalidad == '15' && $sheetModulos !== null) {
+        $sheetModulos->setCellValue('A1', 'Código NIE');
+        $col = 'B';
+        foreach ($asignaturas_modulares as $asig) {
+            $sheetModulos->setCellValue($col . '1', mb_strtoupper($asig, 'UTF-8'));
+            $col++;
+        }
+    }
+
+    $datos_agrupados_academicos = [];
+    $datos_agrupados_modulares = [];
+
+    foreach ($datos as $fila) {
+        $nie = trim($fila['codigo_nie']);
+        $asignatura = $fila['nombre_asignatura'];
+        $nota = $fila['nota_eval'];
+        $codigo_cc = trim($fila['codigo_cc']);
+        $indicador = $fila['indicador_p_p_1'];
+        $codigo_bachillerato_actual = trim($fila['codigo_bachillerato']);
+        $codigo_area_actual = trim($fila['codigo_area']);
+
+        $nota_formateada = calcularNotaFormateada($codigo_cc, $nota, $indicador);
+
+        if ($codigo_bachillerato_actual === '15' && $codigo_area_actual === '03') {
+            if (!isset($datos_agrupados_modulares[$nie])) {
+                $datos_agrupados_modulares[$nie] = [];
+            }
+            $datos_agrupados_modulares[$nie][$asignatura] = $nota_formateada;
+        } else {
+            if (!isset($datos_agrupados_academicos[$nie])) {
+                $datos_agrupados_academicos[$nie] = [];
+            }
+            $datos_agrupados_academicos[$nie][$asignatura] = $nota_formateada;
+        }
+    }
+
+    // Llenar Filas Modo Por Materia (A=NIE, B en adelante=Calificaciones)
+    $fila_num = 2;
+    foreach ($datos_agrupados_academicos as $nie => $notasAlumno) {
+        $sheetAcademico->setCellValue("A$fila_num", $nie);
+        
+        foreach ($asignaturas_academicas as $index => $asig) {
+            $columna = obtenerLetraColumna($index + 1); // Indice 1 empieza en B
+            $sheetAcademico->setCellValue("$columna$fila_num", $notasAlumno[$asig] ?? "");
+        }
+        $fila_num++;
+    }
+
+    if ($codigo_modalidad == '15' && !empty($datos_agrupados_modulares) && $sheetModulos !== null) {
+        $fila_num_mod = 2;
+        foreach ($datos_agrupados_modulares as $nie => $notasAlumno) {
+            $sheetModulos->setCellValue("A$fila_num_mod", $nie);
+            
+            foreach ($asignaturas_modulares as $index => $asig) {
+                $columna = obtenerLetraColumna($index + 1);
+                $sheetModulos->setCellValue("$columna$fila_num_mod", $notasAlumno[$asig] ?? "");
+            }
+            $fila_num_mod++;
+        }
+    }
 }
+
+// Autoajustar columnas
+foreach ($sheetAcademico->getColumnIterator() as $column) {
+    $sheetAcademico->getColumnDimension($column->getColumnIndex())->setAutoSize(true);
+}
+if ($sheetModulos !== null) {
+    foreach ($sheetModulos->getColumnIterator() as $column) {
+        $sheetModulos->getColumnDimension($column->getColumnIndex())->setAutoSize(true);
+    }
+}
+
+// Guardar y generar la respuesta JSON
+NombreArchivoExcelDoble($objPHPExcel, $objPHPExcelModulos, $nombreSeccion, $datos_agrupados_academicos, $datos_agrupados_modulares, $todasLasAsignaturas);
 
 echo json_encode($salidaJson);
 
@@ -283,7 +391,20 @@ echo json_encode($salidaJson);
 //                  FUNCIONES AUXILIARES
 // =========================================================================
 
-// Función de conversión segura de índice numérico a letras de columna de Excel (A, B, C... AA, AB...)
+function calcularNotaFormateada($codigo_cc, $nota, $indicador) {
+    if ($codigo_cc === "02") {
+        if (is_null($nota) || $nota <= 0 || $nota == "") return "B";
+        if ($nota >= 9) return "E";
+        if ($nota >= 7) return "MB";
+        return "B";
+    } elseif ($codigo_cc === "03") {
+        return $indicador;
+    } elseif ($codigo_cc === "01" || $codigo_cc === "04") {
+        return (is_null($nota) || $nota <= 0) ? "1" : $nota;
+    }
+    return $nota;
+}
+
 function obtenerLetraColumna($index) {
     $letra = "";
     while ($index >= 0) {
@@ -293,21 +414,32 @@ function obtenerLetraColumna($index) {
     return $letra;
 }
 
-// Función encargada de guardar ambos archivos de forma física y generar el reporte HTML en JSON
-function NombreArchivoExcelDoble($objPHPExcel, $objPHPExcelModulos, $nombreSeccion, $datos_academicos, $datos_modulares) {
+function NombreArchivoExcelDoble($objPHPExcel, $objPHPExcelModulos, $nombreSeccion, $datos_academicos, $datos_modulares, $todasLasAsignaturas = "no") {
     global $codigo_bachillerato, $nombre_annlectivo, $path_root, $nombre_modalidad, $nombre_grado, $periodo, $DestinoArchivo, $salidaJson;
     
     $codigo_destino = 3; 
     $conteo = 1;
+
+    // 1. Mapeo del Periodo
+    $mapaPeriodos = [
+        "1" => "P1", "2" => "P2", "3" => "P3", "4" => "P4", "5" => "P5",
+        "Periodo 1" => "P1", "Periodo 2" => "P2", "Periodo 3" => "P3", "Periodo 4" => "P4", "Periodo 5" => "P5",
+        " Alert" => "Alertas", "Alertas" => "Alertas"
+    ];
+
+    $sufijoPeriodo = $mapaPeriodos[$periodo] ?? ("P" . substr(trim($periodo), -1));
+
+    // 2. Definición de la etiqueta según la modalidad seleccionada
+    $sufijoModo = ($todasLasAsignaturas === "yes") ? "Por Materias" : "Por Materia";
     
     $contenidoHTML = "
-    <div style='overflow-x: auto; border: 1px solid #e2e8f0; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);'>
-        <table style='width: 100%; border-collapse: collapse; text-align: center; font-family: system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, sans-serif; font-size: 14px;'>
+    <div style='overflow-x: auto; border: 1px solid #e2e8f0; border-radius: 8px;'>
+        <table style='width: 100%; border-collapse: collapse; text-align: center; font-family: system-ui, sans-serif; font-size: 14px;'>
             <thead>
                 <tr style='background-color: #1e3a8a; color: #ffffff;'>
-                    <th style='padding: 12px 15px; font-weight: 600; border-bottom: 2px solid #1e40af;'>#</th>
-                    <th style='padding: 12px 15px; font-weight: 600; text-align: left; border-bottom: 2px solid #1e40af;'>Archivo Generado</th>
-                    <th style='padding: 12px 15px; font-weight: 600; border-bottom: 2px solid #1e40af;'>Tamaño</th>
+                    <th style='padding: 12px 15px;'>#</th>
+                    <th style='padding: 12px 15px; text-align: left;'>Archivo Generado</th>
+                    <th style='padding: 12px 15px;'>Tamaño</th>
                 </tr>
             </thead>
             <tbody>";
@@ -321,12 +453,11 @@ function NombreArchivoExcelDoble($objPHPExcel, $objPHPExcelModulos, $nombreSecci
 
         $nombreBase = htmlspecialchars($nombre_grado) . " " . $nombreSeccion . " - " . $nombre_modalidad;
         $nombreBaseClean = str_replace(['/', ':'], '-', $nombreBase);
-        
-        $iconoExcel = "<span style='display: inline-flex; align-items: center; justify-content: center; background-color: #ecfdf5; color: #059669; width: 28px; height: 28px; border-radius: 6px; margin-right: 10px; font-size: 14px;'><i class='fas fa-file-excel'></i></span>";
+        $iconoExcel = "<span style='color: #059669; margin-right: 10px;'><i class='fas fa-file-excel'></i></span>";
 
-        // 1. Guardar archivo Académico
+        // Construcción del nombre para el archivo ACADEMICO
         if (!empty($datos_academicos)) {
-            $nombreArchivoAcademico = trim($nombreBaseClean) . " - ACADEMICO.xlsx";
+            $nombreArchivoAcademico = trim($nombreBaseClean) . " - ACADEMICO - " . $sufijoPeriodo . " - " . $sufijoModo . ".xlsx";
             $rutaAcademica = $DestinoArchivo . "/" . $nombreArchivoAcademico;
             
             $writer = new Xlsx($objPHPExcel);
@@ -337,39 +468,29 @@ function NombreArchivoExcelDoble($objPHPExcel, $objPHPExcelModulos, $nombreSecci
 
             $contenidoHTML .= "
                 <tr style='background-color: #ffffff; border-bottom: 1px solid #e2e8f0;'>
-                    <td style='padding: 12px 15px; color: #64748b; font-weight: bold;'>{$conteo}</td>
-                    <td style='padding: 12px 15px; text-align: left; color: #1e293b;'>
-                        <div style='display: flex; align-items: center;'>
-                            {$iconoExcel}
-                            <span style='font-weight: 500;'>{$nombreArchivoAcademico}</span>
-                        </div>
-                    </td>
-                    <td style='padding: 12px 15px; color: #475569; font-weight: 500;'>{$tamanoTexto}</td>
+                    <td style='padding: 12px 15px;'>{$conteo}</td>
+                    <td style='padding: 12px 15px; text-align: left;'>{$iconoExcel}<b>{$nombreArchivoAcademico}</b></td>
+                    <td style='padding: 12px 15px;'>{$tamanoTexto}</td>
                 </tr>";
             $conteo++;
         }
 
-        // 2. Guardar archivo Modular
+        // Construcción del nombre para el archivo MODULAR (Si aplica)
         if ($codigo_bachillerato == '15' && $objPHPExcelModulos !== null && !empty($datos_modulares)) {
-            $nombreArchivoModular = trim($nombreBaseClean) . " - MODULOS.xlsx";
+            $nombreArchivoModular = trim($nombreBaseClean) . " - MODULOS - " . $sufijoPeriodo . " - " . $sufijoModo . ".xlsx";
             $rutaModular = $DestinoArchivo . "/" . $nombreArchivoModular;
 
             $writerMod = new Xlsx($objPHPExcelModulos);
             $writerMod->save($rutaModular);
 
             $tamanoMod = round(filesize($rutaModular) / 1024, 2);
-            $tamanoTextoMod = $tamanoMod < 1024 ? "{$tamanoMod} KB" : round($tamanoMod / 1024, 2) . " MB";
+            $tamanoTextoMod = $tamanoMod < 1024 ? "{$tamanoMod} KB" : round($tamano / 1024, 2) . " MB";
 
             $contenidoHTML .= "
                 <tr style='background-color: #f8fafc; border-bottom: 1px solid #e2e8f0;'>
-                    <td style='padding: 12px 15px; color: #64748b; font-weight: bold;'>{$conteo}</td>
-                    <td style='padding: 12px 15px; text-align: left; color: #1e293b;'>
-                        <div style='display: flex; align-items: center;'>
-                            {$iconoExcel}
-                            <span style='font-weight: 500;'>{$nombreArchivoModular}</span>
-                        </div>
-                    </td>
-                    <td style='padding: 12px 15px; color: #475569; font-weight: 500;'>{$tamanoTextoMod}</td>
+                    <td style='padding: 12px 15px;'>{$conteo}</td>
+                    <td style='padding: 12px 15px; text-align: left;'>{$iconoExcel}<b>{$nombreArchivoModular}</b></td>
+                    <td style='padding: 12px 15px;'>{$tamanoTextoMod}</td>
                 </tr>";
         }
 

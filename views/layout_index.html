@@ -300,6 +300,9 @@
                     const selectedAnn = $('#lstannlectivo').val();
                     if (!selectedAnn) return;
 
+                    // Actualizar las URLs de los enlaces de reportes con el año lectivo activo
+                            actualizarEnlacesReportes();
+
                     $.post('php_libs/soporte/dashboard/phpAjaxDashboard.inc.php', { 
                         action: 'getGeneralIndicators', 
                         codigo_ann_lectivo: selectedAnn 
@@ -320,83 +323,83 @@
                             $('#totalAdminFemenino').text(data.total_admin_femenino);
 
                            // 1. ACTUALIZAR LOS BADGES QUE TE FALTABAN
-        // Usamos los datos que vienen en 'matricula_grafico' de tu JSON
-        $('#MatriculaMasculino').text(data.matricula_grafico.masculino);
-        $('#MatriculaFemenino').text(data.matricula_grafico.femenino);
-        $('#MatriculaTotal').text(data.matricula_grafico.total);
+                                    // Usamos los datos que vienen en 'matricula_grafico' de tu JSON
+                                    $('#MatriculaMasculino').text(data.matricula_grafico.masculino);
+                                    $('#MatriculaFemenino').text(data.matricula_grafico.femenino);
+                                    $('#MatriculaTotal').text(data.matricula_grafico.total);
 
-        // 2. CORRECCIÓN DEL GRÁFICO DE PASTEL (Doughnut)
-        if (window.generalMatriculaChart instanceof Chart) {
-            window.generalMatriculaChart.destroy();
-        }
+                                    // 2. CORRECCIÓN DEL GRÁFICO DE PASTEL (Doughnut)
+                                    if (window.generalMatriculaChart instanceof Chart) {
+                                        window.generalMatriculaChart.destroy();
+                                    }
 
-        const ctxPie = document.getElementById('GraficoMatricula').getContext('2d');
-        window.generalMatriculaChart = new Chart(ctxPie, {
-            type: 'doughnut',
-            data: {
-                labels: ['Masculino', 'Femenino'],
-                datasets: [{
-                    data: [data.matricula_grafico.masculino, data.matricula_grafico.femenino],
-                    backgroundColor: ['#007bff', '#dc3545'], // Colores Primary y Danger de AdminLTE
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false, // ¡ESTO EVITA EL CICLO INFINITO!
-                plugins: {
-                    legend: { display: false } // Ocultamos leyenda si ya tienes los badges
-                }
-            }
-        });
+                                    const ctxPie = document.getElementById('GraficoMatricula').getContext('2d');
+                                    window.generalMatriculaChart = new Chart(ctxPie, {
+                                        type: 'doughnut',
+                                        data: {
+                                            labels: ['Masculino', 'Femenino'],
+                                            datasets: [{
+                                                data: [data.matricula_grafico.masculino, data.matricula_grafico.femenino],
+                                                backgroundColor: ['#007bff', '#dc3545'], // Colores Primary y Danger de AdminLTE
+                                                borderWidth: 1
+                                            }]
+                                        },
+                                        options: {
+                                            responsive: true,
+                                            maintainAspectRatio: false, // ¡ESTO EVITA EL CICLO INFINITO!
+                                            plugins: {
+                                                legend: { display: false } // Ocultamos leyenda si ya tienes los badges
+                                            }
+                                        }
+                                    });
 
-// 1. Procesar y agrupar los totales por turno
-const sumasPorTurno = {};
+                            // 1. Procesar y agrupar los totales por turno
+                            const sumasPorTurno = {};
 
-data.lista_matricula.forEach(item => {
-    const turno = item.turno.trim();
-    const total = parseInt(item.total);
-    
-    if (!sumasPorTurno[turno]) {
-        sumasPorTurno[turno] = 0;
-    }
-    sumasPorTurno[turno] += total;
-});
+                            data.lista_matricula.forEach(item => {
+                                const turno = item.turno.trim();
+                                const total = parseInt(item.total);
+                                
+                                if (!sumasPorTurno[turno]) {
+                                    sumasPorTurno[turno] = 0;
+                                }
+                                sumasPorTurno[turno] += total;
+                            });
 
-// 2. Preparar los datos para Chart.js
-const etiquetas = Object.keys(sumasPorTurno); // ["Nocturna", "Jornada Completa", "Matutino", "Vespertino"]
-const valores = Object.values(sumasPorTurno); // [Sumatorias correspondientes]
+                            // 2. Preparar los datos para Chart.js
+                            const etiquetas = Object.keys(sumasPorTurno); // ["Nocturna", "Jornada Completa", "Matutino", "Vespertino"]
+                            const valores = Object.values(sumasPorTurno); // [Sumatorias correspondientes]
 
-// 3. Renderizar el gráfico
-if (window.turnoChart instanceof Chart) {
-    window.turnoChart.destroy();
-}
+                            // 3. Renderizar el gráfico
+                            if (window.turnoChart instanceof Chart) {
+                                window.turnoChart.destroy();
+                            }
 
-const ctxTurno = document.getElementById('turnoDistributionChart').getContext('2d');
-window.turnoChart = new Chart(ctxTurno, {
-    type: 'pie', // O 'doughnut'
-    data: {
-        labels: etiquetas,
-        datasets: [{
-            data: valores,
-            backgroundColor: [
-                '#3498db', // Azul
-                '#e74c3c', // Rojo
-                '#f1c40f', // Amarillo
-                '#2ecc71', // Verde
-                '#9b59b6'  // Morado (por si hay más turnos)
-            ],
-            borderWidth: 1
-        }]
-    },
-    options: {
-        responsive: true,
-        maintainAspectRatio: false, // ¡Muy importante para evitar el ciclo infinito!
-        plugins: {
-            legend: { position: 'bottom' }
-        }
-    }
-});
+                            const ctxTurno = document.getElementById('turnoDistributionChart').getContext('2d');
+                            window.turnoChart = new Chart(ctxTurno, {
+                                type: 'pie', // O 'doughnut'
+                                data: {
+                                    labels: etiquetas,
+                                    datasets: [{
+                                        data: valores,
+                                        backgroundColor: [
+                                            '#3498db', // Azul
+                                            '#e74c3c', // Rojo
+                                            '#f1c40f', // Amarillo
+                                            '#2ecc71', // Verde
+                                            '#9b59b6'  // Morado (por si hay más turnos)
+                                        ],
+                                        borderWidth: 1
+                                    }]
+                                },
+                                options: {
+                                    responsive: true,
+                                    maintainAspectRatio: false, // ¡Muy importante para evitar el ciclo infinito!
+                                    plugins: {
+                                        legend: { position: 'bottom' }
+                                    }
+                                }
+                            });
 
         
                             // 3. Tabla de Matrícula por Modalidad
@@ -495,4 +498,21 @@ window.turnoChart = new Chart(ctxTurno, {
             });
         </script>
     {% endif %}
+
+
+<script>
+    function actualizarEnlacesReportes() {
+        const ann = $('#lstannlectivo').val();
+        if (!ann) return;
+
+        // Ajusta las rutas según donde se ubique cada script de reporte PHP
+        const urlIndicadores = `php_libs/reportes/Estadisticos/IndicadoresEducativos.php?ann_lectivo=${ann}`;
+        const urlMemoria = `php_libs/reportes/Estadisticos/Memoria.php?ann_lectivo=${ann}`;
+        const urlRecuperaciones = `php_libs/reportes/Estadisticos/Recuperaciones.php?ann_lectivo=${ann}`;
+
+        $('#linkReporteIndicadores').attr('href', urlIndicadores);
+        $('#linkReporteMemoria').attr('href', urlMemoria);
+        $('#linkReporteRecuperaciones').attr('href', urlRecuperaciones);
+    }
+</script>
 {% endblock %}
