@@ -12,19 +12,18 @@ var miselect3 = "";
 
 // INICIO DE LA FUNCION PRINCIPAL.
 $(function(){
-    // Escribir la fecha actual.
-    var now = new Date();
-    var day = ("0" + now.getDate()).slice(-2);
-    var month = ("0" + (now.getMonth() + 1)).slice(-2);
-    var today = now.getFullYear()+"-"+(month)+"-"+(day) ;
-    var today_now = now.getFullYear()+"-"+(month)+"-"+"01";
-    var today_inicio = now.getFullYear()+"-"+"01"+"-"+"01";
-        $('#FechaTipoLicencia').val(today);
+// Inicialización de fechas predeterminadas
+    const now = new Date();
+    const today = now.toISOString().split('T')[0];
+    const todayNow = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-01`;
+    const todayInicio = `${now.getFullYear()}-01-01`;
+
+    $('#FechaTipoLicencia').val(today);
     //
     //  INVISILBLE TODOS LOS MENSAJES.
     //  
-    $("#AlertLicenciasPermisos").css("display", "none");
-    $("#AlertReportes").css("display", "none");
+ // Ocultar alertas iniciales
+    $("#AlertLicenciasPermisos, #AlertReportes").hide();
     //
 //  OPCIONES PARA EL TAB NAV
 //
@@ -88,17 +87,16 @@ $(function(){
         //  CUANDO EL CHECK SE ACTIVE O DESACTIVE.
         //
             var check;
-                $("#CheckDias").on("click", function(){
-                    check = $("#CheckDias").is(":checked");
-                    if(check) {
-                        $("#DiasLicenciaPermiso").prop("disabled",false);
-                        $("#DiasLicenciaPermiso").focus();
-                    } else {
-                        $("#DiasLicenciaPermiso").prop("disabled",true);
-                        $("#lstPersonal").focus();
-                        $("#DiasLicenciaPermiso").val("1");
-                    }
-                }); 
+  // Habilitar/Deshabilitar campo de días según checkbox
+    $("#CheckDias").on("change", function () {
+        const esIncapacidad = $(this).is(":checked");
+        $("#DiasLicenciaPermiso").prop("disabled", !esIncapacidad);
+        if (esIncapacidad) {
+            $("#DiasLicenciaPermiso").focus();
+        } else {
+            $("#DiasLicenciaPermiso").val("1");
+        }
+    });
         ////////////////////////////////////////////////////////////////////////////
         // ÑO,ÒAR DATPS DEPÈNDIENTE DEL TAB DE NAV
         //////////////////////////////////////////////////////////////////////////
@@ -420,70 +418,37 @@ $(function(){
                 },
         });
         // PARA GUARDAR O ACTUALIZAR.
-        $('#FormLicenciasPermisos').validate({
-            ignore:"",
-            rules:{
-                lstPersonal: {required: true},
-                    },
-                    errorElement: "em",
-                    errorPlacement: function ( error, element ) {
-                        // Add the `invalid-feedback` class to the error element
-                        error.addClass( "invalid-feedback" );
-                        if ( element.prop( "type" ) === "checkbox" ) {
-                            error.insertAfter( element.next( "label" ) );
-                        } else {
-                            error.insertAfter( element );
-                        }
-                    },
-                        highlight: function ( element, errorClass, validClass ) {
-                                    $( element ).addClass( "is-invalid" ).removeClass( "is-valid" );
-                                },
-                        unhighlight: function (element, errorClass, validClass) {
-                                    $( element ).addClass( "is-valid" ).removeClass( "is-invalid" );
-                                },
-                        invalidHandler: function() {
-                            setTimeout(function() {
-                                toastr["error"]("Falta Información en el Formulario.", "Sistema");
-                        });            
-                    },
-                submitHandler: function(){	
-                    var str = $('#FormLicenciasPermisos').serialize();
-                    if($('input[name="CheckDias"]:checked'))
-                    {
-                        DiasIncapacidad = $("#DiasLicenciaPermiso").val();
-                    }else{
-                        alert();
-                        DiasIncapacidad = 1;
+     // Envío del formulario principal mediante AJAX
+    $('#FormLicenciasPermisos').validate({
+        ignore: "",
+        rules: {
+            lstPersonal: { required: true }
+        },
+        submitHandler: function (form) {
+            const formData = $(form).serialize();
+            const diasIncapacidad = $("#CheckDias").is(":checked") ? $("#DiasLicenciaPermiso").val() : 1;
+            const accion = 'GuardarLicenciasPermisos';
+
+            $.ajax({
+                type: "POST",
+                url: "php_libs/soporte/Personal/LicenciasPermisos.php",
+                data: `${formData}&accion=${accion}&DiasIncapacidad=${diasIncapacidad}&id=${Math.random()}`,
+                dataType: "json",
+                success: function (response) {
+                    if (response.respuesta === false) {
+                        toastr.error(response.mensaje || "Error al procesar la solicitud", "Sistema");
+                    } else {
+                        toastr.success(response.mensaje || "Registro guardado correctamente", "Sistema");
+                        BuscarLicenciasPermisos();
+                        $("#FechaTipoLicencia").focus();
                     }
-                    //alert(str);
-                ///////////////////////////////////////////////////////////////			
-                // Inicio del Ajax. guarda o Actualiza los datos del Formualrio.
-                ///////////////////////////////////////////////////////////////
-                    $.ajax({
-                        beforeSend: function(){
-                            //if($('#CheckDias').is(":checked")) {DiasIncapacidad = $("#DiasLicenciaPermiso").val();}else{DiasIncapacidad = 1;}
-                        },
-                        cache: false,
-                        type: "POST",
-                        dataType: "json",
-                        url:"php_libs/soporte/Personal/LicenciasPermisos.php",
-                        data:str + "&accion=" + accion + "&id=" + Math.random() + "&DiasIncapacidad=" + DiasIncapacidad,
-                        success: function(response){
-                            // Validar mensaje de error
-                            if(response.respuesta == false){
-                                toastr["error"](response.mensaje, "Sistema");
-                            }
-                            else{
-                                toastr["success"](response.mensaje, "Sistema");
-                                // BuscarLicenciasPermisos
-                                    BuscarLicenciasPermisos();
-                                // focus().
-                                    $("#FechaTipoLicencia").focus();
-                                }               
-                        },
-                    });
                 },
-        });
+                error: function () {
+                    toastr.error("Ocurrió un error en la comunicación con el servidor.", "Sistema");
+                }
+            });
+        }
+    });
 	// Información dependiendo del nombres para Imprimir..
         $("#goImprimirLicenciaPermiso").on('click',function () {
             var fecha = $('#FechaTipoLicencia').val();
@@ -524,8 +489,137 @@ $(function(){
                         "&codigo_contratacion=" + codigo_contratacion;
             // Ejecutar la función
             AbrirVentana(varenviar);                                
-        });                    
+        });   
+        
+        var tablaLicencias;
+
+$(document).ready(function() {
+
+    // 1. Contador de Checkboxes Seleccionados para Borrado Masivo
+    $(document).on('change', '.case, #checkBoxAllLicenciasPermiso', function() {
+        if (this.id === 'checkBoxAllLicenciasPermiso') {
+            $('.case').prop('checked', this.checked);
+        }
+        
+        var totalSeleccionados = $('.case:checked').length;
+        $('#badgeSeleccionados').text(totalSeleccionados);
+    });
+
+    // 2. Acción de Borrado Masivo (Eliminar Varios Registros)
+    $('#goEliminarLicenciasPermiso').click(function() {
+        var seleccionados = [];
+        $('.case:checked').each(function() {
+            seleccionados.push($(this).attr('id').replace('chk', ''));
+        });
+
+        if (seleccionados.length === 0) {
+            Swal.fire({
+                icon: 'info',
+                title: 'Atención',
+                text: 'Por favor, selecciona al menos un registro para eliminar.'
+            });
+            return;
+        }
+
+        Swal.fire({
+            title: '¿Confirmas la eliminación?',
+            text: 'Se eliminarán ' + seleccionados.length + ' registros seleccionados. Esta acción no se puede deshacer.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Iterar o enviar array de IDs al servidor
+                var promesas = seleccionados.map(function(id) {
+                    return $.post("php_libs/soporte/Personal/LicenciasPermisos.php", {
+                        accion: 'EliminarLicenciaPermiso',
+                        id_: id
+                    });
+                });
+
+                Promise.all(promesas).then(function() {
+                    Swal.fire('¡Eliminados!', 'Los registros se han eliminado con éxito.', 'success');
+                    $('#checkBoxAllLicenciasPermiso').prop('checked', false);
+                    $('#badgeSeleccionados').text('0');
+                    // Recargar datos de la tabla
+                    if (typeof buscarLicencias === 'function') {
+                        buscarLicencias();
+                    }
+                }).catch(function(error) {
+                    Swal.fire('Error', 'Ocurrió un inconveniente al eliminar los registros.', 'error');
+                });
+            }
+        });
+    });
+});
+
+
+
+
+// ==========================================
+// 1. CARGAR DATOS EN EL MODAL PARA EDITAR
+// ==========================================
+$(document).on('click', '.btnEditarLicencia', function() {
+    // Obtener el ID guardado en el atributo data-id del botón
+    var idRegistro = $(this).data('id');
+
+    // Opción A: Cargar directamente desde los atributos de la fila de la tabla
+    var fila = $(this).closest('tr');
+    var fecha = fila.find('.col-fecha').text().trim();
+    var horaInicio = fila.find('.col-hora-inicio').text().trim();
+    var horaFin = fila.find('.col-hora-fin').text().trim();
+    var dias = fila.find('.col-dias').text().trim();
+    var horas = fila.find('.col-horas').text().trim();
+    var minutos = fila.find('.col-minutos').text().trim();
+    var observacion = $(this).data('observacion') || '';
+
+    // Asignar los valores a los campos de la ventana modal
+    $('#id_licencia_permiso_modal').val(idRegistro);
+    $('#IdHorarios').val(idRegistro);
+    $('#FechaInicio').val(fecha);
+    $('#ModalHoraDesde').val(horaInicio);
+    $('#ModalHoraHasta').val(horaFin);
+    $('#ModalDia').val(dias);
+    $('#ModalHora').val(horas);
+    $('#ModalMinutos').val(minutos);
+    $('#ModalObservacion').val(observacion);
+
+    // Abrir la ventana modal programáticamente
+    $('#VentanaLicenciasPermisos').modal('show');
+});
+
+// ==========================================
+// 2. CORREGIR EL CIERRE DE LA VENTANA MODAL
+// ==========================================
+// Evento para cerrar la modal con el botón de cancelar, la 'X' o por código
+$(document).on('click', '[data-dismiss="modal"], #VentanaLicenciasPermisos1', function() {
+    $('#VentanaLicenciasPermisos').modal('hide');
+});
+
 }); // FIN DEL FUNCTION.
+
+
+// Función auxiliar para inicializar o reiniciar DataTables
+function inicializarTablaDataTables() {
+    if ($.fn.DataTable.isDataTable('#listadoContenidoLicenciasPermiso')) {
+        $('#listadoContenidoLicenciasPermiso').DataTable().destroy();
+    }
+
+    tablaLicencias = $('#listadoContenidoLicenciasPermiso').DataTable({
+        language: {
+            url: "//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json"
+        },
+        pageLength: 10,
+        responsive: true,
+        columnDefs: [
+            { orderable: false, targets: [0, 9] } // Deshabilitar orden en checkbox y acciones
+        ]
+    });
+}
+
 //
 // Mensaje de Carga de Ajax.
 function configureLoadingScreen(screen){
@@ -601,34 +695,41 @@ function TipoLicenciaPermiso() {
         }, "json");
     });
 }
+
+/**
+ * Consulta y actualiza el listado de permisos en la tabla
+ */
 function BuscarLicenciasPermisos() {
-    accion = "BuscarLicenciasPermisos";
-    codigo_personal = $("#lstPersonal").val();
-    codigo_tipo_contratacion = $('#lstTipoContratacion option:selected').val();
-    codigo_licencia_permiso = $('#lstTipoLicencia option:selected').val();
-    fecha = $("#FechaTipoLicencia").val();
-        ///////////////////////////////////////////////////////////////			
-        // Inicio del Ajax. guarda o Actualiza los datos del Formualrio.
-        ///////////////////////////////////////////////////////////////
-        $.ajax({
-            beforeSend: function(){
-                //if($('#TodasLasAsignaturas').is(":checked")) {TodasLasAsignaturas = 'yes';}else{TodasLasAsignaturas = "no"}
-                $('#listaContenidoLicenciasPermiso').empty();
-            },
-            cache: false,
-            type: "POST",
-            dataType: "json",
-            url:"php_libs/soporte/Personal/LicenciasPermisos.php",
-            data: {codigo_personal: codigo_personal, accion: accion, fecha: fecha, codigo_contratacion: codigo_tipo_contratacion, codigo_licencia: codigo_licencia_permiso},
-            success: function(data){
-                    // eliminar y obtener el utlimo elemento. de un array.
-                    $('#listaContenidoLicenciasPermiso').append(data[0]);
-                    $("#SpanDisponible").text(data[1]["Disponible"]);
-                    $("#SpanUtilizado").text(data[1]["Utilizado"]);
-                    $("#SpanDiasLicencia").text(data[1]["DiasLicencia"]);
-            },
-        });
+    const codigoPersonal = $("#lstPersonal").val();
+    const codigoContratacion = $('#lstTipoContratacion option:selected').val();
+    const codigoLicencia = $('#lstTipoLicencia option:selected').val();
+    const fecha = $("#FechaTipoLicencia").val();
+
+    if (!codigoPersonal || codigoPersonal === "00") return;
+
+    $.ajax({
+        type: "POST",
+        url: "php_libs/soporte/Personal/LicenciasPermisos.php",
+        data: {
+            accion: "BuscarLicenciasPermisos",
+            codigo_personal: codigoPersonal,
+            codigo_contratacion: codigoContratacion,
+            codigo_licencia: codigoLicencia,
+            fecha: fecha
+        },
+        dataType: "json",
+        success: function (data) {
+            if (Array.isArray(data) && data.length >= 2) {
+                $('#listaContenidoLicenciasPermiso').html(data[0]);
+                $("#SpanDisponible").text(data[1]["Disponible"] || 0);
+                $("#SpanUtilizado").text(data[1]["Utilizado"] || 0);
+                $("#SpanDiasLicencia").text(data[1]["DiasLicencia"] || 0);
+            }
+        }
+    });
 }
+
+
 function AbrirVentana(url)
 {
     window.open(url, '_blank');

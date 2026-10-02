@@ -1,309 +1,283 @@
-{# Heredando la plantilla principal #}
-
 {% extends 'default_layout.html' %}
 
 {% block extraCSS %}
+  <!-- Loading Screen & Select2 -->
   <link href="css/styles-loading.css" rel="stylesheet">
   <link href="js/plugins/select2/css/select2.min.css" rel="stylesheet" /> 
   <link rel="stylesheet" href="js/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
-  {% endblock %}
+  
+  <!-- DataTables CSS -->
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap4.min.css">
+  
+  <!-- SweetAlert2 CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+{% endblock %}
 
 {% block javascripts %}
-<script type="text/JavaScript" src="js/plugins/select2/js/select2.full.js"></script>
-<script type="text/JavaScript" src="js/Personal/LicenciasPermisos.js"></script>
-<script type="text/JavaScript" src="js/Personal/CalcularTiempo.js"></script>
-<!-- DEFINIR PARA SERVICIO EDUCATIVO CARGAR DATOS-->
-<script type="text/JavaScript">
-	// Carga la INformación de Tabla Año Lectivo.
-	$(document).ready(function()
-	{
-    // SELECT 2
-    $("#lstPersonal").select2({
-        theme: "classic"
+  <!-- Librerías JS -->
+  <script type="text/JavaScript" src="js/plugins/select2/js/select2.full.js"></script>
+  <script type="text/JavaScript" src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+  <script type="text/JavaScript" src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap4.min.js"></script>
+  <script type="text/JavaScript" src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  <!-- Scripts Propios de la Aplicación -->
+  <script type="text/JavaScript" src="js/Personal/LicenciasPermisos.js"></script>
+  <script type="text/JavaScript" src="js/Personal/CalcularTiempo.js"></script>
+
+  <script type="text/JavaScript">
+  $(document).ready(function() {
+      // Inicializar Select2 con tema Bootstrap 4
+      $("#lstPersonal").select2({
+          theme: "bootstrap4",
+          placeholder: "Seleccionar Personal...",
+          allowClear: true
       });
-    // DEFINIR O INICIAR DATA TOOGLE.
-        $('[data-toggle="tooltip"]').tooltip();
-    // DEFINIR O INICIAR LOADINGSCREEN
-        var screen = $('#loading-screen');
-            configureLoadingScreen(screen);
-    // SELECT PERSONAL
-        var miselect=$("#lstPersonal");
-			/* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
-			miselect.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
-            // AJAX
-			$.post("includes/cargar_nombre_personal.php",
-				function(data) {
-					miselect.empty();
-					miselect.append("<option value='00'>Seleccionar...</option>");
-					for (var i=0; i<data.length; i++) {
-						miselect.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');
-					}
-			}, "json");
-    //
-    function changeTimeFormat() {
-      let date = new Date();
-      let n = date.toLocaleString([], {
-          hour: '2-digit',
-          minute: '2-digit',
-          hour12: false,
-      });
-  }
-});
-</script>
+
+      // Inicializar Tooltips
+      $('[data-toggle="tooltip"]').tooltip();
+
+      // Configurar Pantalla de Carga
+      var screen = $('#loading-screen');
+      if (typeof configureLoadingScreen === 'function') {
+          configureLoadingScreen(screen);
+      }
+
+      // Carga remota del personal
+      var miselect = $("#lstPersonal");
+      miselect.empty().append('<option value="">Cargando personal...</option>');
+      
+      $.post("includes/cargar_nombre_personal.php", function(data) {
+          miselect.empty().append("<option value='00'>-- Seleccionar Personal --</option>");
+          $.each(data, function(index, item) {
+              miselect.append('<option value="' + item.codigo + '">' + item.descripcion + '</option>');
+          });
+      }, "json");
+  });
+  </script>
 {% endblock %}
 
 {% block contenidos %}
-  <!-- Content Wrapper. Contains page content -->
-  <div class="content-wrapper fondoBody">
-  <!-- Main content -->
-  <section class="content">
+<div class="content-wrapper fondoBody">
+  <section class="content pt-2">
     <div class="container-fluid">
-      <div class="tab-content"> <!-- VALIDATE DE TODO EL DIV PARA LOS DIFERENTES INPUT'S -->
-        <div class="row">
-          <div class="col-12">
-            <!-- INICIO DEL CARD-->
-              <div class="card">
-                <div class="card-header bg-gradient-navy">
-                  <h3 class="card-title"><i class="fad fa-file-alt"></i>Licencias y Permisos</h3>
+      <div class="card card-navy shadow-sm">
+        
+        <!-- Encabezado Principal del Card -->
+        <div class="card-header bg-gradient-navy d-flex align-items-center">
+          <h3 class="card-title font-weight-bold mb-0">
+            <i class="fas fa-id-card mr-2"></i>Gestión de Licencias y Permisos
+          </h3>
+        </div>
+
+        <div class="card-body p-3">
+          <!-- Pestañas de Navegación -->
+          <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+            <li class="nav-item">
+              <a class="nav-link active font-weight-bold" id="pills-licencias-permisos-tab" data-toggle="pill" href="#pills-licencias-permisos" role="tab" aria-controls="pills-licencias-permisos" aria-selected="true">
+                <i class="fas fa-calendar-alt mr-1"></i> Licencias y Permisos
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link font-weight-bold" id="pills-reportes-tab" data-toggle="pill" href="#pills-reportes" role="tab" aria-controls="pills-reportes" aria-selected="false">
+                <i class="fas fa-print mr-1"></i> Reportes
+              </a>
+            </li>
+          </ul>
+
+          <div class="tab-content" id="pills-tabContent">
+            
+            <!-- TAB 1: FORMULARIO Y TABLA DE LICENCIAS -->
+            <div class="tab-pane fade show active" id="pills-licencias-permisos" role="tabpanel">
+              
+              <!-- Barra de Herramientas Principal -->
+              <div class="p-2 mb-3 bg-light border rounded d-flex align-items-center justify-content-between">
+                <div>
+                  <button type="button" id="goGuardarLicenciaPermiso" class="btn btn-success mr-1" data-toggle="tooltip" title="Guardar Registro">
+                    <i class="fas fa-save mr-1"></i> Guardar
+                  </button>
+                  <button type="button" id="goImprimirLicenciaPermiso" class="btn btn-primary mr-1" data-toggle="tooltip" title="Imprimir Formulario">
+                    <i class="fas fa-print mr-1"></i> Imprimir
+                  </button>
+                  <button type="button" id="goEliminarLicenciasPermiso" class="btn btn-danger" data-toggle="tooltip" title="Eliminar Seleccionados">
+                    <i class="fas fa-trash-alt mr-1"></i> Eliminar <span id="badgeSeleccionados" class="badge badge-light ml-1">0</span>
+                  </button>
                 </div>
-                    <!-- /.card-header -->
-                    <div class="card-body m-1 p-1">
-                      <!-- Nav tabs ASIGNATURA, MODALIDAD, GRADO, SECCION Y AÑO LECTIVO-->
-                      <nav id="NavLicenciasPermisos">
-                        <ul class="nav nav-pills mb-1 mt-1" id="pills-tab" role="list">
-                          <li class="nav-item">
-                            <a class="nav-link active" id="pills-licencias-permisos-tab" data-bs-toggle="pill" href="#pills-licencias-permisos" role="tab" aria-controls="pills-licencias-permisos" aria-selected="true">Licencias y Permisos</a>
-                          </li>
-                          <li class="nav-item">
-                            <a class="nav-link" id="pills-reportes-tab" data-bs-toggle="pill" href="#pills-reportes" role="tab" aria-controls="pills-reportes" aria-selected="false">Reportes</a>
-                          </li>
-                        </ul>
-                      </nav>
-                      {# CONTENEDOR PRINCIPAL #}
-                      <div class="tab-content" id="pills-tabContent">
-                           <!-- NAV TAB LICENCIAS Y PERMISOS. *INICIO*-->
-                          <div class="tab-pane fade show active" id="pills-licencias-permisos" role="tabpanel" aria-labelledby="pills-licencias-permisos-tab">
-                                <!-- botoneeras y alertas-->
-                                <div class="bg-secondary text-white">
-                                    <button type="button" id="goGuardarLicenciaPermiso" aria-label="goGuardarLicenciaPermiso" class="btn btn-info" tabindex="-1" data-toggle="tooltip" data-placement="top" title="Guardar">
-                                      <i class="fal fa-save"></i>
-                                    </button>
-                                    <button type="button" id="goImprimirLicenciaPermiso" aria-label="goImprimirLicenciaPermiso" class="btn btn-primary" tabindex="-1" data-toggle="tooltip" data-placement="right" title="Imprimir">
-                                      <i class="far fa-print"></i>
-                                    </button>                                 
-                                    {# TEXTO DE MENSAJE CON ALERT. #}
-                                    <div class="alert alert-danger p-1 m-1" role="alert" id="AlertLicenciasPermisos">
-                                      <span id="TextoAlertLicenciasPermisos">...</span>
-                                    </div>
-                                </div>
+                
+                <!-- Alertas visuales -->
+                <div id="AlertLicenciasPermisos" class="alert alert-warning m-0 py-1 px-3 d-none" role="alert">
+                  <i class="fas fa-exclamation-triangle mr-1"></i> <span id="TextoAlertLicenciasPermisos">...</span>
+                </div>
+              </div>
 
-                              <!-- NAV TAB HOARIOS PARA CADA NIVEL *INICIO*-->
-                              <form class="form" id="FormLicenciasPermisos" name="FormLicenciasPermisos">
-                                <div class="row">
-                                        <div class="col-md-6 col-lg-6 col-12">
-                                            <div class="form-group">
-                                              <label for="lstPersonal">Personal</label>
-                                              <select class="form-control mx-sm-3" id="lstPersonal" name="lstPersonal"></select>
-                                            </div>
-                                          </div>
-                                        <div class="col-md-6 col-lg-6 col-12">
-                                            <input type="hidden" name="Dia" id="Dia" aria-label="Dia">
-                                            <input type="hidden" name="Hora" id="Hora" aria-label="Hora">
-                                            <input type="hidden" name="Minutos" id="Minutos" aria-label="Minutos">
-                                        </div>
-                                </div>
-                                <div class="row">
-                                        <div class="col-md-4 col-lg-4 col">
-                                            <div class="form-group">
-                                                <label for="lstTipoContratacion">Tipo de Contratación</label>
-                                                <select multiple class="form-control mx-sm-3" id="lstTipoContratacion" name="lstTipoContratacion"></select>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4 col-lg-4 col">
-                                            <div class="form-group">
-                                                <label for="lstTipoLicencia">Tipo de Licencia</label>
-                                                <select multiple class="form-control mx-sm-3" id="lstTipoLicencia" name="lstTipoLicencia"></select>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4 col-lg-4 col">
-                                            
-                                                <div class="form-group">
-                                                    <label for="FechaTipoLicencia">Fecha</label>
-                                                    <input class="form-control" type="date" name="FechaTipoLicencia" id="FechaTipoLicencia">
-                                                </div>
-                                            <div class="form-inline">
-                                                <div class="form-check">
-                                                    <input class="form-check-input" type="checkbox" name="CheckDias" id="CheckDias" aria-label="CheckDias">
-                                                    <label class="form-check-label" for="CheckDias">Días Incapacidad</label>
-                                                </div>
-                                                <div class="form-group">
-                                                    <input class="form-control" type="number" name="DiasLicenciaPermiso" id="DiasLicenciaPermiso" aria-label="DiasLicenciaPermiso" value = "1" disabled>
-                                                    <label for="DiasLicenciaPermiso"></label>
-                                                </div>
-                                            </div>
-                                        </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-8 col-lg-6 col">
-                                        <div class="form-inline">
-                                          <label class="control-label">Desde</label>
-                                          <input type="time" id="HoraDesde" name="HoraDesde" value="00:00" class="form-control" aria-label="HoraDesde" onchange="calcular_tiempo_12_24()" onblur="calcular_tiempo_12_24()">
-                                          <h6>:<span id="SpanHoraDesde" class="badge badge-secondary">!!!</span></h6>
+              <!-- Formulario de Captura -->
+              <form id="FormLicenciasPermisos" name="FormLicenciasPermisos" class="mb-4">
+                <input type="hidden" name="Dia" id="Dia" value="0">
+                <input type="hidden" name="Hora" id="Hora" value="0">
+                <input type="hidden" name="Minutos" id="Minutos" value="0">
 
-                                          <label class="control-label">Desde</label>
-                                          <input type="time" id="HoraHasta" name="HoraHasta" value="00:00" class="form-control" aria-label="HoraHasta" onchange="calcular_tiempo_12_24()" onblur="calcular_tiempo()">
-                                          <h6>:<span id="SpanHoraHasta" class="badge badge-secondary">!!!</span></h6>
-                                          {# <label class="control-label">Tiempo</label> #}
-                                          {# <h6>:<span id="SpanDiasHorass" class="badge badge-info">!!!</span></h6> #}
-                                        </div>
-                                        <div class="form-group">
-                                          <button type="button" class="btn btn-primary btn-sm btn-block">
-                                            Tiempo <span id="SpanDiasHoras" class="badge badge-light">:</span>
-                                          </button>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4 col-lg-6 col">
-                                      <div class="form-group">
-                                        <label for="TxtObservacion">Observación</label>
-                                          <textarea class="form-control" name="TxtObservacion" id="TxtObservacion" aria-label="TXTObservacion"></textarea>
-                                      </div>
-                                        
-                                    </div>
-                                </div>
-                              </form>                                  
-                                <!-- TABLA CON LOS DATOS DEL SERVICIO EDUCATIVO. -->  
-                                    <div class="modal-body">
-                                      <div class="row bg-secondary m-0 p-0">
-                                        <div class="col">
-                                          <div class="form-inline">
-                                            <button type="button" class="btn btn-success btn-sm ">
-                                              Días Licencia: <span id="SpanDiasLicencia" class="badge badge-light"></span>
-                                            </button>
-                                            <button type="button" class="btn btn-primary btn-sm">
-                                              Disponible: <span id="SpanDisponible" class="badge badge-light"></span>
-                                            </button>
-                                            <button type="button" class="btn btn-info btn-sm">
-                                              Utilizado: <span id="SpanUtilizado" class="badge badge-light"></span>
-                                            </button>
-                                          </div>
-                                        </div>
-                                      </div>
-                                        <div class="col m-0 p-0">
-                                          <table id="listadoContenidoLicenciasPermiso" class="table table-striped table-bordered table-hover table-condensed">
-                                            <caption align="top"><div id="encabezado"></div></caption>
-                                            <thead>
-                                              <tr>
-                                                <th><input type="checkbox" name="checkBoxAllLicenciasPermiso" id="checkBoxAllLicenciasPermiso" data-toggle="tooltip" data-placement="top" title="Marcar/Desmarcar Todo">
-                                                  <button type="button" id="goEliminarLicenciasPermiso" aria-label="goEliminarLicenciasPermiso" class="btn btn-link" tabindex="-1" data-toggle="tooltip" data-placement="top" title="Eliminar Seleccionados...">
-                                                    <i class="fad fa-trash"></i>
-                                                  </button>
-                                                </th>
-                                                <th>#</th>
-                                                <th>id</th>
-                                                <th>Fecha</th>
-                                                <th>Hora Inicio</th>
-                                                <th>Hora Fin</th>
-                                                <th>Día</th>
-                                                <th>Horas</th>
-                                                <th>Minutos</th>
-                                                <th></th>
-                                              </tr>
-                                            </thead>
-                                              <tbody id="listaContenidoLicenciasPermiso">
-                                            
-                                              </tbody>                            
-                                            <tfoot>
-                                            </tfoot>
-                                        </table>
-                                      </div>
-                                    </div>
-                                <!-- TABLA CON LOS DATOS DEL organizacion LicenciasPermiso. --> 
-                          </div>
-                          <!-- NAV TAB LICENCIAS Y PERMISOS DE NIVELES SEGUN AÑO LECTIVO *INICIO*-->
-                          <div class="tab-pane fade" id="pills-reportes" role="tabpanel" aria-labelledby="pills-reportes-tab">
-                            <!-- botoneeras y alertas-->
-                            <div class="bg-secondary text-white">
-                              <div class="form-group">
-                                <button type="button" id="goImprimirLicenciasPermisos" aria-label="goImprimirLicenciasPermisos" class="btn btn-info" tabindex="-1" data-toggle="tooltip" data-placement="top" title="Licencias y Permisos">
-                                  <i class="fal fa-print"></i>
-                                </button>
-                                <button type="button" id="goImprimirLL" aria-label="goImprimirLL" class="btn btn-primary" tabindex="-1" data-toggle="tooltip" data-placement="bottom" title="Llegadas Tardías o Injustificadas">
-                                  <i class="fal fa-print"></i>
-                                </button>                                 
-                              </div>
-                                <div class="alert alert-danger p-1 m-1" role="alert" id="AlertReportes">
-                                  <span id="TextoAlertReportes">...</span>
-                                </div>
-                            </div>
-                               <!-- NAV TAB FORM - ORGANIZACION. NIVELES *INICIO*-->
-                                <form class="form" id="FormReportes" name="FormReportes">
-                                  <div class="row">
-                                    <div class="col-md-4 col-lg-4 col">
-                                        <div class="form-group">
-                                            <label for="lstTipoContratacionReporte">Tipo de Contratación</label>
-                                            <select class="form-control mx-sm-3" id="lstTipoContratacionReporte" name="lstTipoContratacion"></select>
-                                        </div>
-                                        <div class="form-group">
-                                          <label for="lstTurnoReporte">Tipo de Contratación</label>
-                                          <select class="form-control mx-sm-3" id="lstTurnoReporte" name="lstTurnoReporte"></select>
-                                      </div>
-                                    </div>
-                                    <div class="col-md-4 col-lg-4 col">
-                                      <div class="form-group m-0">
-                                        <dl class="row">
-                                          <dt></dt>
-                                          <dd>Esta fecha se toma encuenta para obtener el Saldo de Cada Licencia o Permiso.</dd>
-                                        </dl>
-                                      </div>
-                                      <div class="input-group mb-0">
-                                        <div class="input-group-prepend">
-                                          <span class="input-group-text bg-gradient-gray-dark" id="basic-addon6">Fecha: Inicio Año Lectivo</span>
-                                        </div>
-                                        <input type="date" min="1900-01-01" max="9999-12-31" class="form-control" id="FechaAñoLectivo" name="FechaAñoLectivo" placeholder="" aria-label="FechaInicio" aria-describedby="basic-addon6" autocomplete="false">
-                                      </div>
-                                      <div class="input-group mb-0">
-                                        <div class="input-group-prepend">
-                                          <span class="input-group-text bg-gradient-gray-dark" id="basic-addon7">Desde</span>
-                                        </div>
-                                        <input type="date" min="1900-01-01" max="9999-12-31" class="form-control" id="FechaLicenciaDesde" name="FechaLicenciaDesde" placeholder="" aria-label="FechaLicenciaDesde" aria-describedby="basic-addon7" autocomplete="false">
-                                      </div>
-                                      <div class="input-group mb-0">
-                                        <div class="input-group-prepend">
-                                          <span class="input-group-text bg-gradient-gray-dark" id="basic-addon8">Hasta</span>
-                                        </div>
-                                        <input type="date" min="1900-01-01" max="9999-12-31" class="form-control" id="FechaLicenciaHasta" name="FechaLicenciaHasta" placeholder="" aria-label="FechaLicenciaHasta" aria-describedby="basic-addon8" autocomplete="false">
-                                      </div>
-                                    </div>
-                                    <div class="col-md-4 col-lg-4 col">
+                <div class="row">
+                  <!-- Empleado/Personal -->
+                  <div class="col-md-6 col-12 mb-3">
+                    <label for="lstPersonal" class="font-weight-bold text-navy">Personal / Empleado</label>
+                    <select class="form-control select2" id="lstPersonal" name="lstPersonal" style="width: 100%;"></select>
+                  </div>
 
-                                    </div>
-                            </div>
-                                </form>
-                          </div> <!-- ***NAV TAB REPORTES FIN***-->
+                  <!-- Tipo de Contratación -->
+                  <div class="col-md-3 col-12 mb-3">
+                    <label for="lstTipoContratacion" class="font-weight-bold text-navy">Tipo de Contratación</label>
+                    <select class="form-control" id="lstTipoContratacion" name="lstTipoContratacion"></select>
+                  </div>
+
+                  <!-- Tipo de Licencia -->
+                  <div class="col-md-3 col-12 mb-3">
+                    <label for="lstTipoLicencia" class="font-weight-bold text-navy">Tipo de Licencia</label>
+                    <select class="form-control" id="lstTipoLicencia" name="lstTipoLicencia"></select>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <!-- Fecha y Días de Incapacidad -->
+                  <div class="col-md-4 col-12 mb-3">
+                    <label for="FechaTipoLicencia" class="font-weight-bold text-navy">Fecha de Inicio</label>
+                    <input class="form-control mb-2" type="date" name="FechaTipoLicencia" id="FechaTipoLicencia">
+                    
+                    <div class="custom-control custom-checkbox align-items-center">
+                      <input class="custom-control-input" type="checkbox" name="CheckDias" id="CheckDias">
+                      <label class="custom-control-label font-weight-normal" for="CheckDias">Días de Incapacidad</label>
+                    </div>
+                    <div class="mt-1">
+                      <input class="form-control" type="number" min="1" name="DiasLicenciaPermiso" id="DiasLicenciaPermiso" value="1" disabled>
+                    </div>
+                  </div>
+
+                  <!-- Horas Desde / Hasta -->
+                  <div class="col-md-4 col-12 mb-3">
+                    <label class="font-weight-bold text-navy">Rango Horario</label>
+                    <div class="input-group mb-2">
+                      <div class="input-group-prepend"><span class="input-group-text bg-light">Desde</span></div>
+                      <input type="time" id="HoraDesde" name="HoraDesde" value="00:00" class="form-control" onchange="calcular_tiempo_12_24()">
+                    </div>
+                    
+                    <div class="input-group mb-2">
+                      <div class="input-group-prepend"><span class="input-group-text bg-light">Hasta</span></div>
+                      <input type="time" id="HoraHasta" name="HoraHasta" value="00:00" class="form-control" onchange="calcular_tiempo_12_24()">
+                    </div>
+
+                    <div class="text-center bg-light p-2 rounded border">
+                      <span class="font-weight-bold text-muted">Tiempo Calculado: </span>
+                      <span id="SpanDiasHoras" class="badge badge-info p-2 font-weight-bold">0d 0h 0m</span>
+                    </div>
+                  </div>
+
+                  <!-- Observación -->
+                  <div class="col-md-4 col-12 mb-3">
+                    <label for="TxtObservacion" class="font-weight-bold text-navy">Observaciones</label>
+                    <textarea class="form-control" name="TxtObservacion" id="TxtObservacion" rows="5" placeholder="Ingrese detalles o justificación de la solicitud..."></textarea>
+                  </div>
+                </div>
+              </form>
+
+              <!-- Panel Informativo de Saldos de Tiempo -->
+              <div class="row mb-3">
+                <div class="col-12">
+                  <div class="card bg-light border p-2">
+                    <div class="d-flex justify-content-around align-items-center flex-wrap">
+                      <div class="text-center m-1">
+                        <span class="text-muted d-block small font-weight-bold">DÍAS LICENCIA</span>
+                        <span id="SpanDiasLicencia" class="badge badge-success p-2 fs-6">0</span>
                       </div>
-                    </div> <!-- CARD BODY-->
-                <div class="card-footer bg-gradient-navy"></div>
-              </div> <!-- /.card -->
-            <!-- FIN DEL CARD-->
-          </div><!-- /.col -->
-        </div> <!-- /.ROW -->
-      </div> <!-- /. tab-content-->
-    </div> <!-- /. CONTAINER FLUID-->
+                      <div class="text-center m-1">
+                        <span class="text-muted d-block small font-weight-bold">DISPONIBLE</span>
+                        <span id="SpanDisponible" class="badge badge-primary p-2 fs-6">0</span>
+                      </div>
+                      <div class="text-center m-1">
+                        <span class="text-muted d-block small font-weight-bold">UTILIZADO</span>
+                        <span id="SpanUtilizado" class="badge badge-warning p-2 fs-6">0</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Tabla DataTable -->
+              <div class="table-responsive">
+                <table id="listadoContenidoLicenciasPermiso" class="table table-striped table-bordered table-hover w-100">
+                  <thead class="thead-dark">
+                    <tr>
+                      <th class="text-center" style="width: 50px;">
+                        <input type="checkbox" id="checkBoxAllLicenciasPermiso" title="Seleccionar Todos">
+                      </th>
+                      <th class="text-center" style="width: 40px;">#</th>
+                      <th class="text-center">ID</th>
+                      <th class="text-center">Fecha</th>
+                      <th class="text-center">Hora Inicio</th>
+                      <th class="text-center">Hora Fin</th>
+                      <th class="text-center">Días</th>
+                      <th class="text-center">Horas</th>
+                      <th class="text-center">Minutos</th>
+                      <th class="text-center" style="width: 90px;">Acciones</th>
+                    </tr>
+                  </thead>
+                  <tbody id="listaContenidoLicenciasPermiso">
+                    <!-- Los datos se inyectan dinámicamente mediante AJAX -->
+                  </tbody>
+                </table>
+              </div>
+
+            </div> <!-- FIN TAB 1 -->
+
+            <!-- TAB 2: REPORTES -->
+            <div class="tab-pane fade" id="pills-reportes" role="tabpanel">
+              <div class="p-2 mb-3 bg-light border rounded">
+                <button type="button" id="goImprimirLicenciasPermisos" class="btn btn-info mr-1" data-toggle="tooltip" title="Imprimir Licencias y Permisos">
+                  <i class="fas fa-file-pdf mr-1"></i> Generar Informe Licencias
+                </button>
+                <button type="button" id="goImprimirLL" class="btn btn-primary" data-toggle="tooltip" title="Imprimir Llegadas Tardías">
+                  <i class="fas fa-clock mr-1"></i> Informe Llegadas Tardías
+                </button>
+              </div>
+
+              <form id="FormReportes" name="FormReportes">
+                <div class="row">
+                  <div class="col-md-6 col-12">
+                    <div class="form-group">
+                      <label for="lstTipoContratacionReporte" class="font-weight-bold">Tipo de Contratación</label>
+                      <select class="form-control" id="lstTipoContratacionReporte" name="lstTipoContratacionReporte"></select>
+                    </div>
+                    <div class="form-group">
+                      <label for="lstTurnoReporte" class="font-weight-bold">Turno</label>
+                      <select class="form-control" id="lstTurnoReporte" name="lstTurnoReporte"></select>
+                    </div>
+                  </div>
+
+                  <div class="col-md-6 col-12">
+                    <div class="form-group">
+                      <label for="FechaAñoLectivo" class="font-weight-bold">Inicio de Año Lectivo</label>
+                      <input type="date" class="form-control" id="FechaAñoLectivo" name="FechaAñoLectivo">
+                    </div>
+                    <div class="form-row">
+                      <div class="form-group col-md-6">
+                        <label for="FechaLicenciaDesde" class="font-weight-bold">Desde</label>
+                        <input type="date" class="form-control" id="FechaLicenciaDesde" name="FechaLicenciaDesde">
+                      </div>
+                      <div class="form-group col-md-6">
+                        <label for="FechaLicenciaHasta" class="font-weight-bold">Hasta</label>
+                        <input type="date" class="form-control" id="FechaLicenciaHasta" name="FechaLicenciaHasta">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </form>
+            </div> <!-- FIN TAB 2 -->
+
+          </div>
+        </div>
+        <div class="card-footer bg-gradient-navy"></div>
+      </div>
+    </div>
   </section>
-  </div> <!-- CONTENT WRAPPER-->
-<!-- Loading Screen -->
-  {% include 'loading-screen.html' %}
-<!-- plantilla que contiene el . -->
-  {% include 'Personal/VentanaLicenciasPermisos.html' %}  
+</div>
 
-<!-- FINAL DEL BLOQUE DE CONTENIDO.-->
-{% endblock %}  
-
-{% block menu %}
-<!-- plantilla que contiene el menú principal. -->
-		{% include 'layout-menu.html' %}
-{% endblock %}
-
-{% block loginUser %}
-<!--	{% include 'layout-login-user.html' %} -->
+{% include 'loading-screen.html' %}
+{% include 'Personal/VentanaLicenciasPermisos.html' %}
 {% endblock %}

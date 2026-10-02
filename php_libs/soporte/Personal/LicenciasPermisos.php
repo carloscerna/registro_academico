@@ -1,420 +1,367 @@
 <?php
-session_name('demoUI');
-//session_start();
-// Script para ejecutar AJAX
-// cambiar a utf-8.
-	header("Content-Type: text/html; charset=utf-8");
-// Insertar y actualizar tabla de usuarios
-//sleep(1);
-// Inicializamos variables de mensajes y JSON
-	$respuestaOK = false;
-	$mensajeError = "No se puede ejecutar la aplicación";
-	$contenidoOK = "";
-	$encabezado = "";
-	$Accion = "";
-// ruta de los archivos con su carpeta
-    $path_root=trim($_SERVER['DOCUMENT_ROOT']);
-// Incluimos el archivo de funciones y conexión a la base de datos
-	include($path_root."/registro_academico/includes/mainFunctions_conexion.php");
-	include($path_root."/registro_academico/includes/funciones.php");
-// Validar conexión con la base de datos
-if($errorDbConexion == false)
-{
-	// Validamos qe existan las variables post
-	if(isset($_REQUEST) && !empty($_REQUEST))
-	{
-		if(!empty($_POST['accion']))
-		{
-			// Variable
-				$Accion = $_POST['accion'];
-			// Verificamos las variables de acción
-			switch ($Accion) {
-				case 'BuscarContratacion':
-					//
-					$codigo_personal = $_POST['codigo_personal'];
-					// VALIDAR SI ES UN SUBDIRECTOR O DIRECTOR.
-						if($_SESSION['codigo_perfil'] == '03'){
-					// Obtener el valor del turno de la tabla Personal Responsable Licencia.
-						$query = "SELECT codigo_turno FROM personal_responsable_licencia WHERE codigo_personal = '$codigo_personal'";
-					// Ejecutamos el Query.
-						$consulta = $dblink -> query($query);
-					// Recorriendo la Tabla con PDO::
-						while($listado = $consulta -> fetch(PDO::FETCH_BOTH))
-						{
-							 // Nombres de los campos de la tabla.
-								$codigo_turno = $listado['codigo_turno']; 
-						}	
-					// armar query 	
-					$query_personal = "SELECT ps.id_personal_salario, ps.codigo_personal, ps.codigo_rubro, ps.codigo_tipo_contratacion, ps.codigo_tipo_descuento, ps.salario, ps.codigo_turno,
-												cat_c.codigo, cat_c.nombre as nombre_contratacion, cat_d.codigo, cat_d.descripcion as nombre_descuento, cat_r.codigo, cat_r.descripcion as nombre_rubro,
-												tur.codigo as codigo_turno, tur.nombre as nombre_turno, cat_h.inicio as horario_inicio, cat_h.fin as horario_fin
-										FROM personal_salario ps
-										INNER JOIN tipo_contratacion cat_c ON cat_c.codigo = ps.codigo_tipo_contratacion
-										INNER JOIN catalogo_tipo_descuento cat_d ON cat_d.codigo = ps.codigo_tipo_descuento
-										INNER JOIN catalogo_rubro cat_r ON cat_r.codigo = ps.codigo_rubro
-										INNER JOIN turno tur ON tur.codigo = ps.codigo_turno
-										INNER JOIN catalogo_horario cat_h ON cat_h.codigo = ps.codigo_horario
-										WHERE ps.codigo_personal = '$codigo_personal' and ps.codigo_turno = '$codigo_turno' ORDER BY ps.codigo_personal";
-					}else{
-					// armando el Query. PARA LA TABLA HISTORIAL.
-					$query_personal = "SELECT ps.id_personal_salario, ps.codigo_personal, ps.codigo_rubro, ps.codigo_tipo_contratacion, ps.codigo_tipo_descuento, ps.salario, ps.codigo_turno,
-												cat_c.codigo, cat_c.nombre as nombre_contratacion, cat_d.codigo, cat_d.descripcion as nombre_descuento, cat_r.codigo, cat_r.descripcion as nombre_rubro,
-												tur.codigo as codigo_turno, tur.nombre as nombre_turno, cat_h.inicio as horario_inicio, cat_h.fin as horario_fin
-									FROM personal_salario ps
-									INNER JOIN tipo_contratacion cat_c ON cat_c.codigo = ps.codigo_tipo_contratacion
-									INNER JOIN catalogo_tipo_descuento cat_d ON cat_d.codigo = ps.codigo_tipo_descuento
-									INNER JOIN catalogo_rubro cat_r ON cat_r.codigo = ps.codigo_rubro
-									INNER JOIN turno tur ON tur.codigo = ps.codigo_turno
-									INNER JOIN catalogo_horario cat_h ON cat_h.codigo = ps.codigo_horario
-									WHERE ps.codigo_personal = '$codigo_personal' ORDER BY ps.codigo_personal";
-					}
-					// Ejecutamos el Query. PARA LA TABLA EMPLEADOS.
-						$consulta_personal = $dblink -> query($query_personal);
-					// Inicializando el array
-						$datos=array(); $fila_array = 0;
-					// Recorriendo la Tabla con PDO::
-						$num = 1;
-						if($consulta_personal -> rowCount() != 0){		
-						while($listadoPersonal = $consulta_personal -> fetch(PDO::FETCH_BOTH))
-							{
-							// recopilar los valores de los campos.
-								// recopilar los valores de los campos.
-								$id_personal_salario = trim($listadoPersonal['id_personal_salario']);
-								$cod_personal = trim($listadoPersonal['codigo_personal']);
-								$codigo_rubro = trim($listadoPersonal['codigo_rubro']);
-								$tipo_descuento = trim($listadoPersonal['codigo_tipo_descuento']);
-								$tipo_contratacion = trim($listadoPersonal['codigo_tipo_contratacion']);
-								$nombre_contratacion = trim($listadoPersonal['nombre_contratacion']);
-								$codigo_turno = trim($listadoPersonal['codigo_turno']);
-								$nombre_turno = trim($listadoPersonal['nombre_turno']);
-								$horario_inicio = trim($listadoPersonal['horario_inicio']);
-								$horario_fin = trim($listadoPersonal['horario_fin']);
-								$salario = trim($listadoPersonal['salario']);
-							
-							// pasar a la matriz.
-							$datos[$fila_array]["id_personal_salario"] = $id_personal_salario;
-							$datos[$fila_array]["codigo_personal"] = $cod_personal;
-							$datos[$fila_array]["codigo_rubro"] = $codigo_rubro;
-							$datos[$fila_array]["codigo_tipo_descuento"] = $tipo_descuento;
-							$datos[$fila_array]["codigo_tipo_contratacion"] = $tipo_contratacion;
-							$datos[$fila_array]["nombre_contratacion"] = $nombre_contratacion;
-							$datos[$fila_array]["codigo_turno"] = $codigo_turno;
-							$datos[$fila_array]["nombre_turno"] = $nombre_turno;
-							$datos[$fila_array]["salario"] = $salario;
-							$datos[$fila_array]["horario_inicio"] = $horario_inicio;
-							$datos[$fila_array]["horario_fin"] = $horario_fin;
-					
-						// Incrementar el valor del array.
-							$fila_array++; $num++;
-						}
-					}
-					else{
-					$datos[$fila_array]["no_registros"] = '<tr><td> No se encontraron registros.</td>';
-					}
-				break;
-				case 'GuardarLicenciasPermisos':
-					$codigo_personal = $_POST['lstPersonal'];
-					$codigo_contratacion = substr($_POST['lstTipoContratacion'],0,2);
-					$codigo_turno = substr($_POST['lstTipoContratacion'],2,2);
-					$codigo_licencia = $_POST['lstTipoLicencia'];
-					// CALCULO PARA LA FECHA, SI CAMBIA EL VALOR DE DiasLicencia.
-					$fecha = $_POST['FechaTipoLicencia'];
-					$DiasIncapacidad = $_POST['DiasIncapacidad'];
-					$fecha_inicio = ($_POST['FechaTipoLicencia']);
-						if($DiasIncapacidad == 1){
-							$fecha_fin = ($_POST['FechaTipoLicencia']);
-						}else{
-							$DiasIncapacidad--;
-							$Dias = "+" . $DiasIncapacidad . " day"; 
-							$fecha_fin = strtotime($Dias, strtotime($fecha_inicio));
-							$fecha_fin = date('Y-m-d', $fecha_fin);
-						}
-					//
-					$dia = $_POST['Dia'];
-					$hora = $_POST['Hora'];
-					$minutos = $_POST['Minutos'];
-					$hora_fin = $_POST['HoraHasta'];					
-					$hora_inicio = $_POST['HoraDesde'];
-					//
-					$observacion = $_POST['TxtObservacion'];
-					//					
-					$codigo_contratacion_turno = $codigo_personal . $codigo_contratacion . $codigo_turno . $codigo_licencia;
-					// Verificar si el Registro no Existe.
-					$query_busqueda = "SELECT * from personal_licencias_permisos WHERE fecha = '$fecha' and btrim(codigo_personal || codigo_contratacion || codigo_turno || codigo_licencia_permiso) = '$codigo_contratacion_turno'";
-					// Eejcutamos query.
-					$consulta_busqueda = $dblink -> query($query_busqueda);
-					$num_registros = $consulta_busqueda -> rowCount();
-					if($num_registros !=0){
-						// Si existen registros.
-							$respuestaOK = false;
-							$mensajeError = "El Registro ya Existe";
-							$contenidoOK = "";
-					}
-					else{
-						// Preparar query y condiciones para grabar una fecha o diferentes.
-						 // Variables para el proceso de repetior el proceso de las fechas.
-						$datetime1 = new DateTime($fecha_inicio);
-						$datetime2 = new DateTime($fecha_fin);
-						$interval = $datetime1->diff($datetime2);
-						$resultado = $interval->format('%a');
-						    for($i=0;$i<=$resultado;$i++)
-						    {
-								if($i == 0){
-									//Query
-									$query = "INSERT INTO personal_licencias_permisos (fecha, dia, hora, minutos, codigo_personal, codigo_licencia_permiso, codigo_turno, observacion, hora_inicio, hora_fin, codigo_contratacion)
-									VALUES ('$fecha_inicio','$dia','$hora','$minutos','$codigo_personal','$codigo_licencia','$codigo_turno','$observacion','$hora_inicio','$hora_fin','$codigo_contratacion')";
-									// Ejecutamos el query
-									$resultadoQuery = $dblink -> query($query);
-								}else{
-									// Agregar el valor a la fecha o sea sumar el día.
-									$fecha_nueva = new DateTime($fecha_inicio);
-									$fecha_nueva->add(new DateInterval('P'.$i.'D'));
-									$fecha_cambiada=$fecha_nueva->format('Y-m-d');
-									//Query
-									$query = "INSERT INTO personal_licencias_permisos (fecha, dia, hora, minutos, codigo_personal, codigo_licencia_permiso, codigo_turno, observacion, hora_inicio, hora_fin, codigo_contratacion)
-									VALUES ('$fecha_cambiada','$dia','$hora','$minutos','$codigo_personal','$codigo_licencia','$codigo_turno','$observacion','$hora_inicio','$hora_fin','$codigo_contratacion')";
-									// Ejecutamos el query
-									$resultadoQuery = $dblink -> query($query);
-								}
-							}
-						// revisar que no hayan errores.
-						if($resultadoQuery == true){
-							$respuestaOK = true;
-							$mensajeError = "Registro guardado.";
-						}
-						else{
-							$mensajeError = "No Registro";
-							$respuestaOK = false;
-						}
-					}
-				break;
-				case 'ActualizarLyP':
-					$id = $_POST['id_'];
-					$fecha = $_POST['fecha'];
-					$dia = $_POST['dia'];
-					$hora = $_POST['hora'];
-					$minutos = $_POST['minutos'];
-					$codigo_licencia = $_POST['codigo_licencia'];
-					$observacion = $_POST['observaciones'];
-					$hora_inicio = $_POST['hora_inicio'];
-					$hora_fin = $_POST['hora_fin'];
+// Configuración de encabezados para respuesta JSON/UTF-8
+header("Content-Type: application/json; charset=utf-8");
 
-					$query_ = sprintf("UPDATE personal_licencias_permisos SET  fecha = '%s', dia ='%s',  hora = '%s',  minutos = '%s', codigo_licencia_permiso = '%s', observacion = '%s', hora_inicio = '%s', hora_fin = '%s'
-							WHERE id_licencia_permiso=%d",
-							$fecha, $dia, $hora, $minutos, $codigo_licencia, $observacion, $hora_inicio, $hora_fin
-							,$id);
-	
-						// Ejecutamos el query
-						$resultadoQuery = $dblink -> query($query_);
-	
-						if($resultadoQuery == true){
-							$respuestaOK = true;
-							$mensajeError = "Si Registro";							
-						}
-				break;
-				case 'EditarLicenciasPermisos':
-					$id_ = $_REQUEST['id_'];	// id_
-						// armando el Query. PARA LA TABLA HISTORIAL.
-						$query_LyP = "SELECT lp.id_licencia_permiso, lp.codigo_personal, lp.fecha, lp.codigo_contratacion, lp.observacion, lp.dia, lp.hora, lp.minutos, lp.codigo_licencia_permiso, lp.codigo_turno, lp.hora_inicio, lp.hora_fin
-											FROM personal_licencias_permisos lp
-												WHERE lp.id_licencia_permiso = '$id_'";
-				// Ejecutamos el Query. PARA LA TABLA EMPLEADOS.
-				   $consulta_LyP = $dblink -> query($query_LyP);
-				// Inicializando el array
-				   $datos=array(); $fila_array = 0;
-				// Recorriendo la Tabla con PDO::
-					$num = 1;
-					    if($consulta_LyP -> rowCount() != 0){		
-						while($listadoLyP = $consulta_LyP -> fetch(PDO::FETCH_BOTH))
-						  {
-						      // recopilar los valores de los campos.
-								  // recopilar los valores de los campos.
-								  $id_licencia_permiso = trim($listadoLyP['id_licencia_permiso']);
-								  $fecha = trim($listadoLyP['fecha']);
-								  $codigo_contratacion = trim($listadoLyP['codigo_contratacion']);
-								  $observacion = trim($listadoLyP['observacion']);
-								  $dia = trim($listadoLyP['dia']);
-								  $hora = trim($listadoLyP['hora']);
-								  $minutos = trim($listadoLyP['minutos']);
-								  $codigo_licencia_permiso = trim($listadoLyP['codigo_licencia_permiso']);
-								  $codigo_turno = trim($listadoLyP['codigo_turno']);
-								  $hora_inicio = trim($listadoLyP['hora_inicio']);
-								  $hora_fin = trim($listadoLyP['hora_fin']);
-						      
-						      // pasar a la matriz.
-						      $datos[$fila_array]["id_licencia_permiso"] = $id_licencia_permiso;
-							  $datos[$fila_array]["fecha"] = $fecha;
-							  $datos[$fila_array]["codigo_contratacion"] = $codigo_contratacion;
-							  $datos[$fila_array]["observacion"] = $observacion;
-							  $datos[$fila_array]["dia"] = $dia;
-							  $datos[$fila_array]["hora"] = $hora;
-							  $datos[$fila_array]["minutos"] = $minutos;
-							  $datos[$fila_array]["codigo_licencia_permiso"] = $codigo_licencia_permiso;
-							  $datos[$fila_array]["codigo_turno"] = $codigo_turno;
-							  $datos[$fila_array]["hora_inicio"] = $hora_inicio;
-							  $datos[$fila_array]["hora_fin"] = $hora_fin;
-					  
-						   // Incrementar el valor del array.
-						     $fila_array++; $num++;
-						  }
-					    }
-					    else{
-						$datos[$fila_array]["no_registros"] = '<tr><td> No se encontraron registros.</td>';
-					    }
-				break;
-				case 'BuscarLicenciasPermisos':
-					$codigo_personal = $_POST['codigo_personal'];
-					$fecha_l_y_p = substr($_POST['fecha'],0,4);
-					$codigo_contratacion = $_POST['codigo_contratacion'];
-					$codigo_tipo_contratacion = substr($_POST['codigo_contratacion'],0,2);
-					$codigo_tipo_licencia = $_POST['codigo_licencia'];
-					// Calcular el Disponible segùn Tipo de Contratación.
-						$calculo_horas = 5;
-						if($codigo_tipo_contratacion == "05"){ // PAGADOS POR EL CDE.
-							$calculo_horas = 8;
-						}
-				   // armando el Query. PARA LA TABLA HISTORIAL.
-						// armando el Query. PARA LA TABLA HISTORIAL.
-							$query_licencia = "SELECT lp.id_licencia_permiso, lp.codigo_personal, lp.fecha, lp.codigo_contratacion, lp.observacion, lp.dia, lp.hora, lp.minutos, lp.codigo_licencia_permiso, lp.codigo_turno, lp.hora_inicio, lp.hora_fin,
-												btrim(p.nombres || CAST(' ' AS VARCHAR) || p.apellidos) as nombre_docente
-												FROM personal_licencias_permisos lp
-													INNER JOIN personal p ON p.id_personal = lp.codigo_personal
-														WHERE lp.codigo_personal = '$codigo_personal' and btrim(lp.codigo_contratacion || lp.codigo_turno) = '$codigo_contratacion' and TO_CHAR(lp.fecha,'YYYY') = '$fecha_l_y_p'
-															and lp.codigo_licencia_permiso = '$codigo_tipo_licencia'
-												ORDER by lp.fecha";
-						// Query para revisar la tabla tipo de licencia. (catalogo)
-							$query_licencia_permiso = "SELECT codigo, nombre, saldo, minutos from tipo_licencia_o_permiso ORDER BY codigo";
-								$consulta_licencia_permiso = $dblink -> query($query_licencia_permiso);
-						// Recorrer la tabla licencia permiso y colocar datos en las respectivas tablas.
-							$codigo_licencia_o_permiso = array(); $saldo_licencia_o_permiso = array(); $minutos_licencia_o_permiso = array(); $imprimir = array();
-							while($listadoPersonalLyP = $consulta_licencia_permiso -> fetch(PDO::FETCH_BOTH))
-							{
-								// dar valor a variable de un solo SALDO EN MINUTOS.
-								if($listadoPersonalLyP['codigo']==$codigo_tipo_licencia ){
-									// repetir el proceso hasta que la tabla ya no tenga datos.
-										$codigo_licencia_o_permiso[] = $listadoPersonalLyP['codigo'];
-										$saldo_licencia_o_permiso[] = $listadoPersonalLyP['saldo'];
-										//$minutos_licencia_o_permiso[] = $listadoPersonalLyP['minutos'];
-										$minutos_licencia_o_permiso[] = $listadoPersonalLyP['saldo'] * $calculo_horas * 60;
-								}
-							}
-						//
-						// DECLARAR VARIABLES PARA LAS MATRICES.
-						//
-							$tramite_dia = array(); $tramite_hora = array(); $tramite_minutos = array();
-							$num = 1; $j = 0;
-							$verdadero = ""; $num_registros = 0; $num_datos = 0; $num_datos_tabla = 0;
-						// Ejecutar query.
-							$consulta_codigo_licencia_permiso = $dblink -> query($query_licencia);
-						// revisar si hay registros.
-							$num_registros = $consulta_codigo_licencia_permiso -> rowCount();
-							if($num_registros !=0){
-								while($listadoPersonal = $consulta_codigo_licencia_permiso -> fetch(PDO::FETCH_BOTH))
-									{
-										// recopilar los valores de los campos.
-										$id_ = trim($listadoPersonal['id_licencia_permiso']);
-										$fecha = cambiaf_a_normal(trim($listadoPersonal['fecha']));
-										$horario_inicio = trim($listadoPersonal['hora_inicio']);
-										$hora_fin = trim($listadoPersonal['hora_fin']);
-										$dia = trim($listadoPersonal['dia']);
-										$hora = trim($listadoPersonal['hora']);
-										$minutos = trim($listadoPersonal['minutos']);
-										// pasar a la matriz.
-										$datos[$j][] = "<tr>
-										<td><input type=checkbox class=case name=chk$id_ id=chk$id_>
-										<td>$num
-										<td>$id_
-										<td>$fecha
-										<td>$horario_inicio
-										<td>$hora_fin
-										<td>$dia
-										<td>$hora
-										<td>$minutos
-										<td><a data-accion=EditarLicenciaPermiso class='btn btn-xs btn-info' data-toggle='tooltip' data-placement='top' title='Editar' href=$id_><i class='fas fa-edit'></i></a>
-										<a data-accion=EliminarLicenciaPermiso class='btn btn-xs btn-warning' data-toggle='tooltip' data-placement='top' title='Eliminar' href=$id_><i class='fas fa-trash'></i></a>
-										";
-										// suma del total de minutos.
-											$total_minutos = ($dia*$calculo_horas*60) + ($hora*60) + ($minutos);
-										//	
-											$tramite_dia[] = segundosToCadenaD($total_minutos,$calculo_horas);
-											$tramite_hora[] = segundosToCadenaH($total_minutos, $calculo_horas);
-											$tramite_minutos[] = segundosToCadenaM($total_minutos, $calculo_horas);
-										// Aumentar el valor
-											$num++;
-									}	// salida del while.
-										// Calcular Tiempo, sumar dias, horas, minutos.
-											$sub_sin_dia = array_sum($tramite_dia);
-											$sub_sin_hora = array_sum($tramite_hora);
-											$sub_sin_minutos = array_sum($tramite_minutos);
-										// Caluclar Disponible en base a los minutos.
-											$minutos_x_dias = $minutos_licencia_o_permiso[$j];
-											$minutos_subtotal = ($sub_sin_dia*$calculo_horas*60) + ($sub_sin_hora*60) + ($sub_sin_minutos);
-											$minutos = $minutos_x_dias - $minutos_subtotal;
-											$utilizado = segundosToCadena($minutos_subtotal, $calculo_horas, $formato = 1);
-											$saldo_disponible = segundosToCadena($minutos, $calculo_horas, $formato = 1);
-											$DiasLicencia = segundosToCadena($minutos_x_dias, $calculo_horas, $formato = 1);
-										// Acumularlo en la Matriz.
-											$j++; // incorporar en el titulo de la talba
-											// Utilizado y Dias Licencia, Disponible..
-											$datos[$j]["Disponible"] = $saldo_disponible;
-											$datos[$j]["Utilizado"] = $utilizado;
-											$datos[$j]["DiasLicencia"] = $DiasLicencia;
-							}
-							else{
-									$datos[$j][] = "<tr><td colspan = 10><span class='badge badge-dark'>No se encontraron Registros</span></td></tr>";
-									$minutos_x_dias = $minutos_licencia_o_permiso[$j];
-									$DiasLicencia = segundosToCadena($minutos_x_dias, $calculo_horas, $formato = 1);
-									$saldo_disponible = segundosToCadena($minutos_x_dias, $calculo_horas, $formato = 1);
-									$utilizado = segundosToCadena(0, $calculo_horas, $formato = 1);
-									// Acumularlo en la Matriz.
-										$j++; // incorporar en el titulo de la talba
-									// Utilizado y Dias Licencia, Disponible..
-										$datos[$j]["Disponible"] = $saldo_disponible;
-										$datos[$j]["Utilizado"] = $utilizado;
-										$datos[$j]["DiasLicencia"] = $DiasLicencia;
-											$num = 1;
-								}
-								// Eliminar los elmentos de la array que acumula los dia, minutos y horas.
-									unset($tramite_dia, $tramite_hora, $tramite_minutos);
-				break;
-			case 'EliminarLicenciaPermiso':
-				$id_ = $_REQUEST['id_'];	// id_
-				// Armamos el query
-					$query = "DELETE FROM personal_licencias_permisos WHERE id_licencia_permiso = '$id_'";
-				// Ejecutamos el query
-					$count = $dblink -> exec($query);
-				// Validamos que se haya actualizado el registro
-				if($count != 0){
-					$respuestaOK = true;
-					$mensajeError = 'Se ha eliminado el registro correctamente';
-					$contenidoOK = 'Se ha Eliminado '.$count.' Registro(s).';
-				}else{
-					$mensajeError = 'No se ha eliminado el registro';
-				}
-				break;
-			default:
-				$mensajeError = 'Esta acción no se encuentra disponible';
-			break;
-			}
-		}	// condición de la busqueda del nùmero de DUI.
-	}
-	else{
-		$mensajeError = 'No se puede ejecutar la aplicación';
+// Definición de rutas e inclusión de dependencias
+$path_root = trim($_SERVER['DOCUMENT_ROOT']);
+
+// Al incluir mainFunctions_conexion.php, este archivo se encarga de iniciar la sesión (session_start)
+include_once($path_root . "/registro_academico/includes/mainFunctions_conexion.php");
+include_once($path_root . "/registro_academico/includes/funciones.php");
+
+// Verificación de seguridad: asegurar que la sesión esté iniciada si por alguna razón no lo hizo el include
+if (session_status() === PHP_SESSION_NONE) {
+    session_name('demoUI');
+    session_start();
 }
+
+// Inicialización de variables de respuesta
+$respuestaOK = false;
+$mensajeError = "No se puede ejecutar la aplicación";
+$contenidoOK = "";
+$encabezado = "";
+$Accion = "";
+$datos = array();
+
+// Validar que la conexión a la base de datos esté activa
+if (isset($errorDbConexion) && $errorDbConexion === false) {
+
+    // Validar recepción de datos vía POST / REQUEST
+    if (!empty($_REQUEST) && !empty($_POST['accion'])) {
+        $Accion = $_POST['accion'];
+
+        switch ($Accion) {
+
+            case 'BuscarContratacion':
+                $codigo_personal = isset($_POST['codigo_personal']) ? (int)$_POST['codigo_personal'] : 0;
+
+                try {
+                    if (isset($_SESSION['codigo_perfil']) && $_SESSION['codigo_perfil'] == '03') {
+                        // Obtener el turno de la persona si es Director/Subdirector
+                        $stmtTurno = $dblink->prepare("SELECT codigo_turno FROM personal_responsable_licencia WHERE codigo_personal = :cod_personal");
+                        $stmtTurno->execute([':cod_personal' => $codigo_personal]);
+                        $codigo_turno = $stmtTurno->fetchColumn() ?: '';
+
+                        $query_personal = "SELECT ps.id_personal_salario, ps.codigo_personal, ps.codigo_rubro, ps.codigo_tipo_contratacion, ps.codigo_tipo_descuento, ps.salario, ps.codigo_turno,
+                                                    cat_c.codigo, cat_c.nombre as nombre_contratacion, cat_d.codigo, cat_d.descripcion as nombre_descuento, cat_r.codigo, cat_r.descripcion as nombre_rubro,
+                                                    tur.codigo as codigo_turno, tur.nombre as nombre_turno, cat_h.inicio as horario_inicio, cat_h.fin as horario_fin
+                                            FROM personal_salario ps
+                                            INNER JOIN tipo_contratacion cat_c ON cat_c.codigo = ps.codigo_tipo_contratacion
+                                            INNER JOIN catalogo_tipo_descuento cat_d ON cat_d.codigo = ps.codigo_tipo_descuento
+                                            INNER JOIN catalogo_rubro cat_r ON cat_r.codigo = ps.codigo_rubro
+                                            INNER JOIN turno tur ON tur.codigo = ps.codigo_turno
+                                            INNER JOIN catalogo_horario cat_h ON cat_h.codigo = ps.codigo_horario
+                                            WHERE ps.codigo_personal = :cod_personal AND ps.codigo_turno = :cod_turno 
+                                            ORDER BY ps.codigo_personal";
+                        $stmtPersonal = $dblink->prepare($query_personal);
+                        $stmtPersonal->execute([':cod_personal' => $codigo_personal, ':cod_turno' => $codigo_turno]);
+                    } else {
+                        $query_personal = "SELECT ps.id_personal_salario, ps.codigo_personal, ps.codigo_rubro, ps.codigo_tipo_contratacion, ps.codigo_tipo_descuento, ps.salario, ps.codigo_turno,
+                                                    cat_c.codigo, cat_c.nombre as nombre_contratacion, cat_d.codigo, cat_d.descripcion as nombre_descuento, cat_r.codigo, cat_r.descripcion as nombre_rubro,
+                                                    tur.codigo as codigo_turno, tur.nombre as nombre_turno, cat_h.inicio as horario_inicio, cat_h.fin as horario_fin
+                                            FROM personal_salario ps
+                                            INNER JOIN tipo_contratacion cat_c ON cat_c.codigo = ps.codigo_tipo_contratacion
+                                            INNER JOIN catalogo_tipo_descuento cat_d ON cat_d.codigo = ps.codigo_tipo_descuento
+                                            INNER JOIN catalogo_rubro cat_r ON cat_r.codigo = ps.codigo_rubro
+                                            INNER JOIN turno tur ON tur.codigo = ps.codigo_turno
+                                            INNER JOIN catalogo_horario cat_h ON cat_h.codigo = ps.codigo_horario
+                                            WHERE ps.codigo_personal = :cod_personal 
+                                            ORDER BY ps.codigo_personal";
+                        $stmtPersonal = $dblink->prepare($query_personal);
+                        $stmtPersonal->execute([':cod_personal' => $codigo_personal]);
+                    }
+
+                    $fila_array = 0;
+                    if ($stmtPersonal->rowCount() > 0) {
+                        while ($row = $stmtPersonal->fetch(PDO::FETCH_ASSOC)) {
+                            $datos[$fila_array] = array(
+                                "id_personal_salario"     => trim($row['id_personal_salario']),
+                                "codigo_personal"         => trim($row['codigo_personal']),
+                                "codigo_rubro"            => trim($row['codigo_rubro']),
+                                "codigo_tipo_descuento"   => trim($row['codigo_tipo_descuento']),
+                                "codigo_tipo_contratacion"=> trim($row['codigo_tipo_contratacion']),
+                                "nombre_contratacion"     => trim($row['nombre_contratacion']),
+                                "codigo_turno"            => trim($row['codigo_turno']),
+                                "nombre_turno"            => trim($row['nombre_turno']),
+                                "salario"                 => trim($row['salario']),
+                                "horario_inicio"          => trim($row['horario_inicio']),
+                                "horario_fin"             => trim($row['horario_fin'])
+                            );
+                            $fila_array++;
+                        }
+                    } else {
+                        $datos[0]["no_registros"] = '<tr><td colspan="5">No se encontraron registros.</td></tr>';
+                    }
+                    $respuestaOK = true;
+                } catch (PDOException $e) {
+                    $mensajeError = "Error al consultar la contratación: " . $e->getMessage();
+                }
+                break;
+
+            case 'GuardarLicenciasPermisos':
+                $codigo_personal = isset($_POST['lstPersonal']) ? (int)$_POST['lstPersonal'] : 0;
+                $codigo_contratacion = substr($_POST['lstTipoContratacion'] ?? '', 0, 2);
+                $codigo_turno = substr($_POST['lstTipoContratacion'] ?? '', 2, 2);
+                $codigo_licencia = $_POST['lstTipoLicencia'] ?? '';
+                $fecha_inicio = $_POST['FechaTipoLicencia'] ?? date('Y-m-d');
+                $DiasIncapacidad = isset($_POST['DiasIncapacidad']) ? (int)$_POST['DiasIncapacidad'] : 1;
+
+                if ($DiasIncapacidad <= 1) {
+                    $fecha_fin = $fecha_inicio;
+                } else {
+                    $diasSumar = $DiasIncapacidad - 1;
+                    $fecha_fin = date('Y-m-d', strtotime("+$diasSumar day", strtotime($fecha_inicio)));
+                }
+
+                $dia = (int)($_POST['Dia'] ?? 0);
+                $hora = (int)($_POST['Hora'] ?? 0);
+                $minutos = (int)($_POST['Minutos'] ?? 0);
+                $hora_inicio = $_POST['HoraDesde'] ?? '';
+                $hora_fin = $_POST['HoraHasta'] ?? '';
+                $observacion = trim($_POST['TxtObservacion'] ?? '');
+
+                try {
+                    // Verificar si ya existe un registro idéntico en esa fecha
+                    $sqlBusqueda = "SELECT COUNT(*) FROM personal_licencias_permisos 
+                                    WHERE fecha = :fecha 
+                                      AND codigo_personal = :cod_personal 
+                                      AND codigo_contratacion = :cod_contratacion 
+                                      AND codigo_turno = :cod_turno 
+                                      AND codigo_licencia_permiso = :cod_licencia";
+
+                    $stmtBusqueda = $dblink->prepare($sqlBusqueda);
+                    $stmtBusqueda->execute([
+                        ':fecha'             => $fecha_inicio,
+                        ':cod_personal'      => $codigo_personal,
+                        ':cod_contratacion'  => $codigo_contratacion,
+                        ':cod_turno'         => $codigo_turno,
+                        ':cod_licencia'      => $codigo_licencia
+                    ]);
+
+                    if ($stmtBusqueda->fetchColumn() > 0) {
+                        $respuestaOK = false;
+                        $mensajeError = "El registro ya existe para la fecha especificada.";
+                    } else {
+                        // Bucle para insertar por rango de días
+                        $datetime1 = new DateTime($fecha_inicio);
+                        $datetime2 = new DateTime($fecha_fin);
+                        $interval = $datetime1->diff($datetime2);
+                        $diasTotales = $interval->days;
+
+                        $sqlInsert = "INSERT INTO personal_licencias_permisos 
+                                        (fecha, dia, hora, minutos, codigo_personal, codigo_licencia_permiso, codigo_turno, observacion, hora_inicio, hora_fin, codigo_contratacion, estado) 
+                                      VALUES 
+                                        (:fecha, :dia, :hora, :minutos, :cod_personal, :cod_licencia, :cod_turno, :observacion, :hora_inicio, :hora_fin, :cod_contratacion, 'A')";
+
+                        $stmtInsert = $dblink->prepare($sqlInsert);
+
+                        for ($i = 0; $i <= $diasTotales; $i++) {
+                            $fechaActual = clone $datetime1;
+                            $fechaActual->modify("+$i day");
+                            $fechaFormatted = $fechaActual->format('Y-m-d');
+
+                            $stmtInsert->execute([
+                                ':fecha'            => $fechaFormatted,
+                                ':dia'              => $dia,
+                                ':hora'             => $hora,
+                                ':minutos'          => $minutos,
+                                ':cod_personal'     => $codigo_personal,
+                                ':cod_licencia'     => $codigo_licencia,
+                                ':cod_turno'        => $codigo_turno,
+                                ':observacion'      => $observacion,
+                                ':hora_inicio'      => $hora_inicio,
+                                ':hora_fin'         => $hora_fin,
+                                ':cod_contratacion' => $codigo_contratacion
+                            ]);
+                        }
+
+                        $respuestaOK = true;
+                        $mensajeError = "Registro guardado correctamente.";
+                    }
+                } catch (PDOException $e) {
+                    $respuestaOK = false;
+                    $mensajeError = "Error al guardar el registro: " . $e->getMessage();
+                }
+                break;
+
+            case 'ActualizarLyP':
+                $id = (int)($_POST['id_'] ?? 0);
+                $fecha = $_POST['fecha'] ?? '';
+                $dia = (int)($_POST['dia'] ?? 0);
+                $hora = (int)($_POST['hora'] ?? 0);
+                $minutos = (int)($_POST['minutos'] ?? 0);
+                $codigo_licencia = $_POST['codigo_licencia'] ?? '';
+                $observacion = trim($_POST['observaciones'] ?? '');
+                $hora_inicio = $_POST['hora_inicio'] ?? '';
+                $hora_fin = $_POST['hora_fin'] ?? '';
+
+                try {
+                    $sqlUpdate = "UPDATE personal_licencias_permisos 
+                                  SET fecha = :fecha, dia = :dia, hora = :hora, minutos = :minutos, 
+                                      codigo_licencia_permiso = :cod_licencia, observacion = :observacion, 
+                                      hora_inicio = :hora_inicio, hora_fin = :hora_fin 
+                                  WHERE id_licencia_permiso = :id";
+
+                    $stmtUpdate = $dblink->prepare($sqlUpdate);
+                    $stmtUpdate->execute([
+                        ':fecha'         => $fecha,
+                        ':dia'           => $dia,
+                        ':hora'          => $hora,
+                        ':minutos'       => $minutos,
+                        ':cod_licencia'  => $codigo_licencia,
+                        ':observacion'   => $observacion,
+                        ':hora_inicio'   => $hora_inicio,
+                        ':hora_fin'      => $hora_fin,
+                        ':id'            => $id
+                    ]);
+
+                    $respuestaOK = true;
+                    $mensajeError = "Registro actualizado correctamente.";
+                } catch (PDOException $e) {
+                    $respuestaOK = false;
+                    $mensajeError = "Error al actualizar el registro: " . $e->getMessage();
+                }
+                break;
+
+            case 'BuscarLicenciasPermisos':
+                $codigo_personal = (int)($_POST['codigo_personal'] ?? 0);
+                $fecha_anio = substr($_POST['fecha'] ?? date('Y'), 0, 4);
+                $codigo_contratacion = $_POST['codigo_contratacion'] ?? '';
+                $codigo_tipo_contratacion = substr($codigo_contratacion, 0, 2);
+                $codigo_tipo_licencia = $_POST['codigo_licencia'] ?? '';
+
+                $calculo_horas = ($codigo_tipo_contratacion === "05") ? 8 : 5;
+
+                try {
+                    // Consulta de licencias registradas
+                    $sqlLicencias = "SELECT lp.id_licencia_permiso, lp.codigo_personal, lp.fecha, lp.codigo_contratacion, 
+                                            lp.observacion, lp.dia, lp.hora, lp.minutos, lp.codigo_licencia_permiso, 
+                                            lp.codigo_turno, lp.hora_inicio, lp.hora_fin,
+                                            btrim(p.nombres || ' ' || p.apellidos) as nombre_docente
+                                     FROM personal_licencias_permisos lp
+                                     INNER JOIN personal p ON p.id_personal = lp.codigo_personal
+                                     WHERE lp.codigo_personal = :cod_personal 
+                                       AND btrim(lp.codigo_contratacion || lp.codigo_turno) = :cod_contratacion 
+                                       AND TO_CHAR(lp.fecha, 'YYYY') = :anio
+                                       AND lp.codigo_licencia_permiso = :cod_licencia
+                                     ORDER BY lp.fecha";
+
+                    $stmtLicencias = $dblink->prepare($sqlLicencias);
+                    $stmtLicencias->execute([
+                        ':cod_personal'     => $codigo_personal,
+                        ':cod_contratacion' => $codigo_contratacion,
+                        ':anio'             => $fecha_anio,
+                        ':cod_licencia'     => $codigo_tipo_licencia
+                    ]);
+
+                    // Consulta de saldos del catálogo
+                    $stmtCat = $dblink->query("SELECT codigo, nombre, saldo, minutos FROM tipo_licencia_o_permiso WHERE codigo = '$codigo_tipo_licencia'");
+                    $catData = $stmtCat->fetch(PDO::FETCH_ASSOC);
+
+                    $saldoDias = $catData['saldo'] ?? 0;
+                    $minutosMaximos = $saldoDias * $calculo_horas * 60;
+
+                    $j = 0;
+                    $num = 1;
+                    $tramite_dia = array();
+                    $tramite_hora = array();
+                    $tramite_minutos = array();
+
+                    if ($stmtLicencias->rowCount() > 0) {
+                        while ($row = $stmtLicencias->fetch(PDO::FETCH_ASSOC)) {
+                            $id_ = $row['id_licencia_permiso'];
+                            $fecha_fmt = isset($row['fecha']) ? date('d/m/Y', strtotime($row['fecha'])) : '';
+
+                            $datos[$j][] = "<tr>
+                                <td><input type='checkbox' class='case' name='chk{$id_}' id='chk{$id_}'></td>
+                                <td>{$num}</td>
+                                <td>{$id_}</td>
+                                <td>{$fecha_fmt}</td>
+                                <td>{$row['hora_inicio']}</td>
+                                <td>{$row['hora_fin']}</td>
+                                <td>{$row['dia']}</td>
+                                <td>{$row['hora']}</td>
+                                <td>{$row['minutos']}</td>
+                                <td>
+                                    <a data-accion='EditarLicenciaPermiso' class='btn btn-xs btn-info' data-toggle='tooltip' title='Editar' href='{$id_}'><i class='fas fa-edit'></i></a>
+                                    <a data-accion='EliminarLicenciaPermiso' class='btn btn-xs btn-warning' data-toggle='tooltip' title='Eliminar' href='{$id_}'><i class='fas fa-trash'></i></a>
+                                </td>
+                            </tr>";
+
+                            $total_min = ($row['dia'] * $calculo_horas * 60) + ($row['hora'] * 60) + $row['minutos'];
+                            $tramite_dia[] = segundosToCadenaD($total_min, $calculo_horas);
+                            $tramite_hora[] = segundosToCadenaH($total_min, $calculo_horas);
+                            $tramite_minutos[] = segundosToCadenaM($total_min, $calculo_horas);
+
+                            $num++;
+                        }
+
+                        $sub_dia = array_sum($tramite_dia);
+                        $sub_hora = array_sum($tramite_hora);
+                        $sub_min = array_sum($tramite_minutos);
+
+                        $minutos_utilizados = ($sub_dia * $calculo_horas * 60) + ($sub_hora * 60) + $sub_min;
+                        $minutos_disponibles = $minutosMaximos - $minutos_utilizados;
+
+                        $j++;
+                        $datos[$j]["Disponible"] = segundosToCadena($minutos_disponibles, $calculo_horas, 1);
+                        $datos[$j]["Utilizado"]  = segundosToCadena($minutos_utilizados, $calculo_horas, 1);
+                        $datos[$j]["DiasLicencia"] = segundosToCadena($minutosMaximos, $calculo_horas, 1);
+                    } else {
+                        $datos[$j][] = "<tr><td colspan='10'><span class='badge badge-dark'>No se encontraron registros</span></td></tr>";
+                        $j++;
+                        $datos[$j]["Disponible"] = segundosToCadena($minutosMaximos, $calculo_horas, 1);
+                        $datos[$j]["Utilizado"]  = segundosToCadena(0, $calculo_horas, 1);
+                        $datos[$j]["DiasLicencia"] = segundosToCadena($minutosMaximos, $calculo_horas, 1);
+                    }
+                    $respuestaOK = true;
+                } catch (PDOException $e) {
+                    $respuestaOK = false;
+                    $mensajeError = "Error en la búsqueda: " . $e->getMessage();
+                }
+                break;
+
+            case 'EliminarLicenciaPermiso':
+                $id_ = (int)($_REQUEST['id_'] ?? 0);
+
+                try {
+                    $stmtDelete = $dblink->prepare("DELETE FROM personal_licencias_permisos WHERE id_licencia_permiso = :id");
+                    $stmtDelete->execute([':id' => $id_]);
+
+                    if ($stmtDelete->rowCount() > 0) {
+                        $respuestaOK = true;
+                        $mensajeError = 'Se ha eliminado el registro correctamente.';
+                        $contenidoOK = 'Se eliminó 1 registro.';
+                    } else {
+                        $respuestaOK = false;
+                        $mensajeError = 'No se encontró el registro para eliminar.';
+                    }
+                } catch (PDOException $e) {
+                    $respuestaOK = false;
+                    $mensajeError = 'Error al eliminar: ' . $e->getMessage();
+                }
+                break;
+
+            default:
+                $mensajeError = 'Esta acción no se encuentra disponible.';
+                break;
+        }
+    } else {
+        $mensajeError = 'No se recibieron parámetros válidos.';
+    }
+} else {
+    $mensajeError = 'No se pudo establecer la conexión con la base de datos.';
 }
-else{
-	$mensajeError = 'No se puede establecer conexión con la base de datos';}
 
-// Armamos array para convertir a JSON
-$salidaJson = array("respuesta" => $respuestaOK,
-		"mensaje" => $mensajeError,
-		"contenido" => $contenidoOK,
-		"encabezado"=>$encabezado);
-
-if($Accion == 'EditarLicenciasPermisos' || $Accion == "BuscarLicenciasPermisos" || $Accion == 'BuscarContratacion'){
-	// Enviando la matriz con Json.
-		echo json_encode($datos);
-}else{
-	echo json_encode($salidaJson);
+// Retorno unificado en formato JSON
+if (in_array($Accion, ['EditarLicenciasPermisos', 'BuscarLicenciasPermisos', 'BuscarContratacion'])) {
+    echo json_encode($datos);
+} else {
+    echo json_encode([
+        "respuesta" => $respuestaOK,
+        "mensaje"   => $mensajeError,
+        "contenido" => $contenidoOK,
+        "encabezado"=> $encabezado
+    ]);
 }
 ?>

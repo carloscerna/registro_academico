@@ -1,94 +1,85 @@
-<!-- VENTANA MODAL - MODIFICAR LA FECHA DE LA FACTURA -->
-<div class="row mt-3">
-<div class="col">
-<div class="modal fade" data-backdrop="static" data-keyboard="false" id="VentanaLicenciasPermisos" tabindex="-1" role="dialog" aria-labelledby="VentanaLicenciasPermisos" aria-hidden="true">
-<div class="modal-dialog modal-md">
-	<div class="modal-content">
-		<div class="modal-header bg-gradient-navy p-1">
-			<h6 class="modal-title" id="">
-        <span class="fad fa-layer-group"></span>
-          <label for="LblTituloLicenciasPermisos">Licencias | </label>
-      </h6>
-			<button class="close" type = "button" data-dismiss="modal" aria-label="Cerrar" id="VentanaLicenciasPermisos1">
-				<span aria-hidden="true">&times;</span>
-			</button>
-		</div>
-		<!-- FORMULARIO PRINCIPAL. -->
-		<form action="" method="post" name="formVentanaLicenciasPermisos" id="formVentanaLicenciasPermisos" role="form" enctype="multipart/form-data">
-      <!-- SECCION DEL HIDDEN INPUT-->
-      <input type="hidden" id="accion_licencias_permisos" name="accion_licencias_permisos" value="GuardarLicenciasPermisos">
+<!-- VENTANA MODAL PARA EDITAR LICENCIAS / PERMISOS -->
+<div class="modal fade" id="VentanaLicenciasPermisos" tabindex="-1" role="dialog" aria-labelledby="modalLicenciasTitle" aria-hidden="true" data-backdrop="static">
+  <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+    <div class="modal-content shadow-lg border-0">
+      
+      <!-- Encabezado Modal -->
+      <div class="modal-header bg-navy text-white py-2">
+        <h5 class="modal-title font-weight-bold" id="modalLicenciasTitle">
+          <i class="fas fa-edit mr-2"></i>Editar Licencia / Permiso
+        </h5>
+        <button type="button" class="close text-white" data-dismiss="modal" aria-label="Cerrar">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
 
-			<div class="modal-body">
-				<div class="container">
-					<div class="row">
-						<div class="col-12 col-md-12 col-lg-12 col-xl-12">
-                <fieldset id="FieldsetBusquedaTiquete">
-                    <legend> Licencias | </legend>
-                        <div class="row">
-                            <div class="col col-md-12 col-lg-12 col-xl-12">
-                                <div class="input-group">
-                                    <span class="input-group-text text-info" id="TextoAnnLectivoHorarios" name="TextoAnnLectivoHorarios">Año lectivo</span>
-                                </div>
-                                <div class="input-group">
-                                  <span class="input-group-text text-info" id="TextoModalidadesHorarios" name="TextoModalidadesHorarios">Modalidad</span>
-                              </div>
-                            </div>
-                        </div>
-                    </fieldset>
+      <!-- Formulario Modal -->
+      <form id="formVentanaLicenciasPermisos" name="formVentanaLicenciasPermisos" method="post">
+        <input type="hidden" id="accion_licencias_permisos" name="accion_licencias_permisos" value="ActualizarLyP">
+        <input type="hidden" id="id_licencia_permiso_modal" name="id_licencia_permiso_modal">
 
-                    <fieldset id="FieldsetProduccion">
-                        <legend> Licencias | </legend>
-                            <div class="row">
-                                <div class="col">
-                                  <div class="input-group">
-                                    <span class="input-group-text">Estatus</span>
-                                    <select class="custom-select" name="lstHorarios" id="lstHorarios"></select>
-                                  </div>
-                                  <div class="input-group">
-                                    <span class="input-group-text">Períodos</span>
-                                    <select class="custom-select" name="lstPeriodosHorarios" id="lstPeriodosHorarios"></select>
-                                  </div>
-                                    <div class="input-group">
-                                        <div class="input-group mb-1">
-                                            <div class="input-group-prepend">
-                                              <span class="input-group-text bg-gradient-gray-blue" id="basic-addon2">Id</span>
-                                            </div>
-                                            <input type="text" class="form-control text-bold" id="IdHorarios" name = "IdHorarios" placeholder="" aria-label="IdHorarios" aria-describedby="basic-addon2" readonly>
-                                          </div>
-                                    </div>
-                                    <div class="input-group mb-1">
-                                      <div class="input-group-prepend">
-                                        <span class="input-group-text bg-gradient-gray-dark" id="basic-addon6">Fecha Inicio</span>
-                                      </div>
-                                      <input type="date" min="1900-01-01" max="9999-12-31" class="form-control" id="FechaInicio" name="FechaInicio" placeholder="" aria-label="FechaInicio" aria-describedby="basic-addon6" autocomplete="nope">
-                                    </div>
-                                    <div class="input-group mb-1">
-                                      <div class="input-group-prepend">
-                                        <span class="input-group-text bg-gradient-gray-dark" id="basic-addon7">Fecha Fin</span>
-                                      </div>
-                                      <input type="date" min="1900-01-01" max="9999-12-31" class="form-control" id="FechaFin" name="FechaFin" placeholder="" aria-label="FechaFin" aria-describedby="basic-addon7" autocomplete="nope">
-                                    </div>
-                                    <div class="input-group mb-1">
-                                      <div class="input-group-prepend">
-                                        <span class="input-group-text bg-gradient-gray-dark" id="basic-addon8">Fecha Registro Académico</span>
-                                      </div>
-                                      <input type="date" min="1900-01-01" max="9999-12-31" class="form-control" id="FechaRA" name="FechaRA" placeholder="" aria-label="FechaRA" aria-describedby="basic-addon8" autocomplete="nope">
-                                    </div>
-                                </div>
-                            </div>
-                    </fieldset>
-                </div>
-              </div> <!-- ROW -->
-            </div> <!-- CONTAINER -->
-          </div> <!-- MODAL BODY -->
-            <!-- footer modal -->
-            <div class="modal-footer bg-gradient-cyan p-0">
-              <button class="btn btn-default" data-dismiss="modal" type="button">Cerrar</button>
-              <input class="btn btn-primary" type="button" value="Guardar" name="goGuardarHorarios" id="goGuardarHorarios">
+        <div class="modal-body p-4">
+          <div class="row">
+            <!-- ID del Registro -->
+            <div class="col-md-4 col-12 mb-3">
+              <label for="IdHorarios" class="font-weight-bold">ID Registro</label>
+              <input type="text" class="form-control bg-light" id="IdHorarios" name="IdHorarios" readonly>
             </div>
-        </form> <!-- from principal -->
-	</div>
-</div>
-</div>
-</div>			
+
+            <!-- Fecha del Permiso -->
+            <div class="col-md-8 col-12 mb-3">
+              <label for="FechaInicio" class="font-weight-bold">Fecha del Permiso</label>
+              <input type="date" class="form-control" id="FechaInicio" name="FechaInicio">
+            </div>
+          </div>
+
+          <div class="row">
+            <!-- Rango Horario -->
+            <div class="col-md-6 col-12 mb-3">
+              <label for="ModalHoraDesde" class="font-weight-bold">Hora Inicio</label>
+              <input type="time" class="form-control" id="ModalHoraDesde" name="ModalHoraDesde">
+            </div>
+
+            <div class="col-md-6 col-12 mb-3">
+              <label for="ModalHoraHasta" class="font-weight-bold">Hora Fin</label>
+              <input type="time" class="form-control" id="ModalHoraHasta" name="ModalHoraHasta">
+            </div>
+          </div>
+
+          <div class="row">
+            <!-- Días / Horas / Minutos -->
+            <div class="col-md-4 col-12 mb-3">
+              <label for="ModalDia" class="font-weight-bold">Días</label>
+              <input type="number" class="form-control" id="ModalDia" name="ModalDia" min="0">
+            </div>
+            <div class="col-md-4 col-12 mb-3">
+              <label for="ModalHora" class="font-weight-bold">Horas</label>
+              <input type="number" class="form-control" id="ModalHora" name="ModalHora" min="0">
+            </div>
+            <div class="col-md-4 col-12 mb-3">
+              <label for="ModalMinutos" class="font-weight-bold">Minutos</label>
+              <input type="number" class="form-control" id="ModalMinutos" name="ModalMinutos" min="0">
+            </div>
+          </div>
+
+          <!-- Observaciones -->
+          <div class="form-group mb-0">
+            <label for="ModalObservacion" class="font-weight-bold">Observación / Motivo</label>
+            <textarea class="form-control" id="ModalObservacion" name="ModalObservacion" rows="3"></textarea>
+          </div>
+        </div>
+
+        <!-- Pie de Página del Modal -->
+        <div class="modal-footer bg-light">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">
+            <i class="fas fa-times mr-1"></i> Cancelar
+          </button>
+          <button type="button" id="goGuardarModal" class="btn btn-primary">
+            <i class="fas fa-save mr-1"></i> Actualizar Cambios
+          </button>
+        </div>
+      </form>
+
+    </div>
+  </div>
 </div>
