@@ -184,142 +184,276 @@ if (isset($errorDbConexion) && $errorDbConexion === false) {
                 }
                 break;
 
-            case 'ActualizarLyP':
-                $id = (int)($_POST['id_'] ?? 0);
-                $fecha = $_POST['fecha'] ?? '';
-                $dia = (int)($_POST['dia'] ?? 0);
-                $hora = (int)($_POST['hora'] ?? 0);
-                $minutos = (int)($_POST['minutos'] ?? 0);
-                $codigo_licencia = $_POST['codigo_licencia'] ?? '';
-                $observacion = trim($_POST['observaciones'] ?? '');
-                $hora_inicio = $_POST['hora_inicio'] ?? '';
-                $hora_fin = $_POST['hora_fin'] ?? '';
+         case 'ActualizarLyP':
+    // Lectura de los parámetros recibidos por POST
+    $id_licencia = (int)($_POST['id_licencia_permiso_modal'] ?? 0);
+    $fecha       = $_POST['FechaInicio'] ?? '';
+    $hora_inicio = $_POST['ModalHoraDesde'] ?? '';
+    $hora_fin    = $_POST['ModalHoraHasta'] ?? '';
+    $dia         = (int)($_POST['ModalDia'] ?? 0);
+    $hora        = (int)($_POST['ModalHora'] ?? 0);
+    $minutos     = (int)($_POST['ModalMinutos'] ?? 0);
+    $observacion = trim($_POST['ModalObservacion'] ?? '');
 
-                try {
-                    $sqlUpdate = "UPDATE personal_licencias_permisos 
-                                  SET fecha = :fecha, dia = :dia, hora = :hora, minutos = :minutos, 
-                                      codigo_licencia_permiso = :cod_licencia, observacion = :observacion, 
-                                      hora_inicio = :hora_inicio, hora_fin = :hora_fin 
-                                  WHERE id_licencia_permiso = :id";
+    // Validación de parámetros de entrada
+    if ($id_licencia <= 0) {
+        echo json_encode([
+            'respuesta' => false,
+            'mensaje'   => 'No se recibieron parámetros válidos.',
+            'contenido' => '',
+            'encabezado' => ''
+        ]);
+        exit;
+    }
 
-                    $stmtUpdate = $dblink->prepare($sqlUpdate);
-                    $stmtUpdate->execute([
-                        ':fecha'         => $fecha,
-                        ':dia'           => $dia,
-                        ':hora'          => $hora,
-                        ':minutos'       => $minutos,
-                        ':cod_licencia'  => $codigo_licencia,
-                        ':observacion'   => $observacion,
-                        ':hora_inicio'   => $hora_inicio,
-                        ':hora_fin'      => $hora_fin,
-                        ':id'            => $id
-                    ]);
+    try {
+        $sql = "UPDATE personal_licencias_permisos 
+                SET fecha = :fecha,
+                    hora_inicio = :hora_inicio,
+                    hora_fin = :hora_fin,
+                    dia = :dia,
+                    hora = :hora,
+                    minutos = :minutos,
+                    observacion = :observacion
+                WHERE id_licencia_permiso = :id";
 
-                    $respuestaOK = true;
-                    $mensajeError = "Registro actualizado correctamente.";
-                } catch (PDOException $e) {
-                    $respuestaOK = false;
-                    $mensajeError = "Error al actualizar el registro: " . $e->getMessage();
-                }
-                break;
+        $stmt = $dblink->prepare($sql);
+        $stmt->execute([
+            ':fecha'       => $fecha,
+            ':hora_inicio' => $hora_inicio,
+            ':hora_fin'    => $hora_fin,
+            ':dia'         => $dia,
+            ':hora'        => $hora,
+            ':minutos'     => $minutos,
+            ':observacion' => $observacion,
+            ':id'          => $id_licencia
+        ]);
 
+        echo json_encode([
+            'respuesta' => true,
+            'mensaje'   => 'El registro se actualizó correctamente.',
+            'contenido' => '',
+            'encabezado' => ''
+        ]);
+    } catch (PDOException $e) {
+        echo json_encode([
+            'respuesta' => false,
+            'mensaje'   => 'Error en la base de datos: ' . $e->getMessage(),
+            'contenido' => '',
+            'encabezado' => ''
+        ]);
+    }
+    exit;
+    break;
+
+case 'ConsultarSaldoEmpleado':
+    $idPersonal = $_POST['id_personal'] ?? 0;
+    $idTipoLicencia = $_POST['id_tipo_licencia'] ?? 0;
+    
+    // Obtener la fecha del input; si viene vacía, tomar la fecha actual del servidor
+    $fechaInput = $_POST['fecha_licencia'] ?? date('Y-m-d');
+    
+    // Extraer únicamente el año (ejemplo: "2026")
+    $anioConsulta = date('Y', strtotime($fechaInput));
+
+    try {
+        // A. Obtener el saldo oficial en DÍAS desde la tabla tipo_licencia_o_permiso
+        $sqlLicencia = "SELECT id_tipo_licencia_o_permiso, codigo, nombre, saldo 
+                        FROM tipo_licencia_o_permiso 
+                        WHERE id_tipo_licencia_o_permiso = :id_tipo_licencia";
+        
+        $stmtLicencia = $dblink->prepare($sqlLicencia);
+        $stmtLicencia->execute([':id_tipo_licencia' => $idTipoLicencia]);
+        $datosLicencia = $stmtLicencia->fetch(PDO::FETCH_ASSOC);
+
+        $diasLimite = $datosLicencia ? intval($datosLicencia['saldo']) : 0;
+        $nombreLicencia = $datosLicencia ? trim($datosLicencia['nombre']) : 'Sin especificar';
+
+        // B. Consultar el código de cargo para determinar la jornada (5h u 8h)
+        $sqlCargo = "SELECT p.id_personal, c.codigo AS codigo_cargo 
+                     FROM personal p
+                     LEFT JOIN catalogo_cargo c ON p.codigo_cargo = c.codigo
+                     WHERE p.id_personal = :id_personal";
+        
+        $stmtCargo = $dblink->prepare($sqlCargo);
+        $stmtCargo->execute([':id_personal' => $idPersonal]);
+        $datosPersonal = $stmtCargo->fetch(PDO::FETCH_ASSOC);
+
+        $codigoCargo = trim($datosPersonal['codigo_cargo'] ?? '09');
+        
+        // Jornada: '02' y '03' -> 5 horas docentes; demás -> 8 horas administrativas
+        $horasPorDia = in_array($codigoCargo, ['02', '03']) ? 5 : 8;
+        $minutosPorDia = $horasPorDia * 60; // 300 o 480 minutos por día
+
+        // Límite total de minutos según la jornada y días autorizados
+        $minutosLimiteTotal = $diasLimite * $minutosPorDia;
+
+        // C. Consultar consumo filtrado por empleado, tipo de licencia Y AÑO ACTUAL
+        $sqlSaldo = "SELECT 
+                        COALESCE(SUM(dia), 0) AS total_dias,
+                        COALESCE(SUM(hora), 0) AS total_horas,
+                        COALESCE(SUM(minutos), 0) AS total_minutos_extra
+                     FROM personal_licencias_permisos 
+                     WHERE codigo_personal = :id_personal 
+                       AND codigo_licencia_permiso = :id_tipo_licencia
+                       AND EXTRACT(YEAR FROM fecha) = :anio";
+
+        $stmtSaldo = $dblink->prepare($sqlSaldo);
+        $stmtSaldo->execute([
+            ':id_personal'     => $idPersonal,
+            ':id_tipo_licencia' => $idTipoLicencia,
+            ':anio'             => $anioConsulta
+        ]);
+        $resultadoSaldo = $stmtSaldo->fetch(PDO::FETCH_ASSOC);
+
+        // Convertir consumo a minutos globales del año
+        $diasReg = intval($resultadoSaldo['total_dias']);
+        $horasReg = intval($resultadoSaldo['total_horas']);
+        $minutosReg = intval($resultadoSaldo['total_minutos_extra']);
+
+        $minutosConsumidos = ($diasReg * $minutosPorDia) + ($horasReg * 60) + $minutosReg;
+
+        // D. Desglose exacto de lo utilizado para el frontend
+        $diasConsumidos = intdiv($minutosConsumidos, $minutosPorDia);
+        $restoMinutos = $minutosConsumidos % $minutosPorDia;
+        $horasConsumidas = intdiv($restoMinutos, 60);
+        $minutosConsumidosFinal = $restoMinutos % 60;
+
+        // E. Limpieza de salida y retorno de respuesta JSON
+        if (ob_get_length()) ob_clean();
+        header('Content-Type: application/json; charset=utf-8');
+
+        echo json_encode([
+            'respuesta'              => true,
+            'anio'                   => $anioConsulta,
+            'nombre_licencia'        => $nombreLicencia,
+            'codigo_cargo'           => $codigoCargo,
+            'horas_por_dia'          => $horasPorDia,
+            'minutos_consumidos'     => $minutosConsumidos,
+            'dias_consumidos'        => $diasConsumidos,
+            'horas_consumidas'       => $horasConsumidas,
+            'minutos_consumidos_res' => $minutosConsumidosFinal,
+            'dias_limite'            => $diasLimite,
+            'minutos_limite_total'   => $minutosLimiteTotal
+        ]);
+        
+        exit;
+
+    } catch (PDOException $e) {
+        if (ob_get_length()) ob_clean();
+        header('Content-Type: application/json; charset=utf-8');
+        echo json_encode([
+            'respuesta' => false,
+            'mensaje'   => 'Error en la consulta: ' . $e->getMessage()
+        ]);
+        exit;
+    }
+    break;
             case 'BuscarLicenciasPermisos':
-                $codigo_personal = (int)($_POST['codigo_personal'] ?? 0);
-                $fecha_anio = substr($_POST['fecha'] ?? date('Y'), 0, 4);
-                $codigo_contratacion = $_POST['codigo_contratacion'] ?? '';
-                $codigo_tipo_contratacion = substr($codigo_contratacion, 0, 2);
-                $codigo_tipo_licencia = $_POST['codigo_licencia'] ?? '';
+    $codigo_personal = (int)($_POST['codigo_personal'] ?? 0);
+    $fecha_anio = substr($_POST['fecha'] ?? date('Y'), 0, 4);
+    $codigo_contratacion = $_POST['codigo_contratacion'] ?? '';
+    $codigo_tipo_contratacion = substr($codigo_contratacion, 0, 2);
+    $codigo_tipo_licencia = $_POST['codigo_licencia'] ?? '';
 
-                $calculo_horas = ($codigo_tipo_contratacion === "05") ? 8 : 5;
+    $calculo_horas = ($codigo_tipo_contratacion === "05") ? 8 : 5;
 
-                try {
-                    // Consulta de licencias registradas
-                    $sqlLicencias = "SELECT lp.id_licencia_permiso, lp.codigo_personal, lp.fecha, lp.codigo_contratacion, 
-                                            lp.observacion, lp.dia, lp.hora, lp.minutos, lp.codigo_licencia_permiso, 
-                                            lp.codigo_turno, lp.hora_inicio, lp.hora_fin,
-                                            btrim(p.nombres || ' ' || p.apellidos) as nombre_docente
-                                     FROM personal_licencias_permisos lp
-                                     INNER JOIN personal p ON p.id_personal = lp.codigo_personal
-                                     WHERE lp.codigo_personal = :cod_personal 
-                                       AND btrim(lp.codigo_contratacion || lp.codigo_turno) = :cod_contratacion 
-                                       AND TO_CHAR(lp.fecha, 'YYYY') = :anio
-                                       AND lp.codigo_licencia_permiso = :cod_licencia
-                                     ORDER BY lp.fecha";
+    try {
+        // Consulta de licencias registradas
+        $sqlLicencias = "SELECT lp.id_licencia_permiso, lp.codigo_personal, lp.fecha, lp.codigo_contratacion, 
+                                lp.observacion, lp.dia, lp.hora, lp.minutos, lp.codigo_licencia_permiso, 
+                                lp.codigo_turno, lp.hora_inicio, lp.hora_fin,
+                                btrim(p.nombres || ' ' || p.apellidos) as nombre_docente
+                         FROM personal_licencias_permisos lp
+                         INNER JOIN personal p ON p.id_personal = lp.codigo_personal
+                         WHERE lp.codigo_personal = :cod_personal 
+                           AND btrim(lp.codigo_contratacion || lp.codigo_turno) = :cod_contratacion 
+                           AND TO_CHAR(lp.fecha, 'YYYY') = :anio
+                           AND lp.codigo_licencia_permiso = :cod_licencia
+                         ORDER BY lp.fecha";
 
-                    $stmtLicencias = $dblink->prepare($sqlLicencias);
-                    $stmtLicencias->execute([
-                        ':cod_personal'     => $codigo_personal,
-                        ':cod_contratacion' => $codigo_contratacion,
-                        ':anio'             => $fecha_anio,
-                        ':cod_licencia'     => $codigo_tipo_licencia
-                    ]);
+        $stmtLicencias = $dblink->prepare($sqlLicencias);
+        $stmtLicencias->execute([
+            ':cod_personal'     => $codigo_personal,
+            ':cod_contratacion' => $codigo_contratacion,
+            ':anio'             => $fecha_anio,
+            ':cod_licencia'     => $codigo_tipo_licencia
+        ]);
 
-                    // Consulta de saldos del catálogo
-                    $stmtCat = $dblink->query("SELECT codigo, nombre, saldo, minutos FROM tipo_licencia_o_permiso WHERE codigo = '$codigo_tipo_licencia'");
-                    $catData = $stmtCat->fetch(PDO::FETCH_ASSOC);
+        // Consulta de saldos del catálogo
+        $stmtCat = $dblink->query("SELECT codigo, nombre, saldo, minutos FROM tipo_licencia_o_permiso WHERE codigo = '$codigo_tipo_licencia'");
+        $catData = $stmtCat->fetch(PDO::FETCH_ASSOC);
 
-                    $saldoDias = $catData['saldo'] ?? 0;
-                    $minutosMaximos = $saldoDias * $calculo_horas * 60;
+        $saldoDias = $catData['saldo'] ?? 0;
+        $minutosMaximos = $saldoDias * $calculo_horas * 60;
 
-                    $j = 0;
-                    $num = 1;
-                    $tramite_dia = array();
-                    $tramite_hora = array();
-                    $tramite_minutos = array();
+        $num = 1;
+        $tramite_dia = array();
+        $tramite_hora = array();
+        $tramite_minutos = array();
+        $filasHtml = "";
 
-                    if ($stmtLicencias->rowCount() > 0) {
-                        while ($row = $stmtLicencias->fetch(PDO::FETCH_ASSOC)) {
-                            $id_ = $row['id_licencia_permiso'];
-                            $fecha_fmt = isset($row['fecha']) ? date('d/m/Y', strtotime($row['fecha'])) : '';
+        if ($stmtLicencias->rowCount() > 0) {
+            while ($row = $stmtLicencias->fetch(PDO::FETCH_ASSOC)) {
+                $id_ = $row['id_licencia_permiso'];
+                $fecha_fmt = isset($row['fecha']) ? date('d/m/Y', strtotime($row['fecha'])) : '';
 
-                            $datos[$j][] = "<tr>
-                                <td><input type='checkbox' class='case' name='chk{$id_}' id='chk{$id_}'></td>
-                                <td>{$num}</td>
-                                <td>{$id_}</td>
-                                <td>{$fecha_fmt}</td>
-                                <td>{$row['hora_inicio']}</td>
-                                <td>{$row['hora_fin']}</td>
-                                <td>{$row['dia']}</td>
-                                <td>{$row['hora']}</td>
-                                <td>{$row['minutos']}</td>
-                                <td>
-                                    <a data-accion='EditarLicenciaPermiso' class='btn btn-xs btn-info' data-toggle='tooltip' title='Editar' href='{$id_}'><i class='fas fa-edit'></i></a>
-                                    <a data-accion='EliminarLicenciaPermiso' class='btn btn-xs btn-warning' data-toggle='tooltip' title='Eliminar' href='{$id_}'><i class='fas fa-trash'></i></a>
-                                </td>
-                            </tr>";
+                // Construcción de la fila con exactamente 10 columnas (<td>)
+                $filasHtml .= "<tr>
+                    <td class='text-center'><input type='checkbox' class='case' name='chk{$id_}' id='chk{$id_}'></td>
+                    <td class='text-center'>{$num}</td>
+                    <td class='text-center'>{$id_}</td>
+                    <td class='text-center'>{$fecha_fmt}</td>
+                    <td class='text-center'>{$row['hora_inicio']}</td>
+                    <td class='text-center'>{$row['hora_fin']}</td>
+                    <td class='text-center'>{$row['dia']}</td>
+                    <td class='text-center'>{$row['hora']}</td>
+                    <td class='text-center'>{$row['minutos']}</td>
+                    <td class='text-center'>
+                        <a data-accion='EditarLicenciaPermiso' class='btn btn-xs btn-info' data-toggle='tooltip' title='Editar' href='{$id_}'><i class='fas fa-edit'></i></a>
+                        <a data-accion='EliminarLicenciaPermiso' class='btn btn-xs btn-warning' data-toggle='tooltip' title='Eliminar' href='{$id_}'><i class='fas fa-trash'></i></a>
+                    </td>
+                </tr>";
 
-                            $total_min = ($row['dia'] * $calculo_horas * 60) + ($row['hora'] * 60) + $row['minutos'];
-                            $tramite_dia[] = segundosToCadenaD($total_min, $calculo_horas);
-                            $tramite_hora[] = segundosToCadenaH($total_min, $calculo_horas);
-                            $tramite_minutos[] = segundosToCadenaM($total_min, $calculo_horas);
+                $total_min = ($row['dia'] * $calculo_horas * 60) + ($row['hora'] * 60) + $row['minutos'];
+                $tramite_dia[] = segundosToCadenaD($total_min, $calculo_horas);
+                $tramite_hora[] = segundosToCadenaH($total_min, $calculo_horas);
+                $tramite_minutos[] = segundosToCadenaM($total_min, $calculo_horas);
 
-                            $num++;
-                        }
+                $num++;
+            }
 
-                        $sub_dia = array_sum($tramite_dia);
-                        $sub_hora = array_sum($tramite_hora);
-                        $sub_min = array_sum($tramite_minutos);
+            $sub_dia = array_sum($tramite_dia);
+            $sub_hora = array_sum($tramite_hora);
+            $sub_min = array_sum($tramite_minutos);
 
-                        $minutos_utilizados = ($sub_dia * $calculo_horas * 60) + ($sub_hora * 60) + $sub_min;
-                        $minutos_disponibles = $minutosMaximos - $minutos_utilizados;
+            $minutos_utilizados = ($sub_dia * $calculo_horas * 60) + ($sub_hora * 60) + $sub_min;
+            $minutos_disponibles = $minutosMaximos - $minutos_utilizados;
 
-                        $j++;
-                        $datos[$j]["Disponible"] = segundosToCadena($minutos_disponibles, $calculo_horas, 1);
-                        $datos[$j]["Utilizado"]  = segundosToCadena($minutos_utilizados, $calculo_horas, 1);
-                        $datos[$j]["DiasLicencia"] = segundosToCadena($minutosMaximos, $calculo_horas, 1);
-                    } else {
-                        $datos[$j][] = "<tr><td colspan='10'><span class='badge badge-dark'>No se encontraron registros</span></td></tr>";
-                        $j++;
-                        $datos[$j]["Disponible"] = segundosToCadena($minutosMaximos, $calculo_horas, 1);
-                        $datos[$j]["Utilizado"]  = segundosToCadena(0, $calculo_horas, 1);
-                        $datos[$j]["DiasLicencia"] = segundosToCadena($minutosMaximos, $calculo_horas, 1);
-                    }
-                    $respuestaOK = true;
-                } catch (PDOException $e) {
-                    $respuestaOK = false;
-                    $mensajeError = "Error en la búsqueda: " . $e->getMessage();
-                }
-                break;
+            // Índice 0: Cadena HTML de las filas creadas
+            $datos[0] = $filasHtml;
+
+            // Índice 1: Arreglo asociativo con los saldos de tiempo
+            $datos[1]["Disponible"]   = segundosToCadena($minutos_disponibles, $calculo_horas, 1);
+            $datos[1]["Utilizado"]    = segundosToCadena($minutos_utilizados, $calculo_horas, 1);
+            $datos[1]["DiasLicencia"] = segundosToCadena($minutosMaximos, $calculo_horas, 1);
+
+        } else {
+            // SI NO HAY REGISTROS: Se envía la cadena HTML vacía para dejar que DataTables controle la notificación visual sin alterar el número de columnas
+            $datos[0] = "";
+
+            $datos[1]["Disponible"]   = segundosToCadena($minutosMaximos, $calculo_horas, 1);
+            $datos[1]["Utilizado"]    = segundosToCadena(0, $calculo_horas, 1);
+            $datos[1]["DiasLicencia"] = segundosToCadena($minutosMaximos, $calculo_horas, 1);
+        }
+
+        $respuestaOK = true;
+
+    } catch (PDOException $e) {
+        $respuestaOK = false;
+        $mensajeError = "Error en la búsqueda: " . $e->getMessage();
+    }
+    break;
 
             case 'EliminarLicenciaPermiso':
                 $id_ = (int)($_REQUEST['id_'] ?? 0);
@@ -342,10 +476,67 @@ if (isset($errorDbConexion) && $errorDbConexion === false) {
                 }
                 break;
 
+case 'EditarLicenciasPermisos':
+    // 1. Recepción y validación del ID
+    $id_ = (int)($_REQUEST['id_'] ?? 0);
+
+    if ($id_ <= 0) {
+        echo json_encode([
+            'respuestaOK' => false,
+            'mensajeError' => 'ID de registro no válido.'
+        ]);
+        exit;
+    }
+
+    try {
+        // 2. Consulta a la base de datos
+        $sql = "SELECT id_licencia_permiso, codigo_personal, fecha, codigo_contratacion, 
+                       observacion, dia, hora, minutos, codigo_licencia_permiso, 
+                       codigo_turno, hora_inicio, hora_fin
+                FROM personal_licencias_permisos 
+                WHERE id_licencia_permiso = :id";
+
+        $stmt = $dblink->prepare($sql);
+        $stmt->execute([':id' => $id_]);
+
+        if ($stmt->rowCount() > 0) {
+            $registro = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            // Formatear la fecha para input type="date" (YYYY-MM-DD)
+            if (!empty($registro['fecha'])) {
+                $registro['fecha'] = date('Y-m-d', strtotime($registro['fecha']));
+            }
+
+            // 3. Respuesta exitosa con los datos del registro
+            echo json_encode([
+                'respuestaOK' => true,
+                'registro'    => $registro
+            ]);
+        } else {
+            echo json_encode([
+                'respuestaOK' => false,
+                'mensajeError' => 'No se encontró el registro solicitado.'
+            ]);
+        }
+    } catch (PDOException $e) {
+        echo json_encode([
+            'respuestaOK' => false,
+            'mensajeError' => 'Error en la base de datos: ' . $e->getMessage()
+        ]);
+    }
+    exit;
+    break;
+
+
+
+
             default:
                 $mensajeError = 'Esta acción no se encuentra disponible.';
                 break;
         }
+
+
+        
     } else {
         $mensajeError = 'No se recibieron parámetros válidos.';
     }
@@ -354,7 +545,7 @@ if (isset($errorDbConexion) && $errorDbConexion === false) {
 }
 
 // Retorno unificado en formato JSON
-if (in_array($Accion, ['EditarLicenciasPermisos', 'BuscarLicenciasPermisos', 'BuscarContratacion'])) {
+if (in_array($Accion, ['EditarLicenciasPermisos', 'BuscarLicenciasPermisos', 'BuscarContratacion','ConsultarSaldoEmpleado'])) {
     echo json_encode($datos);
 } else {
     echo json_encode([

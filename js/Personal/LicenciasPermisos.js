@@ -100,56 +100,78 @@ $(function(){
         ////////////////////////////////////////////////////////////////////////////
         // ÑO,ÒAR DATPS DEPÈNDIENTE DEL TAB DE NAV
         //////////////////////////////////////////////////////////////////////////
-    $("#NavLicenciasPermisos ul.nav > li > a").on("click", function () {
-        TextoTab = $(this).text();
-        if(TextoTab == "Licencias y Permisos"){
-            // Borrar información de la Tabla.
-                $('#listaContenidoLicenciasPermiso').empty();
-                $("#AlertLicenciasPermisos").css("display", "none");
-        }
-        if(TextoTab == "Reportes"){
-            // Borrar información de la Tabla.
-                $("#AlertReportes").css("display", "none");
-            // Actualizar Fecha.
-                $('#FechaAñoLectivo').val(today_inicio);
-                $('#FechaLicenciaDesde').val(today_now);
-                $('#FechaLicenciaHasta').val(today);
-            //
-            var miselect=$("#lstTipoContratacionReporte");
-			/* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
-			miselect.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
-			//
-			$.post("includes/Personal/Catalogos/Contratacion.php",
-				function(data) {
-					miselect.empty();
-					for (var i=0; i<data.length; i++) {
-                        if(i == 0){
-                            miselect.append('<option value="' + data[i].codigo + '" selected>' + data[i].descripcion + '</option>');
-                        }else{
-                            miselect.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');
-                        }
-						
-					}
-			}, "json");
-            //
-            var miselect1=$("#lstTurnoReporte");
-			/* VACIAMOS EL SELECT Y PONEMOS UNA OPCION QUE DIGA CARGANDO... */
-			miselect1.find('option').remove().end().append('<option value="">Cargando...</option>').val('');
-			//
-			$.post("includes/Personal/Catalogos/Turno.php",
-				function(data) {
-					miselect1.empty();
-					for (var i=0; i<data.length; i++) {
-                        if(i == 0){
-                            miselect1.append('<option value="' + data[i].codigo + '" selected>' + data[i].descripcion + '</option>');
-                        }else{
-                            miselect1.append('<option value="' + data[i].codigo + '">' + data[i].descripcion + '</option>');
-                        }
-						
-					}
-			}, "json");
-        }
-    });
+   $("#NavLicenciasPermisos ul.nav > li > a").on("click", function () {
+    // Usamos .trim() para limpiar espacios en blanco alrededor del texto del TAB
+    var TextoTab = $(this).text().trim();
+    if (TextoTab === "Licencias y Permisos") {
+        // Borrar información de la Tabla
+        $('#listaContenidoLicenciasPermiso').empty();
+        $("#AlertLicenciasPermisos").css("display", "none");
+    }
+
+    if (TextoTab === "Reportes") {
+        // Ocultar alertas y actualizar fechas
+        $("#AlertReportes").css("display", "none");
+        $('#FechaAñoLectivo').val(today_inicio);
+        $('#FechaLicenciaDesde').val(today_now);
+        $('#FechaLicenciaHasta').val(today);
+
+        // --- 1. CARGA DEL SELECT: Tipo de Contratación ---
+        var miselect = $("#lstTipoContratacionReporte");
+        miselect.html('<option value="">Cargando...</option>');
+
+        $.post("includes/Personal/Catalogos/Contratacion.php", function (data) {
+            miselect.empty();
+
+            // Opción por defecto
+            miselect.append('<option value="">-- Seleccione Tipo de Contratación --</option>');
+
+            // Comprobar que los datos devueltos sean un arreglo válido
+            if (Array.isArray(data) && data.length > 0) {
+                $.each(data, function (index, item) {
+                    // Validar si las propiedades se llaman 'codigo' y 'descripcion'
+                    var valCodigo = item.codigo || item.id || "";
+                    var valTexto = item.descripcion || item.nombre || "";
+
+                    miselect.append('<option value="' + valCodigo + '">' + valTexto + '</option>');
+                });
+            } else {
+                miselect.html('<option value="">No se encontraron datos</option>');
+            }
+        }, "json")
+        .fail(function (jqXHR, textStatus, errorThrown) {
+            console.error("Error al cargar Contratación:", textStatus, errorThrown);
+            console.log("Respuesta recibida del servidor:", jqXHR.responseText);
+            miselect.html('<option value="">Error al cargar opciones</option>');
+        });
+
+
+        // --- 2. CARGA DEL SELECT: Turno ---
+        var miselect1 = $("#lstTurnoReporte");
+        miselect1.html('<option value="">Cargando...</option>');
+
+        $.post("includes/Personal/Catalogos/Turno.php", function (data) {
+            miselect1.empty();
+
+            miselect1.append('<option value="">-- Seleccione Turno --</option>');
+
+            if (Array.isArray(data) && data.length > 0) {
+                $.each(data, function (index, item) {
+                    var valCodigo = item.codigo || item.id || "";
+                    var valTexto = item.descripcion || item.nombre || "";
+
+                    miselect1.append('<option value="' + valCodigo + '">' + valTexto + '</option>');
+                });
+            } else {
+                miselect1.html('<option value="">No se encontraron datos</option>');
+            }
+        }, "json")
+        .fail(function (jqXHR, textStatus, errorThrown) {
+            console.error("Error al cargar Turno:", textStatus, errorThrown);
+            miselect1.html('<option value="">Error al cargar opciones</option>');
+        });
+    }
+});
         //
         // SELECFT ON ONCHANGE
         //
@@ -490,6 +512,80 @@ $(function(){
             // Ejecutar la función
             AbrirVentana(varenviar);                                
         });   
+    
+        
+
+
+$(document).ready(function () {
+
+    // Evento al hacer clic o activar la pestaña "Licencias y Permisos"
+    $('#pills-licencias-permisos-tab').on('click shown.bs.tab', function () {
+        // Borrar información de la tabla y ocultar alertas
+        $('#listaContenidoLicenciasPermiso').empty();
+        $("#AlertLicenciasPermisos").css("display", "none");
+    });
+
+    // Evento al hacer clic o activar la pestaña "Reportes"
+    $('#pills-reportes-tab').on('click shown.bs.tab', function () {
+        
+        // 1. Ocultar alertas y actualizar fechas de reportes
+        $("#AlertReportes").css("display", "none");
+        $('#FechaAñoLectivo').val(todayInicio);
+        $('#FechaLicenciaDesde').val(todayNow);
+        $('#FechaLicenciaHasta').val(today);
+
+        // 2. Cargar Select: Tipo de Contratación
+        var selectContratacion = $("#lstTipoContratacionReporte");
+        selectContratacion.html('<option value="">Cargando...</option>');
+
+        $.post("includes/Personal/Catalogos/Contratacion.php", function (data) {
+            selectContratacion.empty();
+            selectContratacion.append('<option value="">-- Seleccione Tipo de Contratación --</option>');
+
+            if (Array.isArray(data) && data.length > 0) {
+                $.each(data, function (index, item) {
+                    var codigo = item.codigo || item.id || "";
+                    var descripcion = item.descripcion || item.nombre || "";
+                    
+                    selectContratacion.append('<option value="' + codigo + '">' + descripcion + '</option>');
+                });
+            } else {
+                selectContratacion.html('<option value="">No se encontraron registros</option>');
+            }
+        }, "json")
+        .fail(function (jqXHR, textStatus, errorThrown) {
+            console.error("Error al cargar Contratación:", textStatus, errorThrown);
+            selectContratacion.html('<option value="">Error al cargar opciones</option>');
+        });
+
+        // 3. Cargar Select: Turno
+        var selectTurno = $("#lstTurnoReporte");
+        selectTurno.html('<option value="">Cargando...</option>');
+
+        $.post("includes/Personal/Catalogos/Turno.php", function (data) {
+            selectTurno.empty();
+            selectTurno.append('<option value="">-- Seleccione Turno --</option>');
+
+            if (Array.isArray(data) && data.length > 0) {
+                $.each(data, function (index, item) {
+                    var codigo = item.codigo || item.id || "";
+                    var descripcion = item.descripcion || item.nombre || "";
+
+                    selectTurno.append('<option value="' + codigo + '">' + descripcion + '</option>');
+                });
+            } else {
+                selectTurno.html('<option value="">No se encontraron registros</option>');
+            }
+        }, "json")
+        .fail(function (jqXHR, textStatus, errorThrown) {
+            console.error("Error al cargar Turno:", textStatus, errorThrown);
+            selectTurno.html('<option value="">Error al cargar opciones</option>');
+        });
+
+    });
+
+});
+
         
         var tablaLicencias;
 
@@ -546,7 +642,7 @@ $(document).ready(function() {
                     $('#badgeSeleccionados').text('0');
                     // Recargar datos de la tabla
                     if (typeof buscarLicencias === 'function') {
-                        buscarLicencias();
+                        BuscarLicenciasPermisos();
                     }
                 }).catch(function(error) {
                     Swal.fire('Error', 'Ocurrió un inconveniente al eliminar los registros.', 'error');
@@ -597,6 +693,122 @@ $(document).on('click', '.btnEditarLicencia', function() {
 // Evento para cerrar la modal con el botón de cancelar, la 'X' o por código
 $(document).on('click', '[data-dismiss="modal"], #VentanaLicenciasPermisos1', function() {
     $('#VentanaLicenciasPermisos').modal('hide');
+});
+
+
+$(document).ready(function () {
+
+    // =========================================================================
+    // 1. FUNCIÓN PARA OBTENER EL SALDO DE LA BD Y ACTUALIZAR LA GRÁFICA
+    // =========================================================================
+    function consultarYActualizarGrafico() {
+        // Obtener el ID del empleado seleccionado y el tipo de contratación
+        var idPersonal = $('#lstPersonal').val() || $('#id_personal').val();
+        var codigoContratacion = $('#lstTipoContratacion option:selected').val() || '01';
+        var idTipoLicencia = $('#lstTipoLicencia option:selected').val();
+
+        // Validar que se haya seleccionado un empleado o tipo de licencia
+        if (!idPersonal) {
+            return;
+        }
+
+      // Petición AJAX para obtener el saldo y actualizar la interfaz HTML
+$.post("php_libs/soporte/Personal/LicenciasPermisos.php", {
+    accion: 'ConsultarSaldoEmpleado',
+    id_personal: idPersonal,
+    id_tipo_licencia: idTipoLicencia
+}, function (response) {
+
+    if (response.respuesta) {
+        // 1. Extraer variables del JSON de respuesta
+        var horasPorDia = response.horas_por_dia;           // 5 u 8
+        var minutosConsumidos = response.minutos_consumidos; // Total en minutos
+        var diasLimite = response.dias_limite;               // Límite de días
+        var codigoCargo = response.codigo_cargo;             // "02", "03", etc.
+
+        // Desglose formateado
+        var diasUtil = response.dias_consumidos;
+        var horasUtil = response.horas_consumidas;
+        var minutosUtil = response.minutos_consumidos_res;
+
+        // 2. Actualizar etiquetas de texto en el HTML
+        $("#SpanDiasLicencia").text(diasLimite + "d");
+        $("#SpanUtilizado").text(diasUtil + "d " + horasUtil + "h " + minutosUtil + "m");
+
+        // 3. Actualizar la etiqueta visual del tipo de jornada
+        if (horasPorDia === 5) {
+            $("#badgeTipoJornada")
+                .removeClass("badge-info")
+                .addClass("badge-primary")
+                .html('<i class="fas fa-chalkboard-teacher mr-1"></i> Jornada Docente (5 hrs/día)');
+        } else {
+            $("#badgeTipoJornada")
+                .removeClass("badge-primary")
+                .addClass("badge-info")
+                .html('<i class="fas fa-user-tie mr-1"></i> Jornada Administrativa (8 hrs/día)');
+        }
+
+        // 4. Calcular el porcentaje de uso y actualizar la barra de progreso (ProgressBar)
+        var minutosPorDia = horasPorDia * 60;
+        var minutosLimiteTotal = diasLimite * minutosPorDia;
+
+        // Calcular porcentaje consumido (limitado al 100% para evitar desbordamiento gráfico)
+        var porcentaje = 0;
+        if (minutosLimiteTotal > 0) {
+            porcentaje = Math.round((minutosConsumidos / minutosLimiteTotal) * 100);
+        }
+        var porcentajeBarra = Math.min(porcentaje, 100);
+
+        // Actualizar el elemento ProgressBar en el HTML
+        var $barra = $("#barraProgresoTiempo");
+        $barra.css("width", porcentajeBarra + "%");
+        $barra.attr("aria-valuenow", porcentajeBarra);
+        $("#textoPorcentaje").text(porcentaje + "% Consumido");
+
+        // Cambiar el color de la barra según el nivel de consumo
+        $barra.removeClass("bg-success bg-warning bg-danger");
+        if (porcentaje < 60) {
+            $barra.addClass("bg-success");  // Verde
+        } else if (porcentaje < 85) {
+            $barra.addClass("bg-warning");  // Amarillo
+        } else {
+            $barra.addClass("bg-danger");   // Rojo (Agotado / Sobregirado)
+        }
+
+        // 5. Calcular tiempo disponible restante
+        var minutosDisponibles = Math.max(0, minutosLimiteTotal - minutosConsumidos);
+        var diasDisp = Math.floor(minutosDisponibles / minutosPorDia);
+        var horasDisp = Math.floor((minutosDisponibles % minutosPorDia) / 60);
+
+        $("#SpanDisponible").text(diasDisp + "d " + horasDisp + "h");
+
+    } else {
+        console.warn("La respuesta del servidor fue negativa:", response.mensaje);
+    }
+
+}, "json")
+.fail(function (jqXHR, textStatus, errorThrown) {
+    console.error("Error al procesar la petición AJAX:", textStatus, errorThrown);
+});
+    }
+
+// =========================================================================
+    // 2. ¿DÓNDE LLAMAMOS A LA FUNCIÓN? (DISPARADORES DE EVENTOS)
+    // =========================================================================
+
+    // A. Al cambiar la opción del combo del personal o tipo de licencia
+    $(document).on('change', '#lstPersonal, #id_personal, #lstTipoLicencia', function () {
+        consultarYActualizarGrafico();
+    });
+
+    // B. Al activar la pestaña "Licencias y Permisos"
+    $('#pills-licencias-permisos-tab').on('click shown.bs.tab', function () {
+        consultarYActualizarGrafico();
+    });
+
+    // C. Ejecución automática inicial al cargar la página por primera vez
+    consultarYActualizarGrafico();
+
 });
 
 }); // FIN DEL FUNCTION.
@@ -699,12 +911,16 @@ function TipoLicenciaPermiso() {
 /**
  * Consulta y actualiza el listado de permisos en la tabla
  */
+/**
+ * Realiza la búsqueda de licencias y permisos por AJAX y renderiza la DataTable.
+ */
 function BuscarLicenciasPermisos() {
     const codigoPersonal = $("#lstPersonal").val();
     const codigoContratacion = $('#lstTipoContratacion option:selected').val();
     const codigoLicencia = $('#lstTipoLicencia option:selected').val();
     const fecha = $("#FechaTipoLicencia").val();
 
+    // Validación: Si no hay personal seleccionado o es "00", se interrumpe la ejecución
     if (!codigoPersonal || codigoPersonal === "00") return;
 
     $.ajax({
@@ -720,14 +936,349 @@ function BuscarLicenciasPermisos() {
         dataType: "json",
         success: function (data) {
             if (Array.isArray(data) && data.length >= 2) {
+                
+                // 1. Si la tabla ya era una DataTable, destruimos la instancia previa
+                if ($.fn.DataTable.isDataTable('#listadoContenidoLicenciasPermiso')) {
+                    $('#listadoContenidoLicenciasPermiso').DataTable().destroy();
+                }
+
+                // 2. Inyectar las filas HTML recibidas desde PHP en el <tbody>
                 $('#listaContenidoLicenciasPermiso').html(data[0]);
+
+                // 3. Re-inicializar DataTable sobre los nuevos datos cargados
+                inicializarTablaLicencias();
+
+                // 4. Actualizar las etiquetas de saldo disponible, utilizado y total
                 $("#SpanDisponible").text(data[1]["Disponible"] || 0);
                 $("#SpanUtilizado").text(data[1]["Utilizado"] || 0);
                 $("#SpanDiasLicencia").text(data[1]["DiasLicencia"] || 0);
             }
+        },
+        error: function (xhr, status, error) {
+            console.error("Error al consultar las licencias:", error);
         }
     });
 }
+
+
+/**
+ * Renderiza gráficamente el saldo de tiempo consumido vs. disponible.
+ * 
+ * @param {number} minutosUtilizados - Minutos totales consumidos por el empleado.
+ * @param {number} diasLimite - Días máximos de licencia permitidos al año.
+ * @param {string} codigoContratacion - Código de contratación ('01', '02', '03' para 5h; otros para 8h).
+ */
+function consultarYActualizarGrafico() {
+    var idPersonal = $('#lstPersonal').val() || $('#id_personal').val();
+    var idTipoLicencia = $('#lstTipoLicencia').val() || $('#id_tipo_licencia').val();
+    
+    // Capturar la fecha seleccionada en el input o asignar la fecha de hoy
+    var fechaLicencia = $('#FechaTipoLicencia').val();
+
+    if (!idPersonal || !idTipoLicencia) return;
+
+    $.post("php_libs/soporte/Personal/LicenciasPermisos.php", {
+        accion: 'ConsultarSaldoEmpleado',
+        id_personal: idPersonal,
+        id_tipo_licencia: idTipoLicencia,
+        fecha_licencia: fechaLicencia
+    }, function (response) {
+
+        if (response.respuesta) {
+            var horasPorDia = response.horas_por_dia;
+            var minutosConsumidos = response.minutos_consumidos;
+            var diasLimite = response.dias_limite;
+            var minutosLimiteTotal = response.minutos_limite_total;
+
+            // 1. Mostrar etiquetas numéricas
+            $("#SpanDiasLicencia").text(diasLimite + "d 0h 0m");
+            $("#SpanUtilizado").text(response.dias_consumidos + "d " + response.horas_consumidas + "h " + response.minutos_consumidos_res + "m");
+
+            // 2. Cálculo matemático exacto del porcentaje consumido en el año
+            var porcentaje = 0;
+            if (minutosLimiteTotal > 0) {
+                porcentaje = Math.round((minutosConsumidos / minutosLimiteTotal) * 100);
+            }
+
+            var porcentajeAnchoBarra = Math.min(porcentaje, 100);
+
+            // 3. Renderizar barra de progreso
+            var $barra = $("#barraProgresoTiempo");
+            $barra.css("width", porcentajeAnchoBarra + "%");
+            $barra.attr("aria-valuenow", porcentajeAnchoBarra);
+            $("#textoPorcentaje").text(porcentaje + "% Consumido en el año " + response.anio);
+
+            // 4. Asignar colores según el consumo anual
+            $barra.removeClass("bg-success bg-warning bg-danger");
+            if (porcentaje < 60) {
+                $barra.addClass("bg-success");  // Verde
+            } else if (porcentaje < 85) {
+                $barra.addClass("bg-warning");  // Amarillo
+            } else {
+                $barra.addClass("bg-danger");   // Rojo
+            }
+
+            // 5. Tiempo disponible restante para el año en curso
+            var minutosPorDia = horasPorDia * 60;
+            var minutosDisponibles = Math.max(0, minutosLimiteTotal - minutosConsumidos);
+            var diasDisp = Math.floor(minutosDisponibles / minutosPorDia);
+            var restoDisp = minutosDisponibles % minutosPorDia;
+            var horasDisp = Math.floor(restoDisp / 60);
+            var minDisp = restoDisp % 60;
+
+            $("#SpanDisponible").text(diasDisp + "d " + horasDisp + "h " + minDisp + "m");
+        }
+
+    }, "json");
+}
+
+// Escuchar cambios también en el input de la fecha
+$(document).on('change', '#FechaTipoLicencia', function () {
+    consultarYActualizarGrafico();
+});
+
+// Ejemplo de prueba:
+// actualizarGraficoSaldo(600, 5, '01'); // Docente (5h/día -> 5 días = 1500 min). 600 min consumidos = 40% (Verde)
+
+
+// Variable global para almacenar la referencia del DataTable
+var tablaLicenciasDT = null;
+
+/**
+ * Inicializa la tabla de licencias y permisos con el plugin DataTables.
+ */
+function inicializarTablaLicencias() {
+    // Si la tabla ya fue inicializada previamente como DataTable, se destruye para permitir la recarga limpia.
+    if ($.fn.DataTable.isDataTable('#listadoContenidoLicenciasPermiso')) {
+        $('#listadoContenidoLicenciasPermiso').DataTable().destroy();
+    }
+
+    // Inicialización del plugin con configuración personalizada
+    $('#listadoContenidoLicenciasPermiso').DataTable({
+        "pageLength": 10,                 // Número de registros visibles por página
+        "lengthMenu": [5, 10, 25, 50],     // Menú desplegable para seleccionar cantidad de registros
+        "responsive": true,               // Hace que la tabla se adapte a pantallas pequeñas
+        "autoWidth": false,               // Desactiva el cálculo de anchos para permitir el control por CSS
+        "order": [[3, "desc"]],           // Ordena por defecto por la columna "Fecha" (índice 3) en orden descendente
+        "columnDefs": [
+            { "orderable": false, "targets": [0, 9] } // Desactiva la ordenación en el Checkbox (0) y en Acciones (9)
+        ],
+        "language": {                     // Configuración del idioma a español
+            "processing":     "Procesando...",
+            "search":         "Buscar:",
+            "lengthMenu":     "Mostrar _MENU_ registros",
+            "info":           "Mostrando _START_ a _END_ de _TOTAL_ registros",
+            "infoEmpty":      "Mostrando 0 a 0 de 0 registros",
+            "infoFiltered":   "(filtrado de _MAX_ registros totales)",
+            "zeroRecords":    "No se encontraron registros coincidentes",
+            "emptyTable":     "No hay licencias ni permisos registrados",
+            "paginate": {
+                "first":      "Primero",
+                "previous":   "Anterior",
+                "next":       "Siguiente",
+                "last":       "Último"
+            }
+        }
+    });
+}
+
+/**
+ * 1. Carga los datos recibidos del JSON en la Ventana Modal para editar
+ * @param {number} idRegistro - ID de la licencia o permiso a consultar
+ */
+function CargarDatosEditar(idRegistro) {
+    $.ajax({
+        type: "POST",
+        url: "php_libs/soporte/Personal/LicenciasPermisos.php",
+        data: {
+            accion: "EditarLicenciasPermisos",
+            id_: idRegistro
+        },
+        dataType: "json",
+        success: function (response) {
+            if (response.respuestaOK) {
+                // Obtenemos el objeto del registro (o directamente response si viene directo)
+                const reg = response.registro || response;
+
+                // Asignar valores a los campos HTML de la Ventana Modal
+                $("#id_licencia_permiso_modal").val(reg.id_licencia_permiso);
+                $("#IdHorarios").val(reg.id_licencia_permiso);
+                $("#FechaInicio").val(reg.fecha);
+                $("#ModalHoraDesde").val(reg.hora_inicio);
+                $("#ModalHoraHasta").val(reg.hora_fin);
+                $("#ModalDia").val(reg.dia);
+                $("#ModalHora").val(reg.hora);
+                $("#ModalMinutos").val(reg.minutos);
+                $("#ModalObservacion").val(reg.observacion);
+
+                // Mostrar la Ventana Modal de edición
+                $("#VentanaLicenciasPermisos").modal("show");
+            } else {
+                alert("Error al cargar la información: " + response.mensajeError);
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("Error en la solicitud de edición:", error);
+        }
+    });
+}
+
+// 2. Eventos que se ejecutan cuando el documento HTML está listo
+$(document).ready(function () {
+
+    // Evento al hacer clic en las acciones de la tabla para editar
+    $(document).on("click", "a[data-accion='EditarLicenciaPermiso'], a[data-accion='EditarLicenciasPermisos']", function (e) {
+        e.preventDefault();
+        const idRegistro = $(this).attr("href");
+        CargarDatosEditar(idRegistro);
+    });
+
+    // Evento al presionar el botón "Actualizar Cambios" dentro de la ventana modal
+    $("#goGuardarModal").on("click", function () {
+        ActualizarLicenciaPermiso();
+    });
+
+});
+
+/**
+ * Envía los datos actualizados de la ventana modal al backend PHP
+ * e informa el resultado mediante SweetAlert2
+ */
+function ActualizarLicenciaPermiso() {
+    // 1. Obtener los datos individuales de los campos de la modal
+    const idLicencia = $("#id_licencia_permiso_modal").val();
+    const fecha = $("#FechaInicio").val();
+    const horaInicio = $("#ModalHoraDesde").val();
+    const horaFin = $("#ModalHoraHasta").val();
+    const dia = $("#ModalDia").val();
+    const hora = $("#ModalHora").val();
+    const minutos = $("#ModalMinutos").val();
+    const observacion = $("#ModalObservacion").val();
+
+    // Validar que exista el ID
+    if (!idLicencia) {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Atención',
+            text: 'No se ha identificado el ID del registro a actualizar.',
+            confirmButtonText: 'Aceptar'
+        });
+        return;
+    }
+
+    // 2. Realizar la petición AJAX
+    $.ajax({
+        type: "POST",
+        url: "php_libs/soporte/Personal/LicenciasPermisos.php",
+        data: {
+            accion: "ActualizarLyP",
+            id_licencia_permiso_modal: idLicencia,
+            FechaInicio: fecha,
+            ModalHoraDesde: horaInicio,
+            ModalHoraHasta: horaFin,
+            ModalDia: dia,
+            ModalHora: hora,
+            ModalMinutos: minutos,
+            ModalObservacion: observacion
+        },
+        dataType: "json",
+        success: function (response) {
+            // Comprobar si la respuesta fue exitosa
+            if (response.respuesta === true || response.respuestaOK === true) {
+                // Ocultar el modal de edición
+                $("#VentanaLicenciasPermisos").modal("hide");
+
+                // Mensaje elegante con SweetAlert2
+                Swal.fire({
+                    icon: 'success',
+                    title: '¡Actualizado!',
+                    text: response.mensaje || 'El registro se actualizó correctamente.',
+                    confirmButtonText: 'Aceptar',
+                    timer: 2500, // Se cierra automáticamente en 2.5 segundos
+                    timerProgressBar: true
+                }).then(() => {
+                    // Recargar la tabla y refrescar el progressbar/saldos de tiempo
+                    if (typeof BuscarLicenciasPermisos === "function") {
+                        BuscarLicenciasPermisos();
+                    }
+                });
+
+            } else {
+                // Alerta de error si el servidor devuelve false
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error al actualizar',
+                    text: response.mensaje || response.mensajeError || 'No se pudo actualizar el registro.',
+                    confirmButtonText: 'Aceptar'
+                });
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("Error en el servidor al actualizar:", error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error de comunicación',
+                text: 'Ocurrió un error al procesar la solicitud en el servidor.',
+                confirmButtonText: 'Aceptar'
+            });
+        }
+    });
+}
+
+/**
+ * Calcula la diferencia entre Hora Inicio y Hora Fin en el Modal
+ * y asigna los valores calculados a las casillas de Días, Horas y Minutos.
+ */
+function calcularDiferenciaTiempoModal() {
+    const horaDesde = $("#ModalHoraDesde").val();
+    const horaHasta = $("#ModalHoraHasta").val();
+
+    // Validar que ambos campos tengan un valor asignado
+    if (!horaDesde || !horaHasta) return;
+
+    // Convertir horas "HH:MM" a minutos desde inicio del día
+    const [hInicio, mInicio] = horaDesde.split(':').map(Number);
+    const [hFin, mFin] = horaHasta.split(':').map(Number);
+
+    const minutosInicio = (hInicio * 60) + mInicio;
+    const minutosFin = (hFin * 60) + mFin;
+
+    // Calcular la diferencia total en minutos
+    let diferenciaMinutos = minutosFin - minutosInicio;
+
+    // Si la hora de fin es menor a la de inicio, asumimos que no es una diferencia válida
+    if (diferenciaMinutos < 0) {
+        diferenciaMinutos = 0;
+    }
+
+    // Determinar las horas de la jornada laboral (8 horas para tipo '05', 5 horas para el resto)
+    const codigoContratacion = $('#lstTipoContratacion option:selected').val() || '';
+    const tipoContratacion = codigoContratacion.substring(0, 2);
+    const horasJornada = (tipoContratacion === "05") ? 8 : 5;
+    const minutosJornada = horasJornada * 60;
+
+    // Calcular Días, Horas y Minutos
+    const dias = Math.floor(diferenciaMinutos / minutosJornada);
+    const minutosRestantesDia = diferenciaMinutos % minutosJornada;
+
+    const horas = Math.floor(minutosRestantesDia / 60);
+    const minutos = minutosRestantesDia % 60;
+
+    // Asignar los valores calculados a los inputs del modal
+    $("#ModalDia").val(dias);
+    $("#ModalHora").val(horas);
+    $("#ModalMinutos").val(minutos);
+}
+
+// Escuchar eventos en el documento
+$(document).ready(function () {
+
+    // Vincular el evento change e input a los campos de hora de la ventana modal
+    $(document).on("change input", "#ModalHoraDesde, #ModalHoraHasta", function () {
+        calcularDiferenciaTiempoModal();
+    });
+
+});
 
 
 function AbrirVentana(url)
