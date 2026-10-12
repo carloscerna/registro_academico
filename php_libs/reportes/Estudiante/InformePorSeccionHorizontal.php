@@ -56,8 +56,8 @@ $stmt_encargado->execute([':codigo_all' => $codigo_all]);
 $nombre_encargado = '';
 $firma_docente_filename = '';
 if ($row = $stmt_encargado->fetch(PDO::FETCH_ASSOC)) {
-    $nombre_encargado = convertirtexto(trim($row['nombre_docente']));
-    $firma_docente_filename = trim($row['firma_docente_filename']);
+    $nombre_encargado = convertirtexto(trim($row['nombre_docente']) ?? '');
+    $firma_docente_filename = trim($row['firma_docente_filename'] ?? '');
 }
 
 

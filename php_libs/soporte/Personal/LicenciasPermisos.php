@@ -370,7 +370,7 @@ case 'ConsultarSaldoEmpleado':
                            AND btrim(lp.codigo_contratacion || lp.codigo_turno) = :cod_contratacion 
                            AND TO_CHAR(lp.fecha, 'YYYY') = :anio
                            AND lp.codigo_licencia_permiso = :cod_licencia
-                         ORDER BY lp.fecha";
+                         ORDER BY lp.fecha asc";
 
         $stmtLicencias = $dblink->prepare($sqlLicencias);
         $stmtLicencias->execute([

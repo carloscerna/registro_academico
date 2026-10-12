@@ -1,33 +1,61 @@
-{# Heredando la plantilla principal #}
-
 {% extends 'default_layout.html' %}
 
 {% block extraCSS %}
+<!-- CSS DataTables -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+<!-- CSS Cropper.js -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
+
 <style>
-    /* Estilos para el encabezado fijo de la tabla */
-    .table-responsive {
-        max-height: 65vh;
-        overflow-y: auto;
-    }
-    #tablaDatosPnFoto thead {
-        position: sticky;
-        top: 0;
-        z-index: 10;
-    }
-    /* Estilos para las imágenes en la tabla */
+    /* Estilos estéticos para imágenes y tablas */
     .student-photo, .pn-preview {
-        max-width: 60px;
-        max-height: 60px;
-        border-radius: 5px;
-        cursor: pointer;
+        width: 50px;
+        height: 50px;
+        object-fit: cover;
+        border-radius: 6px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+        transition: transform 0.2s ease-in-out;
     }
-    .upload-btn {
-        margin-top: 5px;
+    .student-photo:hover, .pn-preview:hover {
+        transform: scale(1.08);
+    }
+    /* Estilos para el contenedor del Cropper */
+    .img-container {
+        max-height: 380px;
+        background-color: #f8f9fa;
+        text-align: center;
+    }
+    .img-container img {
+        max-width: 100%;
+        max-height: 380px;
+    }
+    /* Mejoras para la tarjeta del formulario */
+    .card-filter {
+        border-radius: 10px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+    .input-group-text {
+        background-color: #e9ecef;
+        color: #495057;
+        border-right: none;
+    }
+    .input-group .form-select {
+        border-left: none;
+    }
+    .input-group:focus-within .input-group-text {
+        border-color: #86b7fe;
+        color: #0d6efd;
     }
 </style>
 {% endblock %}
 
 {% block javascripts %}
+    <!-- JS DataTables -->
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+    <!-- JS Cropper.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+    
     <script type="text/JavaScript" src="js/Estudiantes/DatosPnFoto.js"></script>
     <script type="text/JavaScript" src="js/default.js"></script>
     <script type="text/JavaScript" src="js/Utilidades/cargarDatosSelect.js"></script>
@@ -35,123 +63,189 @@
 {% endblock %}
 
 {% block contenidos %}
- <div class="content-wrapper">
-    <section class="content-header">
-      <div class="container-fluid">
-        <div class="row mb-1">
-          <div class="col-sm-6">
-            <h4>Estudiante - Partida de Nacimiento y Foto</h4>
-          </div>
-          <div class="col-sm-6">
-            <ol class="breadcrumb float-sm-right">
-              <li class="breadcrumb-item"><a href="index.php">Home</a></li>
-              <li class="breadcrumb-item active">Datos P.N. y Foto</li>
-            </ol>
+<div class="content-wrapper">
+  <section class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2 align-items-center">
+        <div class="col-sm-6">
+          <h4 class="m-0 text-dark fw-bold">
+            <i class="fas fa-id-card text-primary me-2"></i>Gestión de Partida de Nacimiento y Foto
+          </h4>
+        </div>
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-right mb-0">
+            <li class="breadcrumb-item"><a href="index.php">Inicio</a></li>
+            <li class="breadcrumb-item active">Datos P.N. y Foto</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="content">
+    <div class="container-fluid">
+      <!-- TARJETA DEL FORMULARIO DE SELECCIÓN -->
+      <div class="row mb-4">
+        <div class="col-12">
+          <div class="card card-primary card-outline card-filter">
+            <div class="card-header bg-white py-3">
+              <h3 class="card-title fw-bold text-primary m-0">
+                <i class="fas fa-filter me-2"></i>Filtro de Selección de Grupo
+              </h3>
+            </div>
+            
+            <div class="card-body">
+              <form name="formDatosPnFoto" id="formDatosPnFoto">
+                <input type="hidden" id="accion_buscar" name="accion_buscar" value="BuscarListaPnFoto">
+                
+                <div class="row g-3">
+                  <!-- Selector: Año Lectivo -->
+                  <div class="col-md-4">
+                    <label for="lstannlectivo" class="form-label fw-bold small text-muted">
+                      Año Lectivo
+                    </label>
+                    <div class="input-group">
+                      <span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
+                      <select id="lstannlectivo" name="lstannlectivo" class="form-select" required>
+                        <!-- Opciones cargadas dinámicamente -->
+                      </select>
+                    </div>
+                  </div>
+
+                  <!-- Selector: Modalidad -->
+                  <div class="col-md-4">
+                    <label for="lstmodalidad" class="form-label fw-bold small text-muted">
+                      Modalidad / Nivel
+                    </label>
+                    <div class="input-group">
+                      <span class="input-group-text"><i class="fas fa-graduation-cap"></i></span>
+                      <select id="lstmodalidad" name="lstmodalidad" class="form-select" required>
+                        <!-- Opciones cargadas dinámicamente -->
+                      </select>
+                    </div>
+                  </div>
+
+                  <!-- Selector: Grado - Sección - Turno -->
+                  <div class="col-md-4">
+                    <label for="lstgradoseccion" class="form-label fw-bold small text-muted">
+                      Grado - Sección - Turno
+                    </label>
+                    <div class="input-group">
+                      <span class="input-group-text"><i class="fas fa-chalkboard-teacher"></i></span>
+                      <select id="lstgradoseccion" name="lstgradoseccion" class="form-select" required>
+                        <!-- Opciones cargadas dinámicamente -->
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              </form>
+            </div>
+
+            <!-- Botones de Acción -->
+            <div class="card-footer bg-light text-center py-3">
+              <button type="submit" form="formDatosPnFoto" class="btn btn-primary px-4 shadow-sm me-2" id="goBuscar">
+                <i class="fas fa-search me-1"></i> Buscar Estudiantes
+              </button>
+              <button type="button" class="btn btn-outline-danger px-4 shadow-sm" id="goCancelar">
+                <i class="fas fa-times me-1"></i> Cancelar
+              </button>
+            </div>
           </div>
         </div>
       </div>
-    </section>
 
-<section class="content">
-      <div class="container-fluid">
-        <div class="row">
-          <div class="col">
-            <div class="card card-primary mx-auto">
-              <div class="card-header">
-                <h3 class="card-title">Seleccione un Grupo</h3>
-              </div>
-              <div class="card-body">
-                <form action="" method="post" name="formDatosPnFoto" id="formDatosPnFoto" class="form-horizontal">
-                  <input type="hidden" id="accion_buscar" name="accion_buscar" value="BuscarListaPnFoto">
-                  <div class="form-group row">
-                      <label class="col-sm-4 col-form-label" for="lstannlectivo">Año Lectivo</label>
-                      <div class="col-sm-6">
-                        <select id="lstannlectivo" name="lstannlectivo" autofocus class="form-select" required></select>
-                      </div>
-                    </div>
-                    <div class="form-group row">
-                      <label class="col-sm-4 col-form-label" for="lstmodalidad">Modalidad</label>
-                      <div class="col-sm-6">
-                        <select id="lstmodalidad" name="lstmodalidad" class="form-select" required></select>
-                      </div>
-                    </div>
-                    <div class="form-group row">
-                      <label class="col-sm-4 col-form-label" for="lstgradoseccion">Grado - Sección - Turno</label>
-                      <div class="col-sm-6">
-                        <select id="lstgradoseccion" name="lstgradoseccion" class="form-select" required></select>
-                      </div>
-                    </div>
-                </form>
-              </div>
-                <div class="card-footer d-flex justify-content-center">
-                    <button type="submit" form="formDatosPnFoto" class="btn btn-primary mx-1" id="goBuscar">
-                      <i class="fas fa-search"></i> Buscar
-                    </button>
-                    <button type="button" class="btn btn-danger mx-1" id="goCancelar">
-                      <i class="fas fa-times"></i> Cancelar
-                    </button>
-                </div>
+      <!-- TABLA DE RESULTADOS -->
+      <div class="row">
+        <div class="col-12">
+          <div class="card card-secondary shadow-sm" id="divTabla" style="display: none;">
+            <div class="card-header py-3">
+              <h3 class="card-title fw-bold m-0">
+                <i class="fas fa-list-ol me-2"></i>Listado de Estudiantes Registrados
+              </h3>
+            </div>
+            <div class="card-body">
+              <table class="table table-striped table-hover align-middle w-100" id="tablaDatosPnFoto">
+                <thead class="table-dark text-center">
+                  <tr>
+                    <th style="width: 5%;">N°</th>
+                    <th>Estudiante</th>
+                    <th style="width: 25%;">Partida de Nacimiento</th>
+                    <th style="width: 25%;">Fotografía</th>
+                  </tr>                    
+                </thead>
+                <tbody></tbody>
+              </table>
             </div>
           </div>
         </div>
-          <div class="row">
-            <div class="col">
-             <div class="card card-secondary mx-auto" id="divTabla" style="display: none;">
-                <div class="card-header">
-                  <h3 class="card-title">Listado de Estudiantes</h3>
-                </div>
-                <div class="card-body p-0">
-                  <div class="table-responsive">
-                    <table class="table table-striped table-sm table-bordered table-hover" id="tablaDatosPnFoto">
-                      <thead class="thead-dark text-center">
-                        <tr>
-                          <th style="width: 4%;">N°</th>
-                          <th style="width: 46%;">Estudiante</th>
-                          <th style="width: 25%;">PN-IMG</th>
-                          <th style="width: 25%;">Foto</th>
-                        </tr>                    
-                      </thead>
-                      <tbody id="listaPnFotoOK">
-                       
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-    </section>
-  </div>
-
-  <!-- MODAL PARA SUBIR ARCHIVOS -->
-    <div class="modal fade" id="uploadModal" tabindex="-1" aria-labelledby="uploadModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="uploadModalLabel">Subir Archivo</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="uploadForm" enctype="multipart/form-data">
-                        <input type="hidden" name="accion" value="SubirArchivo">
-                        <input type="hidden" id="alumnoId" name="alumno_id">
-                        <input type="hidden" id="uploadType" name="upload_type">
-                        
-                        <div class="mb-3">
-                            <label for="fileInput" class="form-label">Seleccione un archivo</label>
-                            <input class="form-control" type="file" id="fileInput" name="file_to_upload" required>
-                        </div>
-                        
-                        <div class="progress" style="display: none;">
-                            <div class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                    <button type="submit" form="uploadForm" class="btn btn-primary">Subir</button>
-                </div>
-            </div>
-        </div>
+      </div>
     </div>
+  </section>
+</div>
+
+<!-- MODAL PARA SUBIDA Y RECORTE DE FOTOGRAFÍA O DOCUMENTO -->
+<div class="modal fade" id="uploadModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content shadow">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title fw-bold" id="uploadModalLabel">
+          <i class="fas fa-cloud-upload-alt me-2"></i>Subir Archivo
+        </h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="uploadForm" enctype="multipart/form-data">
+          <input type="hidden" name="accion" value="SubirArchivo">
+          <input type="hidden" id="alumnoId" name="alumno_id">
+          <input type="hidden" id="uploadType" name="upload_type">
+          
+          <div class="mb-3">
+            <label for="fileInput" class="form-label fw-bold">Seleccione un archivo</label>
+            <input class="form-control" type="file" id="fileInput" name="file_to_upload" required>
+            <small id="fileHelpText" class="form-text text-muted"></small>
+          </div>
+
+          <!-- ÁREA DE RECORTE (CROPPER.JS) -->
+          <div id="cropperWrapper" style="display: none;">
+            <div class="img-container mb-3 rounded border shadow-sm">
+              <img id="imageToCrop" src="" alt="Imagen a recortar">
+            </div>
+            
+            <!-- Herramientas visuales de ajuste -->
+            <div class="d-flex justify-content-center flex-wrap gap-2 mb-3" id="cropperTools">
+              <button type="button" class="btn btn-outline-secondary btn-sm" id="btnRotateLeft" title="Rotar -90°">
+                <i class="fas fa-undo me-1"></i> -90°
+              </button>
+              <button type="button" class="btn btn-outline-secondary btn-sm" id="btnRotateRight" title="Rotar +90°">
+                <i class="fas fa-redo me-1"></i> +90°
+              </button>
+              <button type="button" class="btn btn-outline-secondary btn-sm" id="btnZoomIn" title="Acercar">
+                <i class="fas fa-search-plus me-1"></i> Zoom +
+              </button>
+              <button type="button" class="btn btn-outline-secondary btn-sm" id="btnZoomOut" title="Alejar">
+                <i class="fas fa-search-minus me-1"></i> Zoom -
+              </button>
+              <button type="button" class="btn btn-outline-warning btn-sm" id="btnResetCrop" title="Restablecer">
+                <i class="fas fa-sync-alt me-1"></i> Restablecer
+              </button>
+            </div>
+          </div>
+          
+          <!-- Barra de Progreso -->
+          <div class="progress mt-2" style="display: none; height: 22px;">
+            <div class="progress-bar progress-bar-striped progress-bar-animated bg-success fw-bold" role="progressbar" style="width: 0%;">0%</div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer bg-light">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          <i class="fas fa-times me-1"></i> Cancelar
+        </button>
+        <button type="submit" form="uploadForm" class="btn btn-primary" id="btnSaveUpload">
+          <i class="fas fa-save me-1"></i> Guardar y Subir
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock %}
