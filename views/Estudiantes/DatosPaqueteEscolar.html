@@ -1,0 +1,220 @@
+{# Heredando la plantilla principal #}
+
+{% extends 'default_layout.html' %}
+
+{% block extraCSS %}
+<style>
+    /* Estilos para el encabezado fijo de la tabla */
+    .table-responsive {
+        max-height: 60vh; /* Altura máxima del contenedor de la tabla */
+        overflow-y: auto;
+    }
+    #tablaDatosPaqueteEscolar thead {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+    }
+    /* Ajustar el tamaño de los checkboxes */
+    .form-check-input {
+        width: 1.4em;
+        height: 1.4em;
+    }
+    /* Ajustes para inputs de tallas en tabla */
+    .input-talla {
+        width: 65px;
+        text-align: center;
+    }
+    .input-serie {
+        min-width: 110px;
+    }
+    /* Estilos para la leyenda de colores */
+    .legend-badge {
+        font-size: 0.8rem;
+        margin-left: 5px;
+        padding: 0.3em 0.6em;
+    }
+</style>
+{% endblock %}
+
+{% block javascripts %}
+    <script type="text/JavaScript" src="js/Estudiantes/DatosPaqueteEscolar.js"></script>
+    <script type="text/JavaScript" src="js/default.js"></script>
+    <script type="text/JavaScript" src="js/Utilidades/cargarDatosSelect.js"></script>
+    <script type="text/JavaScript" src="js/Utilidades/utilidadesSelect.js"></script>
+{% endblock %}
+
+{% block contenidos %}
+ <div class="content-wrapper">
+    <section class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-1">
+          <div class="col-sm-6">
+            <h4>Estudiante - Paquetes Escolares</h4>
+          </div>
+          <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-right">
+              <li class="breadcrumb-item"><a href="index.php">Home</a></li>
+              <li class="breadcrumb-item active">Datos de Paquete Escolar</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="content">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col">
+            <div class="card card-primary mx-auto">
+              <div class="card-header">
+                <h3 class="card-title">Seleccione un Grupo</h3>
+              </div>
+              <div class="card-body">
+                <form action="" method="post" name="formDatosPaqueteEscolar" id="formDatosPaqueteEscolar" class="form-horizontal">
+                  <input type="hidden" id="accion_buscar" name="accion_buscar" value="BuscarListaPaqueteEscolar">
+                  <div class="form-group row">
+                      <label class="col-sm-4 col-form-label" for="lstannlectivo">Año Lectivo</label>
+                      <div class="col-sm-6">
+                        <select id="lstannlectivo" name="lstannlectivo" autofocus class="form-select" required></select>
+                      </div>
+                    </div>
+                    <div class="form-group row">
+                      <label class="col-sm-4 col-form-label" for="lstmodalidad">Modalidad</label>
+                      <div class="col-sm-6">
+                        <select id="lstmodalidad" name="lstmodalidad" class="form-select" required></select>
+                      </div>
+                    </div>
+                    <div class="form-group row">
+                      <label class="col-sm-4 col-form-label" for="lstgradoseccion">Grado - Sección - Turno</label>
+                      <div class="col-sm-6">
+                        <select id="lstgradoseccion" name="lstgradoseccion" class="form-select" required></select>
+                      </div>
+                    </div>
+                </form>
+              </div>
+                <div class="card-footer d-flex justify-content-center">
+                    <button type="submit" form="formDatosPaqueteEscolar" class="btn btn-primary mx-1" id="goBuscar">
+                      <i class="fas fa-search"></i> Buscar Registros
+                    </button>
+                    <button type="button" class="btn btn-success mx-1" id="goActualizar" disabled>
+                      <i class="fas fa-save"></i> Guardar Paquetes
+                    </button>
+                    <!-- BOTÓN PARA EL RESUMEN -->
+                    <button type="button" class="btn btn-info mx-1" id="goResumen" data-bs-toggle="offcanvas" data-bs-target="#resumenOffcanvas" aria-controls="resumenOffcanvas" disabled>
+                      <i class="fas fa-chart-bar"></i> Resumen
+                    </button>
+                    <!-- BOTÓN AÑADIDO PARA IMPRIMIR PDF -->
+                    <button type="button" class="btn btn-warning mx-1" id="goImprimir" disabled>
+                    <i class="fas fa-print"></i> Imprimir Reporte
+                    </button>
+                    <button type="button" class="btn btn-danger mx-1" id="goCancelar">
+                      <i class="fas fa-times"></i> Cancelar
+                    </button>
+                </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col">
+             <div class="card card-secondary mx-auto" id="divTabla" style="display: none;">
+                <div class="card-header">
+                  <h3 class="card-title">Control de Entrega de Paquetes Escolares</h3>
+                  <div class="card-tools">
+                    <span class="badge bg-success legend-badge">Completo</span>
+                    <span class="badge bg-warning legend-badge">Parcial</span>
+                    <span class="badge bg-secondary legend-badge">Pendiente</span>
+                  </div>
+                </div>
+                <div class="card-body p-0">
+                  <div class="table-responsive">
+                    <table class="table table-striped table-sm table-bordered table-hover align-middle" id="tablaDatosPaqueteEscolar">
+                      <thead class="thead-dark text-center">
+                        <tr>
+                            <th rowspan="2" style="width: 3%;">N°</th>
+                            <th rowspan="2" style="width: 20%;">Estudiante</th>
+                            <th colspan="2">Tecnología</th>
+                            <th colspan="2">Útiles y Calzado</th>
+                            <th colspan="5">Uniformes</th> <!-- Cambiado de 4 a 5 -->
+                            <th rowspan="2" style="width: 8%;">Estado</th>
+                            <th rowspan="2" style="width: 9%;">Fecha Entrega</th>
+                            <th rowspan="2" style="width: 10%;">Observaciones</th>
+                        </tr>
+                        <tr>
+                            <th data-toggle='tooltip' title='Tablet e Identificador/Serie'>Tab. / Serie</th>
+                            <th data-toggle='tooltip' title='Computadora Portátil y Serie'>Comp. / Serie</th>
+                            <th data-toggle='tooltip' title='Útiles Escolares'>Útiles</th>
+                            <th data-toggle='tooltip' title='Zapatos y Talla'>Zap. / Talla</th>
+                            <th data-toggle='tooltip' title='Blusas y Talla'>Blusa / Talla</th>
+                            <th data-toggle='tooltip' title='Camisas y Talla'>Camisa / Talla</th>
+                            <th data-toggle='tooltip' title='Faldas y Talla'>Falda / Talla</th> <!-- NUEVA COLUMNA -->
+                            <th data-toggle='tooltip' title='Pantalón y Talla'>Pant. / Talla</th>
+                            <th data-toggle='tooltip' title='Short y Talla'>Short / Talla</th>
+                        </tr>                   
+                        </thead>
+                      <tbody id="listaDatosPaqueteEscolarOK">
+                       
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+    </section>
+  </div>
+
+  <!-- PANEL LATERAL (OFFCANVAS) PARA EL RESUMEN -->
+  <div class="offcanvas offcanvas-end" tabindex="-1" id="resumenOffcanvas" aria-labelledby="resumenOffcanvasLabel">
+    <div class="offcanvas-header">
+      <h5 id="resumenOffcanvasLabel">Resumen de Paquetes Escolares</h5>
+      <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+      <ul class="list-group mb-3">
+        <li class="list-group-item d-flex justify-content-between align-items-center bg-light fw-bold">
+          Dispositivos y Utiles
+        </li>
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          Tablets Entregadas
+          <span class="badge bg-primary rounded-pill" id="resumenTablet">0</span>
+        </li>
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          Laptops Entregadas
+          <span class="badge bg-primary rounded-pill" id="resumenLaptop">0</span>
+        </li>
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          Paquetes Útiles Entregados
+          <span class="badge bg-primary rounded-pill" id="resumenUtiles">0</span>
+        </li>
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          Zapatos Entregados
+          <span class="badge bg-primary rounded-pill" id="resumenZapatos">0</span>
+        </li>
+      </ul>
+
+      <ul class="list-group">
+        <li class="list-group-item d-flex justify-content-between align-items-center bg-light fw-bold">
+          Estado General de Entregas
+        </li>
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          Entregas Completas
+          <span class="badge bg-success rounded-pill" id="resumenCompletos">0</span>
+        </li>
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          Entregas Parciales
+          <span class="badge bg-warning rounded-pill" id="resumenParciales">0</span>
+        </li>
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          Pendientes de Entrega
+          <span class="badge bg-secondary rounded-pill" id="resumenPendientes">0</span>
+        </li>
+        <li class="list-group-item d-flex justify-content-between align-items-center fw-bold">
+          Total de Estudiantes
+          <span class="badge bg-dark rounded-pill" id="resumenTotal">0</span>
+        </li>
+      </ul>
+    </div>
+  </div>
+{% endblock %}
