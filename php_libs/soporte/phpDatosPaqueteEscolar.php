@@ -35,7 +35,7 @@ if ($errorDbConexion == false) {
                             pe.id_alumno_paquete, pe.posee_tablet, pe.tablet_serie, pe.posee_computadora_portatil, pe.computadora_serie,
                             pe.posee_utiles_escolares, pe.posee_zapatos, pe.talla_zapatos,
                             pe.posee_blusas, pe.talla_blusas, pe.posee_camisa, pe.talla_camisa,
-                            pe.posee_pantalon, pe.talla_pantalon, pe.posee_short, pe.talla_short,
+                            pe.posee_pantalon, pe.talla_pantalon, pe.posee_short, pe.talla_short, pe.posee_falda, pe.talla_falda,
                             pe.estado_entrega, pe.fecha_entrega, pe.observacion
                             FROM alumno a
                             INNER JOIN alumno_matricula am ON a.id_alumno = am.codigo_alumno
@@ -93,6 +93,7 @@ if ($errorDbConexion == false) {
                         $chk_short = ($listado['posee_short'] == 't') ? 'checked' : '';
 
                         $chk_falda = ($listado['posee_falda'] == 't') ? 'checked' : '';
+
 
                         // Conteo del estado de la entrega
                         $estado = $listado['estado_entrega'] ?? 'Pendiente';
@@ -250,8 +251,9 @@ if ($errorDbConexion == false) {
                         $posee_short = ($_POST['posee_short'][$i] === 'true') ? 't' : 'f';
                         $talla_short = $_POST['talla_short'][$i];
 
-                        $posee_falda = ($_POST['posee_falda'][$i] === 'true') ? 't' : 'f';
-                        $talla_falda = $_POST['talla_falda'][$i];
+// Usar validación con isset:
+$posee_falda = (isset($_POST['posee_falda'][$i]) && $_POST['posee_falda'][$i] === 'true') ? 't' : 'f';
+$talla_falda = isset($_POST['talla_falda'][$i]) ? $_POST['talla_falda'][$i] : '';
 
                         $estado_entrega = $_POST['estado_entrega'][$i];
                         $fecha_entrega = !empty($_POST['fecha_entrega'][$i]) ? $_POST['fecha_entrega'][$i] : NULL;
