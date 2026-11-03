@@ -105,7 +105,7 @@ class PDF extends FPDF
         $this->SetY(-40);
         if($firma == 'yes' && !empty($imagen_firma)){
             $img = $_SERVER['DOCUMENT_ROOT'].'/registro_academico/img/'.$imagen_firma;
-            if(file_exists($img)){ $this->Image($img, 80, 230, 60, 15); }
+            if(file_exists($img)){ $this->Image($img, 90, 220, 0, 25); }
         }
         if($sello == 'yes' && !empty($imagen_sello)){
             $img_sello = $_SERVER['DOCUMENT_ROOT'].'/registro_academico/img/'.$imagen_sello;
@@ -177,7 +177,7 @@ while($row = $result->fetch(PDO::FETCH_BOTH))
         .' ha culminado satisfactoriamente sus estudios de bachillerato en la modalidad de '. $nombre_modalidad .' en este Centro Educativo, dando cumplimiento a todos los requisitos exigidos por el Ministerio de Educación para la legalización del Título de Bachillerato '. $nombre_modalidad . '.';
     
     $txt_p3 = 'Por tanto, su título que le acredita como Bachiller de la República, se encuentra en trámite de legalización. Ante ello, el Ministerio de Educación, Ciencia y Tecnología está haciendo las gestiones pertinentes con base a la solicitud enviada por nuestra institución'
-        .', para la emisión del respectivo título en la mayor brevedad posible, el cual tendrá validez a partir del 26 de noviembre del año '. $anio_calculado .'.';
+        .', para la emisión del respectivo título en la mayor brevedad posible, el cual tendrá validez a partir del 3 de noviembre del año '. $anio_calculado .'.';
     
     $txt_p4 = 'Y para los usos que el/la interesado(a) estime conveniente, se le extiende la presente constancia, en el distrito de ' . $nombre_distrito . ' en el municipio de '. $nombre_municipio . ' departamento de '. $nombre_departamento.', '
         . 'a los '. $dia_final .' días del mes de '.$mes.' de '. trim($anio_final_texto) .'.';

@@ -79,14 +79,13 @@ function obtenerDatosPorAsignatura(PDO $pdo, string $codigoAll, string $codigoAs
                       INNER JOIN grado_ano gan ON gan.codigo = am.codigo_grado
                       INNER JOIN seccion sec ON sec.codigo = am.codigo_seccion
                       INNER JOIN ann_lectivo ann ON ann.codigo = am.codigo_ann_lectivo
-                      LEFT JOIN catalogo_periodos cp ON bach.codigo = cp.codigo_modalidad -- Unir con catalogo_periodos
+                      LEFT JOIN catalogo_periodos cp ON bach.codigo = cp.codigo_modalidad
                       WHERE btrim(am.codigo_bach_o_ciclo::text || am.codigo_grado::text || am.codigo_seccion::text || am.codigo_ann_lectivo::text || am.codigo_turno::text) = :codigo_all LIMIT 1";
     $stmt = $pdo->prepare($sqlEncabezado); $stmt->bindParam(':codigo_all', $codigoAll); $stmt->execute();
     $datos['encabezado'] = $stmt->fetch(PDO::FETCH_ASSOC);
-    // Establecer valores por defecto si no se encuentran en catalogo_periodos
+    
     $datos['encabezado']['nota_minima'] = $datos['encabezado']['calificacion_minima'] ?? 5.0;
     $datos['encabezado']['num_periodos'] = $datos['encabezado']['cantidad_periodos'] ?? 3;
-
 
     // Consulta nombre de asignatura y docente
     $sqlAsigDocente = "SELECT asig.nombre as nombre_asignatura, btrim(p.nombres || ' ' || p.apellidos) as nombre_docente
@@ -132,7 +131,7 @@ function generarPdfPorAsignatura(array $datos) {
     $pdf->datosEncabezado = $datos['encabezado'];
     $pdf->nombreAsignatura = $datos['asignatura_info']['nombre_asignatura'] ?? 'Desconocida';
     $pdf->nombreDocente = $datos['asignatura_info']['nombre_docente'] ?? 'No asignado';
-    $pdf->numPeriodos = $numPeriodos; // Pasar número de períodos a la clase PDF
+    $pdf->numPeriodos = $numPeriodos;
 
     $pdf->AddPage();
     $pdf->TablaEncabezado();
@@ -140,12 +139,16 @@ function generarPdfPorAsignatura(array $datos) {
     $pdf->SetFont('Arial', '', 8); $fill = false; $numFila = 0;
     $anchoPeriodo = 10;
     
-    $sumatorias = array_fill(1, $numPeriodos + 5, 0); // Índices 1-numPeriodos + TP, PROM, NR1, NR2, NF
+    $sumatorias = array_fill(1, $numPeriodos + 5, 0);
     $numAlumnosValidos = 0;
-    $alumnosPuntajesNF = []; // Array para guardar puntajes NF para el Top 5
+    $alumnosPuntajesNF = [];
 
     foreach ($datos['notas'] as $alumno) {
-        if ($numFila > 0 && $numFila % FILAS_POR_PAGINA_ASIGNATURA == 0) { $pdf->AddPage(); $pdf->TablaEncabezado(); $pdf->SetFont('Arial', '', 8); }
+        if ($numFila > 0 && $numFila % FILAS_POR_PAGINA_ASIGNATURA == 0) { 
+            $pdf->AddPage(); 
+            $pdf->TablaEncabezado(); 
+            $pdf->SetFont('Arial', '', 8); 
+        }
         $pdf->SetFillColor($fill ? 240 : 255, $fill ? 240 : 255, $fill ? 240 : 255);
 
         $pdf->Cell(8, 6, $numFila + 1, 1, 0, 'C', true);
@@ -161,49 +164,65 @@ function generarPdfPorAsignatura(array $datos) {
             $campoNota = 'nota_p_p_' . $i;
             $notaVal = isset($alumno[$campoNota]) ? floatval($alumno[$campoNota]) : null;
 
-            if($notaVal !== null && $notaVal >= 0) {
-                 if($notaVal < $notaMinima && $notaVal > 0) { $pdf->SetTextColor(255, 0, 0); }
+            // Si la nota existe y es mayor a 0, se muestra en el PDF
+            if ($notaVal !== null && $notaVal > 0) {
+                 if ($notaVal < $notaMinima) { $pdf->SetTextColor(255, 0, 0); }
                  $pdf->Cell($anchoPeriodo, 6, number_format($notaVal, 2), 1, 0, 'C', true);
                  $pdf->SetTextColor(0);
-                 if ($notaVal > 0) {
-                     $totalPuntosAlumno += $notaVal;
-                     $sumatorias[$i] += $notaVal;
-                     $numNotasPeriodoValidas++;
-                     $tieneNotas = true;
-                 }
+                 
+                 $totalPuntosAlumno += $notaVal;
+                 $sumatorias[$i] += $notaVal;
+                 $numNotasPeriodoValidas++;
+                 $tieneNotas = true;
             } else {
+                 // Si es 0 o null, deja el espacio en blanco
                  $pdf->Cell($anchoPeriodo, 6, '', 1, 0, 'C', true);
             }
         }
 
-        // TP y PROM
+        // TP (Total Puntos) y PROM (Promedio)
         $promedioAlumno = ($numNotasPeriodoValidas > 0) ? ($totalPuntosAlumno / $numNotasPeriodoValidas) : 0;
-        $pdf->Cell(10, 6, ($totalPuntosAlumno > 0) ? number_format($totalPuntosAlumno, 2) : '0.00', 1, 0, 'C', true);
-        $pdf->Cell(10, 6, ($promedioAlumno > 0) ? number_format($promedioAlumno, 2) : '0.00', 1, 0, 'C', true);
-        if($tieneNotas) {
-             $sumatorias[$numPeriodos + 1] += $totalPuntosAlumno; // Suma TP
-             $sumatorias[$numPeriodos + 2] += $promedioAlumno;    // Suma PROM
+        
+        // Imprimir TP solo si es mayor a 0
+        $textoTP = ($totalPuntosAlumno > 0) ? number_format($totalPuntosAlumno, 2) : '';
+        $pdf->Cell(10, 6, $textoTP, 1, 0, 'C', true);
+        
+        // Imprimir PROM solo si es mayor a 0
+        $textoProm = ($promedioAlumno > 0) ? number_format($promedioAlumno, 2) : '';
+        $pdf->Cell(10, 6, $textoProm, 1, 0, 'C', true);
+
+        if ($tieneNotas) {
+             $sumatorias[$numPeriodos + 1] += $totalPuntosAlumno;
+             $sumatorias[$numPeriodos + 2] += $promedioAlumno;
              $numAlumnosValidos++;
         }
 
-        // NR1, NR2
+        // NR1 y NR2
         $nr1 = floatval($alumno['recuperacion']);
         $nr2 = floatval($alumno['nota_recuperacion_2']);
-        if($nr1 > 0 && $nr1 < $notaMinima) { $pdf->SetTextColor(255, 0, 0); }
-        $pdf->Cell(10, 6, ($nr1 > 0) ? number_format($nr1, 2) : '', 1, 0, 'C', true); $pdf->SetTextColor(0);
-        if($nr2 > 0 && $nr2 < $notaMinima) { $pdf->SetTextColor(255, 0, 0); }
-        $pdf->Cell(10, 6, ($nr2 > 0) ? number_format($nr2, 2) : '', 1, 0, 'C', true); $pdf->SetTextColor(0);
-        if($nr1 > 0) $sumatorias[$numPeriodos + 3] += $nr1;
-        if($nr2 > 0) $sumatorias[$numPeriodos + 4] += $nr2;
+        
+        if ($nr1 > 0 && $nr1 < $notaMinima) { $pdf->SetTextColor(255, 0, 0); }
+        $pdf->Cell(10, 6, ($nr1 > 0) ? number_format($nr1, 2) : '', 1, 0, 'C', true); 
+        $pdf->SetTextColor(0);
 
-        // NF (calculada)
+        if ($nr2 > 0 && $nr2 < $notaMinima) { $pdf->SetTextColor(255, 0, 0); }
+        $pdf->Cell(10, 6, ($nr2 > 0) ? number_format($nr2, 2) : '', 1, 0, 'C', true); 
+        $pdf->SetTextColor(0);
+
+        if ($nr1 > 0) $sumatorias[$numPeriodos + 3] += $nr1;
+        if ($nr2 > 0) $sumatorias[$numPeriodos + 4] += $nr2;
+
+        // NF (Nota Final calculada)
         $notaFinalVerificada = verificar_nota($alumno['nota_final'], $alumno['recuperacion'], $alumno['nota_recuperacion_2']);
         $nfVal = floatval($notaFinalVerificada);
-        if($nfVal > 0 && $nfVal < $notaMinima) { $pdf->SetTextColor(255, 0, 0); }
-        $pdf->Cell(10, 6, ($nfVal > 0) ? number_format($nfVal, 2) : '', 1, 1, 'C', true); $pdf->SetTextColor(0);
-        if($nfVal > 0) $sumatorias[$numPeriodos + 5] += $nfVal;
         
-        // Guardar datos para Top 5 (usando NF calculada)
+        if ($nfVal > 0 && $nfVal < $notaMinima) { $pdf->SetTextColor(255, 0, 0); }
+        $pdf->Cell(10, 6, ($nfVal > 0) ? number_format($nfVal, 2) : '', 1, 1, 'C', true); 
+        $pdf->SetTextColor(0);
+
+        if ($nfVal > 0) $sumatorias[$numPeriodos + 5] += $nfVal;
+        
+        // Guardar para el Top 5
         $alumnosPuntajesNF[] = ['id' => $alumno['id_alumno'], 'nie' => $alumno['codigo_nie'], 'nombre' => $alumno['nombre_completo'], 'puntaje' => $nfVal];
 
         $fill = !$fill; $numFila++;
@@ -211,14 +230,22 @@ function generarPdfPorAsignatura(array $datos) {
 
     // Filas de TOTAL y PROMEDIO
     $pdf->SetFont('Arial','B', 8);
-    $pdf->Cell(88, 6, 'TOTAL DE PUNTOS', 1, 0, 'R', true); // 8+15+65
-    for ($i = 1; $i <= $numPeriodos + 5; $i++) { $suma = $sumatorias[$i] ?? 0; $pdf->Cell(10, 6, ($suma > 0) ? number_format($suma, 2) : '', 1, 0, 'C', true); }
-    $pdf->Ln();
-    $pdf->Cell(88, 6, 'PROMEDIO', 1, 0, 'R', true);
-    for ($i = 1; $i <= $numPeriodos + 5; $i++) { $suma = $sumatorias[$i] ?? 0; $promedio = ($numAlumnosValidos > 0 && $suma > 0) ? round($suma / $numAlumnosValidos) : ''; $pdf->Cell(10, 6, $promedio, 1, 0, 'C', true); }
+    $pdf->Cell(88, 6, 'TOTAL DE PUNTOS', 1, 0, 'R', true); 
+    for ($i = 1; $i <= $numPeriodos + 5; $i++) { 
+        $suma = $sumatorias[$i] ?? 0; 
+        $pdf->Cell(10, 6, ($suma > 0) ? number_format($suma, 2) : '', 1, 0, 'C', true); 
+    }
     $pdf->Ln();
 
-    // --- TABLA TOP 5 (basado en NF calculada) ---
+    $pdf->Cell(88, 6, 'PROMEDIO', 1, 0, 'R', true);
+    for ($i = 1; $i <= $numPeriodos + 5; $i++) { 
+        $suma = $sumatorias[$i] ?? 0; 
+        $promedio = ($numAlumnosValidos > 0 && $suma > 0) ? round($suma / $numAlumnosValidos, 2) : ''; 
+        $pdf->Cell(10, 6, ($promedio > 0) ? number_format($promedio, 2) : '', 1, 0, 'C', true); 
+    }
+    $pdf->Ln();
+
+    // --- TABLA TOP 5 ---
     usort($alumnosPuntajesNF, function($a, $b) { return $b['puntaje'] <=> $a['puntaje']; });
     $top5 = array_slice($alumnosPuntajesNF, 0, 5);
 
@@ -240,9 +267,9 @@ function generarPdfPorAsignatura(array $datos) {
 
 // --- PUNTO DE ENTRADA DEL SCRIPT ---
 try {
-    if ($errorDbConexion) { throw new Exception("..."); }
+    if (isset($errorDbConexion) && $errorDbConexion) { throw new Exception("Error en la conexión a la base de datos."); }
     $codigo_all = $_GET["todos"] ?? null;
-    $codigo_asignatura = $_GET["lstasignatura"] ?? null; // Parámetro de la asignatura
+    $codigo_asignatura = $_GET["lstasignatura"] ?? null;
 
     if (!$codigo_all || !$codigo_asignatura) { throw new Exception("Faltan parámetros (grupo o asignatura)."); }
 
@@ -252,5 +279,9 @@ try {
 
     generarPdfPorAsignatura($datosReporte);
 
-} catch (PDOException $e) { /* ... */ } catch (Exception $e) { /* ... */ }
+} catch (PDOException $e) { 
+    echo "Error BD: " . $e->getMessage();
+} catch (Exception $e) { 
+    echo "Error: " . $e->getMessage();
+}
 ?>
