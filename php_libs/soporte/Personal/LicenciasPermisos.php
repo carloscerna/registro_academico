@@ -396,7 +396,8 @@ case 'ConsultarSaldoEmpleado':
         if ($stmtLicencias->rowCount() > 0) {
             while ($row = $stmtLicencias->fetch(PDO::FETCH_ASSOC)) {
                 $id_ = $row['id_licencia_permiso'];
-                $fecha_fmt = isset($row['fecha']) ? date('d/m/Y', strtotime($row['fecha'])) : '';
+                $fecha_fmt = $row['fecha'];
+                //$fecha_fmt = isset($row['fecha']) ? date('d/m/Y', strtotime($row['fecha'])) : '';
 
                 // Construcción de la fila con exactamente 10 columnas (<td>)
                 $filasHtml .= "<tr>
